@@ -439,7 +439,6 @@ def query_rules(
         if selector_contains and selector_contains.lower() not in sel.lower():
             continue
         if has_prop:
-            # 属性名大小写不敏感匹配
             if not any(has_prop.lower() == k.lower() for k in props):
                 continue
         if prop_value_contains:
@@ -447,4 +446,194 @@ def query_rules(
             if not any(pvc in v.lower() for v in props.values()):
                 continue
         out.append((sel, props))
+    return out
+
+
+# ============================================================
+# 8. 数据契约提取（P2-3）
+# ============================================================
+# 扫描 JS 中 const/let/var NAME = [...] / {...}，提取数据契约速览。
+# 给 agent 一份"原页面有哪些数据、字段是什么"的参考，减少通读 JS 的负担。
+_VAR_DECL_RE = re.compile(
+    r"(?:const|let|var)\s+(\w+)\s*=\s*([\[\{])", re.MULTILINE
+)
+
+
+def _match_bracket_in(s: str, start: int, open_ch: str, close_ch: str) -> int | None:
+    """s[start] == open_ch，返回对应 close_ch 的索引。考虑字符串边界。"""
+    depth = 0
+    in_str = None
+    i = start
+    while i < len(s):
+        ch = s[i]
+        if in_str:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == in_str:
+                in_str = None
+        else:
+            if ch in ("'", '"', "`"):
+                in_str = ch
+            elif ch == open_ch:
+                depth += 1
+            elif ch == close_ch:
+                depth -= 1
+                if depth == 0:
+                    return i
+        i += 1
+    return None
+
+
+def _infer_field_type(value_str: str) -> str:
+    """从值的字符串形式推断类型。"""
+    v = value_str.strip()
+    if not v:
+        return "string"
+    if v[0] in ("'", '"', "`"):
+        return "string"
+    if v in ("true", "false"):
+        return "boolean"
+    if v == "null":
+        return "null"
+    if v == "undefined":
+        return "undefined"
+    if v.startswith("["):
+        return "array"
+    if v.startswith("{"):
+        return "object"
+    # 数字
+    if re.match(r"^[-\d.]+$", v):
+        return "number"
+    # 裸标识符（可能是变量引用或枚举）
+    return "string"
+
+
+def _extract_object_fields(obj_text: str) -> dict[str, str]:
+    """从对象字面量文本（含外层 { }）提取 {field: type}。"""
+    # 去掉外层 {}
+    inner = obj_text.strip()
+    if inner.startswith("{"):
+        inner = inner[1:]
+    if inner.endswith("}"):
+        inner = inner[:-1]
+    fields: dict[str, str] = {}
+    # 按顶层逗号分割（考虑嵌套）
+    parts: list[str] = []
+    depth = 0
+    in_str = None
+    cur: list[str] = []
+    i = 0
+    while i < len(inner):
+        ch = inner[i]
+        if in_str:
+            cur.append(ch)
+            if ch == "\\":
+                if i + 1 < len(inner):
+                    cur.append(inner[i + 1])
+                    i += 2
+                    continue
+            elif ch == in_str:
+                in_str = None
+            i += 1
+            continue
+        if ch in ("'", '"', "`"):
+            in_str = ch
+            cur.append(ch)
+        elif ch in "[{(":
+            depth += 1
+            cur.append(ch)
+        elif ch in "]})":
+            depth -= 1
+            cur.append(ch)
+        elif ch == "," and depth == 0:
+            parts.append("".join(cur))
+            cur = []
+        else:
+            cur.append(ch)
+        i += 1
+    if cur:
+        parts.append("".join(cur))
+    # 解析每个 part 的 key: value
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        # key 可能是裸标识符或带引号
+        m = re.match(r"^(?:'([^']*)'|\"([^\"]*)\"|`([^`]*)`|(\w+))\s*:\s*(.+)$", part, re.DOTALL)
+        if not m:
+            continue
+        key = m.group(1) or m.group(2) or m.group(3) or m.group(4)
+        val = m.group(5).strip().rstrip(",").strip()
+        fields[key] = _infer_field_type(val)
+    return fields
+
+
+def _count_array_elements(arr_text: str) -> int:
+    """估算数组元素数（按顶层逗号 + 1，空数组返回 0）。"""
+    inner = arr_text.strip()
+    if inner.startswith("["):
+        inner = inner[1:]
+    if inner.endswith("]"):
+        inner = inner[:-1]
+    inner = inner.strip()
+    if not inner:
+        return 0
+    count = 1
+    depth = 0
+    in_str = None
+    for ch in inner:
+        if in_str:
+            if ch == "\\":
+                continue
+            if ch == in_str:
+                in_str = None
+            continue
+        if ch in ("'", '"', "`"):
+            in_str = ch
+        elif ch in "[{(":
+            depth += 1
+        elif ch in "]})":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            count += 1
+    return count
+
+
+def extract_data_contracts(scripts: list[str]) -> list[dict]:
+    """扫描 JS 脚本列表，提取数据契约速览。
+
+    返回 [{name, kind, count, fields}]：
+    - name: 变量名
+    - kind: 'array' | 'object'
+    - count: 数组元素数（object 为 1）
+    - fields: 首元素的字段→类型映射（对象数组取首元素；纯值数组 fields 为空）
+
+    给 agent 当数据契约参考，知道原页面有哪些数据、字段是什么。
+    """
+    out: list[dict] = []
+    for script in scripts:
+        for m in _VAR_DECL_RE.finditer(script):
+            name = m.group(1)
+            bracket = m.group(2)
+            start = m.end() - 1
+            open_ch, close_ch = ("[", "]") if bracket == "[" else ("{", "}")
+            end = _match_bracket_in(script, start, open_ch, close_ch)
+            if end is None:
+                continue
+            literal = script[start:end + 1]
+            kind = "array" if bracket == "[" else "object"
+            if kind == "array":
+                count = _count_array_elements(literal)
+                # 取首元素的字段（若是对象数组）
+                fields: dict[str, str] = {}
+                inner = literal[1:-1].strip()
+                if inner.startswith("{"):
+                    first_end = _match_bracket_in(inner, 0, "{", "}")
+                    if first_end is not None:
+                        fields = _extract_object_fields(inner[:first_end + 1])
+                out.append({"name": name, "kind": kind, "count": count, "fields": fields})
+            else:
+                fields = _extract_object_fields(literal)
+                out.append({"name": name, "kind": kind, "count": 1, "fields": fields})
     return out

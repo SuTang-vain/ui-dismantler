@@ -24,6 +24,7 @@ from _common import (  # noqa: E402
     normalize_var_name, parse_color, to_hex, color_distance,
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
     extract_gradients, slugify, infer_color_roles, query_rules,
+    extract_data_contracts,
 )
 
 
@@ -480,6 +481,93 @@ class TestQueryRules(unittest.TestCase):
         out = query_rules(self.SAMPLE, prop_value_contains="var(--primary)")
         self.assertEqual(len(out), 1)
         self.assertEqual(out[0][0], ".sg-tab.active")
+
+
+class TestExtractDataContracts(unittest.TestCase):
+    def test_array_of_objects(self):
+        js = ["const members = [{name: 'Jisoo', role: '主唱', age: 28}];"]
+        out = extract_data_contracts(js)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0]["name"], "members")
+        self.assertEqual(out[0]["kind"], "array")
+        self.assertEqual(out[0]["count"], 1)
+        self.assertEqual(out[0]["fields"], {"name": "string", "role": "string", "age": "number"})
+
+    def test_array_count(self):
+        js = ["const nums = [1, 2, 3, 4, 5];"]
+        out = extract_data_contracts(js)
+        self.assertEqual(out[0]["count"], 5)
+        self.assertEqual(out[0]["fields"], {})  # 纯值数组无字段
+
+    def test_empty_array(self):
+        js = ["const empty = [];"]
+        out = extract_data_contracts(js)
+        self.assertEqual(out[0]["count"], 0)
+        self.assertEqual(out[0]["fields"], {})
+
+    def test_object_literal(self):
+        js = ["const config = {title: 'BP', count: 4, active: true};"]
+        out = extract_data_contracts(js)
+        self.assertEqual(out[0]["kind"], "object")
+        self.assertEqual(out[0]["count"], 1)
+        self.assertEqual(out[0]["fields"], {
+            "title": "string", "count": "number", "active": "boolean"
+        })
+
+    def test_multiple_vars(self):
+        js = ["const a = [1,2]; const b = {x: 1}; const c = [{k: 'v'}];"]
+        out = extract_data_contracts(js)
+        self.assertEqual(len(out), 3)
+        names = [d["name"] for d in out]
+        self.assertEqual(names, ["a", "b", "c"])
+
+    def test_multiple_scripts(self):
+        out = extract_data_contracts(["const a = [1];", "const b = [2];"])
+        self.assertEqual(len(out), 2)
+
+    def test_field_type_inference(self):
+        js = ["""const d = [{
+            s: 'str', n: 42, b: true, nl: null,
+            arr: [1,2], obj: {x:1}, undef: undefined
+        }];"""]
+        out = extract_data_contracts(js)
+        f = out[0]["fields"]
+        self.assertEqual(f["s"], "string")
+        self.assertEqual(f["n"], "number")
+        self.assertEqual(f["b"], "boolean")
+        self.assertEqual(f["nl"], "null")
+        self.assertEqual(f["arr"], "array")
+        self.assertEqual(f["obj"], "object")
+        self.assertEqual(f["undef"], "undefined")
+
+    def test_nested_array_in_object(self):
+        # 对象里有数组字段，逗号不应误分割
+        js = ["const d = {relations: [['a','b'], ['c','d']], name: 'x'};"]
+        out = extract_data_contracts(js)
+        self.assertEqual(out[0]["fields"]["relations"], "array")
+        self.assertEqual(out[0]["fields"]["name"], "string")
+
+    def test_string_with_comma_not_split(self):
+        # 字符串里的逗号不应当作分隔符
+        js = ["const d = {desc: 'a, b, c', n: 1};"]
+        out = extract_data_contracts(js)
+        self.assertEqual(len(out[0]["fields"]), 2)
+        self.assertEqual(out[0]["fields"]["desc"], "string")
+
+    def test_quoted_keys(self):
+        js = ['const d = {"kebab-case": 1, "中文键": "v"};']
+        out = extract_data_contracts(js)
+        self.assertIn("kebab-case", out[0]["fields"])
+        self.assertIn("中文键", out[0]["fields"])
+
+    def test_no_decls(self):
+        self.assertEqual(extract_data_contracts(["console.log(1);"]), [])
+
+    def test_unclosed_bracket_skipped(self):
+        # 未闭合的字面量应被跳过，不崩溃
+        js = ["const bad = [1, 2, 3;"]
+        out = extract_data_contracts(js)
+        self.assertEqual(out, [])
 
 
 if __name__ == "__main__":
