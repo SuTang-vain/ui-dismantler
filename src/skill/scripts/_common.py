@@ -362,3 +362,53 @@ def safe_json_dump(obj: Any) -> str:
     """JSON 序列化，保证中文可读。"""
     import json
     return json.dumps(obj, ensure_ascii=False, indent=2, default=str)
+
+
+# ============================================================
+# 6. 颜色语义角色推断（P2-1）
+# ============================================================
+# CSS 属性 → 语义角色映射。用于推断一个 --var 在原页面扮演什么角色，
+# 帮助 agent 准确归一化（如用作 border 的色 → --sg-line）。
+_PROP_ROLE_MAP: list[tuple[str, str]] = [
+    # 顺序敏感：更具体的属性先匹配
+    (r"^background(-color)?$", "background"),
+    (r"^border(-color)?(-top|-right|-bottom|-left)?$", "border"),
+    (r"^outline(-color)?$", "border"),
+    (r"^color$", "text"),
+    (r"^fill$", "icon-fill"),
+    (r"^stroke$", "icon-stroke"),
+    (r"^box-shadow$", "shadow"),
+    (r"^text-shadow$", "shadow"),
+    (r"^caret-color$", "text"),
+    (r"^accent-color$", "accent"),
+    (r"^column-rule(-color)?$", "border"),
+    (r"^text-decoration(-color)?$", "decoration"),
+]
+
+
+def _prop_to_role(prop: str) -> str | None:
+    """CSS 属性名 → 语义角色。无匹配返回 None。"""
+    p = prop.strip().lower()
+    for pat, role in _PROP_ROLE_MAP:
+        if re.match(pat, p):
+            return role
+    return None
+
+
+def infer_color_roles(css: str, var_name: str) -> list[str]:
+    """扫描 CSS，推断某 --var 被用作哪些语义角色。
+
+    返回去重后的角色列表，如 ["text", "background"]。
+    用于帮 agent 判断：一个色值在原页面是文字色、背景色、还是边框色。
+    """
+    roles: list[str] = []
+    seen: set[str] = set()
+    pat = re.compile(r"var\(\s*" + re.escape(var_name) + r"\s*\)")
+    for sel, props in parse_rules(css):
+        for prop, val in props.items():
+            if pat.search(val):
+                role = _prop_to_role(prop)
+                if role and role not in seen:
+                    seen.add(role)
+                    roles.append(role)
+    return roles

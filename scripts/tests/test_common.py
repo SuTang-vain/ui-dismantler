@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
 from _common import (  # noqa: E402
     normalize_var_name, parse_color, to_hex, color_distance,
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
-    extract_gradients, slugify,
+    extract_gradients, slugify, infer_color_roles,
 )
 
 
@@ -366,6 +366,60 @@ class TestSlugify(unittest.TestCase):
     def test_empty_returns_case(self):
         self.assertEqual(slugify(""), "case")
         self.assertEqual(slugify("___"), "case")
+
+
+class TestInferColorRoles(unittest.TestCase):
+    def test_text_role(self):
+        css = ".foo { color: var(--ink); }"
+        self.assertEqual(infer_color_roles(css, "--ink"), ["text"])
+
+    def test_background_role(self):
+        css = ".foo { background: var(--paper); } .bar { background-color: var(--paper); }"
+        # background 与 background-color 都归到 background
+        self.assertEqual(infer_color_roles(css, "--paper"), ["background"])
+
+    def test_border_role(self):
+        css = ".foo { border: 1px solid var(--line); } .bar { border-bottom-color: var(--line); }"
+        self.assertEqual(infer_color_roles(css, "--line"), ["border"])
+
+    def test_multiple_roles(self):
+        css = (
+            ".a { color: var(--primary); } "
+            ".b { background: var(--primary); } "
+            ".c { border-color: var(--primary); }"
+        )
+        roles = infer_color_roles(css, "--primary")
+        self.assertIn("text", roles)
+        self.assertIn("background", roles)
+        self.assertIn("border", roles)
+
+    def test_dedup_same_role(self):
+        # 同一角色多次出现只记一次
+        css = ".a { color: var(--ink); } .b { color: var(--ink); }"
+        self.assertEqual(infer_color_roles(css, "--ink"), ["text"])
+
+    def test_shadow_role(self):
+        css = ".foo { box-shadow: 0 2px 4px var(--ink); }"
+        self.assertEqual(infer_color_roles(css, "--ink"), ["shadow"])
+
+    def test_fill_stroke(self):
+        css = ".icon { fill: var(--primary); stroke: var(--accent); }"
+        self.assertEqual(infer_color_roles(css, "--primary"), ["icon-fill"])
+        self.assertEqual(infer_color_roles(css, "--accent"), ["icon-stroke"])
+
+    def test_no_usage_returns_empty(self):
+        css = ".foo { color: red; }"
+        self.assertEqual(infer_color_roles(css, "--unused"), [])
+
+    def test_var_with_whitespace(self):
+        # var( --ink ) 带空格也能匹配
+        css = ".foo { color: var( --ink ); }"
+        self.assertEqual(infer_color_roles(css, "--ink"), ["text"])
+
+    def test_does_not_match_substring_var(self):
+        # --ink 不应匹配 --ink-dark
+        css = ".foo { color: var(--ink-dark); }"
+        self.assertEqual(infer_color_roles(css, "--ink"), [])
 
 
 if __name__ == "__main__":

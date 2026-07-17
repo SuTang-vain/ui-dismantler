@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (  # noqa: E402
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
     extract_gradients, normalize_var_name, parse_color, to_hex, slugify,
-    safe_json_dump,
+    safe_json_dump, infer_color_roles,
 )
 
 try:
@@ -219,11 +219,13 @@ class HtmlAnalyzer:
                     continue
             seen_norm[norm] = orig_name
             usage = self._infer_var_usage(orig_name)
+            roles = infer_color_roles(self.css, orig_name)
             tokens.append({
                 "name": norm,
                 "value": value.strip(),
                 "original": orig_name,
                 "usage": usage,
+                "roles": roles,
             })
         # 渐变
         gradients = []
