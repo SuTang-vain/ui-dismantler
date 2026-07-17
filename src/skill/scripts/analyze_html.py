@@ -756,9 +756,21 @@ class HtmlAnalyzer:
                 while j < n:
                     cj = text[j]
                     if cj == "\\" and j + 1 < n:
-                        # 转义字符保留（JS 的 \" ' \n 等基本兼容 JSON）
-                        buf.append(cj)
-                        buf.append(text[j+1])
+                        nxt = text[j+1]
+                        # JS 转义 → JSON 合法形式
+                        if nxt == "'":
+                            # \' 在双引号串中无需转义
+                            buf.append("'")
+                        elif nxt == '"':
+                            buf.append("\\\"")
+                        elif nxt == "\\":
+                            buf.append("\\\\")
+                        elif nxt == "`":
+                            buf.append("`")
+                        else:
+                            # \n \t \uXXXX 等基本兼容 JSON，原样保留
+                            buf.append(cj)
+                            buf.append(nxt)
                         j += 2
                         continue
                     if cj == quote:
@@ -781,8 +793,18 @@ class HtmlAnalyzer:
                 while j < n:
                     cj = text[j]
                     if cj == "\\" and j + 1 < n:
-                        buf.append(cj)
-                        buf.append(text[j+1])
+                        nxt = text[j+1]
+                        if nxt == "'":
+                            buf.append("'")
+                        elif nxt == '"':
+                            buf.append("\\\"")
+                        elif nxt == "\\":
+                            buf.append("\\\\")
+                        elif nxt == "`":
+                            buf.append("`")
+                        else:
+                            buf.append(cj)
+                            buf.append(nxt)
                         j += 2
                         continue
                     if cj == "`":

@@ -243,23 +243,88 @@ def parse_rules(css_block: str) -> list[tuple[str, dict[str, str]]]:
 # ============================================================
 # 4. 渐变解析
 # ============================================================
-GRADIENT_RE = re.compile(r"(linear|radial|conic)-gradient\s*\(([^)]+(?:\([^)]*\)[^)]*)*)\)", re.IGNORECASE)
+GRADIENT_RE = re.compile(r"(linear|radial|conic)-gradient\s*\(", re.IGNORECASE)
 
 
 def extract_gradients(css: str) -> list[dict[str, str]]:
-    """提取所有 gradient(...)。返回 [{type, value, colors: [...]}]。"""
+    """提取所有 gradient(...)。返回 [{type, value, stops: [...]}]。
+
+    stops 仅含颜色停点，方向参数（90deg / to top / circle 等）已排除。
+    用括号计数法匹配完整 gradient，支持内部嵌套 rgba()/hsla() 等。
+    """
     out: list[dict[str, str]] = []
     for m in GRADIENT_RE.finditer(css):
         gtype = m.group(1).lower()
-        value = m.group(0)
-        # 提取颜色 stops（简化：按逗号分割，但跳过函数内逗号）
-        stops = _split_gradient_stops(m.group(2))
+        # 从 m.end()-1（指向 '('）开始用括号计数匹配到对应 ')'
+        open_idx = m.end() - 1
+        close_idx = _match_paren(css, open_idx)
+        if close_idx is None:
+            continue
+        inner = css[open_idx + 1:close_idx]  # 括号内内容
+        value = css[m.start():close_idx + 1]  # 完整 gradient(...)
+        stops = _split_gradient_stops(inner)
+        stops = _strip_direction(stops, gtype)
         out.append({"type": gtype, "value": value, "stops": stops})
     return out
 
 
+def _match_paren(s: str, open_idx: int) -> int | None:
+    """s[open_idx] == '('，返回对应 ')' 的索引。考虑字符串边界。"""
+    depth = 0
+    in_str = None
+    i = open_idx
+    while i < len(s):
+        ch = s[i]
+        if in_str:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == in_str:
+                in_str = None
+        else:
+            if ch in ("'", '"', "`"):
+                in_str = ch
+            elif ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+                if depth == 0:
+                    return i
+        i += 1
+    return None
+
+
+# 方向参数模式：to <side>、Ndeg、circle/ellipse + 可选位置
+_DIRECTION_RE = re.compile(
+    r"^(to\s+\w|[-\d.]+deg|circle|ellipse|closest|farthest|at\s+)",
+    re.IGNORECASE,
+)
+
+
+def _strip_direction(stops: list[str], gtype: str) -> list[str]:
+    """若首段是方向参数（非颜色），移除它。"""
+    if not stops:
+        return stops
+    first = stops[0].strip()
+    # 颜色特征：#hex、rgb()/rgba()/hsl()/hsla()、transparent、currentColor、命名颜色
+    if _looks_like_color(first):
+        return stops
+    if _DIRECTION_RE.match(first):
+        return stops[1:]
+    return stops
+
+
+_COLOR_HINT_RE = re.compile(
+    r"^(#|rgba?|hsla?|transparent|currentColor)", re.IGNORECASE
+)
+
+
+def _looks_like_color(s: str) -> bool:
+    return bool(_COLOR_HINT_RE.match(s.strip()))
+
+
 def _split_gradient_stops(body: str) -> list[str]:
-    """按顶层逗号分割渐变 stops。"""
+    """按顶层逗号分割渐变内容。"""
     stops: list[str] = []
     depth = 0
     cur = []
@@ -287,8 +352,8 @@ def slugify(name: str) -> str:
     """中英混合名 → slug（用于命名库）。"""
     # 去掉常见后缀标记
     name = re.sub(r"_v\d+", "", name)
-    # 非字母数字中文 → 连字符
-    name = re.sub(r"[^\w\u4e00-\u9fff]+", "-", name, flags=re.UNICODE)
+    # 非字母数字中文 → 连字符（\w 含下划线，故单独把下划线也当分隔符）
+    name = re.sub(r"[^\w\u4e00-\u9fff]+|_", "-", name, flags=re.UNICODE)
     name = name.strip("-").lower()
     return name or "case"
 
