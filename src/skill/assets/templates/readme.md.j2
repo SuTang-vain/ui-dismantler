@@ -1,0 +1,65 @@
+{# readme.md.j2 — 组件库 README #}
+# {{ lib_name }} — 组件库
+
+> 从 `{{ manifest.meta.source | basename }}` 提炼的可复用组件库。{{ manifest.meta.title | default('', true) }}
+
+- 零依赖，原生 JS + CSS
+- 数据驱动：替换 JSON 即可生产新卡片
+- 主题可定制：覆盖 `--sg-*` 变量换肤
+- 响应式：PC / WISE(≤500px) / 极端(≤320px) 三档
+
+## 目录结构
+
+```
+{{ lib_name }}/
+├── README.md
+├── docs/设计规范.md
+├── src/
+│   ├── {{ lib_name }}.css
+│   └── {{ lib_name }}.js
+└── examples/
+    └── {{ example_name }}.html
+```
+
+## 快速开始
+
+```html
+<link rel="stylesheet" href="src/{{ lib_name }}.css">
+<div id="mount"></div>
+<script src="src/{{ lib_name }}.js"></script>
+<script>
+  StarGroup.mount(document.getElementById('mount'), { /* options */ });
+</script>
+```
+
+## API
+
+| 方法 | 说明 |
+|---|---|
+| `StarGroup.mount(container, options)` | 挂载到容器 |
+| `StarGroup.create(options)` | 仅创建 DOM |
+
+## 主题定制
+
+```js
+StarGroup.mount(el, {
+  theme: { primary: '#FF5A5F', accent: '#00A699' },
+  // ...数据
+});
+```
+
+或在 CSS 覆盖：
+```css
+.sg-frame { --sg-primary: #FF5A5F; }
+```
+
+## 设计规范
+
+见 `docs/设计规范.md`。
+
+## 来源
+
+- 原案例: `{{ manifest.meta.source }}`
+- 垂类: {{ manifest.meta.vertical }}
+{% if manifest.warnings %}- ⚠ 生成告警: {{ manifest.warnings | length }} 条（见 manifest）
+{% endif %}

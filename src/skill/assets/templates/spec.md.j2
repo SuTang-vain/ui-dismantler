@@ -1,0 +1,93 @@
+{# spec.md.j2 — 设计规范文档 #}
+# {{ manifest.meta.title | default(lib_name, true) }} — 设计规范
+
+> 由 html-to-component-lib skill 从 `{{ manifest.meta.source | basename }}` 自动生成。
+
+---
+
+## 一、主题色系统
+
+### 设计令牌
+
+| Token | 值 | 语义 / 用途 |
+|---|---|---|
+{% for t in theme_tokens %}| `--sg-{{ t.name }}` | `{{ t.value }}` | {{ t.usage | join('、') if t.usage else t.original or '' }} |
+{% endfor %}
+
+### 渐变
+
+{% if theme_gradients %}
+{% for g in theme_gradients %}| `{{ g.selector }}` | `{{ g.value }}` |
+{% endfor %}
+{% else %}
+（未检测到渐变）
+{% endif %}
+
+---
+
+## 二、Tab 元素
+
+- 共 **{{ tabs | length }}** 个 Tab
+{% for t in tabs %}- `{{ t.id }}`：{{ t.label }}{% if t.count %}（计数 {{ t.count }}）{% endif %}{% if t.more %} — "更多"Tab，打开 Modal{% endif %}
+{% endfor %}
+
+---
+
+## 三、交互模式
+
+{% if has_member_grid %}
+### 成员视图
+- 2×2 网格，每页 {{ member_per_page | default(4) }} 人
+- 点击成员卡切换详情面板；小屏弹 Modal
+{% if has_member_autoplay %}- 自动播放 {{ member_autoplay_interval }}ms/个，任意交互停止{% endif %}
+{% endif %}
+
+{% if has_timeline %}
+### 时间线
+- 横向滚动（scroll-snap），PC 每页 {{ timeline_per_page_pc }} 条 / 移动端 {{ timeline_per_page_mobile }} 条
+- PC 两侧箭头 + 移动端底部控制栏
+- 小屏点击条目弹详情 Modal
+{% endif %}
+
+{% if has_carousel_3d %}
+### 作品轮播（3D 中心聚焦）
+- perspective: {{ carousel_perspective }}px
+- {{ carousel_positions | length }} 档位布局
+{% if has_works_autoplay %}- 自动播放 {{ works_autoplay_interval }}ms/次，悬停暂停{% endif %}
+- 点击中心卡 / CTA 按钮展开创作故事面板
+{% endif %}
+
+### Modal
+{% for m in modals %}- `{{ m.id }}`：触发={{ m.trigger }}，布局={{ m.layout }}，关闭={{ m.closeOn | join('/') }}
+{% endfor %}
+
+---
+
+## 四、逻辑设置
+
+### 响应式断点
+
+| 断点 | 画布 | 关键变化 |
+|---|---|---|
+| PC | {{ canvas_pc[0] }}×{{ canvas_pc[1] }} | 完整布局 |
+{% if canvas_wise %}| `≤500px` | {{ canvas_wise[0] }}×{{ canvas_wise[1] }} | 单栏、隐藏详情面板、控件缩小 |
+{% endif %}{% if canvas_extreme %}| `≤320px` | {{ canvas_extreme[0] }}×{{ canvas_extreme[1] }} | 字号缩小、弹窗替代面板 |
+{% endif %}
+
+### A11y
+
+- Tablist/Tabpanel: {{ a11y.hasTablist }}
+- Dialog: {{ a11y.hasDialog }}
+- aria-live: {{ a11y.hasAriaLive }}
+- ESC 关闭: {{ a11y.closeOnEscape }}
+
+---
+
+## 五、组件清单
+
+{% if has_member_grid %}- `MemberGrid` + `MemberCard` — 成员网格 + 分页 + 兜底
+- `DetailPanel` — 关系列表{% endif %}
+{% if has_timeline %}- `Timeline` — 横向 snap + 双端箭头策略{% endif %}
+{% if has_carousel_3d %}- `WorksCarousel` — 3D 5 档位中心聚焦
+- `StoryPanel` — 覆盖式滑入{% endif %}
+- `Modal` — 事实网格 + 统一 X 按钮

@@ -1,0 +1,209 @@
+# manifest.json 字段定义（manifest_schema.md）
+
+`analyze_html.py` 的输出、`generate_lib.py` 的输入。这是 HTML 与组件库之间的标准化中间契约。
+
+## 顶层结构
+
+```json
+{
+  "schemaVersion": "1.0",
+  "meta": { ... },
+  "theme": { ... },
+  "structure": { ... },
+  "data": { ... },
+  "interactions": [ ... ],
+  "responsive": [ ... ],
+  "a11y": { ... },
+  "warnings": [ ... ]
+}
+```
+
+---
+
+## meta
+
+源文件元信息。
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `source` | string | 是 | 源 HTML 绝对路径 |
+| `title` | string | 是 | `<title>` 文本 |
+| `templateId` | string | 否 | `data-dudesign-template` 属性值 |
+| `vertical` | string | 否 | 垂类名（由 `--vertical` 传入或从父目录推断） |
+| `caseName` | string | 否 | 案例名（slug 化，用于命名库） |
+| `canvas` | object | 是 | 见下 |
+
+### canvas
+
+```json
+"canvas": {
+  "pc": [788, 492],
+  "wise": [380, 456],
+  "extreme": [300, 360],
+  "frameSelector": ".pc-card-frame"
+}
+```
+
+缺档时填 `null`，生成阶段补默认值（WISE=380×456，extreme=300×360）。
+
+---
+
+## theme
+
+主题色与渐变。
+
+```json
+"theme": {
+  "tokens": [
+    {
+      "name": "primary",          // 归一化后的 sg- 名（不含前缀）
+      "value": "#6487FA",
+      "original": "--primary",    // 原变量名（可为 null）
+      "usage": ["选中描边","激活态","主按钮"]
+    }
+  ],
+  "gradients": [
+    {
+      "selector": ".detail-panel",
+      "value": "linear-gradient(180deg, #FBFBFD 0%, #F5F7FC 100%)",
+      "normalized": "linear-gradient(180deg, var(--sg-paper) 0%, var(--sg-soft) 100%)"
+    }
+  ]
+}
+```
+
+`tokens[].usage` 由扫描该变量在 CSS 规则中的出现选择器推断（取前 5 个去重）。
+
+---
+
+## structure
+
+页面结构骨架。
+
+```json
+"structure": {
+  "tabs": [ { "id","label","count","more","ariaControls" } ],
+  "views": [ { "id","tabId","active","type","<type特定字段>" } ],
+  "modals": [ { "id","trigger","layout","hasClose","closeOn" } ],
+  "storyPanels": [ { "id","trigger","layout","hasClose" } ]
+}
+```
+
+### view.type 枚举
+
+| type | 说明 | 特定字段 |
+|---|---|---|
+| `member-grid` | 成员网格 | `layout`, `perPage`, `paginated`, `hasAvatarFallback`, `hasPhotoSource`, `hasState` |
+| `detail-panel` | 详情面板 | `hasKicker`, `rowSelector` |
+| `timeline` | 时间线 | `scrollSnap`, `perPage`, `dualArrowStrategy`, `hasDots`, `hasPageLabel` |
+| `carousel-3d` | 3D 中心聚焦轮播 | `perspective`, `positions[]`, `hasStoryPanel` |
+| `generic` | 未识别 | `note` |
+
+---
+
+## data
+
+从 HTML/JS 提取的业务数据。
+
+```json
+"data": {
+  "members": [
+    {
+      "key": "jisoo",
+      "name": "Jisoo · 金智秀",
+      "role": "队内定位：主唱 · 视觉",
+      "shortName": "Jisoo",
+      "state": "在团",
+      "img": "https://...",
+      "photoSource": "百度百科",
+      "relations": [ ["所属团体","BLACKPINK"], ["队内角色","主唱 · 视觉"] ]
+    }
+  ],
+  "timeline": [
+    { "time": "2016.08", "title": "出道", "desc": "...", "img": "...", "alt": "..." }
+  ],
+  "works": [
+    { "img":"...", "alt":"...", "year":"2016 · 单曲", "title":"《Square One》", "desc":"...", "story":"..." }
+  ],
+  "moreFacts": [
+    { "label": "词条类型", "value": "韩国女子演唱组合", "full": false }
+  ]
+}
+```
+
+每个数组可为空（原案例无对应数据）。字段缺失时填 `null` 或空字符串。
+
+---
+
+## interactions
+
+交互行为清单。
+
+```json
+"interactions": [
+  { "type": "tab-switch", "trigger": "click", "target": ".tab-bar .tab", "action": "switchPanel" },
+  { "type": "select", "trigger": "click", "target": ".member", "action": "selectMember", "sideEffect": "updateDetailPanel" },
+  { "type": "autoplay", "target": "members", "interval": 3000, "stopOn": ["click","touchstart"] },
+  { "type": "modal-open", "trigger": "click", "target": "#tab-more", "action": "openModal" },
+  { "type": "modal-close", "trigger": ["click","keydown:Escape"], "target": ".modal-overlay" }
+]
+```
+
+---
+
+## responsive
+
+响应式断点与变化。
+
+```json
+"responsive": [
+  {
+    "breakpoint": "max-width:500px",
+    "canvas": [380, 456],
+    "changes": [
+      "members-view grid 1.45fr→1fr",
+      "detail-panel display:none",
+      "timeline perPage 3→2",
+      "tl-controls display:none→flex"
+    ]
+  }
+]
+```
+
+---
+
+## a11y
+
+无障碍特征汇总。
+
+```json
+"a11y": {
+  "hasTablist": true,
+  "hasTabpanel": true,
+  "hasDialog": true,
+  "hasAriaLive": true,
+  "hasAriaPressed": true,
+  "hasAriaLabel": true,
+  "closeOnEscape": true,
+  "closeOnOverlayClick": true
+}
+```
+
+---
+
+## warnings
+
+分析过程中的告警，不阻断生成但需人工复核。
+
+```json
+"warnings": [
+  "view panel-works: positions 识别为 5 档，但 is-prev-far 缺少 filter:blur，可能不完整",
+  "data.works[2].story 字段为空，生成时需补全"
+]
+```
+
+---
+
+## 最小模式（--minimal）
+
+当 `analyze_html.py --minimal` 时，仅输出 `meta` + `theme` + `structure.tabs` + `structure.views[].type` + `warnings`，不提取 data/interactions/responsive。用于结构特殊案例的「最小提取」降级。

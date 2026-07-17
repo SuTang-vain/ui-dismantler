@@ -1,0 +1,554 @@
+{# lib.js.j2 — 渲染引擎模板
+   从 manifest 生成 window.<LibName> 渲染引擎。
+   支持 member-grid / timeline / carousel-3d / detail-panel / modal / story-panel。
+#}
+/*!
+ * {{ lib_name }}.js  v1.0.0
+ * 由 html-to-component-lib skill 从 {{ manifest.meta.source | basename }} 自动生成
+ * API: window.{{ lib_pascal }}.mount(container, options) / .create(options)
+ * 零依赖，原生 ES5+。
+ */
+(function (global) {
+  'use strict';
+
+  /* ---------- 工具 ---------- */
+  function el(tag, cls, attrs) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (attrs) for (var k in attrs) {
+      if (k === 'text') n.textContent = attrs[k];
+      else if (k === 'html') n.innerHTML = attrs[k];
+      else if (k.indexOf('data-') === 0 || k === 'role' || k === 'aria-hidden') n.setAttribute(k, attrs[k]);
+      else n[k] = attrs[k];
+    }
+    return n;
+  }
+  function on(node, evt, fn) { node.addEventListener(evt, fn); }
+  function isExtremeSmall() { return global.innerWidth <= 320 || global.innerHeight <= 380; }
+  function isMobile() { return global.innerWidth <= 500; }
+
+  var PREFIX = '{{ prefix }}';  // 'sg'
+
+  var DEFAULTS = {
+    title: '{{ manifest.meta.title | default("组件库", true) }}',
+    ariaLabel: '{{ manifest.meta.title | default("组件库", true) }}',
+    tabs: {{ tabs_json | safe }},
+    members: [],
+    timeline: [],
+    works: [],
+    moreFacts: [],
+    moreTitle: '资料与说明',
+    moreSub: '本卡片仅使用可核实的公开事实，具体年代、关系以官方与权威来源为准。',
+    moreDecl: '动态百科 · 资料与说明',
+    autoPlayMember: 3000,
+    autoPlayWorks: 3500,
+    theme: {}
+  };
+
+  function deepMerge(out) {
+    for (var i = 1; i < arguments.length; i++) {
+      var src = arguments[i]; if (!src) continue;
+      for (var k in src) {
+        if (Object.prototype.toString.call(src[k]) === '[object Object]') out[k] = deepMerge(out[k] || {}, src[k]);
+        else if (Array.isArray(src[k])) out[k] = src[k].slice();
+        else out[k] = src[k];
+      }
+    }
+    return out;
+  }
+
+  function {{ lib_pascal }}(options) {
+    this.opts = deepMerge({}, DEFAULTS, options || {});
+    this.root = null;
+    this._memberTimer = null; this._worksTimer = null;
+    this._memberIdx = 0; this._workIdx = 0;
+    this._memberSelected = null;
+  }
+
+  {{ lib_pascal }}.prototype.create = function () {
+    var frame = el('main', PREFIX + '-frame', { role: 'region' });
+    frame.setAttribute('aria-label', this.opts.ariaLabel);
+    applyTheme(frame, this.opts.theme);
+    frame.style.setProperty('--' + PREFIX + '-tab-count', this.opts.tabs.length);
+    frame.appendChild(this._buildTabBar());
+    frame.appendChild(this._buildViewStack());
+    this.root = frame;
+    return frame;
+  };
+
+  {{ lib_pascal }}.prototype.mount = function (container) {
+    var node = this.create();
+    (container || document.body).appendChild(node);
+    this._afterMount();
+    return this;
+  };
+
+  /* ---------- Tab Bar ---------- */
+  {{ lib_pascal }}.prototype._buildTabBar = function () {
+    var nav = el('nav', PREFIX + '-tab-bar', { role: 'tablist' });
+    var self = this;
+    this.opts.tabs.forEach(function (t, i) {
+      var btn = el('button', PREFIX + '-tab' + (t.more ? ' ' + PREFIX + '-tab-more' : ''), { type: 'button', role: 'tab', text: t.label });
+      btn.id = PREFIX + '-tab-' + t.id;
+      btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      btn.setAttribute('aria-controls', PREFIX + '-panel-' + t.id);
+      if (t.count != null && !t.more) btn.appendChild(el('small', null, { text: String(t.count) }));
+      on(btn, 'click', function () { self._onTabClick(t); });
+      nav.appendChild(btn);
+    });
+    return nav;
+  };
+
+  /* ---------- View Stack ---------- */
+  {{ lib_pascal }}.prototype._buildViewStack = function () {
+    var stack = el('div', PREFIX + '-view-stack');
+{% if has_member_grid %}
+    stack.appendChild(this._buildMembersView());
+{% endif %}
+{% if has_timeline %}
+    stack.appendChild(this._buildTimelineView());
+{% endif %}
+{% if has_carousel_3d %}
+    stack.appendChild(this._buildWorksView());
+{% endif %}
+{% if has_generic_views %}
+{% for t in generic_tabs %}
+    stack.appendChild(this._buildGenericView({{ loop.index0 }}));
+{% endfor %}
+{% endif %}
+    return stack;
+  };
+
+{% if has_generic_views %}
+  /* ---------- 通用视图（generic） ---------- */
+  {{ lib_pascal }}.prototype._buildGenericView = function (idx) {
+    var tab = this.opts.tabs.filter(function (t) { return !t.more; })[idx] || {};
+    var section = el('section', PREFIX + '-view ' + PREFIX + '-generic-view' + (idx === 0 ? ' active' : ''), { id: PREFIX + '-panel-' + tab.id, role: 'tabpanel' });
+    section.setAttribute('aria-labelledby', PREFIX + '-tab-' + tab.id);
+    if (idx !== 0) section.hidden = true;
+    var head = el('div', PREFIX + '-section-head');
+    head.appendChild(el('h2', null, { text: tab.label || '' }));
+    section.appendChild(head);
+    var body = el('div', PREFIX + '-generic-body', { 'aria-live': 'polite' });
+    if (tab.count != null) body.appendChild(el('p', PREFIX + '-subtitle', { text: '共 ' + tab.count + ' 条' }));
+    section.appendChild(body);
+    return section;
+  };
+{% endif %}
+
+{% if has_member_grid %}
+  /* ---------- 成员视图 ---------- */
+  {{ lib_pascal }}.prototype._buildMembersView = function () {
+    var section = el('section', PREFIX + '-view ' + PREFIX + '-members-view active', { id: PREFIX + '-panel-members', role: 'tabpanel' });
+    section.setAttribute('aria-labelledby', PREFIX + '-tab-members');
+    var stage = el('div', PREFIX + '-member-stage');
+    var grid = el('div', PREFIX + '-member-grid', { role: 'list' });
+    stage.appendChild(grid);
+    var prev = el('button', PREFIX + '-arrow ' + PREFIX + '-prev', { type: 'button', 'aria-label': '上一页', text: '‹' });
+    var next = el('button', PREFIX + '-arrow ' + PREFIX + '-next', { type: 'button', 'aria-label': '下一页', text: '›' });
+    var dots = el('div', PREFIX + '-dots');
+    stage.appendChild(prev); stage.appendChild(next); stage.appendChild(dots);
+    var panel = el('aside', PREFIX + '-detail-panel', { 'aria-live': 'polite' });
+    panel.appendChild(el('span', PREFIX + '-detail-kicker', { id: PREFIX + '-rel-kicker', text: '成员 ↔ 团体 关系' }));
+    panel.appendChild(el('h2', null, { id: PREFIX + '-rel-name' }));
+    panel.appendChild(el('p', PREFIX + '-subtitle', { id: PREFIX + '-rel-sub' }));
+    panel.appendChild(el('div', PREFIX + '-relation-list', { id: PREFIX + '-rel-list' }));
+    panel.appendChild(el('span', PREFIX + '-source-note', { text: '资料为可核实的公开事实；未列出的个人作品或履历留待补充。' }));
+    section.appendChild(stage); section.appendChild(panel);
+    this._memberEls = { grid: grid, prev: prev, next: next, dots: dots,
+      name: panel.querySelector('#' + PREFIX + '-rel-name'),
+      sub: panel.querySelector('#' + PREFIX + '-rel-sub'),
+      list: panel.querySelector('#' + PREFIX + '-rel-list'),
+      kicker: panel.querySelector('#' + PREFIX + '-rel-kicker'), stage: stage };
+    return section;
+  };
+
+  {{ lib_pascal }}.prototype._renderMemberPage = function (page) {
+    var perPage = 4, total = Math.ceil(this.opts.members.length / perPage);
+    if (page < 1) page = 1; if (page > total) page = total;
+    var start = (page - 1) * perPage;
+    var pageMembers = this.opts.members.slice(start, start + perPage);
+    var self = this, g = this._memberEls.grid; g.innerHTML = '';
+    pageMembers.forEach(function (m) {
+      var btn = el('button', PREFIX + '-member', { type: 'button', role: 'listitem' });
+      btn.dataset.member = m.key;
+      btn.setAttribute('aria-pressed', m.key === self._memberSelected ? 'true' : 'false');
+      var fig = el('figure', PREFIX + '-avatar', { 'aria-hidden': 'true' });
+      var img = el('img'); img.src = m.img; img.alt = m.name;
+      on(img, 'load', function () { img.classList.add('is-loaded'); });
+      on(img, 'error', function () { img.classList.add('is-error'); });
+      fig.appendChild(img);
+      fig.appendChild(el('span', PREFIX + '-avatar-fallback', { text: m.shortName || m.name.slice(0, 2) }));
+      if (m.photoSource) fig.appendChild(el('span', PREFIX + '-photo-source', { text: m.photoSource }));
+      var info = el('span', PREFIX + '-member-info');
+      info.appendChild(el('span', PREFIX + '-member-name', { text: m.name }));
+      info.appendChild(el('span', PREFIX + '-member-role', { text: m.role || '' }));
+      info.appendChild(el('span', PREFIX + '-member-state', { text: m.state || '在团' }));
+      fig.appendChild(info); btn.appendChild(fig);
+      on(btn, 'click', function () { self._selectMember(m.key, true); });
+      g.appendChild(btn);
+    });
+    this._memberEls.prev.classList.toggle('is-hidden', page <= 1);
+    this._memberEls.next.classList.toggle('is-hidden', page >= total);
+    var d = this._memberEls.dots; d.innerHTML = '';
+    for (var i = 1; i <= total; i++) { (function (i) {
+      var dot = el('button', PREFIX + '-dot' + (i === page ? ' is-active' : ''), { type: 'button', 'aria-label': '第 ' + i + ' 页' });
+      on(dot, 'click', function () { self._goMemberPage(i); self._stopMemberAutoPlay(); });
+      d.appendChild(dot);
+    })(i); }
+    this._memberPage = page;
+  };
+
+  {{ lib_pascal }}.prototype._goMemberPage = function (page) { this._renderMemberPage(page); };
+
+  {{ lib_pascal }}.prototype._selectMember = function (key, fromUser) {
+    this._memberSelected = key;
+    var nodes = this._memberEls.grid.querySelectorAll('.' + PREFIX + '-member');
+    Array.prototype.forEach.call(nodes, function (n) {
+      n.setAttribute('aria-pressed', n.dataset.member === key ? 'true' : 'false');
+    });
+    var d = null;
+    for (var i = 0; i < this.opts.members.length; i++) {
+      if (this.opts.members[i].key === key) { d = this.opts.members[i]; break; }
+    }
+    if (!d) return;
+    this._memberEls.name.textContent = d.name;
+    this._memberEls.sub.textContent = d.role || '';
+    var list = this._memberEls.list; list.innerHTML = '';
+    (d.relations || []).forEach(function (row) {
+      var div = el('div', PREFIX + '-relation-row');
+      div.appendChild(el('span', PREFIX + '-rel-label', { text: row[0] }));
+      div.appendChild(el('span', PREFIX + '-rel-value', { text: row[1] }));
+      list.appendChild(div);
+    });
+    this._memberEls.kicker.textContent = '成员 ↔ 团体 关系 · ' + d.name.split(' ')[0];
+    if (fromUser && isExtremeSmall()) this._openMemberModal(d);
+  };
+
+  {{ lib_pascal }}.prototype._startMemberAutoPlay = function () {
+    this._stopMemberAutoPlay();
+    var self = this;
+    this._memberTimer = setInterval(function () {
+      self._memberIdx = (self._memberIdx + 1) % self.opts.members.length;
+      self._selectMember(self.opts.members[self._memberIdx].key);
+    }, this.opts.autoPlayMember);
+  };
+  {{ lib_pascal }}.prototype._stopMemberAutoPlay = function () {
+    if (this._memberTimer) { clearInterval(this._memberTimer); this._memberTimer = null; }
+  };
+{% endif %}
+
+{% if has_timeline %}
+  /* ---------- 时间线视图 ---------- */
+  {{ lib_pascal }}.prototype._buildTimelineView = function () {
+    var section = el('section', PREFIX + '-view ' + PREFIX + '-timeline-view', { id: PREFIX + '-panel-timeline', role: 'tabpanel', hidden: true });
+    section.setAttribute('aria-labelledby', PREFIX + '-tab-timeline');
+    var head = el('div', PREFIX + '-section-head');
+    head.appendChild(el('strong', null, { text: '组合阶段' }));
+    head.appendChild(el('span', null, { id: PREFIX + '-tl-page-label', text: '第 1 / 1 页 · 关键节点' }));
+    section.appendChild(head);
+    var wrap = el('div', PREFIX + '-tl-scroll-wrap');
+    var prevPc = el('button', PREFIX + '-arrow ' + PREFIX + '-tl-prev-pc is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
+    var nextPc = el('button', PREFIX + '-arrow ' + PREFIX + '-tl-next-pc is-hidden', { type: 'button', 'aria-label': '下一页', text: '›' });
+    var track = el('div', PREFIX + '-tl-track', { id: PREFIX + '-tl-track' });
+    wrap.appendChild(prevPc); wrap.appendChild(nextPc); wrap.appendChild(track);
+    var self = this;
+    this.opts.timeline.forEach(function (t) {
+      var item = el('article', PREFIX + '-t-item');
+      if (t.img) { var img = el('img', PREFIX + '-t-img'); img.src = t.img; img.alt = t.alt || t.title || ''; img.loading = 'lazy'; item.appendChild(img); }
+      var info = el('div', PREFIX + '-t-info');
+      info.appendChild(el('time', null, { text: t.time }));
+      info.appendChild(el('b', null, { text: t.title }));
+      info.appendChild(el('p', null, { text: t.desc }));
+      item.appendChild(info);
+      on(item, 'click', function () { if (isExtremeSmall()) self._openTlModal(t); });
+      track.appendChild(item);
+    });
+    section.appendChild(wrap);
+    var controls = el('div', PREFIX + '-tl-controls');
+    var prevMb = el('button', PREFIX + '-arrow ' + PREFIX + '-tl-prev-mobile is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
+    var nextMb = el('button', PREFIX + '-arrow ' + PREFIX + '-tl-next-mobile', { type: 'button', 'aria-label': '下一页', text: '›' });
+    var tlDots = el('div', PREFIX + '-tl-dots', { id: PREFIX + '-tl-dots' });
+    controls.appendChild(prevMb); controls.appendChild(tlDots); controls.appendChild(nextMb);
+    section.appendChild(controls);
+    this._tlEls = { track: track, prevPc: prevPc, nextPc: nextPc, prevMb: prevMb, nextMb: nextMb, dots: tlDots, label: head.querySelector('#' + PREFIX + '-tl-page-label') };
+    return section;
+  };
+  {{ lib_pascal }}.prototype._tlPerPage = function () { return isExtremeSmall() ? {{ timeline_per_page_mobile }} : (isMobile() ? {{ timeline_per_page_mobile }} : {{ timeline_per_page_pc }}); };
+  {{ lib_pascal }}.prototype._tlItemWidth = function () { var it = this._tlEls.track.querySelector('.' + PREFIX + '-t-item'); return it ? it.offsetWidth + 10 : 0; };
+  {{ lib_pascal }}.prototype._tlTotalPages = function () { var n = this._tlEls.track.querySelectorAll('.' + PREFIX + '-t-item').length; return Math.max(1, Math.ceil(n / this._tlPerPage())); };
+  {{ lib_pascal }}.prototype._buildTlDots = function () {
+    var d = this._tlEls.dots; d.innerHTML = ''; var total = this._tlTotalPages(), self = this;
+    for (var i = 0; i < total; i++) { (function (i) {
+      var dot = el('button', PREFIX + '-tl-dot' + (i === 0 ? ' is-active' : ''), { type: 'button', 'data-index': String(i) });
+      on(dot, 'click', function () { var w = self._tlItemWidth(); self._tlEls.track.scrollTo({ left: i * w * self._tlPerPage(), behavior: 'smooth' }); });
+      d.appendChild(dot);
+    })(i); }
+  };
+  {{ lib_pascal }}.prototype._updateTlArrows = function () {
+    var tr = this._tlEls.track, sl = tr.scrollLeft, max = tr.scrollWidth - tr.clientWidth;
+    this._tlEls.prevPc.classList.toggle('is-hidden', sl <= 5);
+    this._tlEls.prevMb.classList.toggle('is-hidden', sl <= 5);
+    this._tlEls.nextPc.classList.toggle('is-hidden', sl >= max - 5);
+    this._tlEls.nextMb.classList.toggle('is-hidden', sl >= max - 5);
+    var perPage = this._tlPerPage(), total = this._tlTotalPages(), w = this._tlItemWidth(), page = 1;
+    if (w > 0) { page = Math.round(sl / (w * perPage)) + 1; page = Math.max(1, Math.min(page, total)); }
+    this._tlEls.label.textContent = '第 ' + page + ' / ' + total + ' 页 · 关键节点';
+    var dots = this._tlEls.dots.querySelectorAll('.' + PREFIX + '-tl-dot');
+    Array.prototype.forEach.call(dots, function (dt, i) { dt.classList.toggle('is-active', i === page - 1); });
+  };
+  {{ lib_pascal }}.prototype._resetTlScroll = function () {
+    var tr = this._tlEls.track, self = this;
+    tr.scrollTo({ left: 0, behavior: 'auto' });
+    requestAnimationFrame(function () { tr.scrollTo({ left: 0, behavior: 'auto' }); self._updateTlArrows(); });
+  };
+  {{ lib_pascal }}.prototype._scrollTl = function (dir) { var w = this._tlItemWidth(); this._tlEls.track.scrollBy({ left: dir * w * this._tlPerPage(), behavior: 'smooth' }); };
+{% endif %}
+
+{% if has_carousel_3d %}
+  /* ---------- 作品视图：3D 中心聚焦轮播 ---------- */
+  {{ lib_pascal }}.prototype._buildWorksView = function () {
+    var section = el('section', PREFIX + '-view ' + PREFIX + '-works-view', { id: PREFIX + '-panel-works', role: 'tabpanel', hidden: true });
+    section.setAttribute('aria-labelledby', PREFIX + '-tab-works');
+    var head = el('div', PREFIX + '-section-head');
+    head.appendChild(el('strong', null, { text: '团体作品概览' }));
+    head.appendChild(el('span', null, { text: '仅收录团体作品 · 个人作品另列' }));
+    section.appendChild(head);
+    var wrap = el('div', PREFIX + '-ws-scroll-wrap');
+    var prev = el('button', PREFIX + '-arrow ' + PREFIX + '-ws-prev', { type: 'button', 'aria-label': '上一个', text: '‹' });
+    var next = el('button', PREFIX + '-arrow ' + PREFIX + '-ws-next', { type: 'button', 'aria-label': '下一个', text: '›' });
+    var carousel = el('div', PREFIX + '-works-carousel', { id: PREFIX + '-works-carousel' });
+    var dots = el('div', PREFIX + '-ws-dots', { id: PREFIX + '-ws-dots' });
+    wrap.appendChild(prev); wrap.appendChild(next); wrap.appendChild(carousel); wrap.appendChild(dots);
+    section.appendChild(wrap);
+    var cta = el('button', PREFIX + '-ws-story-cta', { type: 'button', text: '展开创作故事' });
+    section.appendChild(cta);
+    var storyPanel = el('div', PREFIX + '-work-story-panel', { id: PREFIX + '-work-story-panel', hidden: true });
+    var storyClose = el('button', PREFIX + '-ws-story-close', { type: 'button', 'aria-label': '关闭故事', html: '&times;' });
+    var storyBody = el('div', PREFIX + '-ws-story-body', { id: PREFIX + '-ws-story-body' });
+    storyPanel.appendChild(storyClose); storyPanel.appendChild(storyBody);
+    section.appendChild(storyPanel);
+    this._worksEls = { carousel: carousel, dots: dots, prev: prev, next: next, cta: cta, storyPanel: storyPanel, storyClose: storyClose, storyBody: storyBody, cards: [] };
+    return section;
+  };
+  {{ lib_pascal }}.prototype._renderWorksCarousel = function () {
+    var self = this, c = this._worksEls.carousel, d = this._worksEls.dots;
+    c.innerHTML = ''; d.innerHTML = ''; this._worksEls.cards = [];
+    this.opts.works.forEach(function (w, i) {
+      var card = el('article', PREFIX + '-work-item'); card.dataset.index = String(i);
+      card.innerHTML = '<img class="' + PREFIX + '-w-img" src="' + w.img + '" alt="' + (w.alt || w.title || '') + '" loading="lazy" />' +
+        '<div class="' + PREFIX + '-work-info"><span class="' + PREFIX + '-work-year">' + w.year + '</span><b>' + w.title + '</b><p>' + w.desc + '</p></div>';
+      c.appendChild(card); self._worksEls.cards.push(card);
+      var dot = el('button', PREFIX + '-ws-dot' + (i === 0 ? ' is-active' : ''), { type: 'button', 'aria-label': '第 ' + (i + 1) + ' 个作品' });
+      on(dot, 'click', function () { self._goWork(i); });
+      d.appendChild(dot);
+      on(card, 'click', function () { var idx = Number(this.dataset.index); if (idx === self._workIdx) self._openWorkStory(idx); else self._goWork(idx); });
+    });
+  };
+  {{ lib_pascal }}.prototype._updateWorksLayout = function () {
+    var total = this._worksEls.cards.length, self = this;
+    this._worksEls.cards.forEach(function (card, i) {
+      card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far');
+      if (i === self._workIdx) card.classList.add('is-center');
+      else if (i === (self._workIdx - 1 + total) % total) card.classList.add('is-prev-side');
+      else if (i === (self._workIdx + 1) % total) card.classList.add('is-next-side');
+      else if (i === (self._workIdx - 2 + total) % total) card.classList.add('is-prev-far');
+      else if (i === (self._workIdx + 2) % total) card.classList.add('is-next-far');
+    });
+    var dots = this._worksEls.dots.querySelectorAll('.' + PREFIX + '-ws-dot');
+    Array.prototype.forEach.call(dots, function (dt, i) { dt.classList.toggle('is-active', i === self._workIdx); });
+  };
+  {{ lib_pascal }}.prototype._nextWork = function () { var t = this._worksEls.cards.length; if (!t) return; this._workIdx = (this._workIdx + 1) % t; this._updateWorksLayout(); };
+  {{ lib_pascal }}.prototype._prevWork = function () { var t = this._worksEls.cards.length; if (!t) return; this._workIdx = (this._workIdx - 1 + t) % t; this._updateWorksLayout(); };
+  {{ lib_pascal }}.prototype._goWork = function (idx) { this._workIdx = idx; this._updateWorksLayout(); this._restartWorksAutoPlay(); };
+  {{ lib_pascal }}.prototype._startWorksAutoPlay = function () { this._stopWorksAutoPlay(); if (!this._worksEls.cards.length) return; var self = this; this._worksTimer = setInterval(function () { self._nextWork(); }, this.opts.autoPlayWorks); };
+  {{ lib_pascal }}.prototype._stopWorksAutoPlay = function () { if (this._worksTimer) { clearInterval(this._worksTimer); this._worksTimer = null; } };
+  {{ lib_pascal }}.prototype._restartWorksAutoPlay = function () { this._stopWorksAutoPlay(); this._startWorksAutoPlay(); };
+  {{ lib_pascal }}.prototype._openWorkStory = function (idx) {
+    var d = this.opts.works[idx]; if (!d) return;
+    this._worksEls.storyBody.innerHTML = '<img class="' + PREFIX + '-ws-story-cover" src="' + d.img + '" alt="' + (d.alt || d.title || '') + '" />' +
+      '<div class="' + PREFIX + '-ws-story-content"><span class="' + PREFIX + '-ws-year">' + d.year + '</span><h3>' + d.title + '</h3>' +
+      '<div class="' + PREFIX + '-ws-story-divider"></div><span class="' + PREFIX + '-ws-story-label">创作背景</span><p class="' + PREFIX + '-ws-story-text">' + d.story + '</p></div>';
+    this._worksEls.storyPanel.classList.add('open'); this._worksEls.storyPanel.hidden = false; this._stopWorksAutoPlay();
+  };
+  {{ lib_pascal }}.prototype._closeWorkStory = function () { this._worksEls.storyPanel.classList.remove('open'); this._worksEls.storyPanel.hidden = true; this._startWorksAutoPlay(); };
+{% endif %}
+
+  /* ---------- Modal ---------- */
+  {{ lib_pascal }}.prototype._buildModals = function () {
+    var self = this;
+    var modal = el('div', PREFIX + '-modal-overlay', { id: PREFIX + '-modal', role: 'dialog', 'aria-modal': 'true' });
+    modal.hidden = true; modal.setAttribute('aria-labelledby', PREFIX + '-modal-title');
+    var card = el('div', PREFIX + '-modal-card');
+    var xBtn = el('button', PREFIX + '-modal-x-btn', { type: 'button', 'aria-label': '关闭', html: '&times;' });
+    var head = el('div', PREFIX + '-modal-head'); head.appendChild(el('h3', null, { id: PREFIX + '-modal-title', text: this.opts.moreTitle }));
+    var body = el('div', PREFIX + '-modal-body');
+    this.opts.moreFacts.forEach(function (f) {
+      var row = el('div', PREFIX + '-m-row' + (f.full ? ' full' : ''));
+      row.appendChild(el('small', null, { text: f.label }));
+      row.appendChild(el('span', null, { text: f.value }));
+      body.appendChild(row);
+    });
+    var foot = el('div', PREFIX + '-modal-foot'); foot.appendChild(el('span', PREFIX + '-modal-decl', { text: this.opts.moreDecl }));
+    card.appendChild(xBtn); card.appendChild(head);
+    if (this.opts.moreSub) card.appendChild(el('p', PREFIX + '-modal-sub', { text: this.opts.moreSub }));
+    card.appendChild(body); card.appendChild(foot); modal.appendChild(card);
+    on(xBtn, 'click', function () { self._closeModal(); });
+    on(modal, 'click', function (e) { if (e.target === modal) self._closeModal(); });
+    this.root.appendChild(modal); this._modal = modal;
+{% if has_member_grid %}
+    var memberModal = el('div', PREFIX + '-modal-overlay', { id: PREFIX + '-member-modal', role: 'dialog', 'aria-modal': 'true' });
+    memberModal.hidden = true;
+    var mCard = el('div', PREFIX + '-modal-card ' + PREFIX + '-member-detail-modal');
+    var mX = el('button', PREFIX + '-modal-x-btn', { type: 'button', 'aria-label': '关闭', html: '&times;' });
+    var mHead = el('div', PREFIX + '-modal-head'); mHead.appendChild(el('h3', null, { id: PREFIX + '-member-modal-title', text: '成员详情' }));
+    var mBody = el('div', PREFIX + '-modal-body', { id: PREFIX + '-member-modal-body' });
+    var mFoot = el('div', PREFIX + '-modal-foot'); mFoot.appendChild(el('span', PREFIX + '-modal-decl', { text: '点击卡片查看详情' }));
+    mCard.appendChild(mX); mCard.appendChild(mHead); mCard.appendChild(mBody); mCard.appendChild(mFoot); memberModal.appendChild(mCard);
+    on(mX, 'click', function () { self._closeMemberModal(); });
+    on(memberModal, 'click', function (e) { if (e.target === memberModal) self._closeMemberModal(); });
+    this.root.appendChild(memberModal); this._memberModal = memberModal; this._memberModalBody = mBody;
+    this._memberModalTitle = mHead.querySelector('#' + PREFIX + '-member-modal-title');
+{% endif %}
+{% if has_timeline %}
+    var tlModal = el('div', PREFIX + '-modal-overlay', { id: PREFIX + '-tl-modal', role: 'dialog', 'aria-modal': 'true' });
+    tlModal.hidden = true;
+    var tlCard = el('div', PREFIX + '-modal-card ' + PREFIX + '-tl-modal-card');
+    var tlX = el('button', PREFIX + '-modal-x-btn', { type: 'button', 'aria-label': '关闭', html: '&times;' });
+    var tlBody = el('div', PREFIX + '-modal-body', { id: PREFIX + '-tl-modal-body' });
+    tlCard.appendChild(tlX); tlCard.appendChild(tlBody); tlModal.appendChild(tlCard);
+    on(tlX, 'click', function () { self._closeTlModal(); });
+    on(tlModal, 'click', function (e) { if (e.target === tlModal) self._closeTlModal(); });
+    this.root.appendChild(tlModal); this._tlModal = tlModal; this._tlModalBody = tlBody;
+{% endif %}
+  };
+
+  {{ lib_pascal }}.prototype._openModal = function () {
+    this._modal.hidden = false; this._modal.classList.add('open');
+    var t = this.root.querySelector('#' + PREFIX + '-tab-more');
+    if (t) { t.setAttribute('aria-selected', 'true'); t.setAttribute('aria-expanded', 'true'); }
+  };
+  {{ lib_pascal }}.prototype._closeModal = function () {
+    this._modal.classList.remove('open'); this._modal.hidden = true;
+    var t = this.root.querySelector('#' + PREFIX + '-tab-more');
+    if (t) { t.setAttribute('aria-selected', 'false'); t.setAttribute('aria-expanded', 'false'); }
+  };
+{% if has_member_grid %}
+  {{ lib_pascal }}.prototype._openMemberModal = function (d) {
+    this._memberModalTitle.textContent = d.name;
+    var b = this._memberModalBody; b.innerHTML = '';
+    (d.relations || []).forEach(function (row) {
+      var r = el('div', PREFIX + '-m-row'); r.appendChild(el('small', null, { text: row[0] })); r.appendChild(el('span', null, { text: row[1] })); b.appendChild(r);
+    });
+    this._memberModal.hidden = false; this._memberModal.classList.add('open');
+  };
+  {{ lib_pascal }}.prototype._closeMemberModal = function () { this._memberModal.classList.remove('open'); this._memberModal.hidden = true; };
+{% endif %}
+{% if has_timeline %}
+  {{ lib_pascal }}.prototype._openTlModal = function (t) {
+    var html = '';
+    if (t.img) html += '<img src="' + t.img + '" alt="' + (t.alt || t.title || '') + '" class="' + PREFIX + '-tl-modal-img" />';
+    html += '<div class="' + PREFIX + '-tl-modal-text"><h3>' + t.title + '</h3><p>' + t.desc + '</p></div>';
+    this._tlModalBody.innerHTML = html; this._tlModal.hidden = false; this._tlModal.classList.add('open');
+  };
+  {{ lib_pascal }}.prototype._closeTlModal = function () { this._tlModal.classList.remove('open'); this._tlModal.hidden = true; };
+{% endif %}
+
+  /* ---------- Tab 切换 ---------- */
+  {{ lib_pascal }}.prototype._onTabClick = function (tab) {
+    var self = this;
+    var tabs = this.root.querySelectorAll('.' + PREFIX + '-tab-bar .' + PREFIX + '-tab');
+    var panels = {};
+{% if has_member_grid %}    panels['members'] = this.root.querySelector('#' + PREFIX + '-panel-members');
+{% endif %}
+{% if has_timeline %}    panels['timeline'] = this.root.querySelector('#' + PREFIX + '-panel-timeline');
+{% endif %}
+{% if has_carousel_3d %}    panels['works'] = this.root.querySelector('#' + PREFIX + '-panel-works');
+{% endif %}
+{% if has_generic_views %}{% for t in generic_tabs %}    panels['{{ t.id }}'] = this.root.querySelector('#' + PREFIX + '-panel-{{ t.id }}');
+{% endfor %}{% endif %}
+    if (tab.more) { if (this._modal.hidden) this._openModal(); else this._closeModal(); return; }
+    Array.prototype.forEach.call(tabs, function (t) { t.setAttribute('aria-selected', t.id === PREFIX + '-tab-' + tab.id ? 'true' : 'false'); });
+    Object.keys(panels).forEach(function (k) { var p = panels[k], a = k === tab.id; p.hidden = !a; p.classList.toggle('active', a); });
+{% if has_timeline %}    if (tab.id === 'timeline') this._resetTlScroll();
+{% endif %}
+{% if has_carousel_3d %}    if (tab.id === 'works') this._startWorksAutoPlay(); else this._stopWorksAutoPlay();
+{% endif %}
+    if (!this._modal.hidden) this._closeModal();
+  };
+
+  /* ---------- 挂载后绑定 ---------- */
+  {{ lib_pascal }}.prototype._afterMount = function () {
+    this._buildModals();
+{% if has_member_grid %}
+    if (this.opts.members.length) {
+      var self = this;
+      this._memberSelected = this.opts.members[0].key;
+      this._renderMemberPage(1); this._selectMember(this._memberSelected);
+      on(this._memberEls.prev, 'click', function () { self._goMemberPage((self._memberPage || 1) - 1); self._stopMemberAutoPlay(); });
+      on(this._memberEls.next, 'click', function () { self._goMemberPage((self._memberPage || 1) + 1); self._stopMemberAutoPlay(); });
+      on(this._memberEls.stage, 'click', function () { self._stopMemberAutoPlay(); });
+      on(this._memberEls.stage, 'touchstart', function () { self._stopMemberAutoPlay(); });
+      this._startMemberAutoPlay();
+    }
+{% endif %}
+{% if has_timeline %}
+    if (this.opts.timeline.length) {
+      var self2 = this;
+      this._buildTlDots();
+      on(this._tlEls.prevPc, 'click', function () { self2._scrollTl(-1); });
+      on(this._tlEls.nextPc, 'click', function () { self2._scrollTl(1); });
+      on(this._tlEls.prevMb, 'click', function () { self2._scrollTl(-1); });
+      on(this._tlEls.nextMb, 'click', function () { self2._scrollTl(1); });
+      on(this._tlEls.track, 'scroll', function () { self2._updateTlArrows(); });
+      on(global, 'resize', function () { self2._buildTlDots(); self2._updateTlArrows(); });
+      requestAnimationFrame(function () { self2._updateTlArrows(); });
+    }
+{% endif %}
+{% if has_carousel_3d %}
+    if (this.opts.works.length) {
+      var self3 = this;
+      this._renderWorksCarousel(); this._updateWorksLayout();
+      on(this._worksEls.prev, 'click', function () { self3._prevWork(); self3._restartWorksAutoPlay(); });
+      on(this._worksEls.next, 'click', function () { self3._nextWork(); self3._restartWorksAutoPlay(); });
+      on(this._worksEls.carousel, 'mouseenter', function () { self3._stopWorksAutoPlay(); });
+      on(this._worksEls.carousel, 'mouseleave', function () { self3._startWorksAutoPlay(); });
+      on(this._worksEls.cta, 'click', function () { self3._openWorkStory(self3._workIdx); });
+      on(this._worksEls.storyClose, 'click', function () { self3._closeWorkStory(); });
+      on(this._worksEls.storyPanel, 'click', function (e) { if (e.target === self3._worksEls.storyPanel) self3._closeWorkStory(); });
+    }
+{% endif %}
+    var self4 = this;
+    on(document, 'keydown', function (e) {
+      if (e.key !== 'Escape') return;
+{% if has_timeline %}      if (!self4._tlModal.hidden) { self4._closeTlModal(); return; }
+{% endif %}
+{% if has_member_grid %}      if (!self4._memberModal.hidden) { self4._closeMemberModal(); return; }
+{% endif %}
+{% if has_carousel_3d %}      if (!self4._worksEls.storyPanel.hidden) { self4._closeWorkStory(); return; }
+{% endif %}
+      if (!self4._modal.hidden) self4._closeModal();
+    });
+    var moreTab = this.root.querySelector('#' + PREFIX + '-tab-more');
+    if (moreTab) moreTab.setAttribute('aria-expanded', 'false');
+  };
+
+  /* ---------- 主题 ---------- */
+  function applyTheme(node, theme) {
+    if (!theme) return;
+    Object.keys(theme).forEach(function (k) {
+      var name = k.indexOf('--' + PREFIX + '-') === 0 ? k : '--' + PREFIX + '-' + k;
+      node.style.setProperty(name, theme[k]);
+    });
+  }
+
+  var API = {
+    version: '1.0.0',
+    create: function (options) { var inst = new {{ lib_pascal }}(options); return inst.create(); },
+    mount: function (container, options) { var inst = new {{ lib_pascal }}(options); return inst.mount(container); },
+    {{ lib_pascal }}: {{ lib_pascal }}
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = API;
+  global.{{ lib_pascal }} = API;
+
+})(typeof window !== 'undefined' ? window : this);
