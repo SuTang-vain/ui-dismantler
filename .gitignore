@@ -17,3 +17,7 @@ dist/
 
 # 案例样本中的大文件按需排除（保留目录占位）
 examples/**/*.zip
+
+# node 依赖
+node_modules/
+package-lock.json

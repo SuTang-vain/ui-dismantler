@@ -1,0 +1,36 @@
+{
+  "case": "original.html",
+  "render_ok": true,
+  "render_error": null,
+  "structure": {
+    "node_match_rate": 0.0,
+    "class_match_rate": 0.0,
+    "ref_nodes": 38,
+    "got_nodes": 16,
+    "matched_nodes": 0
+  },
+  "text": {
+    "text_match_rate": 0.062,
+    "exact_match": 0,
+    "contain_match": 1,
+    "ref_count": 16,
+    "got_count": 4,
+    "missing": [
+      "7 件事",
+      "✕",
+      "了解不多",
+      "低调隐忍的贤内助",
+      "先告诉我：你心中的黄月英是？",
+      "史实",
+      "名士之女、才堪卧龙、智嫁孔明、巧创机械、辅夫立业、教子有方、流芳后世",
+      "如果没发生",
+      "如果没有这",
+      "开始解锁 7 件事 →"
+    ]
+  },
+  "scores": {
+    "structure": 0.0,
+    "text": 0.062,
+    "overall": 0.031
+  }
+}

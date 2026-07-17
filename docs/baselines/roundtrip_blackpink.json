@@ -1,0 +1,36 @@
+{
+  "case": "original.html",
+  "render_ok": true,
+  "render_error": null,
+  "structure": {
+    "node_match_rate": 0.038,
+    "class_match_rate": 0.393,
+    "ref_nodes": 185,
+    "got_nodes": 259,
+    "matched_nodes": 7
+  },
+  "text": {
+    "text_match_rate": 0.838,
+    "exact_match": 25,
+    "contain_match": 6,
+    "ref_count": 37,
+    "got_count": 95,
+    "missing": [
+      "主唱 · 说唱 · 视觉",
+      "主唱 · 领舞",
+      "主舞 · 说唱 · 副唱",
+      "入退团时间线",
+      "团体作品",
+      "团体作品：中心聚焦轮播",
+      "成员 + 关系主视图",
+      "成员 ↔ 团体 关系",
+      "成员详情弹窗 (小屏幕专用)",
+      "经历"
+    ]
+  },
+  "scores": {
+    "structure": 0.215,
+    "text": 0.838,
+    "overall": 0.527
+  }
+}

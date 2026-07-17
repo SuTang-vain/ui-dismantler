@@ -1,0 +1,36 @@
+{
+  "case": "original.html",
+  "render_ok": true,
+  "render_error": null,
+  "structure": {
+    "node_match_rate": 0.0,
+    "class_match_rate": 0.0,
+    "ref_nodes": 137,
+    "got_nodes": 32,
+    "matched_nodes": 0
+  },
+  "text": {
+    "text_match_rate": 0.111,
+    "exact_match": 4,
+    "contain_match": 3,
+    "ref_count": 63,
+    "got_count": 8,
+    "missing": [
+      "0 / 5",
+      "zhǐ shàng tán bīng",
+      "、空谈道理之人。",
+      "。",
+      "《史记·廉颇列传》",
+      "下一题 →",
+      "临场实操",
+      "义",
+      "书上讲兵，从未实操",
+      "仅通晓书面理论，全无"
+    ]
+  },
+  "scores": {
+    "structure": 0.0,
+    "text": 0.111,
+    "overall": 0.056
+  }
+}
