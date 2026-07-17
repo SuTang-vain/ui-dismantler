@@ -196,36 +196,94 @@ def compare_structure(ref: dict, got: dict) -> dict:
                 out.add(c)
         return out
 
+    def _suffix_tokens(cls_name):
+        """把类名按 - 拆成 token，返回后缀 token 集合（用于重命名容错）。
+
+        如 'pc-card-frame' -> {'frame','card-frame','pc-card-frame'}（所有后缀段）
+        'frame' -> {'frame'}
+        这样 'frame' 能匹配 'pc-card-frame' 的尾 token。
+        """
+        parts = cls_name.split("-")
+        return {"-".join(parts[i:]) for i in range(len(parts))}
+
     def is_container(node):
-        """无 class 的 div/span 是纯容器，对齐时跳过。"""
-        return (node.get("tag") in ("div", "span")
+        """无 class 的 div/span/body 是纯容器，对齐时跳过。
+
+        body 和 mount 容器 div 都是纯包裹层，无语义 class，
+        跳过它们才能让参照侧（body > main.pc-card-frame）与
+        渲染侧（div > main.sg-frame）在 main 层对齐。
+        """
+        return (node.get("tag") in ("div", "span", "body")
                 and not node.get("classes")
                 and not node.get("text"))
 
     def unwrap(node):
-        """跳过容器层，返回首个有意义的子节点（用于顶层对齐）。"""
+        """跳过容器层，返回首个有意义的子节点（用于顶层对齐）。
+
+        无 class 的 div/span/body 是纯包裹层。若它只有一个子，下钻到子；
+        若有多个子，取第一个带 class 的子（语义入口）。
+        这样 body > main.pc-card-frame 与 div > main.sg-frame 能在 main 层对齐。
+        """
         while is_container(node):
             ch = node.get("children", [])
+            if not ch:
+                break
             if len(ch) == 1:
                 node = ch[0]
-            else:
-                break
+                continue
+            # 多子：找第一个带 class 的子节点（跳过 #text 等噪音）
+            picked = None
+            for c in ch:
+                if c.get("tag") != "#text" and c.get("classes"):
+                    picked = c
+                    break
+            node = picked if picked else ch[0]
         return node
 
     def class_similarity(rc, gc):
-        """两组 class 的 Jaccard 相似度（归一化后）。"""
-        if not rc and not gc:
-            return 1.0
-        union = rc | gc
-        if not union:
-            return 1.0
-        return len(rc & gc) / len(union)
+        """两组 class 的相似度（归一化后）。
 
-    def find_best_match(r_node, candidates):
-        """在候选中找 class 最相似的节点。返回 (index, similarity)。"""
+        综合 Jaccard 精确匹配 + 后缀 token 容错匹配：
+        - Jaccard：完全相同的归一化类名
+        - 后缀容错：如 'frame' 匹配 'pc-card-frame' 的尾 token，给 0.6 信用
+          （处理 agent 把 pc-card-frame 重命名为 sg-frame 的情况）
+
+        双方都无 class 时返回中性低分 0.3（不返回 1.0）：
+        无 class 意味着无法判断对齐性，不应压过有 class 的节点。
+        否则 #text 与无 class 容器会总是"最佳匹配"，挤掉真正的结构匹配。
+        """
+        if not rc and not gc:
+            return 0.3  # 中性低分，不压过有 class 的候选
+        if not rc or not gc:
+            return 0.0
+        # Jaccard 精确部分
+        exact = len(rc & gc)
+        union = len(rc | gc)
+        jaccard = exact / union if union else 0.0
+        # 后缀 token 容错：非精确匹配的类对，看尾 token 是否重合
+        r_suffix = set()
+        for c in rc:
+            r_suffix |= _suffix_tokens(c)
+        g_suffix = set()
+        for c in gc:
+            g_suffix |= _suffix_tokens(c)
+        suffix_match = len(r_suffix & g_suffix)
+        # 后缀信用：重合的后缀 token 数 / 较大组的类数，上限 0.6
+        max_classes = max(len(rc), len(gc))
+        suffix_credit = min(0.6, (suffix_match / max_classes) * 0.6) if max_classes else 0.0
+        # 综合：Jaccard 为主，后缀信用补充（不重复计精确匹配的）
+        return min(1.0, jaccard + suffix_credit)
+
+    def find_best_match(r_node, candidates, used):
+        """在候选（原 gch 列表 + used 索引集）中找 class 最相似的未占用节点。
+
+        返回 (原索引, similarity)。返回的索引可直接用于 gch[i] 和 used.add(i)。
+        """
         rc = norm_classes(r_node.get("classes", []))
         best_i, best_s = -1, 0.0
         for i, g in enumerate(candidates):
+            if i in used:
+                continue
             gc = norm_classes(g.get("classes", []))
             s = class_similarity(rc, gc)
             if s > best_s:
@@ -249,8 +307,8 @@ def compare_structure(ref: dict, got: dict) -> dict:
         gch = g.get("children", []) or []
         used = set()
         for ri in rch:
-            bi, bs = find_best_match(ri, [g for j, g in enumerate(gch) if j not in used])
-            if bi >= 0 and bs > 0.3:  # 相似度阈值 0.3 才算匹配
+            bi, bs = find_best_match(ri, gch, used)
+            if bi >= 0 and bs > 0.2:  # 相似度阈值 0.2 才算匹配（容许类名重命名）
                 used.add(bi)
                 walk(ri, gch[bi])
             else:

@@ -3,11 +3,11 @@
   "render_ok": true,
   "render_error": null,
   "structure": {
-    "node_match_rate": 0.038,
-    "class_match_rate": 0.393,
-    "ref_nodes": 185,
-    "got_nodes": 259,
-    "matched_nodes": 7
+    "node_match_rate": 0.931,
+    "class_match_rate": 0.973,
+    "ref_nodes": 144,
+    "got_nodes": 224,
+    "matched_nodes": 134
   },
   "text": {
     "text_match_rate": 0.838,
@@ -29,8 +29,8 @@
     ]
   },
   "scores": {
-    "structure": 0.215,
+    "structure": 0.952,
     "text": 0.838,
-    "overall": 0.527
+    "overall": 0.895
   }
 }
