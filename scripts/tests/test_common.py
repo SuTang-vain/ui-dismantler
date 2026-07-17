@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
 from _common import (  # noqa: E402
     normalize_var_name, parse_color, to_hex, color_distance,
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
-    extract_gradients, slugify, infer_color_roles,
+    extract_gradients, slugify, infer_color_roles, query_rules,
 )
 
 
@@ -420,6 +420,66 @@ class TestInferColorRoles(unittest.TestCase):
         # --ink 不应匹配 --ink-dark
         css = ".foo { color: var(--ink-dark); }"
         self.assertEqual(infer_color_roles(css, "--ink"), [])
+
+
+class TestQueryRules(unittest.TestCase):
+    SAMPLE = (
+        ".sg-member { color: var(--ink); background: var(--paper); } "
+        ".sg-member-grid { grid-template-columns: repeat(2, 1fr); display: grid; } "
+        ".sg-frame { perspective: 900px; } "
+        ".sg-tab.active { border-bottom: 2px solid var(--primary); }"
+    )
+
+    def test_selector_contains(self):
+        out = query_rules(self.SAMPLE, selector_contains=".sg-member")
+        # .sg-member 和 .sg-member-grid 都含 .sg-member 子串
+        sels = [s for s, _ in out]
+        self.assertIn(".sg-member", sels)
+        self.assertIn(".sg-member-grid", sels)
+
+    def test_selector_contains_case_insensitive(self):
+        out = query_rules(self.SAMPLE, selector_contains=".SG-MEMBER")
+        self.assertEqual(len(out), 2)
+
+    def test_has_prop(self):
+        out = query_rules(self.SAMPLE, has_prop="grid-template-columns")
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0][0], ".sg-member-grid")
+
+    def test_has_prop_case_insensitive(self):
+        out = query_rules(self.SAMPLE, has_prop="GRID-TEMPLATE-COLUMNS")
+        self.assertEqual(len(out), 1)
+
+    def test_prop_value_contains(self):
+        # 查值含某子串的规则（900px 是 .sg-frame perspective 的值）
+        out = query_rules(self.SAMPLE, prop_value_contains="900px")
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0][0], ".sg-frame")
+
+    def test_combined_and(self):
+        # selector + has_prop 组合（AND）
+        out = query_rules(
+            self.SAMPLE,
+            selector_contains=".sg-member",
+            has_prop="display",
+        )
+        # .sg-member-grid 含 display，.sg-member 不含
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0][0], ".sg-member-grid")
+
+    def test_no_match_returns_empty(self):
+        self.assertEqual(query_rules(self.SAMPLE, selector_contains=".nonexistent"), [])
+
+    def test_no_filter_returns_all(self):
+        # 不传任何条件，返回所有规则
+        out = query_rules(self.SAMPLE)
+        self.assertEqual(len(out), 4)
+
+    def test_prop_value_in_var_reference(self):
+        # 查含 var(--primary) 的规则
+        out = query_rules(self.SAMPLE, prop_value_contains="var(--primary)")
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0][0], ".sg-tab.active")
 
 
 if __name__ == "__main__":

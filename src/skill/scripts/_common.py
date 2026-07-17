@@ -412,3 +412,39 @@ def infer_color_roles(css: str, var_name: str) -> list[str]:
                     seen.add(role)
                     roles.append(role)
     return roles
+
+
+# ============================================================
+# 7. CSS 规则结构化查询（P2-2）
+# ============================================================
+def query_rules(
+    css: str,
+    selector_contains: str | None = None,
+    has_prop: str | None = None,
+    prop_value_contains: str | None = None,
+) -> list[tuple[str, dict[str, str]]]:
+    """按条件查询 CSS 规则，给 agent 快速定位样式细节。
+
+    参数（均可选，组合为 AND）：
+    - selector_contains: 选择器包含该子串（大小写不敏感）
+    - has_prop: 规则含该属性（大小写不敏感）
+    - prop_value_contains: 某属性的值包含该子串（大小写不敏感）
+
+    返回 [(selector, {prop: value}), ...]。
+    例：query_rules(css, selector_contains='.member', has_prop='grid-template-columns')
+        → 查 .member 相关的布局规则
+    """
+    out: list[tuple[str, dict[str, str]]] = []
+    for sel, props in parse_rules(css):
+        if selector_contains and selector_contains.lower() not in sel.lower():
+            continue
+        if has_prop:
+            # 属性名大小写不敏感匹配
+            if not any(has_prop.lower() == k.lower() for k in props):
+                continue
+        if prop_value_contains:
+            pvc = prop_value_contains.lower()
+            if not any(pvc in v.lower() for v in props.values()):
+                continue
+        out.append((sel, props))
+    return out
