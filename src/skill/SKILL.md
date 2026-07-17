@@ -7,108 +7,214 @@ description: 将单个 HTML 案例页拆解为可复用的组件库（参数化 
 
 把一个自包含的 HTML 案例页（含内联 `<style>`/`<script>`）拆解为结构化、可复用、数据驱动的组件库。
 
+## 你（agent）的角色
+
+**你是拆解的主控者**，不是脚本的调度员。你要像工程师阅读一份源码那样**理解**这份 HTML——它的主题色语义、Tab/视图结构、交互模式、数据组织、响应式断点——然后**亲自产出**完整的组件库代码。Python 脚本只是你的确定性工具，帮你拿颜色值、校验约束、量化等价度，但**理解和创作由你完成**。
+
+标杆质量：`明星组合/组件库`（手工拆解 BLACKPINK 的产物，2613 行，完整 A11y + 设计令牌 + 数据驱动）。你产出的库要对标这个质量，不是"能跑就行"。
+
 ## 何时使用
 
 - 用户提供一个 HTML 文件（或目录），要求「拆成组件库」「提取复用模板」「规范化」
 - 用户要求提取某页面的主题色 / Tab / 交互模式 / 逻辑设置并固化复用
-- 用户要求把同垂类多个案例合并为公共组件库
+- 用户要求把同垂类多个案例合并为公共组件库（垂类聚合，见末节）
 
-## 工作流（按顺序）
+## 拆解工作流（按顺序执行）
 
-### 1. 分析：HTML → manifest.json
+### 第 1 步：通读 HTML，建立理解
 
-```bash
-python3 scripts/analyze_html.py <html路径> --out <manifest.json> [--vertical <垂类名>]
-```
+**不要急着调脚本**。先完整读一遍 HTML（`<head>` 的 `<style>`、`<body>` 的结构、`<script>` 的逻辑），在脑中建立以下认知：
 
-读取 HTML，提取主题色令牌、Tab 结构、视图/交互模式、数据数组、响应式断点、A11y 特征，输出标准化 `manifest.json`（schema 见 `references/manifest_schema.md`）。
+1. **画布与布局**：PC 尺寸多少？是固定画框（`.pc-card-frame` 788×492 这类）还是流式？有哪些响应式断点（`@media max-width: 500/320`）？每个断点画布尺寸和布局怎么变？
+2. **主题色语义**：`:root` 里定义了哪些颜色变量？**哪个是品牌主色**（用于选中态/激活态/主按钮）？**哪个是强调色**（用于"其它"/故事/高亮）？文字分几级灰阶（ink/muted/subtle）？背景色（paper 卡片底/stage 画布底）？分割线色？这些语义要你自己判断，不是机械地取变量名。
+3. **Tab/视图结构**：有几个 Tab？是 `role=tablist` 还是 `nav + data-p` 关联型？每个 Tab 对应什么视图（成员网格/时间线/作品轮播/详情面板）？末位有没有"更多"特殊 Tab？
+4. **交互模式**：有没有自动播放（`setInterval`）？间隔多少？什么交互会停止？有没有 Modal（`role=dialog`）？触发方式？关闭方式（X/遮罩/ESC）？有没有 3D 轮播（`perspective`）？故事面板？
+5. **数据组织**：成员/作品/时间线数据在哪？是 `<script type=application/json>` 还是 JS 数组（`const memberList = [...]`）还是直接写在 DOM？字段有哪些？有没有图片兜底逻辑？有没有图片来源标注？
+6. **A11y 现状**：原页面已有哪些 `role`/`aria-*`？哪些缺失需要补？
 
-**查看解析详情**：分析引擎的识别规则在 `references/patterns.md`。若某案例结构特殊导致关键字段缺失，引擎会在 manifest 的 `warnings[]` 中标注，需人工补全后再进入下一步。
+**理解不清的地方，去读对应的 CSS 规则和 JS 片段确认**。这一步的质量决定后续所有产出。
 
-### 2. 生成：manifest → 组件库
-
-```bash
-python3 scripts/generate_lib.py <manifest.json> --out <输出目录> [--name <库名>]
-```
-
-基于 `assets/templates/` 下的 Jinja2 模板生成完整组件库：
-
-```
-<输出目录>/
-├── README.md
-├── docs/设计规范.md
-├── src/<lib-name>.css     参数化样式（sg-* 前缀，--sg-* 变量）
-├── src/<lib-name>.js      渲染引擎（window.<LibName>.mount/create）
-└── examples/<case>.html   数据驱动示例
-```
-
-所有输出必须符合 `references/spec.md` 的强约束。
-
-### 3. 校验：强约束检查
+### 第 2 步：调工具拿确定性数据（参考用，不是唯一依据）
 
 ```bash
+python3 scripts/analyze_html.py <html路径> --out <manifest.json> --minimal
+```
+
+`--minimal` 模式快速提取主题色令牌 + 结构清单，给你当**参考**。注意：
+- 工具提取的主题色**语义可能不准**（它只看变量名模式匹配），你要按第 1 步的理解修正归一化（比如把 `--marker-primary` 归到 `--sg-primary`，把 `--cause-color` 归到 `--sg-accent`）
+- 工具识别的视图类型可能不全（因果链/地图导览会走 generic），你要自己判断真实结构
+- `manifest.warnings[]` 标注的未识别项，是你的拆解重点
+
+工具是拐杖，你的理解是双腿。归一化映射表见 `references/spec.md` 第 2 节。
+
+### 第 3 步：产出组件库文件
+
+在用户指定目录（或 `/tmp/<lib-name>/`）下创建完整组件库：
+
+```
+<lib-name>/
+├── README.md                 介绍 + 快速开始 + API + 数据契约 + 主题定制
+├── docs/设计规范.md           主题色系统 / Tab 结构 / 交互模式 / 逻辑设置 / 响应式
+├── src/
+│   ├── <lib-name>.css        参数化样式（sg-* 前缀，--sg-* 变量，三档响应式）
+│   └── <lib-name>.js         渲染引擎（<LibName>.mount/create API，数据驱动，A11y）
+└── examples/
+    ├── <案例>.html            用组件库 + 原数据复刻原案例
+    └── template.html          空白复用模板（带示例数据）
+```
+
+#### 3.1 `src/<lib-name>.css` — 参数化样式
+
+- 所有类名 `sg-` 前缀，kebab-case（`.sg-frame` `.sg-tab` `.sg-member`）
+- `:root`（或 `.sg-frame` 作用域）定义所有 `--sg-*` 变量，含语义注释
+- **颜色全走变量**，禁止在规则里硬编码 `#hex`（`:root` 定义与 `rgba(0,0,0,0.x)` 纯黑白蒙版例外）
+- 渐变里的颜色也引用变量：`linear-gradient(var(--sg-paper), var(--sg-soft))`
+- 三档响应式：PC 默认 + `@media (max-width:500px)` + `@media (max-width:320px)`，即使原案例只有 PC 也要补全
+- 保留原案例的布局精髓（3D 透视档位、scroll-snap、grid 列数等），不要简化掉
+
+#### 3.2 `src/<lib-name>.js` — 渲染引擎
+
+对标 `star-group.js` 的范式（见 `references/` 下标杆）：
+
+```js
+(function (global) {
+  'use strict';
+  // 工具：el(tag, cls, attrs) 创建节点；on(node, evt, fn) 绑事件
+  function el(tag, cls, attrs) { /* ... */ }
+
+  var DEFAULTS = { /* 所有可配置项，含 tabs/members/timeline/works/theme/autoPlay 等 */ };
+
+  function LibName(options) {
+    this.opts = deepMerge({}, DEFAULTS, options || {});
+    this.root = null;
+    // 定时器/索引/选中态等实例状态
+  }
+  LibName.prototype.create = function () { /* 构建 DOM，返回根节点 */ };
+  LibName.prototype.mount = function (container) { /* create + append + afterMount */ };
+  // _buildTabBar / _buildViewStack / _buildMembers / _buildTimeline / _buildWorks ...
+  // _afterMount：启动自动播放、绑定交互、a11y 初始化
+
+  function applyTheme(root, theme) { /* 把 options.theme 写入 root.style 的 --sg-* */ }
+
+  global.LibName = { mount: function(c,o){return new LibName(o).mount(c);}, create: function(o){return new LibName(o).create();} };
+})(window);
+```
+
+要点：
+- **数据驱动**：所有可变内容走 `options`，**禁止硬编码业务文案/URL**
+- **完整 A11y**：tablist/tab/tabpanel + aria-selected/aria-controls/aria-labelledby；dialog + aria-modal + hidden；aria-live 播报区；图标按钮 aria-label；ESC 关闭
+- **图片兜底**：`load`/`error` 事件驱动 `.is-loaded`/`.is-error`，兜底显示首字母 + 渐变
+- **自动播放**：`setInterval` + 任意交互停止（click/touchstart/mouseenter）
+- **响应式逻辑**：`isMobile()`/`isExtremeSmall()` 判断小屏行为差异（弹 Modal vs 内嵌面板）
+
+#### 3.3 `examples/<案例>.html` — 用原数据复刻
+
+- 引入 `src/<lib-name>.css` 和 `src/<lib-name>.js`
+- 把原 HTML 的**真实数据**（成员/作品/时间线/事实）填入 `options`
+- 调 `LibName.mount(document.getElementById('mount'), {...})`
+- 目标：这个页面要能还原原案例的核心内容（往返测试会量化）
+
+#### 3.4 `examples/template.html` — 空白复用模板
+
+- 同结构，但用示例/占位数据
+- 注释标注每个数据段的含义，方便复用时替换
+
+#### 3.5 `docs/设计规范.md` — 完整规范
+
+对标 `明星组合/组件库/docs/设计规范.md` 的结构：
+1. **主题色系统**：设计令牌表（Token / 值 / 语义用途）+ 语义分组 + 渐变叠加
+2. **Tab 元素**：结构 + 属性约定 + 三档尺寸
+3. **交互模式**：视图栈 + 各视图（成员/时间线/作品/详情）的交互细节
+4. **逻辑设置**：响应式断点 + 自动播放策略 + 数据驱动 + A11y + 性能稳健性
+5. **字体排版**：字体栈 + 标题层级 + 圆角体系
+6. **组件清单**：组件 → 类名 → 复用要点
+
+#### 3.6 `README.md`
+
+对标 `明星组合/组件库/README.md`：介绍 + 目录结构 + 快速开始 + API 表 + 数据契约（TS 接口）+ 主题定制 + 组件清单 + 交互行为表 + 响应式断点 + 版本。
+
+### 第 4 步：自检（必须全过）
+
+```bash
+# 4a. 8 项强约束校验
 python3 scripts/validate_lib.py <组件库目录>
+
+# 4b. JS 语法检查
+node --check src/<lib-name>.js
+
+# 4c. 往返等价度（量化"忠于原 HTML"的程度）
+python3 scripts/roundtrip.py <原html路径> --lib <组件库目录> --out <报告.json>
 ```
 
-校验 8 项强约束（命名/变量/数据分离/响应式/A11y/主题可定制/零依赖/文档）。不通过则报具体违规项。
+**质量门槛**（必须全过才算完成）：
+- `validate_lib.py` 8 项全 PASS
+- `node --check` 无语法错误
+- `roundtrip.py` 综合分 ≥ 0.7（结构 ≥ 0.5，文本 ≥ 0.8）
 
-### 4.（可选）聚合：垂类公共库
+### 第 5 步：修订（不达标则循环）
 
-```bash
-python3 scripts/aggregate_vertical.py <垂类目录> --out <输出目录>
-```
-
-扫描垂类目录下所有案例的 manifest（若缺失则先跑 analyze），归并出垂类公共库 + 各案例变体配置。
+- **validate 失败**：按报错项修订对应文件（命名/变量/响应式/A11y 等）
+- **roundtrip 文本分低**：看报告 `text.missing` 数组（缺失的真实文本，如成员定位"主唱·说唱·视觉"），把缺失内容补回 `examples/<案例>.html` 的数据
+- **roundtrip 结构分低**：看 `structure.node_match_rate` 和 `class_match_rate`，对照 `ref_nodes`/`got_nodes` 数量差异，补回缺失的结构层（允许 sg-* 类名归一化差异，对比器已对 sg- 前缀做归一化匹配）
+- 修订后重跑自检，循环直到达标或达 3 轮上限（3 轮仍不达标则向用户说明差距）
 
 ## 关键约束（详见 references/spec.md）
 
-- CSS 类名 `sg-` 前缀，变量 `--sg-*` 前缀
-- 内容数据必须为 JSON 数组，与渲染逻辑解耦
-- 必须含 PC / WISE(≤500px) / 极端(≤320px) 三档响应式
-- 所有颜色经变量，禁止硬编码 `#hex`（`:root` 定义与 `var()` fallback 除外）
-- 零依赖（字体 CDN 除外）
-- A11y（按需）：
-  - 有 tab 切换 → 必须有 `role=tablist` + `role=tabpanel`
-  - 有 modal → 必须有 `role=dialog` + ESC 关闭
-  - 任何库 → 必须有 `aria-live` + `aria-label`
+8 项强约束，`validate_lib.py` 据此校验：
 
-## 泛化能力
+1. **命名前缀**：CSS 类 `sg-`、变量 `--sg-`、JS 全局 PascalCase、DOM id `sg-`
+2. **变量归一化**：原变量名按下表归一到 `--sg-*`（primary/accent/ink/muted/subtle/line/paper/stage/soft...）
+3. **数据分离**：可变内容走 JSON，禁止 JS 硬编码业务文案/URL
+4. **响应式三档**：PC + WISE(≤500px) + 极端(≤320px)
+5. **A11y**：tablist/tabpanel、dialog、aria-live、aria-label、ESC 关闭（按需）
+6. **主题可定制**：颜色全走变量，禁止硬编码 `#hex`（`:root` 与纯黑白蒙版例外）
+7. **零依赖**：禁止外部 JS/CSS（字体 CDN 例外）
+8. **文档完备**：README.md + docs/设计规范.md 齐全
 
-引擎内置三种结构化视图模式（member-grid / timeline / carousel-3d）+ tab 切换 + modal 体系，覆盖明星组合类页面。对其他垂类结构：
+## 标杆参考
 
-- **tab 变体**：识别 `role=tablist`、`.tab-bar`/`.tab-nav`、以及 `<nav>` + `data-p`/`data-tab`/`data-target` 关联型（如文化类词语的 `.nav > span.n[data-p]` ↔ `section.panel[id]`）
-- **generic 兜底**：无法识别的视图统一 fallback 为 `generic`，生成 `<section role=tabpanel>` + `.sg-generic-body[aria-live]` 容器，保证 A11y 基线达标；无 tab 的单视图页面（如因果链、地图导览）生成兜底视图
-- **垂类局限**：因果链（splash→timeline-nav）、地图导览（map-viewport+dpad）等深度交互范式的**数据提取**尚未实现，会走 generic 兜底产出合规但需人工细化的库。manifest 的 `warnings[]` 会标注未识别项
+拆解时对标手工 BLACKPINK 组件库的质量（用户提供，作为 gold standard）：
+- `明星组合/组件库/README.md` — 文档结构范本
+- `明星组合/组件库/docs/设计规范.md` — 规范文档范本
+- `明星组合/组件库/src/star-group.js` — 渲染引擎范式（IIFE + el() + DEFAULTS + create/mount + _buildXxx）
+- `明星组合/组件库/src/star-group.css` — 参数化样式范式（:root 变量 + sg- 前缀 + 三档响应式）
+
+## 工具层（确定性辅助，你调用它们）
+
+| 脚本 | 用途 | 何时调 |
+|---|---|---|
+| `scripts/analyze_html.py --minimal` | 提取主题色令牌 + 结构清单 | 第 2 步，拿参考数据 |
+| `scripts/validate_lib.py` | 8 项强约束校验 | 第 4 步自检 |
+| `scripts/roundtrip.py` | 往返等价度（原 HTML ⇄ 库渲染 DOM） | 第 4 步自检 |
+| `node --check` | JS 语法检查 | 第 4 步自检 |
+
+工具的源码在 `src/skill/scripts/`，单测在 `scripts/tests/`（`python3 scripts/tests/run.py` 跑全部）。
+
+## 垂类聚合（可选，单案例拆解稳定后再做）
+
+同垂类多个案例 → 公共库 + 各案例变体配置：
+
+1. 对每个案例独立跑第 1-5 步，产出各自组件库
+2. 提取公共部分（主题色骨架、Tab 结构、渲染引擎框架）为垂类公共库
+3. 各案例的差异（主题色值、数据字段、特有视图）作为变体配置叠加
+4. `scripts/aggregate_vertical.py` 可辅助归并（但归并逻辑由你主导，脚本只做去重）
+
+**前置条件**：单案例拆解能力稳定（前向测试全过）后再做垂类聚合，否则会在不稳固的基础上叠加复杂度。
 
 ## 依赖
 
-- Python 3.8+
-- `beautifulsoup4`、`jinja2`（用户级安装：`pip install --user --break-system-packages beautifulsoup4 jinja2`）
-- 可选：`node`（用于 `node --check` 验证生成 JS 语法）
-
-## 端到端示例
-
-```bash
-SKILL=~/.zcode/skills/html-to-component-lib/scripts
-
-# 逐案例：分析 → 生成 → 校验
-python3 $SKILL/analyze_html.py path/to/case.html --out /tmp/case.mf --vertical 明星组合
-python3 $SKILL/generate_lib.py /tmp/case.mf --out /tmp/case_lib --name my-lib
-python3 $SKILL/validate_lib.py /tmp/case_lib
-
-# 垂类聚合：同垂类多案例 → 公共库 + 变体
-python3 $SKILL/aggregate_vertical.py path/to/vertical_dir --out /tmp/vertical_lib --name vertical-lib
-python3 $SKILL/validate_lib.py /tmp/vertical_lib
-```
+- Python 3.8+（`beautifulsoup4`，用户级安装：`pip install --user --break-system-packages beautifulsoup4`）
+- Node.js（用于 `node --check` 和 `roundtrip.py` 的 jsdom 渲染）
 
 ## 失败处理
 
-- `validate_lib.py` 报 FAIL：按提示修对应模板/脚本，**不要手改生成产物**（会被下次生成覆盖）
-- `manifest.warnings` 非空：属正常，表示部分视图走 generic 兜底；仅当 `structure.tabs` 和 `structure.views` 同时为空且页面确有 tab/视图结构时，才需扩展 `patterns.md` 的识别规则
-- 生成 JS 语法错误：`node --check src/<lib>.js` 定位
+- `validate_lib.py` 报 FAIL：按提示修订对应文件，重跑自检
+- `roundtrip.py` 低分：看报告 `missingTexts`/`missingNodes`，补回缺失内容
+- `node --check` 语法错误：定位行号修复
+- 工具脚本本身报错（非校验失败）：检查 Python 依赖，或读 `scripts/tests/` 确认工具行为
 
 ## 参考文件
 
-- `references/spec.md` — 强约束规范（命名/变量/响应式/A11y 详细规则与归一化映射表）
-- `references/patterns.md` — 模式识别规则（Tab/轮播/Modal 等结构的判定特征）
-- `references/manifest_schema.md` — manifest.json 字段定义
+- `references/spec.md` — 8 项强约束详细规范 + 变量归一化映射表
+- `references/patterns.md` — 结构识别特征（Tab/轮播/Modal 等的判定规则，第 1 步理解 HTML 时参考）
+- `references/manifest_schema.md` — manifest.json 字段定义（第 2 步工具输出）
