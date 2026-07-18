@@ -1,0 +1,1282 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/sutang/01_sutang/02_project/Ui_dismantler/examples/cases/huang-yueying/original.html",
+    "title": "如果没有这7件事，读懂三国才女黄月英藏于卧龙身后的智慧传奇",
+    "templateId": null,
+    "vertical": "cases",
+    "caseName": "huang-yueying",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": ".main-area"
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          "timeline-node.active .tname",
+          "tab-btn.active",
+          "tab-btn:hover:not(.active)",
+          "event-icon",
+          "summary-time"
+        ],
+        "roles": [
+          "text",
+          "background",
+          "border",
+          "icon-stroke"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#5274f2",
+        "original": "--primary-dark",
+        "usage": [
+          "event-icon",
+          "splash-cta",
+          "progress-fill"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "soft",
+        "value": "rgba(100, 135, 250, 0.1)",
+        "original": "--primary-light",
+        "usage": [
+          "timeline-node.active",
+          "tab-btn:hover:not(.active)",
+          "module-title",
+          "people-box .p-title .p-hint",
+          "people-item:hover"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "paper",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          "#app-container",
+          "modal-content",
+          "/* ========== What-if modal ========== */\n      .whatif-modal"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "stage",
+        "value": "#f8f8f8",
+        "original": "--bg-gray",
+        "usage": [
+          "/* Event header */\n      .event-header",
+          "event-image",
+          "people-box",
+          "mobile-title-card",
+          "mobile-people"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "ink",
+        "value": "#1e1f24",
+        "original": "--text-main",
+        "usage": [
+          "timeline-node .tname",
+          "timeline-node.active .year",
+          "tab-btn",
+          "event-name",
+          "event-summary"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "muted",
+        "value": "#848691",
+        "original": "--text-secondary",
+        "usage": [
+          "timeline-node .year",
+          "event-period",
+          "people-item-role",
+          "splash-eyebrow",
+          "splash-sub"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "subtle",
+        "value": "#b7b9c1",
+        "original": "--text-tertiary",
+        "usage": [
+          "timeline-arrow",
+          "splash-hint"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "border-light",
+        "value": "rgba(30, 31, 36, 0.06)",
+        "original": "--border-light",
+        "usage": [
+          "/* ========== Timeline (top) ========== */\n      .timeline-nav",
+          "timeline-node",
+          "/* Event header */\n      .event-header",
+          "event-icon",
+          "event-image"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 2px 8px rgba(30, 31, 36, 0.06)",
+        "original": "--shadow-sm",
+        "usage": [
+          "tab-btn",
+          "info-module",
+          "event-image",
+          "mobile-event-image",
+          "module-tab"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 12px 36px rgba(30, 31, 36, 0.12)",
+        "original": "--shadow-lg",
+        "usage": [
+          "#app-container",
+          "modal-content",
+          "/* ========== What-if modal ========== */\n      .whatif-modal"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "radius-md",
+        "value": "10px",
+        "original": "--radius-md",
+        "usage": [
+          "timeline-node",
+          "tab-btn",
+          "/* Event header */\n      .event-header",
+          "info-module",
+          "event-image"
+        ],
+        "roles": []
+      },
+      {
+        "name": "radius-lg",
+        "value": "12px",
+        "original": "--radius-lg",
+        "usage": [
+          "#app-container",
+          "modal-content",
+          "splash-question",
+          "/* ========== What-if modal ========== */\n      .whatif-modal"
+        ],
+        "roles": []
+      },
+      {
+        "name": "accent",
+        "value": "#6487fa",
+        "original": "--cause-color",
+        "usage": [
+          "mobile-people .mp-tag.opponent"
+        ],
+        "roles": [
+          "text"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "selector": "/* ========== Timeline (top) ========== */\n      .timeline-nav",
+        "value": "linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%)",
+        "normalized": "linear-gradient(180deg, var(--sg-paper) 0%, var(--sg-stage) 100%)"
+      },
+      {
+        "selector": ".event-icon",
+        "value": "linear-gradient(\n          135deg,\n          var(--primary),\n          var(--primary-dark)\n        )",
+        "normalized": "linear-gradient(\n          135deg,\n          var(--primary),\n          var(--primary-dark)\n        )"
+      },
+      {
+        "selector": ".event-image .img-caption",
+        "value": "linear-gradient(transparent, rgba(0, 0, 0, 0.68))",
+        "normalized": "linear-gradient(transparent, rgba(0, 0, 0, 0.68))"
+      },
+      {
+        "selector": ".mobile-event-image .img-caption",
+        "value": "linear-gradient(transparent, rgba(0, 0, 0, 0.68))",
+        "normalized": "linear-gradient(transparent, rgba(0, 0, 0, 0.68))"
+      },
+      {
+        "selector": "/* ========== Splash (first screen) ========== */\n      .splash",
+        "value": "radial-gradient(circle at 20% 20%, rgba(100,135,250,0.18), transparent 55%)",
+        "normalized": "radial-gradient(circle at 20% 20%, rgba(100,135,250,0.18), transparent 55%)"
+      },
+      {
+        "selector": "/* ========== Splash (first screen) ========== */\n      .splash",
+        "value": "radial-gradient(circle at 80% 80%, rgba(232,89,12,0.10), transparent 55%)",
+        "normalized": "radial-gradient(circle at 80% 80%, rgba(232,89,12,0.10), transparent 55%)"
+      },
+      {
+        "selector": "/* ========== Splash (first screen) ========== */\n      .splash",
+        "value": "linear-gradient(180deg, #ffffff 0%, #f4f6ff 100%)",
+        "normalized": "linear-gradient(180deg, var(--sg-paper) 0%, #f4f6ff 100%)"
+      },
+      {
+        "selector": ".splash-cta",
+        "value": "linear-gradient(135deg, var(--primary), var(--primary-dark))",
+        "normalized": "linear-gradient(135deg, var(--primary), var(--primary-dark))"
+      },
+      {
+        "selector": ".progress-fill",
+        "value": "linear-gradient(90deg, var(--primary), var(--primary-dark))",
+        "normalized": "linear-gradient(90deg, var(--primary), var(--primary-dark))"
+      },
+      {
+        "selector": ".info-module.open",
+        "value": "linear-gradient(180deg, #fff, #f7f9ff)",
+        "normalized": "linear-gradient(180deg, #fff, #f7f9ff)"
+      },
+      {
+        "selector": "/* ========== What-if button ========== */\n      .whatif-btn",
+        "value": "linear-gradient(135deg, #ff8a3d, #e8590c)",
+        "normalized": "linear-gradient(135deg, #ff8a3d, #e8590c)"
+      }
+    ]
+  },
+  "structure": {
+    "pattern": "cause-chain",
+    "tabs": [],
+    "views": [],
+    "modals": [
+      {
+        "id": "modalOverlay",
+        "trigger": "unknown",
+        "layout": "generic",
+        "hasClose": true,
+        "closeOn": [
+          "x-button",
+          "overlay-click",
+          "escape"
+        ]
+      },
+      {
+        "id": "whatifOverlay",
+        "trigger": "unknown",
+        "layout": "generic",
+        "hasClose": true,
+        "closeOn": [
+          "x-button",
+          "overlay-click",
+          "escape"
+        ]
+      }
+    ],
+    "storyPanels": []
+  },
+  "data": {
+    "events": [
+      {
+        "name": "名士之女",
+        "year": "东汉末年",
+        "time": "家世成长时期",
+        "summary": "黄月英为沔南名士黄承彦独女，出身荆州书香世家，自幼得名师教导，底蕴深厚。",
+        "image": "黄月英名士之女.JPG",
+        "imageCaption": "名士书香育慧心",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "汉末荆州文风鼎盛，名士云集"
+            },
+            {
+              "type": "step",
+              "label": "家学",
+              "text": "<span class=\"hl-person\">黄承彦</span>学识渊博，深耕士林"
+            },
+            {
+              "type": "step",
+              "label": "熏陶",
+              "text": "黄月英自幼博览群书"
+            },
+            {
+              "type": "step",
+              "label": "积淀",
+              "text": "得名师教导，底蕴深厚"
+            },
+            {
+              "type": "effect",
+              "text": "积淀深厚学识，聪慧过人"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "生长名士书香第，饱读诗书"
+            },
+            {
+              "type": "step",
+              "label": "研习",
+              "text": "跟随父亲研习天文地理"
+            },
+            {
+              "type": "step",
+              "label": "潜心",
+              "text": "摒弃闺阁娇柔习气"
+            },
+            {
+              "type": "step",
+              "label": "成才",
+              "text": "年少身怀奇才，才学过人"
+            },
+            {
+              "type": "effect",
+              "text": "才学远超当世多数世人"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "优渥家学与悉心教导"
+            },
+            {
+              "type": "step",
+              "label": "修心",
+              "text": "深耕学识技艺"
+            },
+            {
+              "type": "step",
+              "label": "不慕",
+              "text": "不重容貌浮华"
+            },
+            {
+              "type": "step",
+              "label": "品性",
+              "text": "养成沉稳睿智品性"
+            },
+            {
+              "type": "effect",
+              "text": "具备匹配卧龙之才"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "深厚家学底蕴"
+            },
+            {
+              "type": "step",
+              "label": "根基",
+              "text": "成一生智慧核心根基"
+            },
+            {
+              "type": "step",
+              "label": "远播",
+              "text": "才学声名远播"
+            },
+            {
+              "type": "step",
+              "label": "伏笔",
+              "text": "引名士关注结缘卧龙"
+            },
+            {
+              "type": "effect",
+              "text": "为后续辅佐夫君埋下伏笔"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "汉末才女、名士之女",
+            "desc": "出身荆州名士世家，饱读诗书、精通谋略巧思，才情卓绝。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "才冠乡里",
+        "year": "青年时期",
+        "time": "才情展露时期",
+        "summary": "黄月英传闻容貌质朴，却天资卓绝、才学高深，智谋见识冠绝荆州乡里。",
+        "image": "黄月英才冠乡里.JPG",
+        "imageCaption": "满腹经纶冠荆州",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "汉末世人重容貌浮华"
+            },
+            {
+              "type": "step",
+              "label": "风气",
+              "text": "荆州名士推崇真才实学"
+            },
+            {
+              "type": "step",
+              "label": "研学",
+              "text": "黄月英潜心深耕智识"
+            },
+            {
+              "type": "step",
+              "label": "出众",
+              "text": "不重妆容专攻学问"
+            },
+            {
+              "type": "effect",
+              "text": "虽容貌质朴才学远超同辈"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "貌拙才高藏慧心"
+            },
+            {
+              "type": "step",
+              "label": "辩理",
+              "text": "与荆州名士论学辩理"
+            },
+            {
+              "type": "step",
+              "label": "深耕",
+              "text": "深耕兵法天文机械"
+            },
+            {
+              "type": "step",
+              "label": "扬名",
+              "text": "练就实用奇才"
+            },
+            {
+              "type": "effect",
+              "text": "成为荆州知名奇女子"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "才貌反差鲜明"
+            },
+            {
+              "type": "step",
+              "label": "蜕变",
+              "text": "摆脱世俗偏见"
+            },
+            {
+              "type": "step",
+              "label": "立足",
+              "text": "以真才实学立足"
+            },
+            {
+              "type": "step",
+              "label": "敬重",
+              "text": "赢得众人敬重"
+            },
+            {
+              "type": "effect",
+              "text": "获其父认可可配大才"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "才名远传荆州"
+            },
+            {
+              "type": "step",
+              "label": "听闻",
+              "text": "让诸葛亮听闻其智慧"
+            },
+            {
+              "type": "step",
+              "label": "佳话",
+              "text": "打破世俗择偶标准"
+            },
+            {
+              "type": "step",
+              "label": "基础",
+              "text": "成重才不重貌佳话"
+            },
+            {
+              "type": "effect",
+              "text": "为与诸葛亮结缘奠定基础"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "绝世才女、智冠荆州",
+            "desc": "貌拙才高，博览百家、精通谋略巧思，才情冠绝汉末乡里。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "智嫁孔明",
+        "year": "207年",
+        "time": "姻缘缔结时期",
+        "summary": "黄承彦向诸葛亮举荐女儿，称其才堪匹配，诸葛亮重才不重貌，欣然应允成婚。",
+        "image": "黄月英智嫁孔明.JPG",
+        "imageCaption": "才女配得卧龙才",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "诸葛亮隐居隆中潜心治学"
+            },
+            {
+              "type": "step",
+              "label": "风气",
+              "text": "汉末婚恋多重容貌家世"
+            },
+            {
+              "type": "step",
+              "label": "契合",
+              "text": "黄月英才德兼备"
+            },
+            {
+              "type": "step",
+              "label": "举荐",
+              "text": "与诸葛亮志趣相契合"
+            },
+            {
+              "type": "effect",
+              "text": "黄承彦主动为女举荐"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "良才遇得知音配"
+            },
+            {
+              "type": "step",
+              "label": "相处",
+              "text": "与诸葛亮论道研学"
+            },
+            {
+              "type": "step",
+              "label": "坚守",
+              "text": "摒弃世俗浮华"
+            },
+            {
+              "type": "step",
+              "label": "知己",
+              "text": "以才德立身互为知己"
+            },
+            {
+              "type": "effect",
+              "text": "二人结为夫妻传为佳话"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "姻缘打破世俗偏见"
+            },
+            {
+              "type": "step",
+              "label": "蜕变",
+              "text": "从名士之女"
+            },
+            {
+              "type": "step",
+              "label": "贤妻",
+              "text": "成为卧龙知己贤妻"
+            },
+            {
+              "type": "step",
+              "label": "相伴",
+              "text": "开启半生相伴生涯"
+            },
+            {
+              "type": "effect",
+              "text": "成诸葛亮最坚实后盾"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "知己式婚姻"
+            },
+            {
+              "type": "step",
+              "label": "支撑",
+              "text": "为诸葛亮潜心治学提供支撑"
+            },
+            {
+              "type": "step",
+              "label": "共进",
+              "text": "夫妻研学共进"
+            },
+            {
+              "type": "step",
+              "label": "碰撞",
+              "text": "碰撞出诸多智谋巧思"
+            },
+            {
+              "type": "effect",
+              "text": "为出山辅汉筑牢后方根基"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "卧龙贤妻、绝代知音",
+            "desc": "以才结缘诸葛亮，心性通透志趣相投，是卧龙一生知己。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "巧创机械",
+        "year": "隐居隆中",
+        "time": "巧思创作时期",
+        "summary": "黄月英精通机关巧技，自创木兽、机关器械，启发诸葛亮改良木牛流马、连弩。",
+        "image": "黄月英巧创机械.JPG",
+        "imageCaption": "巧手慧心造机关",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "汉末工艺简陋"
+            },
+            {
+              "type": "step",
+              "label": "需求",
+              "text": "诸葛亮推演兵法军械"
+            },
+            {
+              "type": "step",
+              "label": "擅长",
+              "text": "黄月英深谙机械原理"
+            },
+            {
+              "type": "step",
+              "label": "钻研",
+              "text": "擅长设计各类机关造物"
+            },
+            {
+              "type": "effect",
+              "text": "居家潜心打造机关器械"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "慧心巧手通机巧"
+            },
+            {
+              "type": "step",
+              "label": "研制",
+              "text": "研制木狗木虎等器械"
+            },
+            {
+              "type": "step",
+              "label": "探讨",
+              "text": "与诸葛亮探讨机械原理"
+            },
+            {
+              "type": "step",
+              "label": "助力",
+              "text": "技艺精妙无人能及"
+            },
+            {
+              "type": "effect",
+              "text": "为木牛流马连弩提供灵感"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "机关巧思落地成型"
+            },
+            {
+              "type": "step",
+              "label": "蜕变",
+              "text": "从闺阁才女"
+            },
+            {
+              "type": "step",
+              "label": "巧匠",
+              "text": "蜕变为三国顶尖巧匠"
+            },
+            {
+              "type": "step",
+              "label": "助力",
+              "text": "技艺成果服务蜀汉"
+            },
+            {
+              "type": "effect",
+              "text": "成蜀汉北伐重要助力"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "机关巧技"
+            },
+            {
+              "type": "step",
+              "label": "效率",
+              "text": "提升蜀汉运输与作战效率"
+            },
+            {
+              "type": "step",
+              "label": "空白",
+              "text": "填补军械工艺空白"
+            },
+            {
+              "type": "step",
+              "label": "支撑",
+              "text": "推动古代机械发展"
+            },
+            {
+              "type": "effect",
+              "text": "让北伐具备硬核器械支撑"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "机械巧匠、工科奇才",
+            "desc": "精通机关机械设计，独创诸多巧器，启迪蜀汉军工发展。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "辅夫立业",
+        "year": "蜀汉时期",
+        "time": "辅佐立业时期",
+        "summary": "诸葛亮出山后，黄月英打理家事、稳定后方，智识为辅，助力夫君建功蜀汉。",
+        "image": "黄月英辅夫立业.JPG",
+        "imageCaption": "安居后方稳家事",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "诸葛亮出山辅佐刘备"
+            },
+            {
+              "type": "step",
+              "label": "局势",
+              "text": "蜀汉初创诸事繁杂"
+            },
+            {
+              "type": "step",
+              "label": "擅长",
+              "text": "黄月英沉稳睿智"
+            },
+            {
+              "type": "step",
+              "label": "持家",
+              "text": "擅长持家理事统筹全局"
+            },
+            {
+              "type": "effect",
+              "text": "全权打理家事免除后顾之忧"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "安居幕后担家事"
+            },
+            {
+              "type": "step",
+              "label": "相处",
+              "text": "闲暇与诸葛亮推演谋略"
+            },
+            {
+              "type": "step",
+              "label": "坚守",
+              "text": "严守家风安稳府邸"
+            },
+            {
+              "type": "step",
+              "label": "支撑",
+              "text": "杜绝家事干扰朝政"
+            },
+            {
+              "type": "effect",
+              "text": "成为诸葛亮最可靠后方"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "后方安稳"
+            },
+            {
+              "type": "step",
+              "label": "理政",
+              "text": "诸葛亮得以全心理政"
+            },
+            {
+              "type": "step",
+              "label": "蜕变",
+              "text": "以幕后之身助力蜀汉"
+            },
+            {
+              "type": "step",
+              "label": "立功",
+              "text": "低调立功默默奉献"
+            },
+            {
+              "type": "effect",
+              "text": "成就诸葛亮千古贤相之名"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "无私辅佐"
+            },
+            {
+              "type": "step",
+              "label": "运作",
+              "text": "让蜀汉军政运作更稳"
+            },
+            {
+              "type": "step",
+              "label": "典范",
+              "text": "诠释贤妻典范"
+            },
+            {
+              "type": "step",
+              "label": "标杆",
+              "text": "树立家国兼顾标杆"
+            },
+            {
+              "type": "effect",
+              "text": "其幕后功绩成蜀汉隐性助力"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "蜀汉贤内助、幕后智囊",
+            "desc": "安居后方、持家辅政，以智慧默默助力蜀汉基业建设。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "悉心教子",
+        "year": "蜀汉中后期",
+        "time": "持家教子时期",
+        "summary": "黄月英悉心教导诸葛瞻、诸葛果等子女，传学识、立家风，培育忠良之后。",
+        "image": "黄月英悉心教子.JPG",
+        "imageCaption": "诗书传家育良嗣",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "诸葛亮常年北伐在外"
+            },
+            {
+              "type": "step",
+              "label": "局势",
+              "text": "乱世中家风是家族根本"
+            },
+            {
+              "type": "step",
+              "label": "擅长",
+              "text": "黄月英学识渊博"
+            },
+            {
+              "type": "step",
+              "label": "育人",
+              "text": "深谙育人之道品行端正"
+            },
+            {
+              "type": "effect",
+              "text": "独自承担子女教养重任"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "独居府邸传家学"
+            },
+            {
+              "type": "step",
+              "label": "传授",
+              "text": "传授子女诗书谋略品德"
+            },
+            {
+              "type": "step",
+              "label": "坚守",
+              "text": "言传身教忠君爱国"
+            },
+            {
+              "type": "step",
+              "label": "成才",
+              "text": "教导子女修身立德"
+            },
+            {
+              "type": "effect",
+              "text": "子女品性端正学有所成"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "优良家风传承"
+            },
+            {
+              "type": "step",
+              "label": "延续",
+              "text": "世代保有忠义风骨"
+            },
+            {
+              "type": "step",
+              "label": "母仪",
+              "text": "以母仪育人延续志向"
+            },
+            {
+              "type": "step",
+              "label": "忠臣",
+              "text": "其子诸葛瞻为国尽忠"
+            },
+            {
+              "type": "effect",
+              "text": "成蜀汉忠臣良将"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "培育忠良后代"
+            },
+            {
+              "type": "step",
+              "label": "盛名",
+              "text": "延续诸葛家族忠义盛名"
+            },
+            {
+              "type": "step",
+              "label": "典范",
+              "text": "育人智慧成后世典范"
+            },
+            {
+              "type": "step",
+              "label": "流传",
+              "text": "家风教育流传千古"
+            },
+            {
+              "type": "effect",
+              "text": "让诸葛忠义之名流传千古"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "贤良慈母、家风传承者",
+            "desc": "言传身教教养子女，传承忠义家风，守护诸葛世家风骨。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      },
+      {
+        "name": "名传千古",
+        "year": "后世流传",
+        "time": "后世扬名时期",
+        "summary": "黄月英以才德传世，打破容貌偏见，成为三国极具智慧与美德的传奇女性。",
+        "image": "黄月英名传千古.JPG",
+        "imageCaption": "才德兼备传千古",
+        "flows": {
+          "背景": [
+            {
+              "type": "cause",
+              "text": "古代史书多重男轻女"
+            },
+            {
+              "type": "step",
+              "label": "世人",
+              "text": "世人多知诸葛亮盛名"
+            },
+            {
+              "type": "step",
+              "label": "低调",
+              "text": "鲜知幕后黄月英付出"
+            },
+            {
+              "type": "step",
+              "label": "传承",
+              "text": "才德事迹代代流传"
+            },
+            {
+              "type": "effect",
+              "text": "经史料与民间传说流传"
+            }
+          ],
+          "经过": [
+            {
+              "type": "cause",
+              "text": "藏于幕后修德才"
+            },
+            {
+              "type": "step",
+              "label": "淡泊",
+              "text": "一生淡泊名利"
+            },
+            {
+              "type": "step",
+              "label": "坚守",
+              "text": "以才辅夫以德传家"
+            },
+            {
+              "type": "step",
+              "label": "本心",
+              "text": "摒弃浮华坚守本心"
+            },
+            {
+              "type": "effect",
+              "text": "以绝世才德被后世铭记"
+            }
+          ],
+          "结果": [
+            {
+              "type": "cause",
+              "text": "一生智德兼备"
+            },
+            {
+              "type": "step",
+              "label": "才女",
+              "text": "成三国传奇才女"
+            },
+            {
+              "type": "step",
+              "label": "蜕变",
+              "text": "从幕后贤妻蜕变"
+            },
+            {
+              "type": "step",
+              "label": "典范",
+              "text": "成智慧女性典范"
+            },
+            {
+              "type": "effect",
+              "text": "事迹载入典籍美名千载"
+            }
+          ],
+          "影响": [
+            {
+              "type": "cause",
+              "text": "打破世俗偏见"
+            },
+            {
+              "type": "step",
+              "label": "范本",
+              "text": "成古今才女贤妻良母范本"
+            },
+            {
+              "type": "step",
+              "label": "光彩",
+              "text": "为三国增添女性光彩"
+            },
+            {
+              "type": "step",
+              "label": "启迪",
+              "text": "启迪后世世人"
+            },
+            {
+              "type": "effect",
+              "text": "流芳百世被后世广为称颂"
+            }
+          ]
+        },
+        "people": [
+          {
+            "name": "黄月英",
+            "role": "千古才女、传世贤德典范",
+            "desc": "才德兼备、低调睿智，以一生修为成就千古女性传奇。",
+            "side": "ally",
+            "avatar": "黄月英.JPG"
+          }
+        ]
+      }
+    ],
+    "causeChain": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "家世→熏陶"
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": "学识→匹配"
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": "知己→成婚"
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": "相伴→精进"
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": "智识→助力"
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "贤德→传家→流芳"
+      }
+    ],
+    "whatIf": [
+      {
+        "q": "若无名士家世熏陶？",
+        "real": "黄月英出身荆州名士世家，自幼饱读诗书，积淀深厚才学与格局。",
+        "alt": "若无家学滋养，便无绝世才情，难成卧龙知己贤妻。",
+        "foot": "→ 家学育慧心，才情启一生。"
+      },
+      {
+        "q": "若无绝世才学傍身？",
+        "real": "黄月英貌拙才高，智谋学识冠绝乡里，得名士认可推崇。",
+        "alt": "若无满腹经纶，难引诸葛亮倾心，无缘千古良缘。",
+        "foot": "→ 真才胜浮华，慧质引知音。"
+      },
+      {
+        "q": "若无结缘卧龙孔明？",
+        "real": "黄月英以才结缘诸葛亮，互为知己，相守半生同心共济。",
+        "alt": "若无此番良缘，世间便少一段才德相配的千古佳话。",
+        "foot": "→ 知己结良缘，相守助山河。"
+      },
+      {
+        "q": "若无机关巧思造物？",
+        "real": "黄月英精通机械机关，独创巧器，启迪蜀汉军工发展。",
+        "alt": "若无其巧思启迪，木牛流马或难成型，北伐更添阻碍。",
+        "foot": "→ 巧手藏智慧，巧技助江山。"
+      },
+      {
+        "q": "若无幕后默默辅佐？",
+        "real": "黄月英安居后方，打理家事、智辅夫君，稳固蜀汉根基。",
+        "alt": "若无其安稳后方，诸葛亮难全心理政北伐建功。",
+        "foot": "→ 幕后守家国，贤德助功成。"
+      },
+      {
+        "q": "若无悉心传家育人？",
+        "real": "黄月英悉心教导子女，传承忠义家风，培育诸葛良嗣。",
+        "alt": "若无优良家风传承，诸葛忠义之名难续千年。",
+        "foot": "→ 诗书传家远，忠义继千秋。"
+      },
+      {
+        "q": "若无一生才德坚守？",
+        "real": "黄月英不慕浮华、以才立德，成为三国传奇智慧女性。",
+        "alt": "若无德才兼备的坚守，便无后世千古美名流传。",
+        "foot": "→ 德才留青史，慧韵照千秋。"
+      }
+    ]
+  },
+  "interactions": [],
+  "responsive": [
+    {
+      "breakpoint": "(max-width: 480px), (max-height: 480px)",
+      "changes": [
+        "timeline-node flex: 1 → 0 0 calc((100% - 18px) / 3.5)",
+        "timeline-node .tname font-size: 13px → 12.5px",
+        "modules-grid display: grid → block",
+        "module-title display: flex → none",
+        "module-list-item font-size: 13px → 12px",
+        "module-list-label font-size: 13px → 12px",
+        "modal-person-name font-size: 16px → 15px"
+      ]
+    },
+    {
+      "breakpoint": "(max-width: 320px), (max-height: 365px)",
+      "changes": [
+        "timeline-node .tname font-size: 13px → 11px",
+        "mobile-hero grid-template-columns: 118px 1fr → 92px 1fr",
+        "mobile-event-image .img-captio font-size: 10px → 8px",
+        "mobile-title-card .event-name font-size: 15px → 13px",
+        "summary-time display: none → inline",
+        "mobile-title-card .event-summa font-size: 12.5px → 10.5px",
+        "module-tab font-size: 12px → 10px",
+        "modules-grid display: grid → block",
+        "module-title display: flex → none",
+        "module-list-item font-size: 13px → clamp(11.5px, 3.8vw, 12.5px)",
+        "module-list-label font-size: 13px → clamp(11.5px, 3.8vw, 12.5px)",
+        "mobile-people .mp-label font-size: 11px → 12px",
+        "mobile-people .mp-tag font-size: 11.5px → 11px"
+      ]
+    },
+    {
+      "breakpoint": "(max-width: 480px), (max-height: 480px)",
+      "changes": [
+        "splash-eyebrow font-size: 12px → 10px",
+        "splash-title font-size: 28px → 19px",
+        "splash-sub font-size: 13px → 11px",
+        "splash-question .q-title font-size: 14px → 12px",
+        "splash-opt font-size: 12.5px → 12px",
+        "splash-cta font-size: 14px → 13px",
+        "splash-hint font-size: 11px → 10px"
+      ]
+    },
+    {
+      "breakpoint": "(max-width: 320px), (max-height: 365px)",
+      "changes": [
+        "splash-title font-size: 28px → 16px",
+        "splash-opt font-size: 12.5px → 11.5px",
+        "splash-cta font-size: 14px → 12.5px"
+      ]
+    }
+  ],
+  "a11y": {
+    "hasTablist": false,
+    "hasTabpanel": false,
+    "hasDialog": false,
+    "hasAriaLive": false,
+    "hasAriaPressed": false,
+    "hasAriaLabel": false,
+    "closeOnEscape": true,
+    "closeOnOverlayClick": true
+  },
+  "warnings": [
+    "structure: 识别为 cause-chain 范式，但 tab/视图结构为空（agent 需自行从数据/JS 理解结构）"
+  ]
+}

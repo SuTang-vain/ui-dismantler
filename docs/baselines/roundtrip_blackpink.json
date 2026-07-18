@@ -2,35 +2,42 @@
   "case": "original.html",
   "render_ok": true,
   "render_error": null,
+  "ref_render_ok": true,
+  "ref_render_error": null,
   "structure": {
-    "node_match_rate": 0.931,
-    "class_match_rate": 0.973,
-    "ref_nodes": 144,
+    "node_match_rate": 0.089,
+    "class_match_rate": 0.947,
+    "tag_topology_rate": 0.952,
+    "ref_nodes": 225,
     "got_nodes": 224,
-    "matched_nodes": 134
+    "matched_nodes": 20,
+    "tag_matched": 20,
+    "tag_total": 21,
+    "total_ref_nodes": 225,
+    "total_got_nodes": 225,
+    "coverage": 1.0
   },
   "text": {
-    "text_match_rate": 0.838,
-    "exact_match": 25,
+    "text_match_rate": 0.968,
+    "exact_match": 85,
     "contain_match": 6,
-    "ref_count": 37,
+    "ref_count": 94,
     "got_count": 95,
     "missing": [
       "主唱 · 说唱 · 视觉",
       "主唱 · 领舞",
       "主舞 · 说唱 · 副唱",
-      "入退团时间线",
       "团体作品",
-      "团体作品：中心聚焦轮播",
-      "成员 + 关系主视图",
       "成员 ↔ 团体 关系",
-      "成员详情弹窗 (小屏幕专用)",
-      "经历"
+      "本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。",
+      "经历",
+      "资料为可核实的公开事实;未列出的个人作品或履历留待补充。",
+      "队内定位：主唱 · 视觉"
     ]
   },
   "scores": {
-    "structure": 0.952,
-    "text": 0.838,
-    "overall": 0.895
+    "structure": 0.692,
+    "text": 0.968,
+    "overall": 0.83
   }
 }

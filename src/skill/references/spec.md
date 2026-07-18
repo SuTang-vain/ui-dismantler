@@ -98,3 +98,85 @@
 ```
 
 退出码：全过 0，有失败 1。
+
+## 9. 输出形态（P3 输出泛化）
+
+组件库支持三种输出形态，由 `adapt_output.py` 从 IIFE 源码生成：
+
+### IIFE（默认，agent 直接产出）
+
+```js
+(function(global) {
+  "use strict";
+  function LibName(root, options) { /* 渲染逻辑 */ }
+  global.LibName = { mount: function(c,o){...}, create: function(o){...} };
+})(window);
+```
+- 用法：`<script src="lib.js"></script>` + `LibName.mount(el, opts)`
+- roundtrip 默认验证此形态
+
+### ESM/UMD（适配器生成）
+
+```bash
+python3 adapt_output.py lib.js --esm --out lib.esm.js
+```
+- 构造函数改名为 `_LibCtor` 避免与全局 API 名冲突
+- 用法：`<script src="lib.esm.js"></script>` + `LibName.mount(el, opts)`（兼容 `<script>` 加载）
+- 或构建工具 `import { mount } from 'lib.esm.js'`（UMD 风格）
+
+### Web Component（适配器生成）
+
+```bash
+python3 adapt_output.py lib.js --wc --name sg-lib --out lib.wc.js
+```
+- 声明式用法：`<sg-lib><script type="application/json">{...}</script></sg-lib>`
+- `connectedCallback` 自动解析 JSON 子元素或 `data-options` 属性
+- 用法：`<script src="lib.wc.js"></script>` + `<sg-lib>...</sg-lib>`
+
+### Tailwind config 主题色提取（P1 泛用化）
+
+当原页面用 Tailwind CDN（`:root` 无 CSS 变量）时，`analyze_html.py` 自动：
+1. 跑原页面 JS，桩捕获 `tailwind.config = {...}`
+2. 提取 `theme.extend.colors` 并归一化到 `--sg-*`：
+
+| Tailwind 色名 | 归一化为 | 语义 |
+|---|---|---|
+| `primary` | `--sg-primary` | 主功能色 |
+| `on-primary` | `--sg-on-primary` | 主色上前景 |
+| `secondary` | `--sg-accent` | 强调色 |
+| `surface`/`background` | `--sg-paper` | 卡片/页面底 |
+| `on-surface`/`on-background` | `--sg-ink` | 主文字 |
+| `on-surface-variant` | `--sg-muted` | 次文字 |
+| `outline` | `--sg-line` | 分割线 |
+| `primary-container` | `--sg-soft` | 主色浅底 |
+| `secondary-container` | `--sg-soft-accent` | 强调色浅底 |
+| `error` | `--sg-error` | 错误色 |
+
+### 范式识别（P2 抽取智能）
+
+`analyze_html.py` 输出 `manifest.structure.pattern`：
+
+| pattern | 判定特征 | 数据契约 |
+|---|---|---|
+| `cause-chain` | timeline-nav + causeChain 数据 + whatif | events/causeChain/whatIf |
+| `nav-panel` | nav > [data-p] + .panel | graphNodes/quiz |
+| `quiz` | qz-body/quiz 结构 | quiz |
+| `graph` | svg + gnd/node + NODES 数据 | graphNodes |
+| `member-card` | tablist + 成员网格 | members/timeline/works |
+| `unknown` | 未识别，agent 自行理解 | - |
+
+### roundtrip 评分维度（P0 诚实度量）
+
+```
+struct_score = tag_topology_rate * 0.4    # DOM tag 拓扑（不受 class 命名影响）
+             + class_match_rate * 0.3    # class 语义相似度
+             + node_match_rate * 0.3     # 节点递归匹配率
+overall = struct_score * 0.5 + text_match_rate * 0.5
+```
+
+| 维度 | 含义 | Tailwind 页面注意 |
+|---|---|---|
+| tag_topology_rate | tag 匹配的节点数 / 遍历节点数 | 通常 0.95+，是 Tailwind 页面的主要结构分 |
+| class_match_rate | class 相似度均值（Jaccard + 后缀容错） | Tailwind 工具类 vs sg- 语义类天然低（0.02-0.2），正常 |
+| node_match_rate | tag 匹配的 ref 节点 / ref 节点总数 | 受 class 匹配阈值影响 |
+| coverage | 遍历的 ref 节点 / 全 ref 节点 | 应接近 100% |

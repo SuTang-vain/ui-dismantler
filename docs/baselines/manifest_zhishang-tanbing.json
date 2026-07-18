@@ -1,0 +1,547 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/sutang/01_sutang/02_project/Ui_dismantler/examples/cases/zhishang-tanbing/original.html",
+    "title": "纸上谈兵 · 动态百科",
+    "templateId": null,
+    "vertical": "cases",
+    "caseName": "zhishang-tanbing",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": ".h-main"
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          "nav .n.on",
+          "h3.sec::before",
+          "cmp-btn.k1",
+          "core .c",
+          "ex-item .dot"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#4a6fe0",
+        "original": "--primary-d",
+        "usage": [
+          "nav .n:hover",
+          "core .c.wide",
+          "ex-item b",
+          "scard .body .bd-inner em",
+          "src-card .from"
+        ],
+        "roles": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "name": "soft",
+        "value": "#eef2ff",
+        "original": "--primary-l",
+        "usage": [
+          "nav .n:hover",
+          "cmp-btn:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "paper",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          "#app"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "stage",
+        "value": "#f8f8f8",
+        "original": "--bg-gray",
+        "usage": [
+          "core .c",
+          "ex-item",
+          "ex-foot .gc",
+          "f",
+          "gp-side"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "t1",
+        "value": "#1e1f24",
+        "original": "--t1",
+        "usage": [
+          "nav .n",
+          "h3.sec",
+          "core .c .v",
+          "ex-item",
+          "ex-foot .gc .v"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "t2",
+        "value": "#848691",
+        "original": "--t2",
+        "usage": [
+          "scard .head .ht .h-sub",
+          "src-card .tr",
+          "f",
+          "gp-side .dd",
+          "qz-fb"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "t3",
+        "value": "#b7b9c1",
+        "original": "--t3",
+        "usage": [
+          "core .c .k",
+          "ex-foot .gc .k",
+          "gnd .rel",
+          "pop .nd-img"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "line",
+        "value": "rgba(0,0,0,0.06)",
+        "original": "--line",
+        "usage": [
+          "nav",
+          "scard",
+          "scard .head",
+          "f",
+          "gnd .dot"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "sd-md",
+        "value": "0 4px 16px rgba(0,0,0,0.1)",
+        "original": "--sd-md",
+        "usage": [
+          "#app"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "green",
+        "value": "#34c759",
+        "original": "--green",
+        "usage": [
+          "cmp-btn.k3",
+          "opt.right",
+          "opt.right .key",
+          "opt.right::after"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "orange",
+        "value": "#ff9500",
+        "original": "--orange",
+        "usage": [
+          "cmp-btn.k2"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "red",
+        "value": "#ff3b30",
+        "original": "--red",
+        "usage": [
+          "opt.wrong",
+          "opt.wrong .key",
+          "opt.wrong::after"
+        ],
+        "roles": [
+          "border",
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "r-s",
+        "value": "8px",
+        "original": "--r-s",
+        "usage": [
+          "home-l .cover",
+          "core .c",
+          "ex-item",
+          "src-card",
+          "graph"
+        ],
+        "roles": []
+      },
+      {
+        "name": "r-m",
+        "value": "12px",
+        "original": "--r-m",
+        "usage": [
+          "home-l",
+          "scard",
+          "qz-body",
+          "qz-result",
+          "pop .box"
+        ],
+        "roles": []
+      }
+    ],
+    "gradients": [
+      {
+        "selector": ".home-l",
+        "value": "linear-gradient(160deg,#3d52a0,#6487fa 60%,#8aa6ff)",
+        "normalized": "linear-gradient(160deg,#3d52a0,var(--sg-primary) 60%,#8aa6ff)"
+      },
+      {
+        "selector": ".scard .head",
+        "value": "linear-gradient(160deg,#f5f8ff,#eef2ff)",
+        "normalized": "linear-gradient(160deg,#f5f8ff,var(--sg-soft))"
+      },
+      {
+        "selector": ".scard .body .bd-inner em",
+        "value": "linear-gradient(transparent 60%,rgba(100,135,250,0.22) 60%)",
+        "normalized": "linear-gradient(transparent 60%,rgba(100,135,250,0.22) 60%)"
+      },
+      {
+        "selector": ".src-card",
+        "value": "linear-gradient(135deg,#f5f8ff,#eef2ff)",
+        "normalized": "linear-gradient(135deg,#f5f8ff,var(--sg-soft))"
+      },
+      {
+        "selector": ".graph",
+        "value": "radial-gradient(circle at 50% 45%,#f4f7ff,#fff 70%)",
+        "normalized": "radial-gradient(circle at 50% 45%,#f4f7ff,#fff 70%)"
+      },
+      {
+        "selector": ".qz-top .bar i",
+        "value": "linear-gradient(90deg,#6487fa,#8aa6ff)",
+        "normalized": "linear-gradient(90deg,var(--sg-primary),#8aa6ff)"
+      },
+      {
+        "selector": ".qz-body",
+        "value": "linear-gradient(160deg,#f5f8ff,#fbfcff 60%,#fff)",
+        "normalized": "linear-gradient(160deg,#f5f8ff,#fbfcff 60%,#fff)"
+      },
+      {
+        "selector": ".opt .key",
+        "value": "linear-gradient(135deg,#eef2ff,#e3e9ff)",
+        "normalized": "linear-gradient(135deg,var(--sg-soft),#e3e9ff)"
+      },
+      {
+        "selector": ".opt.right",
+        "value": "linear-gradient(135deg,#eaf7ee,#f3fbf5)",
+        "normalized": "linear-gradient(135deg,#eaf7ee,#f3fbf5)"
+      },
+      {
+        "selector": ".opt.wrong",
+        "value": "linear-gradient(135deg,#fdecec,#fff5f5)",
+        "normalized": "linear-gradient(135deg,#fdecec,#fff5f5)"
+      },
+      {
+        "selector": ".qz-result",
+        "value": "linear-gradient(160deg,#6487fa,#8aa6ff)",
+        "normalized": "linear-gradient(160deg,var(--sg-primary),#8aa6ff)"
+      },
+      {
+        "selector": ".pop .nd-img",
+        "value": "linear-gradient(45deg,#eef1f8,#eef1f8 9px,#e5eaf6 9px,#e5eaf6 18px)",
+        "normalized": "linear-gradient(45deg,#eef1f8,#eef1f8 9px,#e5eaf6 9px,#e5eaf6 1var(--sg-r-s))"
+      }
+    ]
+  },
+  "structure": {
+    "pattern": "nav-panel",
+    "tabs": [
+      {
+        "id": "home",
+        "label": "基本释义",
+        "count": null,
+        "more": null,
+        "ariaControls": "home"
+      },
+      {
+        "id": "story",
+        "label": "典故出处",
+        "count": null,
+        "more": null,
+        "ariaControls": "story"
+      },
+      {
+        "id": "graph-p",
+        "label": "关联词",
+        "count": null,
+        "more": null,
+        "ariaControls": "graph-p"
+      },
+      {
+        "id": "quiz",
+        "label": "测一测",
+        "count": null,
+        "more": null,
+        "ariaControls": "quiz"
+      }
+    ],
+    "views": [
+      {
+        "id": "home",
+        "tabId": "home",
+        "active": false,
+        "type": "info-grid"
+      },
+      {
+        "id": "story",
+        "tabId": "story",
+        "active": false,
+        "type": "story-card"
+      },
+      {
+        "id": "graph-p",
+        "tabId": "graph-p",
+        "active": true,
+        "type": "graph"
+      },
+      {
+        "id": "quiz",
+        "tabId": "quiz",
+        "active": false,
+        "type": "quiz"
+      }
+    ],
+    "modals": [],
+    "storyPanels": []
+  },
+  "data": {
+    "graphNodes": [
+      {
+        "w": "坐而论道",
+        "rel": "近义词",
+        "x": 18,
+        "y": 25,
+        "desc": "空讲道理，不肯亲身实践落实。"
+      },
+      {
+        "w": "夸夸其谈",
+        "rel": "近义词",
+        "x": 82,
+        "y": 25,
+        "desc": "言语浮夸空洞，缺少实际行动支撑。"
+      },
+      {
+        "w": "华而不实",
+        "rel": "衍生词义",
+        "x": 10,
+        "y": 50,
+        "desc": "外表光鲜，内里无实用才干。"
+      },
+      {
+        "w": "空谈理论",
+        "rel": "同类成语",
+        "x": 90,
+        "y": 50,
+        "desc": "只钻研书本，不结合现实情况。"
+      },
+      {
+        "w": "闭门造车",
+        "rel": "同类意象",
+        "x": 15,
+        "y": 78,
+        "desc": "脱离客观实际，仅凭主观臆断行事。"
+      },
+      {
+        "w": "史记",
+        "rel": "典籍关联",
+        "x": 85,
+        "y": 78,
+        "desc": "西汉史书，为本成语原始出处。",
+        "img": 1
+      },
+      {
+        "w": "赵括",
+        "rel": "人物关联",
+        "x": 50,
+        "y": 12,
+        "desc": "典故核心人物，空谈兵法致大败。",
+        "img": 1
+      },
+      {
+        "w": "脚踏实地",
+        "rel": "反义词",
+        "x": 35,
+        "y": 92,
+        "desc": "做事稳扎稳打，重视实践落地。"
+      },
+      {
+        "w": "知行合一",
+        "rel": "反义词",
+        "x": 65,
+        "y": 92,
+        "desc": "理论结合实践，做到言行统一。"
+      }
+    ],
+    "quiz": [
+      {
+        "t": "纸上谈兵典故主角是谁？",
+        "o": [
+          "廉颇",
+          "赵括",
+          "白起",
+          "蔺相如"
+        ],
+        "a": 1,
+        "fb": "成语典故源自赵国将领赵括的故事。"
+      },
+      {
+        "t": "该成语核心寓意是？",
+        "o": [
+          "擅长谋略",
+          "空谈无实",
+          "骁勇善战",
+          "虚心求教"
+        ],
+        "a": 1,
+        "fb": "专门批评只懂理论、不会实操之人。"
+      },
+      {
+        "t": "成语出自哪部史书？",
+        "o": [
+          "论语",
+          "汉书",
+          "史记",
+          "左传"
+        ],
+        "a": 2,
+        "fb": "记载于《史记·廉颇蔺相如列传》。"
+      },
+      {
+        "t": "以下属于其反义词的是？",
+        "o": [
+          "夸夸其谈",
+          "知行合一",
+          "坐而论道",
+          "华而不实"
+        ],
+        "a": 1,
+        "fb": "知行合一主张理论实践相结合。"
+      },
+      {
+        "t": "纸上谈兵感情色彩为？",
+        "o": [
+          "褒义",
+          "中性",
+          "贬义",
+          "赞美"
+        ],
+        "a": 2,
+        "fb": "属于贬词，用来讥讽脱离实际者。"
+      }
+    ]
+  },
+  "interactions": [],
+  "responsive": [
+    {
+      "breakpoint": "(max-width:520px)",
+      "changes": [
+        "nav .n font-size: 13.5px → 12.5px",
+        "m-subtab display: none → flex",
+        "home-l .big font-size: 40px → 28px",
+        "home-l .one font-size: 13px → 12px",
+        "home-r flex: 1 → none",
+        "core .c .k font-size: 11.5px → 10.5px",
+        "core .c .v font-size: 14px → 12px",
+        "core .c.wide .v font-size: 13px → 11.5px",
+        "ex-item font-size: 12.5px → 12px",
+        "ex-foot .gc .v font-size: 12.5px → 11.5px",
+        "scard display: flex → block",
+        "scard .head display: flex → block",
+        "scard .head .badge display: flex → none",
+        "scard .head .ht .h-main font-size: 14px → 13.5px",
+        "scard .body display: flex → block"
+      ]
+    },
+    {
+      "breakpoint": "(min-width:396px) and (max-width:520px)",
+      "changes": [
+        "nav .n font-size: 13.5px → 13px",
+        "home-l .big font-size: 40px → 30px",
+        "home-l .one font-size: 13px → 12.5px",
+        "core .c .v font-size: 14px → 12.5px",
+        "scard .body .bd-inner font-size: 12.5px → 13px",
+        "qz-body .qt font-size: 15.5px → 14.5px",
+        "opt font-size: 13px → 12.5px",
+        "#cmp .col .h font-size: 13.5px → 14px",
+        "#cmp .col .li font-size: 11.5px → 12px",
+        "cmp-btn font-size: 12.5px → 13px"
+      ]
+    },
+    {
+      "breakpoint": "(max-width:330px)",
+      "changes": [
+        "nav .n font-size: 13.5px → 11px",
+        "m-subtab .ms font-size: 12px → 11px",
+        "home-l .big font-size: 40px → 22px",
+        "home-l .tag font-size: 11.5px → 10.5px",
+        "home-l .one font-size: 13px → 11.5px",
+        "h3.sec font-size: 13px → 12px",
+        "core .c .k font-size: 11.5px → 10px",
+        "core .c .v font-size: 14px → 11px",
+        "core .c.wide .v font-size: 13px → 11px",
+        "ex-item font-size: 12.5px → 11px",
+        "ex-foot .gc .k font-size: 11px → 10px",
+        "ex-foot .gc .v font-size: 12.5px → 11px",
+        "scard .head .ht .h-main font-size: 14px → 12.5px",
+        "scard .head .ht .h-sub font-size: 11px → 10.5px",
+        "scard .body .bd-inner font-size: 12.5px → 11.5px"
+      ]
+    }
+  ],
+  "a11y": {
+    "hasTablist": false,
+    "hasTabpanel": false,
+    "hasDialog": false,
+    "hasAriaLive": false,
+    "hasAriaPressed": false,
+    "hasAriaLabel": false,
+    "closeOnEscape": false,
+    "closeOnOverlayClick": true
+  },
+  "warnings": []
+}

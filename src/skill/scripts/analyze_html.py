@@ -85,14 +85,15 @@ class HtmlAnalyzer:
         meta = self._analyze_meta()
         theme = self._analyze_theme()
         if self.minimal:
-            # 最小模式：仅 meta + theme + 简化 structure
+            # 最小模式：仅 meta + theme + 简化 structure（含范式识别）
             tabs = self._analyze_tabs()
             views = self._analyze_views(minimal=True)
+            pattern = self._detect_pattern()
             return {
                 "schemaVersion": "1.0",
                 "meta": meta,
                 "theme": theme,
-                "structure": {"tabs": tabs, "views": views, "modals": [], "storyPanels": []},
+                "structure": {"pattern": pattern, "tabs": tabs, "views": views, "modals": [], "storyPanels": []},
                 "data": {},
                 "interactions": [],
                 "responsive": [],
@@ -207,6 +208,76 @@ class HtmlAnalyzer:
     # ============================================================
     # theme
     # ============================================================
+    def _extract_tailwind_colors(self) -> list[dict]:
+        """P2+ 通用化：从 Tailwind config 提取主题色（当 :root 变量为空时）。
+
+        页面用 Tailwind CDN 时，颜色定义在 tailwind.config.theme.extend.colors 里，
+        不在 :root CSS 变量里。需用 jsdom 渲染捕获 window.__twConfig。
+        返回与 _analyze_theme tokens 相同结构的列表。
+        """
+        import subprocess, json as _json
+        RENDERER = Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "_roundtrip_render.mjs"
+        if not RENDERER.exists():
+            return []
+        try:
+            proc = subprocess.run(
+                ["node", str(RENDERER), str(self.html_path), "--ref", "--tw-only"],
+                capture_output=True, timeout=30, encoding="utf-8", errors="replace",
+            )
+        except Exception:
+            return []
+        if proc.returncode != 0:
+            return []
+        try:
+            raw = proc.stdout
+            idx = raw.find("{")
+            if idx < 0:
+                return []
+            d = _json.loads(raw[idx:])
+        except _json.JSONDecodeError:
+            return []
+        if not d.get("ok"):
+            return []
+        tw_cfg = d.get("tailwindConfig") or {}
+        colors = tw_cfg.get("theme", {}).get("extend", {}).get("colors") or tw_cfg.get("theme", {}).get("colors") or {}
+        if not colors:
+            return []
+        tokens = []
+        seen_norm = {}
+        for orig_name, value in colors.items():
+            if not isinstance(value, str) or not value.startswith("#"):
+                continue
+            norm = normalize_var_name(orig_name)
+            if norm in seen_norm:
+                continue
+            seen_norm[norm] = orig_name
+            tokens.append({
+                "name": norm,
+                "value": value.strip(),
+                "original": f"tw:{orig_name}",
+                "usage": [],
+                "roles": self._infer_tailwind_roles(orig_name),
+            })
+        return tokens
+
+    def _infer_tailwind_roles(self, tw_name: str) -> list[str]:
+        """根据 Tailwind 色名推断语义角色（无 CSS 可扫时用名字推断）。"""
+        name = tw_name.lower()
+        roles = []
+        if name.startswith("on-"):
+            roles.append("text")
+        elif "container" in name or "surface" in name or "background" in name:
+            roles.append("background")
+        elif "outline" in name or "border" in name:
+            roles.append("border")
+        elif "error" in name:
+            roles.append("error")
+        else:
+            roles.append("background")
+        if "fixed" in name or "dim" in name:
+            roles.append("variant")
+        return roles
+
     def _analyze_theme(self) -> dict:
         tokens: list[dict] = []
         seen_norm: dict[str, str] = {}  # norm_name -> original
@@ -238,6 +309,12 @@ class HtmlAnalyzer:
                             "value": g["value"],
                             "normalized": self._normalize_gradient(g["value"]),
                         })
+        # P2+ 通用化：:root 变量为空时从 Tailwind config 提取
+        if not tokens:
+            tw_tokens = self._extract_tailwind_colors()
+            if tw_tokens:
+                tokens = tw_tokens
+                self.warnings.append(f"theme: :root 无变量，从 Tailwind config 提取 {len(tw_tokens)} 个主题色")
         return {"tokens": tokens, "gradients": gradients}
 
     def _infer_var_usage(self, var_name: str) -> list[str]:
@@ -278,24 +355,61 @@ class HtmlAnalyzer:
         views = self._analyze_views()
         modals = self._analyze_modals()
         story_panels = self._analyze_story_panels()
-        # 诊断：tabs/views 都空但页面有实质内容 → 可能是未支持的结构范式
+        pattern = self._detect_pattern()
+        # 诊断：tabs/views 都空但页面有实质内容 -> 可能是未支持的结构范式
         if not tabs and not views:
             body = self.soup.find("body")
-            # 用子元素数量 + 文本长度双重判断（地图导览类文本极少但子元素多）
             child_count = len(body.find_all(recursive=True)) if body else 0
             content_len = len(body.get_text(strip=True)) if body else 0
             if child_count > 15 or content_len > 50:
-                self.warnings.append(
-                    "structure: 未识别出 tab/视图结构，可能为未支持的范式"
-                    "（如因果链/地图导览/全屏交互），将走 generic 兜底"
-                )
+                if pattern == "unknown":
+                    self.warnings.append(
+                        "structure: 未识别出 tab/视图结构，可能为未支持的范式"
+                        "（如因果链/地图导览/全屏交互），将走 generic 兜底"
+                    )
+                else:
+                    self.warnings.append(
+                        f"structure: 识别为 {pattern} 范式，但 tab/视图结构为空"
+                        f"（agent 需自行从数据/JS 理解结构）"
+                    )
         return {
+            "pattern": pattern,
             "tabs": tabs,
             "views": views,
             "modals": modals,
             "storyPanels": story_panels,
         }
 
+    def _detect_pattern(self) -> str:
+        """P2: 检测页面范式（基于结构特征，非类名精确匹配）。
+
+        已识别范式：
+        - cause-chain（因果链）：timeline-nav + 因果链数据 + whatif
+        - nav-panel（导航+面板）：nav > [data-p] + .panel
+        - quiz（测验）：qz-body/quiz + opts/quiz 结构
+        - graph（关联图谱）：svg 连线 + 节点定位
+        - member-card（成员卡，v1 范式）：tablist + 成员网格
+        """
+        has_timeline_nav = bool(self.soup.find(class_=re.compile(r"timeline-?nav", re.I)))
+        has_cause_chain = "causeChain" in "\n".join(self.scripts) or bool(self.soup.find(class_=re.compile(r"cause-?chain", re.I)))
+        has_whatif = bool(self.soup.find(class_=re.compile(r"whatif", re.I))) or "whatIf" in "\n".join(self.scripts)
+        if has_timeline_nav and (has_cause_chain or has_whatif):
+            return "cause-chain"
+        nav = self.soup.find(class_=re.compile(r"^nav$", re.I)) or self.soup.find("nav")
+        if nav:
+            triggers = nav.find_all(attrs={"data-p": True}) or nav.find_all(attrs={"data-tab": True})
+            panels = self.soup.find_all(class_=re.compile(r"panel", re.I))
+            if triggers and len(triggers) >= 2 and len(panels) >= 2:
+                return "nav-panel"
+        if bool(self.soup.find(class_=re.compile(r"qz-?(body|next|fb|top|result)", re.I))) or "QS" in "\n".join(self.scripts):
+            return "quiz"
+        svg = self.soup.find("svg")
+        if svg and bool(self.soup.find(class_=re.compile(r"gnd|node|graph", re.I))) and "NODES" in "\n".join(self.scripts):
+            return "graph"
+        tablist = self.soup.find(attrs={"role": "tablist"})
+        if tablist and bool(self.soup.find(class_=re.compile(r"member", re.I))):
+            return "member-card"
+        return "unknown"
     def _analyze_tabs(self) -> list[dict]:
         # 方式1: role=tablist
         tablist = self.soup.find(attrs={"role": "tablist"})
@@ -424,6 +538,22 @@ class HtmlAnalyzer:
             return "detail-panel"
         if node.get("aria-live") == "polite":
             return "detail-panel"
+        # P2 新增视图类型
+        # 测验面板
+        if re.search(r"qz-?(body|next|fb|top|result)|\bquiz\b", html_str, re.I):
+            return "quiz"
+        # 图谱面板
+        if node.find("svg") and re.search(r"\b(gnd|graph|node-?list)\b", html_str, re.I):
+            return "graph"
+        # 典故/故事卡片
+        if re.search(r"scard|src-?card|story-?(l|r)", html_str, re.I):
+            return "story-card"
+        # 核心信息网格
+        if re.search(r"\b(core|ex-?item|ex-?foot)\b", html_str, re.I):
+            return "info-grid"
+        # 手风琴
+        if re.search(r"info-?module|module-?(list|title|tabs)", html_str, re.I):
+            return "accordion"
         # 未识别
         self.warnings.append(f"view {node.get('id','?')}: unknown type, fallback to generic")
         return "generic"
@@ -682,6 +812,24 @@ class HtmlAnalyzer:
         facts = self._extract_facts_from_modal()
         if facts:
             data["moreFacts"] = facts
+        # P2: 因果链数据契约（events/causeChain/whatIf）
+        if "events" not in data:
+            ev = self._extract_js_array("events", "events")
+            if ev:
+                data["events"] = ev
+        cc = self._extract_js_array("causeChain", "causeChain")
+        if cc:
+            data["causeChain"] = cc
+        wi = self._extract_js_array("whatIf", "whatIf")
+        if wi:
+            data["whatIf"] = wi
+        # P2: nav-panel 数据契约（NODES/QS）
+        nodes = self._extract_js_array("NODES", "nodes")
+        if nodes:
+            data["graphNodes"] = nodes
+        qs = self._extract_js_array("QS", "qs")
+        if qs:
+            data["quiz"] = qs
         return data
 
     def _extract_js_array(self, var_name: str, kind: str) -> list | None:

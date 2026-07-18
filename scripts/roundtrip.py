@@ -153,16 +153,54 @@ def render_generated_dom(lib_dir: Path) -> dict:
     try:
         proc = subprocess.run(
             ["node", str(RENDERER), str(example)],
-            capture_output=True, text=True, timeout=30, cwd=str(HERE),
+            capture_output=True, timeout=30, cwd=str(HERE),
+            encoding="utf-8", errors="replace",
         )
     except subprocess.TimeoutExpired:
         return {"ok": False, "error": "jsdom 渲染超时（30s）"}
     if proc.returncode != 0:
+        return {"ok": False, "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}", "stderr": proc.stderr[:400]}
+    try:
+        d = json.loads(proc.stdout)
+        # 大输出走临时文件
+        if d.get("__outputFile"):
+            import shutil
+            with open(d["__outputFile"], "r", encoding="utf-8") as f:
+                return json.loads(f.read())
+        return d
+    except json.JSONDecodeError as e:
+        # 渲染器崩溃未输出 JSON，给 stderr 作诊断
+        return {"ok": False, "error": f"渲染器输出非 JSON: {e}", "stderr": proc.stderr[:400], "raw": proc.stdout[:200]}
+
+
+
+# ============================================================
+# 参照 DOM（渲染版）：用 jsdom 执行原 HTML 的 JS，拿 post-render DOM
+# ============================================================
+def render_reference_dom(html_path: Path) -> dict:
+    """用 jsdom 执行原 HTML 的内联 JS，返回渲染后的 body 子树 + 可见文本集合。
+
+    与 render_generated_dom 对称：参照侧也跑 JS，这样两边都是 post-render DOM，
+    避免"参照是静态稀疏 DOM、生成库是渲染后富 DOM"的结构性失真。
+    """
+    try:
+        proc = subprocess.run(
+            ["node", str(RENDERER), str(html_path), "--ref"],
+            capture_output=True, timeout=30, cwd=str(HERE),
+            encoding="utf-8", errors="replace",
+        )
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": "原 HTML jsdom 渲染超时（30s）"}
+    if proc.returncode != 0:
         return {"ok": False, "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}"}
     try:
-        return json.loads(proc.stdout)
+        d = json.loads(proc.stdout)
+        if d.get("__outputFile"):
+            with open(d["__outputFile"], "r", encoding="utf-8") as f:
+                return json.loads(f.read())
+        return d
     except json.JSONDecodeError as e:
-        return {"ok": False, "error": f"渲染器输出非 JSON: {e}", "raw": proc.stdout[:200]}
+        return {"ok": False, "error": f"参照渲染器输出非 JSON: {e}", "raw": proc.stdout[:200]}
 
 
 # ============================================================
@@ -183,7 +221,7 @@ def compare_structure(ref: dict, got: dict) -> dict:
     if not got_tree:
         return {"node_match_rate": 0.0, "class_match_rate": 0.0, "error": "渲染后 DOM 为空"}
 
-    stats = {"ref_nodes": 0, "got_nodes": 0, "matched": 0, "ref_classes": 0, "cls_matched": 0}
+    stats = {"ref_nodes": 0, "got_nodes": 0, "matched": 0, "ref_classes": 0, "cls_matched": 0, "tag_matched": 0, "tag_total": 0}
 
     def norm_classes(cls_list):
         """归一化 class：去 sg- 前缀，用于语义匹配。"""
@@ -218,26 +256,21 @@ def compare_structure(ref: dict, got: dict) -> dict:
                 and not node.get("text"))
 
     def unwrap(node):
-        """跳过容器层，返回首个有意义的子节点（用于顶层对齐）。
+        """只下钻单子节点的纯容器层（桥接 body > main.pc-card-frame 这类包裹）。
 
-        无 class 的 div/span/body 是纯包裹层。若它只有一个子，下钻到子；
-        若有多个子，取第一个带 class 的子（语义入口）。
-        这样 body > main.pc-card-frame 与 div > main.sg-frame 能在 main 层对齐。
+        重要：多子节点的容器不再"取首个有 class 子"--那会丢弃兄弟子树，
+        导致覆盖率仅 3.6%-47.4%（只比了首个 classed 子树）。多子时停在容器本身，
+        让 walk 对全部子节点做贪心匹配，保证全 DOM 覆盖。
         """
         while is_container(node):
-            ch = node.get("children", [])
+            ch = node.get("children", []) or []
             if not ch:
                 break
-            if len(ch) == 1:
-                node = ch[0]
+            non_text = [c for c in ch if c.get("tag") != "#text"]
+            if len(non_text) == 1:
+                node = non_text[0]
                 continue
-            # 多子：找第一个带 class 的子节点（跳过 #text 等噪音）
-            picked = None
-            for c in ch:
-                if c.get("tag") != "#text" and c.get("classes"):
-                    picked = c
-                    break
-            node = picked if picked else ch[0]
+            break
         return node
 
     def class_similarity(rc, gc):
@@ -297,36 +330,59 @@ def compare_structure(ref: dict, got: dict) -> dict:
             return
         if r.get("tag") == g.get("tag"):
             stats["matched"] += 1
+            stats["tag_matched"] += 1
+        stats["tag_total"] += 1
         rc = norm_classes(r.get("classes", []))
         gc = norm_classes(g.get("classes", []))
         if rc or gc:
             stats["ref_classes"] += 1
             stats["cls_matched"] += class_similarity(rc, gc)
-        # 递归：对子节点做贪心匹配
+        # 递归：对子节点做贪心匹配（纯 class 策略，不干扰）
         rch = r.get("children", []) or []
         gch = g.get("children", []) or []
         used = set()
         for ri in rch:
             bi, bs = find_best_match(ri, gch, used)
-            if bi >= 0 and bs > 0.2:  # 相似度阈值 0.2 才算匹配（容许类名重命名）
+            if bi >= 0 and bs > 0.2:
                 used.add(bi)
                 walk(ri, gch[bi])
             else:
-                stats["ref_nodes"] += _count(ri)
+                # tag 兜底递归：class 不达标但 tag 相同时，仍递归统计 tag 拓扑
+                # 注意：不重复加 _count(ri)（walk 内部会统计 ref_nodes）
+                r_tag = ri.get("tag", "")
+                matched_by_tag = False
+                for j, g2 in enumerate(gch):
+                    if j not in used and g2.get("tag", "") == r_tag:
+                        used.add(j)
+                        walk(ri, g2)
+                        matched_by_tag = True
+                        break
+                if not matched_by_tag:
+                    stats["ref_nodes"] += _count(ri)
         # 未匹配的 got 子节点计入 got_nodes
         for j, g in enumerate(gch):
             if j not in used:
                 stats["got_nodes"] += _count(g)
 
+    total_ref = _count(ref_tree)
+    total_got = _count(got_tree) if got_tree else 0
     walk(unwrap(ref_tree), unwrap(got_tree))
     node_rate = stats["matched"] / stats["ref_nodes"] if stats["ref_nodes"] else 0.0
     cls_rate = stats["cls_matched"] / stats["ref_classes"] if stats["ref_classes"] else 1.0
+    coverage = stats["ref_nodes"] / total_ref if total_ref else 1.0
+    tag_rate = stats["tag_matched"] / stats["tag_total"] if stats["tag_total"] else 0.0
     return {
         "node_match_rate": round(node_rate, 3),
         "class_match_rate": round(cls_rate, 3),
+        "tag_topology_rate": round(tag_rate, 3),
         "ref_nodes": stats["ref_nodes"],
         "got_nodes": stats["got_nodes"],
         "matched_nodes": stats["matched"],
+        "tag_matched": stats["tag_matched"],
+        "tag_total": stats["tag_total"],
+        "total_ref_nodes": total_ref,
+        "total_got_nodes": total_got,
+        "coverage": round(coverage, 3),
     }
 
 
@@ -416,8 +472,11 @@ def main():
     try:
         # 1. 参照 DOM
         print(f"[1/3] 解析原 HTML → 参照 DOM ...", file=sys.stderr)
-        ref = extract_reference_dom(html_path)
-        print(f"      参照节点数 {ref['text_count']} 文本", file=sys.stderr)
+        ref = render_reference_dom(html_path)
+        if not ref.get("ok"):
+            print(f"      参照渲染失败: {ref.get('error')}", file=sys.stderr)
+        else:
+            print(f"      参照节点数 {ref.get('textCount', '?')} 文本", file=sys.stderr)
 
         # 2. 生成库（或用已有）
         if args.lib:
@@ -441,11 +500,18 @@ def main():
         texts = compare_texts(ref, got)
 
         # 综合评分
-        struct_score = (struct.get("node_match_rate", 0) + struct.get("class_match_rate", 0)) / 2
+        # 结构分 = tag 匹配率(40%) + class 匹配率(30%) + node 匹配率(30%)
+        # tag 拓扑权重最高：它不受 class 命名范式影响（Tailwind vs 语义类）
+        tag_rate = struct.get("tag_topology_rate", 0)
+        cls_rate = struct.get("class_match_rate", 0)
+        node_rate = struct.get("node_match_rate", 0)
+        struct_score = tag_rate * 0.4 + cls_rate * 0.3 + node_rate * 0.3
         report = {
             "case": html_path.name,
             "render_ok": got.get("ok", False),
             "render_error": got.get("error"),
+            "ref_render_ok": ref.get("ok", False),
+            "ref_render_error": ref.get("error"),
             "structure": struct,
             "text": texts,
             "scores": {
