@@ -142,65 +142,56 @@ def generate_showcase(lib_dir: Path) -> str:
     if color_rows:
         sections.append(f'<section class="ds-section"><h2 class="ds-section-title">色卡系统 Color Tokens</h2><div class="ds-color-board">{color_rows}</div></section>')
 
-    # --- 字体 ---
+    # --- 令牌速览（排版+圆角+阴影+渐变合并）---
+    token_parts = []
     font_vars = groups.get("字体 Font", [])
     if font_vars:
-        font_html = ""
+        font_html = '<div class="ds-tokens-row"><span class="ds-tokens-label">字体</span><div class="ds-tokens-chips">'
         for name, value in font_vars:
-            font_html += f'<div class="ds-font-card"><div class="ds-font-preview" style="font-family:{value}">{name}<br/>中文 ABCabc 123</div><div class="ds-var-name">{name}</div><div class="ds-var-value">{value}</div></div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">排版系统 Typography</h2><div class="ds-font-grid">{font_html}</div></section>')
-
-    # --- 圆角 ---
+            short = name.replace("--sg-", "")
+            font_html += f'<span class="ds-font-chip" style="font-family:{value}">{short}</span>'
+        font_html += '</div></div>'
+        token_parts.append(font_html)
     radius_vars = groups.get("圆角 Radius", [])
     if radius_vars:
-        radius_html = ""
+        radius_html = '<div class="ds-tokens-row"><span class="ds-tokens-label">圆角</span><div class="ds-tokens-chips">'
         for name, value in radius_vars:
-            radius_html += f'<div class="ds-radius-card"><div class="ds-radius-preview" style="border-radius:{value}"></div><div class="ds-var-name">{name}</div><div class="ds-var-value">{value}</div></div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">圆角 Radius</h2><div class="ds-radius-grid">{radius_html}</div></section>')
-
-    # --- 阴影 ---
+            short = name.replace("--sg-", "")
+            radius_html += f'<span class="ds-token-chip"><span class="ds-radius-box" style="border-radius:{value}"></span>{short}</span>'
+        radius_html += '</div></div>'
+        token_parts.append(radius_html)
     shadow_vars = groups.get("阴影 Shadow", [])
     if shadow_vars:
-        shadow_html = ""
+        shadow_html = '<div class="ds-tokens-row"><span class="ds-tokens-label">阴影</span><div class="ds-tokens-chips">'
         for name, value in shadow_vars:
-            shadow_html += f'<div class="ds-shadow-card"><div class="ds-shadow-preview" style="box-shadow:{value}"></div><div class="ds-var-name">{name}</div><div class="ds-var-value">{value}</div></div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">阴影 Shadow</h2><div class="ds-shadow-grid">{shadow_html}</div></section>')
-
-    # --- 渐变 ---
+            short = name.replace("--sg-", "")
+            shadow_html += f'<span class="ds-token-chip"><span class="ds-shadow-box" style="box-shadow:{value}"></span>{short}</span>'
+        shadow_html += '</div></div>'
+        token_parts.append(shadow_html)
     if gradients:
-        grad_html = ""
-        for g in gradients[:10]:
-            grad_html += f'<div class="ds-gradient-card"><div class="ds-gradient-preview" style="background:{g["value"]}"></div><div class="ds-var-value">{g["value"][:60]}</div></div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">渐变 Gradients</h2><div class="ds-gradient-grid">{grad_html}</div></section>')
+        grad_html = '<div class="ds-tokens-row"><span class="ds-tokens-label">渐变</span><div class="ds-tokens-chips">'
+        for g in gradients[:8]:
+            grad_html += f'<span class="ds-grad-chip" style="background:{g["value"]}"></span>'
+        grad_html += '</div></div>'
+        token_parts.append(grad_html)
+    if token_parts:
+        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">令牌速览 Tokens</h2>{" ".join(token_parts)}</section>')
 
-    # --- 组件类清单 ---
-    if component_classes:
-        comp_html = '<div class="ds-comp-list">' + "".join(
-            f'<span class="ds-comp-tag">{cls}</span>' for cls in component_classes
-        ) + '</div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">组件类清单 Components ({len(component_classes)} 个)</h2>{comp_html}<p class="ds-hint">下方交互态预览展示各组件的默认/hover/active 效果</p></section>')
-
-    # --- 交互态组件预览 ---
+    # --- 组件与交互态（清单+预览合并）---
     interactive_comps = extract_interactive_components(css_text, component_classes)
     if interactive_comps:
-        interact_html = '<div class="ds-interact-controls"><button class="ds-toggle-btn" onclick="dsToggleAllStates()">切换全部交互态</button><span class="ds-hint">鼠标悬停看 hover，点击按钮锁定交互态</span></div>'
-        interact_html += '<div class="ds-interact-grid">'
+        comp_tags = '<div class="ds-comp-list">' + "".join(f'<span class="ds-comp-tag">{c}</span>' for c in component_classes) + '</div>'
+        interact_html = '<div class="ds-interact-controls"><button class="ds-toggle-btn" onclick="dsToggleAllStates()">切换交互态</button></div>'
+        interact_html += '<div class="ds-interact-list">'
         for comp in interactive_comps:
             cls = comp["cls"]
             states = comp["states"]
-            # 默认态
-            default_preview = build_component_preview(cls, "default")
-            # 各交互态
-            state_previews = ""
+            previews = f'<div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini">{build_component_preview(cls, "default")}</div></div>'
             for st in states:
-                state_previews += build_component_preview(cls, st)
-            interact_html += f'''<div class="ds-interact-card">
-              <div class="ds-interact-header"><span class="ds-interact-name">{cls}</span><span class="ds-interact-states">{", ".join(states)}</span></div>
-              <div class="ds-interact-row"><div class="ds-interact-label">默认</div><div class="ds-interact-stage">{default_preview}</div></div>
-              {"".join(f'<div class="ds-interact-row"><div class="ds-interact-label">{st}</div><div class="ds-interact-stage">{build_component_preview(cls, st)}</div></div>' for st in states)}
-            </div>'''
+                previews += f'<div class="ds-interact-cell"><span class="ds-interact-mini-label">{st}</span><div class="ds-interact-mini">{build_component_preview(cls, st)}</div></div>'
+            interact_html += f'<div class="ds-interact-item"><span class="ds-interact-name">{cls}</span><div class="ds-interact-cells">{previews}</div></div>'
         interact_html += '</div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">交互态预览 Interactive States ({len(interactive_comps)} 个组件)</h2>{interact_html}</section>')
+        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">组件与交互态 Components ({len(interactive_comps)}/{len(component_classes)})</h2>{comp_tags}{interact_html}</section>')
 
     # --- 响应式断点 ---
     if breakpoints:
@@ -265,52 +256,52 @@ function dsToggleAllStates() {
 <style>
 /* === 展示页自身样式（不依赖组件库） === */
 * {{ margin:0; padding:0; box-sizing:border-box; }}
-body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background:#f5f5f7; color:#1d1d1f; line-height:1.6; padding:40px 20px; }}
-.ds-header {{ max-width:1200px; margin:0 auto 48px; }}
-.ds-header h1 {{ font-size:2rem; font-weight:800; margin-bottom:8px; }}
-.ds-header p {{ color:#6e6e73; font-size:1.1rem; }}
-.ds-meta {{ display:flex; gap:16px; margin-top:12px; font-size:0.85rem; color:#86868b; }}
-.ds-meta span {{ background:#fff; padding:4px 12px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); }}
-.ds-section {{ max-width:1200px; margin:0 auto 48px; background:#fff; border-radius:16px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }}
-.ds-section-title {{ font-size:1.4rem; font-weight:700; margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid #f0f0f0; }}
-.ds-group-title {{ font-size:1rem; font-weight:600; margin:24px 0 12px; color:#424245; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background:#f5f5f7; color:#1d1d1f; line-height:1.6; padding:24px 16px; }}
+.ds-header {{ max-width:1100px; margin:0 auto 12px; }}
+.ds-header h1 {{ font-size:1.1rem; font-weight:700; margin-bottom:2px; display:inline; margin-right:8px; }}
+.ds-header p {{ color:#86868b; font-size:0.78rem; display:inline; }}
+.ds-meta {{ display:flex; gap:6px; margin-top:6px; font-size:0.72rem; color:#86868b; }}
+.ds-meta span {{ background:#fff; padding:2px 8px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); }}
+.ds-section {{ max-width:1100px; margin:0 auto 10px; background:#fff; border-radius:10px; padding:12px 16px; box-shadow:0 1px 4px rgba(0,0,0,0.05); }}
+.ds-section-title {{ font-size:0.92rem; font-weight:700; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid #f0f0f0; }}
+.ds-group-title {{ font-size:0.82rem; font-weight:600; margin:8px 0 4px; color:#424245; }}
 /* 紧凑聚合式色卡 */
 .ds-color-board {{ display:flex; flex-direction:column; gap:2px; border-radius:12px; overflow:hidden; border:1px solid rgba(0,0,0,0.06); }}
 .ds-color-row {{ display:flex; align-items:stretch; }}
-.ds-color-label {{ display:flex; align-items:center; justify-content:center; width:100px; min-width:100px; font-size:0.75rem; font-weight:700; color:#86868b; background:#fafafa; border-right:1px solid rgba(0,0,0,0.06); text-align:center; padding:0 8px; text-transform:uppercase; letter-spacing:0.03em; }}
+.ds-color-label {{ display:flex; align-items:center; justify-content:center; width:80px; min-width:80px; font-size:0.7rem; font-weight:700; color:#86868b; background:#fafafa; border-right:1px solid rgba(0,0,0,0.06); text-align:center; padding:0 6px; text-transform:uppercase; letter-spacing:0.03em; }}
 .ds-chips {{ display:flex; flex:1; flex-wrap:nowrap; }}
-.ds-chip {{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 4px; gap:2px; transition:flex 0.2s; cursor:default; }}
+.ds-chip {{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px 2px; gap:1px; transition:flex 0.2s; cursor:default; }}
 .ds-chip:hover {{ flex:1.5; z-index:2; box-shadow:inset 0 0 0 2px rgba(255,255,255,0.4); }}
-.ds-chip-name {{ font-family:monospace; font-size:0.72rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }}
-.ds-chip-val {{ font-family:monospace; font-size:0.62rem; opacity:0.7; white-space:nowrap; }}
-.ds-var-name {{ padding:8px 12px 2px; font-size:0.8rem; font-weight:600; font-family:monospace; color:#1d1d1f; }}
-.ds-var-value {{ padding:0 12px 8px; font-size:0.75rem; color:#86868b; font-family:monospace; word-break:break-all; }}
-.ds-font-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }}
-.ds-font-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:12px; padding:16px; }}
-.ds-font-preview {{ font-size:1.5rem; margin-bottom:8px; min-height:60px; }}
-.ds-radius-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:16px; }}
+.ds-chip-name {{ font-family:monospace; font-size:0.66rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }}
+.ds-chip-val {{ font-family:monospace; font-size:0.58rem; opacity:0.65; white-space:nowrap; }}
+.ds-var-name {{ padding:4px 8px 1px; font-size:0.72rem; font-weight:600; font-family:monospace; color:#1d1d1f; }}
+.ds-var-value {{ padding:0 8px 4px; font-size:0.68rem; color:#86868b; font-family:monospace; word-break:break-all; }}
+.ds-font-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; }}
+.ds-font-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:8px; padding:10px; }}
+.ds-font-preview {{ font-size:1.1rem; margin-bottom:4px; min-height:36px; }}
+.ds-radius-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }}
 .ds-radius-card {{ text-align:center; }}
-.ds-radius-preview {{ width:80px; height:80px; background:linear-gradient(135deg,var(--sg-primary,#6487fa),var(--sg-accent,#3e6659)); margin:0 auto 8px; }}
-.ds-shadow-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; }}
-.ds-shadow-card {{ text-align:center; padding:24px; }}
-.ds-shadow-preview {{ width:120px; height:80px; background:#fff; margin:0 auto 12px; border-radius:12px; }}
-.ds-gradient-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }}
-.ds-gradient-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:12px; overflow:hidden; }}
-.ds-gradient-preview {{ height:60px; }}
-.ds-comp-list {{ display:flex; flex-wrap:wrap; gap:8px; }}
-.ds-comp-tag {{ font-family:monospace; font-size:0.8rem; background:#f5f5f7; padding:4px 10px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); color:#424245; }}
-.ds-hint {{ margin-top:12px; font-size:0.85rem; color:#86868b; }}
-.ds-interact-controls {{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }}
-.ds-toggle-btn {{ padding:8px 16px; background:#1d1d1f; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600; }}
+.ds-radius-preview {{ width:52px; height:52px; background:linear-gradient(135deg,var(--sg-primary,#6487fa),var(--sg-accent,#3e6659)); margin:0 auto 4px; }}
+.ds-shadow-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }}
+.ds-shadow-card {{ text-align:center; padding:12px; }}
+.ds-shadow-preview {{ width:80px; height:50px; background:#fff; margin:0 auto 6px; border-radius:8px; }}
+.ds-gradient-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }}
+.ds-gradient-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:8px; overflow:hidden; }}
+.ds-gradient-preview {{ height:36px; }}
+.ds-comp-list {{ display:flex; flex-wrap:wrap; gap:4px; }}
+.ds-comp-tag {{ font-family:monospace; font-size:0.72rem; background:#f5f5f7; padding:2px 7px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); color:#424245; }}
+.ds-hint {{ margin-top:6px; font-size:0.72rem; color:#86868b; }}
+.ds-interact-controls {{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }}
+.ds-toggle-btn {{ padding:5px 12px; background:#1d1d1f; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:0.78rem; font-weight:600; }}
 .ds-toggle-btn:hover {{ background:#424245; }}
-.ds-interact-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }}
-.ds-interact-card {{ border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:16px; background:#fafafa; }}
-.ds-interact-header {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,0.06); }}
-.ds-interact-name {{ font-family:monospace; font-size:0.85rem; font-weight:600; color:#1d1d1f; }}
-.ds-interact-states {{ font-size:0.75rem; color:#86868b; }}
-.ds-interact-row {{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }}
-.ds-interact-label {{ font-size:0.75rem; color:#86868b; min-width:40px; padding-top:4px; text-transform:uppercase; letter-spacing:0.05em; }}
-.ds-interact-stage {{ flex:1; min-height:40px; display:flex; align-items:center; padding:8px; background:#fff; border-radius:8px; border:1px solid rgba(0,0,0,0.04); }}
+.ds-interact-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }}
+.ds-interact-card {{ border:1px solid rgba(0,0,0,0.08); border-radius:8px; padding:8px; background:#fafafa; }}
+.ds-interact-header {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid rgba(0,0,0,0.06); }}
+.ds-interact-name {{ font-family:monospace; font-size:0.72rem; font-weight:600; color:#1d1d1f; }}
+.ds-interact-states {{ font-size:0.68rem; color:#86868b; }}
+.ds-interact-row {{ display:flex; align-items:center; gap:6px; margin-bottom:4px; }}
+.ds-interact-label {{ font-size:0.68rem; color:#86868b; min-width:32px; text-transform:uppercase; letter-spacing:0.03em; }}
+.ds-interact-stage {{ flex:1; min-height:28px; display:flex; align-items:center; padding:4px 6px; background:#fff; border-radius:5px; border:1px solid rgba(0,0,0,0.04); }}
 .ds-interact-stage > * {{ max-width:100%; }}
 </style>
 <!-- 组件库 CSS（让色卡用 var(--sg-*) 引用） -->
