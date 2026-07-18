@@ -150,7 +150,29 @@ def generate_showcase(lib_dir: Path) -> str:
         comp_html = '<div class="ds-comp-list">' + "".join(
             f'<span class="ds-comp-tag">{cls}</span>' for cls in component_classes
         ) + '</div>'
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">组件类清单 Components ({len(component_classes)} 个)</h2>{comp_html}<p class="ds-hint">点击 examples 里的 HTML 查看实际组件渲染效果</p></section>')
+        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">组件类清单 Components ({len(component_classes)} 个)</h2>{comp_html}<p class="ds-hint">下方交互态预览展示各组件的默认/hover/active 效果</p></section>')
+
+    # --- 交互态组件预览 ---
+    interactive_comps = extract_interactive_components(css_text, component_classes)
+    if interactive_comps:
+        interact_html = '<div class="ds-interact-controls"><button class="ds-toggle-btn" onclick="dsToggleAllStates()">切换全部交互态</button><span class="ds-hint">鼠标悬停看 hover，点击按钮锁定交互态</span></div>'
+        interact_html += '<div class="ds-interact-grid">'
+        for comp in interactive_comps:
+            cls = comp["cls"]
+            states = comp["states"]
+            # 默认态
+            default_preview = build_component_preview(cls, "default")
+            # 各交互态
+            state_previews = ""
+            for st in states:
+                state_previews += build_component_preview(cls, st)
+            interact_html += f'''<div class="ds-interact-card">
+              <div class="ds-interact-header"><span class="ds-interact-name">{cls}</span><span class="ds-interact-states">{", ".join(states)}</span></div>
+              <div class="ds-interact-row"><div class="ds-interact-label">默认</div><div class="ds-interact-stage">{default_preview}</div></div>
+              {"".join(f'<div class="ds-interact-row"><div class="ds-interact-label">{st}</div><div class="ds-interact-stage">{build_component_preview(cls, st)}</div></div>' for st in states)}
+            </div>'''
+        interact_html += '</div>'
+        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">交互态预览 Interactive States ({len(interactive_comps)} 个组件)</h2>{interact_html}</section>')
 
     # --- 响应式断点 ---
     if breakpoints:
@@ -162,7 +184,51 @@ def generate_showcase(lib_dir: Path) -> str:
 
     sections_html = "\n".join(sections)
 
-    html = f"""<!doctype html>
+    # JS 不能放 f-string 里（花括号冲突），用独立字符串
+    ds_js = """<script>
+(function() {
+  var sheets = document.styleSheets;
+  var hoverRules = [];
+  for (var i = 0; i < sheets.length; i++) {
+    try {
+      var rules = sheets[i].cssRules || sheets[i].rules;
+      for (var j = 0; j < rules.length; j++) {
+        var r = rules[j];
+        if (r.selectorText && r.selectorText.indexOf(':hover') > -1) {
+          var newSel = r.selectorText.replace(/:hover/g, '.force-hover');
+          hoverRules.push(newSel + ' { ' + r.style.cssText + ' }');
+        }
+      }
+    } catch(e) {}
+  }
+  if (hoverRules.length) {
+    var style = document.createElement('style');
+    style.textContent = hoverRules.join('\n');
+    document.head.appendChild(style);
+  }
+})();
+var dsToggleState = false;
+function dsToggleAllStates() {
+  dsToggleState = !dsToggleState;
+  document.querySelectorAll('.ds-interact-stage').forEach(function(stage) {
+    var el = stage.firstElementChild;
+    if (!el) return;
+    var label = stage.parentElement.querySelector('.ds-interact-label');
+    var labelText = label ? label.textContent : '';
+    if (dsToggleState) {
+      el.classList.add('force-hover');
+      ['active','open','on','picked','right','wrong'].forEach(function(s) {
+        if (labelText.indexOf(s) > -1) el.classList.add(s);
+      });
+    } else {
+      el.classList.remove('force-hover');
+      ['active','open','on','picked','right','wrong'].forEach(function(s) { el.classList.remove(s); });
+    }
+  });
+}
+</script>"""
+
+    html_head = f"""<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
@@ -200,11 +266,18 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-comp-list {{ display:flex; flex-wrap:wrap; gap:8px; }}
 .ds-comp-tag {{ font-family:monospace; font-size:0.8rem; background:#f5f5f7; padding:4px 10px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); color:#424245; }}
 .ds-hint {{ margin-top:12px; font-size:0.85rem; color:#86868b; }}
-.ds-bp-table {{ width:100%; border-collapse:collapse; font-size:0.9rem; }}
-.ds-bp-table th {{ text-align:left; padding:8px 12px; background:#f5f5f7; font-weight:600; }}
-.ds-bp-table td {{ padding:8px 12px; border-bottom:1px solid rgba(0,0,0,0.06); }}
-.ds-bp-table code {{ font-family:monospace; font-size:0.8rem; color:#6e6e73; }}
-@media (max-width:600px) {{ .ds-section {{ padding:20px; }} .ds-color-grid {{ grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); }} }}
+.ds-interact-controls {{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }}
+.ds-toggle-btn {{ padding:8px 16px; background:#1d1d1f; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600; }}
+.ds-toggle-btn:hover {{ background:#424245; }}
+.ds-interact-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }}
+.ds-interact-card {{ border:1px solid rgba(0,0,0,0.08); border-radius:12px; padding:16px; background:#fafafa; }}
+.ds-interact-header {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,0.06); }}
+.ds-interact-name {{ font-family:monospace; font-size:0.85rem; font-weight:600; color:#1d1d1f; }}
+.ds-interact-states {{ font-size:0.75rem; color:#86868b; }}
+.ds-interact-row {{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }}
+.ds-interact-label {{ font-size:0.75rem; color:#86868b; min-width:40px; padding-top:4px; text-transform:uppercase; letter-spacing:0.05em; }}
+.ds-interact-stage {{ flex:1; min-height:40px; display:flex; align-items:center; padding:8px; background:#fff; border-radius:8px; border:1px solid rgba(0,0,0,0.04); }}
+.ds-interact-stage > * {{ max-width:100%; }}
 </style>
 <!-- 组件库 CSS（让色卡用 var(--sg-*) 引用） -->
 <link rel="stylesheet" href="src/{css_files[0].name if css_files else 'lib.css'}" />
@@ -221,9 +294,77 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
   </div>
 </div>
 {sections_html}
-</body>
-</html>"""
+"""
+    html = html_head + ds_js + "\n</body>\n</html>"
     return html
+
+
+
+def extract_interactive_components(css_text: str, all_classes: list[str]) -> list[dict]:
+    """从 CSS 提取含交互态（:hover/.active/.open/.on）的组件。
+
+    返回 [{cls: "sg-filter-btn", states: ["hover", "active"]}, ...]
+    """
+    interactive = {}
+    # 扫描 :hover 和 .active/.open/.on/.picked/.right/.wrong
+    for sel, props in parse_rules(css_text):
+        for part in sel.split(","):
+            part = part.strip()
+            if not part:
+                continue
+            # 提取主体类
+            subjects = re.findall(r"\.(sg-[a-z][\w-]*)", part)
+            for cls in subjects:
+                if cls not in all_classes:
+                    continue
+                # 检测交互态
+                has_hover = ":hover" in part
+                # .active/.open/.on 等状态类
+                state_classes = re.findall(r"\.(active|open|on|picked|right|wrong|hide)\b", part)
+                if has_hover or state_classes:
+                    interactive.setdefault(cls, set())
+                    if has_hover:
+                        interactive[cls].add("hover")
+                    for sc in state_classes:
+                        if sc == "hide":
+                            continue
+                        interactive[cls].add(sc)
+    # 按组件名排序
+    return [{"cls": cls, "states": sorted(states)} for cls, states in sorted(interactive.items())]
+
+
+def build_component_preview(cls: str, state: str) -> str:
+    """为组件类生成一个预览 HTML，应用指定的交互态。
+
+    state: "default" / "hover" / "active" / "open" / "on" 等
+    """
+    # 按组件名模式推断合适的预览内容
+    name = cls.lower()
+    # 状态类（非 hover）直接加到 class
+    state_class = "" if state == "default" or state == "hover" else f" {state}"
+    # hover 用 force-hover 类（由 JS 复制 :hover 规则）
+    force_class = " force-hover" if state == "hover" else ""
+
+    if "btn" in name or "button" in name or "cta" in name:
+        label = {"active": "激活态", "on": "选中", "default": "按钮", "hover": "悬停"}.get(state, state)
+        return f'<button class="{cls}{state_class}{force_class}">{label}</button>'
+    if "link" in name:
+        return f'<a class="{cls}{state_class}{force_class}" href="#">链接示例</a>'
+    if "tag" in name or "badge" in name or "chip" in name:
+        return f'<span class="{cls}{state_class}{force_class}">标签</span>'
+    if "card" in name:
+        return f'<div class="{cls}{state_class}{force_class}"><div style="padding:8px;font-size:0.875rem">卡片标题</div><div style="padding:0 8px 8px;font-size:0.75rem;opacity:0.7">卡片描述内容</div></div>'
+    if "nav" in name or "tab" in name and "list" not in name:
+        return f'<span class="{cls}{state_class}{force_class}">导航项</span>'
+    if "node" in name:
+        return f'<div class="{cls}{state_class}{force_class}" style="padding:6px 12px"><div style="font-size:0.8rem;font-weight:600">节点</div><div style="font-size:0.7rem;opacity:0.7">年份</div></div>'
+    if "module" in name or "panel" in name or "item" in name:
+        return f'<div class="{cls}{state_class}{force_class}" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div>'
+    if "opt" in name:
+        return f'<div class="{cls}{state_class}{force_class}"><span style="display:inline-block;width:20px;height:20px;background:rgba(100,135,250,0.2);border-radius:4px;text-align:center;line-height:20px;font-size:0.7rem;margin-right:6px">A</span>选项</div>'
+    # 通用预览
+    return f'<div class="{cls}{state_class}{force_class}" style="padding:8px 12px;font-size:0.85rem">{cls}</div>'
+
 
 
 def main():
