@@ -170,7 +170,7 @@ def generate_showcase(lib_dir: Path) -> str:
         token_parts.append(shadow_html)
     if gradients:
         grad_html = '<div class="ds-tokens-row"><span class="ds-tokens-label">渐变</span><div class="ds-tokens-chips">'
-        for g in gradients[:8]:
+        for g in gradients[:12]:
             grad_html += f'<span class="ds-grad-chip" style="background:{g["value"]}"></span>'
         grad_html += '</div></div>'
         token_parts.append(grad_html)
