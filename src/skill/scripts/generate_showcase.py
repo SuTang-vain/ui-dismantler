@@ -229,10 +229,10 @@ def generate_showcase(lib_dir: Path) -> str:
 var dsToggleState = false;
 function dsToggleAllStates() {
   dsToggleState = !dsToggleState;
-  document.querySelectorAll('.ds-interact-stage').forEach(function(stage) {
+  document.querySelectorAll('.ds-interact-mini').forEach(function(stage) {
     var el = stage.firstElementChild;
     if (!el) return;
-    var label = stage.parentElement.querySelector('.ds-interact-label');
+    var label = stage.parentElement.querySelector('.ds-interact-mini-label');
     var labelText = label ? label.textContent : '';
     if (dsToggleState) {
       el.classList.add('force-hover');
@@ -276,33 +276,28 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-chip-val {{ font-family:monospace; font-size:0.58rem; opacity:0.65; white-space:nowrap; }}
 .ds-var-name {{ padding:4px 8px 1px; font-size:0.72rem; font-weight:600; font-family:monospace; color:#1d1d1f; }}
 .ds-var-value {{ padding:0 8px 4px; font-size:0.68rem; color:#86868b; font-family:monospace; word-break:break-all; }}
-.ds-font-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; }}
-.ds-font-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:8px; padding:10px; }}
-.ds-font-preview {{ font-size:1.1rem; margin-bottom:4px; min-height:36px; }}
-.ds-radius-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }}
-.ds-radius-card {{ text-align:center; }}
-.ds-radius-preview {{ width:52px; height:52px; background:linear-gradient(135deg,var(--sg-primary,#6487fa),var(--sg-accent,#3e6659)); margin:0 auto 4px; }}
-.ds-shadow-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }}
-.ds-shadow-card {{ text-align:center; padding:12px; }}
-.ds-shadow-preview {{ width:80px; height:50px; background:#fff; margin:0 auto 6px; border-radius:8px; }}
-.ds-gradient-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }}
-.ds-gradient-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:8px; overflow:hidden; }}
-.ds-gradient-preview {{ height:36px; }}
-.ds-comp-list {{ display:flex; flex-wrap:wrap; gap:4px; }}
-.ds-comp-tag {{ font-family:monospace; font-size:0.72rem; background:#f5f5f7; padding:2px 7px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); color:#424245; }}
+.ds-tokens-row {{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }}
+.ds-tokens-label {{ width:44px; min-width:44px; font-size:0.68rem; font-weight:700; color:#86868b; text-transform:uppercase; }}
+.ds-tokens-chips {{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }}
+.ds-font-chip {{ font-size:0.82rem; padding:3px 10px; background:#f5f5f7; border-radius:5px; border:1px solid rgba(0,0,0,0.06); }}
+.ds-token-chip {{ display:inline-flex; align-items:center; gap:5px; font-size:0.68rem; font-family:monospace; color:#424245; }}
+.ds-radius-box {{ width:24px; height:24px; background:linear-gradient(135deg,var(--sg-primary,#6487fa),var(--sg-accent,#3e6659)); display:inline-block; }}
+.ds-shadow-box {{ width:32px; height:22px; background:#fff; border-radius:4px; display:inline-block; }}
+.ds-grad-chip {{ width:48px; height:20px; border-radius:3px; display:inline-block; }}
+.ds-comp-list {{ display:flex; flex-wrap:wrap; gap:3px; margin-bottom:10px; }}
+.ds-comp-tag {{ font-family:monospace; font-size:0.68rem; background:#f5f5f7; padding:2px 6px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); color:#424245; }}
 .ds-hint {{ margin-top:6px; font-size:0.72rem; color:#86868b; }}
-.ds-interact-controls {{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }}
-.ds-toggle-btn {{ padding:5px 12px; background:#1d1d1f; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:0.78rem; font-weight:600; }}
+.ds-interact-controls {{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }}
+.ds-toggle-btn {{ padding:4px 12px; background:#1d1d1f; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; font-weight:600; }}
 .ds-toggle-btn:hover {{ background:#424245; }}
-.ds-interact-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }}
-.ds-interact-card {{ border:1px solid rgba(0,0,0,0.08); border-radius:8px; padding:8px; background:#fafafa; }}
-.ds-interact-header {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid rgba(0,0,0,0.06); }}
-.ds-interact-name {{ font-family:monospace; font-size:0.72rem; font-weight:600; color:#1d1d1f; }}
-.ds-interact-states {{ font-size:0.68rem; color:#86868b; }}
-.ds-interact-row {{ display:flex; align-items:center; gap:6px; margin-bottom:4px; }}
-.ds-interact-label {{ font-size:0.68rem; color:#86868b; min-width:32px; text-transform:uppercase; letter-spacing:0.03em; }}
-.ds-interact-stage {{ flex:1; min-height:28px; display:flex; align-items:center; padding:4px 6px; background:#fff; border-radius:5px; border:1px solid rgba(0,0,0,0.04); }}
-.ds-interact-stage > * {{ max-width:100%; }}
+.ds-interact-list {{ display:flex; flex-direction:column; gap:4px; }}
+.ds-interact-item {{ display:flex; align-items:center; gap:8px; padding:4px 8px; border-radius:6px; background:#fafafa; }}
+.ds-interact-name {{ font-family:monospace; font-size:0.7rem; font-weight:600; color:#424245; min-width:120px; }}
+.ds-interact-cells {{ display:flex; gap:6px; align-items:center; flex:1; }}
+.ds-interact-cell {{ display:flex; align-items:center; gap:4px; }}
+.ds-interact-mini-label {{ font-size:0.6rem; color:#a0a0a0; text-transform:uppercase; }}
+.ds-interact-mini {{ display:flex; align-items:center; padding:3px 6px; background:#fff; border-radius:4px; border:1px solid rgba(0,0,0,0.04); }}
+.ds-interact-mini > * {{ max-width:100%; transform:scale(0.85); transform-origin:left center; }}
 </style>
 <!-- 组件库 CSS（让色卡用 var(--sg-*) 引用） -->
 <link rel="stylesheet" href="src/{css_files[0].name if css_files else 'lib.css'}" />
