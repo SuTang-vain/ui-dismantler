@@ -42,6 +42,30 @@ def classify_var(name: str, value: str) -> str:
     return "功能色 Functional"
 
 
+def _text_color_for(color_val: str) -> str:
+    """根据背景色亮度返回 #fff 或 #1d1d1f（保证色块上的文字可读）。"""
+    v = color_val.strip()
+    # 解析 hex
+    m = re.match(r"^#([0-9a-fA-F]{6})$", v)
+    if not m:
+        m = re.match(r"^#([0-9a-fA-F]{3})$", v)
+        if m:
+            h = "".join(c * 2 for c in m.group(1))
+        else:
+            # rgba：alpha 高则看 r,g,b
+            rm = re.match(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)", v)
+            if rm:
+                r, g, b = float(rm.group(1)), float(rm.group(2)), float(rm.group(3))
+            else:
+                return "#1d1d1f"
+    else:
+        h = m.group(1)
+        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    # 相对亮度（简化 sRGB）
+    lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    return "#ffffff" if lum < 0.55 else "#1d1d1f"
+
+
 def is_color_var(name: str, value: str) -> bool:
     """判断变量是否是颜色值。"""
     v = value.strip()
@@ -96,23 +120,27 @@ def generate_showcase(lib_dir: Path) -> str:
     # 5. 生成 HTML
     sections = []
 
-    # --- 色卡 ---
+    # --- 色卡（紧凑聚合式）---
     color_cats = ["功能色 Functional", "文字色 Text", "背景色 Background", "分割线 Border", "状态色 Status", "页脚色 Footer"]
-    color_html = ""
+    color_rows = ""
     for cat in color_cats:
         if cat not in groups:
             continue
         vars_list = groups[cat]
-        cards = ""
+        chips = ""
         for name, value in vars_list:
             if not is_color_var(name, value):
                 continue
-            # 色块背景用变量引用
-            cards += f'<div class="ds-color-card"><div class="ds-swatch" style="background:{value}"></div><div class="ds-var-name">{name}</div><div class="ds-var-value">{value}</div></div>'
-        if cards:
-            color_html += f'<div class="ds-color-group"><h3 class="ds-group-title">{cat}</h3><div class="ds-color-grid">{cards}</div></div>'
-    if color_html:
-        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">色卡系统 Color Tokens</h2>{color_html}</section>')
+            # 紧凑色块：色块内显示变量简称 + 色值
+            short_name = name.replace("--sg-", "")
+            # 判断色块文字用深色还是浅色（根据背景亮度）
+            tc = _text_color_for(value)
+            chips += f'<div class="ds-chip" style="background:{value};color:{tc}"><span class="ds-chip-name">{short_name}</span><span class="ds-chip-val">{value}</span></div>'
+        if chips:
+            label = cat.split(" ")[0]
+            color_rows += f'<div class="ds-color-row"><span class="ds-color-label">{label}</span><div class="ds-chips">{chips}</div></div>'
+    if color_rows:
+        sections.append(f'<section class="ds-section"><h2 class="ds-section-title">色卡系统 Color Tokens</h2><div class="ds-color-board">{color_rows}</div></section>')
 
     # --- 字体 ---
     font_vars = groups.get("字体 Font", [])
@@ -246,9 +274,15 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-section {{ max-width:1200px; margin:0 auto 48px; background:#fff; border-radius:16px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }}
 .ds-section-title {{ font-size:1.4rem; font-weight:700; margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid #f0f0f0; }}
 .ds-group-title {{ font-size:1rem; font-weight:600; margin:24px 0 12px; color:#424245; }}
-.ds-color-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; }}
-.ds-color-card {{ border:1px solid rgba(0,0,0,0.06); border-radius:12px; overflow:hidden; }}
-.ds-swatch {{ height:80px; border-bottom:1px solid rgba(0,0,0,0.06); }}
+/* 紧凑聚合式色卡 */
+.ds-color-board {{ display:flex; flex-direction:column; gap:2px; border-radius:12px; overflow:hidden; border:1px solid rgba(0,0,0,0.06); }}
+.ds-color-row {{ display:flex; align-items:stretch; }}
+.ds-color-label {{ display:flex; align-items:center; justify-content:center; width:100px; min-width:100px; font-size:0.75rem; font-weight:700; color:#86868b; background:#fafafa; border-right:1px solid rgba(0,0,0,0.06); text-align:center; padding:0 8px; text-transform:uppercase; letter-spacing:0.03em; }}
+.ds-chips {{ display:flex; flex:1; flex-wrap:nowrap; }}
+.ds-chip {{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 4px; gap:2px; transition:flex 0.2s; cursor:default; }}
+.ds-chip:hover {{ flex:1.5; z-index:2; box-shadow:inset 0 0 0 2px rgba(255,255,255,0.4); }}
+.ds-chip-name {{ font-family:monospace; font-size:0.72rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }}
+.ds-chip-val {{ font-family:monospace; font-size:0.62rem; opacity:0.7; white-space:nowrap; }}
 .ds-var-name {{ padding:8px 12px 2px; font-size:0.8rem; font-weight:600; font-family:monospace; color:#1d1d1f; }}
 .ds-var-value {{ padding:0 12px 8px; font-size:0.75rem; color:#86868b; font-family:monospace; word-break:break-all; }}
 .ds-font-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }}
