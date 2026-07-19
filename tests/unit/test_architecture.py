@@ -25,6 +25,11 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "uiir/projection/expanded.py",
             "uiir/projection/diff.py",
             "uiir/extraction/css_media.py",
+            "uiir/runtime/runtime_refs.py",
+            "uiir/runtime/scenarios.py",
+            "uiir/runtime/actions.py",
+            "uiir/runtime/assertions.py",
+            "uiir/runtime/init_script.py",
             "cli/manifest_to_uiir.py",
         ):
             with self.subTest(relative=relative):

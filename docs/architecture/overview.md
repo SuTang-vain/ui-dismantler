@@ -18,6 +18,7 @@ flowchart TB
         ANALYSIS["analysis/html.py"]
         UIIR["uiir/model.py"]
         EXTRACT["uiir/extraction/*"]
+        RUNTIME["uiir/runtime/*"]
         GENERATION["generation/*"]
         VALIDATION["validation/library.py"]
         AGGREGATION["aggregation/vertical.py"]
@@ -40,6 +41,7 @@ flowchart TB
     COMMON --> GENERATION
     COMMON --> VALIDATION
     EXTRACT --> UIIR
+    RUNTIME --> UIIR
     ANALYSIS --> AGGREGATION
     GENERATION --> AGGREGATION
     UIIR --> CLI
@@ -58,7 +60,8 @@ flowchart TB
 |---|---|---|
 | `core/` | CSS、颜色、变量、数据契约等共享纯函数 | CLI 参数、文件产出流程 |
 | `analysis/` | HTML/CSS/JS -> manifest v1 | UI-IR 投影、组件库生成 |
-| `uiir/extraction/` | CSS `@media`、源码引用、运行时事件与本地资源证据 | 节点/关系业务建模 |
+| `uiir/extraction/` | CSS `@media`、源码引用与本地资源证据 | 节点/关系业务建模、浏览器启动 |
+| `uiir/runtime/` | Playwright 驱动的运行时场景执行（事件注册、候选盘点、状态转移、断言） | 静态证据抽取、节点/关系业务建模 |
 | `uiir/model.py` | UI-IR 建模、验证、反向转换和观察投影 | 浏览器启动细节 |
 | `generation/` | 组件库脚手架、showcase、输出适配 | 源页面关系推断 |
 | `validation/` | 组件库强约束检查 | 自动修复 |
@@ -98,7 +101,7 @@ manifest + Agent 语义理解
 允许：
 
 - `analysis/generation/validation -> core`
-- `uiir/model -> uiir/extraction`
+- `uiir/model -> uiir/extraction + uiir/runtime`
 - `aggregation -> analysis + generation + core`
 - `cli -> 对应核心模块`
 - `skill/scripts -> src/ui_dismantler`

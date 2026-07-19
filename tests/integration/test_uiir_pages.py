@@ -9,7 +9,7 @@ _ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_ROOT / "src"))
 
 from ui_dismantler.uiir.extraction.css_media import extract_css_media_blocks  # noqa: E402
-from ui_dismantler.uiir.extraction.runtime_refs import observe_runtime_references  # noqa: E402
+from ui_dismantler.uiir.runtime.runtime_refs import observe_runtime_references  # noqa: E402
 from ui_dismantler.uiir.extraction.source_refs import extract_source_references  # noqa: E402
 
 _FIXTURES = _ROOT / "tests" / "fixtures" / "kezhongke"

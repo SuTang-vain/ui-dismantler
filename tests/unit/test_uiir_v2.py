@@ -12,7 +12,7 @@ sys.path.insert(0, str(_ROOT / "src"))
 
 from ui_dismantler.uiir.extraction.css_media import extract_css_media_blocks, parse_css_media_blocks  # noqa: E402
 from ui_dismantler.cli.manifest_to_uiir import main as convert_main  # noqa: E402
-from ui_dismantler.uiir.extraction.runtime_refs import observe_runtime_references  # noqa: E402
+from ui_dismantler.uiir.runtime.runtime_refs import observe_runtime_references  # noqa: E402
 from ui_dismantler.uiir.extraction.source_refs import extract_source_references, resolve_dom_selector  # noqa: E402
 from ui_dismantler.cli.uiir_diff import main as diff_main  # noqa: E402
 from ui_dismantler.cli.uiir_to_compact import main as compact_main  # noqa: E402

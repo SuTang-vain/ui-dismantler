@@ -35,7 +35,7 @@ from ..schema import (
 from ..validation import validate_uiir
 from ..extraction.css_media import extract_css_media_blocks
 from ..extraction.source_refs import extract_source_references, resolve_dom_selector
-from ..extraction.runtime_refs import observe_runtime_references
+from ..runtime.runtime_refs import observe_runtime_references
 
 
 class UIIRBuilder:

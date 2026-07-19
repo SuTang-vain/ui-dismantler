@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Compatibility entry point; implementation: ``ui_dismantler.uiir.extraction.runtime_refs``."""
+"""Compatibility entry point; implementation: ``ui_dismantler.uiir.runtime.runtime_refs``."""
 
 from _bootstrap import expose
 
-expose("ui_dismantler.uiir.extraction.runtime_refs", globals())
+expose("ui_dismantler.uiir.runtime.runtime_refs", globals())
