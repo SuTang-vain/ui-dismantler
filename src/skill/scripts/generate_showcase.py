@@ -277,17 +277,17 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-group-title {{ font-size:0.82rem; font-weight:600; margin:8px 0 4px; color:#424245; }}
 /* 紧凑聚合式色卡 */
 .ds-color-board {{ display:flex; flex-direction:column; gap:2px; border-radius:12px; overflow:hidden; border:1px solid rgba(0,0,0,0.06); }}
-.ds-color-row {{ display:flex; flex-direction:column; }}
-.ds-color-label {{ display:flex; align-items:center; padding:4px 8px; font-size:0.7rem; font-weight:700; color:#86868b; background:#fafafa; border-bottom:1px solid rgba(0,0,0,0.06); text-transform:uppercase; letter-spacing:0.03em; }}
-.ds-chips {{ display:flex; flex-wrap:wrap; }}
+.ds-color-row {{ display:flex; align-items:stretch; }}
+.ds-color-label {{ display:flex; align-items:center; justify-content:center; width:80px; min-width:80px; font-size:0.7rem; font-weight:700; color:#86868b; background:#fafafa; border-right:1px solid rgba(0,0,0,0.06); text-align:center; padding:0 6px; text-transform:uppercase; letter-spacing:0.03em; }}
+.ds-chips {{ display:flex; flex:1; flex-wrap:nowrap; }}
 .ds-chip {{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px 2px; gap:1px; transition:flex 0.2s; cursor:default; }}
 .ds-chip:hover {{ flex:1.5; z-index:2; box-shadow:inset 0 0 0 2px rgba(255,255,255,0.4); }}
 .ds-chip-name {{ font-family:monospace; font-size:0.66rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }}
 .ds-chip-val {{ font-family:monospace; font-size:0.58rem; opacity:0.65; white-space:nowrap; }}
 .ds-var-name {{ padding:4px 8px 1px; font-size:0.72rem; font-weight:600; font-family:monospace; color:#1d1d1f; }}
 .ds-var-value {{ padding:0 8px 4px; font-size:0.68rem; color:#86868b; font-family:monospace; word-break:break-all; }}
-.ds-tokens-row {{ display:flex; flex-direction:column; gap:4px; margin-bottom:8px; }}
-.ds-tokens-label {{ font-size:0.68rem; font-weight:700; color:#86868b; text-transform:uppercase; }}
+.ds-tokens-row {{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }}
+.ds-tokens-label {{ width:44px; min-width:44px; font-size:0.68rem; font-weight:700; color:#86868b; text-transform:uppercase; }}
 .ds-tokens-chips {{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }}
 .ds-font-chip {{ font-size:0.82rem; padding:3px 10px; background:#f5f5f7; border-radius:5px; border:1px solid rgba(0,0,0,0.06); }}
 .ds-token-chip {{ display:inline-flex; align-items:center; gap:5px; font-size:0.68rem; font-family:monospace; color:#424245; }}
@@ -301,10 +301,10 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-toggle-btn {{ padding:4px 12px; background:#1d1d1f; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem; font-weight:600; }}
 .ds-toggle-btn:hover {{ background:#424245; }}
 .ds-interact-list {{ display:flex; flex-direction:column; gap:4px; }}
-.ds-interact-item {{ display:flex; flex-direction:column; gap:6px; padding:8px; border-radius:6px; background:#fafafa; }}
-.ds-interact-name {{ font-family:monospace; font-size:0.7rem; font-weight:600; color:#424245; }}
-.ds-interact-cells {{ display:flex; gap:6px; align-items:flex-start; flex-wrap:wrap; }}
-.ds-interact-cell {{ display:flex; flex-direction:column; align-items:center; gap:3px; }}
+.ds-interact-item {{ display:flex; align-items:center; gap:8px; padding:4px 8px; border-radius:6px; background:#fafafa; }}
+.ds-interact-name {{ font-family:monospace; font-size:0.7rem; font-weight:600; color:#424245; min-width:120px; }}
+.ds-interact-cells {{ display:flex; gap:6px; align-items:center; flex:1; }}
+.ds-interact-cell {{ display:flex; align-items:center; gap:4px; }}
 .ds-interact-mini-label {{ font-size:0.6rem; color:#a0a0a0; text-transform:uppercase; }}
 .ds-interact-mini {{ display:flex; align-items:center; padding:3px 6px; background:#fff; border-radius:4px; border:1px solid rgba(0,0,0,0.04); position:relative; overflow:hidden; contain:layout; min-height:32px; }}
 .ds-interact-mini > * {{ max-width:100%; transform:scale(0.85); transform-origin:left center; }}
