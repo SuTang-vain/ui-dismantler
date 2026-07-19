@@ -43,25 +43,35 @@ def classify_var(name: str, value: str) -> str:
 
 
 def _text_color_for(color_val: str) -> str:
-    """根据背景色亮度返回 #fff 或 #1d1d1f（保证色块上的文字可读）。"""
+    """根据背景色亮度返回 #fff 或 #1d1d1f（保证色块上的文字可读）。
+
+    rgba 半透明色按白底叠加计算等效亮度：
+    等效色 = 前景色 * alpha + 白底 * (1 - alpha)
+    """
     v = color_val.strip()
-    # 解析 hex
+    r, g, b = 255, 255, 255  # 默认白底
+    # 解析 hex 6 位
     m = re.match(r"^#([0-9a-fA-F]{6})$", v)
-    if not m:
-        m = re.match(r"^#([0-9a-fA-F]{3})$", v)
-        if m:
-            h = "".join(c * 2 for c in m.group(1))
-        else:
-            # rgba：alpha 高则看 r,g,b
-            rm = re.match(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)", v)
-            if rm:
-                r, g, b = float(rm.group(1)), float(rm.group(2)), float(rm.group(3))
-            else:
-                return "#1d1d1f"
-    else:
+    if m:
         h = m.group(1)
         r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    # 相对亮度（简化 sRGB）
+    else:
+        m3 = re.match(r"^#([0-9a-fA-F]{3})$", v)
+        if m3:
+            h = "".join(c * 2 for c in m3.group(1))
+            r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+        else:
+            # rgba：提取 alpha 做白底叠加
+            rm = re.match(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)", v)
+            if rm:
+                cr, cg, cb = float(rm.group(1)), float(rm.group(2)), float(rm.group(3))
+                alpha = float(rm.group(4)) if rm.group(4) else 1.0
+                # 白底叠加：等效色 = 前景 * alpha + 255 * (1 - alpha)
+                r = cr * alpha + 255 * (1 - alpha)
+                g = cg * alpha + 255 * (1 - alpha)
+                b = cb * alpha + 255 * (1 - alpha)
+            else:
+                return "#1d1d1f"
     lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
     return "#ffffff" if lum < 0.55 else "#1d1d1f"
 
