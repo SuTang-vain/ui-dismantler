@@ -306,8 +306,21 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsof
 .ds-interact-cells {{ display:flex; gap:6px; align-items:center; flex:1; }}
 .ds-interact-cell {{ display:flex; align-items:center; gap:4px; }}
 .ds-interact-mini-label {{ font-size:0.6rem; color:#a0a0a0; text-transform:uppercase; }}
-.ds-interact-mini {{ display:flex; align-items:center; padding:3px 6px; background:#fff; border-radius:4px; border:1px solid rgba(0,0,0,0.04); }}
+.ds-interact-mini {{ display:flex; align-items:center; padding:3px 6px; background:#fff; border-radius:4px; border:1px solid rgba(0,0,0,0.04); position:relative; overflow:hidden; contain:layout; min-height:32px; }}
 .ds-interact-mini > * {{ max-width:100%; transform:scale(0.85); transform-origin:left center; }}
+/* 隔离组件库的 absolute/fixed 定位，防止覆盖展示页 */
+.ds-interact-mini .sg-modal-overlay, .ds-interact-mini .sg-splash, .ds-interact-mini .sg-cause-chain-svg,
+.ds-interact-mini .sg-modal-content, .ds-interact-mini .sg-whatif-modal,
+.ds-interact-mini .sg-progress-wrap, .ds-interact-mini .sg-timeline-nav > svg {{
+  position:relative !important; inset:auto !important; top:auto !important; right:auto !important;
+  left:auto !important; bottom:auto !important; z-index:auto !important;
+  display:flex !important; opacity:1 !important; transform:scale(0.85) !important;
+  background:rgba(0,0,0,0.04) !important; backdrop-filter:none !important; width:auto !important; height:auto !important;
+  min-height:20px; padding:4px 8px; border-radius:4px; max-width:100%;
+}}
+.ds-interact-mini .sg-modal-overlay.active, .ds-interact-mini .sg-splash.hide {{
+  display:flex !important; opacity:1 !important;
+}}
 </style>
 <!-- 组件库 CSS（让色卡用 var(--sg-*) 引用） -->
 <link rel="stylesheet" href="src/{css_files[0].name if css_files else 'lib.css'}" />
