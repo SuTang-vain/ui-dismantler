@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kezhongke Dynamic Journal Fixture</title>
+<style>
+  body { margin: 0; padding: 36px; font: 15px/1.5 Inter, system-ui, sans-serif; color: #27241f; background: #f7f5f0; }
+  #journal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .journal-card { padding: 18px; border: 1px solid #d8d2c8; border-radius: 16px; background: white; cursor: pointer; text-align: left; }
+  #journal-detail { margin-top: 22px; padding: 18px; border-radius: 14px; background: #eae4d9; }
+  [hidden] { display: none; }
+  @media (max-width: 700px) { #journal-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>期刊</h1>
+  <div id="journal-grid" aria-busy="true"></div>
+  <section id="journal-detail" hidden data-open="false"></section>
+</main>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const entries = [
+      {id: 'field', title: '田野观察'},
+      {id: 'method', title: '方法札记'},
+      {id: 'archive', title: '档案切片'}
+    ];
+    const grid = document.getElementById('journal-grid');
+    window.setTimeout(() => {
+      entries.forEach(entry => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'journal-card';
+        button.dataset.entry = entry.id;
+        button.textContent = entry.title;
+        button.addEventListener('click', () => {
+          const detail = document.getElementById('journal-detail');
+          detail.hidden = false;
+          detail.dataset.open = 'true';
+          detail.textContent = entry.title + ' 已打开';
+        });
+        grid.appendChild(button);
+      });
+      grid.setAttribute('aria-busy', 'false');
+    }, 20);
+  });
+</script>
+</body>
+</html>

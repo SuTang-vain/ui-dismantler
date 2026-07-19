@@ -1,0 +1,30 @@
+[
+  {
+    "id": "switch-to-register",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#tab-register",
+        "assertions": [
+          {"assertion": "visible", "selector": "#form-register"},
+          {"assertion": "hidden", "selector": "#form-login"},
+          {"assertion": "attribute", "selector": "#tab-register", "name": "aria-selected", "equals": "true"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "validate-login-locally",
+    "actions": [
+      {"action": "fill", "selector": "#login-email", "value": "fixture@example.test"},
+      {"action": "fill", "selector": "#login-password", "value": "fixture-secret"},
+      {
+        "action": "click",
+        "selector": "#login-btn",
+        "assertions": [
+          {"assertion": "attribute", "selector": "#auth-status", "name": "data-state", "equals": "ready"}
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kezhongke Article Search Fixture</title>
+<style>
+  body { margin: 0; font: 16px/1.5 Inter, system-ui, sans-serif; color: #24211d; background: #fbfaf7; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 5vw; border-bottom: 1px solid #ddd8ce; }
+  .search { display: flex; gap: 8px; }
+  input { width: 240px; padding: 9px 12px; border: 1px solid #cfc7b9; border-radius: 999px; }
+  button { padding: 9px 12px; border: 0; border-radius: 999px; cursor: pointer; }
+  #profile-menu { position: absolute; right: 5vw; padding: 10px; border: 1px solid #d9d2c6; border-radius: 12px; background: white; }
+  main { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+  #search-result { padding: 18px; border-radius: 14px; background: #eee8de; }
+  [hidden] { display: none !important; }
+  @media (max-width: 720px) {
+    header { align-items: stretch; flex-direction: column; }
+    input { width: auto; flex: 1; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <label class="search">搜索 <input id="search-input" type="search" autocomplete="off"></label>
+  <button id="profile-button" type="button" aria-expanded="false" aria-controls="profile-menu">个人中心</button>
+</header>
+<nav id="profile-menu" hidden><a href="#account">账户设置</a></nav>
+<main>
+  <article>
+    <p>页面内容索引</p>
+    <section id="search-result" hidden data-query-state="empty"></section>
+  </article>
+</main>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchResult = document.getElementById('search-result');
+  searchInput.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    const hasQuery = searchInput.value.trim().length > 0;
+    searchResult.hidden = !hasQuery;
+    searchResult.dataset.queryState = hasQuery ? 'matched' : 'empty';
+    searchResult.textContent = hasQuery ? '找到相关页面' : '';
+  });
+  const profileButton = document.getElementById('profile-button');
+  const profileMenu = document.getElementById('profile-menu');
+  profileButton.addEventListener('click', () => {
+    const expanded = profileButton.getAttribute('aria-expanded') !== 'true';
+    profileButton.setAttribute('aria-expanded', String(expanded));
+    profileMenu.hidden = !expanded;
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      profileButton.setAttribute('aria-expanded', 'false');
+      profileMenu.hidden = true;
+    }
+  });
+</script>
+</body>
+</html>

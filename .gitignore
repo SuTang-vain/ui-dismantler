@@ -15,6 +15,9 @@ dist/
 *.swp
 .DS_Store
 
+# ZCode 本地工作目录（plan/会话产物）
+.zcode/
+
 # 案例样本中的大文件按需排除（保留目录占位）
 examples/**/*.zip
 

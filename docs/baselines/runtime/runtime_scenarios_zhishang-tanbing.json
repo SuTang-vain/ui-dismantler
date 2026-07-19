@@ -1,0 +1,104 @@
+{
+  "scenarios": [
+    {
+      "id": "story-graph-quiz",
+      "name": "典故、图谱与测验主路径",
+      "when": {
+        "condition": "visible",
+        "selector": "[data-p=\"story\"]"
+      },
+      "actions": [
+        {
+          "action": "click",
+          "selector": "[data-p=\"story\"]",
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#story",
+              "name": "class",
+              "contains": "on"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": ".hl",
+          "index": 0,
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#pop",
+              "name": "class",
+              "contains": "on"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": "#pclose",
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#pop",
+              "name": "class",
+              "equals": "pop"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": "[data-p=\"graph-p\"]",
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#graph-p",
+              "name": "class",
+              "contains": "on"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": ".gnd",
+          "index": 1,
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": ".gnd",
+              "index": 1,
+              "name": "class",
+              "contains": "on"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": "[data-p=\"quiz\"]",
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#quiz",
+              "name": "class",
+              "contains": "on"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": ".opt",
+          "index": 0
+        },
+        {
+          "action": "click",
+          "selector": "#qznext"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "visible",
+          "selector": "#qzbody"
+        }
+      ]
+    }
+  ]
+}

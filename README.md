@@ -1,119 +1,128 @@
 # ui-dismantler
 
-> 将自包含 HTML 案例页拆解为可复用组件库的工具集。
+将 HTML 案例拆解为可复用、可验证的组件库。Agent 负责理解页面与生成代码，确定性工具负责结构提取、UI 关系建模、展示页生成和质量校验。
 
-核心诉求：**根据 HTML 创建对应的组件库以便复用**。Agent 阅读 HTML、理解其主题色语义与交互模式、产出完整的数据驱动组件库（对标手工拆解的 `明星组合/组件库` 质量）。Python 脚本作为确定性工具，辅助提取与校验。
+## 核心工作流
 
-## 架构：agent 驱动 + 工具辅助
+1. 阅读原始 HTML，识别视觉系统、组件、数据、交互和响应式行为。
+2. 运行分析工具生成 manifest；必要时投影为 UI-IR v2。
+3. 生成数据驱动的 CSS、JavaScript、示例页、设计规范和 showcase。
+4. 运行约束校验、JavaScript 语法检查和 roundtrip 等价度测试。
+5. 根据报告迭代，直到达到质量门槛。
 
-```
-用户给 HTML
-    │
-    ▼
-Agent（主控）──────────────────────────────────────┐
-   │ 1. 读 HTML，理解结构/样式/交互                  │  工具层（确定性，可复现）
-   │ 2. 调工具拿确定性数据（主题色/变量/CSS 规则）     │  - analyze_html.py（提取主题色/CSS，含语义角色）
-   │ 3. 产出组件库各文件（css/js/html/docs）         │  - validate_lib.py（8 项强约束校验）
-   │ 4. 自检：调 validate + roundtrip 验证           │  - roundtrip.py（往返等价度）
-   │ 5. 不达标则按决策表修订                          │  - _common.py（颜色/CSS/数据契约工具函数）
-    └───────────────────────────────────────────────┘
-```
+## 架构
 
-- **agent 做理解和创作**：理解 HTML 结构、设计渲染逻辑、写代码
-- **工具做确定性提取和校验**：颜色解析、CSS 拆分、约束校验、往返测试
-- **往返测试当裁判**：agent 产出的库必须通过往返测试，低分则修订
+仓库分为三个明确层次：
 
-## 产出标准
+| 层 | 目录 | 职责 |
+|---|---|---|
+| 核心实现 | `src/ui_dismantler/` | 可导入、可测试的 Python 工具包 |
+| Skill 适配 | `src/skill/` | Agent 指令、参考资料、模板和兼容 CLI |
+| 工程验证 | `scripts/`、`tests/`、`docs/baselines/` | roundtrip、批量验证、测试与基线 |
 
-对标手工拆解的 `明星组合/组件库`（2613 行，完整 A11y + 设计令牌 + 数据驱动）：
+`src/skill/scripts/*.py` 是稳定兼容入口，实际实现位于 `src/ui_dismantler/`。新增功能应进入核心包，不再把业务逻辑写入兼容脚本。
 
-```
-<库名>/
-├── README.md                 介绍 + 快速开始 + API + 数据契约 + 主题定制
-├── docs/设计规范.md           主题色系统 / Tab 结构 / 交互模式 / 逻辑设置 / 响应式
-├── src/
-│   ├── <lib>.css             参数化样式（sg-* 前缀，--sg-* 变量，三档响应式）
-│   └── <lib>.js              渲染引擎（mount/create API，数据驱动，A11y）
-└── examples/
-    ├── <案例>.html           用组件库复刻原案例（填入原数据）
-    └── template.html         空白复用模板（带示例数据）
+```mermaid
+flowchart LR
+    A["HTML / CSS / JavaScript"] --> B["analysis · manifest v1"]
+    B --> C["UI-IR v2"]
+    C --> D["compact / expanded / diff"]
+    B --> E["Agent 生成组件库"]
+    E --> F["showcase"]
+    E --> G["validate + roundtrip"]
+    G --> H["质量报告"]
 ```
 
-**质量门槛**：validate 8 项全 PASS + node --check 通过 + roundtrip 综合 ≥ 0.85（结构 ≥ 0.7 / 文本 ≥ 0.8）。
-
-## 工具层
-
-### CLI 脚本
-
-| 脚本 | 用途 |
-|---|---|
-| `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
-| `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
-| `scripts/roundtrip.py` | 往返等价度（原 HTML ⇄ 库渲染 DOM，量化"忠于原 HTML"程度） |
-| `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
-| `node --check` | JS 语法检查 |
-
-### Python 工具函数（`src/skill/scripts/_common.py`）
-
-| 函数 | 用途 |
-|---|---|
-| `infer_color_roles(css, var)` | 推断 --var 被用作什么角色（text/background/border/shadow/icon-fill） |
-| `query_rules(css, ...)` | 按选择器/属性/值过滤 CSS 规则 |
-| `extract_data_contracts(scripts)` | 扫描 JS 提取数据契约速览（变量名/类型/字段） |
-| `parse_color` / `to_hex` | 颜色值解析与归一化 |
-| `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
-
-工具层有 113 个单元测试覆盖边界（`python3 scripts/tests/run.py`）。
-
-## 当前能力与基线（P0 诚实度量后）
-
-> **重要**：P0 修复了 roundtrip 的两个度量盲区：(1) 参照侧改为 jsdom 渲染后 DOM（之前是静态解析，JS 动态生成的内容没进参照），(2) unwrap 不再只取首个有 class 子树（之前覆盖率仅 3.6%-47.4%，局部假满分）。现在覆盖率 99.4%-100%，分数是诚实的。
-
-| 案例 | 结构 | 文本 | 综合 | 覆盖率 | 旧综合 | 状态 |
-|---|---|---|---|---|---|---|
-| BLACKPINK（v1 链路）| 0.518 | 0.838 | 0.743 | 100% | ~~0.895~~ | ⚠️ v1 generic 库空壳本质暴露（结构 0.952->0.518） |
-| 黄月英（因果链，agent 拆解）| 0.971 | 0.971 | 0.971 | 99.4% | ~~0.941~~ | ✅ GOLD，库质量经受住诚实检验 |
-| 纸上谈兵（nav+panel，agent 拆解）| 0.970 | 0.989 | 0.979 | 99.5% | ~~0.992~~ | ✅ GOLD，修图谱节点缺失后结构 0.896->0.970 |
-
-**结论**：度量尺修复后，agent 拆解的两个案例（huang/zhi）均达 GOLD 标准（≥0.85），证明 agent 路线有效且经得起诚实度量；而 v1 generic 库（blackpink）从 0.895 暴跌至 0.743，证实了"规则套模板产出合规但空壳"的诊断。
-
-**P0 修复的 bug**：zhishang-tanbing 图谱节点在 jsdom 下因 `clientWidth=0` 导致 `layout()` early return，9 个关联词节点未渲染。修复为节点（百分比定位）无条件添加、连线（需像素坐标）条件绘制。诚实分从 0.936 升至 0.979。
+详细边界与依赖方向见 [`docs/architecture/overview.md`](docs/architecture/overview.md)。
 
 ## 目录
 
-```
-src/skill/              ZCode Skill（SKILL.md + scripts + references + assets 模板）
-  ├── SKILL.md          agent 驱动拆解指南（5 步工作流 + 自检决策表）
-  ├── scripts/          工具脚本（analyze/validate/aggregate + _common.py）
-  ├── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
-  └── assets/templates/ Jinja2 模板（v1 generate_lib 用，agent 驱动后退役）
-examples/cases/         案例样本（blackpink / huang-yueying / zhishang-tanbing）
-scripts/                roundtrip + verify_all + tests
-docs/                   ROADMAP + baselines
+```text
+ui-dismantler/
+├── src/
+│   ├── ui_dismantler/        # 核心 Python 包
+│   │   ├── analysis/          # HTML -> manifest
+│   │   ├── uiir/             # UI-IR 模型、投影与证据提取
+│   │   ├── generation/       # 组件库、showcase 与输出适配
+│   │   ├── validation/       # 组件库约束校验
+│   │   ├── aggregation/      # 多案例垂类聚合
+│   │   └── core/             # 共享 CSS/颜色/数据解析工具
+│   └── skill/                # Agent Skill、模板、Schema、兼容脚本
+├── scripts/                  # 工程级测试与 roundtrip 命令
+├── tests/
+│   ├── unit/                 # 纯函数、模型与 CLI 测试
+│   ├── integration/          # 浏览器与页面形态回归
+│   └── fixtures/             # 可迁移页面夹具
+├── docs/
+│   ├── architecture/         # 架构与 UI-IR 设计
+│   ├── guides/               # 开发和测试说明
+│   └── baselines/            # manifest、runtime、roundtrip 基线
+└── examples/cases/           # 原始案例页
 ```
 
 ## 快速开始
 
 ```bash
-# 装依赖
-pip install --user --break-system-packages beautifulsoup4
+# Python 基础依赖
+python3 -m pip install -r requirements.txt
 
-# 1. 分析 HTML（拿主题色/结构参考）
-python3 src/skill/scripts/analyze_html.py examples/cases/blackpink/original.html --out /tmp/mf.json --minimal
+# Node.js roundtrip 依赖
+npm install
 
-# 2. 校验组件库（8 项强约束）
+# 1. HTML -> manifest
+python3 src/skill/scripts/analyze_html.py \
+  examples/cases/blackpink/original.html \
+  --out /tmp/blackpink.manifest.json \
+  --minimal
+
+# 2. manifest -> UI-IR v2
+python3 src/skill/scripts/manifest_v1_to_uiir.py \
+  /tmp/blackpink.manifest.json \
+  --out /tmp/blackpink.uiir.json \
+  --pretty
+
+# 3. 校验生成的组件库
 python3 src/skill/scripts/validate_lib.py <组件库目录>
 
-# 3. 往返等价度
-python3 scripts/roundtrip.py examples/cases/blackpink/original.html --lib <组件库目录>
+# 4. roundtrip 等价度
+python3 scripts/roundtrip.py <原始 HTML> --lib <组件库目录> --out <报告.json>
 
-# 4. 批量回归验证
-python3 scripts/verify_all.py
+# 5. 完整测试
+python3 scripts/test.py
 ```
 
-agent 拆解工作流详见 [src/skill/SKILL.md](src/skill/SKILL.md)，规划详见 [docs/ROADMAP.md](docs/ROADMAP.md)。
+运行时事件观察是可选能力：
 
-## 依赖
+```bash
+python3 -m pip install -r requirements-runtime.txt
+python3 -m playwright install chromium
+```
 
-- Python 3.8+（beautifulsoup4）
-- Node.js（用于 `node --check` 和 roundtrip 的 jsdom 渲染）
+## 主要入口
+
+| 命令 | 用途 |
+|---|---|
+| `src/skill/scripts/analyze_html.py` | HTML -> manifest v1 |
+| `src/skill/scripts/manifest_v1_to_uiir.py` | manifest v1 -> canonical UI-IR v2 |
+| `src/skill/scripts/uiir_to_compact.py` | UI-IR -> 面向 Agent 的紧凑观察 |
+| `src/skill/scripts/generate_showcase.py` | 从组件库 CSS 生成 showcase |
+| `src/skill/scripts/validate_lib.py` | 执行 8 项组件库强约束校验 |
+| `scripts/roundtrip.py` | 对比原页面与组件库渲染结果 |
+| `scripts/verify_all.py` | 批量执行案例回归 |
+| `scripts/test.py` | 运行全部单元与集成测试 |
+
+## 质量门槛
+
+- `validate_lib.py`：8 项全部通过。
+- `node --check`：生成的 JavaScript 无语法错误。
+- roundtrip：PASS `overall >= 0.70`；GOLD `overall >= 0.85`。
+- 工具层：当前 192 项测试通过后才可继续迭代。
+
+## 文档
+
+- [`docs/README.md`](docs/README.md)：文档索引。
+- [`docs/architecture/overview.md`](docs/architecture/overview.md)：整体架构与模块职责。
+- [`docs/architecture/ui-ir-v2.md`](docs/architecture/ui-ir-v2.md)：UI-IR v2 模型、证据和 CLI。
+- [`docs/guides/development.md`](docs/guides/development.md)：开发、测试与兼容约定。
+- [`docs/ROADMAP.md`](docs/ROADMAP.md)：演进路线与已完成工作。
+- [`src/skill/SKILL.md`](src/skill/SKILL.md)：Agent 完整执行规范。

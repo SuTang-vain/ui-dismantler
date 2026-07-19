@@ -46,7 +46,7 @@ v1 的 Python 脚本不丢弃，转为 agent 的**工具层**：
 
 | v1 脚本 | v2 角色 |
 |---|---|
-| `_common.py` | 工具：颜色解析、CSS 变量提取、media 拆分（确定性，agent 调用） |
+| `src/ui_dismantler/core/common.py` | 工具：颜色解析、CSS 变量提取、media 拆分（确定性，agent 调用） |
 | `analyze_html.py` | 工具：快速提取主题色令牌、结构清单（给 agent 当参考，不是唯一依据） |
 | `validate_lib.py` | 工具：8 项强约束校验（agent 自检） |
 | `roundtrip.py` | 工具：往返等价度（agent 自检 + 量化质量） |
@@ -95,10 +95,10 @@ agent 产出的组件库必须达到当初手工拆解的质量：
 
 ### P0-2 单元测试
 
-对工具层（`_common.py`、`_fix_js_object`）做边界测试，确保 agent 调用的工具可靠。
-- `scripts/tests/test_common.py`：颜色解析、变量提取、media 拆分、slugify
-- `scripts/tests/test_fix_js_object.py`：单引号/模板字符串/URL 冒号/嵌套
-- `scripts/tests/run.py`：一键跑全部
+对工具层（`core/common.py`、`HtmlAnalyzer._fix_js_object`）做边界测试，确保 agent 调用的工具可靠。
+- `tests/unit/test_common.py`：颜色解析、变量提取、media 拆分、slugify
+- `tests/unit/test_fix_js_object.py`：单引号/模板字符串/URL 冒号/嵌套
+- `scripts/test.py`：一键运行 `tests/unit/` 与 `tests/integration/`
 
 ---
 
@@ -191,3 +191,36 @@ SKILL.md 要包含：
 - **保留 generate_lib.py 套模板路线**：agent 直接写代码，模板退役。
 - **垂类聚合**：等 agent 单案例拆解能力稳定（P1 前向测试全过）后再做。
 - **可视化 Playground**：浏览器打开 example.html 即可预览。
+
+---
+
+## P4：UI-IR v2 关系中间层（进行中，2026-07-19）
+
+在不破坏当前 agent-driven 主流程的前提下，引入轻量的类型化父子节点与稀疏关系边：
+
+- [x] UI-IR v2 RFC 与 JSON Schema
+- [x] manifest v1 → UI-IR v2 初始转换器
+- [x] stable key、关系去重、dangling edge 与 parent cycle 验证
+- [x] baseline 转换测试
+- [x] UI-IR v2 → manifest v1 兼容投影
+- [x] v1 → v2 → v1 语义 round-trip
+- [x] manifest 级 provenance、解析方法与 confidence
+- [x] CSS `@media` 直接解析、selector 聚合与 `responds` edges
+- [x] CSS declaration `sourceSpan` 与 confidence
+- [x] manifest 响应式文本兼容回退
+- [x] evidence 重复字符串表、引用验证与无损展开
+- [x] DOM/JS `sourceSpan` 与静态 selector / 事件绑定引用链
+- [x] 可选浏览器 listener/property 注册观察与静态 confidence 合并
+- [x] 受约束 Playwright 真实动作回放与 listener 调用覆盖
+- [x] 隔离场景、场景/动作条件与动作后/最终声明式断言
+- [x] 多路径覆盖率汇总、场景 evidence 与脱敏失败重放指针
+- [x] 从 DOM 状态提取有界交互候选，并记录已执行路径的隐私安全轻量状态图
+- [ ] 对候选进行风险分级与有界路径扩展（仍需人或 Agent 选择业务路径）
+- [x] compact Agent 首轮观察投影
+- [x] expanded Agent 无损语义观察投影
+- [x] stable-key diff Agent 观察投影
+- [ ] 使用通用关系合并替换 `aggregate_vertical.py` 的领域字段特判
+- [ ] 可重建 SQLite 跨项目索引
+
+设计文档：`docs/architecture/ui-ir-v2.md`
+Schema：`src/skill/references/uiir_v2_schema.json`

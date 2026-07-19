@@ -1,0 +1,26 @@
+[
+  {
+    "id": "open-and-navigate-toc",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#toc-toggle",
+        "assertions": [
+          {"assertion": "visible", "selector": "#toc"},
+          {"assertion": "attribute", "selector": "#toc-toggle", "name": "aria-expanded", "equals": "true"}
+        ]
+      },
+      {
+        "action": "click",
+        "selector": "#link-framework",
+        "assertions": [
+          {"assertion": "hidden", "selector": "#toc"},
+          {"assertion": "attribute", "selector": "#link-framework", "name": "class", "contains": "active"}
+        ]
+      }
+    ],
+    "assertions": [
+      {"assertion": "attribute", "selector": "#toc-toggle", "name": "aria-expanded", "equals": "false"}
+    ]
+  }
+]

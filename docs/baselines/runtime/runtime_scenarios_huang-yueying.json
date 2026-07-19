@@ -1,0 +1,65 @@
+{
+  "scenarios": [
+    {
+      "id": "intro-to-timeline",
+      "name": "开场选择进入时间线",
+      "when": {
+        "condition": "visible",
+        "selector": "#splashStart"
+      },
+      "actions": [
+        {
+          "action": "click",
+          "selector": ".splash-opt",
+          "index": 0,
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": ".splash-opt",
+              "index": 0,
+              "name": "class",
+              "contains": "picked"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": "#splashStart",
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": "#splash",
+              "name": "class",
+              "contains": "hide"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": ".timeline-node",
+          "index": 2,
+          "assertions": [
+            {
+              "assertion": "attribute",
+              "selector": ".timeline-node",
+              "index": 2,
+              "name": "class",
+              "contains": "active"
+            }
+          ]
+        },
+        {
+          "action": "click",
+          "selector": "[data-key=\"背景\"]"
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "count",
+          "selector": ".timeline-node",
+          "equals": 7
+        }
+      ]
+    }
+  ]
+}

@@ -11,20 +11,21 @@
 - 字符串内的引号转义
 - 注释跳过
 
-运行：python3 scripts/tests/test_fix_js_object.py
+运行：python3 tests/unit/test_fix_js_object.py
 """
 
 import json
 import os
+from pathlib import Path
 import sys
 import unittest
 
-_SKILL_SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "..", "src", "skill", "scripts")
-sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
+_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_ROOT / "src"))
 
 # _fix_js_object 是 HtmlAnalyzer 的方法，但它无状态、不依赖 self
 # 直接实例化一个最小 HTML 的 analyzer 来拿到可调用方法
-from analyze_html import HtmlAnalyzer  # noqa: E402
+from ui_dismantler.analysis.html import HtmlAnalyzer  # noqa: E402
 
 import tempfile  # noqa: E402
 

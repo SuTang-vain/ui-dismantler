@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kezhongke Growth Filter Fixture</title>
+<style>
+  body { margin: 0; padding: 36px; font: 15px/1.5 Inter, system-ui, sans-serif; background: #faf8f4; color: #28241e; }
+  .filters { display: flex; gap: 8px; margin-bottom: 20px; }
+  .filter { padding: 9px 15px; border: 1px solid #d5cec2; border-radius: 999px; background: white; }
+  .filter.active { color: white; background: #81502f; }
+  #growth-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .growth-card { min-height: 100px; padding: 16px; border-radius: 14px; background: #eee8dd; }
+  .growth-card[hidden] { display: none; }
+  @media (max-width: 680px) { #growth-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>生长记录</h1>
+  <div class="filters" role="toolbar" aria-label="内容筛选">
+    <button id="filter-all" class="filter active" type="button" data-filter="all" aria-pressed="true">全部</button>
+    <button id="filter-ai" class="filter" type="button" data-filter="ai" aria-pressed="false">AI</button>
+    <button id="filter-field" class="filter" type="button" data-filter="field" aria-pressed="false">田野</button>
+  </div>
+  <div id="growth-grid">
+    <article class="growth-card" data-topic="ai">模型实验</article>
+    <article class="growth-card" data-topic="field">田野记录</article>
+    <article class="growth-card" data-topic="ai">自动化笔记</article>
+  </div>
+</main>
+<script>
+  const filters = Array.from(document.querySelectorAll('[data-filter]'));
+  const cards = Array.from(document.querySelectorAll('[data-topic]'));
+  filters.forEach(button => button.addEventListener('click', () => {
+    const filter = button.dataset.filter;
+    filters.forEach(item => {
+      const active = item === button;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-pressed', String(active));
+    });
+    cards.forEach(card => { card.hidden = filter !== 'all' && card.dataset.topic !== filter; });
+    document.getElementById('growth-grid').dataset.activeFilter = filter;
+  }));
+</script>
+</body>
+</html>

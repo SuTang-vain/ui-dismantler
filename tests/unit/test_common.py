@@ -9,18 +9,17 @@
 - extract_gradients（渐变提取）
 - slugify
 
-运行：python3 scripts/tests/test_common.py
+运行：python3 tests/unit/test_common.py
 """
 
-import os
+from pathlib import Path
 import sys
 import unittest
 
-# 让脚本能直接 import src/skill/scripts/_common.py
-_SKILL_SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "..", "src", "skill", "scripts")
-sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
+_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_ROOT / "src"))
 
-from _common import (  # noqa: E402
+from ui_dismantler.core.common import (  # noqa: E402
     normalize_var_name, parse_color, to_hex, color_distance,
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
     extract_gradients, slugify, infer_color_roles, query_rules,

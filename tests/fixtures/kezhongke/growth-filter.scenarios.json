@@ -1,0 +1,32 @@
+[
+  {
+    "id": "filter-ai-cards",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#filter-ai",
+        "assertions": [
+          {"assertion": "attribute", "selector": "#filter-ai", "name": "aria-pressed", "equals": "true"},
+          {"assertion": "attribute", "selector": "#growth-grid", "name": "data-active-filter", "equals": "ai"},
+          {"assertion": "hidden", "selector": "[data-topic=field]"},
+          {"assertion": "visible", "selector": "[data-topic=ai]", "index": 1}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "filter-and-reset",
+    "actions": [
+      {"action": "click", "selector": "#filter-field"},
+      {
+        "action": "click",
+        "selector": "#filter-all",
+        "assertions": [
+          {"assertion": "visible", "selector": ".growth-card", "index": 0},
+          {"assertion": "visible", "selector": ".growth-card", "index": 1},
+          {"assertion": "visible", "selector": ".growth-card", "index": 2}
+        ]
+      }
+    ]
+  }
+]

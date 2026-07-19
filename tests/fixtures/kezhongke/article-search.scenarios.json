@@ -1,0 +1,39 @@
+[
+  {
+    "id": "search-by-enter",
+    "actions": [
+      {"action": "fill", "selector": "#search-input", "value": "研究方法"},
+      {
+        "action": "press",
+        "selector": "#search-input",
+        "key": "Enter",
+        "assertions": [
+          {"assertion": "visible", "selector": "#search-result"},
+          {"assertion": "attribute", "selector": "#search-result", "name": "data-query-state", "equals": "matched"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "profile-menu-keyboard-close",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#profile-button",
+        "assertions": [
+          {"assertion": "visible", "selector": "#profile-menu"},
+          {"assertion": "attribute", "selector": "#profile-button", "name": "aria-expanded", "equals": "true"}
+        ]
+      },
+      {
+        "action": "press",
+        "selector": "body",
+        "key": "Escape",
+        "assertions": [
+          {"assertion": "hidden", "selector": "#profile-menu"},
+          {"assertion": "attribute", "selector": "#profile-button", "name": "aria-expanded", "equals": "false"}
+        ]
+      }
+    ]
+  }
+]

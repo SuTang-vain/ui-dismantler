@@ -1,17 +1,16 @@
 """generate_showcase.py 单元与集成测试。"""
 
 from html.parser import HTMLParser
-import os
 from pathlib import Path
 import re
 import sys
 import tempfile
 import unittest
 
-_SKILL_SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "..", "src", "skill", "scripts")
-sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
+_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_ROOT / "src"))
 
-from generate_showcase import (  # noqa: E402
+from ui_dismantler.generation.showcase import (  # noqa: E402
     _contrast_text,
     _parse_css_color,
     _pick_font,

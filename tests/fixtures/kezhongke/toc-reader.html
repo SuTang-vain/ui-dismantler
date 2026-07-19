@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kezhongke TOC Reader Fixture</title>
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 16px/1.7 Georgia, serif; color: #28251f; }
+  #toc-toggle { position: fixed; top: 16px; left: 16px; z-index: 2; padding: 10px 14px; }
+  #toc { position: fixed; top: 64px; left: 16px; width: 190px; padding: 14px; border: 1px solid #d9d4ca; background: white; }
+  #toc:not(.mobile-open) { display: none; }
+  #toc a { display: block; padding: 6px; color: #554a3b; }
+  #toc a.active { color: #a34a28; font-weight: 700; }
+  main { max-width: 720px; margin: auto; padding: 70px 24px; }
+  section { min-height: 70vh; padding-top: 20px; }
+  @media (min-width: 1600px) {
+    #toc-toggle { display: none; }
+    #toc { display: block !important; }
+    main { padding-left: 230px; }
+  }
+</style>
+</head>
+<body>
+<button id="toc-toggle" type="button" aria-expanded="false" aria-controls="toc">目录</button>
+<nav id="toc" aria-label="文档目录">
+  <a id="link-intro" href="#intro" class="active">引言</a>
+  <a id="link-framework" href="#framework">框架</a>
+  <a id="link-boundary" href="#boundary">边界</a>
+</nav>
+<main>
+  <section id="intro"><h1>引言</h1><p>用于测试长文档目录状态。</p></section>
+  <section id="framework"><h2>框架</h2><p>内容结构与概念关系。</p></section>
+  <section id="boundary"><h2>边界</h2><p>应用条件和限制。</p></section>
+</main>
+<script>
+  const tocToggle = document.getElementById('toc-toggle');
+  const toc = document.getElementById('toc');
+  const links = Array.from(toc.querySelectorAll('a'));
+  tocToggle.addEventListener('click', () => {
+    const open = !toc.classList.contains('mobile-open');
+    toc.classList.toggle('mobile-open', open);
+    tocToggle.setAttribute('aria-expanded', String(open));
+  });
+  links.forEach(link => link.addEventListener('click', event => {
+    event.preventDefault();
+    history.replaceState(null, '', link.hash);
+    links.forEach(item => item.classList.toggle('active', item === link));
+    toc.classList.remove('mobile-open');
+    tocToggle.setAttribute('aria-expanded', 'false');
+  }));
+</script>
+</body>
+</html>

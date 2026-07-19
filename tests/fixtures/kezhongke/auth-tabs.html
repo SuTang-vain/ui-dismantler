@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kezhongke Auth Tabs Fixture</title>
+<style>
+  :root { color-scheme: light; font-family: Inter, system-ui, sans-serif; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f5f3ef; color: #25231f; }
+  main { width: min(92vw, 440px); padding: 28px; border: 1px solid #ded9cf; border-radius: 20px; background: white; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .tab { flex: 1; padding: 12px; border: 0; border-radius: 12px; background: #eeeae2; cursor: pointer; }
+  .tab.active { color: white; background: #a34a28; }
+  .panel { display: grid; gap: 12px; }
+  .panel[hidden] { display: none; }
+  label { display: grid; gap: 6px; }
+  input, button { font: inherit; }
+  input { padding: 10px 12px; border: 1px solid #cfc8bd; border-radius: 10px; }
+  .primary { padding: 11px 14px; border: 0; border-radius: 10px; color: white; background: #25231f; }
+  #auth-status { min-height: 1.5em; color: #6d3d24; }
+</style>
+</head>
+<body>
+<main>
+  <div class="tabs" role="tablist" aria-label="认证方式">
+    <button id="tab-login" class="tab active" role="tab" aria-selected="true" aria-controls="form-login">登录</button>
+    <button id="tab-register" class="tab" role="tab" aria-selected="false" aria-controls="form-register">注册</button>
+  </div>
+  <section id="form-login" class="panel" role="tabpanel">
+    <label>邮箱 <input id="login-email" type="email" autocomplete="username"></label>
+    <label>密码 <input id="login-password" type="password" autocomplete="current-password"></label>
+    <button id="login-btn" class="primary" type="button">立即进入</button>
+  </section>
+  <section id="form-register" class="panel" role="tabpanel" hidden>
+    <label>邮箱 <input id="register-email" type="email"></label>
+    <label>验证码 <input id="register-otp" inputmode="numeric"></label>
+    <button id="register-btn" class="primary" type="button">完成注册</button>
+  </section>
+  <p id="auth-status" aria-live="polite"></p>
+</main>
+<script>
+  const loginTab = document.getElementById('tab-login');
+  const registerTab = document.getElementById('tab-register');
+  const loginPanel = document.getElementById('form-login');
+  const registerPanel = document.getElementById('form-register');
+  function switchTab(mode) {
+    const login = mode === 'login';
+    loginTab.classList.toggle('active', login);
+    registerTab.classList.toggle('active', !login);
+    loginTab.setAttribute('aria-selected', String(login));
+    registerTab.setAttribute('aria-selected', String(!login));
+    loginPanel.hidden = !login;
+    registerPanel.hidden = login;
+  }
+  loginTab.addEventListener('click', () => switchTab('login'));
+  registerTab.addEventListener('click', () => switchTab('register'));
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const complete = document.getElementById('login-email').value && document.getElementById('login-password').value;
+    document.getElementById('auth-status').textContent = complete ? '登录信息已就绪' : '请完整填写登录信息';
+    document.getElementById('auth-status').dataset.state = complete ? 'ready' : 'incomplete';
+  });
+</script>
+</body>
+</html>

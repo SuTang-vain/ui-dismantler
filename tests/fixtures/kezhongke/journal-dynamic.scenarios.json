@@ -1,0 +1,21 @@
+[
+  {
+    "id": "load-and-open-dynamic-entry",
+    "when": [
+      {"condition": "attribute", "selector": "#journal-grid", "name": "aria-busy", "equals": "false", "timeoutMs": 1000}
+    ],
+    "actions": [
+      {
+        "action": "click",
+        "selector": "[data-entry=method]",
+        "assertions": [
+          {"assertion": "visible", "selector": "#journal-detail"},
+          {"assertion": "attribute", "selector": "#journal-detail", "name": "data-open", "equals": "true"}
+        ]
+      }
+    ],
+    "assertions": [
+      {"assertion": "count", "selector": ".journal-card", "equals": 3}
+    ]
+  }
+]

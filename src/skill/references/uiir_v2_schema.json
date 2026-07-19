@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ui-dismantler.local/schema/ui-ir-v2.json",
+  "title": "UI-IR v2",
+  "description": "Compact typed parent-edge intermediate representation for UI Dismantler.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "format",
+    "sourceSchemaVersion",
+    "nodeTypes",
+    "relationTypes",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.0"
+    },
+    "format": {
+      "const": "ui-ir"
+    },
+    "sourceSchemaVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nodeTypes": {
+      "const": [
+        "page",
+        "region",
+        "component",
+        "element",
+        "data",
+        "state",
+        "token",
+        "breakpoint"
+      ]
+    },
+    "relationTypes": {
+      "const": [
+        "renders",
+        "binds",
+        "triggers",
+        "controls",
+        "styles",
+        "responds",
+        "references",
+        "variantOf",
+        "derivedFrom",
+        "labels"
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "evidence": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[0-9]+$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/evidenceRecord"
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "warnings": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        },
+        {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "key"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
+    "edge": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "evidenceRecord": {
+      "type": "object",
+      "required": [
+        "observations"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidenceObservation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceObservation": {
+      "type": "object",
+      "required": [
+        "method",
+        "confidence"
+      ],
+      "properties": {
+        "manifestPath": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "method": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "selector": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "source": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "sourceSpan": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
+        "mediaQuery": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringRef"
+          }
+        },
+        "api": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "event": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "runtimeObserved": {
+          "type": "boolean"
+        },
+        "runtimeMatch": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "runtimeMode": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "runtimeLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "runtimeColumn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "options": {
+          "type": "object"
+        },
+        "invocationCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "binding": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "scope": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "variable": {
+          "$ref": "#/$defs/stringRef"
+        },
+        "runtimeScenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringRef"
+          }
+        },
+        "invokedRuntimeScenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringRef"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "manifestPath"
+          ]
+        },
+        {
+          "required": [
+            "sourceSpan"
+          ]
+        },
+        {
+          "required": [
+            "runtimeObserved"
+          ],
+          "properties": {
+            "runtimeObserved": {
+              "const": true
+            }
+          }
+        }
+      ]
+    },
+    "stringRef": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    }
+  }
+}
