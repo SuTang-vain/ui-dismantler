@@ -5,6 +5,10 @@
 - [`architecture/overview.md`](architecture/overview.md)：仓库分层、模块职责、依赖方向和兼容策略。
 - [`architecture/ui-ir-v2.md`](architecture/ui-ir-v2.md)：UI-IR v2 数据结构、静态/运行时证据、投影与 CLI。
 
+## 研究与启发
+
+- [`research/designrepair-inspirations.md`](research/designrepair-inspirations.md)：DesignRepair 的双层知识库、分而治之质量分析与修复架构启发。
+
 ## 开发与测试
 
 - [`guides/development.md`](guides/development.md)：环境、测试命令、扩展规则和发布前检查。
