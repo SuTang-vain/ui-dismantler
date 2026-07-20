@@ -92,7 +92,7 @@
 [PASS] 1. 命名前缀
 [PASS] 2. CSS 变量归一化
 [FAIL] 3. 数据分离 — examples/example.html 中发现硬编码 URL
-  ↳ src/star-group.js:142  img.src = 'https://...'
+  ↳ src/glossary.js:142  img.src = 'https://...'
 [PASS] 4. 响应式三档
 ...
 ```

@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "python3 scripts/tests/run.py",
-    "verify": "python3 src/skill/scripts/validate_lib.py examples/cases/blackpink-v10/lib && python3 scripts/roundtrip.py examples/cases/blackpink-v10/original.html --lib examples/cases/blackpink-v10/lib",
-    "verify:all": "python3 scripts/verify_all.py --lib-dir examples/cases/blackpink-v10/lib"
+    "verify": "python3 src/skill/scripts/validate_lib.py benchmark/lib && python3 scripts/roundtrip.py benchmark/original.html --lib benchmark/lib",
+    "verify:all": "python3 scripts/verify_all.py --lib-dir benchmark/lib"
   }
 }

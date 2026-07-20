@@ -28,8 +28,8 @@ from ui_dismantler.paths import PROJECT_ROOT
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="批量验证：全案例 roundtrip 汇总（并行+缓存+增量）")
-    ap.add_argument("--cases-dir", default=str(PROJECT_ROOT / "examples" / "cases"),
-                    help="案例目录（默认 examples/cases）")
+    ap.add_argument("--cases-dir", default=str(PROJECT_ROOT),
+                    help="案例目录（默认项目根，扫描 <dir>/<name>/original.html）")
     ap.add_argument("--lib-dir",
                     help="已生成组件库父目录（其下每个子目录名对应案例名）；必填，agent 产出库后验证")
     ap.add_argument("--threshold", type=float, default=0.85,

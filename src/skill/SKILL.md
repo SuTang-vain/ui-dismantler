@@ -11,7 +11,7 @@ Dismantle a self-contained HTML case page (with inline `<style>`/`<script>`) int
 
 **You are the lead dismantler**, not a script dispatcher. Like an engineer reading source code, you must **understand** this HTML -- its theme color semantics, Tab/view structure, interaction patterns, data organization, responsive breakpoints -- and then **personally produce** the complete component library code. The Python scripts are just deterministic tools that help you fetch color values, validate constraints, and quantify equivalence; **understanding and creation are done by you**.
 
-Benchmark quality: `明星组合/组件库` (the manually dismantled BLACKPINK output, 2613 lines, with complete A11y + design tokens + data-driven). The library you produce should match this quality bar, not just "it runs".
+Benchmark quality: `benchmark/lib` (the domain-neutral benchmark library, 1346 lines, covering 6 patterns with complete A11y + design tokens + data-driven). The library you produce should match this quality bar, not just "it runs".
 
 ## When to Use
 
@@ -48,12 +48,12 @@ The tool recognizes **10 patterns** via a pluggable `ViewDetectorRegistry`. Each
 
 | Pattern | structural_type | Recognition signal | Typical case |
 |---|---|---|---|
-| `carousel-3d` | collection | carousel position class + `perspective` | BLACKPINK works carousel |
+| `carousel-3d` | collection | carousel position class + `perspective` | carousel works |
 | `cause-chain` | sequence | timeline-nav + causeChain/whatIf data | Huang Yueying, She Xiang-furen |
 | `nav-panel` | content-region | nav + ≥2 triggers (data-p/data-tab) + ≥2 panels | Zhi-shang-tan-bing |
 | `graph` | collection | svg lines / node class + graph JS data | Qingyu-nian, Xie-tianzi |
-| `timeline` | sequence | timeline/tl-item class | star-group timeline |
-| `member-grid` | collection | member-grid/member-list class | BLACKPINK member grid |
+| `timeline` | sequence | timeline/tl-item class | glossary timeline |
+| `member-grid` | collection | member-grid/member-list class | glossary member grid |
 | `detail-panel` | content-region | detail-panel/aria-live:polite | profile panel |
 | `quiz` | form | qz-body/quiz/opt class | quiz |
 | `comparison` | content-region | whatif-card/cmp-btn class | comparison |
@@ -102,7 +102,7 @@ In the user-specified directory (or `/tmp/<lib-name>/`), create the complete com
 
 #### 3.2 `src/<lib-name>.js` - Rendering Engine
 
-Benchmark against the `star-group.js` pattern (see `references/` benchmark):
+Benchmark against the `glossary.js` pattern (see `benchmark/lib/src/`):
 
 ```js
 (function (global) {
@@ -149,7 +149,7 @@ Key points:
 
 #### 3.5 `docs/设计规范.md` - Complete Spec
 
-Benchmark against the structure of `明星组合/组件库/docs/设计规范.md`:
+Benchmark against the structure of `benchmark/lib/docs/设计规范.md`:
 1. **Theme color system**: design token table (Token / Value / Semantic usage) + semantic grouping + gradient overlay
 2. **Tab elements**: structure + attribute conventions + three-tier sizes
 3. **Interaction patterns**: view stack + interaction details for each view (member/timeline/works/detail)
@@ -186,7 +186,7 @@ python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --ou
 - Runtime main threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
 - When the page has Tab/Dialog/form interactions, add `--scenarios <scenarios.json>`; each scenario must have assertions proving the state was actually reached
 
-> Threshold basis: the hand-built benchmark (star group) has roundtrip overall 0.91;
+> Threshold basis: the benchmark library has roundtrip overall 0.99;
 > agent dismantling (huang/zhi) 0.97+ GOLD;
 > unsupported patterns (huang-yueying/zhi-shang-tan-bing generic fallback) naturally fall short and are lifted via agent dismantling.
 
@@ -232,11 +232,11 @@ Locate revision points using the "Self-Check Decision Table" above. After fixing
 
 ## Benchmark Reference
 
-When dismantling, target the quality of the hand-built BLACKPINK component library (provided by the user, as gold standard):
-- `明星组合/组件库/README.md` - documentation structure template
-- `明星组合/组件库/docs/设计规范.md` - spec doc template
-- `明星组合/组件库/src/star-group.js` - rendering engine pattern (IIFE + el() + DEFAULTS + create/mount + _buildXxx)
-- `明星组合/组件库/src/star-group.css` - parametric style pattern (:root vars + sg- prefix + three-tier responsive)
+When dismantling, target the quality of the benchmark component library:
+- `benchmark/lib/README.md` - documentation structure template
+- `benchmark/lib/docs/设计规范.md` - spec doc template
+- `benchmark/lib/src/glossary.js` - rendering engine pattern (IIFE + el() + DEFAULTS + create/mount + _buildXxx)
+- `benchmark/lib/src/glossary.css` - parametric style pattern (:root vars + sg- prefix + three-tier responsive)
 
 ## Tool Layer (deterministic helpers, you call them)
 

@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Technical Glossary Explorer</title>
+<style>
+/* === Theme tokens === */
+:root {
+  --ink: #1a1a2e;
+  --muted: #6b7280;
+  --subtle: #9ca3af;
+  --line: #e5e7eb;
+  --paper: #ffffff;
+  --stage: #f3f4f6;
+  --primary: #4f46e5;
+  --accent: #ec4899;
+  --accent-2: #14b8a6;
+  --soft: #eef2ff;
+  --soft-accent: #fce7f3;
+  --error: #ef4444;
+  --sg-frame-w: 800px;
+  --sg-frame-h: 560px;
+  --sg-r-card: 12px;
+  --sg-r-row: 8px;
+  --sg-r-pill: 999px;
+  --sg-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sg-dur-fast: 150ms;
+  --sg-dur-mid: 300ms;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--stage);
+  color: var(--ink);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* === Canvas / Frame === */
+.pc-card-frame {
+  width: var(--sg-frame-w);
+  max-width: 100%;
+  background: var(--paper);
+  border-radius: var(--sg-r-card);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+/* === Tab Bar === */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.tab-bar .tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+  transition: all var(--sg-dur-fast) var(--sg-ease);
+}
+.tab-bar .tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tab-bar .tab:hover { background: var(--soft); }
+
+/* === View Stack === */
+.view-stack { position: relative; min-height: 400px; }
+.view {
+  display: none;
+  padding: 20px;
+}
+.view.active { display: block; }
+
+/* === Section Head === */
+.section-head { margin-bottom: 16px; }
+.section-head h2 { font-size: 1.1rem; font-weight: 700; }
+.section-head p { font-size: 0.85rem; color: var(--muted); }
+
+/* === Splash Overlay === */
+.splash {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  transition: opacity var(--sg-dur-mid) var(--sg-ease);
+}
+.splash.hide { opacity: 0; pointer-events: none; }
+.splash-eyebrow {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.splash-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+.splash-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 24px; }
+.splash-question {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.splash-options { display: flex; gap: 12px; margin-bottom: 24px; }
+.splash-opt {
+  padding: 10px 20px;
+  border: 2px solid var(--line);
+  border-radius: var(--sg-r-pill);
+  background: var(--paper);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--sg-dur-fast) var(--sg-ease);
+}
+.splash-opt:hover { border-color: var(--primary); background: var(--soft); }
+.splash-opt[data-v="1"] { border-color: var(--primary); background: var(--soft); }
+.splash-cta {
+  padding: 12px 32px;
+  background: var(--primary);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--sg-r-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--sg-dur-fast) var(--sg-ease);
+}
+.splash-cta:hover { opacity: 0.9; }
+.splash-hint { font-size: 0.75rem; color: var(--subtle); margin-top: 12px; }
+
+/* === Quiz === */
+.qz-top { margin-bottom: 16px; }
+.qz-top .qt { font-size: 1rem; font-weight: 600; }
+.qz-top .qno { font-size: 0.78rem; color: var(--accent); margin-bottom: 4px; }
+.qz-body { margin-bottom: 16px; }
+.qz-body .opts { display: flex; flex-direction: column; gap: 8px; }
+.qz-body .opt {
+  padding: 12px 16px;
+  border: 2px solid var(--line);
+  border-radius: var(--sg-r-row);
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all var(--sg-dur-fast) var(--sg-ease);
+}
+.qz-body .opt:hover { border-color: var(--primary); }
+.qz-body .opt.selected { border-color: var(--primary); background: var(--soft); }
+.qz-body .opt.correct { border-color: var(--accent-2); background: #ecfdf5; }
+.qz-body .opt.wrong { border-color: var(--error); background: #fef2f2; }
+.qz-fb {
+  padding: 10px 14px;
+  border-radius: var(--sg-r-row);
+  font-size: 0.82rem;
+  margin-top: 8px;
+  display: none;
+}
+.qz-fb.show { display: block; }
+.qz-fb.ok { background: #ecfdf5; color: var(--accent-2); }
+.qz-fb.no { background: #fef2f2; color: var(--error); }
+.qz-next {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--sg-r-pill);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 12px;
+  display: none;
+}
+.qz-next.show { display: inline-block; }
+.qz-next:hover { opacity: 0.9; }
+.qz-result {
+  text-align: center;
+  padding: 24px;
+  display: none;
+}
+.qz-result.show { display: block; }
+.qz-result .score { font-size: 2rem; font-weight: 700; color: var(--primary); }
+
+/* === Comparison === */
+.cmp-container { display: flex; gap: 16px; }
+.cmp-btn {
+  padding: 8px 16px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: var(--sg-r-pill);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.cmp-btn:hover { background: var(--primary); color: var(--paper); }
+.whatif-card {
+  flex: 1;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: var(--sg-r-card);
+}
+.whatif-card.real { border-color: var(--accent-2); }
+.whatif-card.alt { border-color: var(--accent); }
+.whatif-card h3 { font-size: 0.95rem; margin-bottom: 8px; }
+.whatif-card p { font-size: 0.85rem; color: var(--muted); }
+.whatif-card .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--sg-r-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.whatif-card.real .tag { background: #ecfdf5; color: var(--accent-2); }
+.whatif-card.alt .tag { background: var(--soft-accent); color: var(--accent); }
+
+/* === Graph === */
+.graph-container { position: relative; }
+.graph-container svg {
+  width: 100%;
+  height: 300px;
+  border: 1px solid var(--line);
+  border-radius: var(--sg-r-card);
+  background: var(--stage);
+}
+.graph-container .node {
+  cursor: pointer;
+  transition: all var(--sg-dur-fast) var(--sg-ease);
+}
+.graph-container .node:hover { opacity: 0.8; }
+.graph-container .node text {
+  font-size: 11px;
+  fill: var(--ink);
+  text-anchor: middle;
+}
+.graph-container .node circle { stroke: var(--primary); stroke-width: 2; }
+.graph-container .node.center circle { fill: var(--primary); }
+.graph-container .node.center text { fill: var(--paper); }
+.graph-info {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--soft);
+  border-radius: var(--sg-r-row);
+  font-size: 0.85rem;
+  min-height: 40px;
+}
+
+/* === Nav + Panels === */
+.nav-section { }
+.nav-section .nav {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.nav-section .nav button {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+}
+.nav-section .nav button.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.nav-section .panel {
+  display: none;
+  padding: 16px;
+  background: var(--stage);
+  border-radius: var(--sg-r-row);
+}
+.nav-section .panel.active { display: block; }
+.nav-section .panel h4 { font-size: 0.9rem; margin-bottom: 8px; }
+.nav-section .panel p { font-size: 0.85rem; color: var(--muted); }
+
+/* === Cause Chain === */
+.cause-chain-view .timeline-nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.cause-chain-view .timeline-nav button {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--sg-r-pill);
+  background: var(--paper);
+  cursor: pointer;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.cause-chain-view .timeline-nav button.active {
+  background: var(--primary);
+  color: var(--paper);
+  border-color: var(--primary);
+}
+.cause-chain-content {
+  padding: 16px;
+  background: var(--stage);
+  border-radius: var(--sg-r-card);
+}
+.cause-chain-content .event-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+.cause-chain-content .event-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; }
+.cause-chain-content .whatif-btn {
+  padding: 6px 16px;
+  background: var(--soft-accent);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--sg-r-pill);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.cause-chain-content .whatif-btn:hover { background: var(--accent); color: var(--paper); }
+.cause-chain-content .whatif-result {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--soft);
+  border-radius: var(--sg-r-row);
+  font-size: 0.82rem;
+  display: none;
+}
+.cause-chain-content .whatif-result.show { display: block; }
+
+/* === Responsive: WISE <=500px === */
+@media (max-width: 500px) {
+  :root { --sg-frame-w: 380px; --sg-frame-h: 500px; }
+  body { padding: 8px; }
+  .cmp-container { flex-direction: column; }
+  .splash-options { flex-direction: column; }
+}
+
+/* === Responsive: extreme <=320px === */
+@media (max-width: 320px) {
+  :root { --sg-frame-w: 300px; --sg-frame-h: 440px; }
+  .tab-bar .tab { font-size: 0.72rem; padding: 8px 4px; }
+}
+</style>
+</head>
+<body>
+
+<main class="pc-card-frame" role="region" aria-label="Technical Glossary Explorer">
+
+  <!-- Splash overlay -->
+  <div class="splash" id="splash">
+    <div class="splash-eyebrow">Glossary Explorer</div>
+    <div class="splash-title">Master Technical Concepts</div>
+    <div class="splash-sub">Interactive quizzes, comparisons, and relationship maps</div>
+    <div class="splash-question">Which area interests you most?</div>
+    <div class="splash-options">
+      <button class="splash-opt" data-v="0">Frontend Patterns</button>
+      <button class="splash-opt" data-v="1">Data Structures</button>
+      <button class="splash-opt" data-v="2">Algorithms</button>
+    </div>
+    <button class="splash-cta" id="splash-start">Start Exploring</button>
+    <div class="splash-hint">Choose a topic or just start exploring</div>
+  </div>
+
+  <!-- Tab bar -->
+  <nav class="tab-bar" role="tablist" aria-label="Glossary sections">
+    <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-quiz" data-tab="quiz">Quiz</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-comparison" data-tab="comparison">Compare</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-graph" data-tab="graph">Graph</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-nav" data-tab="nav">Topics</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-cause" data-tab="cause">Causal</button>
+  </nav>
+
+  <!-- View stack -->
+  <div class="view-stack">
+
+    <!-- Panel 1: Quiz -->
+    <section class="view active" id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz">
+      <div class="section-head">
+        <h2>Concept Quiz</h2>
+        <p>Test your understanding of frontend patterns</p>
+      </div>
+      <div class="qz-top">
+        <div class="qno">Question 1 of 3</div>
+        <div class="qt">What does CSS specificity determine?</div>
+      </div>
+      <div class="qz-body">
+        <div class="opts">
+          <div class="opt" data-k="a">Which property value wins when multiple rules apply</div>
+          <div class="opt" data-k="b">The rendering order of CSS files</div>
+          <div class="opt" data-k="c">Whether a selector is valid</div>
+          <div class="opt" data-k="d">The performance cost of a rule</div>
+        </div>
+        <div class="qz-fb"></div>
+      </div>
+      <button class="qz-next">Next Question</button>
+      <div class="qz-result">
+        <div class="score"></div>
+        <p>You completed the quiz!</p>
+      </div>
+    </section>
+
+    <!-- Panel 2: Comparison -->
+    <section class="view" id="panel-comparison" role="tabpanel" aria-labelledby="tab-comparison" hidden>
+      <div class="section-head">
+        <h2>Pattern Comparison</h2>
+        <p>Compare real-world vs alternative approaches</p>
+      </div>
+      <button class="cmp-btn" id="cmp-toggle">Switch perspective</button>
+      <div class="cmp-container">
+        <div class="whatif-card real">
+          <span class="tag">Real</span>
+          <h3>CSS Custom Properties</h3>
+          <p>Runtime-evaluated variables defined in :root. Inherited, overridable, and JavaScript-accessible.</p>
+        </div>
+        <div class="whatif-card alt">
+          <span class="tag">Alternative</span>
+          <h3>Sass Variables</h3>
+          <p>Compile-time substitution. No runtime overhead but cannot be changed dynamically or accessed via JS.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 3: Graph -->
+    <section class="view" id="panel-graph" role="tabpanel" aria-labelledby="tab-graph" hidden>
+      <div class="section-head">
+        <h2>Concept Relationship Map</h2>
+        <p>Click a node to learn more</p>
+      </div>
+      <div class="graph-container">
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- Edges -->
+          <line x1="300" y1="150" x2="150" y2="60" stroke="#e5e7eb" stroke-width="2"/>
+          <line x1="300" y1="150" x2="450" y2="60" stroke="#e5e7eb" stroke-width="2"/>
+          <line x1="300" y1="150" x2="120" y2="240" stroke="#e5e7eb" stroke-width="2"/>
+          <line x1="300" y1="150" x2="480" y2="240" stroke="#e5e7eb" stroke-width="2"/>
+          <!-- Center node -->
+          <g class="node center" data-id="css" transform="translate(300,150)">
+            <circle r="40" fill="#4f46e5"/>
+            <text dy="4">CSS</text>
+          </g>
+          <!-- Connected nodes -->
+          <g class="node" data-id="specificity" transform="translate(150,60)">
+            <circle r="32" fill="#fff"/>
+            <text dy="4">Specificity</text>
+          </g>
+          <g class="node" data-id="variables" transform="translate(450,60)">
+            <circle r="32" fill="#fff"/>
+            <text dy="4">Variables</text>
+          </g>
+          <g class="node" data-id="flexbox" transform="translate(120,240)">
+            <circle r="32" fill="#fff"/>
+            <text dy="4">Flexbox</text>
+          </g>
+          <g class="node" data-id="grid" transform="translate(480,240)">
+            <circle r="32" fill="#fff"/>
+            <text dy="4">Grid</text>
+          </g>
+        </svg>
+        <div class="graph-info" id="graph-info">Click a node to see details</div>
+      </div>
+    </section>
+
+    <!-- Panel 4: Nav + Panels -->
+    <section class="view" id="panel-nav" role="tabpanel" aria-labelledby="tab-nav" hidden>
+      <div class="section-head">
+        <h2>Topic Navigator</h2>
+        <p>Browse related concepts</p>
+      </div>
+      <div class="nav-section">
+        <nav class="nav">
+          <button class="active" data-p="p1">Layout</button>
+          <button data-p="p2">Colors</button>
+          <button data-p="p3">Typography</button>
+        </nav>
+        <div class="panel active" id="p1">
+          <h4>Layout Systems</h4>
+          <p>Flexbox for 1D, Grid for 2D, both designed for responsive design from the ground up.</p>
+        </div>
+        <div class="panel" id="p2">
+          <h4>Color Models</h4>
+          <p>Hex, RGB, HSL, LCH. Modern CSS also supports color-mix() and relative color syntax.</p>
+        </div>
+        <div class="panel" id="p3">
+          <h4>Type Systems</h4>
+          <p>Variable fonts, font-display, clamp() for fluid typography, and logical properties.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 5: Cause Chain -->
+    <section class="view cause-chain-view" id="panel-cause" role="tabpanel" aria-labelledby="tab-cause" hidden>
+      <div class="section-head">
+        <h2>Causal Chain: CSS Evolution</h2>
+        <p>How CSS problems led to new features</p>
+      </div>
+      <div class="timeline-nav" id="cause-nav">
+        <button class="active" data-event="0">Float Era</button>
+        <button data-event="1">Flexbox</button>
+        <button data-event="2">Grid</button>
+        <button data-event="3">Container Queries</button>
+      </div>
+      <div class="cause-chain-content" id="cause-content">
+        <div class="event-title">Float Era</div>
+        <div class="event-desc">Before flexbox, layouts were built with floats and clearfix hacks. This caused fragile, hard-to-maintain code.</div>
+        <button class="whatif-btn">What if floats never existed?</button>
+        <div class="whatif-result">Without floats, early web would have relied entirely on tables and positioning, delaying CSS-based layouts by years.</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+// === Data ===
+var QUIZ_DATA = [
+  {
+    q: "What does CSS specificity determine?",
+    opts: ["Which property value wins when multiple rules apply", "The rendering order of CSS files", "Whether a selector is valid", "The performance cost of a rule"],
+    correct: 0
+  },
+  {
+    q: "Which CSS property creates a stacking context?",
+    opts: ["z-index (always)", "position + z-index", "opacity < 1", "Both B and C"],
+    correct: 3
+  },
+  {
+    q: "What does 'cascade' mean in CSS?",
+    opts: ["Styles flow top-down", "Multiple rules can apply to one element", "CSS files must be ordered", "Inheritance is automatic"],
+    correct: 1
+  }
+];
+
+var NODES = [
+  { id: "css", label: "CSS", desc: "The core styling language of the web" },
+  { id: "specificity", label: "Specificity", desc: "Determines which rule wins when multiple apply" },
+  { id: "variables", label: "Variables", desc: "Custom properties evaluated at runtime" },
+  { id: "flexbox", label: "Flexbox", desc: "One-dimensional layout model" },
+  { id: "grid", label: "Grid", desc: "Two-dimensional layout system" }
+];
+
+var causeChain = [
+  { title: "Float Era", desc: "Before flexbox, layouts used floats and clearfix hacks, causing fragile code." },
+  { title: "Flexbox", desc: "Solved 1D layout problems: alignment, distribution, reordering." },
+  { title: "Grid", desc: "Brought native 2D layout to CSS, replacing frameworks for many use cases." },
+  { title: "Container Queries", desc: "Components can respond to their container size, not just viewport." }
+];
+
+// === State ===
+var currentQuestion = 0;
+var quizScore = 0;
+var currentEvent = 0;
+
+// === Splash ===
+document.getElementById('splash-start').addEventListener('click', function() {
+  document.getElementById('splash').classList.add('hide');
+});
+
+// === Tab switching ===
+var tabs = document.querySelectorAll('.tab-bar .tab');
+var views = document.querySelectorAll('.view-stack .view');
+tabs.forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    tabs.forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    var target = tab.getAttribute('data-tab');
+    views.forEach(function(v) { v.classList.remove('active'); v.setAttribute('hidden', ''); });
+    var panel = document.getElementById('panel-' + target);
+    panel.classList.add('active');
+    panel.removeAttribute('hidden');
+  });
+});
+
+// === Quiz logic ===
+function renderQuestion() {
+  var q = QUIZ_DATA[currentQuestion];
+  var top = document.querySelector('.qz-top');
+  top.querySelector('.qno').textContent = 'Question ' + (currentQuestion + 1) + ' of ' + QUIZ_DATA.length;
+  top.querySelector('.qt').textContent = q.q;
+  var optsContainer = document.querySelector('.qz-body .opts');
+  optsContainer.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var div = document.createElement('div');
+    div.className = 'opt';
+    div.setAttribute('data-k', String.fromCharCode(97 + i));
+    div.textContent = opt;
+    div.addEventListener('click', function() { selectAnswer(i, div); });
+    optsContainer.appendChild(div);
+  });
+  document.querySelector('.qz-fb').classList.remove('show', 'ok', 'no');
+  document.querySelector('.qz-next').classList.remove('show');
+  document.querySelector('.qz-result').classList.remove('show');
+}
+
+function selectAnswer(index, el) {
+  var q = QUIZ_DATA[currentQuestion];
+  var allOpts = document.querySelectorAll('.qz-body .opt');
+  allOpts.forEach(function(o) { o.classList.remove('selected', 'correct', 'wrong'); });
+  el.classList.add('selected');
+  var fb = document.querySelector('.qz-fb');
+  if (index === q.correct) {
+    el.classList.add('correct');
+    fb.textContent = 'Correct! ' + q.opts[index];
+    fb.classList.add('show', 'ok');
+    quizScore++;
+  } else {
+    el.classList.add('wrong');
+    allOpts[q.correct].classList.add('correct');
+    fb.textContent = 'Not quite. The answer is: ' + q.opts[q.correct];
+    fb.classList.add('show', 'no');
+  }
+  document.querySelector('.qz-next').classList.add('show');
+}
+
+document.querySelector('.qz-next').addEventListener('click', function() {
+  currentQuestion++;
+  if (currentQuestion < QUIZ_DATA.length) {
+    renderQuestion();
+  } else {
+    document.querySelector('.qz-top').style.display = 'none';
+    document.querySelector('.qz-body').style.display = 'none';
+    document.querySelector('.qz-next').style.display = 'none';
+    var result = document.querySelector('.qz-result');
+    result.classList.add('show');
+    result.querySelector('.score').textContent = quizScore + ' / ' + QUIZ_DATA.length;
+  }
+});
+
+// === Comparison toggle ===
+document.getElementById('cmp-toggle').addEventListener('click', function() {
+  var cards = document.querySelectorAll('.whatif-card');
+  cards.forEach(function(c) { c.style.opacity = c.style.opacity === '0.5' ? '1' : '0.5'; });
+});
+
+// === Graph node click ===
+document.querySelectorAll('.graph-container .node').forEach(function(node) {
+  node.addEventListener('click', function() {
+    var id = node.getAttribute('data-id');
+    var info = NODES.find(function(n) { return n.id === id; });
+    if (info) {
+      document.getElementById('graph-info').textContent = info.label + ': ' + info.desc;
+    }
+  });
+});
+
+// === Nav-panel switching ===
+var navButtons = document.querySelectorAll('.nav-section .nav button');
+var panels = document.querySelectorAll('.nav-section .panel');
+navButtons.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    navButtons.forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var target = btn.getAttribute('data-p');
+    panels.forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById(target).classList.add('active');
+  });
+});
+
+// === Cause chain navigation ===
+var causeButtons = document.querySelectorAll('.cause-chain-view .timeline-nav button');
+causeButtons.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    causeButtons.forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentEvent = parseInt(btn.getAttribute('data-event'), 10);
+    var ev = causeChain[currentEvent];
+    var content = document.getElementById('cause-content');
+    content.querySelector('.event-title').textContent = ev.title;
+    content.querySelector('.event-desc').textContent = ev.desc;
+    content.querySelector('.whatif-result').classList.remove('show');
+  });
+});
+
+document.querySelector('.whatif-btn').addEventListener('click', function() {
+  document.querySelector('.whatif-result').classList.toggle('show');
+});
+
+// === ESC key handler ===
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var splash = document.getElementById('splash');
+    if (!splash.classList.contains('hide')) {
+      splash.classList.add('hide');
+    }
+  }
+});
+
+// === Init ===
+renderQuestion();
+</script>
+
+</body>
+</html>

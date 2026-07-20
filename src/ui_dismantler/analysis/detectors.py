@@ -269,10 +269,12 @@ def _detect_graph(context: ViewContext) -> ViewDetection | None:
     # 路径 3：无 DOM 证据但有强图谱数据信号（数据驱动，DOM 未渲染）
     if not svg and not has_node_class:
         graph_keywords = [tok for tok in graph_data_tokens if tok in scripts_blob]
-        if graph_keywords:
+        # 要求至少 2 个不同的图谱数据关键字，避免单关键字误判
+        # （如 NODES 出现在非图谱页面的 JS 里也会误命中）
+        if len(graph_keywords) >= 2:
             # 进一步确认：有 mount 调用、Graph 函数、或 svg 生成代码
             mount_signal = any(
-                tok in scripts_blob for tok in (".mount(", "Graph", "graph")
+                tok in scripts_blob for tok in (".mount(", "CharStoryGraph", "buildGraph")
             )
             if mount_signal:
                 return _result(
