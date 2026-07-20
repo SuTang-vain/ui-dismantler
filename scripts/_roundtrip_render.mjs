@@ -321,6 +321,7 @@ function isElementVisible(window, element) {
   let current = element;
   while (current && current.nodeType === 1) {
     if (current.hidden || current.getAttribute('aria-hidden') === 'true') return false;
+    if (current.classList && current.classList.contains('hidden')) return false;
     const inline = current.style;
     if (inline && (inline.display === 'none' || inline.visibility === 'hidden')) return false;
     const computed = window.getComputedStyle(current);

@@ -107,6 +107,7 @@ def compute_interaction_coverage(
     interactions: Iterable[dict],
     scenarios: Iterable[dict],
     *,
+    scenario_matrix: dict | None = None,
     include_candidates: bool = False,
 ) -> dict:
     interactions = [item for item in interactions if isinstance(item, dict)]
@@ -114,8 +115,34 @@ def compute_interaction_coverage(
         item for item in scenarios
         if isinstance(item, dict) and (include_candidates or not item.get("candidate", False))
     ]
-    covered: list[dict] = []
-    uncovered: list[dict] = []
+    state_by_id = {
+        state.get("id"): state
+        for state in (
+            scenario_matrix.get("states", [])
+            if isinstance(scenario_matrix, dict)
+            else []
+        )
+        if isinstance(state, dict) and isinstance(state.get("id"), str)
+    }
+
+    def actions_succeeded(state: dict | None) -> bool:
+        if not state:
+            return False
+        sides = (state.get("reference_scenario"), state.get("library_scenario"))
+        return all(
+            isinstance(result, dict)
+            and isinstance(result.get("steps"), list)
+            and all(step.get("ok") is True for step in result["steps"] if isinstance(step, dict))
+            and len(result["steps"]) == sum(isinstance(step, dict) for step in result["steps"])
+            for result in sides
+        )
+
+    declared: list[dict] = []
+    executed: list[dict] = []
+    verified: list[dict] = []
+    undeclared: list[dict] = []
+    unexecuted: list[dict] = []
+    unverified: list[dict] = []
     for index, interaction in enumerate(interactions):
         entry = {
             "index": index,
@@ -125,21 +152,67 @@ def compute_interaction_coverage(
             "trigger": interaction.get("trigger"),
             "target": interaction.get("target"),
         }
-        matching = [scenario.get("id") for scenario in scenarios if scenario_covers_interaction(scenario, interaction)]
+        matching = [
+            scenario.get("id")
+            for scenario in scenarios
+            if scenario_covers_interaction(scenario, interaction)
+        ]
         if matching:
             entry["scenarios"] = matching
-            covered.append(entry)
+            declared.append(entry)
         else:
-            uncovered.append(entry)
+            undeclared.append(entry)
+
+        executed_scenarios = [
+            scenario_id for scenario_id in matching
+            if actions_succeeded(state_by_id.get(scenario_id))
+        ]
+        if executed_scenarios:
+            executed_entry = {**entry, "scenarios": matching, "executedScenarios": executed_scenarios}
+            executed.append(executed_entry)
+        else:
+            unexecuted.append({**entry, **({"scenarios": matching} if matching else {})})
+
+        verified_scenarios = [
+            scenario_id for scenario_id in matching
+            if state_by_id.get(scenario_id, {}).get("passed") is True
+        ]
+        if verified_scenarios:
+            verified_entry = {
+                **entry,
+                "scenarios": matching,
+                "verifiedScenarios": verified_scenarios,
+            }
+            verified.append(verified_entry)
+        else:
+            unverified.append({**entry, **({"scenarios": matching} if matching else {})})
+
     total = len(interactions)
+    def summary(items: list[dict], missing: list[dict]) -> dict:
+        return {
+            "covered": len(items),
+            "uncovered": len(missing),
+            "rate": round(len(items) / total, 3) if total else 1.0,
+        }
+
+    identified_coverage = summary(declared, undeclared)
+    executed_coverage = summary(executed, unexecuted)
+    verified_coverage = summary(verified, unverified)
     return {
-        "schemaVersion": "1.0",
+        "schemaVersion": "1.1",
         "identified": total,
-        "covered": len(covered),
-        "uncovered": len(uncovered),
-        "rate": round(len(covered) / total, 3) if total else 1.0,
-        "coveredInteractions": covered,
-        "uncoveredInteractions": uncovered,
+        "identifiedCoverage": identified_coverage,
+        "executedCoverage": executed_coverage,
+        "verifiedCoverage": verified_coverage,
+        "covered": identified_coverage["covered"],
+        "uncovered": identified_coverage["uncovered"],
+        "rate": identified_coverage["rate"],
+        "coveredInteractions": declared,
+        "uncoveredInteractions": undeclared,
+        "executedInteractions": executed,
+        "unexecutedInteractions": unexecuted,
+        "verifiedInteractions": verified,
+        "unverifiedInteractions": unverified,
     }
 
 

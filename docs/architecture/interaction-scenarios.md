@@ -72,9 +72,16 @@ python3 scripts/roundtrip.py original.html \
   --coverage-threshold 0.85
 ```
 
-报告中的 `interaction_coverage` 包含已识别、已覆盖、未覆盖数量、覆盖率和逐项列表。
-不传 `--coverage-threshold` 时只生成诊断，不改变退出码；传入门槛后，覆盖率不足会与
-状态矩阵一样以退出码 `1` 阻断质量门禁。`verify_all.py` 的单案例模式支持相同参数。
+报告中的 `interaction_coverage` 同时给出三层指标：
+
+- `identifiedCoverage`：正式场景声明覆盖了多少 manifest 交互；
+- `executedCoverage`：覆盖场景在原页面和组件库两侧的动作均成功执行；
+- `verifiedCoverage`：覆盖场景进一步通过 assertions 与状态综合分门槛。
+
+顶层 `covered/uncovered/rate` 继续映射 `identifiedCoverage`，兼容既有报告消费者。
+不传 `--coverage-threshold` 时三层指标只作为诊断，不改变退出码；传入门槛后，门禁
+使用 `verifiedCoverage.rate`，不足时与状态矩阵一样以退出码 `1` 阻断。
+`verify_all.py` 的单案例模式支持相同参数。
 
 ## Actions
 

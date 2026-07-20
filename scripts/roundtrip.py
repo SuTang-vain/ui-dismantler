@@ -843,12 +843,16 @@ def main():
             )
         if manifest_file:
             report["interaction_coverage"] = compute_interaction_coverage(
-                manifest_interactions, scenarios,
+                manifest_interactions,
+                scenarios,
+                scenario_matrix=report.get("scenario_matrix"),
             )
             if args.coverage_threshold is not None:
                 report["interaction_coverage"]["threshold"] = args.coverage_threshold
+                report["interaction_coverage"]["gateMetric"] = "verifiedCoverage.rate"
                 report["interaction_coverage"]["passed"] = (
-                    report["interaction_coverage"]["rate"] >= args.coverage_threshold
+                    report["interaction_coverage"]["verifiedCoverage"]["rate"]
+                    >= args.coverage_threshold
                 )
         out = json.dumps(report, ensure_ascii=False, indent=2)
         if args.out:

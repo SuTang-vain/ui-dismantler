@@ -190,7 +190,8 @@ SKILL.md 要包含：
 
 `scripts/generate_scenarios.py` 根据 manifest 的交互清单生成待审阅候选场景；
 `roundtrip.py --manifest` 输出已识别交互与正式场景的覆盖率，
-`--coverage-threshold` 可将覆盖率纳入质量门禁。候选场景默认不计入覆盖率，
+并区分声明覆盖、双侧成功执行和通过状态门禁的已验证覆盖；
+`--coverage-threshold` 使用已验证覆盖率作为质量门禁。候选场景默认不计入覆盖率，
 必须人工补齐 assertions 并移除 `candidate` 标记后才算正式验证。
 
 ---

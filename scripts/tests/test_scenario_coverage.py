@@ -33,7 +33,63 @@ class TestInteractionCoverage(unittest.TestCase):
         }]
         coverage = compute_interaction_coverage([interaction], scenarios)
         self.assertEqual(coverage["rate"], 1.0)
+        self.assertEqual(coverage["identifiedCoverage"]["rate"], 1.0)
+        self.assertEqual(coverage["executedCoverage"]["rate"], 0.0)
+        self.assertEqual(coverage["verifiedCoverage"]["rate"], 0.0)
         self.assertEqual(coverage["coveredInteractions"][0]["scenarios"], ["switch-register"])
+
+    def test_execution_and_verification_are_derived_from_state_matrix(self):
+        interaction = {
+            "type": "explicit-handler",
+            "trigger": "click",
+            "target": "#tab-register",
+            "handler": "switchTab",
+            "action": "switch-tab",
+        }
+        scenarios = [{
+            "id": "switch-register",
+            "steps": [{"action": "click", "target": "#tab-register"}],
+            "assertions": [{"target": "#tab-register", "classIncludes": ["active"]}],
+        }]
+        matrix = {
+            "states": [{
+                "id": "switch-register",
+                "reference_scenario": {"steps": [{"ok": True}]},
+                "library_scenario": {"steps": [{"ok": True}]},
+                "passed": True,
+            }],
+        }
+        coverage = compute_interaction_coverage(
+            [interaction], scenarios, scenario_matrix=matrix,
+        )
+        self.assertEqual(coverage["executedCoverage"]["rate"], 1.0)
+        self.assertEqual(coverage["verifiedCoverage"]["rate"], 1.0)
+        self.assertEqual(
+            coverage["verifiedInteractions"][0]["verifiedScenarios"],
+            ["switch-register"],
+        )
+
+    def test_executed_but_failed_state_is_not_verified(self):
+        interaction = {"trigger": "click", "target": "#save", "action": "save"}
+        scenarios = [{
+            "id": "save",
+            "steps": [{"action": "click", "target": "#save"}],
+            "assertions": [{"target": "#save", "classIncludes": ["done"]}],
+        }]
+        matrix = {
+            "states": [{
+                "id": "save",
+                "reference_scenario": {"steps": [{"ok": True}]},
+                "library_scenario": {"steps": [{"ok": True}]},
+                "passed": False,
+            }],
+        }
+        coverage = compute_interaction_coverage(
+            [interaction], scenarios, scenario_matrix=matrix,
+        )
+        self.assertEqual(coverage["identifiedCoverage"]["rate"], 1.0)
+        self.assertEqual(coverage["executedCoverage"]["rate"], 1.0)
+        self.assertEqual(coverage["verifiedCoverage"]["rate"], 0.0)
 
     def test_candidate_scenarios_are_excluded_by_default(self):
         interaction = {"type": "event-listener", "trigger": "resize", "target": "window", "action": "update-viewport"}

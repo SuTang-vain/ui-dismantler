@@ -14,6 +14,7 @@ _SCRIPTS = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, os.path.abspath(_SCRIPTS))
 
 import roundtrip as rt  # noqa: E402
+from scenario_coverage import interaction_fingerprint  # noqa: E402
 
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "scenarios" / "interaction-app"
@@ -105,6 +106,30 @@ class TestScenarioExecution(unittest.TestCase):
         )
         self.assertEqual(reference["viewport"], {"width": 390, "height": 844})
         self.assertIn("mobile-state", reference["texts"])
+
+    def test_standard_hidden_utility_class_is_not_visible_offline(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            html_path = root / "hidden.html"
+            scenario_path = root / "scenario.json"
+            html_path.write_text(
+                "<!doctype html><body><div id='target' class='hidden'>Hidden</div></body>",
+                encoding="utf-8",
+            )
+            scenario_path.write_text(json.dumps({
+                "schemaVersion": "1.0",
+                "scenarios": [{
+                    "id": "hidden-utility",
+                    "steps": [],
+                    "assertions": [{"target": "#target", "visible": False}],
+                }],
+            }), encoding="utf-8")
+            reference = rt.render_reference_dom(
+                html_path,
+                scenario_file=scenario_path,
+                scenario_id="hidden-utility",
+            )
+        self.assertTrue(reference["ok"], reference.get("error"))
 
     def test_selector_failure_is_an_execution_error(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -267,7 +292,57 @@ class TestScenarioRoundtrip(unittest.TestCase):
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(report["interaction_coverage"]["identified"], 1)
         self.assertEqual(report["interaction_coverage"]["rate"], 0.0)
+        self.assertEqual(report["interaction_coverage"]["verifiedCoverage"]["rate"], 0.0)
+        self.assertEqual(report["interaction_coverage"]["gateMetric"], "verifiedCoverage.rate")
         self.assertFalse(report["interaction_coverage"]["passed"])
+
+    def test_coverage_gate_uses_verified_not_declared_rate(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            scenario_path = root / "failed-covered-scenario.json"
+            manifest_path = root / "manifest.json"
+            report_path = root / "report.json"
+            scenario_path.write_text(json.dumps({
+                "schemaVersion": "1.0",
+                "scenarios": [{
+                    "id": "covered-but-failed",
+                    "covers": [],
+                    "steps": [{"action": "click", "target": ".open-dialog"}],
+                    "assertions": [{
+                        "target": ".dialog-overlay",
+                        "classIncludes": ["never-present"],
+                    }],
+                }],
+            }), encoding="utf-8")
+            interaction = {
+                "type": "explicit-handler",
+                "trigger": "click",
+                "target": ".open-dialog",
+                "handler": "openDialog",
+                "action": "open-dialog",
+            }
+            manifest_path.write_text(json.dumps({"interactions": [interaction]}), encoding="utf-8")
+            scenarios = json.loads(scenario_path.read_text(encoding="utf-8"))
+            scenarios["scenarios"][0]["covers"] = [interaction_fingerprint(interaction)]
+            scenario_path.write_text(json.dumps(scenarios), encoding="utf-8")
+            proc = subprocess.run([
+                sys.executable,
+                str(Path(rt.__file__)),
+                str(SOURCE),
+                "--lib", str(LIB),
+                "--reference-mode", "rendered",
+                "--scenarios", str(scenario_path),
+                "--manifest", str(manifest_path),
+                "--coverage-threshold", "1.0",
+                "--out", str(report_path),
+            ], capture_output=True, text=True, timeout=60)
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+        coverage = report["interaction_coverage"]
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(coverage["identifiedCoverage"]["rate"], 1.0)
+        self.assertEqual(coverage["executedCoverage"]["rate"], 0.0)
+        self.assertEqual(coverage["verifiedCoverage"]["rate"], 0.0)
+        self.assertFalse(coverage["passed"])
 
 
 if __name__ == "__main__":

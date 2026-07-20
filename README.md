@@ -66,10 +66,10 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 220 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵和交互状态矩阵。
+工具层有 224 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵和交互状态矩阵。
 
 交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
-manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告 `interaction_coverage`；显式传入 `--coverage-threshold` 后，未被正式场景覆盖的交互会阻断门禁。
+manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告声明、执行和已验证三层 `interaction_coverage`；显式传入 `--coverage-threshold` 后，`verifiedCoverage.rate` 不足会阻断门禁。
 
 ## 当前能力与基线
 
