@@ -1,0 +1,6 @@
+[
+  ["element:icon", {"role":"icon-button"}],
+  ["element:email", {"tag":"input"}],
+  ["element:photo", {"tag":"img"}],
+  ["element:tab", {"role":"tab","ariaControls":"missing-panel","text":"Details"}]
+]

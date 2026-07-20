@@ -1,0 +1,1 @@
+{"id":"material-accessible","version":"0.1.0","extends":["web-base"],"enable":["system.*"],"disable":[],"overrides":{"system.spacing.sibling-consistency":{"severity":"info","autoRepair":false,"priority":100}}}

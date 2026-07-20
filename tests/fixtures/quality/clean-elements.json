@@ -1,0 +1,7 @@
+[
+  ["element:icon", {"role":"icon-button","ariaLabel":"Search"}],
+  ["element:email", {"tag":"input","label":"Email"}],
+  ["element:photo", {"tag":"img","alt":"Team"}],
+  ["element:panel", {"id":"panel","role":"tabpanel"}],
+  ["element:tab", {"role":"tab","ariaControls":"panel","text":"Details"}]
+]

@@ -30,6 +30,12 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "uiir/runtime/actions.py",
             "uiir/runtime/assertions.py",
             "uiir/runtime/init_script.py",
+            "quality/schema.py",
+            "quality/inspection.py",
+            "quality/knowledge/loader.py",
+            "quality/knowledge/profiles.py",
+            "quality/detection/static.py",
+            "cli/inspect_quality.py",
             "cli/manifest_to_uiir.py",
         ):
             with self.subTest(relative=relative):

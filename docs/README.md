@@ -4,6 +4,7 @@
 
 - [`architecture/overview.md`](architecture/overview.md)：仓库分层、模块职责、依赖方向和兼容策略。
 - [`architecture/ui-ir-v2.md`](architecture/ui-ir-v2.md)：UI-IR v2 数据结构、静态/运行时证据、投影与 CLI。
+- [`architecture/quality-ir.md`](architecture/quality-ir.md)：Quality IR、Profile 合成和 inspect-only 质量检测原型。
 
 ## 研究与启发
 
