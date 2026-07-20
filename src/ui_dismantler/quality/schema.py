@@ -305,6 +305,51 @@ def validate_render_observation(value: Any) -> list[str]:
     return errors
 
 
+def validate_state_transition(value: Any) -> list[str]:
+    """Validate one trusted-scenario before/after ARIA state transition."""
+    if not isinstance(value, dict):
+        return ["StateTransition must be an object"]
+    errors: list[str] = []
+    for field in ("scenarioId", "targetKey", "selector", "action", "viewportKey", "status"):
+        if not _text(value.get(field)):
+            errors.append(f"{field} must be a non-empty string")
+    if value.get("action") not in (None, "click"):
+        errors.append("action must be click")
+    if value.get("status") not in (None, "completed", "failed", "skipped"):
+        errors.append("status must be completed, failed, or skipped")
+    action_index = value.get("actionIndex")
+    if isinstance(action_index, bool) or not isinstance(action_index, int) or action_index < 0:
+        errors.append("actionIndex must be a non-negative integer")
+    if "stateObservable" in value and not isinstance(value["stateObservable"], bool):
+        errors.append("stateObservable must be boolean")
+    if "role" in value and not isinstance(value["role"], str):
+        errors.append("role must be a string")
+    viewport = value.get("viewport")
+    if not isinstance(viewport, dict):
+        errors.append("viewport must be an object")
+    else:
+        for field in ("width", "height"):
+            item = viewport.get(field)
+            if isinstance(item, bool) or not isinstance(item, (int, float)) or item <= 0:
+                errors.append(f"viewport.{field} must be positive")
+    for field in ("before", "after"):
+        context = value.get(field)
+        if not isinstance(context, dict):
+            errors.append(f"{field} must be an object")
+            continue
+        synthetic = {
+            "targetKey": str(value.get("targetKey") or "transition"),
+            "viewport": viewport if isinstance(viewport, dict) else {"width":1,"height":1},
+            "computedStyle": {}, "stateContext": context,
+        }
+        for error in validate_render_observation(synthetic):
+            if error.startswith("stateContext"):
+                errors.append(field + error[len("stateContext"):])
+    if "error" in value and not isinstance(value["error"], str):
+        errors.append("error must be a string")
+    return errors
+
+
 def validate_repair_proposal(value: Any) -> list[str]:
     """Validate a proposal without applying a patch."""
     if not isinstance(value, dict):

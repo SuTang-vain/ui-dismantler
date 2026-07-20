@@ -6,13 +6,13 @@ import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
 from ui_dismantler.quality.colors import composite, contrast_ratio, parse_css_color, resolve_background, resolved_text_contrast
 from ui_dismantler.quality.focus import analyze_focus_indicator
-from ui_dismantler.quality.states import controlled_visibility_consistency, invalid_aria_states
+from ui_dismantler.quality.states import controlled_visibility_consistency, invalid_aria_states, state_transition_consistency
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
-from ui_dismantler.quality.observation.render import _build_observation
+from ui_dismantler.quality.observation.render import _build_observation, _normalize_state_scenarios
 from ui_dismantler.quality.schema import (
-    validate_guideline, validate_profile, validate_render_observation,
+    validate_guideline, validate_profile, validate_render_observation, validate_state_transition,
     validate_repair_proposal, validate_verification_result,
 )
 from ui_dismantler.uiir.conversion.manifest_to_uiir import UIIRBuilder
@@ -52,7 +52,9 @@ class TestQualitySchema(unittest.TestCase):
         observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "layoutContext": {"documentClientWidth": 390, "documentScrollWidth": 390, "pageHorizontalOverflow": False, "targetContributesToPageOverflow": False, "horizontalScrollContainer": None, "exceptionKind": ""}, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
         proposal = {"id": "proposal:1", "findingIds": ["finding:1"], "targetKey": "element:x", "strategy": "local-attribute", "risk": "low", "changes": [{"attribute": "aria-label", "after": "Search"}], "verificationChecks": ["quality-rescan"], "rollback": "restore source span"}
         verification = {"proposalId": "proposal:1", "status": "accepted", "originalIssuesResolved": True, "contentPreserved": True, "behaviorPreserved": True, "newIssues": [], "checks": [{"name": "quality-rescan", "passed": True}]}
+        transition = {"scenarioId":"toggle","actionIndex":0,"action":"click","selector":"#x","targetKey":"element:x","viewportKey":"desktop","viewport":{"width":1280,"height":720},"status":"completed","role":"button","stateObservable":True,"before":{"ariaExpanded":"false","ariaSelected":None,"ariaPressed":None,"ariaControls":[],"controlsTruncated":False,"controlledTargets":[]},"after":{"ariaExpanded":"true","ariaSelected":None,"ariaPressed":None,"ariaControls":[],"controlsTruncated":False,"controlledTargets":[]}}
         self.assertEqual(validate_render_observation(observation), [])
+        self.assertEqual(validate_state_transition(transition), [])
         self.assertEqual(validate_repair_proposal(proposal), [])
         self.assertEqual(validate_verification_result(verification), [])
 
@@ -75,6 +77,21 @@ class TestStateAnalysis(unittest.TestCase):
         }, "button")
         self.assertIsNone(mismatch)
         self.assertEqual(reason, "controlled-target-not-observed")
+
+    def test_trusted_transition_checks_toggle_and_visibility(self):
+        good, reason = state_transition_consistency(
+            {"ariaExpanded":"false","ariaSelected":None,"ariaPressed":None,"ariaControls":["panel"],"controlsTruncated":False,"controlledTargets":[{"id":"panel","found":True,"visible":False}]},
+            {"ariaExpanded":"true","ariaSelected":None,"ariaPressed":None,"ariaControls":["panel"],"controlsTruncated":False,"controlledTargets":[{"id":"panel","found":True,"visible":True}]},
+            "button",
+        )
+        self.assertIsNone(good); self.assertIsNone(reason)
+        bad, reason = state_transition_consistency(
+            {"ariaPressed":"false","ariaExpanded":None,"ariaSelected":None,"controlledTargets":[]},
+            {"ariaPressed":"false","ariaExpanded":None,"ariaSelected":None,"controlledTargets":[]},
+            "button",
+        )
+        self.assertIsNone(reason)
+        self.assertEqual(bad["issues"][0]["reason"], "state-not-updated")
 
 
 class TestContrastMath(unittest.TestCase):
@@ -297,6 +314,20 @@ class TestRenderFindings(unittest.TestCase):
         self.assertLess(observed["ratio"], 4.5)
 
 
+    def test_trusted_state_transitions_report_stale_invalid_and_visibility_mismatch(self):
+        render = fixture("render-transitions.json")
+        uiir = document([(item["targetKey"], {"id": item["selector"][1:], "role": item.get("role") or "button"}) for item in render["stateTransitions"]])
+        report = inspect_uiir(uiir, self.profile, render)
+        transition_findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.controlled-state.transition"]
+        self.assertEqual({item["targetKey"] for item in transition_findings}, {
+            "element:transition-expanded-stale", "element:transition-expanded-visibility-bad",
+            "element:transition-pressed-stale", "element:transition-tab-stale", "element:transition-invalid-after",
+        })
+        token_findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.aria-state.token-valid"]
+        self.assertEqual([item["targetKey"] for item in token_findings], ["element:transition-invalid-after"])
+        self.assertEqual(token_findings[0]["evidence"][0]["method"], "trusted-scenario")
+        self.assertIn({"guidelineId":"system.web.controlled-state.transition","targetKey":"element:transition-action-failed","viewportKey":"desktop","reason":"scenario-action-not-completed"}, report["diagnostics"]["renderSkipped"])
+
     def test_aria_state_tokens_and_controlled_visibility_are_separate_findings(self):
         render = fixture("render-state.json")
         uiir = document([(item["targetKey"], {"id": item["selector"][1:], "role": item.get("role") or "button", "ariaControls": " ".join(item["stateContext"]["ariaControls"])}) for item in render["observations"]])
@@ -311,6 +342,33 @@ class TestRenderFindings(unittest.TestCase):
             {"guidelineId":"system.web.controlled-state.visibility","targetKey":"element:state-missing-control","viewportKey":"desktop","reason":"controlled-target-not-observed"},
             {"guidelineId":"system.web.controlled-state.visibility","targetKey":"element:state-truncated","viewportKey":"desktop","reason":"controlled-targets-truncated"},
         ])
+
+    def test_optional_browser_trusted_clicks_capture_state_transitions(self):
+        scenario_path = FIXTURES / "state-transition.scenarios.json"
+        scenarios = json.loads(scenario_path.read_text(encoding="utf-8"))
+        uiir = document([
+            ("element:transition-expanded-good", {"id":"transition-expanded-good","role":"button"}),
+            ("element:transition-expanded-stale", {"id":"transition-expanded-stale","role":"button"}),
+            ("element:transition-expanded-visibility-bad", {"id":"transition-expanded-visibility-bad","role":"button"}),
+            ("element:transition-pressed-good", {"id":"transition-pressed-good","role":"button"}),
+            ("element:transition-pressed-stale", {"id":"transition-pressed-stale","role":"button"}),
+            ("element:transition-tab-good", {"id":"transition-tab-good","role":"tab"}),
+            ("element:transition-tab-stale", {"id":"transition-tab-stale","role":"tab"}),
+            ("element:transition-invalid-after", {"id":"transition-invalid-after","role":"button"}),
+        ])
+        render, warnings = observe_render(
+            FIXTURES / "render.html", targets_from_uiir(uiir),
+            viewports=[{"id":"desktop","width":1280,"height":720}], scenarios=scenarios,
+        )
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        self.assertEqual(len(render["stateTransitions"]), 8)
+        report = inspect_uiir(uiir, self.profile, render)
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.controlled-state.transition"]
+        self.assertEqual({item["targetKey"] for item in findings}, {
+            "element:transition-expanded-stale", "element:transition-expanded-visibility-bad",
+            "element:transition-pressed-stale", "element:transition-tab-stale", "element:transition-invalid-after",
+        })
 
     def test_optional_browser_state_probe_matches_initial_visibility(self):
         uiir = document([
@@ -383,6 +441,11 @@ class TestRenderFindings(unittest.TestCase):
         keyboard_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(keyboard_uiir, self.profile, render)
+        render = fixture("render-transitions.json")
+        render["stateTransitions"][0]["actionIndex"] = -1
+        transition_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":item.get("role") or "button"}) for item in render["stateTransitions"]])
+        with self.assertRaisesRegex(ValueError, "invalid state transition"):
+            inspect_uiir(transition_uiir, self.profile, render)
         render = fixture("render-state.json")
         render["observations"][0]["stateContext"]["controlledTargets"][0]["visible"] = "hidden"
         state_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":item.get("role") or "button"}) for item in render["observations"]])
@@ -447,6 +510,19 @@ class TestRenderObservation(unittest.TestCase):
             {"targetKey": "element:action", "selector": "#action"},
             {"targetKey": "element:wide", "selector": "#wide"},
         ])
+
+    def test_quality_scenarios_only_accept_explicit_condition_free_clicks(self):
+        targets = [{"targetKey":"element:toggle","selector":"#toggle"}]
+        accepted, warnings = _normalize_state_scenarios([
+            {"id":"good","actions":[{"action":"click","selector":"#toggle"}]},
+            {"id":"fill","actions":[{"action":"fill","selector":"#toggle","value":"x"}]},
+            {"id":"conditional","when":[{"condition":"visible","selector":"#toggle"}],"actions":[{"action":"click","selector":"#toggle"}]},
+            {"id":"action-conditional","actions":[{"action":"click","selector":"#toggle","when":[{"condition":"visible","selector":"#toggle"}]}]},
+            {"id":"unknown","actions":[{"action":"click","selector":"#missing"}]},
+        ], targets, max_scenarios=16, max_actions=32)
+        self.assertEqual([item["id"] for item in accepted], ["good"])
+        self.assertEqual(accepted[0]["actions"][0]["targetKey"], "element:toggle")
+        self.assertEqual(len(warnings), 4)
 
     def test_browser_payload_preserves_layout_and_keyboard_contexts(self):
         raw = {

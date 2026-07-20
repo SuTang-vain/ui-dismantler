@@ -5,6 +5,7 @@ from typing import Any
 from urllib.parse import unquote, urlparse
 from ..schema import QUALITY_SCHEMA_VERSION, validate_render_observation
 from ...uiir.schema import NODE_TYPES
+from ...uiir.runtime.actions import _perform_trusted_action
 from ...uiir.validation import validate_uiir
 
 DEFAULT_VIEWPORTS = (
@@ -25,6 +26,39 @@ STYLE_FIELDS = (
     "transform", "filter",
 )
 
+STATE_TRANSITION_SCRIPT = """args => {
+  function visible(target) {
+    const rect = target.getBoundingClientRect();
+    const style = getComputedStyle(target);
+    return !target.hidden && target.getAttribute('aria-hidden') !== 'true'
+      && style.display !== 'none' && style.visibility !== 'hidden'
+      && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0
+      && target.getClientRects().length > 0;
+  }
+  const matches = document.querySelectorAll(args.selector);
+  const target = matches[args.index || 0];
+  if (!target) return {error: 'not-found', matched: matches.length};
+  const controls = (target.getAttribute('aria-controls') || '').trim().split(/\\s+/).filter(Boolean);
+  return {
+    role: target.getAttribute('role') || '',
+    stateContext: {
+      ariaExpanded: target.getAttribute('aria-expanded'),
+      ariaSelected: target.getAttribute('aria-selected'),
+      ariaPressed: target.getAttribute('aria-pressed'),
+      ariaControls: controls.slice(0, 16),
+      controlsTruncated: controls.length > 16,
+      controlledTargets: controls.slice(0, 16).map(id => {
+        const controlled = document.getElementById(id);
+        if (!controlled) return {id, found:false, visible:false, hiddenAttribute:false, ariaHidden:'', role:''};
+        return {
+          id, found:true, visible:visible(controlled), hiddenAttribute:controlled.hidden,
+          ariaHidden:controlled.getAttribute('aria-hidden') || '', role:controlled.getAttribute('role') || ''
+        };
+      })
+    }
+  };
+}"""
+
 
 def _normalize_viewports(viewports: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
     raw = list(viewports) if viewports is not None else [dict(item) for item in DEFAULT_VIEWPORTS]
@@ -43,6 +77,80 @@ def _normalize_viewports(viewports: list[dict[str, Any]] | None) -> list[dict[st
             raise ValueError(f"viewports[{index}] dimensions must be integers between 200 and 4096")
         ids.add(viewport_id); result.append({"id": viewport_id, "width": width, "height": height})
     return result
+
+
+def _normalize_state_scenarios(
+    scenarios: list[Any] | None,
+    targets: list[dict[str, str]],
+    *,
+    max_scenarios: int,
+    max_actions: int,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Accept only condition-free click scenarios grounded in explicit UI-IR targets."""
+    if scenarios is None:
+        return [], []
+    if not isinstance(scenarios, list):
+        raise ValueError("scenarios must be an array")
+    if not 1 <= max_scenarios <= 64 or not 1 <= max_actions <= 256:
+        raise ValueError("scenario budgets are out of range")
+    selector_keys: dict[str, list[str]] = {}
+    for target in targets:
+        selector_keys.setdefault(target["selector"], []).append(target["targetKey"])
+    accepted: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    seen_ids: set[str] = set()
+    used_actions = 0
+    for index, raw in enumerate(scenarios[:max_scenarios]):
+        if not isinstance(raw, dict):
+            warnings.append(f"scenario {index + 1} skipped: scenario must be an object")
+            continue
+        scenario_id = str(raw.get("id") or f"scenario-{index + 1}").strip()[:128]
+        if not scenario_id or scenario_id in seen_ids:
+            warnings.append(f"scenario {index + 1} skipped: id must be unique and non-empty")
+            continue
+        seen_ids.add(scenario_id)
+        if raw.get("when"):
+            warnings.append(f"scenario {scenario_id} skipped: conditions are not supported by the quality transition probe")
+            continue
+        actions = raw.get("actions")
+        if not isinstance(actions, list) or not actions:
+            warnings.append(f"scenario {scenario_id} skipped: actions must be a non-empty array")
+            continue
+        normalized: list[dict[str, Any]] = []
+        reason = ""
+        for action_index, action in enumerate(actions):
+            if not isinstance(action, dict) or str(action.get("action") or "").strip().lower() != "click":
+                reason = "only click actions are supported"; break
+            if action.get("when"):
+                reason = "action conditions are not supported"; break
+            selector = str(action.get("selector") or "").strip()
+            keys = selector_keys.get(selector, [])
+            if len(keys) != 1:
+                reason = "action selector must map to exactly one explicit UI-IR target"; break
+            normalized.append({**action, "action":"click", "selector":selector, "targetKey":keys[0], "actionIndex":action_index})
+        if reason:
+            warnings.append(f"scenario {scenario_id} skipped: {reason}")
+            continue
+        if used_actions + len(normalized) > max_actions:
+            warnings.append(f"scenario {scenario_id} skipped: total action budget exceeded")
+            continue
+        used_actions += len(normalized)
+        accepted.append({"id":scenario_id, "actions":normalized})
+    if len(scenarios) > max_scenarios:
+        warnings.append(f"scenarios truncated to {max_scenarios}")
+    return accepted, warnings
+
+
+def _state_is_observable(snapshot: Any) -> bool:
+    if not isinstance(snapshot, dict) or not isinstance(snapshot.get("stateContext"), dict):
+        return False
+    state = snapshot["stateContext"]
+    role = str(snapshot.get("role") or "").strip().lower()
+    return (
+        state.get("ariaExpanded") is not None
+        or state.get("ariaPressed") is not None
+        or (role == "tab" and state.get("ariaSelected") is not None)
+    )
 
 
 def targets_from_uiir(document: dict[str, Any], *, limit: int = 256) -> list[dict[str, str]]:
@@ -75,7 +183,7 @@ def targets_from_uiir(document: dict[str, Any], *, limit: int = 256) -> list[dic
 
 
 def _empty(source: Path, targets: list[dict[str, str]], viewports: list[dict[str, Any]]) -> dict[str, Any]:
-    return {"schemaVersion": QUALITY_SCHEMA_VERSION, "format": "render-observation", "source": str(source), "targets": targets, "viewports": viewports, "observations": [], "browser": None}
+    return {"schemaVersion": QUALITY_SCHEMA_VERSION, "format": "render-observation", "source": str(source), "targets": targets, "viewports": viewports, "observations": [], "stateTransitions": [], "browser": None}
 
 
 def _build_observation(item: dict[str, Any], viewport: dict[str, Any]) -> dict[str, Any]:
@@ -102,6 +210,9 @@ def observe_render(
     timeout_ms: int = 5000,
     settle_ms: int = 100,
     max_targets: int = 256,
+    scenarios: list[Any] | None = None,
+    max_scenarios: int = 16,
+    max_scenario_actions: int = 32,
 ) -> tuple[dict[str, Any], list[str]]:
     """Observe explicit local-page targets; network requests are always blocked."""
     source = Path(source_path).expanduser().resolve()
@@ -118,7 +229,10 @@ def observe_render(
             raise ValueError(f"targets[{index}] must contain targetKey and selector")
         normalized_targets.append({"targetKey": str(item["targetKey"])[:512], "selector": str(item["selector"])[:512]})
     result = _empty(source, normalized_targets, normalized_viewports)
-    warnings: list[str] = []
+    normalized_scenarios, scenario_warnings = _normalize_state_scenarios(
+        scenarios, normalized_targets, max_scenarios=max_scenarios, max_actions=max_scenario_actions,
+    )
+    warnings: list[str] = list(scenario_warnings)
     try:
         from playwright.sync_api import sync_playwright
     except Exception as exc:
@@ -333,6 +447,49 @@ def observe_render(
                         errors = validate_render_observation(observation)
                         if errors: warnings.append(f"{viewport['id']} {item['targetKey']}: {'; '.join(errors)}")
                         else: result["observations"].append(observation)
+                    for scenario in normalized_scenarios:
+                        scenario_context = browser.new_context(
+                            viewport={"width": viewport["width"], "height": viewport["height"]},
+                            service_workers="block",
+                        )
+                        scenario_page = scenario_context.new_page()
+                        scenario_page.route("**/*", route_request)
+                        try:
+                            scenario_page.goto(source.as_uri(), wait_until="domcontentloaded", timeout=timeout_ms)
+                            scenario_page.wait_for_timeout(settle_ms)
+                            for action in scenario["actions"]:
+                                probe_args = {"selector": action["selector"], "index": action.get("index", 0)}
+                                before = scenario_page.evaluate(STATE_TRANSITION_SCRIPT, probe_args)
+                                observable_before = _state_is_observable(before)
+                                if observable_before:
+                                    action_result = _perform_trusted_action(
+                                        scenario_page, action, action["actionIndex"], timeout_ms,
+                                    )
+                                    after = scenario_page.evaluate(STATE_TRANSITION_SCRIPT, probe_args)
+                                else:
+                                    action_result = {"status":"skipped", "error":"no observable ARIA state before click"}
+                                    after = before
+                                transition = {
+                                    "scenarioId": scenario["id"],
+                                    "actionIndex": action["actionIndex"],
+                                    "action": "click",
+                                    "selector": action["selector"],
+                                    "targetKey": action["targetKey"],
+                                    "viewportKey": viewport["id"],
+                                    "viewport": {"width": viewport["width"], "height": viewport["height"]},
+                                    "status": action_result.get("status", "failed"),
+                                    "role": str(after.get("role") or before.get("role") or "") if isinstance(after, dict) and isinstance(before, dict) else "",
+                                    "before": before.get("stateContext", {}) if isinstance(before, dict) else {},
+                                    "after": after.get("stateContext", {}) if isinstance(after, dict) else {},
+                                    "stateObservable": observable_before or _state_is_observable(after),
+                                }
+                                if action_result.get("error"):
+                                    transition["error"] = str(action_result["error"])[:600]
+                                result["stateTransitions"].append(transition)
+                        except Exception as exc:
+                            warnings.append(f"{viewport['id']} scenario {scenario['id']} failed: {type(exc).__name__}: {exc}")
+                        finally:
+                            scenario_context.close()
                 except Exception as exc:
                     warnings.append(f"{viewport['id']} observation failed: {type(exc).__name__}: {exc}")
                 finally:

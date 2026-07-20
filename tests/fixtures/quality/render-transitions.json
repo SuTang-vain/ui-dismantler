@@ -1,0 +1,443 @@
+{
+  "schemaVersion": "1.0",
+  "format": "render-observation",
+  "source": "render.html",
+  "browser": "fixture",
+  "targets": [
+    {
+      "targetKey": "element:transition-expanded-good",
+      "selector": "#transition-expanded-good"
+    },
+    {
+      "targetKey": "element:transition-expanded-stale",
+      "selector": "#transition-expanded-stale"
+    },
+    {
+      "targetKey": "element:transition-expanded-visibility-bad",
+      "selector": "#transition-expanded-visibility-bad"
+    },
+    {
+      "targetKey": "element:transition-pressed-good",
+      "selector": "#transition-pressed-good"
+    },
+    {
+      "targetKey": "element:transition-pressed-stale",
+      "selector": "#transition-pressed-stale"
+    },
+    {
+      "targetKey": "element:transition-tab-good",
+      "selector": "#transition-tab-good"
+    },
+    {
+      "targetKey": "element:transition-tab-stale",
+      "selector": "#transition-tab-stale"
+    },
+    {
+      "targetKey": "element:transition-invalid-after",
+      "selector": "#transition-invalid-after"
+    },
+    {
+      "targetKey": "element:transition-action-failed",
+      "selector": "#transition-action-failed"
+    }
+  ],
+  "viewports": [
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "observations": [],
+  "stateTransitions": [
+    {
+      "scenarioId": "click-transition-expanded-good",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-expanded-good",
+      "targetKey": "element:transition-expanded-good",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-good"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-good",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "after": {
+        "ariaExpanded": "true",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-good"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-good",
+            "found": true,
+            "visible": true,
+            "hiddenAttribute": false,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-expanded-stale",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-expanded-stale",
+      "targetKey": "element:transition-expanded-stale",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-stale"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-stale",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "after": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-stale"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-stale",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-expanded-visibility-bad",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-expanded-visibility-bad",
+      "targetKey": "element:transition-expanded-visibility-bad",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-hidden"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-hidden",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "after": {
+        "ariaExpanded": "true",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-panel-hidden"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-panel-hidden",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": ""
+          }
+        ]
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-pressed-good",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-pressed-good",
+      "targetKey": "element:transition-pressed-good",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "false",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "after": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "true",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-pressed-stale",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-pressed-stale",
+      "targetKey": "element:transition-pressed-stale",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "false",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "after": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "false",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-tab-good",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-tab-good",
+      "targetKey": "element:transition-tab-good",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "tab",
+      "before": {
+        "ariaExpanded": null,
+        "ariaSelected": "false",
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-tabpanel"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-tabpanel",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": "tabpanel"
+          }
+        ]
+      },
+      "after": {
+        "ariaExpanded": null,
+        "ariaSelected": "true",
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-tabpanel"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-tabpanel",
+            "found": true,
+            "visible": true,
+            "hiddenAttribute": false,
+            "ariaHidden": "",
+            "role": "tabpanel"
+          }
+        ]
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-tab-stale",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-tab-stale",
+      "targetKey": "element:transition-tab-stale",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "tab",
+      "before": {
+        "ariaExpanded": null,
+        "ariaSelected": "false",
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-tabpanel-stale"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-tabpanel-stale",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": "tabpanel"
+          }
+        ]
+      },
+      "after": {
+        "ariaExpanded": null,
+        "ariaSelected": "false",
+        "ariaPressed": null,
+        "ariaControls": [
+          "transition-tabpanel-stale"
+        ],
+        "controlsTruncated": false,
+        "controlledTargets": [
+          {
+            "id": "transition-tabpanel-stale",
+            "found": true,
+            "visible": false,
+            "hiddenAttribute": true,
+            "ariaHidden": "",
+            "role": "tabpanel"
+          }
+        ]
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-invalid-after",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-invalid-after",
+      "targetKey": "element:transition-invalid-after",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "completed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "false",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "after": {
+        "ariaExpanded": null,
+        "ariaSelected": null,
+        "ariaPressed": "yes",
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "stateObservable": true
+    },
+    {
+      "scenarioId": "click-transition-action-failed",
+      "actionIndex": 0,
+      "action": "click",
+      "selector": "#transition-action-failed",
+      "targetKey": "element:transition-action-failed",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "status": "failed",
+      "role": "button",
+      "before": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "after": {
+        "ariaExpanded": "false",
+        "ariaSelected": null,
+        "ariaPressed": null,
+        "ariaControls": [],
+        "controlsTruncated": false,
+        "controlledTargets": []
+      },
+      "stateObservable": true
+    }
+  ]
+}

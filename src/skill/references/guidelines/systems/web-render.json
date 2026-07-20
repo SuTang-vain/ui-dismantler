@@ -315,5 +315,41 @@
       "profile": "web-base",
       "reference": "ARIA controlled-state diagnostic; compares initial aria-expanded/tab aria-selected state with bounded aria-controls target visibility"
     }
+  },
+  {
+    "id": "system.web.controlled-state.transition",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "state",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "active",
+      "selected",
+      "expanded"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-controlled-state-transition"
+    },
+    "evidenceRequired": [
+      "render",
+      "scenario"
+    ],
+    "repairStrategy": "state-transition",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "Trusted click diagnostic; verifies bounded ARIA state changes and resulting aria-controls visibility"
+    }
   }
 ]

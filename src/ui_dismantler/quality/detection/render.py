@@ -4,9 +4,10 @@ from hashlib import sha1
 from typing import Any
 from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
-from ..states import controlled_visibility_consistency, invalid_aria_states
-from ..schema import validate_render_observation
+from ..states import controlled_visibility_consistency, invalid_aria_states, state_transition_consistency
+from ..schema import validate_render_observation, validate_state_transition
 
+TRANSITION_DETECTORS = {"render-aria-state-token", "render-controlled-state-transition"}
 RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow", "render-aria-state-token", "render-controlled-visibility"}
 
 
@@ -35,6 +36,23 @@ def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: st
     }
 
 
+def _transition_finding(guideline: dict[str, Any], transition: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
+    target_key = transition["targetKey"]
+    viewport_key = str(transition.get("viewportKey") or "viewport")
+    scenario_id = transition["scenarioId"]
+    action_index = transition["actionIndex"]
+    digest = sha1(f"{guideline['id']}\0{target_key}\0{viewport_key}\0{scenario_id}\0{action_index}".encode()).hexdigest()[:12]
+    return {
+        "id": f"finding:{digest}", "guidelineId": guideline["id"], "targetKey": target_key,
+        "viewportKey": viewport_key, "constraint": guideline["constraint"], "severity": guideline["severity"],
+        "confidence": 1.0, "evidence": [{
+            "method":"trusted-scenario", "detector":guideline["detector"]["name"],
+            "message":message, "selector":transition.get("selector"), "viewport":transition.get("viewport"),
+            "scenarioId":scenario_id, "actionIndex":action_index, "observed":observed,
+        }], "repairProposals": [], "status":"open",
+    }
+
+
 def inspect_render_findings(
     render_document: dict[str, Any],
     effective_profile: dict[str, Any],
@@ -46,12 +64,19 @@ def inspect_render_findings(
     observations = render_document.get("observations")
     if not isinstance(observations, list):
         raise ValueError("render_document.observations must be an array")
+    transitions = render_document.get("stateTransitions", [])
+    if not isinstance(transitions, list):
+        raise ValueError("render_document.stateTransitions must be an array")
     findings: list[dict[str, Any]] = []
     skipped = diagnostics if diagnostics is not None else []
     for index, observation in enumerate(observations):
         errors = validate_render_observation(observation)
         if errors:
             raise ValueError(f"invalid render observation[{index}]: {'; '.join(errors)}")
+    for index, transition in enumerate(transitions):
+        errors = validate_state_transition(transition)
+        if errors:
+            raise ValueError(f"invalid state transition[{index}]: {'; '.join(errors)}")
     for guideline in effective_profile["guidelines"]:
         detector = guideline["detector"]["name"]
         if detector not in RENDER_DETECTORS:
@@ -234,5 +259,38 @@ def inspect_render_findings(
                         guideline, observation,
                         f"Text contrast is below the {threshold}:1 threshold",
                         {**contrast, "threshold": threshold, "fontSizePx": font_size, "fontWeight": font_weight, "largeText": large_text},
+                    ))
+    for guideline in effective_profile["guidelines"]:
+        detector = guideline["detector"]["name"]
+        if detector not in TRANSITION_DETECTORS:
+            continue
+        for transition in transitions:
+            if transition.get("status") != "completed":
+                if detector == "render-controlled-state-transition":
+                    skipped.append({
+                        "guidelineId": guideline["id"], "targetKey": transition["targetKey"],
+                        "viewportKey": transition.get("viewportKey"), "reason": "scenario-action-not-completed",
+                    })
+                continue
+            if detector == "render-aria-state-token":
+                invalid = invalid_aria_states(transition.get("after"))
+                if invalid:
+                    findings.append(_transition_finding(
+                        guideline, transition, "Trusted action produced an invalid ARIA state token",
+                        {"invalidStates":invalid, "before":transition.get("before"), "after":transition.get("after")},
+                    ))
+            elif detector == "render-controlled-state-transition":
+                mismatch, uncertainty = state_transition_consistency(
+                    transition.get("before"), transition.get("after"), str(transition.get("role") or ""),
+                )
+                if uncertainty:
+                    skipped.append({
+                        "guidelineId": guideline["id"], "targetKey": transition["targetKey"],
+                        "viewportKey": transition.get("viewportKey"), "reason": uncertainty,
+                    })
+                    continue
+                if mismatch:
+                    findings.append(_transition_finding(
+                        guideline, transition, "Trusted click did not produce a coherent ARIA state transition", mismatch,
                     ))
     return findings

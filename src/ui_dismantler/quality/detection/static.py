@@ -102,9 +102,10 @@ def inspect_uiir(document: dict[str, Any], effective_profile: dict[str, Any], re
     if render_document is not None:
         from .render import inspect_render_findings
         known_keys = {node[3]["key"] for node in document["nodes"]}
+        render_targets = list(render_document.get("observations", [])) + list(render_document.get("stateTransitions", []))
         unknown_keys = sorted({
             observation.get("targetKey")
-            for observation in render_document.get("observations", [])
+            for observation in render_targets
             if isinstance(observation, dict) and observation.get("targetKey") not in known_keys
         })
         if unknown_keys:

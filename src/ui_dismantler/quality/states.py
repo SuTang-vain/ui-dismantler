@@ -77,3 +77,54 @@ def controlled_visibility_consistency(
         "visibleControlledIds": visible_ids,
         "hiddenControlledIds": hidden_ids,
     }, None
+
+
+def state_transition_consistency(
+    before: Any,
+    after: Any,
+    role: str,
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Check whether a trusted click updates bounded ARIA state coherently."""
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return None, "invalid-state-transition-snapshot"
+    issues: list[dict[str, Any]] = []
+    relevant = False
+
+    before_expanded = str(before.get("ariaExpanded") or "").strip().lower()
+    after_expanded = str(after.get("ariaExpanded") or "").strip().lower()
+    if before_expanded in {"true", "false"}:
+        relevant = True
+        if after_expanded not in {"true", "false"}:
+            issues.append({"attribute":"aria-expanded", "reason":"invalid-after-state", "before":before.get("ariaExpanded"), "after":after.get("ariaExpanded")})
+        elif after_expanded == before_expanded:
+            issues.append({"attribute":"aria-expanded", "reason":"state-not-updated", "before":before.get("ariaExpanded"), "after":after.get("ariaExpanded")})
+
+    before_pressed = str(before.get("ariaPressed") or "").strip().lower()
+    after_pressed = str(after.get("ariaPressed") or "").strip().lower()
+    if before_pressed in {"true", "false", "mixed"}:
+        relevant = True
+        if after_pressed not in {"true", "false", "mixed"}:
+            issues.append({"attribute":"aria-pressed", "reason":"invalid-after-state", "before":before.get("ariaPressed"), "after":after.get("ariaPressed")})
+        elif after_pressed == before_pressed:
+            issues.append({"attribute":"aria-pressed", "reason":"state-not-updated", "before":before.get("ariaPressed"), "after":after.get("ariaPressed")})
+
+    before_selected = str(before.get("ariaSelected") or "").strip().lower()
+    after_selected = str(after.get("ariaSelected") or "").strip().lower()
+    if role.strip().lower() == "tab" and before_selected in {"true", "false"}:
+        relevant = True
+        if after_selected not in {"true", "false"}:
+            issues.append({"attribute":"aria-selected", "reason":"invalid-after-state", "before":before.get("ariaSelected"), "after":after.get("ariaSelected")})
+        elif before_selected == "false" and after_selected != "true":
+            issues.append({"attribute":"aria-selected", "reason":"tab-not-selected", "before":before.get("ariaSelected"), "after":after.get("ariaSelected")})
+
+    if not relevant:
+        return None, "no-observable-aria-state"
+
+    visibility, uncertainty = controlled_visibility_consistency(after, role)
+    if uncertainty:
+        return None, uncertainty
+    if visibility:
+        issues.append({"reason":"controlled-visibility-mismatch", "details":visibility})
+    if not issues:
+        return None, None
+    return {"issues":issues, "before":before, "after":after}, None

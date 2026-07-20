@@ -1,0 +1,74 @@
+[
+  {
+    "id": "expanded-good",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-expanded-good"
+      }
+    ]
+  },
+  {
+    "id": "expanded-stale",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-expanded-stale"
+      }
+    ]
+  },
+  {
+    "id": "expanded-visibility-bad",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-expanded-visibility-bad"
+      }
+    ]
+  },
+  {
+    "id": "pressed-good",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-pressed-good"
+      }
+    ]
+  },
+  {
+    "id": "pressed-stale",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-pressed-stale"
+      }
+    ]
+  },
+  {
+    "id": "tab-good",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-tab-good"
+      }
+    ]
+  },
+  {
+    "id": "tab-stale",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-tab-stale"
+      }
+    ]
+  },
+  {
+    "id": "invalid-after",
+    "actions": [
+      {
+        "action": "click",
+        "selector": "#transition-invalid-after"
+      }
+    ]
+  }
+]
