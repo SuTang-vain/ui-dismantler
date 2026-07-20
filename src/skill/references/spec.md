@@ -98,3 +98,46 @@
 ```
 
 退出码：全过 0，有失败 1。
+
+## 9. 输出形态（P3 输出泛化）
+
+组件库支持三种输出形态，由 `adapt_output.py` 从 IIFE 源码生成：
+
+### IIFE（默认，agent 直接产出）
+
+```js
+(function(global) {
+  "use strict";
+  function LibName(root, options) { /* 渲染逻辑 */ }
+  global.LibName = { mount: function(c,o){...}, create: function(o){...} };
+})(window);
+```
+- 用法：`<script src="lib.js"></script>` + `LibName.mount(el, opts)`
+- roundtrip 默认验证此形态
+
+### ESM/UMD（适配器生成）
+
+```bash
+python3 src/skill/scripts/adapt_output.py lib.js --esm --out lib.esm.js
+```
+- 构造函数改名为 `_LibCtor` 避免与全局 API 名冲突
+- 用法：`<script src="lib.esm.js"></script>` + `LibName.mount(el, opts)`（兼容 `<script>` 加载）
+- 或构建工具 `import { mount } from 'lib.esm.js'`（UMD 风格）
+
+### Web Component（适配器生成）
+
+```bash
+python3 src/skill/scripts/adapt_output.py lib.js --wc --name sg-lib --out lib.wc.js
+```
+- 声明式用法：`<sg-lib><script type="application/json">{...}</script></sg-lib>`
+- `connectedCallback` 自动解析 JSON 子元素或 `data-options` 属性
+- 用法：`<script src="lib.wc.js"></script>` + `<sg-lib>...</sg-lib>`
+
+### 批量生成所有形态
+
+```bash
+python3 src/skill/scripts/adapt_output.py lib.js --all --name sg-lib --out-dir src/
+```
+一次生成 `.esm.js` + `.wc.js`。
+
+> **注意**：`adapt_output.py` 目前仅识别 `function Lib(root, options)` 命名约定。使用自定义构造函数名（如 `function GlossaryExplorer(options)`）的库需要先用此命名约定产出 IIFE，再转换。

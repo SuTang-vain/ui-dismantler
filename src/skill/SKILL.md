@@ -77,6 +77,21 @@ Tools are crutches; your understanding is your legs. The normalization mapping t
 
 ### Step 3: Produce Component Library Files
 
+**Output forms** (default IIFE, can generate other forms as needed):
+
+| Form | File | Usage | Suitable scenario |
+|---|---|---|---|
+| IIFE (default) | `<lib>.js` | `<script src>` + `Lib.mount()` | General-purpose; roundtrip validates this form by default |
+| ESM/UMD | `<lib>.esm.js` | `<script src>` or `import {mount}` | Modern build tools (webpack/vite) |
+| Web Component | `<lib>.wc.js` | `<sg-lib>` tag + JSON | Declarative usage, framework-agnostic |
+
+IIFE is the default output. For other forms, use the adapter generator:
+```bash
+python3 src/skill/scripts/adapt_output.py src/<lib>.js --esm --out src/<lib>.esm.js
+python3 src/skill/scripts/adapt_output.py src/<lib>.js --wc --name sg-<lib> --out src/<lib>.wc.js
+python3 src/skill/scripts/adapt_output.py src/<lib>.js --all --name sg-<lib> --out-dir src/
+```
+
 In the user-specified directory (or `/tmp/<lib-name>/`), create the complete component library:
 
 ```
@@ -189,6 +204,18 @@ python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --ou
 > Threshold basis: the benchmark library has roundtrip overall 0.99;
 > agent dismantling (huang/zhi) 0.97+ GOLD;
 > unsupported patterns (huang-yueying/zhi-shang-tan-bing generic fallback) naturally fall short and are lifted via agent dismantling.
+
+**Roundtrip scoring dimensions**:
+- `tag_topology_rate` (weight 40%): DOM tag topology match rate, unaffected by class-naming conventions
+- `class_match_rate` (weight 30%): class semantic similarity (tolerates sg- renames)
+- `node_match_rate` (weight 30%): recursive node match rate
+- `text_match_rate`: text exact + contains match
+- `coverage`: reference coverage (should be close to 100%)
+- `overall = struct_score * 0.5 + text * 0.5`
+
+> **About Tailwind pages**: Tailwind utility classes (`bg-background text-on-background`) and sg- semantic classes
+> are two valid paradigms; class similarity is naturally low. In this case, tag topology rate (typically 0.95+)
+> and text match rate (1.0) are more faithful measures. overall 0.70+ is acceptable (PASS); don't chase high class-match scores.
 
 ### Self-Check Decision Table (failure -> revision action)
 
@@ -310,6 +337,7 @@ Multi-case aggregation, batch vertical generation, and domain assets are not par
 **roundtrip renderer** (`scripts/_roundtrip_render.mjs`) capabilities and limits:
 - Two modes: component-library mode (default, serializes `#mount` subtree) + reference mode (`--ref`, serializes `<body>` subtree)
 - Multi-file support: auto-inlines all `<link>` CSS and `<script src>` JS (in document order)
+- Stub injection: Tailwind/marked/dompurify/mermaid/localStorage/canvas getContext all stubbed, prevents crashes from missing external deps
 - VirtualConsole: silences jsdom's "Not implemented" warnings
 - Large JSON output: >40KB goes through a temp file (prevents pipe truncation)
 - Limits: jsdom has no real layout engine (clientWidth=0), no canvas pixel rendering, limited support for Web Component connectedCallback timing
