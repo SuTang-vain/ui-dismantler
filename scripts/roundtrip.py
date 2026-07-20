@@ -15,8 +15,9 @@ roundtrip.py — 往返等价度测试
 
 用法:
   python3 roundtrip.py <原 HTML> --lib <组件库目录> [--out <报告路径>]
+  python3 roundtrip.py <原 HTML> --lib <组件库目录> --scenarios <场景.json>
 
-退出码: 0 表示可跑通（不论分数高低），2 表示流程出错。
+退出码: 0 表示流程可跑通且场景门禁通过，1 表示场景未达标，2 表示流程出错。
 """
 from __future__ import annotations
 
@@ -178,7 +179,24 @@ def _run_renderer(html_path: Path, *renderer_args: str, timeout: int = 30) -> di
         }
 
 
-def render_generated_dom(lib_dir: Path, width: int = 1024, height: int = 768) -> dict:
+def _scenario_renderer_args(
+    scenario_file: Path | None,
+    scenario_id: str | None,
+) -> tuple[str, ...]:
+    if scenario_file is None and scenario_id is None:
+        return ()
+    if scenario_file is None or not scenario_id:
+        raise ValueError("scenario_file 与 scenario_id 必须同时提供")
+    return ("--scenario-file", str(scenario_file), "--scenario-id", scenario_id)
+
+
+def render_generated_dom(
+    lib_dir: Path,
+    width: int = 1024,
+    height: int = 768,
+    scenario_file: Path | None = None,
+    scenario_id: str | None = None,
+) -> dict:
     """用 jsdom 执行生成库 example.html 的 mount，返回渲染后 DOM。"""
     examples = sorted(lib_dir.glob("examples/*.html"))
     if not examples:
@@ -188,16 +206,24 @@ def render_generated_dom(lib_dir: Path, width: int = 1024, height: int = 768) ->
         example,
         "--width", str(width),
         "--height", str(height),
+        *_scenario_renderer_args(scenario_file, scenario_id),
     )
 
 
-def render_reference_dom(html_path: Path, width: int = 1024, height: int = 768) -> dict:
+def render_reference_dom(
+    html_path: Path,
+    width: int = 1024,
+    height: int = 768,
+    scenario_file: Path | None = None,
+    scenario_id: str | None = None,
+) -> dict:
     """执行原页面资源和脚本，返回用户运行时可见的 body DOM。"""
     return _run_renderer(
         html_path,
         "--ref",
         "--width", str(width),
         "--height", str(height),
+        *_scenario_renderer_args(scenario_file, scenario_id),
     )
 
 
@@ -229,6 +255,215 @@ def resolve_reference_dom(
         "missing_files": rendered.get("missingFiles", []),
     })
     return static
+
+
+ALLOWED_SCENARIO_ACTIONS = {"click", "input", "key", "wait"}
+
+
+def load_scenario_matrix(path: Path) -> list[dict]:
+    """读取并验证无代码执行能力的轻量交互场景协议。"""
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"场景文件读取失败: {exc}") from exc
+    if not isinstance(document, dict) or document.get("schemaVersion") != "1.0":
+        raise ValueError("场景文件必须是 schemaVersion=1.0 的 object")
+    scenarios = document.get("scenarios")
+    if not isinstance(scenarios, list) or not scenarios:
+        raise ValueError("scenarios 必须是非空数组")
+    seen: set[str] = set()
+    normalized: list[dict] = []
+    for index, scenario in enumerate(scenarios):
+        if not isinstance(scenario, dict):
+            raise ValueError(f"scenarios[{index}] 必须是 object")
+        scenario_id = scenario.get("id")
+        if not isinstance(scenario_id, str) or not scenario_id.strip():
+            raise ValueError(f"scenarios[{index}].id 必须是非空字符串")
+        if scenario_id in seen:
+            raise ValueError(f"场景 id 重复: {scenario_id}")
+        seen.add(scenario_id)
+        viewport = scenario.get("viewport", {})
+        if not isinstance(viewport, dict):
+            raise ValueError(f"场景 {scenario_id} 的 viewport 必须是 object")
+        for key in ("width", "height"):
+            value = viewport.get(key)
+            if value is not None and (not isinstance(value, int) or value <= 0):
+                raise ValueError(f"场景 {scenario_id} 的 viewport.{key} 必须为正整数")
+        steps = scenario.get("steps", [])
+        if not isinstance(steps, list):
+            raise ValueError(f"场景 {scenario_id} 的 steps 必须是数组")
+        for step_index, step in enumerate(steps):
+            _validate_scenario_step(scenario_id, step_index, step)
+        assertions = scenario.get("assertions")
+        if not isinstance(assertions, list) or not assertions:
+            raise ValueError(f"场景 {scenario_id} 的 assertions 必须是非空数组")
+        for assertion_index, assertion in enumerate(assertions):
+            _validate_scenario_assertion(scenario_id, assertion_index, assertion)
+        normalized.append({
+            "id": scenario_id,
+            "label": scenario.get("label", scenario_id),
+            "viewport": viewport,
+            "steps": steps,
+            "assertions": assertions,
+        })
+    return normalized
+
+
+def _validate_scenario_step(scenario_id: str, index: int, step: object) -> None:
+    if not isinstance(step, dict):
+        raise ValueError(f"场景 {scenario_id} steps[{index}] 必须是 object")
+    action = step.get("action")
+    if action not in ALLOWED_SCENARIO_ACTIONS:
+        raise ValueError(f"场景 {scenario_id} steps[{index}] action 不支持: {action}")
+    if action in {"click", "input"}:
+        _validate_scenario_target(scenario_id, index, step.get("target"), required=True)
+    elif action == "key":
+        _validate_scenario_target(scenario_id, index, step.get("target"), required=False)
+        if not isinstance(step.get("key"), str) or not step["key"]:
+            raise ValueError(f"场景 {scenario_id} steps[{index}].key 必须是非空字符串")
+    if action == "input" and not isinstance(step.get("value"), str):
+        raise ValueError(f"场景 {scenario_id} steps[{index}].value 必须是字符串")
+    if action == "wait":
+        ms = step.get("ms")
+        if not isinstance(ms, int) or not 0 <= ms <= 5000:
+            raise ValueError(f"场景 {scenario_id} steps[{index}].ms 必须位于 0..5000")
+
+
+def _validate_scenario_target(
+    scenario_id: str,
+    index: int,
+    target: object,
+    required: bool,
+) -> None:
+    if target is None and not required:
+        return
+    if isinstance(target, str) and target:
+        return
+    if isinstance(target, dict):
+        selectors = [target.get(key) for key in ("reference", "library", "default")]
+        if any(isinstance(value, str) and value for value in selectors):
+            return
+    raise ValueError(f"场景 {scenario_id} steps[{index}].target 无有效 selector")
+
+
+def _validate_scenario_assertion(
+    scenario_id: str,
+    index: int,
+    assertion: object,
+) -> None:
+    if not isinstance(assertion, dict):
+        raise ValueError(f"场景 {scenario_id} assertions[{index}] 必须是 object")
+    _validate_scenario_target(
+        scenario_id,
+        index,
+        assertion.get("target"),
+        required=True,
+    )
+    checks = {
+        "visible", "text", "textContains", "value", "focused",
+        "classIncludes", "classExcludes", "attributes",
+    }
+    if not any(key in assertion for key in checks):
+        raise ValueError(f"场景 {scenario_id} assertions[{index}] 至少需要一个检查项")
+    for key in ("visible", "focused"):
+        if key in assertion and not isinstance(assertion[key], bool):
+            raise ValueError(f"场景 {scenario_id} assertions[{index}].{key} 必须是 boolean")
+    for key in ("text", "textContains", "value"):
+        if key in assertion and not isinstance(assertion[key], str):
+            raise ValueError(f"场景 {scenario_id} assertions[{index}].{key} 必须是字符串")
+    for key in ("classIncludes", "classExcludes"):
+        value = assertion.get(key)
+        if value is not None and (
+            not isinstance(value, list)
+            or not all(isinstance(item, str) and item for item in value)
+        ):
+            raise ValueError(f"场景 {scenario_id} assertions[{index}].{key} 必须是字符串数组")
+    attributes = assertion.get("attributes")
+    if attributes is not None and (
+        not isinstance(attributes, dict)
+        or not all(
+            isinstance(name, str)
+            and name
+            and (isinstance(value, str) or value is None)
+            for name, value in attributes.items()
+        )
+    ):
+        raise ValueError(f"场景 {scenario_id} assertions[{index}].attributes 格式无效")
+
+
+def score_comparison(reference: dict, library: dict) -> dict:
+    """对任一初始/场景状态执行与主报告一致的评分。"""
+    structure = compare_structure(reference, library)
+    text = compare_texts(reference, library)
+    structure_score = (
+        structure.get("node_match_rate", 0) + structure.get("class_match_rate", 0)
+    ) / 2
+    scores = {
+        "structure": round(structure_score, 3),
+        "text": text.get("text_match_rate", 0),
+        "overall": round((structure_score + text.get("text_match_rate", 0)) * 0.5, 3),
+    }
+    return {"structure": structure, "text": text, "scores": scores}
+
+
+def evaluate_scenario_matrix(
+    html_path: Path,
+    lib_dir: Path,
+    scenario_file: Path,
+    scenarios: list[dict],
+    default_width: int,
+    default_height: int,
+    threshold: float,
+) -> dict:
+    """在独立页面实例中对称执行每个场景并逐状态评分。"""
+    states: list[dict] = []
+    for scenario in scenarios:
+        viewport = scenario.get("viewport", {})
+        width = viewport.get("width", default_width)
+        height = viewport.get("height", default_height)
+        reference = render_reference_dom(
+            html_path,
+            width=width,
+            height=height,
+            scenario_file=scenario_file,
+            scenario_id=scenario["id"],
+        )
+        library = render_generated_dom(
+            lib_dir,
+            width=width,
+            height=height,
+            scenario_file=scenario_file,
+            scenario_id=scenario["id"],
+        )
+        state = {
+            "id": scenario["id"],
+            "label": scenario["label"],
+            "viewport": {"width": width, "height": height},
+            "reference_ok": reference.get("ok", False),
+            "library_ok": library.get("ok", False),
+            "reference_scenario": reference.get("scenario"),
+            "library_scenario": library.get("scenario"),
+            "reference_error": reference.get("error"),
+            "library_error": library.get("error"),
+        }
+        if reference.get("ok") and library.get("ok"):
+            state.update(score_comparison(reference, library))
+            state["passed"] = state["scores"]["overall"] >= threshold
+        else:
+            state["scores"] = {"structure": 0.0, "text": 0.0, "overall": 0.0}
+            state["passed"] = False
+        states.append(state)
+    overalls = [state["scores"]["overall"] for state in states]
+    return {
+        "schemaVersion": "1.0",
+        "source": str(scenario_file),
+        "threshold": threshold,
+        "total": len(states),
+        "passed": sum(1 for state in states if state["passed"]),
+        "avgOverall": round(sum(overalls) / len(overalls), 3) if overalls else 0.0,
+        "minOverall": min(overalls, default=0.0),
+        "states": states,
+    }
 
 
 # ============================================================
@@ -470,6 +705,9 @@ def main():
     )
     ap.add_argument("--width", type=int, default=1024, help="jsdom 视口宽度（默认 1024）")
     ap.add_argument("--height", type=int, default=768, help="jsdom 视口高度（默认 768）")
+    ap.add_argument("--scenarios", help="交互场景 JSON；每个场景从全新页面实例执行")
+    ap.add_argument("--state-threshold", type=float, default=0.85,
+                    help="单个交互状态综合分门槛（默认 0.85）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout）")
     args = ap.parse_args()
 
@@ -485,6 +723,19 @@ def main():
 
     if args.width <= 0 or args.height <= 0:
         print("ERROR: --width/--height 必须为正整数", file=sys.stderr)
+        sys.exit(2)
+    if not 0 <= args.state_threshold <= 1:
+        print("ERROR: --state-threshold 必须位于 0..1", file=sys.stderr)
+        sys.exit(2)
+    if args.scenarios and args.reference_mode == "static":
+        print("ERROR: 交互场景不能与 --reference-mode static 同时使用", file=sys.stderr)
+        sys.exit(2)
+
+    scenario_file = Path(args.scenarios).resolve() if args.scenarios else None
+    try:
+        scenarios = load_scenario_matrix(scenario_file) if scenario_file else []
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(2)
 
     skill_dir = Path(args.skill_dir).resolve()
@@ -517,11 +768,7 @@ def main():
         # 3. 渲染 + 对比
         print(f"[3/3] jsdom 渲染 + 对比 ...", file=sys.stderr)
         got = render_generated_dom(lib_dir, width=args.width, height=args.height)
-        struct = compare_structure(ref, got)
-        texts = compare_texts(ref, got)
-
-        # 综合评分
-        struct_score = (struct.get("node_match_rate", 0) + struct.get("class_match_rate", 0)) / 2
+        initial = score_comparison(ref, got)
         report = {
             "case": html_path.name,
             "render_ok": got.get("ok", False),
@@ -544,20 +791,26 @@ def main():
                 "unsupported_modules": got.get("unsupportedModules", []),
                 "viewport": got.get("viewport", {"width": args.width, "height": args.height}),
             },
-            "structure": struct,
-            "text": texts,
-            "scores": {
-                "structure": round(struct_score, 3),
-                "text": texts.get("text_match_rate", 0),
-                # 综合分（结构*0.5 + 文本*0.5）
-                "overall": round((struct_score * 0.5 + texts.get("text_match_rate", 0) * 0.5), 3),
-            },
+            **initial,
         }
+        if scenario_file:
+            print(f"      执行 {len(scenarios)} 个独立交互场景 ...", file=sys.stderr)
+            report["scenario_matrix"] = evaluate_scenario_matrix(
+                html_path,
+                lib_dir,
+                scenario_file,
+                scenarios,
+                args.width,
+                args.height,
+                args.state_threshold,
+            )
         out = json.dumps(report, ensure_ascii=False, indent=2)
         if args.out:
             Path(args.out).write_text(out, encoding="utf-8")
             print(f"报告已写入 {args.out}", file=sys.stderr)
         print(out)
+        if report.get("scenario_matrix", {}).get("passed") != report.get("scenario_matrix", {}).get("total"):
+            sys.exit(1)
     except Exception as e:
         print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
         sys.exit(2)

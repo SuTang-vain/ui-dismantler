@@ -13,8 +13,17 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const args = process.argv.slice(2);
 const htmlPath = args[0];
 const isReference = args.includes('--ref');
-const width = readPositiveIntArg('--width', 1024);
-const height = readPositiveIntArg('--height', 768);
+const scenarioFile = readStringArg('--scenario-file');
+const scenarioId = readStringArg('--scenario-id');
+const selectedScenario = loadScenario(scenarioFile, scenarioId);
+const defaultWidth = readPositiveIntArg('--width', 1024);
+const defaultHeight = readPositiveIntArg('--height', 768);
+const width = selectedScenario && selectedScenario.viewport && selectedScenario.viewport.width
+  ? selectedScenario.viewport.width
+  : defaultWidth;
+const height = selectedScenario && selectedScenario.viewport && selectedScenario.viewport.height
+  ? selectedScenario.viewport.height
+  : defaultHeight;
 
 if (!htmlPath) {
   console.error('用法: node _roundtrip_render.mjs <html> [--ref] [--width N --height N]');
@@ -32,6 +41,23 @@ function readPositiveIntArg(name, fallback) {
   if (index < 0) return fallback;
   const value = Number.parseInt(args[index + 1], 10);
   return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function readStringArg(name) {
+  const index = args.indexOf(name);
+  return index >= 0 ? args[index + 1] : null;
+}
+
+function loadScenario(path, id) {
+  if (!path && !id) return null;
+  if (!path || !id) throw new Error('--scenario-file 与 --scenario-id 必须同时提供');
+  const absolute = resolve(path);
+  if (!existsSync(absolute)) throw new Error(`场景文件不存在: ${absolute}`);
+  const document = JSON.parse(readFileSync(absolute, 'utf-8'));
+  const scenarios = Array.isArray(document.scenarios) ? document.scenarios : [];
+  const scenario = scenarios.find((item) => item && item.id === id);
+  if (!scenario) throw new Error(`场景不存在: ${id}`);
+  return scenario;
 }
 
 function output(value) {
@@ -254,6 +280,170 @@ async function waitForSettled(window, root) {
   return waitedMs;
 }
 
+function selectorForRole(target, role) {
+  if (typeof target === 'string') return target;
+  if (!target || typeof target !== 'object') return null;
+  return target[role] || target.default || null;
+}
+
+function queryTarget(window, target, role, required = true) {
+  const selector = selectorForRole(target, role);
+  if (!selector) {
+    if (required) throw new Error(`缺少 ${role} selector`);
+    return window.document;
+  }
+  const element = window.document.querySelector(selector);
+  if (!element) throw new Error(`selector 未命中: ${selector}`);
+  return element;
+}
+
+function isElementVisible(window, element) {
+  let current = element;
+  while (current && current.nodeType === 1) {
+    if (current.hidden || current.getAttribute('aria-hidden') === 'true') return false;
+    const inline = current.style;
+    if (inline && (inline.display === 'none' || inline.visibility === 'hidden')) return false;
+    const computed = window.getComputedStyle(current);
+    if (computed && (computed.display === 'none' || computed.visibility === 'hidden')) return false;
+    current = current.parentElement;
+  }
+  return true;
+}
+
+function evaluateAssertion(window, assertion, role, index) {
+  const result = {
+    index,
+    target: selectorForRole(assertion.target, role),
+    ok: true,
+    checks: [],
+  };
+  try {
+    const element = queryTarget(window, assertion.target, role);
+    function check(kind, expected, actual, passed) {
+      result.checks.push({ kind, expected, actual, ok: passed });
+      if (!passed) result.ok = false;
+    }
+    if ('visible' in assertion) {
+      const actual = isElementVisible(window, element);
+      check('visible', assertion.visible, actual, actual === assertion.visible);
+    }
+    if ('text' in assertion) {
+      const actual = element.textContent.trim();
+      check('text', assertion.text, actual, actual === assertion.text);
+    }
+    if ('textContains' in assertion) {
+      const actual = element.textContent.trim();
+      check('textContains', assertion.textContains, actual, actual.includes(assertion.textContains));
+    }
+    if ('value' in assertion) {
+      const actual = 'value' in element ? String(element.value) : null;
+      check('value', assertion.value, actual, actual === assertion.value);
+    }
+    if ('focused' in assertion) {
+      const actual = window.document.activeElement === element;
+      check('focused', assertion.focused, actual, actual === assertion.focused);
+    }
+    for (const className of assertion.classIncludes || []) {
+      check('classIncludes', className, [...element.classList], element.classList.contains(className));
+    }
+    for (const className of assertion.classExcludes || []) {
+      check('classExcludes', className, [...element.classList], !element.classList.contains(className));
+    }
+    for (const [name, expected] of Object.entries(assertion.attributes || {})) {
+      const actual = element.getAttribute(name);
+      check(`attribute:${name}`, expected, actual, actual === expected);
+    }
+  } catch (error) {
+    result.ok = false;
+    result.error = String(error && error.message || error);
+  }
+  return result;
+}
+
+async function executeScenario(window, scenario, role, root) {
+  if (!scenario) return null;
+  if (!Array.isArray(scenario.steps)) {
+    return {
+      ok: false,
+      id: scenario.id,
+      label: scenario.label || scenario.id,
+      steps: [],
+      error: 'steps 必须是数组',
+    };
+  }
+  const results = [];
+  for (let index = 0; index < scenario.steps.length; index += 1) {
+    const step = scenario.steps[index];
+    const result = { index, action: step && step.action, ok: false };
+    try {
+      if (!step || typeof step !== 'object') throw new Error('step 必须是 object');
+      if (step.action === 'click') {
+        const element = queryTarget(window, step.target, role);
+        element.click();
+        result.target = selectorForRole(step.target, role);
+      } else if (step.action === 'input') {
+        const element = queryTarget(window, step.target, role);
+        element.focus();
+        element.value = step.value;
+        element.dispatchEvent(new window.Event('input', { bubbles: true, cancelable: true }));
+        if (step.commit !== false) {
+          element.dispatchEvent(new window.Event('change', { bubbles: true, cancelable: true }));
+        }
+        result.target = selectorForRole(step.target, role);
+        result.value = step.value;
+      } else if (step.action === 'key') {
+        const element = queryTarget(window, step.target, role, false);
+        if (element.focus) element.focus();
+        const options = {
+          key: step.key,
+          code: step.code || '',
+          bubbles: true,
+          cancelable: true,
+          altKey: Boolean(step.altKey),
+          ctrlKey: Boolean(step.ctrlKey),
+          metaKey: Boolean(step.metaKey),
+          shiftKey: Boolean(step.shiftKey),
+        };
+        element.dispatchEvent(new window.KeyboardEvent('keydown', options));
+        element.dispatchEvent(new window.KeyboardEvent('keyup', options));
+        result.target = selectorForRole(step.target, role) || 'document';
+        result.key = step.key;
+      } else if (step.action === 'wait') {
+        await new Promise((resolveWait) => setTimeout(resolveWait, step.ms));
+        result.ms = step.ms;
+      } else {
+        throw new Error(`不支持的 action: ${step.action}`);
+      }
+      if (step.action !== 'wait') await waitForSettled(window, root);
+      result.ok = true;
+    } catch (error) {
+      result.error = String(error && error.message || error);
+      results.push(result);
+      return { ok: false, id: scenario.id, label: scenario.label || scenario.id, steps: results };
+    }
+    results.push(result);
+  }
+  if (!Array.isArray(scenario.assertions)) {
+    return {
+      ok: false,
+      id: scenario.id,
+      label: scenario.label || scenario.id,
+      steps: results,
+      assertions: [],
+      error: 'assertions 必须是数组',
+    };
+  }
+  const assertions = scenario.assertions.map((assertion, index) =>
+    evaluateAssertion(window, assertion, role, index));
+  return {
+    ok: assertions.every((assertion) => assertion.ok),
+    id: scenario.id,
+    label: scenario.label || scenario.id,
+    steps: results,
+    assertions,
+  };
+}
+
 try {
   const sourceHtml = readFileSync(absHtmlPath, 'utf-8');
   const prepared = prepareHtml(sourceHtml, dirname(absHtmlPath));
@@ -270,7 +460,7 @@ try {
   const root = isReference
     ? window.document.body
     : window.document.getElementById('mount');
-  const waitedMs = await waitForSettled(window, root);
+  let waitedMs = await waitForSettled(window, root);
 
   if (!root) {
     output({
@@ -281,6 +471,22 @@ try {
     });
     process.exit(0);
   }
+
+  const role = isReference ? 'reference' : 'library';
+  const scenario = await executeScenario(window, selectedScenario, role, root);
+  if (scenario && !scenario.ok) {
+    output({
+      ok: false,
+      mode: isReference ? 'reference' : 'library',
+      error: `场景执行失败: ${scenario.id}`,
+      scenario,
+      viewport: { width, height },
+      runtimeErrors: [...(window.__roundtripErrors || []), ...jsdomErrors].slice(0, 5),
+      ...prepared.diagnostics,
+    });
+    process.exit(0);
+  }
+  if (scenario) waitedMs += await waitForSettled(window, root);
 
   const serialized = serialize(root);
   const texts = collectTexts(root);
@@ -308,6 +514,7 @@ try {
     texts,
     textCount: texts.length,
     runtimeErrors: [...(window.__roundtripErrors || []), ...jsdomErrors].slice(0, 5),
+    scenario,
     ...prepared.diagnostics,
   });
   process.exit(0);

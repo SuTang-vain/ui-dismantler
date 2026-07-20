@@ -11,6 +11,10 @@
     # 单库模式：lib-dir 本身是组件库（含 src/），只对首个匹配案例验证
     python3 scripts/verify_all.py --lib-dir examples/cases/blackpink-v10/lib
 
+    # 单案例交互状态矩阵
+    python3 scripts/verify_all.py --case blackpink-v10 --lib-dir examples/cases/blackpink-v10/lib \
+      --scenarios scenarios.json
+
     # 指定案例目录
     python3 scripts/verify_all.py --cases-dir path/to/cases --lib-dir /tmp/libs
 
@@ -20,7 +24,7 @@
     # 报告输出到文件
     python3 scripts/verify_all.py --out report.json
 
-退出码：全部达标 0，有未达标 1，流程出错 2。
+退出码：初始分与全部交互状态均达标 0，有未达标 1，流程出错 2。
 """
 from __future__ import annotations
 
@@ -81,8 +85,10 @@ def build_roundtrip_command(
     reference_mode: str,
     width: int,
     height: int,
+    scenarios: Path | None = None,
+    state_threshold: float = 0.85,
 ) -> list[str]:
-    return [
+    command = [
         sys.executable,
         str(ROUNDTRIP),
         str(html),
@@ -92,6 +98,12 @@ def build_roundtrip_command(
         "--width", str(width),
         "--height", str(height),
     ]
+    if scenarios:
+        command += [
+            "--scenarios", str(scenarios),
+            "--state-threshold", str(state_threshold),
+        ]
+    return command
 
 
 def run_roundtrip(
@@ -101,10 +113,13 @@ def run_roundtrip(
     reference_mode: str,
     width: int,
     height: int,
+    scenarios: Path | None = None,
+    state_threshold: float = 0.85,
 ) -> dict:
     """对单个案例跑 roundtrip，返回报告 dict。"""
     cmd = build_roundtrip_command(
         html, lib_dir, out_json, reference_mode, width, height,
+        scenarios, state_threshold,
     )
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
@@ -113,7 +128,10 @@ def run_roundtrip(
     if not out_json.exists():
         return {"ok": False, "error": f"roundtrip 未产出报告: {proc.stderr[:200]}"}
     try:
-        return {"ok": True, "report": json.loads(out_json.read_text(encoding="utf-8"))}
+        report = json.loads(out_json.read_text(encoding="utf-8"))
+        if proc.returncode not in (0, 1):
+            return {"ok": False, "error": f"roundtrip 退出码 {proc.returncode}: {proc.stderr[:200]}"}
+        return {"ok": True, "report": report, "exit_code": proc.returncode}
     except json.JSONDecodeError as e:
         return {"ok": False, "error": f"报告解析失败: {e}"}
 
@@ -135,6 +153,9 @@ def main():
     )
     ap.add_argument("--width", type=int, default=1024, help="jsdom 视口宽度")
     ap.add_argument("--height", type=int, default=768, help="jsdom 视口高度")
+    ap.add_argument("--scenarios", help="交互场景 JSON（单案例验证使用）")
+    ap.add_argument("--state-threshold", type=float, default=0.85,
+                    help="交互状态综合分门槛（默认 0.85）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout 摘要）")
     args = ap.parse_args()
 
@@ -156,12 +177,22 @@ def main():
     if args.width <= 0 or args.height <= 0:
         print("ERROR: --width/--height 必须为正整数", file=sys.stderr)
         sys.exit(2)
+    if not 0 <= args.state_threshold <= 1:
+        print("ERROR: --state-threshold 必须位于 0..1", file=sys.stderr)
+        sys.exit(2)
+    scenario_file = Path(args.scenarios).resolve() if args.scenarios else None
+    if scenario_file and not scenario_file.is_file():
+        print(f"ERROR: 场景文件不存在: {scenario_file}", file=sys.stderr)
+        sys.exit(2)
     # 单库模式：lib_root 本身是组件库（有 src/），只对能匹配的案例跑
     single_lib_mode = (lib_root / "src").is_dir()
     try:
         cases = select_cases(cases, lib_root, single_lib_mode, args.case)
     except ValueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(2)
+    if scenario_file and len(cases) != 1:
+        print("ERROR: --scenarios 只能与单案例验证配合使用，请加 --case", file=sys.stderr)
         sys.exit(2)
     print(
         f"批量验证：{len(cases)} 个案例，门槛 {args.threshold}，"
@@ -193,12 +224,19 @@ def main():
             args.reference_mode,
             args.width,
             args.height,
+            scenario_file,
+            args.state_threshold,
         )
         if res["ok"]:
             scores = res["report"].get("scores", {})
             reference = res["report"].get("reference", {})
+            scenario_matrix = res["report"].get("scenario_matrix")
             overall = scores.get("overall", 0)
-            passed = overall >= args.threshold
+            states_passed = (
+                scenario_matrix is None
+                or scenario_matrix.get("passed") == scenario_matrix.get("total")
+            )
+            passed = overall >= args.threshold and states_passed
             results.append({
                 "case": name,
                 "ok": True,
@@ -206,6 +244,7 @@ def main():
                 "passed": passed,
                 "render_ok": res["report"].get("render_ok", False),
                 "reference": reference,
+                "scenario_matrix": scenario_matrix,
             })
             mark = "✓" if passed else "✗"
             print(f"{mark} 综合 {overall}", file=sys.stderr)
@@ -242,6 +281,7 @@ def main():
     report = {
         "threshold": args.threshold,
         "referenceMode": args.reference_mode,
+        "stateThreshold": args.state_threshold,
         "viewport": {"width": args.width, "height": args.height},
         "total": total,
         "rendered": ok_count,
