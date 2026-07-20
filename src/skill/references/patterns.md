@@ -240,14 +240,75 @@
 
 ---
 
+## 15. 问答测试 quiz
+
+**判定特征**（`_classify_view` 在 detail-panel 之后判定）：
+- 节点 HTML 含 `qz-?(top|body|next|fb|result)` 或 `quiz` 或 `q-title`/`qt`；或
+- 节点含 `.opt[data-k]` 选项 + `.qno`/`.qt` 题干。
+
+**结构骨架**：`.qz-top`(题号/进度条/得分) + `.qz-body`(.qt 题干 + .opts > .opt 选项 + .qz-fb 反馈) + .qz-next(下一题) + .qz-result(结果/徽章)。
+
+**提取**：
+```json
+{
+  "type": "quiz",
+  "questionCount": 5,
+  "hasFeedback": true,
+  "hasResult": true,
+  "hasProgressBar": true,
+  "optionsSelector": ".opt"
+}
+```
+
+## 16. 对比辨析 comparison
+
+**判定特征**：
+- 视图形态：节点含 `whatif-card`(real/alt 双栏) 或 `cmp-(btn|pop)` 或 `cmp` 类；或 `.col.a` + `.col.b` 双栏 + real/alt。
+- modal 形态：`_classify_modal_layout` 识别 `.whatif-modal`/`.whatif-card` -> layout=`comparison`。
+
+**结构骨架**：双栏 `.whatif-card.real`(史实) + `.whatif-card.alt`(如果没发生) + `.whatif-foot`；或 `#cmp .cmp` + `.col.a/.col.b` + `.cmp-btn.k1/k2/k3` + `.cmp-pop-*` 弹窗。
+
+**提取**：
+```json
+{
+  "type": "comparison",
+  "columns": [ {"side":"real","label":"史实"}, {"side":"alt","label":"如果没发生"} ],
+  "hasPopup": false
+}
+```
+
+## 17. 开场解锁屏 splash
+
+**判定特征**：节点 class 含 `splash` 且含 `.splash-cta` + `.splash-?(question|opt|options|start)`。
+
+**结构骨架**：`.splash-eyebrow`(身份定语) + `.splash-title`(含强调词) + `.splash-sub` + `.splash-question`(.q-title + .splash-options > .splash-opt[data-v] 单选) + `.splash-cta`(开始解锁按钮) + `.splash-hint`。点击 CTA 后 `.splash.hide`。
+
+**提取**：
+```json
+{
+  "type": "splash",
+  "hasQuestion": true,
+  "hasOptions": true,
+  "ctaSelector": ".splash-cta",
+  "ctaText": "开始解锁 7 件事 ->"
+}
+```
+
+> 注：splash 通常是全屏开场屏而非 panel，若 `_analyze_views` 选不到 panel 节点则不会进入 `_classify_view`，需结合因果链/全屏交互范式单独探测（当前版本暂未覆盖 JS 空壳渲染场景）。
+
+---
+
 ## 识别失败处理
 
-当某视图类型无法被 4-10 任一规则匹配：
+当某视图类型无法被 4-10、15-17 任一规则匹配：
 - manifest 的 `warnings[]` 追加 `"view <id>: unknown type, fallback to generic"`
 - 该视图 `type` 标记为 `"generic"`，`data` 字段尝试通用 DOM 提取（文本+图片）
 - 生成阶段走 **generic 视图分支**（`has_generic_views`）：
   - 有 tabs：为每个非-more tab 生成 `<section role="tabpanel">`，内含 `.sg-section-head` + `.sg-generic-body[aria-live=polite]`
   - 无 tabs（如因果链/地图导览等单视图范式）：生成一个兜底视图（id=`main`），确保 A11y 基线（tabpanel + aria-live）达标
 - README 标注「需人工细化」
+
+> 当前已支持：member-grid / timeline / carousel-3d / detail-panel / quiz / comparison / splash。
+> 仍未支持（走 generic 兜底）：因果链（causal-chain，需 JS 空壳渲染探测）、关系图谱（relation-graph）、词典释义卡、典故故事卡。
 
 > **A11y 按需校验**（spec #5）：tablist/tabpanel 仅在 manifest `structure.tabs` 非空时强制；dialog/ESC 仅在 `structure.modals` 非空时强制；aria-live/aria-label 任何组件库都要求。这样因果链、地图导览等无 tab 切换的垂类不会因 tabpanel 缺失而误判失败。

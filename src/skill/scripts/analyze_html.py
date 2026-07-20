@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (  # noqa: E402
     extract_root_vars, extract_all_vars, split_media_blocks, parse_rules,
     extract_gradients, normalize_var_name, parse_color, to_hex, slugify,
-    safe_json_dump, infer_color_roles,
+    safe_json_dump, infer_color_roles, extract_data_contracts,
 )
 
 try:
@@ -424,6 +424,21 @@ class HtmlAnalyzer:
             return "detail-panel"
         if node.get("aria-live") == "polite":
             return "detail-panel"
+        # 问答测试 quiz：题干/选项/进度/反馈/结果 任一组合
+        if re.search(r"\bqz-?(top|body|next|fb|result|opts)|\bquiz\b|\bqt\b|\bq-title\b", html_str, re.I):
+            return "quiz"
+        if node.find(class_=re.compile(r"\bopt\b|qz-(?:next|result|fb)", re.I)) and \
+           node.find(class_=re.compile(r"q(?:t|title|no)", re.I)):
+            return "quiz"
+        # 对比辨析 comparison：双栏 real/alt 或 cmp+col.a/col.b
+        if re.search(r"whatif-card|cmp-(?:btn|pop)|\bcmp\b", html_str, re.I):
+            return "comparison"
+        if node.find(class_=re.compile(r"\bcol-[ab]\b|\bcol\b", re.I)) and \
+           node.find(class_=re.compile(r"real|alt", re.I)):
+            return "comparison"
+        # 开场解锁屏 splash：splash + cta + 单选/启动
+        if re.search(r"\bsplash-?(?:cta|opt|question|options|start)\b", html_str, re.I):
+            return "splash"
         # 未识别
         self.warnings.append(f"view {node.get('id','?')}: unknown type, fallback to generic")
         return "generic"
@@ -437,7 +452,60 @@ class HtmlAnalyzer:
             return self._extract_carousel_3d_details(node)
         if vtype == "detail-panel":
             return {"hasKicker": bool(node.find(class_=re.compile(r"kicker", re.I)))}
+        if vtype == "quiz":
+            return self._extract_quiz_details(node)
+        if vtype == "comparison":
+            return self._extract_comparison_details(node)
+        if vtype == "splash":
+            return self._extract_splash_details(node)
         return {}
+
+    def _extract_quiz_details(self, node) -> dict:
+        """问答测试视图：题干/选项/进度/反馈/结果。"""
+        html_str = str(node)
+        # 题数：优先 .qz-next 出现次数+1，退到 .opt 组数，再退到 qz-top 题号文本
+        q_next = len(re.findall(r"qz-?next", html_str, re.I))
+        opt_groups = len(node.find_all(class_=re.compile(r"\bopts?\b", re.I)))
+        question_count = max(q_next + 1, opt_groups) if (q_next or opt_groups) else None
+        return {
+            "questionCount": question_count,
+            "hasFeedback": bool(node.find(class_=re.compile(r"qz-?fb|feedback", re.I))),
+            "hasResult": bool(node.find(class_=re.compile(r"qz-?result", re.I))),
+            "hasProgressBar": bool(node.find(class_=re.compile(r"\bbar\b|progress", re.I))),
+            "optionsSelector": ".opt" if node.find(class_=re.compile(r"\bopt", re.I)) else None,
+        }
+
+    def _extract_comparison_details(self, node) -> dict:
+        """对比辨析视图：双栏 real/alt 或 col.a/col.b。"""
+        html_str = str(node)
+        columns = []
+        # whatif 形态：real/alt
+        if node.find(class_=re.compile(r"real", re.I)):
+            columns.append({"side": "real", "label": "史实"})
+        if node.find(class_=re.compile(r"\balt\b", re.I)):
+            columns.append({"side": "alt", "label": "如果没发生"})
+        # cmp 形态：col.a/col.b
+        col_a = node.find(class_=re.compile(r"col-?a\b", re.I))
+        col_b = node.find(class_=re.compile(r"col-?b\b", re.I))
+        if col_a and not any(c["side"] == "real" for c in columns):
+            columns.append({"side": "a", "label": col_a.get_text(strip=True)[:20] or "A"})
+        if col_b and not any(c["side"] == "alt" for c in columns):
+            columns.append({"side": "b", "label": col_b.get_text(strip=True)[:20] or "B"})
+        return {
+            "columns": columns,
+            "hasPopup": bool(re.search(r"cmp-?pop", html_str, re.I)),
+        }
+
+    def _extract_splash_details(self, node) -> dict:
+        """开场解锁屏：CTA + 单选题/启动按钮。"""
+        html_str = str(node)
+        cta = node.find(class_=re.compile(r"splash-?cta", re.I))
+        return {
+            "hasQuestion": bool(node.find(class_=re.compile(r"splash-?(question|opt)", re.I))),
+            "hasOptions": bool(node.find(class_=re.compile(r"splash-?opt", re.I))),
+            "ctaSelector": ".splash-cta" if cta else None,
+            "ctaText": cta.get_text(strip=True)[:30] if cta else None,
+        }
 
     def _extract_member_grid_details(self, node) -> dict:
         grid = node.find(class_=re.compile(r"member-?(grid|list)", re.I)) or node
@@ -583,6 +651,10 @@ class HtmlAnalyzer:
 
     def _classify_modal_layout(self, node, node_cls: str) -> str:
         """判定 modal 布局类型。"""
+        # 对比辨析（whatif 形态）：.whatif-card.real + .whatif-card.alt 双栏
+        if node.find(class_=re.compile(r"whatif-?card", re.I)) or \
+           node.find(class_=re.compile(r"whatif-?modal", re.I)):
+            return "comparison"
         body_node = node.find(class_=re.compile(r"modal-?body", re.I))
         if not body_node:
             return "generic"
@@ -664,11 +736,21 @@ class HtmlAnalyzer:
                 data["members"] = self._normalize_members(parsed)
             elif "time" in sid.lower():
                 data["timeline"] = self._normalize_timeline(parsed)
-        # JS 数组提取
+        # JS 数组提取：先按写死的 memberList 试（向后兼容），提不到再用通用发现
         if "members" not in data:
             members = self._extract_js_array("memberList", "members")
             if members:
                 data["members"] = self._normalize_members(members)
+        # 通用发现：用 extract_data_contracts 扫描所有 JS 数组，按字段特征分类
+        # 解决写死变量名 memberList 的局限（不同案例可能叫 members/groupMembers/starList 等）
+        if "members" not in data or "works" not in data or "timeline" not in data:
+            discovered = self._discover_js_arrays()
+            if "members" not in data and discovered.get("members"):
+                data["members"] = self._normalize_members(discovered["members"])
+            if "works" not in data and discovered.get("works"):
+                data["works"] = self._normalize_works(discovered["works"])
+            if "timeline" not in data and discovered.get("timeline"):
+                data["timeline"] = self._normalize_timeline(discovered["timeline"])
         # DOM 提取（时间线/成员从 DOM）
         if "timeline" not in data:
             tl = self._extract_timeline_from_dom()
@@ -707,6 +789,47 @@ class HtmlAnalyzer:
                 except json.JSONDecodeError:
                     self.warnings.append(f"JS 数组 {var_name} 解析失败，需人工补全 data.{kind}")
                     return None
+        return None
+
+    def _discover_js_arrays(self) -> dict[str, list]:
+        """通用 JS 数组发现：用 extract_data_contracts 扫描所有 var/const/let 数组声明，
+        按首元素字段特征分类为 members/works/timeline。
+
+        相比 _extract_js_array（写死变量名 memberList），本方法不依赖固定变量名，
+        能识别 members/groupMembers/starList/membersData 等任意命名的数组。
+        仅当字段特征匹配时才归类，避免误识别（如配置数组、字符串数组不归类）。
+        """
+        out: dict[str, list] = {}
+        contracts = extract_data_contracts(self.scripts)
+        for c in contracts:
+            if c.get("kind") != "array":
+                continue
+            fields = c.get("fields") or {}
+            if not fields:
+                continue  # 纯值数组（如颜色配置）不归类
+            arr = self._extract_js_array(c["name"], c["name"])
+            if not arr:
+                continue
+            kind = self._classify_data_array(fields)
+            if kind and kind not in out:
+                out[kind] = arr
+        return out
+
+    def _classify_data_array(self, fields: dict) -> str | None:
+        """按字段特征判定一个对象数组的业务类型。
+
+        members: 含 name + (role/state/relations/img 任一)
+        works:   含 title + (year/img/desc 任一)，且无 role
+        timeline:含 time，或 (title + 无 role + 无 year)
+        """
+        f = {k.lower() for k in fields}
+        has = lambda *keys: any(k in f for k in keys)
+        if has("name") and has("role", "state", "relations", "img", "shortname"):
+            return "members"
+        if has("time") and has("title", "desc", "img"):
+            return "timeline"
+        if has("title") and has("year", "img", "desc") and not has("role", "state"):
+            return "works"
         return None
 
     def _match_bracket(self, s: str, start: int, open_ch: str, close_ch: str) -> str | None:

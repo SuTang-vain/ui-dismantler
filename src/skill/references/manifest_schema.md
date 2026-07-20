@@ -1,6 +1,6 @@
 # manifest.json 字段定义（manifest_schema.md）
 
-`analyze_html.py` 的输出、`generate_lib.py` 的输入。这是 HTML 与组件库之间的标准化中间契约。
+`analyze_html.py` 的输出。这是 HTML 的标准化中间契约，供 agent 拆解时参考（结构化主题色/结构/数据清单）。
 
 ## 顶层结构
 
@@ -97,7 +97,20 @@
 | `detail-panel` | 详情面板 | `hasKicker`, `rowSelector` |
 | `timeline` | 时间线 | `scrollSnap`, `perPage`, `dualArrowStrategy`, `hasDots`, `hasPageLabel` |
 | `carousel-3d` | 3D 中心聚焦轮播 | `perspective`, `positions[]`, `hasStoryPanel` |
+| `quiz` | 问答测试 | `questionCount`, `hasFeedback`, `hasResult`, `hasProgressBar`, `optionsSelector` |
+| `comparison` | 对比辨析（双栏 real/alt） | `columns[]`(`{side,label}`), `hasPopup` |
+| `splash` | 开场解锁屏 | `hasQuestion`, `hasOptions`, `ctaSelector`, `ctaText` |
 | `generic` | 未识别 | `note` |
+
+### modal.layout 枚举
+
+| layout | 说明 |
+|---|---|
+| `image-text` | 图片+文本 |
+| `relation-list` | 关系列表（标签:值行） |
+| `fact-grid` | 事实网格 |
+| `comparison` | 对比辨析（whatif real/alt 双栏） |
+| `generic` | 未识别 |
 
 ---
 
