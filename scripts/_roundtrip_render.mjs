@@ -49,19 +49,34 @@ try {
   });
   const { window } = dom;
 
-  // 给 mount 一点时间（同步执行的话不需要，但保险起见）
-  await new Promise((r) => setTimeout(r, 50));
+  // 轮询等待 mount 完成：每 20ms 检查 #mount 是否有子节点，最多等 500ms。
+  // 比固定 50ms 鲁棒：同步 mount 立即返回；异步 mount（rAF/setTimeout 初始化）
+  // 也有时间完成；避免漏算异步渲染的节点。
+  const mountEl0 = window.document.getElementById('mount');
+  const POLL_INTERVAL = 20;
+  const POLL_MAX = 500;
+  let waited = 0;
+  while (waited < POLL_MAX) {
+    if (mountEl0 && mountEl0.children.length > 0) break;
+    await new Promise((r) => setTimeout(r, POLL_INTERVAL));
+    waited += POLL_INTERVAL;
+  }
+  // mount 完成后再给 30ms 让 trailing rAF / settled Promise 跑完
+  if (waited > 0) {
+    await new Promise((r) => setTimeout(r, 30));
+  }
 
   // 检查 mount 是否真的渲染了内容
   const mountEl = window.document.getElementById('mount');
   const childCount = mountEl ? mountEl.children.length : -1;
 
   if (childCount === 0) {
-    // mount 可能没执行成功，输出诊断
+    // mount 可能没执行成功，输出诊断（含等待时长）
     console.log(JSON.stringify({
       ok: false,
-      error: 'mount 后 #mount 无子元素（JS 可能未执行或渲染失败）',
+      error: `mount 后 #mount 无子元素（等待 ${waited}ms 仍空，JS 可能未执行或渲染失败）`,
       childCount,
+      waitedMs: waited,
       hasWindow: typeof window !== 'undefined',
       scriptsLoaded: window.document.querySelectorAll('script').length,
     }));

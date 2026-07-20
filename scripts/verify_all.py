@@ -2,20 +2,20 @@
 """verify_all.py - 批量验证：对目录下所有案例 HTML 跑 roundtrip，汇总通过率与平均分。
 
 用途：改 skill / 工具层后跑全量回归，确认没退化。
-也能用 --lib-dir 指定"案例名 -> 已生成组件库目录"的映射，验证 agent 产出。
+用 --lib-dir 指定"案例名 -> 已生成组件库目录"的映射，验证 agent 产出。
 
 用法：
-    # 默认：跑 v1 链路（analyze+generate）对全部案例
-    python3 scripts/verify_all.py
-
-    # 指定案例目录
-    python3 scripts/verify_all.py --cases-dir path/to/cases
-
     # 验证已生成的库（每个案例名对应一个 lib 目录）
     python3 scripts/verify_all.py --lib-dir /tmp/libs
 
+    # 单库模式：lib-dir 本身是组件库（含 src/），只对首个匹配案例验证
+    python3 scripts/verify_all.py --lib-dir examples/cases/blackpink-v10/lib
+
+    # 指定案例目录
+    python3 scripts/verify_all.py --cases-dir path/to/cases --lib-dir /tmp/libs
+
     # 门槛调整（默认综合≥0.85）
-    python3 scripts/verify_all.py --threshold 0.80
+    python3 scripts/verify_all.py --lib-dir /tmp/libs --threshold 0.80
 
     # 报告输出到文件
     python3 scripts/verify_all.py --out report.json
@@ -70,7 +70,7 @@ def main():
     ap.add_argument("--cases-dir", default=str(HERE.parent / "examples" / "cases"),
                     help="案例目录（默认 examples/cases）")
     ap.add_argument("--lib-dir",
-                    help="已生成组件库父目录（其下每个子目录名对应案例名）；不提供则跑 v1 链路")
+                    help="已生成组件库父目录（其下每个子目录名对应案例名）；必填，agent 产出库后验证")
     ap.add_argument("--threshold", type=float, default=0.85,
                     help="综合分门槛（默认 0.85）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout 摘要）")
@@ -82,9 +82,14 @@ def main():
         print(f"ERROR: {cases_dir} 下未找到 */original.html", file=sys.stderr)
         sys.exit(2)
 
-    lib_root = Path(args.lib_dir).resolve() if args.lib_dir else None
+    if not args.lib_dir:
+        print("ERROR: 必须提供 --lib-dir <组件库目录>。", file=sys.stderr)
+        print("       agent 驱动模式下组件库由 agent 产出，不再自动跑 analyze+generate。", file=sys.stderr)
+        sys.exit(2)
+
+    lib_root = Path(args.lib_dir).resolve()
     # 单库模式：lib_root 本身是组件库（有 src/），只对能匹配的案例跑
-    single_lib_mode = lib_root and (lib_root / "src").is_dir()
+    single_lib_mode = (lib_root / "src").is_dir()
     print(f"批量验证：{len(cases)} 个案例，门槛 {args.threshold}\n", file=sys.stderr)
 
     results: list[dict] = []

@@ -50,8 +50,22 @@ class LibValidator:
         issues = []
         # CSS 类名应有 sg- 前缀：只检查规则的主体（最右侧选择器段），
         # 不检查后代/祖先类（如 .sg-modal .member 里的 .member 是数据驱动类，非本库定义）
-        generic_words = {"tab", "member", "modal", "view", "panel", "avatar", "arrow", "dot",
-                         "frame", "carousel", "timeline", "story", "detail", "relation"}
+        # 名单覆盖 UI 组件库常见结构词，agent 写 .card/.btn 等裸类名应被告警
+        generic_words = {
+            # 原 14 词（视图/容器/导航）
+            "tab", "member", "modal", "view", "panel", "avatar", "arrow", "dot",
+            "frame", "carousel", "timeline", "story", "detail", "relation",
+            # 卡片/按钮/图标/标题类
+            "card", "btn", "button", "icon", "title", "subtitle", "kicker", "badge",
+            "chip", "tag", "label", "value",
+            # 容器/布局类
+            "head", "header", "body", "foot", "footer", "content", "overlay",
+            "wrap", "wrapper", "container", "grid", "row", "col", "cell", "item",
+            "list", "section", "nav", "bar",
+            # 媒体类
+            "cover", "photo", "img", "image", "thumb", "thumbnail", "video",
+            "prev", "next", "close",
+        }
         for sel, _ in parse_rules(self.css):
             # 按逗号分组，取每段主体（最后一段联合选择器）
             for part in sel.split(","):
@@ -95,7 +109,7 @@ class LibValidator:
     # ---------- 3. 数据分离 ----------
     def check_data_separation(self):
         issues = []
-        # JS 中不应硬编码业务 URL（http）
+        # 1) JS 中不应硬编码业务 URL（http）
         # 排除注释和模板字符串里的 src 拼接
         for m in re.finditer(r'https?://[^\s"\'`]+', self.js):
             ctx = self.js[max(0, m.start()-30):m.end()+10]
@@ -105,9 +119,38 @@ class LibValidator:
             # 检查是否是硬编码（非 w.img / m.img 等变量引用）
             if not re.search(r"[\w.]+\.(img|src)\s*[,;)]", ctx):
                 issues.append(f"JS 疑似硬编码 URL: {m.group()[:50]}...")
-                if len(issues) >= 3:
+                if len(issues) >= 5:
                     break
-        self.record("3. 数据分离", not issues, "；".join(issues) if issues else "JS 无硬编码业务数据，数据经 options 传入")
+        # 2) examples HTML 的 DOM 不应硬编码业务文案
+        # 规范：可变内容（成员/作品/时间线/事实）必须走 <script> options/JSON，
+        # 不应直接写在 DOM 可见文本里。剥离所有 <script> 块后检查 DOM 残留。
+        # 强业务特征（避免误伤"下一题/成员"等结构性文本，以及品牌名 BLACKPINK）：
+        # - 连续 4 位年份（如 2016、2022）：业务时间数据最可靠信号
+        # - 长描述段落（≥15 连续中文字符，含具体业务信息）
+        # 注：全大写人名易误伤品牌名/缩写，故不查；改靠年份+长描述定位硬编码业务文案
+        for html in self.html_files:
+            t = html.read_text(encoding="utf-8", errors="replace")
+            # 剥离所有 <script>...</script> 块
+            dom_only = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", t, flags=re.I)
+            # 剥离 HTML 标签，只看可见文本
+            dom_text = re.sub(r"<[^>]+>", " ", dom_only)
+            dom_text = re.sub(r"\s+", " ", dom_text).strip()
+            # 查 4 位年份（排除页脚版权年如 © 2024，只查明显业务年份：带月份或事件上下文）
+            # 简化：查 19xx/20xx 年份，但允许单一年份（可能是版权声明），只告警 ≥2 个年份
+            # 用前后非数字断言（不用 \b，因中文不是 \w，"2016年" 的 \b 不生效）
+            years = re.findall(r"(?<!\d)(19\d{2}|20\d{2})(?!\d)", dom_text)
+            if len(years) >= 2:
+                issues.append(f"{html.name}: DOM 硬编码 {len(years)} 个年份 {years[:3]}（业务时间应走 options）")
+            # 查长描述段落（≥15 连续中文，排除纯结构性短语）
+            long_descs = re.findall(r"[\u4e00-\u9fff，。、]{15,}", dom_text)
+            # 排除常见结构性长文本（如"点击成员卡片查看详情"）
+            struct_phrases = {"点击成员卡片查看详情", "请选择一个成员查看详情", "暂无数据"}
+            biz_descs = [d for d in long_descs if d not in struct_phrases][:2]
+            for d in biz_descs:
+                issues.append(f"{html.name}: DOM 硬编码长描述「{d[:20]}...」（应走 options）")
+            if len(issues) >= 5:
+                break
+        self.record("3. 数据分离", not issues, "；".join(issues[:3]) if issues else "JS 无硬编码业务数据，examples HTML 业务文案经 options 传入")
 
     # ---------- 4. 响应式三档 ----------
     def check_responsive(self):
@@ -135,18 +178,44 @@ class LibValidator:
     def check_a11y(self):
         issues = []
         blob = self.css + "\n" + self.js
-        structure = (self.manifest or {}).get("structure", {})
-        tabs = structure.get("tabs", [])
-        modals = structure.get("modals", [])
-        has_tab_switch = bool([t for t in tabs if not t.get("more")])
+
+        # 从 blob 自身探测结构（不依赖外部 manifest）：
+        # 库声明了 tab/modal 结构才强制对应 role，避免对纯展示库误报，
+        # 也避免 manifest 缺失时检查被全跳过（gold-standard 库无 manifest）。
+        def _has_tab_switch():
+            """有 Tab 切换的信号：role=tab/tablist、.sg-tab* 类、JS 里 tablist 关键字。"""
+            if re.search(r"role[=:]\s*['\"]?tab(list)?['\"]?", blob):
+                return True
+            if re.search(r"\.sg-tab[a-z-]*", self.css):
+                return True
+            if "tablist" in self.js or "tabpanel" in self.js:
+                return True
+            # manifest 兜底（若有则也采信）
+            tabs = (self.manifest or {}).get("structure", {}).get("tabs", [])
+            return bool([t for t in tabs if not t.get("more")])
+
+        def _has_modal():
+            """有 Modal 的信号：role=dialog、aria-modal、.sg-modal* 类、JS 里 dialog 关键字。"""
+            if re.search(r"role[=:]\s*['\"]?dialog['\"]?", blob):
+                return True
+            if "aria-modal" in blob:
+                return True
+            if re.search(r"\.sg-modal[a-z-]*", self.css):
+                return True
+            if "dialog" in self.js:
+                return True
+            # manifest 兜底
+            modals = (self.manifest or {}).get("structure", {}).get("modals", [])
+            return bool(modals)
+
         # tablist/tabpanel 仅在有 tab 切换时强制
-        if has_tab_switch:
+        if _has_tab_switch():
             if not re.search(r"role[=:]\s*['\"]tablist['\"]", blob):
                 issues.append("缺少 role=tablist")
             if not re.search(r"role[=:]\s*['\"]tabpanel['\"]", blob):
                 issues.append("缺少 role=tabpanel")
         # 有 modal 就必须 role=dialog + ESC 关闭
-        if modals:
+        if _has_modal():
             if not re.search(r"role[=:]\s*['\"]dialog['\"]", blob):
                 issues.append("缺少 role=dialog")
             if "Escape" not in self.js:
@@ -156,7 +225,15 @@ class LibValidator:
             issues.append("缺少 aria-live")
         if "aria-label" not in blob:
             issues.append("缺少 aria-label")
-        self.record("5. A11y", not issues, "；".join(issues[:3]) if issues else "A11y 基线达标（tablist/tabpanel/dialog/aria-live/aria-label/ESC 按需）")
+        detail_parts = []
+        if _has_tab_switch():
+            detail_parts.append("tablist/tabpanel")
+        if _has_modal():
+            detail_parts.append("dialog/ESC")
+        detail_parts.extend(["aria-live", "aria-label"])
+        self.record("5. A11y", not issues,
+                    "；".join(issues[:3]) if issues else
+                    f"A11y 达标（按需检查 {'/'.join(detail_parts)}）")
 
     # ---------- 6. 主题可定制 ----------
     def check_theme(self):

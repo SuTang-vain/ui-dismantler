@@ -2,20 +2,19 @@
 """
 roundtrip.py — 往返等价度测试
 
-回答核心问题：用工具把 HTML 拆成组件库后，再用原数据填回去，和原 HTML 有多像？
+回答核心问题：组件库用原数据渲染后，和原 HTML 有多像？
 
 流程：
-  原 HTML ──analyze──▶ manifest ──generate──▶ 组件库 ──mount(原数据)──▶ 渲染后 DOM
   原 HTML ──解析──▶ 参照 DOM
+  组件库 ──mount(原数据)──▶ 渲染后 DOM（jsdom）
   参照 DOM ⇄ 渲染后 DOM ──对比──▶ 等价度报告（结构 / 文本）
 
-对比维度（阶段一只做结构 + 文本，样式/交互后续）：
+对比维度：
   1. 结构等价：DOM 树拓扑（标签、层级、class 集合）相似度
   2. 文本等价：可见文本内容集合的重合度
 
 用法:
-  python3 roundtrip.py <原 HTML> [--skill-dir <skill目录>] [--out <报告路径>]
-  python3 roundtrip.py <原 HTML> --lib <已生成组件库目录>  # 跳过 analyze/generate，直接对比
+  python3 roundtrip.py <原 HTML> --lib <组件库目录> [--out <报告路径>]
 
 退出码: 0 表示可跑通（不论分数高低），2 表示流程出错。
 """
@@ -26,7 +25,6 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 from bs4 import BeautifulSoup, NavigableString
@@ -319,10 +317,22 @@ def compare_structure(ref: dict, got: dict) -> dict:
                 stats["got_nodes"] += _count(g)
 
     walk(unwrap(ref_tree), unwrap(got_tree))
-    node_rate = stats["matched"] / stats["ref_nodes"] if stats["ref_nodes"] else 0.0
+    recall = stats["matched"] / stats["ref_nodes"] if stats["ref_nodes"] else 0.0
+    precision = stats["matched"] / stats["got_nodes"] if stats["got_nodes"] else 0.0
+    # 冗余惩罚：防止 agent 靠多渲染冗余 DOM 刷高 recall。
+    # 宽容带：got ≤ ref×1.5 不罚（容许数据驱动渲染的合理节点膨胀）；
+    # 超出部分按 (got-ref*1.5)/got 比例折扣 recall，最多罚 80%（保留 0.2 底，避免归零误判为全错）。
+    _EXCESS_TOLERANCE = 1.5
+    excess = max(0, stats["got_nodes"] - stats["ref_nodes"] * _EXCESS_TOLERANCE)
+    excess_ratio = excess / stats["got_nodes"] if stats["got_nodes"] else 0.0
+    redundancy_penalty = min(0.8, excess_ratio)
+    node_rate = recall * (1 - redundancy_penalty)
     cls_rate = stats["cls_matched"] / stats["ref_classes"] if stats["ref_classes"] else 1.0
     return {
         "node_match_rate": round(node_rate, 3),
+        "node_recall": round(recall, 3),          # 原始召回率（无惩罚，供诊断）
+        "node_precision": round(precision, 3),      # 精确率（got 噪音越多越低）
+        "redundancy_penalty": round(redundancy_penalty, 3),
         "class_match_rate": round(cls_rate, 3),
         "ref_nodes": stats["ref_nodes"],
         "got_nodes": stats["got_nodes"],
@@ -339,7 +349,12 @@ def _count(node) -> int:
 
 
 def compare_texts(ref: dict, got: dict) -> dict:
-    """文本对比：可见文本集合的重合度（精确匹配 + 包含匹配）。"""
+    """文本对比：可见文本集合的重合度（精确匹配 + 包含匹配）。
+
+    主分用 recall（matched / ref_count）：原 HTML 静态文本通常少于数据驱动
+    渲染后的文本（如成员卡片各有多条字段），故 got 冗余多为合理膨胀，不惩罚。
+    另报 text_precision + extra 列表供 agent 诊断 got 侧噪音。
+    """
     if not got.get("ok"):
         return {"text_match_rate": 0.0, "error": got.get("error", "渲染失败")}
     ref_texts = ref["texts"]
@@ -357,55 +372,39 @@ def compare_texts(ref: dict, got: dict) -> dict:
             contain += 1
     matched = exact + contain
     rate = matched / len(ref_set) if ref_set else 1.0
+    # precision：matched / got_count（got 噪音越多越低；不做惩罚，仅诊断）
+    precision = matched / len(got_set) if got_set else 0.0
     return {
         "text_match_rate": round(rate, 3),
+        "text_precision": round(precision, 3),
         "exact_match": exact,
         "contain_match": contain,
         "ref_count": len(ref_set),
         "got_count": len(got_set),
         "missing": sorted(ref_set - got_set)[:10],  # 缺失的文本（最多列 10 条）
+        "extra": sorted(got_set - ref_set)[:10],   # got 侧多余文本（噪音诊断，最多 10 条）
     }
 
 
 # ============================================================
 # 主流程
 # ============================================================
-def run_pipeline(html_path: Path, skill_dir: Path, work_dir: Path) -> Path:
-    """跑 v1 全链路：analyze → generate，返回生成库目录。"""
-    scripts = skill_dir / "scripts"
-    mf = work_dir / "manifest.json"
-    lib_dir = work_dir / "lib"
-    # analyze
-    p = subprocess.run(
-        [sys.executable, str(scripts / "analyze_html.py"), str(html_path),
-         "--out", str(mf), "--vertical", "test"],
-        capture_output=True, text=True,
-    )
-    if p.returncode != 0:
-        raise RuntimeError(f"analyze 失败: {p.stderr[:300]}")
-    # generate
-    lib_name = html_path.stem.replace("original", "case") or "case"
-    p = subprocess.run(
-        [sys.executable, str(scripts / "generate_lib.py"), str(mf),
-         "--out", str(lib_dir), "--name", lib_name],
-        capture_output=True, text=True,
-    )
-    if p.returncode != 0:
-        raise RuntimeError(f"generate 失败: {p.stderr[:300]}")
-    return lib_dir
-
-
 def main():
     ap = argparse.ArgumentParser(description="往返等价度测试：原 HTML ⇄ 组件库渲染后 DOM")
     ap.add_argument("html", help="原 HTML 文件路径")
-    ap.add_argument("--skill-dir", default=str(SKILL_DIR_DEFAULT), help="skill 目录（默认 src/skill）")
-    ap.add_argument("--lib", help="已生成组件库目录（提供则跳过 analyze/generate）")
+    ap.add_argument("--skill-dir", default=str(SKILL_DIR_DEFAULT), help="skill 目录（默认 src/skill，仅用于定位渲染器）")
+    ap.add_argument("--lib", help="已生成组件库目录（必填：agent 产出的库，不再走 v1 模板链路）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout）")
     args = ap.parse_args()
 
     html_path = Path(args.html).resolve()
     if not html_path.is_file():
         print(f"ERROR: 文件不存在: {html_path}", file=sys.stderr)
+        sys.exit(2)
+
+    if not args.lib:
+        print("ERROR: 必须提供 --lib <组件库目录>。", file=sys.stderr)
+        print("       agent 驱动模式下组件库由 agent 产出，不再自动跑 analyze+generate。", file=sys.stderr)
         sys.exit(2)
 
     skill_dir = Path(args.skill_dir).resolve()
@@ -419,20 +418,12 @@ def main():
         ref = extract_reference_dom(html_path)
         print(f"      参照节点数 {ref['text_count']} 文本", file=sys.stderr)
 
-        # 2. 生成库（或用已有）
-        if args.lib:
-            lib_dir = Path(args.lib).resolve()
-            print(f"[2/3] 使用已有组件库: {lib_dir}", file=sys.stderr)
-        else:
-            with tempfile.TemporaryDirectory() as td:
-                work_dir = Path(td)
-                print(f"[2/3] 跑 analyze + generate ...", file=sys.stderr)
-                lib_dir = run_pipeline(html_path, skill_dir, work_dir)
-                # 复制到持久目录供渲染
-                persist = Path(tempfile.mkdtemp()) / "lib"
-                import shutil
-                shutil.copytree(lib_dir, persist)
-                lib_dir = persist
+        # 2. 已生成库
+        lib_dir = Path(args.lib).resolve()
+        if not lib_dir.is_dir():
+            print(f"ERROR: 组件库目录不存在: {lib_dir}", file=sys.stderr)
+            sys.exit(2)
+        print(f"[2/3] 使用组件库: {lib_dir}", file=sys.stderr)
 
         # 3. 渲染 + 对比
         print(f"[3/3] jsdom 渲染 + 对比 ...", file=sys.stderr)
