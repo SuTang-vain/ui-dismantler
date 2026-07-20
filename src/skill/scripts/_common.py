@@ -1,7 +1,7 @@
 """_common.py — html-to-component-lib skill 的共享工具
 
 提供 CSS 解析、颜色解析、变量归一化等基础能力。
-被 analyze_html.py / generate_lib.py / validate_lib.py 复用。
+被 analyze_html.py / validate_lib.py 复用。
 不依赖第三方包（bs4 仅在 analyze 中用）。
 """
 
