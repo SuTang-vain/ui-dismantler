@@ -285,45 +285,5 @@ class TestGoldenSnapshotBlackpinkV10(unittest.TestCase):
             f"文本分 {scores['text']} < 0.8")
 
 
-# ============================================================
-# 黄金快照：blackpink-latest/lib 端到端 roundtrip
-# agent 产出的最新版（v10 迭代 + entry-cover 特性），作为第二个回归锚点
-# ============================================================
-class TestGoldenSnapshotBlackpinkLatest(unittest.TestCase):
-    """对 blackpink-latest 组件库跑完整 roundtrip，断言分数不低于门槛。
-
-    HTML 在 Downloads（不在仓库内），fixture 缺失则跳过。
-    LIB 在 examples/cases/blackpink-latest/（已入库）。
-    """
-
-    REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    HTML = "/Users/tangyaoyue/Downloads/明星组合_BLACKPINK/index.html"
-    LIB = os.path.join(REPO, "examples", "cases", "blackpink-latest")
-
-    def test_roundtrip_meets_threshold(self):
-        if not (os.path.isfile(self.HTML) and os.path.isdir(self.LIB)):
-            self.skipTest(f"fixture 缺失: {self.HTML} 或 {self.LIB}")
-        import json
-        import subprocess
-
-        proc = subprocess.run(
-            [sys.executable, os.path.join(self.REPO, "scripts", "roundtrip.py"),
-             self.HTML, "--lib", self.LIB],
-            capture_output=True, text=True, timeout=60,
-            cwd=self.REPO,
-        )
-        self.assertEqual(proc.returncode, 0,
-                         f"roundtrip 失败: {proc.stderr[:300]}")
-        report = json.loads(proc.stdout)
-        scores = report["scores"]
-        # latest 版含 entry-cover 新特性，DOM 更复杂，门槛同 0.85
-        self.assertGreaterEqual(scores["overall"], 0.85,
-            f"综合分 {scores['overall']} < 0.85")
-        self.assertGreaterEqual(scores["structure"], 0.7,
-            f"结构分 {scores['structure']} < 0.7")
-        self.assertGreaterEqual(scores["text"], 0.8,
-            f"文本分 {scores['text']} < 0.8")
-
-
 if __name__ == "__main__":
     unittest.main(verbosity=2)

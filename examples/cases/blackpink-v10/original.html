@@ -1868,7 +1868,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       ]
     }
   ];
-  
+
   // ---- Carousel state ----
   const membersPerPage = 4;
   var totalPages = Math.ceil(memberList.length / membersPerPage);
@@ -1878,22 +1878,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
   var carouselPrev = document.querySelector('.carousel-prev');
   var carouselNext = document.querySelector('.carousel-next');
   var carouselDots = document.querySelector('.carousel-dots');
-  
+
   // ---- Build member data lookup for quick access ----
   var memberData = {};
   memberList.forEach(function(m) { memberData[m.key] = m; });
-  
+
   // ---- DOM refs ----
   var relName  = document.getElementById('rel-name');
   var relSub   = document.getElementById('rel-sub');
   var relList  = document.getElementById('rel-list');
   var relKick  = document.getElementById('rel-kicker');
-  
+
   // ---- Render a page of members ----
   function renderMemberPage(page) {
     var start = (page - 1) * membersPerPage;
     var pageMembers = memberList.slice(start, start + membersPerPage);
-    
+
     memberGrid.innerHTML = '';
     pageMembers.forEach(function(m) {
       var btn = document.createElement('button');
@@ -1902,61 +1902,61 @@ button { font: inherit; color: inherit; cursor: pointer; }
       btn.setAttribute('role', 'listitem');
       btn.dataset.member = m.key;
       btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false');
-      
+
       var fig = document.createElement('figure');
       fig.className = 'avatar';
       fig.setAttribute('aria-hidden', 'true');
-      
+
       var img = document.createElement('img');
       img.src = m.img;
       img.alt = m.name;
       img.addEventListener('load', function() { img.classList.add('is-loaded'); });
       img.addEventListener('error', function() { img.classList.add('is-error'); });
       fig.appendChild(img);
-      
+
       var fallback = document.createElement('span');
       fallback.className = 'avatar-fallback';
       fallback.textContent = m.shortName;
       fig.appendChild(fallback);
-      
+
       var source = document.createElement('span');
       source.className = 'photo-source';
       source.textContent = m.photoSource;
       fig.appendChild(source);
-      
+
       var info = document.createElement('span');
       info.className = 'member-info';
-      
+
       var nameSpan = document.createElement('span');
       nameSpan.className = 'member-name';
       nameSpan.textContent = m.name;
       info.appendChild(nameSpan);
-      
+
       var roleSpan = document.createElement('span');
       roleSpan.className = 'member-role';
       roleSpan.textContent = m.role.replace('队内定位:', '');
       info.appendChild(roleSpan);
-      
+
       var stateSpan = document.createElement('span');
       stateSpan.className = 'member-state';
       stateSpan.textContent = '在团';
       info.appendChild(stateSpan);
-      
+
       fig.appendChild(info);
       btn.appendChild(fig);
-      
+
       // Click handler
       btn.addEventListener('click', function() {
         selectMember(m.key, true);
       });
-      
+
       memberGrid.appendChild(btn);
     });
-    
+
     // Update arrows
     carouselPrev.classList.toggle('is-hidden', page <= 1);
     carouselNext.classList.toggle('is-hidden', page >= totalPages);
-    
+
     // Update dots
     carouselDots.innerHTML = '';
     for (var i = 1; i <= totalPages; i++) {
@@ -1970,22 +1970,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
       carouselDots.appendChild(dot);
     }
   }
-  
+
   function goToPage(page) {
     if (page < 1) page = 1;
     if (page > totalPages) page = totalPages;
     currentPage = page;
     renderMemberPage(page);
   }
-  
+
   carouselPrev.addEventListener('click', function() { goToPage(currentPage - 1); stopAutoPlay(); });
   carouselNext.addEventListener('click', function() { goToPage(currentPage + 1); stopAutoPlay(); });
-  
+
   // ---- Auto-play: cycle through individual members ----
   var autoPlayTimer = null;
   var autoPlayInterval = 3000;
   var autoPlayMemberIndex = 0;
-  
+
   function startAutoPlay() {
     stopAutoPlay();
     autoPlayMemberIndex = 0;
@@ -1996,14 +1996,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
       selectMember(m.key);
     }, autoPlayInterval);
   }
-  
+
   function stopAutoPlay() {
     if (autoPlayTimer) {
       clearInterval(autoPlayTimer);
       autoPlayTimer = null;
     }
   }
-  
+
   // ---- Helper: select a member by key ----
   function selectMember(key, showModal) {
     selectedMemberKey = key;
@@ -2027,15 +2027,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
       openMemberModal(d);
     }
   }
-  
+
   // Stop on any user interaction
   function onUserInteraction() { stopAutoPlay(); }
-  
+
   document.querySelector('.member-stage').addEventListener('click', onUserInteraction);
   document.querySelector('.member-stage').addEventListener('touchstart', onUserInteraction);
   carouselDots.addEventListener('click', onUserInteraction);
   memberGrid.addEventListener('click', onUserInteraction);
-  
+
   // ---- Initial render ----
   renderMemberPage(1);
   startAutoPlay();
@@ -2489,7 +2489,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       collapseTlItem(expandedTlItem);
     }
   });
-  
+
   // 小屏作品详情弹窗已集成到轮播引擎中
 
   // initial state
