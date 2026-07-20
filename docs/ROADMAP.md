@@ -92,13 +92,8 @@ agent 产出的组件库必须达到 benchmark 的质量：
 
 `scripts/roundtrip.py` + `_roundtrip_render.mjs`，对称执行原页面和组件库后量化等价度。`auto` 模式优先运行态参照，失败时显式记录并回退静态解析；`rendered` 严格模式禁止回退。
 基线报告见 `docs/baselines/`：
-<<<<<<< HEAD
-- `roundtrip_blackpink_v10_rendered.json`：运行态主基线（综合 0.992，结构 0.995，文本 0.990）
-- `roundtrip_blackpink_v10_agent.json`：历史静态兼容基线（综合 0.928，结构 0.965，文本 0.892）
-=======
 - `roundtrip_benchmark_rendered.json`：运行态主基线（综合 0.990，结构 0.997，文本 0.983）
 - `roundtrip_benchmark_static.json`：历史静态兼容基线（综合 0.849，结构 0.947，文本 0.750）
->>>>>>> codex/generic-agent-quality
 - `archive-v1/`：v1 模板链路的历史 baseline（generate_lib 已删，不可复现，仅存档）
 
 ### P0-2 单元测试
@@ -134,11 +129,7 @@ SKILL.md 要包含：
 - sg-* 强约束规范（命名/变量/响应式/A11y，引用 spec.md）
 - 工具调用方式（analyze/validate/roundtrip 的 CLI）
 - 质量门槛（validate 全过 + roundtrip ≥ 0.85）
-<<<<<<< HEAD
-- 标杆示例（BLACKPINK 组件库的结构和质量标准）
-=======
 - 标杆示例（benchmark 组件库的结构和质量标准）
->>>>>>> codex/generic-agent-quality
 
 ### P1-2 前向测试：agent 独立拆解新案例
 

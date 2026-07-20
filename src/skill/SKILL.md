@@ -1,10 +1,6 @@
 ---
 name: html-to-component-lib
-<<<<<<< HEAD
-description: 将单个 HTML 页面拆解为可复用的组件库（参数化 CSS + 渲染引擎 JS + 数据驱动示例 + 设计规范文档）。MUST USE 当用户想把 HTML 转为组件库/复用模板/提取主题色与交互模式，或提到「拆解 HTML」「提取组件」「做成组件库」「规范化复用」「提取主题色」「提取交互模式」。可选 profile 仅提供领域上下文，输出遵循 sg-* 强约束规范。
-=======
 description: Dismantle a single HTML case page into a reusable component library (parametric CSS + rendering engine JS + data-driven examples + design spec docs). MUST USE when the user wants to turn an HTML case into a component library / reusable template / extract theme colors and interaction patterns, or mentions "dismantle HTML" / "extract components" / "make a component library" / "standardize for reuse" / "extract theme colors" / "extract interaction patterns" / 「拆解 HTML」「提取组件」「做成组件库」「规范化复用」「提取主题色」「提取交互模式」. Optional `profile` provides domain context only; output follows the sg-* strong-constraint spec.
->>>>>>> codex/generic-agent-quality
 ---
 
 # HTML -> Component Library Dismantling Skill
@@ -19,15 +15,9 @@ Benchmark quality: `benchmark/lib` (the domain-neutral benchmark library, 1346 l
 
 ## When to Use
 
-<<<<<<< HEAD
-- 用户提供一个 HTML 文件（或目录），要求「拆成组件库」「提取复用模板」「规范化」
-- 用户要求提取某页面的主题色 / Tab / 交互模式 / 逻辑设置并固化复用
-- 用户提供可选领域背景时，将其作为理解上下文，不把它写成核心规则分支
-=======
 - The user provides an HTML file (or directory) and asks to "dismantle into a component library", "extract reusable template", or "standardize"
 - The user asks to extract a page's theme colors / Tabs / interaction patterns / logic settings and freeze them for reuse
 - The user provides an optional domain background; treat it as understanding context, don't write it as a core rule branch
->>>>>>> codex/generic-agent-quality
 
 ## Dismantling Workflow (execute in order)
 
@@ -189,21 +179,12 @@ node --check src/<lib-name>.js
 python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --out <report.json>
 ```
 
-<<<<<<< HEAD
-**质量门槛**（必须全过才算完成）：
-- `validate_lib.py` 8 项全 PASS
-- `node --check` 无语法错误
-- `roundtrip.py` 默认使用运行态参照；`reference.fallback=true` 时必须修复参照渲染问题或用 `--reference-mode static` 明确记录兼容口径
-- 运行态主门槛：综合 ≥ 0.85（结构 ≥ 0.7，文本 ≥ 0.8）
-- 页面含 Tab、Dialog、表单等交互时，补充 `--scenarios <场景.json>`；每个场景必须有 assertions 证明状态真实达成
-=======
 **Quality thresholds** (all must pass to count as complete):
 - `validate_lib.py`: all 8 items PASS
 - `node --check`: no syntax errors
 - `roundtrip.py`: defaults to rendered reference; when `reference.fallback=true`, fix the reference rendering or record the compatibility contract with `--reference-mode static`
 - Runtime main threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
 - When the page has Tab/Dialog/form interactions, add `--scenarios <scenarios.json>`; each scenario must have assertions proving the state was actually reached
->>>>>>> codex/generic-agent-quality
 
 > Threshold basis: the benchmark library has roundtrip overall 0.99;
 > agent dismantling (huang/zhi) 0.97+ GOLD;
@@ -215,19 +196,6 @@ After each self-check round, use this table to locate the revision point. After 
 
 | Self-check failure | Root cause location | Revision action |
 |---|---|---|
-<<<<<<< HEAD
-| validate: 1.命名前缀 | CSS 规则主体含无 sg- 前缀的通用词（tab/member/modal...） | 把违规类名加 `sg-` 前缀；注意只改主体选择器（最右段），后代类若是数据驱动可不动 |
-| validate: 2.变量归一化 | `:root` 外的规则里用了未归一的 `--原变量` 或硬编码色值 | 在 `:root` 定义 `--sg-*` 变量，规则里改用 `var(--sg-xxx)`；归一化映射见 spec.md 第 2 节 |
-| validate: 3.数据分离 | examples HTML 里硬编码了业务文案/URL（非占位） | 把硬编码内容抽到 `<script type="application/json">` 或 options 参数 |
-| validate: 4.响应式三档 | 缺 `@media (max-width:500px)` 或 `(max-width:320px)` | 补全两档断点，每档至少有画布尺寸/字号/布局调整 |
-| validate: 5.A11y | 有 tab 但无 role=tablist，或有 dialog 但无 ESC | 按需补 A11y 属性（详见 spec.md 第 5 节的按需表） |
-| validate: 6.主题可定制 | 规则里硬编码 `#hex` 或 `rgb()`（非 :root、非纯黑白蒙版） | 替换为 `var(--sg-xxx)`；渐变里的色也走变量 |
-| validate: 7.零依赖 | examples HTML 引了外部 JS/CSS（字体 CDN 除外） | 删除外部引用，改用本地 src/ 资源 |
-| validate: 8.文档完备 | 缺 README.md 或 docs/设计规范.md，或 README 无 API 说明 | 补全文档，README 含 mount/create API，设计规范含主题色章节 |
-| node --check 报错 | JS 语法错误（缺分号/括号不匹配/非法字符） | 按报错行号定位修复，常见：模板字符串未闭合、对象尾逗号 |
-| roundtrip 文本分 <0.8 | 看报告 `text.missing`，缺真实内容（成员定位/作品标题等）；`text.extra` 是 got 侧多余文本（不扣分，仅诊断噪音，如时间线年份等数据驱动文本） | 把缺失文本补进 `examples/<案例>.html` 的 options 数据；extra 无需处理 |
-| roundtrip 结构分 <0.7 | 看 `structure.node_match_rate`（含冗余惩罚）；对比 `node_recall`：若 recall 高但 match_rate 低，说明 `redundancy_penalty>0`（got 节点超 ref 1.5 倍，有多余 DOM）；`node_precision` 低也提示冗余 | 缺视图层（没渲染 timeline/works）/嵌套层级错位/modal 没挂载 -> 补视图；got 冗余 DOM（多渲染占位/调试容器）-> 精简渲染，只产出原 HTML 存在的结构。对比器已对 sg- 前缀和类名重命名容错 |
-=======
 | validate: 1. naming prefix | CSS rule body contains non-sg-prefixed generic words (tab/member/modal...) | Add `sg-` prefix to offending class names; only change the rule's main selector (rightmost segment). Descendant classes that are data-driven can be left alone |
 | validate: 2. variable normalization | Rules outside `:root` use un-normalized `--original-var` or hardcoded colors | Define `--sg-*` vars in `:root`, switch rules to `var(--sg-xxx)`; normalization mapping in spec.md Section 2 |
 | validate: 3. data separation | examples HTML hardcodes business copy/URLs (non-placeholder) | Move hardcoded content into `<script type="application/json">` or options params |
@@ -239,7 +207,6 @@ After each self-check round, use this table to locate the revision point. After 
 | node --check error | JS syntax error (missing semicolon / unbalanced parens / illegal char) | Locate and fix by line number; common: unclosed template literal, trailing comma in object |
 | roundtrip text score <0.8 | Check report `text.missing`, missing real content (member roles/work titles etc.); `text.extra` is got-side noise (data-driven text like timeline years, not penalized) | Add missing text into `examples/<case>.html` options data; extra needs no action |
 | roundtrip structure score <0.7 | Check `structure.node_match_rate` (with redundancy penalty); compare `node_recall`: high recall but low match_rate means `redundancy_penalty>0` (got nodes > 1.5× ref, redundant DOM); low `node_precision` also signals redundancy | Missing view layer (timeline/works not rendered) / nesting misaligned / modal not mounted -> add view; got redundant DOM (placeholder/debug containers) -> slim rendering, only output structures present in original HTML. The comparator already tolerates sg- prefix and class renames |
->>>>>>> codex/generic-agent-quality
 
 **Exit protocol**:
 - All thresholds pass -> dismantling complete, report file paths + self-check results to the user
@@ -306,15 +273,6 @@ In Step 1 when understanding HTML or Step 2 when fetching reference data, you ca
 | `split_media_blocks(css)` | Split `@media` blocks (distinguishes keyframes) | Understand responsive breakpoints |
 | `extract_gradients(css)` | Extract gradients (supports nested `rgba()`) | Normalize colors inside gradients to `var()` |
 
-<<<<<<< HEAD
-工具的源码在 `src/skill/scripts/`，单测在 `scripts/tests/`（`python3 scripts/tests/run.py` 跑全部，209 个测试覆盖边界）。
-
-## 领域上下文与实验边界
-
-`--profile` 可记录页面所属领域，帮助 agent 理解术语，但不能改变确定性核心算法。领域专用 detector 必须通过 registry 插入，并同时提供跨页面误报测试。
-
-多案例聚合、批量垂类生成和领域资产不属于本 Skill 的稳定能力，统一在 `codex/vertical-case-experiments` 分支探索。稳定质量线只接收可复现、跨领域成立的检查和回归样本。
-=======
 ### Package Architecture
 
 Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤11 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, 276 tests covering unit + architecture-guard + interaction-matrix edge cases).
@@ -339,7 +297,6 @@ src/ui_dismantler/
 Architecture guards (`scripts/tests/test_architecture.py`, 9 assertions) enforce layering: business modules must not contain CLI code (`argparse`/`sys.exit`/`def main()`); legacy entry points must be ≤11-line thin bridges; core package must never import the compatibility layer (cycle prevention).
 
 ## Domain Context and Experiment Boundaries
->>>>>>> codex/generic-agent-quality
 
 `--profile` can record the page's domain, helping the agent understand terminology, but cannot change the deterministic core algorithm. Domain-specific detectors must be inserted via the `ViewDetectorRegistry` and must simultaneously provide cross-page false-positive tests.
 
