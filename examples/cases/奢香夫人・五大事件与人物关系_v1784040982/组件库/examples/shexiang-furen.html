@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>奢香夫人 · 五大事件与人物关系 — 组件库示例</title>
+<link rel="stylesheet" href="../src/shexiang-furen.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+  #mount { width: 788px; height: 492px; max-width: 100vw; max-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/shexiang-furen.js"></script>
+<script>
+ShexiangFuren.mount(document.getElementById('mount'), {
+  legend: [
+    { type: 'family', label: '亲族' },
+    { type: 'ruler', label: '君臣' },
+    { type: 'ally', label: '盟友' },
+    { type: 'enemy', label: '对立' }
+  ],
+  hint: '点击头像查看人物详情，可拖动',
+  initial: 0,
+  events: [
+    {
+      name: '闻名水西', year: '1375年', period: '宣慰夫人',
+      image: 'images/闻名水西.webp',
+      summary: '奢香为川南彝族部落公主，自幼聪明好学。洪武八年与贵州宣慰使、水西默部首领霭翠成婚，人称奢香夫人。婚后辅佐丈夫处理宣慰司政事，以贤能闻名水西，被族人尊为苴慕。',
+      summaryShort: '嫁霭翠，贤名水西。',
+      people: [
+        { name: '奢香夫人', px: 50, py: 65, role: '宣慰夫人', avatar: 'images/奢香夫人.webp', big: true, deed: '嫁霭翠，辅佐理事，被尊为苴慕。', impact: '初显政治才能。' },
+        { name: '霭翠', px: 78, py: 28, role: '贵州宣慰使', avatar: 'images/霭翠.webp', rel: 'family', deed: '水西默部首领，与奢香成婚共治。', impact: '奢香之夫。' }
+      ],
+      links: []
+    },
+    {
+      name: '马烨逼辱', year: '1389年', period: '摄行宣慰',
+      image: 'images/马烨逼辱.webp',
+      summary: '霭翠卒后，奢香摄行贵州宣慰使。明都指挥马烨忌其摄职，役使开驿时杀戮彝民，强索赋税。大旱无收，奢香屡诉不成，反被执至贵阳鞭笞裸背，欲激彝人兵衅。奢香深明大义，阻四十八部起事，避免战祸。',
+      summaryShort: '受辱不屈，阻彝起兵。',
+      people: [
+        { name: '奢香夫人', px: 50, py: 66, role: '摄行宣慰使', avatar: 'images/奢香夫人.webp', big: true, deed: '遭马烨鞭笞，仍阻四十八部造反。', impact: '忍辱负重，顾全大局。' },
+        { name: '马烨', px: 78, py: 28, role: '都指挥', avatar: 'images/马烨.webp', rel: 'enemy', deed: '杀戮彝民，执奢香鞭笞，欲激兵衅。', impact: '奢香之敌，逼辱之吏。' }
+      ],
+      links: []
+    },
+    {
+      name: '进京面圣', year: '1391年', period: '顺德夫人',
+      image: 'images/进京面圣.webp',
+      summary: '奢香经宋钦妻刘淑贞引荐走诉京师，面陈马烨逼反真相。朱元璋问以何报，奢香愿子孙世世不敢生事，并愿刊山凿险开置驿道。帝封顺德夫人，赐金帛，召马烨还京治罪。',
+      summaryShort: '面圣陈情，封顺德夫人。',
+      people: [
+        { name: '奢香夫人', px: 50, py: 66, role: '顺德夫人', avatar: 'images/奢香夫人.webp', big: true, deed: '走诉京师，面陈马烨之罪，愿开驿道。', impact: '获封夫人，马烨伏法。' },
+        { name: '刘淑贞', px: 78, py: 22, role: '宋钦之妻', avatar: 'images/刘淑贞.webp', rel: 'ally', deed: '引荐奢香入京面见朱元璋。', impact: '奢香进京引路人。' },
+        { name: '朱元璋', px: 78, py: 72, role: '明太祖', avatar: 'images/朱元璋.webp', rel: 'ruler', deed: '封奢香顺德夫人，召马烨还京治罪。', impact: '奢香所面陈之君。' }
+      ],
+      links: [
+        { a: '刘淑贞', b: '朱元璋', type: 'ally', label: '引见' }
+      ]
+    },
+    {
+      name: '开辟驿道', year: '1391年', period: '顺德夫人',
+      image: 'images/开辟驿道.webp',
+      summary: '奢香回贵州后，亲率各部落以偏桥为中心开置两条驿道，置龙场、陆广、谷里、水西、奢香、金鸡、阁鸦、归化、毕节九驿，打通川滇湘通道，稳定西南，确定与明王朝臣属关系。朱元璋曰：奢香归附，胜得十万雄兵。',
+      summaryShort: '九驿贯通，西南归附。',
+      people: [
+        { name: '奢香夫人', px: 50, py: 65, role: '顺德夫人', avatar: 'images/奢香夫人.webp', big: true, deed: '亲率部落刊山凿险，开置九驿两道。', impact: '西南通道大开。' },
+        { name: '朱元璋', px: 78, py: 28, role: '明太祖', avatar: 'images/朱元璋.webp', rel: 'ruler', deed: '赞奢香归附胜得十万雄兵。', impact: '奢香所臣属之君。' }
+      ],
+      links: []
+    },
+    {
+      name: '兴学彝汉', year: '1392年', period: '顺德夫人',
+      image: 'images/兴学彝汉.webp',
+      summary: '奢香多次朝觐金陵，广聘汉儒，兴宣慰司学，传耕织之技，倡彝汉融合。洪武二十三年送独子阿期陇弟入太学，太祖特诏善教。二十五年学成，钦赐姓安，汉名安的，赐三品朝服。水西由此安定繁荣。',
+      summaryShort: '兴学融汉，子入太学。',
+      people: [
+        { name: '奢香夫人', px: 50, py: 63, role: '顺德夫人', avatar: 'images/奢香夫人.webp', big: true, deed: '兴宣慰司学，送子入太学，倡彝汉融合。', impact: '水西安定，文明日昌。' },
+        { name: '朱元璋', px: 78, py: 22, role: '明太祖', avatar: 'images/朱元璋.webp', rel: 'ruler', deed: '特诏国子监善教阿期陇弟，赐子姓安。', impact: '奢香所朝之主。' },
+        { name: '安的', px: 78, py: 72, role: '宣慰使', avatar: 'images/安的.webp', rel: 'family', deed: '阿期陇弟，太学学成，钦赐汉名安的。', impact: '奢香之子，袭职水西。' }
+      ],
+      links: [
+        { a: '朱元璋', b: '安的', type: 'ruler', label: '赐名' }
+      ]
+    }
+  ]
+});
+</script>
+</body>
+</html>

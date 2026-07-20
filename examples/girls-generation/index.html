@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="少女时代（Girls' Generation / SNSD）动态百科词条">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%233b7ad9%27/%3E%3Cpath d=%27M20 19h24v26H20z%27 fill=%27white%27 opacity=%27.9%27/%3E%3Cpath d=%27M25 25h14v3H25zm0 6h14v3H25zm0 6h9v3h-9z%27 fill=%27%233b7ad9%27/%3E%3C/svg%3E">
+  <title>少女时代｜动态百科</title>
+  <link rel="stylesheet" href="star-group.css">
+  <style>
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
+    body{display:grid;place-items:center;background:#f8f8f8;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  </style>
+</head>
+<body>
+  <main id="mount" aria-label="少女时代词条"></main>
+  <script src="star-group.js"></script>
+  <script>
+  StarGroup.mount(document.getElementById('mount'), {
+    title: '少女时代',
+    ariaLabel: '少女时代动态百科成员探索卡',
+    theme: {
+      // 百科蓝主题：延续组件库的中性百科信息层级。
+      primary: '#3b7ad9', accent: '#1f5fae', ink: '#1f2d3d',
+      muted: '#6f8297', subtle: '#9bacc0', note: '#7f90a3',
+      line: '#d8e4f2', paper: '#ffffff', stage: '#f5f8fc',
+      soft: '#eaf2fc', 'soft-accent': '#edf5ff',
+      'neutral-soft': '#f7faff', 'panel-top': '#fbfdff', 'panel-bottom': '#f2f7fd',
+      'member-active': '#3b7ad9', 'timeline-dot': '#3b7ad9'
+    },
+    detailKicker: '成员 ↔ 少女时代',
+    sourceNote: '成员资料依据公开信息整理；个人活动与合约状态以官方公告为准。',
+    timelineHeadTitle: '组合大事记',
+    timelineHeadSub: '点击节点展开经历背景',
+    worksHeadTitle: '少女时代代表作品',
+    worksHeadSub: '聚焦团体发行作品',
+    worksStoryCta: '展开作品故事',
+    worksStoryLabel: '作品背景',
+    timelineStoryLabel: '经历背景',
+    timelineHint: '了解背景 ›',
+    timelineCollapse: '收起',
+    memberModalTitle: '成员资料',
+    memberModalDecl: '动态百科 · 少女时代成员资料',
+    moreModalDecl: '动态百科 · 资料与说明',
+    entryCoverImg: 'assets/group/girls-generation-2022.jpg',
+    entryCoverAlt: '少女时代八位成员于 2022 年参加节目录制的组合合照',
+    entryCells: [
+      { no: '01', name: '成员', arrow: '↓' },
+      { no: '02', name: '大事记', arrow: '↓' },
+      { no: '03', name: '代表作品', arrow: '↓' },
+      { no: '04', name: '更多', arrow: '↗' }
+    ],
+    tabs: [
+      { id: 'members', label: '成员', count: 8 },
+      { id: 'timeline', label: '大事记', count: 5 },
+      { id: 'works', label: '代表作品', count: 5 },
+      { id: 'more', label: '更多', more: true }
+    ],
+    members: [
+      { key: 'taeyeon', name: 'Taeyeon · 金泰妍', role: '队内定位：队长 · 主唱', shortName: '泰妍', state: '在团',
+        img: 'assets/members/taeyeon.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','金泰妍（김태연）'],['出生','1989 年 3 月 9 日'],['队内身份','队长、主唱'],['团体活动','2007 年以少女时代成员身份出道']] },
+      { key: 'sunny', name: 'Sunny · 李顺圭', role: '队内定位：主唱', shortName: 'Sunny', state: '在团',
+        img: 'assets/members/sunny.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','李顺圭（이순규）'],['出生','1989 年 5 月 15 日'],['队内身份','主唱'],['团体活动','2007 年以少女时代成员身份出道']] },
+      { key: 'tiffany', name: 'Tiffany · 黄美英', role: '队内定位：主唱', shortName: 'Tiffany', state: '在团',
+        img: 'assets/members/tiffany.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['韩文名','蒂芬妮·杨（티파니 영）'],['出生','1989 年 8 月 1 日'],['队内身份','主唱'],['团体活动','2017 年后仍为团体成员，参与 2022 年回归']] },
+      { key: 'hyoyeon', name: 'Hyoyeon · 金孝渊', role: '队内定位：领舞 · 副唱', shortName: '孝渊', state: '在团',
+        img: 'assets/members/hyoyeon.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','金孝渊（김효연）'],['出生','1989 年 9 月 22 日'],['队内身份','领舞、副唱'],['团体活动','2007 年以少女时代成员身份出道']] },
+      { key: 'yuri', name: 'Yuri · 权俞利', role: '队内定位：领舞 · 副唱', shortName: '俞利', state: '在团',
+        img: 'assets/members/yuri.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','权俞利（권유리）'],['出生','1989 年 12 月 5 日'],['队内身份','领舞、副唱'],['团体活动','2007 年以少女时代成员身份出道']] },
+      { key: 'sooyoung', name: 'Sooyoung · 崔秀英', role: '队内定位：副唱', shortName: '秀英', state: '在团',
+        img: 'assets/members/sooyoung.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','崔秀英（최수영）'],['出生','1990 年 2 月 10 日'],['队内身份','副唱'],['团体活动','2017 年后仍为团体成员，参与 2022 年回归']] },
+      { key: 'yoona', name: 'Yoona · 林允儿', role: '队内定位：领舞 · 门面', shortName: '允儿', state: '在团',
+        img: 'assets/members/yoona.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','林允儿（임윤아）'],['出生','1990 年 5 月 30 日'],['队内身份','领舞、门面'],['团体活动','2007 年以少女时代成员身份出道']] },
+      { key: 'seohyun', name: 'Seohyun · 徐玄', role: '队内定位：主唱 · 忙内', shortName: '徐玄', state: '在团',
+        img: 'assets/members/seohyun.jpg', photoSource: 'Wikimedia Commons · CC 授权',
+        relations: [['本名','徐珠贤（서주현）'],['出生','1991 年 6 月 28 日'],['队内身份','主唱、忙内'],['团体活动','2017 年后仍为团体成员，参与 2022 年回归']] }
+    ],
+    timeline: [
+      { time: '2007.08', title: '以《再次重逢的世界》正式出道', desc: '少女时代以九人编制正式开启团体活动。', img: 'assets/works/into-the-new-world.jpg', alt: '再次重逢的世界', story: '2007 年 8 月，SM Entertainment 推出的女子组合少女时代以《再次重逢的世界》正式出道。作品以坚定、明亮的旋律和高强度群舞表达向新世界前进的主题，后来在韩国流行文化中不断被重新演绎，也成为团体生涯最重要的起点之一。' },
+      { time: '2009.01', title: '《Gee》掀起现象级热潮', desc: '首张迷你专辑主打成为团体早期代表作。', img: 'assets/works/gee.jpg', alt: 'Gee 单曲封面', story: '2009 年发行的《Gee》以重复性极强的副歌、鲜明造型与整齐群舞迅速传播，并连续九周位列韩国音乐节目榜首。作品帮助少女时代建立广泛公众认知，也让团体从上升期新人进入韩国主流女子组合代表行列。' },
+      { time: '2011.09', title: '《The Boys》拓展全球舞台', desc: '推出韩文及英文版本，扩大海外活动范围。', img: 'assets/works/the-boys.png', alt: 'The Boys 专辑封面', story: '第三张正规专辑《The Boys》呈现更具力量感的声音与视觉风格，并同步推出英文版本。少女时代围绕这张作品开展更广泛的国际宣传，在亚洲之外的市场获得更多曝光，成为团体全球化阶段的重要节点。' },
+      { time: '2017.08', title: '十周年《Holiday Night》发行', desc: '以第六张正规专辑纪念出道十周年。', img: 'assets/works/holiday-night.jpg', alt: 'Holiday Night 专辑封面', story: '出道十周年之际，少女时代发行第六张正规专辑《Holiday Night》，以《Holiday》和《All Night》作为双主打。专辑既延续团体的明亮舞曲特征，也通过影像与纪念活动回望成员共同走过的十年。' },
+      { time: '2022.08', title: '《FOREVER 1》十五周年回归', desc: '八名成员共同发行第七张正规专辑。', img: 'assets/works/forever-1.jpg', alt: 'FOREVER 1 专辑封面', story: '2022 年，八名成员为纪念出道十五周年再次集结，发行第七张正规专辑《FOREVER 1》。同名主打以庆祝与长久相伴为核心，完整体舞台和综艺活动也让这次回归成为连接团体历史与当下的重要纪念。' }
+    ],
+    works: [
+      { img: 'assets/works/gee.jpg', alt: 'Gee', year: '2009 · 迷你专辑主打', title: '《Gee》', desc: '以轻快旋律与鲜明舞台形象广泛传播的早期代表作。', story: '《Gee》收录于少女时代首张迷你专辑，2009 年发行。歌曲推出后在韩国音乐节目中获得长时间第一名，并成为团体早期最具代表性的流行作品之一。简洁的旋律钩子、整齐的群舞与标志性造型，共同构成了它在流行文化中的辨识度。' },
+      { img: 'assets/works/genie.jpg', alt: 'Genie', year: '2009 · 迷你专辑主打', title: '《说出你的愿望（Genie）》', desc: '延续明快舞曲风格，以“愿望”作为歌词主题。', story: '《说出你的愿望（Genie）》是少女时代于 2009 年发行的同名迷你专辑主打曲。作品采用电子舞曲取向的编曲，歌词围绕鼓励与梦想展开；歌曲的现场表演与舞蹈动作亦成为团体同期舞台的重要记忆点。' },
+      { img: 'assets/works/oh.jpg', alt: 'Oh!', year: '2010 · 正规专辑主打', title: '《Oh!》', desc: '第二张正规专辑同名主打，呈现青春活力的团体风格。', story: '《Oh!》是少女时代第二张韩国正规专辑的同名主打曲，于 2010 年推出。作品以清晰的节拍、活泼的合唱段落和团体编舞呈现明亮气质，是该时期少女时代音乐与视觉风格的代表作品。' },
+      { img: 'assets/works/the-boys.png', alt: 'The Boys', year: '2011 · 正规专辑主打', title: '《The Boys》', desc: '第三张正规专辑主打，推出韩文及英文版本。', story: '《The Boys》收录于同名第三张正规专辑。歌曲以更具力量感的流行舞曲编曲呈现，发行时同步推进海外宣传，并推出英文版本，成为少女时代在国际市场扩展阶段的重要作品。' },
+      { img: 'assets/works/forever-1.jpg', alt: 'FOREVER 1', year: '2022 · 正规专辑主打', title: '《FOREVER 1》', desc: '十五周年纪念专辑同名主打，八位成员共同参与。', story: '《FOREVER 1》为少女时代第七张韩国正规专辑的同名主打曲，于 2022 年发行。作品以团体十五周年为节点，由八名成员共同完成回归活动，传达长久相伴与庆祝团体历程的主题。' }
+    ],
+    moreTitle: '资料与说明',
+    moreSub: '本词条依据公开资料整理；成员活动状态与合作关系以官方公告为准。',
+    moreDecl: '动态百科 · 资料与说明',
+    moreFacts: [
+      { label: '词条类型', value: '韩国女子演唱组合' },
+      { label: '经纪公司', value: 'SM Entertainment（出道时所属）' },
+      { label: '出道日期', value: '2007 年 8 月 5 日' },
+      { label: '八人活动阵容', value: '金泰妍、李顺圭、黄美英、金孝渊、权俞利、崔秀英、林允儿、徐珠贤' },
+      { label: '前成员', value: '郑秀妍（Jessica，2014 年离开组合）' },
+      { label: '代表作品', value: '《Gee》《说出你的愿望（Genie）》《Oh!》《The Boys》《FOREVER 1》' },
+      { label: '资料声明', value: '页面为学习用途的动态百科组件示例；成员肖像来自 Wikimedia Commons 的 CC 授权照片；作品封面通过 Apple Music / iTunes Search API 引用，人物与作品信息请以权威公开资料为准。', full: true }
+    ],
+    autoPlayMember: 4200,
+    autoPlayWorks: 4200
+  });
+  </script>
+</body>
+</html>

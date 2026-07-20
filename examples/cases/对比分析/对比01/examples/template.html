@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>三大队组件库 · 复用模板</title>
+    <link rel="stylesheet" href="../src/sandadui.css" />
+    <style>
+      html, body {
+        width: 100%; height: 100%; margin: 0; overflow: hidden;
+        overscroll-behavior: none; touch-action: manipulation;
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #eef1f8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mount"></div>
+    <script src="../src/sandadui.js"></script>
+    <script>
+      // 占位数据：替换为真实业务数据即可复用
+      var options = {
+        ariaLabel: '人物关系与剧情解析（模板）',
+        heroKey: 'hero',
+        imgBase: './images/',
+        legend: [
+          { type: 'family',  label: '战友' },
+          { type: 'romance', label: '家人' },
+          { type: 'master',  label: '师徒' },
+          { type: 'friend',  label: '同行' },
+          { type: 'enemy',   label: '对立' }
+        ],
+        chars: [
+          { key: 'hero',   name: '主角', actor: '演员A 饰', img: 'placeholder.webp', big: true, desc: '主角简介：核心人物，故事线围绕其展开。' },
+          { key: 'ally',   name: '同伴', actor: '演员B 饰', img: 'placeholder.webp', desc: '同伴简介：与主角并肩的关键角色。' },
+          { key: 'mentor', name: '师父', actor: '演员C 饰', img: 'placeholder.webp', desc: '师父简介：主角的引路人。' },
+          { key: 'rival',  name: '对手', actor: '演员D 饰', img: 'placeholder.webp', desc: '对手简介：与主角立场对立。' }
+        ],
+        storyModules: [
+          {
+            key: 'act1',
+            name: '第一幕',
+            desc: '故事开端：事件发生，主角介入。',
+            chars: ['hero','ally','mentor','rival'],
+            edges: [
+              { a: 'hero', b: 'ally',   type: 'family', label: '同伴' },
+              { a: 'hero', b: 'mentor', type: 'master', label: '师徒' },
+              { a: 'hero', b: 'rival',  type: 'enemy',  label: '对立' }
+            ],
+            roles: {
+              hero:   { rel: ['核心人物','执念'], desc: '主角本段定位。' },
+              ally:   { rel: ['同伴','并肩'],     desc: '同伴本段定位。' },
+              mentor: { rel: ['师父','引路'],     desc: '师父本段定位。' },
+              rival:  { rel: ['对手','对立'],     desc: '对手本段定位。' }
+            }
+          },
+          {
+            key: 'act2',
+            name: '第二幕',
+            desc: '故事发展：冲突升级，主角受挫。',
+            chars: ['hero','ally','rival'],
+            edges: [
+              { a: 'hero', b: 'ally',  type: 'family', label: '同伴' },
+              { a: 'hero', b: 'rival', type: 'enemy',  label: '对立' }
+            ],
+            roles: {
+              hero:  { rel: ['核心人物','受挫'], desc: '主角本段定位。' },
+              ally:  { rel: ['同伴','支援'],     desc: '同伴本段定位。' },
+              rival: { rel: ['对手','得势'],     desc: '对手本段定位。' }
+            }
+          }
+        ],
+        worksCats: [
+          { id: 'theme', label: '同题材' },
+          { id: 'cast',  label: '同主演' }
+        ],
+        works: {
+          theme: [
+            { n: '示例作品甲', m: '演员一 / 演员二 / 演员三', r: '题材标签 · 推荐理由', cover: 'placeholder.webp', ep: '120分钟' },
+            { n: '示例作品乙', m: '演员四 / 演员五 / 演员六', r: '题材标签 · 推荐理由', cover: 'placeholder.webp', ep: '45集' },
+            { n: '示例作品丙', m: '演员七 / 演员八 / 演员九', r: '题材标签 · 推荐理由', cover: 'placeholder.webp', ep: '98分钟' },
+            { n: '示例作品丁', m: '演员十 / 演员十一 / 演员十二', r: '题材标签 · 推荐理由', cover: 'placeholder.webp', ep: '110分钟' }
+          ],
+          cast: [
+            { n: '示例作品戊', m: '演员一 / 演员十三', r: '同主演 · 推荐理由', cover: 'placeholder.webp', ep: '130分钟' },
+            { n: '示例作品己', m: '演员一 / 演员十四', r: '同主演 · 推荐理由', cover: 'placeholder.webp', ep: '46集' },
+            { n: '示例作品庚', m: '演员一 / 演员十五', r: '同主演 · 推荐理由', cover: 'placeholder.webp', ep: '105分钟' },
+            { n: '示例作品辛', m: '演员一 / 演员十六', r: '同主演 · 推荐理由', cover: 'placeholder.webp', ep: '92分钟' }
+          ]
+        }
+      };
+      Sandadui.mount(document.getElementById('mount'), options);
+    </script>
+  </body>
+</html>

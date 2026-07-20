@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>挟天子以令诸侯 · 组件库模板</title>
+<link rel="stylesheet" href="../src/xie-tianzi.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/xie-tianzi.js"></script>
+<script>
+XieTianzi.mount(document.getElementById('mount'), {
+  title: '示例成语',
+  pinyin: 'shi li cheng yu',
+  tags: ['中性', '示例标签'],
+  oneLiner: '这是一句示例释义概要。',
+  initial: 'home',
+  nav: [
+    { key: 'home', label: '基本释义' },
+    { key: 'story', label: '典故出处' },
+    { key: 'graph', label: '关联词' },
+    { key: 'quiz', label: '测一测' }
+  ],
+  home: {
+    subtabs: [
+      { key: 'core', label: '核心信息' },
+      { key: 'examples', label: '典型例句' }
+    ],
+    core: [
+      { k: '字面义', v: '示例字面含义' },
+      { k: '引申义', v: '示例引申含义' },
+      { k: '出处摘要', v: '示例典籍' },
+      { k: '详细释义', v: '示例详细释义文字。', wide: true }
+    ],
+    examples: [
+      { text: '示例人物**示例成语**，示例语境。' }
+    ],
+    synonyms: ['近义词甲', '近义词乙'],
+    antonyms: ['反义词甲', '反义词乙']
+  },
+  story: {
+    subtabs: [
+      { key: 'stories', label: '词条典故' },
+      { key: 'src', label: '出处原文' }
+    ],
+    cards: [
+      { badge: '源', main: '示例典故甲', sub: '示例副题', body: '示例典故正文**示例高亮**。' }
+    ],
+    source: {
+      from: '《示例典籍》',
+      text: '示例原文片段，[k1]示例注解词[/k1]。',
+      tr: '示例白话翻译。',
+      notes: { k1: ['示例注解词', '示例注解说明文字。'] }
+    }
+  },
+  graph: {
+    center: { w: '示例成语', x: 50, y: 50 },
+    nodes: [
+      { w: '近义词甲', rel: '近义词', x: 18, y: 25, desc: '示例近义词说明。' },
+      { w: '反义词甲', rel: '反义词', x: 82, y: 25, desc: '示例反义词说明。' },
+      { w: '同类意象甲', rel: '同类意象', x: 50, y: 12, desc: '示例同类说明。' }
+    ],
+    nodeImgs: {}
+  },
+  quiz: {
+    questions: [
+      { t: '示例问题一？', o: ['甲', '乙', '丙', '丁'], a: 0, fb: '示例反馈说明。' }
+    ],
+    resultDesc: '示例结果描述。',
+    badges: { full: '示例满分称号', ok: '示例良好称号', low: '示例鼓励称号' }
+  }
+});
+</script>
+</body>
+</html>

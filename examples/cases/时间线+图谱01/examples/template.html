@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>奢香夫人 · 组件库模板</title>
+<link rel="stylesheet" href="../src/shexiang-furen.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+  #mount { width: 788px; height: 492px; max-width: 100vw; max-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/shexiang-furen.js"></script>
+<script>
+ShexiangFuren.mount(document.getElementById('mount'), {
+  legend: [
+    { type: 'family', label: '亲族' },
+    { type: 'ruler', label: '君臣' },
+    { type: 'ally', label: '盟友' },
+    { type: 'enemy', label: '对立' }
+  ],
+  hint: '点击头像查看人物详情，可拖动',
+  initial: 0,
+  events: [
+    {
+      name: '示例事件甲', year: '示例年', period: '示例时期',
+      image: '',
+      summary: '示例事件概要描述。',
+      summaryShort: '示例短摘要。',
+      people: [
+        { name: '主角', px: 50, py: 65, role: '主角身份', avatar: '', big: true, deed: '示例作为描述。', impact: '示例影响描述。' },
+        { name: '配角甲', px: 78, py: 28, role: '配角身份', avatar: '', rel: 'ally', deed: '示例配角作为。', impact: '示例配角影响。' }
+      ],
+      links: []
+    },
+    {
+      name: '示例事件乙', year: '示例年', period: '示例时期',
+      image: '',
+      summary: '示例事件乙概要。',
+      summaryShort: '示例短摘要乙。',
+      people: [
+        { name: '主角', px: 50, py: 65, role: '主角身份', avatar: '', big: true, deed: '示例作为。', impact: '示例影响。' },
+        { name: '对手', px: 78, py: 28, role: '对手身份', avatar: '', rel: 'enemy', deed: '示例对手作为。', impact: '示例对手影响。' }
+      ],
+      links: []
+    }
+  ]
+});
+</script>
+</body>
+</html>
