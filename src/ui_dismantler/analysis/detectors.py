@@ -32,11 +32,20 @@ class ViewDetection:
 
 @dataclass(frozen=True)
 class ViewContext:
-    """Detector 可读取的稳定输入。"""
+    """Detector 可读取的稳定输入。
+
+    Attributes:
+        node: 被检测的 DOM 节点（BeautifulSoup Tag）。
+        html: 节点序列化后的 HTML 字符串（方便正则匹配）。
+        css: 页面合并后的 CSS 文本。
+        scripts: 页面 <script> 内容数组（用于检查 JS 数据契约关键字，
+            如 causeChain / whatIf / NODES）。默认空 tuple，旧调用方无需改动。
+    """
 
     node: Any
     html: str
     css: str
+    scripts: tuple[str, ...] = ()
 
 
 DetectorFn = Callable[[ViewContext], ViewDetection | None]
@@ -74,8 +83,20 @@ class ViewDetectorRegistry:
                 return
         raise ValueError(f"找不到插入目标 detector: {before}")
 
-    def detect(self, node: Any, css: str) -> ViewDetection | None:
-        context = ViewContext(node=node, html=str(node), css=css)
+    def detect(
+        self,
+        node: Any,
+        css: str,
+        scripts: tuple[str, ...] = (),
+    ) -> ViewDetection | None:
+        """运行所有 detector，首个命中结果获胜。
+
+        Args:
+            node: 被检测的 DOM 节点。
+            css: 页面 CSS 文本。
+            scripts: 页面 <script> 内容数组（传给 detector 用于检查 JS 关键字）。
+        """
+        context = ViewContext(node=node, html=str(node), css=css, scripts=scripts)
         for detector in self._detectors:
             result = detector.detect(context)
             if result is not None:
@@ -153,11 +174,94 @@ def _detect_splash(context: ViewContext) -> ViewDetection | None:
     return None
 
 
+def _detect_cause_chain(context: ViewContext) -> ViewDetection | None:
+    """因果链范式：timeline-nav + 因果链数据/whatif。
+
+    典型形态：奢香夫人/黄月英类页面——顶部时间线导航 + 因果链 JS 数据
+    + 可选的 whatif 假设分支。需同时具备时间线导航和因果链信号才命中
+    （避免与单纯 timeline 误判）。
+    """
+    has_timeline_nav = re.search(r"timeline-?nav", context.html, re.I) is not None
+    if not has_timeline_nav:
+        return None
+    scripts_blob = "\n".join(context.scripts)
+    has_cause_chain = (
+        "causeChain" in scripts_blob
+        or re.search(r"cause-?chain", context.html, re.I) is not None
+    )
+    has_whatif = (
+        re.search(r"whatif", context.html, re.I) is not None
+        or "whatIf" in scripts_blob
+    )
+    if not (has_cause_chain or has_whatif):
+        return None
+    evidence = ["class:timeline-nav"]
+    if has_cause_chain:
+        evidence.append("data:causeChain")
+    if has_whatif:
+        evidence.append("signal:whatif")
+    confidence = 0.95 if (has_cause_chain and has_whatif) else 0.88
+    return _result("cause-chain", "sequence", confidence, *evidence)
+
+
+def _detect_nav_panel(context: ViewContext) -> ViewDetection | None:
+    """导航+面板范式：nav 容器内 >=2 个触发器（data-p/data-tab）+ >=2 个面板。
+
+    典型形态：纸上谈兵类页面——nav 里有多个 data-p 触发器，下方对应多个
+    .panel 面板。需同时满足触发器和面板的最低数量才命中。
+    """
+    nav = context.node.find(class_=re.compile(r"^nav$", re.I)) or context.node.find("nav")
+    if not nav:
+        return None
+    triggers = nav.find_all(attrs={"data-p": True}) or nav.find_all(attrs={"data-tab": True})
+    if len(triggers) < 2:
+        return None
+    panels = context.node.find_all(class_=re.compile(r"panel", re.I))
+    if len(panels) < 2:
+        return None
+    return _result(
+        "nav-panel", "content-region", 0.92,
+        f"nav-triggers:{len(triggers)}", f"panels:{len(panels)}",
+    )
+
+
+def _detect_graph(context: ViewContext) -> ViewDetection | None:
+    """关系图谱范式：svg 连线 + 节点定位类名 + NODES JS 数据。
+
+    典型形态：庆余年人物关系图谱、谢天子关系图——svg 画连线，节点用
+    gnd/node/graph 类名定位，JS 里有 NODES 数据数组。需三者同时具备。
+    """
+    svg = context.node.find("svg")
+    if not svg:
+        return None
+    if not context.node.find(class_=re.compile(r"gnd|node|graph", re.I)):
+        return None
+    scripts_blob = "\n".join(context.scripts)
+    if "NODES" not in scripts_blob:
+        return None
+    return _result(
+        "graph", "collection", 0.95,
+        "element:svg", "class:graph-node", "data:NODES",
+    )
+
+
 def default_view_detector_registry() -> ViewDetectorRegistry:
-    """创建互不共享可变状态的默认 registry。"""
+    """创建互不共享可变状态的默认 registry。
+
+    detector 顺序遵循"越具体越靠前"原则：先识别有强信号的复合范式
+    （carousel/cause-chain/nav-panel/graph，它们要求多个信号同时存在），
+    再识别单一信号的范式（timeline/member-grid/detail-panel/quiz/comparison/splash）。
+
+    特别注意：cause-chain 必须在 timeline 之前，因为 timeline 的正则
+    会匹配到 cause-chain 的 timeline-nav 类名，但 cause-chain 要求
+    额外的因果链/whatif 信号，是更具体的判断。
+    """
 
     return ViewDetectorRegistry([
         ViewDetector("carousel-3d", _detect_carousel_3d),
+        ViewDetector("cause-chain", _detect_cause_chain),
+        ViewDetector("nav-panel", _detect_nav_panel),
+        ViewDetector("graph", _detect_graph),
         ViewDetector("timeline", _detect_timeline),
         ViewDetector("member-grid", _detect_member_grid),
         ViewDetector("detail-panel", _detect_detail_panel),
