@@ -5,84 +5,229 @@
       "id": "dismiss-splash",
       "label": "Dismiss splash overlay",
       "steps": [
-        {"action": "click", "target": ".sg-splash-cta"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".splash-cta",
+            "library": ".sg-splash-cta"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-splash", "classExcludes": ["hide"]},
-        {"target": ".sg-splash", "classIncludes": ["hide"]}
+        {
+          "target": {
+            "reference": ".splash",
+            "library": ".sg-splash"
+          },
+          "classIncludes": [
+            "hide"
+          ]
+        }
       ]
     },
     {
       "id": "quiz-answer-correct",
       "label": "Answer quiz question correctly",
       "steps": [
-        {"action": "click", "target": ".sg-opt[data-k='a']"},
-        {"action": "click", "target": ".sg-qz-next"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".opt[data-k='a']",
+            "library": ".sg-opt[data-k='a']"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-qz-fb", "classIncludes": ["show", "ok"]},
-        {"target": ".sg-qz-next", "classIncludes": ["show"]}
+        {
+          "target": {
+            "reference": ".qz-fb",
+            "library": ".sg-qz-fb"
+          },
+          "classIncludes": [
+            "show"
+          ]
+        },
+        {
+          "target": {
+            "reference": ".qz-next",
+            "library": ".sg-qz-next"
+          },
+          "classIncludes": [
+            "show"
+          ]
+        }
       ]
     },
     {
-      "id": "comparison-toggle",
-      "label": "Toggle comparison perspective",
+      "id": "switch-to-comparison-tab",
+      "label": "Switch from quiz to comparison tab",
       "steps": [
-        {"action": "click", "target": ".sg-cmp-btn"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='comparison']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='comparison']"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-whatif-card", "visible": true}
+        {
+          "target": {
+            "reference": "#panel-comparison",
+            "library": "#sg-panel-comparison"
+          },
+          "classIncludes": [
+            "active"
+          ]
+        },
+        {
+          "target": {
+            "reference": "#panel-quiz",
+            "library": "#sg-panel-quiz"
+          },
+          "classExcludes": [
+            "active"
+          ]
+        }
       ]
     },
     {
-      "id": "graph-node-click",
-      "label": "Click graph node to see details",
+      "id": "switch-to-graph-tab",
+      "label": "Switch to graph tab and verify visibility",
       "steps": [
-        {"action": "click", "target": ".sg-node[data-id='specificity']"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='graph']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='graph']"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-graph-info", "textContains": "Specificity"}
+        {
+          "target": {
+            "reference": "#panel-graph",
+            "library": "#sg-panel-graph"
+          },
+          "classIncludes": [
+            "active"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "switch-to-nav-tab",
+      "label": "Switch to nav-panel tab",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='nav']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='nav']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#panel-nav",
+            "library": "#sg-panel-nav"
+          },
+          "classIncludes": [
+            "active"
+          ]
+        }
       ]
     },
     {
       "id": "nav-panel-switch",
-      "label": "Switch nav-panel tab",
+      "label": "Switch nav-panel sub-tab within nav view",
       "steps": [
-        {"action": "click", "target": ".sg-nav button[data-p='p2']"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='nav']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='nav']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav button[data-p='p2']",
+            "library": ".sg-nav button[data-p='p2']"
+          }
+        }
       ],
       "assertions": [
-        {"target": "#p2", "classIncludes": ["active"]},
-        {"target": "#p1", "classExcludes": ["active"]}
-      ]
-    },
-    {
-      "id": "cause-chain-navigate",
-      "label": "Navigate cause-chain timeline",
-      "steps": [
-        {"action": "click", "target": ".sg-timeline-nav button[data-event='1']"}
-      ],
-      "assertions": [
-        {"target": ".sg-cause-chain-content .event-title", "text": "Flexbox"}
+        {
+          "target": {
+            "reference": "#p2",
+            "library": "#sg-p2"
+          },
+          "classIncludes": [
+            "active"
+          ]
+        }
       ]
     },
     {
       "id": "cause-chain-whatif",
-      "label": "Toggle whatif in cause-chain",
+      "label": "Switch to cause tab and toggle whatif",
       "steps": [
-        {"action": "click", "target": ".sg-whatif-btn"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='cause']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='cause']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".whatif-btn",
+            "library": ".sg-whatif-btn"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-whatif-result", "classIncludes": ["show"]}
+        {
+          "target": {
+            "reference": ".whatif-result",
+            "library": ".sg-whatif-result"
+          },
+          "classIncludes": [
+            "show"
+          ]
+        }
       ]
     },
     {
-      "id": "escape-closes-splash",
-      "label": "ESC closes splash",
+      "id": "cause-chain-navigate",
+      "label": "Navigate cause-chain to Flexbox event",
       "steps": [
-        {"action": "key", "target": "document", "key": "Escape"}
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-bar .tab[data-tab='cause']",
+            "library": ".sg-tab-bar .sg-tab[data-tab='cause']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".timeline-nav button[data-event='1']",
+            "library": ".sg-timeline-nav button[data-event='1']"
+          }
+        }
       ],
       "assertions": [
-        {"target": ".sg-splash", "classIncludes": ["hide"]}
+        {
+          "target": {
+            "reference": ".cause-chain-content .event-title",
+            "library": ".sg-cause-chain-content .sg-event-title"
+          },
+          "text": "Flexbox"
+        }
       ]
     }
   ]

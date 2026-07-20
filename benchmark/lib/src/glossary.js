@@ -241,7 +241,7 @@
     var nav = el('nav', PREFIX + '-tab-bar', { role: 'tablist', 'aria-label': this.opts.tablistLabel });
     var self = this;
     this.opts.tabs.forEach(function (t, i) {
-      var btn = el('button', PREFIX + '-tab' + (i === 0 ? ' ' + PREFIX + '-active' : ''), {
+      var btn = el('button', PREFIX + '-tab' + (i === 0 ? ' ' + 'active' : ''), {
         type: 'button',
         id: PREFIX + '-tab-' + t.id,
         role: 'tab',
@@ -270,7 +270,7 @@
   /* ---------- Quiz view ---------- */
   GlossaryExplorer.prototype._buildQuizView = function () {
     var q = this.opts.quiz;
-    var section = el('section', PREFIX + '-view ' + PREFIX + '-active', {
+    var section = el('section', PREFIX + '-view ' + 'active', {
       id: PREFIX + '-panel-quiz',
       role: 'tabpanel',
       'aria-labelledby': PREFIX + '-tab-quiz'
@@ -392,7 +392,7 @@
     var nav = el('nav', PREFIX + '-nav');
     var self = this;
     n.items.forEach(function (it, i) {
-      var btn = el('button', i === 0 ? PREFIX + '-active' : '', {
+      var btn = el('button', i === 0 ? 'active' : '', {
         type: 'button',
         'data-p': it.id,
         text: it.label
@@ -403,7 +403,7 @@
     navSection.appendChild(nav);
 
     n.items.forEach(function (it, i) {
-      var panel = el('div', PREFIX + '-panel' + (i === 0 ? ' ' + PREFIX + '-active' : ''), {
+      var panel = el('div', PREFIX + '-panel' + (i === 0 ? ' ' + 'active' : ''), {
         id: PREFIX + '-' + it.id
       });
       panel.appendChild(el('h4', null, { text: it.heading }));
@@ -430,7 +430,7 @@
     var timeline = el('div', PREFIX + '-timeline-nav', { id: PREFIX + '-cause-nav' });
     var self = this;
     c.events.forEach(function (ev, i) {
-      var btn = el('button', i === 0 ? PREFIX + '-active' : '', {
+      var btn = el('button', i === 0 ? 'active' : '', {
         type: 'button',
         'data-event': String(i),
         text: ev.title
@@ -458,7 +458,7 @@
       whatifResult: whatifResult
     };
     on(whatifBtn, 'click', function () {
-      whatifResult.classList.toggle(PREFIX + '-show');
+      whatifResult.classList.toggle('show');
     });
     return section;
   };
@@ -468,13 +468,13 @@
     var tabs = this.root.querySelectorAll('.' + PREFIX + '-tab-bar .' + PREFIX + '-tab');
     Array.prototype.forEach.call(tabs, function (t) {
       var isActive = t.getAttribute('data-tab') === tab.id;
-      t.classList.toggle(PREFIX + '-active', isActive);
+      t.classList.toggle('active', isActive);
       t.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
     var views = this.root.querySelectorAll('.' + PREFIX + '-view-stack .' + PREFIX + '-view');
     Array.prototype.forEach.call(views, function (v) {
       var isActive = v.id === PREFIX + '-panel-' + tab.id;
-      v.classList.toggle(PREFIX + '-active', isActive);
+      v.classList.toggle('active', isActive);
       if (isActive) v.removeAttribute('hidden');
       else v.setAttribute('hidden', 'hidden');
     });
@@ -499,32 +499,32 @@
       on(div, 'click', function () { self._selectAnswer(i, div); });
       opts.appendChild(div);
     });
-    this._qEls.fb.classList.remove(PREFIX + '-show', PREFIX + '-ok', PREFIX + '-no');
+    this._qEls.fb.classList.remove('show', 'ok', 'no');
     this._qEls.fb.textContent = '';
-    this._qEls.next.classList.remove(PREFIX + '-show');
-    this._qEls.result.classList.remove(PREFIX + '-show');
+    this._qEls.next.classList.remove('show');
+    this._qEls.result.classList.remove('show');
   };
 
   GlossaryExplorer.prototype._selectAnswer = function (index, optEl) {
     var q = this.opts.quiz.questions[this._qIdx];
     var allOpts = this._qEls.opts.querySelectorAll('.' + PREFIX + '-opt');
     Array.prototype.forEach.call(allOpts, function (o) {
-      o.classList.remove(PREFIX + '-selected', PREFIX + '-correct', PREFIX + '-wrong');
+      o.classList.remove('selected', 'correct', 'wrong');
     });
-    optEl.classList.add(PREFIX + '-selected');
+    optEl.classList.add('selected');
     var fb = this._qEls.fb;
     if (index === q.correct) {
-      optEl.classList.add(PREFIX + '-correct');
+      optEl.classList.add('correct');
       fb.textContent = this.opts.quiz.correctPrefix + q.opts[index];
-      fb.classList.add(PREFIX + '-show', PREFIX + '-ok');
+      fb.classList.add('show', 'ok');
       this._qScore++;
     } else {
-      optEl.classList.add(PREFIX + '-wrong');
-      allOpts[q.correct].classList.add(PREFIX + '-correct');
+      optEl.classList.add('wrong');
+      allOpts[q.correct].classList.add('correct');
       fb.textContent = this.opts.quiz.wrongPrefix + q.opts[q.correct];
-      fb.classList.add(PREFIX + '-show', PREFIX + '-no');
+      fb.classList.add('show', 'no');
     }
-    this._qEls.next.classList.add(PREFIX + '-show');
+    this._qEls.next.classList.add('show');
   };
 
   GlossaryExplorer.prototype._nextQuestion = function () {
@@ -535,7 +535,7 @@
       this._qEls.top.style.display = 'none';
       this._qEls.body.style.display = 'none';
       this._qEls.next.style.display = 'none';
-      this._qEls.result.classList.add(PREFIX + '-show');
+      this._qEls.result.classList.add('show');
       this._qEls.score.textContent = this._qScore + this.opts.quiz.scoreSeparator +
         this.opts.quiz.questions.length;
     }
@@ -544,25 +544,25 @@
   /* ---------- Nav switching ---------- */
   GlossaryExplorer.prototype._onNavClick = function (btn) {
     var navButtons = this.root.querySelectorAll('.' + PREFIX + '-nav-section .' + PREFIX + '-nav button');
-    Array.prototype.forEach.call(navButtons, function (b) { b.classList.remove(PREFIX + '-active'); });
-    btn.classList.add(PREFIX + '-active');
+    Array.prototype.forEach.call(navButtons, function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
     var target = btn.getAttribute('data-p');
     var panels = this.root.querySelectorAll('.' + PREFIX + '-nav-section .' + PREFIX + '-panel');
     Array.prototype.forEach.call(panels, function (p) {
-      p.classList.toggle(PREFIX + '-active', p.id === PREFIX + '-' + target);
+      p.classList.toggle('active', p.id === PREFIX + '-' + target);
     });
   };
 
   /* ---------- Cause chain ---------- */
   GlossaryExplorer.prototype._onCauseClick = function (btn) {
     var btns = this.root.querySelectorAll('.' + PREFIX + '-cause-chain-view .' + PREFIX + '-timeline-nav button');
-    Array.prototype.forEach.call(btns, function (b) { b.classList.remove(PREFIX + '-active'); });
-    btn.classList.add(PREFIX + '-active');
+    Array.prototype.forEach.call(btns, function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
     this._evIdx = parseInt(btn.getAttribute('data-event'), 10);
     var ev = this.opts.causeChain.events[this._evIdx];
     this._cEls.title.textContent = ev.title;
     this._cEls.desc.textContent = ev.desc;
-    this._cEls.whatifResult.classList.remove(PREFIX + '-show');
+    this._cEls.whatifResult.classList.remove('show');
   };
 
   /* ---------- After mount: wire all events ---------- */
@@ -572,7 +572,7 @@
     // Splash dismiss via CTA
     var cta = this.root.querySelector('#' + PREFIX + '-splash-start');
     if (cta) on(cta, 'click', function () {
-      self._splash.classList.add(PREFIX + '-hide');
+      self._splash.classList.add('hide');
     });
 
     // Quiz: next button + initial render
@@ -603,8 +603,8 @@
     // ESC key closes the splash overlay
     on(document, 'keydown', function (e) {
       if (e.key !== 'Escape') return;
-      if (self._splash && !self._splash.classList.contains(PREFIX + '-hide')) {
-        self._splash.classList.add(PREFIX + '-hide');
+      if (self._splash && !self._splash.classList.contains('hide')) {
+        self._splash.classList.add('hide');
       }
     });
 

@@ -289,5 +289,42 @@ class TestGoldenSnapshotBenchmark(unittest.TestCase):
         self.assertGreaterEqual(report["scores"]["text"], 0.95)
 
 
+class TestBenchmarkScenarioMatrix(unittest.TestCase):
+    """Benchmark 交互场景矩阵回归：8 个场景全部通过。"""
+
+    REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    HTML = os.path.join(REPO, "benchmark", "original.html")
+    LIB = os.path.join(REPO, "benchmark", "lib")
+    SCENARIOS = os.path.join(REPO, "benchmark", "scenarios.json")
+
+    def test_all_scenarios_pass(self):
+        """benchmark 的 8 个交互场景必须全部通过（防止交互回归）。"""
+        if not (os.path.isfile(self.HTML) and os.path.isdir(self.LIB) and os.path.isfile(self.SCENARIOS)):
+            self.skipTest("benchmark fixture 缺失")
+        import json
+        import subprocess
+
+        proc = subprocess.run(
+            [sys.executable, os.path.join(self.REPO, "scripts", "roundtrip.py"),
+             self.HTML, "--lib", self.LIB,
+             "--scenarios", self.SCENARIOS,
+             "--state-threshold", "0.85",
+             "--out", os.path.join(self.REPO, "/tmp/benchmark_scenario_report.json")],
+            capture_output=True, text=True, timeout=120,
+            cwd=self.REPO,
+        )
+        self.assertEqual(proc.returncode, 0,
+                         f"roundtrip 场景矩阵失败: {proc.stderr[:300]}")
+        report_path = os.path.join(self.REPO, "/tmp/benchmark_scenario_report.json")
+        report = json.loads(open(report_path, encoding="utf-8").read())
+        matrix = report.get("scenario_matrix", {})
+        total = matrix.get("total", 0)
+        passed = matrix.get("passed", 0)
+        self.assertEqual(passed, total,
+                         f"场景矩阵未全过: {passed}/{total}")
+        self.assertGreaterEqual(total, 6,
+                                f"场景数过少: {total}（预期至少 6 个）")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
