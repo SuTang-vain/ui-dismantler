@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>庆余年 · 人物图谱与剧情脉络 - 组件库示例</title>
+<style>
+  html, body {
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    background: #eef1f8;
+  }
+</style>
+<link rel="stylesheet" href="../src/char-story-graph.css">
+</head>
+<body>
+<div id="mount"></div>
+
+<script src="../src/char-story-graph.js"></script>
+<script>
+/* -------------------------------------------------------------
+ * 《庆余年》人物图谱与剧情脉络 - 用数据驱动方式复刻原案例
+ * 数据契约见 ../README.md
+ * 仅替换数据即可生成其他"人物关系图谱 + 剧情因果 + 作品推荐"页面
+ * ----------------------------------------------------------- */
+CharStoryGraph.mount(document.getElementById('mount'), {
+  title: '庆余年：人物关系与剧情全解析',
+  ariaLabel: '庆余年 人物关系图谱与剧情脉络',
+  imgBase: '../../images/',
+  hero: 'fanxian',
+
+  relTypes: {
+    family: '血缘',
+    romance: '情感',
+    master: '师徒',
+    friend: '盟友',
+    enemy: '对立'
+  },
+
+  /* ---- 角色（13 位，主角 fanxian 为 big 节点） ---- */
+  chars: {
+    fanxian:        { name: '范闲',     actor: '张若昀 饰', img: '角色_范闲.webp',     big: true,
+                      desc: '穿越至南庆的现代人。表面为户部尚书范建之子，实为叶轻眉之子。以监察院提司身份周旋于皇权、长公主与二皇子势力之间。' },
+    qingdi:         { name: '庆帝',     actor: '陈道明 饰', img: '角色_庆帝.webp',     big: true,
+                      desc: '南庆开国之君，深不可测。既是范闲生父（隐秘线），也是叶轻眉之死的最终推手。以帝王之术布局天下。' },
+    fanjian:        { name: '范建',     actor: '高曙光 饰', img: '角色_范建.webp',
+                      desc: '户部尚书，范闲名义上的父亲。为叶轻眉挚友，暗中守护范闲。' },
+    chenpingping:   { name: '陈萍萍',   actor: '吴刚 饰',   img: '角色_陈萍萍.webp',
+                      desc: '监察院院长，坐轮椅的黑衣人。叶轻眉旧部，多年隐忍布局，是范闲最重要的靠山。' },
+    feijie:         { name: '费介',     actor: '刘桦 饰',   img: '角色_费介.webp',
+                      desc: '监察院三处提司，毒理宗师。范闲的启蒙师父，教其用毒与暗器技艺。' },
+    wuzhu:          { name: '五竹',     actor: '佟梦实 饰', img: '角色_五竹.webp',
+                      desc: '蒙眼客，神秘刺客。叶轻眉留给范闲的守护者，绝对武力值天花板。' },
+    linwan:         { name: '林婉儿',   actor: '李沁 饰',   img: '角色_林婉儿.webp',
+                      desc: '鸡腿姑娘，长公主之女，范闲挚爱与妻子。夹在母亲与丈夫的斗争之间。' },
+    changgong:      { name: '长公主',   actor: '李小冉 饰', img: '角色_长公主.webp',
+                      desc: '李云睿，庆帝之妹。掌控内库多年，与二皇子结盟，是范闲入京后最主要的对手。' },
+    li2:            { name: '二皇子',   actor: '刘端端 饰', img: '角色_二皇子.webp',
+                      desc: '李承泽，风流才子式反派。表面温和，暗中与长公主合谋争位。' },
+    li3:            { name: '太子',     actor: '张昊唯 饰', img: '角色_太子.webp',
+                      desc: '李承乾，庆帝长子。看似占据储位却常被架空。' },
+    yeqingmei:      { name: '叶轻眉',   actor: '袁泉 饰',   img: '角色_叶轻眉.webp',
+                      desc: '范闲生母，来自更高文明的先驱者。留下神庙与内库遗产，其死是全剧核心因果起点。' },
+    haitang:        { name: '海棠朵朵', actor: '辛芷蕾 饰', img: '角色_海棠朵朵.webp',
+                      desc: '北齐圣女，天一道弟子。与范闲相识于出使北齐，是知己式的红颜。' },
+    xiaoen:         { name: '肖恩',     actor: '于荣光 饰', img: '剧情_06_肖恩临终.webp',
+                      desc: '北齐暗线关键人物，背负旧年恩怨与秘密。他临终吐露的真相，成为范闲逼近叶轻眉旧案的关键一环。' },
+    yanbingyun:     { name: '言冰云',   actor: '肖战 饰',   img: '角色_言冰云.webp',
+                      desc: '监察院四处提司，冷静聪慧。与范闲共同处理南北谍战事宜。' }
+  },
+
+  /* ---- 关系连线 ---- */
+  edges: [
+    { a: 'qingdi',        b: 'fanxian',    type: 'family',  label: '生父·隐线' },
+    { a: 'fanjian',       b: 'fanxian',    type: 'family',  label: '名父' },
+    { a: 'yeqingmei',     b: 'fanxian',    type: 'family',  label: '生母' },
+    { a: 'yeqingmei',     b: 'qingdi',     type: 'enemy',   label: '旧怨' },
+    { a: 'chenpingping',  b: 'yeqingmei',  type: 'friend',  label: '旧部' },
+    { a: 'chenpingping',  b: 'fanxian',    type: 'friend',  label: '扶持' },
+    { a: 'feijie',        b: 'fanxian',    type: 'master',  label: '师徒' },
+    { a: 'wuzhu',         b: 'fanxian',    type: 'friend',  label: '守护' },
+    { a: 'linwan',        b: 'fanxian',    type: 'romance', label: '夫妻' },
+    { a: 'changgong',     b: 'linwan',     type: 'family',  label: '母女' },
+    { a: 'changgong',     b: 'fanxian',    type: 'enemy',   label: '政敌' },
+    { a: 'changgong',     b: 'li2',        type: 'friend',  label: '结盟' },
+    { a: 'li2',           b: 'fanxian',    type: 'enemy',   label: '对峙' },
+    { a: 'li3',           b: 'fanxian',    type: 'enemy',   label: '对立' },
+    { a: 'li3',           b: 'li2',        type: 'enemy',   label: '储位' },
+    { a: 'haitang',       b: 'fanxian',    type: 'friend',  label: '知己' },
+    { a: 'yanbingyun',    b: 'fanxian',    type: 'friend',  label: '挚友' },
+    { a: 'fanjian',       b: 'yeqingmei',  type: 'friend',  label: '挚友' }
+  ],
+
+  /* ---- 主角与各角色直接关系 ---- */
+  heroRel: {
+    qingdi:        { type: 'family',  text: '生父（隐线）' },
+    fanjian:       { type: 'family',  text: '名义之父' },
+    yeqingmei:     { type: 'family',  text: '生母' },
+    chenpingping:  { type: 'friend',  text: '最重要的靠山' },
+    feijie:        { type: 'master',  text: '启蒙师父' },
+    wuzhu:         { type: 'friend',  text: '守护者' },
+    linwan:        { type: 'romance', text: '挚爱 · 妻子' },
+    changgong:     { type: 'enemy',   text: '头号政敌' },
+    li2:           { type: 'enemy',   text: '夺位对手' },
+    li3:           { type: 'enemy',   text: '储位相关' },
+    haitang:       { type: 'friend',  text: '红颜知己' },
+    yanbingyun:    { type: 'friend',  text: '挚友 · 同僚' }
+  },
+
+  /* ---- 关系图谱归一化布局（0~1，主角居中） ---- */
+  layoutRel: {
+    fanxian:       [0.46, 0.50],
+    wuzhu:         [0.40, 0.08],
+    linwan:        [0.62, 0.06],
+    chenpingping:  [0.22, 0.10],
+    yeqingmei:     [0.05, 0.24],
+    fanjian:       [0.03, 0.66],
+    qingdi:        [0.16, 0.82],
+    changgong:     [0.94, 0.16],
+    li2:           [0.80, 0.45],
+    li3:           [0.95, 0.80],
+    feijie:        [0.34, 0.92],
+    yanbingyun:    [0.55, 0.94],
+    haitang:       [0.74, 0.86]
+  },
+
+  /* ---- 剧情因果思维导图根节点 + 剧情节点（10 集） ---- */
+  mindRoot: {
+    root: true,
+    ep: '起点',
+    title: '庆余年 · 因果起点',
+    desc: '叶轻眉旧案埋因，范闲入京起局。'
+  },
+  plots: [
+    { ep: '01', title: '携遗物入京 · 身世入局', cover: '剧情_01_范闲抵京.webp', type: '开端',
+      desc: '范闲带着叶轻眉留下的遗物与疑问离开澹州入京，表面是认祖归宗，实则从踏进范府起便被卷入母亲旧案与京都暗流。',
+      roles: ['fanxian', 'fanjian'], causeNext: '入京即入局' },
+    { ep: '05', title: '牛栏街遇袭 · 京都杀机', cover: '剧情_02_牛栏街遇袭.webp', type: '杀机',
+      desc: '范闲在京城首次遭遇致命围杀，五竹出手救命。暗中敌意由试探转为动手，他终于明白自己早已成了局中人。',
+      roles: ['fanxian', 'wuzhu'], causeNext: '杀机逼入朝堂' },
+    { ep: '12', title: '诗会扬名 · 京都立足', cover: '剧情_03_诗会斗诗.webp', type: '立足',
+      desc: '诗会一战让范闲声名骤起，不再只是澹州来客。名声、婚约与林婉儿这条情感线一起，让他开始在京都拥有真正的位置。',
+      roles: ['fanxian', 'linwan'], causeNext: '才名引出内库' },
+    { ep: '16', title: '内库易主 · 长公主树敌', cover: '剧情_04_内库之争.webp', type: '树敌',
+      desc: '庆帝把内库权柄交到范闲手中，直接触动长公主多年的利益根基。范闲从被观察的棋子，变成权力场必须除掉的障碍。',
+      roles: ['fanxian', 'qingdi', 'changgong'], causeNext: '内库引发树敌' },
+    { ep: '20', title: '出使北齐 · 旧案牵出', cover: '剧情_05_出使北齐.webp', type: '探秘',
+      desc: '范闲奉命北上，在北齐与言冰云、海棠朵朵周旋，也开始接近肖恩、神庙与叶轻眉旧事。京都权谋由此牵出更大的历史暗线。',
+      roles: ['fanxian', 'yanbingyun', 'haitang'], causeNext: '旧案逼近真相' },
+    { ep: '27', title: '肖恩吐真 · 真相翻面', cover: '剧情_06_肖恩临终.webp', type: '揭示',
+      desc: '肖恩临终吐露往年秘辛，陈萍萍也在局外接应布局。范闲第一次意识到，母亲之死与自己的人生棋局，背后站着的可能不只是长公主。',
+      roles: ['fanxian', 'xiaoen', 'chenpingping'], causeNext: '真相逼出反攻' },
+    { ep: '32', title: '抱月楼设局 · 范闲反攻', cover: '剧情_07_抱月楼案.webp', type: '反击',
+      desc: '回京后的范闲不再只求自保，而是借抱月楼一案精准反制二皇子党羽。攻守之势第一次出现逆转，也让双方冲突彻底公开化。',
+      roles: ['fanxian', 'li2'], causeNext: '反击逼出合谋' },
+    { ep: '38', title: '言冰云风波·院内生变', cover: '剧情_08_言冰云风波.webp', type: '失控',
+      desc: '言冰云牵出的疑云搅动监察院内外，信任与忠诚开始松动。范闲面对的已不只是外敌，还有局内秩序被一点点撕开。',
+      roles: ['fanxian', 'yanbingyun'], causeNext: '内乱推高危局' },
+    { ep: '42', title: '三方合围 · 京都临界', cover: '剧情_09_三方合谋.webp', type: '合围',
+      desc: '太子、二皇子与长公主各怀心思却共同指向范闲，京都暗斗终于汇成明面围剿。个人恩怨上升为整座朝局对他的联合施压。',
+      roles: ['fanxian', 'li3', 'li2', 'changgong'], causeNext: '杀局逼向终场' },
+    { ep: '46', title: '大东山惊变 · 季终收束', cover: '剧情_10_大东山惊变.webp', type: '悬念',
+      desc: '大东山一役把此前积压的皇权博弈与生死试探一并推到极点。范闲表面死局临身，实际上把更大的真相与反击留给下一季开启。',
+      roles: ['fanxian', 'qingdi'], causeNext: '' }
+  ],
+
+  /* ---- 作品推荐：四类 tab ---- */
+  worksTabs: [
+    { id: 'series', label: '同系列' },
+    { id: 'theme',  label: '同题材' },
+    { id: 'cast',   label: '同主演' },
+    { id: 'ip',     label: '同作者' }
+  ],
+  works: {
+    series: [
+      { n: '庆余年 第一季', m: '张若昀 / 李沁 / 陈道明', r: '范闲入京 · 权谋开篇', cover: '季_第一季.webp', ep: '46集' },
+      { n: '庆余年 第二季', m: '张若昀 / 李沁 / 吴刚',   r: '鉴查院风云 · 三方对峙', cover: '季_第二季.webp', ep: '36集' },
+      { n: '庆余年 第三季', m: '原班人马',               r: '神庙终局 · 待续大结局', cover: '季_第三季.webp', up: true, ep: '待播' }
+    ],
+    theme: [
+      { n: '琅琊榜',       m: '胡歌 / 刘涛 / 王凯', r: '权谋回归 · 复仇布局', cover: '推荐_琅琊榜.webp' },
+      { n: '鹤唳华亭',     m: '罗晋 / 李一桐',     r: '储位之争与父子博弈', cover: '推荐_鹤唳华亭.webp' },
+      { n: '雪中悍刀行',   m: '张若昀 / 李庚希',   r: '同主演的架空古装',   cover: '推荐_雪中悍刀行.webp' },
+      { n: '知否知否',     m: '赵丽颖 / 冯绍峰',   r: '家宅权谋交织朝堂',   cover: '推荐_知否知否.webp' }
+    ],
+    cast: [
+      { n: '雪中悍刀行',           m: '张若昀 / 李庚希', r: '延续硬核古装侠气',   cover: '推荐_雪中悍刀行_张若昀.webp' },
+      { n: '警察荣誉',             m: '张若昀 / 白鹿',   r: '张若昀刑侦反差戏路', cover: '推荐_警察荣誉.webp' },
+      { n: '狼殿下',               m: '李沁 / 王大陆',   r: '林婉儿演员古装奇幻', cover: '推荐_狼殿下.webp' },
+      { n: '流金岁月',             m: '李沁 / 刘诗诗',   r: '李沁都市情感戏路',   cover: '推荐_流金岁月.webp' }
+    ],
+    ip: [
+      { n: '将夜',   m: '陈飞宇 / 宋伊人',   r: '猫腻改编 · 少年成长', cover: '推荐_将夜.webp' },
+      { n: '择天记', m: '鹿晗 / 古力娜扎',   r: '猫腻改编 · 修行权谋', cover: '推荐_择天记.webp' }
+    ]
+  }
+});
+</script>
+</body>
+</html>

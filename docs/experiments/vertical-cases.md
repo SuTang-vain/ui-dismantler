@@ -10,6 +10,7 @@
 - `examples/cases/影视/`：两个影视内容案例。
 - `examples/cases/明星组合/`：BLACKPINK 垂类组件库实验版本。
 - `examples/cases/奢香夫人・五大事件与人物关系_v1784040982/`：带原始页面、图片和生成组件库的完整实验样本。
+- `examples/cases/qingyu-relations/`：《庆余年》人物关系、剧情因果与作品推荐组件库实验；当前缺少原始输入，不属于完整 roundtrip 案例。
 - `examples/girls-generation/`：少女时代组件库与本地图片资产；资源来源见其 `assets/SOURCES.md`。
 - `scripts/dismantle_case_verticals.py`：批量确定性提取实验脚本，必须显式传入 `--root`。
 
@@ -42,3 +43,6 @@ python3 scripts/dismantle_case_verticals.py --root /path/to/case-root
 - detector 和通用观察能力进入 `codex/generic-agent-quality`。
 - 垂类生成资产和批处理探索保留在本实验分支。
 - DesignRepair 的 guideline、finding、repair、verification 研究保持在其专项分支。
+
+本实验分支可以 rebase 到最新通用质量线以复用工具，但垂类资产不得反向合并到
+`codex/generic-agent-quality`。可复用能力必须先提炼为中立技术 fixture 和独立提交。

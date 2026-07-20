@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>人物关系图谱 · 组件库复用模板</title>
+<style>
+  html, body {
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    background: #eef1f8;
+  }
+</style>
+<link rel="stylesheet" href="../src/char-story-graph.css">
+</head>
+<body>
+<div id="mount"></div>
+
+<script src="../src/char-story-graph.js"></script>
+<script>
+/* -------------------------------------------------------------
+ * 空白复用模板：用示例/占位数据演示组件库用法
+ * 替换下方 options 中的数据即可生成你自己的"人物图谱"页面
+ * 数据契约见 ../README.md
+ * ----------------------------------------------------------- */
+CharStoryGraph.mount(document.getElementById('mount'), {
+  title: '示例：人物关系图谱',
+  ariaLabel: '示例 人物关系图谱与剧情脉络',
+  imgBase: './images/',   // 改成你的图片目录
+  hero: 'p1',
+
+  relTypes: {
+    family: '血缘',
+    romance: '情感',
+    master: '师徒',
+    friend: '盟友',
+    enemy: '对立'
+  },
+
+  /* ---- 角色数据：key 唯一，big 标记主角节点放大 ---- */
+  chars: {
+    p1: { name: '主角',     actor: '演员 A 饰', img: 'avatar1.svg', big: true,
+          desc: '主角的简介。这里写一段较长的人物背景描述，用于右侧详情面板展示。' },
+    p2: { name: '角色二',   actor: '演员 B 饰', img: 'avatar2.svg',
+          desc: '角色二的简介。' },
+    p3: { name: '角色三',   actor: '演员 C 饰', img: 'avatar3.svg',
+          desc: '角色三的简介。' },
+    p4: { name: '角色四',   actor: '演员 D 饰', img: 'avatar4.svg',
+          desc: '角色四的简介。' },
+    p5: { name: '角色五',   actor: '演员 E 饰', img: 'avatar5.svg',
+          desc: '角色五的简介。' }
+  },
+
+  /* ---- 关系连线：type 取值 family/romance/master/friend/enemy ---- */
+  edges: [
+    { a: 'p2', b: 'p1', type: 'family',  label: '亲属' },
+    { a: 'p3', b: 'p1', type: 'friend',  label: '盟友' },
+    { a: 'p4', b: 'p1', type: 'enemy',   label: '对手' },
+    { a: 'p5', b: 'p1', type: 'romance', label: '挚爱' }
+  ],
+
+  /* ---- 主角与各角色直接关系（用于详情面板标签） ---- */
+  heroRel: {
+    p2: { type: 'family',  text: '至亲' },
+    p3: { type: 'friend',  text: '并肩作战' },
+    p4: { type: 'enemy',   text: '主要对手' },
+    p5: { type: 'romance', text: '挚爱' }
+  },
+
+  /* ---- 不传 layoutRel 时自动环形布局；这里演示手动布局 ---- */
+  layoutRel: {
+    p1: [0.5, 0.5],
+    p2: [0.2, 0.2],
+    p3: [0.8, 0.2],
+    p4: [0.2, 0.8],
+    p5: [0.8, 0.8]
+  },
+
+  /* ---- 剧情因果：根节点 + 剧情节点 ---- */
+  mindRoot: { ep: '起点', title: '故事 · 因果起点', desc: '故事脉络的起始节点。' },
+  plots: [
+    { ep: '01', title: '剧情节点一', cover: 'plot1.svg', type: '开端',
+      desc: '第一段剧情的描述文字。', roles: ['p1', 'p2'], causeNext: '引出下一节点' },
+    { ep: '02', title: '剧情节点二', cover: 'plot2.svg', type: '发展',
+      desc: '第二段剧情的描述文字。', roles: ['p1', 'p3'], causeNext: '矛盾升级' },
+    { ep: '03', title: '剧情节点三', cover: 'plot3.svg', type: '高潮',
+      desc: '第三段剧情的描述文字。', roles: ['p1', 'p4'], causeNext: '' }
+  ],
+
+  /* ---- 作品推荐：可自定义 tab 分类 ---- */
+  worksTabs: [
+    { id: 'series', label: '同系列' },
+    { id: 'theme',  label: '同题材' },
+    { id: 'cast',   label: '同主演' },
+    { id: 'ip',     label: '同作者' }
+  ],
+  works: {
+    series: [
+      { n: '示例作品一', m: '演员甲 / 演员乙', r: '推荐理由一', cover: 'work1.svg', ep: '24集' },
+      { n: '示例作品二', m: '演员丙 / 演员丁', r: '推荐理由二', cover: 'work2.svg', ep: '36集' }
+    ],
+    theme: [
+      { n: '同类题材一', m: '演员戊', r: '题材相近', cover: 'work3.svg' }
+    ],
+    cast: [
+      { n: '同主演作品', m: '演员甲', r: '同主演', cover: 'work4.svg' }
+    ],
+    ip: [
+      { n: '同 IP 作品', m: '演员己', r: '同原作', cover: 'work5.svg', up: true, ep: '待播' }
+    ]
+  },
+
+  /* ---- 主题定制（可选，覆盖 --sg-* 变量） ---- */
+  theme: {
+    primary: '#6487fa'
+  }
+});
+</script>
+</body>
+</html>
