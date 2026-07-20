@@ -4,7 +4,7 @@
 将单个 HTML 案例页解析为标准化的 manifest.json，作为组件库生成的中间契约。
 
 用法：
-    python3 analyze_html.py <html路径> --out <manifest.json> [--vertical <垂类名>] [--minimal]
+    python3 analyze_html.py <html路径> --out <manifest.json> [--profile <领域上下文>] [--minimal]
 
 依赖：beautifulsoup4
 """
@@ -25,6 +25,9 @@ from _common import (  # noqa: E402
     extract_gradients, normalize_var_name, parse_color, to_hex, slugify,
     safe_json_dump, infer_color_roles, extract_data_contracts,
 )
+from view_detectors import (  # noqa: E402
+    ViewDetection, ViewDetectorRegistry, default_view_detector_registry,
+)
 
 try:
     from bs4 import BeautifulSoup, NavigableString  # type: ignore
@@ -38,10 +41,22 @@ except ImportError:
 # 分析器主类
 # ============================================================
 class HtmlAnalyzer:
-    def __init__(self, html_path: str, vertical: str | None = None, minimal: bool = False):
+    def __init__(
+        self,
+        html_path: str,
+        vertical: str | None = None,
+        minimal: bool = False,
+        detector_registry: ViewDetectorRegistry | None = None,
+        profile: str | None = None,
+    ):
         self.html_path = Path(html_path).resolve()
-        self.vertical = vertical or self._infer_vertical()
+        if profile and vertical and profile != vertical:
+            raise ValueError("profile 与兼容参数 vertical 不能指定不同值")
+        self.profile = profile or vertical or self._infer_profile()
+        # manifest v1 继续输出 meta.vertical；新代码不应依赖它驱动核心算法。
+        self.vertical = self.profile
         self.minimal = minimal
+        self.detector_registry = detector_registry or default_view_detector_registry()
         self.warnings: list[str] = []
         self.html = self._read_html_robust()
         self.soup = BeautifulSoup(self.html, "html.parser")
@@ -132,9 +147,14 @@ class HtmlAnalyzer:
                     out.append(t)
         return out
 
-    def _infer_vertical(self) -> str:
+    def _infer_profile(self) -> str:
+        """从目录推断可选领域上下文，不参与核心识别分支。"""
         parent = self.html_path.parent.parent
         return parent.name if parent.name else "未分类"
+
+    def _infer_vertical(self) -> str:
+        """兼容旧调用；新代码使用 ``_infer_profile``。"""
+        return self._infer_profile()
 
     # ============================================================
     # meta
@@ -402,46 +422,23 @@ class HtmlAnalyzer:
         return views
 
     def _classify_view(self, node) -> str:
-        """根据 patterns.md 判定视图类型。"""
-        html_str = str(node)
-        # 作品轮播 3D
-        if re.search(r"is-center|is-prev-side|is-next-side", html_str) and "perspective" in self.css:
-            return "carousel-3d"
-        if re.search(r"works?-?(carousel|slider|stage)", html_str, re.I) and "perspective" in self.css:
-            return "carousel-3d"
-        # 时间线
-        if re.search(r"time-?line|tl-?(track|item|scroll)", html_str, re.I):
-            return "timeline"
-        if node.find("time") and "scroll-snap" in self.css:
-            return "timeline"
-        # 成员网格
-        if re.search(r"member-?(grid|list|stage|area)", html_str, re.I):
-            return "member-grid"
-        if node.find(class_=re.compile(r"member", re.I)):
-            return "member-grid"
-        # 详情面板
-        if re.search(r"detail-?(panel|card|aside)", html_str, re.I):
-            return "detail-panel"
-        if node.get("aria-live") == "polite":
-            return "detail-panel"
-        # 问答测试 quiz：题干/选项/进度/反馈/结果 任一组合
-        if re.search(r"\bqz-?(top|body|next|fb|result|opts)|\bquiz\b|\bqt\b|\bq-title\b", html_str, re.I):
-            return "quiz"
-        if node.find(class_=re.compile(r"\bopt\b|qz-(?:next|result|fb)", re.I)) and \
-           node.find(class_=re.compile(r"q(?:t|title|no)", re.I)):
-            return "quiz"
-        # 对比辨析 comparison：双栏 real/alt 或 cmp+col.a/col.b
-        if re.search(r"whatif-card|cmp-(?:btn|pop)|\bcmp\b", html_str, re.I):
-            return "comparison"
-        if node.find(class_=re.compile(r"\bcol-[ab]\b|\bcol\b", re.I)) and \
-           node.find(class_=re.compile(r"real|alt", re.I)):
-            return "comparison"
-        # 开场解锁屏 splash：splash + cta + 单选/启动
-        if re.search(r"\bsplash-?(?:cta|opt|question|options|start)\b", html_str, re.I):
-            return "splash"
-        # 未识别
-        self.warnings.append(f"view {node.get('id','?')}: unknown type, fallback to generic")
-        return "generic"
+        """兼容 manifest v1：返回 detector 的语义类型字符串。"""
+        detection = self.detect_view(node)
+        if detection.semantic_type == "generic":
+            self.warnings.append(f"view {node.get('id','?')}: unknown type, fallback to generic")
+        return detection.semantic_type
+
+    def detect_view(self, node) -> ViewDetection:
+        """返回带结构类型、置信度和证据的视图识别结果。"""
+        result = self.detector_registry.detect(node, self.css)
+        if result is not None:
+            return result
+        return ViewDetection(
+            semantic_type="generic",
+            structural_type="unknown",
+            confidence=0.0,
+            evidence=("fallback:no-detector-matched",),
+        )
 
     def _extract_view_details(self, node, vtype: str) -> dict:
         if vtype == "member-grid":
@@ -1227,7 +1224,9 @@ def main():
     ap = argparse.ArgumentParser(description="HTML → manifest.json 分析引擎")
     ap.add_argument("html", help="HTML 文件路径")
     ap.add_argument("--out", "-o", required=True, help="输出 manifest.json 路径")
-    ap.add_argument("--vertical", help="垂类名（默认从父目录推断）")
+    context = ap.add_mutually_exclusive_group()
+    context.add_argument("--profile", help="可选领域上下文标签（不参与核心识别）")
+    context.add_argument("--vertical", help="兼容别名：等同 --profile")
     ap.add_argument("--minimal", action="store_true", help="最小提取模式（仅主题色+结构清单）")
     args = ap.parse_args()
 
@@ -1236,7 +1235,12 @@ def main():
         sys.exit(1)
 
     try:
-        analyzer = HtmlAnalyzer(args.html, vertical=args.vertical, minimal=args.minimal)
+        analyzer = HtmlAnalyzer(
+            args.html,
+            vertical=args.vertical,
+            minimal=args.minimal,
+            profile=args.profile,
+        )
         manifest = analyzer.analyze()
     except Exception as e:
         print(f"ERROR: 分析失败 [{type(e).__name__}]: {e}", file=sys.stderr)
@@ -1248,7 +1252,7 @@ def main():
     # 摘要
     print(f"✓ 已生成 manifest: {out_path}")
     print(f"  标题: {manifest['meta']['title']}")
-    print(f"  垂类: {manifest['meta']['vertical']}")
+    print(f"  Profile: {manifest['meta']['vertical']}")
     print(f"  主题色令牌: {len(manifest['theme']['tokens'])} 个")
     print(f"  Tab: {len(manifest['structure']['tabs'])} 个")
     print(f"  视图: {[v['type'] for v in manifest['structure']['views']]}")

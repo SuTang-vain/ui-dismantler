@@ -29,7 +29,7 @@
 | `source` | string | 是 | 源 HTML 绝对路径 |
 | `title` | string | 是 | `<title>` 文本 |
 | `templateId` | string | 否 | `data-dudesign-template` 属性值 |
-| `vertical` | string | 否 | 垂类名（由 `--vertical` 传入或从父目录推断） |
+| `vertical` | string | 否 | manifest v1 兼容字段，记录可选领域上下文；新调用使用 `--profile`，`--vertical` 仅为兼容别名。该字段不参与核心识别分支 |
 | `caseName` | string | 否 | 案例名（slug 化，用于命名库） |
 | `canvas` | object | 是 | 见下 |
 

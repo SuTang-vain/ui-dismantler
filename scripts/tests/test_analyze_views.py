@@ -19,6 +19,9 @@ _SKILL_SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "..", "src", "ski
 sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
 
 from analyze_html import HtmlAnalyzer  # noqa: E402
+from view_detectors import (  # noqa: E402
+    ViewDetection, ViewDetector, default_view_detector_registry,
+)
 
 
 def _make_analyzer(body_html: str, css: str = "") -> HtmlAnalyzer:
@@ -145,6 +148,91 @@ class TestNoRegressionOnExistingTypes(unittest.TestCase):
         a = _make_analyzer(html)
         node = a.soup.find(id="x")
         self.assertEqual(a._classify_view(node), "generic")
+
+
+class TestViewDetectorRegistry(unittest.TestCase):
+    """语义 detector 可扩展，同时不污染其他分析器实例。"""
+
+    def test_detection_exposes_structure_confidence_and_evidence(self):
+        html = '<section class="panel" id="t"><div class="timeline"><time>2016</time></div></section>'
+        a = _make_analyzer(html)
+        result = a.detect_view(a.soup.find(id="t"))
+        self.assertEqual(result.semantic_type, "timeline")
+        self.assertEqual(result.structural_type, "sequence")
+        self.assertGreater(result.confidence, 0.5)
+        self.assertTrue(result.evidence)
+
+    def test_custom_detector_can_precede_builtin_detector(self):
+        registry = default_view_detector_registry()
+
+        def detect_featured(context):
+            if "featured-members" in context.html:
+                return ViewDetection(
+                    semantic_type="featured-collection",
+                    structural_type="collection",
+                    confidence=0.99,
+                    evidence=("class:featured-members",),
+                )
+            return None
+
+        registry.register(
+            ViewDetector("featured-collection", detect_featured),
+            before="member-grid",
+        )
+        html = '<section class="panel" id="m"><div class="featured-members member-grid"></div></section>'
+        full = f'<!doctype html><html><body>{html}</body></html>'
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(full)
+        a = HtmlAnalyzer(path, detector_registry=registry)
+        self.assertEqual(a._classify_view(a.soup.find(id="m")), "featured-collection")
+
+    def test_default_registries_do_not_share_mutations(self):
+        first = default_view_detector_registry()
+        second = default_view_detector_registry()
+        first.register(ViewDetector("custom", lambda context: None))
+        self.assertIn("custom", [item.name for item in first.detectors])
+        self.assertNotIn("custom", [item.name for item in second.detectors])
+
+    def test_duplicate_detector_name_is_rejected(self):
+        registry = default_view_detector_registry()
+        with self.assertRaises(ValueError):
+            registry.register(ViewDetector("timeline", lambda context: None))
+
+
+class TestProfileCompatibility(unittest.TestCase):
+    """profile 是中立输入，vertical 仅作为 manifest v1 兼容别名。"""
+
+    def test_profile_populates_legacy_vertical_field(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        a = HtmlAnalyzer(path, profile="knowledge-page")
+        self.assertEqual(a._analyze_meta()["vertical"], "knowledge-page")
+
+    def test_vertical_constructor_argument_remains_supported(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        a = HtmlAnalyzer(path, vertical="legacy-domain")
+        self.assertEqual(a.profile, "legacy-domain")
+        self.assertEqual(a._analyze_meta()["vertical"], "legacy-domain")
+
+    def test_conflicting_profile_and_vertical_are_rejected(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        with self.assertRaises(ValueError):
+            HtmlAnalyzer(path, vertical="legacy", profile="generic")
+
+    def test_detection_requires_evidence(self):
+        with self.assertRaises(ValueError):
+            ViewDetection(
+                semantic_type="collection",
+                structural_type="collection",
+                confidence=0.8,
+                evidence=(),
+            )
 
 
 if __name__ == "__main__":
