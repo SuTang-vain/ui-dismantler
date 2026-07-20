@@ -23,6 +23,8 @@ Agent（主控）─────────────────────
 - **工具做确定性提取和校验**：颜色解析、CSS 拆分、约束校验、往返测试
 - **往返测试当裁判**：agent 产出的库必须通过往返测试，低分则修订
 
+通用化分支将领域信息降级为可选 `profile`，视图识别由可注册 detector 完成。Detector 同时给出中立结构类型、语义类型、置信度和证据；manifest v1 输出保持兼容。
+
 ## 产出标准
 
 对标手工拆解的 `明星组合/组件库`（2613 行，完整 A11y + 设计令牌 + 数据驱动）：
@@ -63,7 +65,7 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 174 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含黄金快照回归（blackpink-v10/lib 综合 ≥0.85）。
+工具层有 182 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含黄金快照回归（blackpink-v10/lib 综合 ≥0.85）。
 
 ## 当前能力与基线
 
