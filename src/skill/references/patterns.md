@@ -113,12 +113,11 @@
 ```json
 {
   "type": "detail-panel",
-  "hasKicker": true,         // 存在 .detail-kicker
-  "rowSelector": ".relation-row",
-  "labelSelector": ".rel-label",
-  "valueSelector": ".rel-value"
+  "hasKicker": true
 }
 ```
+
+> 注：`rowSelector`/`labelSelector`/`valueSelector` 在早期版本中规划但未实现。当前仅提取 `hasKicker`。
 
 ## 6. 时间线
 

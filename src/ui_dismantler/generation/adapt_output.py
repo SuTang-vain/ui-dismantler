@@ -18,13 +18,15 @@ import re
 from pathlib import Path
 
 
-def extract_iife_core(src: str) -> tuple[str, str, str]:
+def extract_iife_core(src: str) -> tuple[str, str, str, str, str]:
     """从 IIFE 源码提取核心部分。
 
-    返回 (preamble, body, api_name)：
+    返回 (preamble, body, api_name, lib_name, use_strict)：
     - preamble: IIFE 开头 (function(global){"use strict"; ... 到 function Lib 之前)
-    - body: function Lib(root,options){...} 到 return {...} 之后的 }
-    - api_name: 暴露的全局名（如 KzkAbout）
+    - body: function Lib(root,options){...} 到 var API 之前
+    - api_name: 暴露的全局名（如 StarGroup / GlossaryExplorer）
+    - lib_name: 构造函数名（如 Lib / StarGroup）
+    - use_strict: "use strict"; 字符串（如存在）
     """
     # 找 IIFE 包裹
     m = re.search(r'\(function\s*\(\s*global\s*\)\s*\{("use strict";)?', src)

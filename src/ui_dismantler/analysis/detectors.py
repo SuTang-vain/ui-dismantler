@@ -137,7 +137,8 @@ def _detect_timeline(context: ViewContext) -> ViewDetection | None:
 def _detect_member_grid(context: ViewContext) -> ViewDetection | None:
     if re.search(r"member-?(grid|list|stage|area)", context.html, re.I):
         return _result("member-grid", "collection", 0.96, "class:member-collection")
-    if context.node.find(class_=re.compile(r"member", re.I)):
+    # 弱信号：后代含 member 类名（锚定词边界，避免误匹配 dis-member / remember 等）
+    if context.node.find(class_=re.compile(r"(?:^|[-_])member(?:[-_]|$)", re.I)):
         return _result("member-grid", "collection", 0.78, "descendant-class:member")
     return None
 
@@ -145,8 +146,13 @@ def _detect_member_grid(context: ViewContext) -> ViewDetection | None:
 def _detect_detail_panel(context: ViewContext) -> ViewDetection | None:
     if re.search(r"detail-?(panel|card|aside)", context.html, re.I):
         return _result("detail-panel", "content-region", 0.94, "class:detail-panel")
+    # 弱信号：aria-live=polite 且有 kicker 或 relation-row 结构
+    # （纯 aria-live 可能是状态公告区，需额外证据才判为 detail-panel）
     if context.node.get("aria-live") == "polite":
-        return _result("detail-panel", "content-region", 0.72, "aria-live:polite")
+        has_kicker = context.node.find(class_=re.compile(r"kicker", re.I)) is not None
+        has_relation = context.node.find(class_=re.compile(r"rel(?:ation)?-?(row|label|value)", re.I)) is not None
+        if has_kicker or has_relation:
+            return _result("detail-panel", "content-region", 0.72, "aria-live:polite", "struct:relation-rows")
     return None
 
 

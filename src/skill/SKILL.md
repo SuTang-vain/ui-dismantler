@@ -275,7 +275,7 @@ In Step 1 when understanding HTML or Step 2 when fetching reference data, you ca
 
 ### Package Architecture
 
-Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤11 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, 276 tests covering unit + architecture-guard + interaction-matrix edge cases).
+Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤16 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, 296 tests covering unit + architecture-guard + interaction-matrix edge cases).
 
 ```
 src/ui_dismantler/
@@ -294,7 +294,7 @@ src/ui_dismantler/
     └── scenario_generator.py # scenario candidate generator
 ```
 
-Architecture guards (`scripts/tests/test_architecture.py`, 9 assertions) enforce layering: business modules must not contain CLI code (`argparse`/`sys.exit`/`def main()`); legacy entry points must be ≤11-line thin bridges; core package must never import the compatibility layer (cycle prevention).
+Architecture guards (`scripts/tests/test_architecture.py`, 9 assertions) enforce layering: business modules must not contain CLI code (`argparse`/`sys.exit`/`def main()`); legacy entry points must be ≤16-line thin bridges; core package must never import the compatibility layer (cycle prevention).
 
 ## Domain Context and Experiment Boundaries
 

@@ -8,9 +8,4 @@ from pathlib import Path
 PACKAGE_ROOT = Path(__file__).resolve().parent
 SOURCE_ROOT = PACKAGE_ROOT.parent
 PROJECT_ROOT = SOURCE_ROOT.parent
-SKILL_ROOT = SOURCE_ROOT / "skill"
-SCRIPTS_DIR = SKILL_ROOT / "scripts"
-LEGACY_SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-TEMPLATE_DIR = SKILL_ROOT / "assets" / "templates"
-ROUNDTRIP_RENDERER = LEGACY_SCRIPTS_DIR / "_roundtrip_render.mjs"
-EXAMPLES_DIR = PROJECT_ROOT / "examples"
+ROUNDTRIP_RENDERER = PROJECT_ROOT / "scripts" / "_roundtrip_render.mjs"
