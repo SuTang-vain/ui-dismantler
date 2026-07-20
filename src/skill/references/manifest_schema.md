@@ -58,7 +58,7 @@
     {
       "name": "primary",          // 归一化后的 sg- 名（不含前缀）
       "value": "#6487FA",
-      "original": "--primary",    // 原变量名（可为 null）
+      "original": "--primary",    // 原变量名，或 tailwind.colors.primary
       "usage": ["选中描边","激活态","主按钮"]
     }
   ],
@@ -73,6 +73,9 @@
 ```
 
 `tokens[].usage` 由扫描该变量在 CSS 规则中的出现选择器推断（取前 5 个去重）。
+对于 Tailwind CDN 页面，分析器还会读取静态 `tailwind.config` 中的
+`theme.extend.colors` 颜色叶子，并通过页面 utility class 推断 `usage` 与 `roles`；
+不会执行配置代码或请求远程资源。
 
 ---
 
@@ -158,9 +161,14 @@
   { "type": "select", "trigger": "click", "target": ".member", "action": "selectMember", "sideEffect": "updateDetailPanel" },
   { "type": "autoplay", "target": "members", "interval": 3000, "stopOn": ["click","touchstart"] },
   { "type": "modal-open", "trigger": "click", "target": "#tab-more", "action": "openModal" },
-  { "type": "modal-close", "trigger": ["click","keydown:Escape"], "target": ".modal-overlay" }
+  { "type": "modal-close", "trigger": ["click","keydown:Escape"], "target": ".modal-overlay" },
+  { "type": "explicit-handler", "trigger": "click", "target": "#tab-register", "handler": "switchTab", "action": "switch-tab" }
 ]
 ```
+
+`explicit-handler` 来自 DOM 中明确声明的 `onclick`、`onsubmit`、`oninput`、
+`onchange`、`onkeydown` 或 `onkeyup`。它记录稳定 selector 和 handler 名，不执行
+handler，也不推断未显式绑定的业务行为。
 
 ---
 

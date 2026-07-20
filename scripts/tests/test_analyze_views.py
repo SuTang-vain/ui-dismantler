@@ -235,5 +235,98 @@ class TestProfileCompatibility(unittest.TestCase):
             )
 
 
+class TestLocalResourceAnalysis(unittest.TestCase):
+    """静态分析应观察站点共享的本地 CSS/JS 资源。"""
+
+    def test_site_root_resources_are_included_without_network_access(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = os.path.abspath(temp_dir)
+            page_dir = os.path.join(root, "projects", "demo")
+            shared_dir = os.path.join(root, "shared")
+            os.makedirs(page_dir)
+            os.makedirs(shared_dir)
+            with open(os.path.join(shared_dir, "nav.css"), "w", encoding="utf-8") as f:
+                f.write(":root { --brand: #ad2c0d; } .shared-nav { color: var(--brand); }")
+            with open(os.path.join(shared_dir, "nav.js"), "w", encoding="utf-8") as f:
+                f.write("document.body.dataset.shared = 'yes';")
+            html_path = os.path.join(page_dir, "index.html")
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write("""<!doctype html><html><head>
+                <link rel="stylesheet" href="/shared/nav.css?v=1">
+                <link rel="stylesheet" href="https://cdn.example/remote.css">
+                </head><body><nav class="shared-nav">Shared</nav>
+                <script src="/shared/nav.js?v=1"></script>
+                <script src="/shared/missing.js"></script></body></html>""")
+
+            analyzer = HtmlAnalyzer(html_path)
+
+        self.assertIn("--brand", analyzer.css)
+        self.assertTrue(any("dataset.shared" in script for script in analyzer.scripts))
+        self.assertTrue(any("missing.js" in warning for warning in analyzer.warnings))
+        self.assertNotIn("remote.css", analyzer.css)
+
+
+class TestTailwindAndExplicitInteractions(unittest.TestCase):
+    def test_tailwind_colors_are_extracted_with_usage(self):
+        html = '''<!doctype html><html><head>
+        <script>tailwind.config = { theme: { extend: { colors: {
+          primary: "#ad2c0d", "surface-container": "#ffe9e4",
+          nested: { strong: "#123456" }
+        }}}};</script></head><body>
+        <button class="bg-primary text-surface-container">进入</button>
+        <div class="text-nested-strong"></div>
+        </body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        analyzer = HtmlAnalyzer(path)
+        manifest = analyzer.analyze()
+        tokens = {token["original"]: token for token in manifest["theme"]["tokens"]}
+
+        self.assertEqual(tokens["tailwind.colors.primary"]["value"], "#ad2c0d")
+        self.assertIn("background", tokens["tailwind.colors.primary"]["roles"])
+        self.assertIn("text", tokens["tailwind.colors.surface-container"]["roles"])
+        self.assertTrue(tokens["tailwind.colors.nested.strong"]["usage"])
+
+    def test_explicit_handlers_and_auth_tabs_are_observed(self):
+        html = '''<!doctype html><html><body>
+        <div class="auth-tabs">
+          <button id="login" class="auth-tab active" onclick="switchTab('login')">登录</button>
+          <button id="register" class="auth-tab" onclick="switchTab('register')">注册</button>
+        </div>
+        <form id="auth" onsubmit="handleLogin()"><input oninput="syncValue()"></form>
+        </body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        analyzer = HtmlAnalyzer(path)
+        manifest = analyzer.analyze()
+
+        self.assertEqual([tab["id"] for tab in manifest["structure"]["tabs"]], ["login", "register"])
+        handlers = manifest["interactions"]
+        self.assertTrue(any(item.get("action") == "switch-tab" and item.get("target") == "#register" for item in handlers))
+        self.assertTrue(any(item.get("trigger") == "submit" and item.get("action") == "submit-login" for item in handlers))
+        self.assertTrue(any(item.get("trigger") == "input" and item.get("handler") == "syncValue" for item in handlers))
+
+    def test_static_event_listeners_expose_resolvable_targets(self):
+        html = '''<!doctype html><html><body><input id="search-input"><div id="profile"></div>
+        <script>
+          var input = document.getElementById('search-input');
+          input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitSearch(); });
+          var profile = document.querySelector('#profile');
+          var trigger = profile.firstElementChild;
+          trigger.addEventListener('click', openProfile);
+          document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeProfile(); });
+        </script></body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        interactions = HtmlAnalyzer(path).analyze()["interactions"]
+
+        self.assertTrue(any(item.get("target") == "#search-input" and item.get("action") == "handle-keyboard:enter" for item in interactions))
+        self.assertTrue(any(item.get("target") == "#profile > *" and item.get("trigger") == "click" for item in interactions))
+        self.assertTrue(any(item.get("target") == "document" and item.get("action") == "handle-keyboard:escape" for item in interactions))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

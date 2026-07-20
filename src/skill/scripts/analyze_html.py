@@ -134,18 +134,73 @@ class HtmlAnalyzer:
     # ---------- 基础提取 ----------
     def _extract_css(self) -> str:
         parts = []
-        for style in self.soup.find_all("style"):
-            parts.append(style.get_text() or "")
+        for node in self.soup.find_all(["style", "link"]):
+            if node.name == "style":
+                text = node.get_text() or ""
+                if text.strip():
+                    parts.append(text)
+                continue
+            rel = {item.lower() for item in (node.get("rel") or [])}
+            href = node.get("href")
+            if "stylesheet" not in rel or not href or not self._is_local_resource(href):
+                continue
+            resource = self._read_local_resource(href, "CSS")
+            if resource is not None:
+                parts.append(resource)
         return "\n".join(parts)
 
     def _extract_scripts(self) -> list[str]:
         out = []
         for s in self.soup.find_all("script"):
-            if s.get("type") in (None, "text/javascript", "application/javascript"):
-                t = s.get_text()
-                if t and t.strip():
-                    out.append(t)
+            script_type = (s.get("type") or "").strip().lower()
+            if script_type not in ("", "text/javascript", "application/javascript"):
+                continue
+            src = s.get("src")
+            if src:
+                if self._is_local_resource(src):
+                    resource = self._read_local_resource(src, "JS")
+                    if resource is not None:
+                        out.append(resource)
+                continue
+            t = s.get_text()
+            if t and t.strip():
+                out.append(t)
         return out
+
+    def _is_local_resource(self, resource: str) -> bool:
+        """判断资源是否可在本地读取；远程 URL 不发起网络请求。"""
+        return resource.startswith("file:") or (
+            not resource.startswith("//")
+            and not re.match(r"^[a-z][a-z0-9+.-]*:", resource, re.I)
+        )
+
+    def _resolve_local_resource(self, resource: str) -> Path:
+        """解析相对路径与站点根绝对路径。
+
+        页面通常位于站点子目录，``/shared/nav.js`` 需要从页面目录向上
+        搜索可用的站点根，而不是直接映射到操作系统的 ``/shared``。
+        """
+        cleaned = resource.split("#", 1)[0].split("?", 1)[0]
+        if cleaned.startswith("file:"):
+            return Path(cleaned[5:]).resolve()
+        if cleaned.startswith("/"):
+            candidate_dir = self.html_path.parent
+            while candidate_dir != candidate_dir.parent:
+                candidate = (candidate_dir / cleaned.lstrip("/")).resolve()
+                if candidate.is_file():
+                    return candidate
+                candidate_dir = candidate_dir.parent
+        return (self.html_path.parent / cleaned).resolve()
+
+    def _read_local_resource(self, resource: str, kind: str) -> str | None:
+        path = self._resolve_local_resource(resource)
+        if not path.is_file():
+            self.warnings.append(f"resource: 本地 {kind} 不存在: {resource}")
+            return None
+        try:
+            return path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            return path.read_bytes().decode("utf-8", errors="replace")
 
     def _infer_profile(self) -> str:
         """从目录推断可选领域上下文，不参与核心识别分支。"""
@@ -247,6 +302,12 @@ class HtmlAnalyzer:
                 "usage": usage,
                 "roles": roles,
             })
+        for token in self._extract_tailwind_color_tokens():
+            norm = token["name"]
+            if norm in seen_norm:
+                continue
+            seen_norm[norm] = token["original"]
+            tokens.append(token)
         # 渐变
         gradients = []
         for sel, props in parse_rules(self.css):
@@ -259,6 +320,93 @@ class HtmlAnalyzer:
                             "normalized": self._normalize_gradient(g["value"]),
                         })
         return {"tokens": tokens, "gradients": gradients}
+
+    def _extract_tailwind_color_tokens(self) -> list[dict]:
+        """提取 inline ``tailwind.config`` 中可直接解析的颜色叶子。
+
+        Tailwind CDN 页面通常没有 CSS ``:root`` 变量，颜色会藏在
+        ``theme.extend.colors`` 对象里。这里只读取静态字符串颜色，不执行
+        任意 JS，也不尝试解析函数、主题回调或远程配置。
+        """
+        tokens: list[dict] = []
+        for script in self.scripts:
+            match = re.search(r"tailwind\s*\.\s*config\s*=\s*\{", script, re.I)
+            if not match:
+                continue
+            start = script.find("{", match.start())
+            config_text = self._match_bracket(script, start, "{", "}")
+            if not config_text:
+                continue
+            try:
+                config = json.loads(config_text)
+            except json.JSONDecodeError:
+                try:
+                    config = json.loads(self._fix_js_object(config_text))
+                except json.JSONDecodeError:
+                    self.warnings.append("theme: Tailwind config 解析失败")
+                    continue
+            colors = (config.get("theme", {}).get("extend", {}).get("colors")
+                      or config.get("theme", {}).get("colors"))
+            if not isinstance(colors, dict):
+                continue
+            self._append_tailwind_color_leaves(tokens, colors)
+        return tokens
+
+    def _append_tailwind_color_leaves(
+        self,
+        tokens: list[dict],
+        colors: dict,
+        path: tuple[str, ...] = (),
+    ) -> None:
+        for key, value in colors.items():
+            current_path = path + (str(key),)
+            if isinstance(value, dict):
+                self._append_tailwind_color_leaves(tokens, value, current_path)
+                continue
+            if not isinstance(value, str) or parse_color(value) is None:
+                continue
+            name = normalize_var_name("--" + "-".join(current_path))
+            utility = "-".join(current_path).lower()
+            usage = self._tailwind_class_usage(utility)
+            tokens.append({
+                "name": name,
+                "value": value.strip(),
+                "original": "tailwind.colors." + ".".join(current_path),
+                "usage": usage,
+                "roles": self._tailwind_color_roles(utility),
+            })
+
+    def _tailwind_class_usage(self, color_name: str) -> list[str]:
+        usages: list[str] = []
+        pattern = re.compile(
+            r"(?:^|[\s:/])(?:bg|text|border|ring|decoration|from|via|to)-"
+            + re.escape(color_name)
+            + r"(?:$|[\s/:-])",
+            re.I,
+        )
+        for node in self.soup.find_all(class_=True):
+            classes = " ".join(node.get("class") or [])
+            if pattern.search(classes):
+                label = node.name + ("#" + node.get("id") if node.get("id") else "")
+                if label not in usages:
+                    usages.append(label)
+                if len(usages) >= 5:
+                    break
+        return usages
+
+    def _tailwind_color_roles(self, color_name: str) -> list[str]:
+        roles: list[str] = []
+        for prefix, role in (
+            ("bg", "background"), ("text", "text"), ("border", "border"),
+            ("ring", "border"), ("from", "background"), ("via", "background"),
+            ("to", "background"),
+        ):
+            if re.search(rf"(?:^|[\s:]){prefix}-{re.escape(color_name)}(?:$|[\s/:])", " ".join(
+                " ".join(node.get("class") or []) for node in self.soup.find_all(class_=True)
+            ), re.I):
+                if role not in roles:
+                    roles.append(role)
+        return roles
 
     def _infer_var_usage(self, var_name: str) -> list[str]:
         """扫描 var() 使用位置，推断用途。"""
@@ -322,10 +470,11 @@ class HtmlAnalyzer:
         if tablist:
             return self._extract_tabs_from(tablist)
         # 方式2: 类名匹配（tab-bar / tab-nav / tabs 等）
-        for pat in ["tab-bar", "tab-nav", "tab-list", "tabs", "module-tabs", "works-tabs", "tab-nav"]:
+        for pat in ["tab-bar", "tab-nav", "tab-list", "tabs", "module-tabs", "works-tabs", "tab-nav", "auth-tab"]:
             node = self.soup.find(class_=re.compile(pat, re.I))
             if node:
-                return self._extract_tabs_from(node)
+                container = node.parent if pat == "auth-tab" and node.parent else node
+                return self._extract_tabs_from(container)
         # 方式3: nav 容器 + 子项带 data-p/data-tab/data-target 关联 panel
         # （如纸上谈兵 .nav > span.n[data-p="home"] ↔ section.panel#home）
         nav = self.soup.find("nav") or self.soup.find(class_=re.compile(r"^(nav|tabbar|bottom-nav)$", re.I))
@@ -346,7 +495,7 @@ class HtmlAnalyzer:
                 or container.find_all(attrs={"data-target": True})
         if not tab_nodes:
             # 回退到类名
-            tab_nodes = container.find_all(class_=re.compile(r"tab(-?item)?$", re.I))
+            tab_nodes = container.find_all(class_=re.compile(r"(?:^|[-_])tab(?:[-_]?item)?$|^tab(?:[-_]?item)?$", re.I))
         if not tab_nodes:
             tab_nodes = [c for c in container.find_all(["button", "a"]) if c.find(class_=re.compile(r"tab", re.I)) or "tab" in (c.get("class") or [])]
         for node in tab_nodes:
@@ -1157,7 +1306,146 @@ class HtmlAnalyzer:
                 "type": "select", "trigger": "click", "target": ".member",
                 "action": "selectMember", "sideEffect": "updateDetailPanel",
             })
-        return interactions
+        interactions.extend(self._extract_explicit_handlers())
+        interactions.extend(self._extract_event_listeners())
+        return self._dedupe_interactions(interactions)
+
+    def _extract_explicit_handlers(self) -> list[dict]:
+        """提取 DOM 内联事件处理器，作为通用交互入口观察结果。"""
+        out: list[dict] = []
+        event_map = {
+            "onclick": "click", "onsubmit": "submit", "oninput": "input",
+            "onchange": "change", "onkeydown": "keydown", "onkeyup": "keyup",
+        }
+        for node in self.soup.find_all(True):
+            for attribute, trigger in event_map.items():
+                handler = node.get(attribute)
+                if not handler:
+                    continue
+                handler_name = self._handler_name(handler)
+                out.append({
+                    "type": "explicit-handler",
+                    "trigger": trigger,
+                    "target": self._stable_selector(node),
+                    "handler": handler_name,
+                    "action": self._handler_action(handler_name, handler),
+                })
+        return out
+
+    def _extract_event_listeners(self) -> list[dict]:
+        """提取静态可解析的 ``addEventListener`` 绑定。"""
+        out: list[dict] = []
+        for script in self.scripts:
+            selectors: dict[str, str] = {}
+            for match in re.finditer(
+                r"(?:var|let|const)\s+(\w+)\s*=\s*document\.getElementById\(\s*['\"]([^'\"]+)['\"]\s*\)",
+                script,
+            ):
+                selectors[match.group(1)] = "#" + match.group(2)
+            for match in re.finditer(
+                r"(?:var|let|const)\s+(\w+)\s*=\s*document\.querySelector\(\s*['\"]([^'\"]+)['\"]\s*\)",
+                script,
+            ):
+                selectors[match.group(1)] = match.group(2)
+            for match in re.finditer(
+                r"(?:var|let|const)\s+(\w+)\s*=\s*(\w+)\.firstElementChild",
+                script,
+            ):
+                parent = selectors.get(match.group(2), match.group(2))
+                selectors[match.group(1)] = parent + " > *"
+
+            listener_pattern = re.compile(
+                r"(?P<target>document|window|[A-Za-z_$][\w$]*(?:\.firstElementChild)?)\s*\.\s*"
+                r"addEventListener\(\s*['\"](?P<event>[\w-]+)['\"]",
+                re.I,
+            )
+            for match in listener_pattern.finditer(script):
+                raw_target = match.group("target")
+                target = self._listener_target_selector(raw_target, selectors)
+                event = match.group("event").lower()
+                out.append({
+                    "type": "event-listener",
+                    "trigger": event,
+                    "target": target,
+                    "handler": "addEventListener",
+                    "action": self._listener_action(event, script[match.start():match.start() + 220]),
+                })
+        return out
+
+    def _listener_target_selector(self, target: str, selectors: dict[str, str]) -> str:
+        if target in ("document", "window"):
+            return target
+        if target.endswith(".firstElementChild"):
+            base = target[:-len(".firstElementChild")]
+            return selectors.get(base, base) + " > *"
+        return selectors.get(target, target)
+
+    def _listener_action(self, event: str, context: str) -> str:
+        lower = context.lower()
+        if event == "keydown":
+            keys = []
+            if "escape" in lower:
+                keys.append("escape")
+            if "enter" in lower:
+                keys.append("enter")
+            return "handle-keyboard" + ((":" + ",".join(keys)) if keys else "")
+        if event == "scroll":
+            return "update-scroll-state"
+        if event == "resize":
+            return "update-viewport"
+        if event == "domcontentloaded":
+            return "initialize-page"
+        if event == "input":
+            return "handle-input"
+        return "handle-" + event
+
+    def _handler_name(self, handler: str) -> str:
+        match = re.match(r"\s*([\w$]+)\s*\(", handler)
+        return match.group(1) if match else "inline"
+
+    def _handler_action(self, name: str, handler: str) -> str:
+        lower = (name + " " + handler).lower()
+        for keyword, action in (
+            ("switchtab", "switch-tab"), ("scrollcarousel", "scroll-carousel"),
+            ("handlelogin", "submit-login"), ("handlesendotp", "submit-otp"),
+            ("handleregister", "submit-register"), ("showprofileeditor", "open-profile"),
+            ("hideprofileeditor", "close-profile"), ("handlelogout", "logout"),
+        ):
+            if keyword in lower:
+                return action
+        return name if name != "inline" else "inline-handler"
+
+    def _stable_selector(self, node) -> str:
+        if node.get("id"):
+            return "#" + node["id"]
+        classes = [c for c in (node.get("class") or []) if re.match(r"^[A-Za-z_][\w-]*$", c)]
+        if classes:
+            candidate = "." + classes[0]
+            if len(self.soup.select(candidate)) == 1:
+                return candidate
+        path: list[str] = []
+        current = node
+        while current is not None and getattr(current, "name", None) not in (None, "[document]"):
+            if current.get("id"):
+                path.append("#" + current["id"])
+                break
+            sibling_index = 1
+            for sibling in current.previous_siblings:
+                if getattr(sibling, "name", None) == current.name:
+                    sibling_index += 1
+            path.append(f"{current.name}:nth-of-type({sibling_index})")
+            current = current.parent
+        return " > ".join(reversed(path))
+
+    def _dedupe_interactions(self, interactions: list[dict]) -> list[dict]:
+        out: list[dict] = []
+        seen: set[tuple] = set()
+        for interaction in interactions:
+            key = tuple(sorted((k, str(v)) for k, v in interaction.items()))
+            if key not in seen:
+                seen.add(key)
+                out.append(interaction)
+        return out
 
     # ============================================================
     # responsive

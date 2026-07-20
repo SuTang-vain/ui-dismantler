@@ -106,6 +106,38 @@ class TestRenderedReference(unittest.TestCase):
         )
         self.assertIn("Offline body", rendered["texts"])
 
+    def test_site_root_resources_and_intersection_observer_are_supported(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            page_dir = root / "projects" / "demo"
+            shared_dir = root / "shared"
+            page_dir.mkdir(parents=True)
+            shared_dir.mkdir()
+            (shared_dir / "nav.js").write_text(
+                "document.addEventListener('DOMContentLoaded', function() {"
+                "document.body.insertAdjacentHTML('afterbegin', '<nav>Shared nav</nav>');"
+                "});",
+                encoding="utf-8",
+            )
+            html = page_dir / "index.html"
+            html.write_text(
+                "<!doctype html><html><head>"
+                "<script src='/shared/nav.js'></script>"
+                "</head><body><section class='reveal'>Reveal content</section>"
+                "<script>new IntersectionObserver(function(entries) {"
+                "entries.forEach(function(entry) { entry.target.classList.add('visible'); });"
+                "}).observe(document.querySelector('.reveal'));</script></body></html>",
+                encoding="utf-8",
+            )
+            rendered = rt.render_reference_dom(html)
+
+        self.assertTrue(rendered["ok"], rendered.get("error"))
+        self.assertEqual(rendered["jsFiles"], 1)
+        self.assertEqual(rendered["missingFiles"], [])
+        self.assertEqual(rendered["runtimeErrors"], [])
+        self.assertIn("Shared nav", rendered["texts"])
+        self.assertIn("visible", _classes(rendered["dom"]))
+
 
 class TestTechnicalFeatureMatrix(unittest.TestCase):
     SOURCE = FIXTURES / "multi-resource" / "original.html"

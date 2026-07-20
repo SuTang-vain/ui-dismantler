@@ -76,6 +76,14 @@ function isLocalResource(resource) {
 function resolveLocalResource(baseDir, resource) {
   const cleaned = cleanResourcePath(resource);
   if (cleaned.startsWith('file:')) return new URL(cleaned).pathname;
+  if (cleaned.startsWith('/')) {
+    let candidateDir = baseDir;
+    while (candidateDir && candidateDir !== dirname(candidateDir)) {
+      const candidate = resolve(candidateDir, `.${cleaned}`);
+      if (existsSync(candidate)) return candidate;
+      candidateDir = dirname(candidateDir);
+    }
+  }
   return resolve(baseDir, cleaned);
 }
 
@@ -107,6 +115,18 @@ function runtimeBootstrap(viewportWidth, viewportHeight) {
         addEventListener: function () {}, removeEventListener: function () {},
         dispatchEvent: function () { return false; } };
     };
+    if (!window.IntersectionObserver) {
+      window.IntersectionObserver = function (callback) {
+        this.observe = function (element) {
+          setTimeout(function () {
+            callback([{ target: element, isIntersecting: true, intersectionRatio: 1 }], this);
+          }.bind(this), 0);
+        };
+        this.unobserve = function () {};
+        this.disconnect = function () {};
+        this.takeRecords = function () { return []; };
+      };
+    }
     window.tailwind = window.tailwind || { config: {}, theme: { extend: {} } };
     window.marked = window.marked || { parse: function (text) { return text; } };
     window.DOMPurify = window.DOMPurify || { sanitize: function (text) { return text; } };
@@ -310,6 +330,11 @@ function isElementVisible(window, element) {
   return true;
 }
 
+function elementText(element) {
+  const renderedText = typeof element.innerText === 'string' ? element.innerText : '';
+  return (renderedText || element.textContent || '').trim();
+}
+
 function evaluateAssertion(window, assertion, role, index) {
   const result = {
     index,
@@ -328,11 +353,11 @@ function evaluateAssertion(window, assertion, role, index) {
       check('visible', assertion.visible, actual, actual === assertion.visible);
     }
     if ('text' in assertion) {
-      const actual = element.textContent.trim();
+      const actual = elementText(element);
       check('text', assertion.text, actual, actual === assertion.text);
     }
     if ('textContains' in assertion) {
-      const actual = element.textContent.trim();
+      const actual = elementText(element);
       check('textContains', assertion.textContains, actual, actual.includes(assertion.textContains));
     }
     if ('value' in assertion) {
