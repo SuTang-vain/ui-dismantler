@@ -11,10 +11,11 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-_SCRIPTS = os.path.join(os.path.dirname(__file__), "..")
-sys.path.insert(0, os.path.abspath(_SCRIPTS))
+# 优先 import 规范包（patch 需要作用于业务模块本身，而非桥接副本）
+_SRC = os.path.join(os.path.dirname(__file__), "..", "..", "src")
+sys.path.insert(0, os.path.abspath(_SRC))
 
-import roundtrip as rt  # noqa: E402
+from ui_dismantler.evaluation import roundtrip as rt  # noqa: E402
 
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures" / "roundtrip"
@@ -159,7 +160,7 @@ class TestTechnicalFeatureMatrix(unittest.TestCase):
         proc = subprocess.run(
             [
                 sys.executable,
-                str(Path(rt.__file__)),
+                "-m", "ui_dismantler.cli.roundtrip",
                 str(self.SOURCE),
                 "--lib", str(self.LIB),
                 "--reference-mode", "rendered",
@@ -167,6 +168,7 @@ class TestTechnicalFeatureMatrix(unittest.TestCase):
             capture_output=True,
             text=True,
             timeout=30,
+            env={**os.environ, "PYTHONPATH": os.path.abspath(_SRC)},
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         report = json.loads(proc.stdout)

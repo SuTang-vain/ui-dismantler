@@ -10,17 +10,26 @@ import sys
 import tempfile
 import unittest
 
-_SCRIPTS = os.path.join(os.path.dirname(__file__), "..")
-sys.path.insert(0, os.path.abspath(_SCRIPTS))
+# 优先 import 规范包（subprocess 调用走 cli 模块，patch 需要作用于业务模块本身）
+_SRC = os.path.join(os.path.dirname(__file__), "..", "..", "src")
+sys.path.insert(0, os.path.abspath(_SRC))
 
-import roundtrip as rt  # noqa: E402
-from scenario_coverage import interaction_fingerprint  # noqa: E402
+from ui_dismantler.evaluation import roundtrip as rt  # noqa: E402
+from ui_dismantler.evaluation.scenario_coverage import interaction_fingerprint  # noqa: E402
 
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "scenarios" / "interaction-app"
 SOURCE = FIXTURE / "original.html"
 LIB = FIXTURE / "lib"
 SCENARIOS = FIXTURE / "scenarios.json"
+
+
+def _roundtrip_cmd(*extra: str) -> list[str]:
+    """构造 ``python -m ui_dismantler.cli.roundtrip`` 命令，保证 PYTHONPATH 含 src。"""
+    return [sys.executable, "-m", "ui_dismantler.cli.roundtrip", *extra]
+
+
+_ROUNDTRIP_ENV = {**os.environ, "PYTHONPATH": os.path.abspath(_SRC)}
 
 
 class TestScenarioProtocol(unittest.TestCase):
@@ -182,18 +191,17 @@ class TestScenarioExecution(unittest.TestCase):
 class TestScenarioRoundtrip(unittest.TestCase):
     def test_full_matrix_scores_each_independent_state(self):
         proc = subprocess.run(
-            [
-                sys.executable,
-                str(Path(rt.__file__)),
+            _roundtrip_cmd(
                 str(SOURCE),
                 "--lib", str(LIB),
                 "--reference-mode", "rendered",
                 "--scenarios", str(SCENARIOS),
                 "--state-threshold", "0.95",
-            ],
+            ),
             capture_output=True,
             text=True,
             timeout=60,
+            env=_ROUNDTRIP_ENV,
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         report = json.loads(proc.stdout)
@@ -241,18 +249,17 @@ class TestScenarioRoundtrip(unittest.TestCase):
                 }],
             }), encoding="utf-8")
             proc = subprocess.run(
-                [
-                    sys.executable,
-                    str(Path(rt.__file__)),
+                _roundtrip_cmd(
                     str(SOURCE),
                     "--lib", str(LIB),
                     "--reference-mode", "rendered",
                     "--scenarios", str(scenario_path),
                     "--out", str(report_path),
-                ],
+                ),
                 capture_output=True,
                 text=True,
                 timeout=60,
+                env=_ROUNDTRIP_ENV,
             )
             report = json.loads(report_path.read_text(encoding="utf-8"))
         self.assertEqual(proc.returncode, 1)
@@ -273,9 +280,7 @@ class TestScenarioRoundtrip(unittest.TestCase):
                 }],
             }), encoding="utf-8")
             proc = subprocess.run(
-                [
-                    sys.executable,
-                    str(Path(rt.__file__)),
+                _roundtrip_cmd(
                     str(SOURCE),
                     "--lib", str(LIB),
                     "--reference-mode", "rendered",
@@ -283,10 +288,11 @@ class TestScenarioRoundtrip(unittest.TestCase):
                     "--manifest", str(manifest_path),
                     "--coverage-threshold", "1.0",
                     "--out", str(report_path),
-                ],
+                ),
                 capture_output=True,
                 text=True,
                 timeout=60,
+                env=_ROUNDTRIP_ENV,
             )
             report = json.loads(report_path.read_text(encoding="utf-8"))
         self.assertEqual(proc.returncode, 1)
@@ -325,17 +331,18 @@ class TestScenarioRoundtrip(unittest.TestCase):
             scenarios = json.loads(scenario_path.read_text(encoding="utf-8"))
             scenarios["scenarios"][0]["covers"] = [interaction_fingerprint(interaction)]
             scenario_path.write_text(json.dumps(scenarios), encoding="utf-8")
-            proc = subprocess.run([
-                sys.executable,
-                str(Path(rt.__file__)),
-                str(SOURCE),
-                "--lib", str(LIB),
-                "--reference-mode", "rendered",
-                "--scenarios", str(scenario_path),
-                "--manifest", str(manifest_path),
-                "--coverage-threshold", "1.0",
-                "--out", str(report_path),
-            ], capture_output=True, text=True, timeout=60)
+            proc = subprocess.run(
+                _roundtrip_cmd(
+                    str(SOURCE),
+                    "--lib", str(LIB),
+                    "--reference-mode", "rendered",
+                    "--scenarios", str(scenario_path),
+                    "--manifest", str(manifest_path),
+                    "--coverage-threshold", "1.0",
+                    "--out", str(report_path),
+                ),
+                capture_output=True, text=True, timeout=60, env=_ROUNDTRIP_ENV,
+            )
             report = json.loads(report_path.read_text(encoding="utf-8"))
         coverage = report["interaction_coverage"]
         self.assertEqual(proc.returncode, 1)

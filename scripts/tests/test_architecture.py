@@ -36,11 +36,19 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "generation/adapt_output.py",
             "validation/__init__.py",
             "validation/library.py",
+            "evaluation/__init__.py",
+            "evaluation/scenario_coverage.py",
+            "evaluation/scenario_generator.py",
+            "evaluation/roundtrip.py",
+            "evaluation/batch.py",
             "cli/__init__.py",
             "cli/analyze_html.py",
             "cli/validate_lib.py",
             "cli/generate_showcase.py",
             "cli/adapt_output.py",
+            "cli/roundtrip.py",
+            "cli/verify_all.py",
+            "cli/generate_scenarios.py",
         ):
             with self.subTest(relative=relative):
                 self.assertTrue(
@@ -127,9 +135,9 @@ class TestArchitectureBoundaries(unittest.TestCase):
 
         这是 CLI 与业务分离的关键防线：业务层应可被任何代码 import 调用，
         不能有进程级副作用（sys.exit）或参数解析（argparse）。
-        覆盖 core/ + analysis/ + generation/ + validation/ 下所有 .py。
+        覆盖 core/ + analysis/ + generation/ + validation/ + evaluation/ 下所有 .py。
         """
-        business_dirs = ["core", "analysis", "generation", "validation"]
+        business_dirs = ["core", "analysis", "generation", "validation", "evaluation"]
         forbidden = ["argparse", "sys.exit", "ap.parse_args", "def main("]
         found_any = False
         for subdir in business_dirs:
@@ -157,6 +165,43 @@ class TestArchitectureBoundaries(unittest.TestCase):
         text = bootstrap.read_text(encoding="utf-8")
         self.assertIn("def expose", text, "_bootstrap.py 必须定义 expose() 函数")
         self.assertIn("SOURCE_ROOT", text, "_bootstrap.py 必须定位 SOURCE_ROOT")
+
+    def test_legacy_scripts_entry_points_are_thin_wrappers(self):
+        """scripts/ 下的旧入口（roundtrip/verify_all/scenario_coverage/generate_scenarios）
+        必须是薄桥接，桥接到 ui_dismantler.evaluation + cli。
+
+        与 src/skill/scripts/ 的桥接是对称设计——两个旧入口目录都不能内联业务逻辑。
+        """
+        SCRIPTS_COMPAT = ROOT / "scripts"
+        # 业务 + CLI 双桥接（旧入口含 if __name__ 转发）
+        scripts_biz_cli_pairs = [
+            ("roundtrip.py", "ui_dismantler.evaluation.roundtrip", "ui_dismantler.cli.roundtrip"),
+            ("verify_all.py", "ui_dismantler.evaluation.batch", "ui_dismantler.cli.verify_all"),
+            ("generate_scenarios.py", "ui_dismantler.evaluation.scenario_generator", "ui_dismantler.cli.generate_scenarios"),
+        ]
+        for name, biz_mod, cli_mod in scripts_biz_cli_pairs:
+            path = SCRIPTS_COMPAT / name
+            self.assertTrue(path.is_file(), f"scripts/{name} 缺失")
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(name=f"scripts/{name}"):
+                self.assertIn("from _bootstrap import expose", text, f"scripts/{name} 必须用 _bootstrap.expose 桥接")
+                self.assertIn(f'expose("{biz_mod}"', text, f"scripts/{name} 必须桥接到 {biz_mod}")
+                self.assertIn(f'expose("{cli_mod}"', text, f"scripts/{name} 必须桥接到 {cli_mod}")
+                self.assertNotIn("argparse", text, f"scripts/{name} 桥接不应含 argparse")
+
+        # 纯业务桥接（scenario_coverage 无 CLI，只透出符号）
+        sc_compat = SCRIPTS_COMPAT / "scenario_coverage.py"
+        self.assertTrue(sc_compat.is_file(), "scripts/scenario_coverage.py 缺失")
+        sc_text = sc_compat.read_text(encoding="utf-8")
+        with self.subTest(name="scripts/scenario_coverage.py"):
+            self.assertIn("from _bootstrap import expose", sc_text)
+            self.assertIn('expose("ui_dismantler.evaluation.scenario_coverage"', sc_text)
+
+        # scripts/ 必须有自己的 _bootstrap.py
+        scripts_bootstrap = SCRIPTS_COMPAT / "_bootstrap.py"
+        self.assertTrue(scripts_bootstrap.is_file(), "scripts/_bootstrap.py 缺失")
+        sb_text = scripts_bootstrap.read_text(encoding="utf-8")
+        self.assertIn("def expose", sb_text, "scripts/_bootstrap.py 必须定义 expose()")
 
     def test_core_common_is_not_empty(self):
         """core/common.py 不能是空壳——它是 _common.py 的规范归宿。"""
