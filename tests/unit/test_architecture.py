@@ -35,6 +35,8 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "quality/knowledge/loader.py",
             "quality/knowledge/profiles.py",
             "quality/detection/static.py",
+            "quality/observation/render.py",
+            "cli/observe_quality_render.py",
             "cli/inspect_quality.py",
             "cli/manifest_to_uiir.py",
         ):

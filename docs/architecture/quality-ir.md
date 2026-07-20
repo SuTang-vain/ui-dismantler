@@ -11,4 +11,13 @@ python3 -m ui_dismantler.cli.inspect_quality page.uiir.json \
   --profile web-base -o quality-findings.json
 ```
 
-首批检测器覆盖 icon button 名称、表单标签、ARIA 引用、Tab/TabPanel 引用及图片 alt。视觉系统规则仍需 Render Observation（geometry/computed styles）后才启用。
+首批检测器覆盖 icon button 名称、表单标签、ARIA 引用、Tab/TabPanel 引用及图片 alt。
+
+最小 Render Observation 采集器可在本地 HTML 上按 UI-IR 的显式 selector/id，针对最多 8 个 viewport 采集 geometry、可见性、viewport clipping 与受控 computed-style 白名单。它阻断 HTTP(S) 请求，不执行任意用户脚本参数，Playwright 不可用时只返回 warning：
+
+```bash
+python3 -m ui_dismantler.cli.observe_quality_render page.html page.uiir.json \
+  --viewport wise:390x844 -o page.render.json
+```
+
+系统视觉规则尚未启用；下一阶段应先为 contrast、overflow 和 click-target 建立确定性检测与缺陷注入基准。

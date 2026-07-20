@@ -6,6 +6,7 @@ import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
+from ui_dismantler.quality.observation import observe_render, targets_from_uiir
 from ui_dismantler.quality.schema import (
     validate_guideline, validate_profile, validate_render_observation,
     validate_repair_proposal, validate_verification_result,
@@ -113,6 +114,37 @@ class TestStaticInspection(unittest.TestCase):
         self.assertEqual(base_report["findings"], material_report["findings"])
         self.assertNotEqual(base_report["profile"]["guidelineIds"], material_report["profile"]["guidelineIds"])
         self.assertEqual(uiir, original)
+
+
+class TestRenderObservation(unittest.TestCase):
+    def test_targets_only_use_explicit_uiir_references(self):
+        uiir = document([
+            ("element:action", {"id": "action", "role": "button"}),
+            ("element:wide", {"selector": "#wide"}),
+            ("element:prose", {"text": "do not guess this as a selector"}),
+        ])
+        self.assertEqual(targets_from_uiir(uiir), [
+            {"targetKey": "element:action", "selector": "#action"},
+            {"targetKey": "element:wide", "selector": "#wide"},
+        ])
+
+    def test_render_observation_enforces_resource_budgets(self):
+        with self.assertRaisesRegex(ValueError, "max_targets"):
+            observe_render(FIXTURES / "render.html", [], max_targets=0)
+        with self.assertRaisesRegex(ValueError, "between 1 and 8"):
+            observe_render(FIXTURES / "render.html", [], viewports=[{"id": str(i), "width": 300, "height": 300} for i in range(9)])
+
+    def test_missing_playwright_is_a_non_blocking_warning(self):
+        report, warnings = observe_render(FIXTURES / "render.html", [{"targetKey": "element:action", "selector": "#action"}], viewports=[{"id": "wise", "width": 390, "height": 844}])
+        self.assertEqual(report["format"], "render-observation")
+        self.assertEqual(report["viewports"][0]["id"], "wise")
+        if report["browser"] is None:
+            self.assertTrue(warnings)
+            self.assertEqual(report["observations"], [])
+        else:
+            self.assertEqual(warnings, [])
+            self.assertEqual(report["observations"][0]["targetKey"], "element:action")
+            self.assertEqual(report["observations"][0]["bounds"]["height"], 44)
 
 if __name__ == "__main__":
     unittest.main()
