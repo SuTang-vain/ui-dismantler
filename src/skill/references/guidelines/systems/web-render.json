@@ -173,5 +173,38 @@
       "profile": "web-base",
       "reference": "WCAG 2.2 2.1.1 diagnostic; managed composite descendants are skipped pending arrow-key behavior evidence"
     }
+  },
+  {
+    "id": "system.web.tab-order.positive",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "keyboard",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-positive-tabindex"
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "keyboard-order",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 2.4.3 diagnostic; positive tabindex can override meaningful DOM focus order"
+    }
   }
 ]

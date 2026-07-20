@@ -6,7 +6,7 @@ from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
 from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -126,6 +126,19 @@ def inspect_render_findings(
                         "compositeRole": keyboard.get("compositeRole"),
                     },
                 ))
+            elif detector == "render-positive-tabindex":
+                if observation.get("disabled"):
+                    continue
+                keyboard = observation.get("keyboardContext")
+                if not isinstance(keyboard, dict):
+                    continue
+                tab_index = keyboard.get("tabIndex")
+                if isinstance(tab_index, int) and not isinstance(tab_index, bool) and tab_index > 0:
+                    findings.append(_finding(
+                        guideline, observation,
+                        "Positive tabindex overrides the document's natural sequential focus order",
+                        {"tabIndex": tab_index},
+                    ))
             elif detector == "render-text-contrast":
                 if not str(observation.get("textContent") or "").strip():
                     continue

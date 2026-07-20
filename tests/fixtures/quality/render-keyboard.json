@@ -15,6 +15,10 @@
     {
       "targetKey": "element:keyboard-tab-inactive",
       "selector": "#keyboard-tab-inactive"
+    },
+    {
+      "targetKey": "element:tabindex-positive",
+      "selector": "#tabindex-positive"
     }
   ],
   "viewports": [
@@ -152,6 +156,61 @@
         "focusVisible": false,
         "before": [],
         "after": []
+      }
+    },
+    {
+      "targetKey": "element:tabindex-positive",
+      "selector": "#tabindex-positive",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "button",
+      "role": "",
+      "interactive": true,
+      "disabled": false,
+      "textContent": "Priority action",
+      "accessibleName": "Priority action",
+      "bounds": {
+        "x": 0,
+        "y": 160,
+        "width": 120,
+        "height": 32
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "keyboardContext": {
+        "sequentiallyFocusable": true,
+        "tabIndex": 3,
+        "managedComposite": false,
+        "compositeRole": ""
+      },
+      "focusContext": {
+        "focusable": true,
+        "focused": true,
+        "focusVisible": true,
+        "before": [
+          {
+            "scope": "target",
+            "style": {
+              "outlineStyle": "none",
+              "outlineWidth": "0px",
+              "outlineColor": "rgba(0,0,0,0)"
+            }
+          }
+        ],
+        "after": [
+          {
+            "scope": "target",
+            "style": {
+              "outlineStyle": "solid",
+              "outlineWidth": "2px",
+              "outlineColor": "rgb(0,95,204)"
+            }
+          }
+        ]
       }
     }
   ]

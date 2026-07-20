@@ -238,6 +238,7 @@ class TestRenderFindings(unittest.TestCase):
             ("element:keyboard-bad", {"id":"keyboard-bad","role":"button","text":"Keyboard bad"}),
             ("element:keyboard-good", {"id":"keyboard-good","role":"button","text":"Keyboard good"}),
             ("element:keyboard-tab-inactive", {"id":"keyboard-tab-inactive","role":"tab","text":"Inactive tab"}),
+            ("element:tabindex-positive", {"id":"tabindex-positive","role":"button","text":"Priority action"}),
         ])
         render, warnings = observe_render(
             FIXTURES / "render.html", targets_from_uiir(uiir),
@@ -248,6 +249,8 @@ class TestRenderFindings(unittest.TestCase):
         report = inspect_uiir(uiir, self.profile, render)
         findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.keyboard-reachable"]
         self.assertEqual([item["targetKey"] for item in findings], ["element:keyboard-bad"])
+        tab_order = [item for item in report["findings"] if item["guidelineId"] == "system.web.tab-order.positive"]
+        self.assertEqual([item["targetKey"] for item in tab_order], ["element:tabindex-positive"])
         self.assertIn({"guidelineId":"system.web.keyboard-reachable","targetKey":"element:keyboard-tab-inactive","viewportKey":"desktop","reason":"managed-composite-focus"}, report["diagnostics"]["renderSkipped"])
 
     def test_hidden_and_disabled_targets_do_not_produce_findings(self):
@@ -312,12 +315,25 @@ class TestRenderFindings(unittest.TestCase):
             ("element:keyboard-bad", {"id":"keyboard-bad","role":"button","text":"Keyboard bad"}),
             ("element:keyboard-good", {"id":"keyboard-good","role":"button","text":"Keyboard good"}),
             ("element:keyboard-tab-inactive", {"id":"keyboard-tab-inactive","role":"tab","text":"Inactive tab"}),
+            ("element:tabindex-positive", {"id":"tabindex-positive","role":"button","text":"Priority action"}),
         ])
         report = inspect_uiir(uiir, self.profile, fixture("render-keyboard.json"))
         findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.keyboard-reachable"]
         self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in findings], [("element:keyboard-bad", "desktop")])
         self.assertEqual(findings[0]["evidence"][0]["observed"]["tabIndex"], -1)
         self.assertIn({"guidelineId":"system.web.keyboard-reachable","targetKey":"element:keyboard-tab-inactive","viewportKey":"desktop","reason":"managed-composite-focus"}, report["diagnostics"]["renderSkipped"])
+
+    def test_positive_tabindex_reports_local_order_risk(self):
+        uiir = document([
+            ("element:keyboard-bad", {"id":"keyboard-bad","role":"button","text":"Keyboard bad"}),
+            ("element:keyboard-good", {"id":"keyboard-good","role":"button","text":"Keyboard good"}),
+            ("element:keyboard-tab-inactive", {"id":"keyboard-tab-inactive","role":"tab","text":"Inactive tab"}),
+            ("element:tabindex-positive", {"id":"tabindex-positive","role":"button","text":"Priority action"}),
+        ])
+        report = inspect_uiir(uiir, self.profile, fixture("render-keyboard.json"))
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.tab-order.positive"]
+        self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in findings], [("element:tabindex-positive", "desktop")])
+        self.assertEqual(findings[0]["evidence"][0]["observed"], {"tabIndex": 3})
 
     def test_static_only_inspection_ignores_render_rules(self):
         report = inspect_uiir(self.uiir, self.profile)
