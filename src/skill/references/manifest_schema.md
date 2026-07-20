@@ -1,6 +1,6 @@
 # manifest.json 字段定义（manifest_schema.md）
 
-`analyze_html.py` 的输出、`generate_lib.py` 的输入。这是 HTML 与组件库之间的标准化中间契约。
+`analyze_html.py` 的输出。这是 HTML 的标准化中间契约，供 agent 拆解时参考（结构化主题色/结构/数据清单）。
 
 ## 顶层结构
 
@@ -29,7 +29,7 @@
 | `source` | string | 是 | 源 HTML 绝对路径 |
 | `title` | string | 是 | `<title>` 文本 |
 | `templateId` | string | 否 | `data-dudesign-template` 属性值 |
-| `vertical` | string | 否 | 垂类名（由 `--vertical` 传入或从父目录推断） |
+| `vertical` | string | 否 | manifest v1 兼容字段，记录可选领域上下文；新调用使用 `--profile`，`--vertical` 仅为兼容别名。该字段不参与核心识别分支 |
 | `caseName` | string | 否 | 案例名（slug 化，用于命名库） |
 | `canvas` | object | 是 | 见下 |
 
@@ -58,7 +58,7 @@
     {
       "name": "primary",          // 归一化后的 sg- 名（不含前缀）
       "value": "#6487FA",
-      "original": "--primary",    // 原变量名（可为 null）
+      "original": "--primary",    // 原变量名，或 tailwind.colors.primary
       "usage": ["选中描边","激活态","主按钮"]
     }
   ],
@@ -73,6 +73,9 @@
 ```
 
 `tokens[].usage` 由扫描该变量在 CSS 规则中的出现选择器推断（取前 5 个去重）。
+对于 Tailwind CDN 页面，分析器还会读取静态 `tailwind.config` 中的
+`theme.extend.colors` 颜色叶子，并通过页面 utility class 推断 `usage` 与 `roles`；
+不会执行配置代码或请求远程资源。
 
 ---
 
@@ -97,7 +100,20 @@
 | `detail-panel` | 详情面板 | `hasKicker`, `rowSelector` |
 | `timeline` | 时间线 | `scrollSnap`, `perPage`, `dualArrowStrategy`, `hasDots`, `hasPageLabel` |
 | `carousel-3d` | 3D 中心聚焦轮播 | `perspective`, `positions[]`, `hasStoryPanel` |
+| `quiz` | 问答测试 | `questionCount`, `hasFeedback`, `hasResult`, `hasProgressBar`, `optionsSelector` |
+| `comparison` | 对比辨析（双栏 real/alt） | `columns[]`(`{side,label}`), `hasPopup` |
+| `splash` | 开场解锁屏 | `hasQuestion`, `hasOptions`, `ctaSelector`, `ctaText` |
 | `generic` | 未识别 | `note` |
+
+### modal.layout 枚举
+
+| layout | 说明 |
+|---|---|
+| `image-text` | 图片+文本 |
+| `relation-list` | 关系列表（标签:值行） |
+| `fact-grid` | 事实网格 |
+| `comparison` | 对比辨析（whatif real/alt 双栏） |
+| `generic` | 未识别 |
 
 ---
 
@@ -145,9 +161,14 @@
   { "type": "select", "trigger": "click", "target": ".member", "action": "selectMember", "sideEffect": "updateDetailPanel" },
   { "type": "autoplay", "target": "members", "interval": 3000, "stopOn": ["click","touchstart"] },
   { "type": "modal-open", "trigger": "click", "target": "#tab-more", "action": "openModal" },
-  { "type": "modal-close", "trigger": ["click","keydown:Escape"], "target": ".modal-overlay" }
+  { "type": "modal-close", "trigger": ["click","keydown:Escape"], "target": ".modal-overlay" },
+  { "type": "explicit-handler", "trigger": "click", "target": "#tab-register", "handler": "switchTab", "action": "switch-tab" }
 ]
 ```
+
+`explicit-handler` 来自 DOM 中明确声明的 `onclick`、`onsubmit`、`oninput`、
+`onchange`、`onkeydown` 或 `onkeyup`。它记录稳定 selector 和 handler 名，不执行
+handler，也不推断未显式绑定的业务行为。
 
 ---
 

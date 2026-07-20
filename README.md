@@ -23,6 +23,25 @@ Agent（主控）─────────────────────
 - **工具做确定性提取和校验**：颜色解析、CSS 拆分、约束校验、往返测试
 - **往返测试当裁判**：agent 产出的库必须通过往返测试，低分则修订
 
+通用化分支将领域信息降级为可选 `profile`，视图识别由可注册 detector 完成。Detector 同时给出中立结构类型、语义类型、置信度和证据；manifest v1 输出保持兼容。
+
+**已识别范式**（10 种，按注册顺序）：
+
+| 范式 | structural_type | 识别信号 | 典型案例 |
+|---|---|---|---|
+| `carousel-3d` | collection | carousel 位置类 + perspective | BLACKPINK 作品轮播 |
+| `cause-chain` | sequence | timeline-nav + causeChain/whatIf 数据 | 黄月英、奢香夫人 |
+| `nav-panel` | content-region | nav + ≥2 triggers (data-p/data-tab) + ≥2 panels | 纸上谈兵 |
+| `graph` | collection | svg 连线 / node 类名 + 图谱 JS 数据 | 庆余年、谢天子关系图 |
+| `timeline` | sequence | timeline/tl-item 类名 | 明星组合时间线 |
+| `member-grid` | collection | member-grid/member-list 类名 | BLACKPINK 成员网格 |
+| `detail-panel` | content-region | detail-panel/aria-live:polite | 资料面板 |
+| `quiz` | form | qz-body/quiz/opt 类名 | 问答测试 |
+| `comparison` | content-region | whatif-card/cmp-btn 类名 | 对比辨析 |
+| `splash` | overlay | splash-cta/splash-opt 类名 | 开场解锁屏 |
+
+cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_analyze_views` 会对 body 整体跑 detector，命中后作为唯一 view 返回。其余 7 种是 panel 级范式。
+
 ## 产出标准
 
 对标手工拆解的 `明星组合/组件库`（2613 行，完整 A11y + 设计令牌 + 数据驱动）：
@@ -49,7 +68,8 @@ Agent（主控）─────────────────────
 |---|---|
 | `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
 | `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
-| `scripts/roundtrip.py` | 往返等价度（原 HTML ⇄ 库渲染 DOM，量化"忠于原 HTML"程度） |
+| `scripts/roundtrip.py` | 往返等价度（原页面运行后 DOM ⇄ 库渲染 DOM；失败回退会显式报告） |
+| `scripts/generate_scenarios.py` | 从 manifest 生成待审阅的交互场景候选 |
 | `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
 | `node --check` | JS 语法检查 |
 
@@ -63,28 +83,32 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 113 个单元测试覆盖边界（`python3 scripts/tests/run.py`）。
+工具层有 276 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵、交互状态矩阵和架构守护断言。
+
+交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
+manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告声明、执行和已验证三层 `interaction_coverage`；显式传入 `--coverage-threshold` 后，`verifiedCoverage.rate` 不足会阻断门禁。
 
 ## 当前能力与基线
 
 | 案例 | 结构 | 文本 | 综合 | 状态 |
 |---|---|---|---|---|
-| BLACKPINK（v1 链路）| 0.952 | 0.838 | 0.895 | ✅ 支持范式 |
-| 手工标杆（明星组合）| 0.952 | 0.865 | 0.908 | ✅ gold standard |
-| 子代理产出（部分）| 0.952 | 0.892 | 0.922 | ✅ 超标杆，验证 agent 路线 |
-| 黄月英（因果链）| 0.000 | 0.062 | 0.031 | ❌ 未支持范式 |
-| 纸上谈兵（nav+panel）| 0.000 | 0.111 | 0.056 | ❌ 未支持范式 |
+| BLACKPINK v10（运行态参照）| 0.995 | 0.990 | 0.992 | ✅ 主通用质量基线 |
+| BLACKPINK v10（历史静态参照）| 0.965 | 0.892 | 0.928 | ✅ 兼容性基线 |
+| 手工标杆（明星组合）| 0.952 | 0.865 | 0.908 | ✅ agent 产出超标杆 |
+| 黄月英（因果链）| - | - | - | ✅ 范式已识别（cause-chain detector，待 agent 拆解产出组件库） |
+| 纸上谈兵（nav+panel）| - | - | - | ✅ 范式已识别（nav-panel detector，待 agent 拆解产出组件库） |
 
-未支持范式靠 agent 拆解提升（agent 理解因果链/nav-panel 结构，不走 v1 generic 兜底）。
+> v1 链路（generate_lib 模板）的 baseline 已归档至 `docs/baselines/archive-v1/`，不可复现。
+> 运行态主基线：`docs/baselines/roundtrip_blackpink_v10_rendered.json`；历史静态兼容基线：`roundtrip_blackpink_v10_agent.json`。
+> cause-chain/nav-panel/graph 三种页面级范式已由可注册 detector 识别（含 ViewContext.scripts 检查 JS 数据契约），不再依赖 agent 兜底。剩余案例待 agent 产出组件库后跑 roundtrip 验证。
 
 ## 目录
 
 ```
-src/skill/              ZCode Skill（SKILL.md + scripts + references + assets 模板）
+src/skill/              ZCode Skill（SKILL.md + scripts + references）
   ├── SKILL.md          agent 驱动拆解指南（5 步工作流 + 自检决策表）
-  ├── scripts/          工具脚本（analyze/validate/aggregate + _common.py）
-  ├── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
-  └── assets/templates/ Jinja2 模板（v1 generate_lib 用，agent 驱动后退役）
+  ├── scripts/          工具脚本（analyze/validate + _common.py）
+  └── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
 examples/cases/         案例样本（blackpink / huang-yueying / zhishang-tanbing）
 scripts/                roundtrip + verify_all + tests
 docs/                   ROADMAP + baselines
@@ -104,6 +128,9 @@ python3 src/skill/scripts/validate_lib.py <组件库目录>
 
 # 3. 往返等价度
 python3 scripts/roundtrip.py examples/cases/blackpink/original.html --lib <组件库目录>
+
+# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
+python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
 
 # 4. 批量回归验证
 python3 scripts/verify_all.py

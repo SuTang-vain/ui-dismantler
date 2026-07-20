@@ -1,0 +1,414 @@
+"""test_analyze_views.py - analyze_html.py 视图分类单元测试
+
+覆盖：
+- _classify_view 新增视图类型：quiz / comparison / splash
+- _extract_view_details 对应字段提取
+- _classify_modal_layout 的 comparison（whatif 形态）
+- 回归：已有类型（member-grid/timeline/carousel-3d/detail-panel）不误判
+
+运行：python3 scripts/tests/test_analyze_views.py
+"""
+
+import os
+import sys
+import tempfile
+import unittest
+
+# 让脚本能 import src/skill/scripts/analyze_html.py
+_SKILL_SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "..", "src", "skill", "scripts")
+sys.path.insert(0, os.path.abspath(_SKILL_SCRIPTS))
+
+from analyze_html import HtmlAnalyzer  # noqa: E402
+from view_detectors import (  # noqa: E402
+    ViewDetection, ViewDetector, default_view_detector_registry,
+)
+
+
+def _make_analyzer(body_html: str, css: str = "") -> HtmlAnalyzer:
+    """构造一个最小 HTML 文件并返回 HtmlAnalyzer 实例。"""
+    full = f"""<!doctype html><html><head><meta charset="utf-8">
+<title>test</title><style>{css}</style></head>
+<body>{body_html}</body></html>"""
+    fd, path = tempfile.mkstemp(suffix=".html")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(full)
+    return HtmlAnalyzer(path)
+
+
+class TestClassifyViewNewTypes(unittest.TestCase):
+    """_classify_view 对新视图类型的识别。"""
+
+    def test_quiz_recognized_by_qz_prefix(self):
+        html = '<section class="panel" id="quiz"><div class="qz-top"></div><div class="qz-body"><div class="qt">题干</div><div class="opts"></div></div><div class="qz-next"></div><div class="qz-result"></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="quiz")
+        self.assertEqual(a._classify_view(node), "quiz")
+
+    def test_quiz_recognized_by_opt_and_qt(self):
+        html = '<section class="panel" id="quiz"><div class="q-title">题</div><div class="opt" data-k="1"></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="quiz")
+        self.assertEqual(a._classify_view(node), "quiz")
+
+    def test_comparison_recognized_by_whatif(self):
+        html = '<section class="panel" id="cmp"><div class="whatif-card real">史实</div><div class="whatif-card alt">如果没发生</div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="cmp")
+        self.assertEqual(a._classify_view(node), "comparison")
+
+    def test_comparison_recognized_by_cmp_btn(self):
+        html = '<section class="panel" id="cmp"><button class="cmp-btn k1">维度1</button><button class="cmp-btn k2">维度2</button></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="cmp")
+        self.assertEqual(a._classify_view(node), "comparison")
+
+    def test_splash_recognized_by_cta_and_options(self):
+        html = '<section class="panel" id="splash"><div class="splash-cta">开始解锁</div><div class="splash-opt" data-v="1">选项</div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="splash")
+        self.assertEqual(a._classify_view(node), "splash")
+
+
+class TestExtractViewDetails(unittest.TestCase):
+    """新视图类型的字段提取。"""
+
+    def test_quiz_fields(self):
+        html = '''<section class="panel" id="quiz">
+          <div class="qz-top"><div class="bar"></div></div>
+          <div class="qz-body">
+            <div class="qt">题干1</div><div class="opts"><div class="opt" data-k="0">A</div></div>
+            <div class="qz-fb">反馈</div>
+          </div>
+          <div class="qz-next">下一题</div>
+          <div class="qz-result">结果</div>
+        </section>'''
+        a = _make_analyzer(html)
+        node = a.soup.find(id="quiz")
+        details = a._extract_view_details(node, "quiz")
+        self.assertGreaterEqual(details["questionCount"], 1)
+        self.assertTrue(details["hasFeedback"])
+        self.assertTrue(details["hasResult"])
+        self.assertTrue(details["hasProgressBar"])
+        self.assertEqual(details["optionsSelector"], ".opt")
+
+    def test_comparison_fields_whatif(self):
+        html = '<section class="panel" id="cmp"><div class="whatif-card real">史实A</div><div class="whatif-card alt">如果B</div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="cmp")
+        details = a._extract_view_details(node, "comparison")
+        sides = [c["side"] for c in details["columns"]]
+        self.assertIn("real", sides)
+        self.assertIn("alt", sides)
+
+    def test_splash_fields(self):
+        html = '<section class="panel" id="splash"><div class="splash-question">问题</div><div class="splash-cta">开始</div><div class="splash-opt" data-v="1">x</div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="splash")
+        details = a._extract_view_details(node, "splash")
+        self.assertTrue(details["hasQuestion"])
+        self.assertTrue(details["hasOptions"])
+        self.assertEqual(details["ctaSelector"], ".splash-cta")
+        self.assertIn("开始", details["ctaText"])
+
+
+class TestClassifyModalLayoutComparison(unittest.TestCase):
+    """_classify_modal_layout 对 whatif 形态的 comparison 识别。"""
+
+    def test_whatif_modal_is_comparison(self):
+        html = '<div class="modal-overlay" id="whatifOverlay"><div class="whatif-modal"><div class="whatif-card real">史实</div><div class="whatif-card alt">如果</div></div></div>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="whatifOverlay")
+        self.assertEqual(a._classify_modal_layout(node, "modal-overlay"), "comparison")
+
+
+class TestPageLevelPatternRecognition(unittest.TestCase):
+    """页面级范式（cause-chain/nav-panel/graph）的全屏识别 + details 提取。
+
+    这些范式无法在单个 panel 上识别（需要全局视角），_analyze_views
+    改造后会对 body 整体跑 detector，命中后作为唯一 view 返回。
+    """
+
+    def test_cause_chain_page_recognized_with_details(self):
+        """黄月英类页面：timeline-nav + causeChain -> cause-chain + details。"""
+        html = '''<body>
+<div class="timeline-nav"><button data-p="c1">事件1</button><button data-p="c2">事件2</button></div>
+<div class="cause-chain">因果链</div>
+<button class="whatif-btn">假设</button>
+<script>var causeChain=[{cause:'a',effect:'b'}]; var whatIf={};</script>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "cause-chain")
+        self.assertTrue(views[0]["hasTimelineNav"])
+        self.assertTrue(views[0]["hasCauseChainData"])
+        self.assertTrue(views[0]["hasWhatIf"])
+
+    def test_nav_panel_page_recognized_with_triggers(self):
+        """纸上谈兵类页面：nav + triggers + panels -> nav-panel + details。"""
+        html = '''<body>
+<nav><button data-p="p1">Tab1</button><button data-p="p2">Tab2</button>
+<button data-p="p3">Tab3</button><button data-p="p4">Tab4</button></nav>
+<div class="panel" id="p1">P1</div><div class="panel" id="p2">P2</div>
+<div class="panel" id="p3">P3</div><div class="panel" id="p4">P4</div>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "nav-panel")
+        self.assertEqual(views[0]["triggerCount"], 4)
+        self.assertEqual(views[0]["panelCount"], 4)
+        self.assertEqual(len(views[0]["triggers"]), 4)
+
+    def test_graph_page_recognized_with_data_source(self):
+        """庆余年类页面：数据驱动 graph -> graph + dataSource。"""
+        html = '''<body>
+<div id="mount"></div>
+<script>CharStoryGraph.mount(el, {relTypes:{family:'血缘'}});</script>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "graph")
+        self.assertEqual(views[0]["dataSource"], "mount-options")
+
+    def test_panel_page_not_overridden_by_page_level(self):
+        """有 panel 且非页面级范式时，仍走 panel 级识别。"""
+        html = '<section class="panel" id="m"><div class="member-grid"><div class="member"></div></div></section>'
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        # member-grid 是 panel 级范式，不应被页面级兜底覆盖
+        types = [v["type"] for v in views]
+        self.assertIn("member-grid", types)
+        self.assertNotIn("cause-chain", types)
+        self.assertNotIn("nav-panel", types)
+
+    def test_minimal_mode_skips_page_level_detection(self):
+        """--minimal 模式不跑页面级范式检测（快速模式）。"""
+        html = '<body><div class="timeline-nav"></div><div class="cause-chain"></div></body>'
+        # minimal 通过构造函数传入，analyze() 不带参数
+        full = f"""<!doctype html><html><head><meta charset="utf-8">
+<title>test</title></head><body>{html}</body></html>"""
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(full)
+        a = HtmlAnalyzer(path, minimal=True)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        # minimal 模式下应为空（不跑 detect_view）
+        self.assertEqual(len(views), 0)
+
+
+class TestNoRegressionOnExistingTypes(unittest.TestCase):
+    """回归：已有视图类型不被新分支误判。"""
+
+    def test_member_grid_not_misclassified(self):
+        html = '<section class="panel" id="m"><div class="member-grid"><div class="member"><img></div></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="m")
+        self.assertEqual(a._classify_view(node), "member-grid")
+
+    def test_timeline_not_misclassified(self):
+        html = '<section class="panel" id="t"><div class="timeline"><div class="tl-item"><time>2016</time></div></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="t")
+        self.assertEqual(a._classify_view(node), "timeline")
+
+    def test_detail_panel_not_misclassified(self):
+        html = '<section class="panel" id="d" aria-live="polite"><div class="detail-panel"></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="d")
+        self.assertEqual(a._classify_view(node), "detail-panel")
+
+    def test_truly_unknown_still_generic(self):
+        """完全陌生的结构仍兜底 generic。"""
+        html = '<section class="panel" id="x"><div class="unknown-widget"><p>hello</p></div></section>'
+        a = _make_analyzer(html)
+        node = a.soup.find(id="x")
+        self.assertEqual(a._classify_view(node), "generic")
+
+
+class TestViewDetectorRegistry(unittest.TestCase):
+    """语义 detector 可扩展，同时不污染其他分析器实例。"""
+
+    def test_detection_exposes_structure_confidence_and_evidence(self):
+        html = '<section class="panel" id="t"><div class="timeline"><time>2016</time></div></section>'
+        a = _make_analyzer(html)
+        result = a.detect_view(a.soup.find(id="t"))
+        self.assertEqual(result.semantic_type, "timeline")
+        self.assertEqual(result.structural_type, "sequence")
+        self.assertGreater(result.confidence, 0.5)
+        self.assertTrue(result.evidence)
+
+    def test_custom_detector_can_precede_builtin_detector(self):
+        registry = default_view_detector_registry()
+
+        def detect_featured(context):
+            if "featured-members" in context.html:
+                return ViewDetection(
+                    semantic_type="featured-collection",
+                    structural_type="collection",
+                    confidence=0.99,
+                    evidence=("class:featured-members",),
+                )
+            return None
+
+        registry.register(
+            ViewDetector("featured-collection", detect_featured),
+            before="member-grid",
+        )
+        html = '<section class="panel" id="m"><div class="featured-members member-grid"></div></section>'
+        full = f'<!doctype html><html><body>{html}</body></html>'
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(full)
+        a = HtmlAnalyzer(path, detector_registry=registry)
+        self.assertEqual(a._classify_view(a.soup.find(id="m")), "featured-collection")
+
+    def test_default_registries_do_not_share_mutations(self):
+        first = default_view_detector_registry()
+        second = default_view_detector_registry()
+        first.register(ViewDetector("custom", lambda context: None))
+        self.assertIn("custom", [item.name for item in first.detectors])
+        self.assertNotIn("custom", [item.name for item in second.detectors])
+
+    def test_duplicate_detector_name_is_rejected(self):
+        registry = default_view_detector_registry()
+        with self.assertRaises(ValueError):
+            registry.register(ViewDetector("timeline", lambda context: None))
+
+
+class TestProfileCompatibility(unittest.TestCase):
+    """profile 是中立输入，vertical 仅作为 manifest v1 兼容别名。"""
+
+    def test_profile_populates_legacy_vertical_field(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        a = HtmlAnalyzer(path, profile="knowledge-page")
+        self.assertEqual(a._analyze_meta()["vertical"], "knowledge-page")
+
+    def test_vertical_constructor_argument_remains_supported(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        a = HtmlAnalyzer(path, vertical="legacy-domain")
+        self.assertEqual(a.profile, "legacy-domain")
+        self.assertEqual(a._analyze_meta()["vertical"], "legacy-domain")
+
+    def test_conflicting_profile_and_vertical_are_rejected(self):
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("<!doctype html><html><title>x</title></html>")
+        with self.assertRaises(ValueError):
+            HtmlAnalyzer(path, vertical="legacy", profile="generic")
+
+    def test_detection_requires_evidence(self):
+        with self.assertRaises(ValueError):
+            ViewDetection(
+                semantic_type="collection",
+                structural_type="collection",
+                confidence=0.8,
+                evidence=(),
+            )
+
+
+class TestLocalResourceAnalysis(unittest.TestCase):
+    """静态分析应观察站点共享的本地 CSS/JS 资源。"""
+
+    def test_site_root_resources_are_included_without_network_access(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = os.path.abspath(temp_dir)
+            page_dir = os.path.join(root, "projects", "demo")
+            shared_dir = os.path.join(root, "shared")
+            os.makedirs(page_dir)
+            os.makedirs(shared_dir)
+            with open(os.path.join(shared_dir, "nav.css"), "w", encoding="utf-8") as f:
+                f.write(":root { --brand: #ad2c0d; } .shared-nav { color: var(--brand); }")
+            with open(os.path.join(shared_dir, "nav.js"), "w", encoding="utf-8") as f:
+                f.write("document.body.dataset.shared = 'yes';")
+            html_path = os.path.join(page_dir, "index.html")
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write("""<!doctype html><html><head>
+                <link rel="stylesheet" href="/shared/nav.css?v=1">
+                <link rel="stylesheet" href="https://cdn.example/remote.css">
+                </head><body><nav class="shared-nav">Shared</nav>
+                <script src="/shared/nav.js?v=1"></script>
+                <script src="/shared/missing.js"></script></body></html>""")
+
+            analyzer = HtmlAnalyzer(html_path)
+
+        self.assertIn("--brand", analyzer.css)
+        self.assertTrue(any("dataset.shared" in script for script in analyzer.scripts))
+        self.assertTrue(any("missing.js" in warning for warning in analyzer.warnings))
+        self.assertNotIn("remote.css", analyzer.css)
+
+
+class TestTailwindAndExplicitInteractions(unittest.TestCase):
+    def test_tailwind_colors_are_extracted_with_usage(self):
+        html = '''<!doctype html><html><head>
+        <script>tailwind.config = { theme: { extend: { colors: {
+          primary: "#ad2c0d", "surface-container": "#ffe9e4",
+          nested: { strong: "#123456" }
+        }}}};</script></head><body>
+        <button class="bg-primary text-surface-container">进入</button>
+        <div class="text-nested-strong"></div>
+        </body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        analyzer = HtmlAnalyzer(path)
+        manifest = analyzer.analyze()
+        tokens = {token["original"]: token for token in manifest["theme"]["tokens"]}
+
+        self.assertEqual(tokens["tailwind.colors.primary"]["value"], "#ad2c0d")
+        self.assertIn("background", tokens["tailwind.colors.primary"]["roles"])
+        self.assertIn("text", tokens["tailwind.colors.surface-container"]["roles"])
+        self.assertTrue(tokens["tailwind.colors.nested.strong"]["usage"])
+
+    def test_explicit_handlers_and_auth_tabs_are_observed(self):
+        html = '''<!doctype html><html><body>
+        <div class="auth-tabs">
+          <button id="login" class="auth-tab active" onclick="switchTab('login')">登录</button>
+          <button id="register" class="auth-tab" onclick="switchTab('register')">注册</button>
+        </div>
+        <form id="auth" onsubmit="handleLogin()"><input oninput="syncValue()"></form>
+        </body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        analyzer = HtmlAnalyzer(path)
+        manifest = analyzer.analyze()
+
+        self.assertEqual([tab["id"] for tab in manifest["structure"]["tabs"]], ["login", "register"])
+        handlers = manifest["interactions"]
+        self.assertTrue(any(item.get("action") == "switch-tab" and item.get("target") == "#register" for item in handlers))
+        self.assertTrue(any(item.get("trigger") == "submit" and item.get("action") == "submit-login" for item in handlers))
+        self.assertTrue(any(item.get("trigger") == "input" and item.get("handler") == "syncValue" for item in handlers))
+
+    def test_static_event_listeners_expose_resolvable_targets(self):
+        html = '''<!doctype html><html><body><input id="search-input"><div id="profile"></div>
+        <script>
+          var input = document.getElementById('search-input');
+          input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitSearch(); });
+          var profile = document.querySelector('#profile');
+          var trigger = profile.firstElementChild;
+          trigger.addEventListener('click', openProfile);
+          document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeProfile(); });
+        </script></body></html>'''
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html)
+        interactions = HtmlAnalyzer(path).analyze()["interactions"]
+
+        self.assertTrue(any(item.get("target") == "#search-input" and item.get("action") == "handle-keyboard:enter" for item in interactions))
+        self.assertTrue(any(item.get("target") == "#profile > *" and item.get("trigger") == "click" for item in interactions))
+        self.assertTrue(any(item.get("target") == "document" and item.get("action") == "handle-keyboard:escape" for item in interactions))
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

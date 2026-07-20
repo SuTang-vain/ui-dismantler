@@ -1,1 +1,17 @@
-{"name":"ui-dismantler","private":true,"type":"module","description":"HTML 拆解为可复用组件库","engines":{"node":">=18"}}
+{
+  "name": "ui-dismantler",
+  "private": true,
+  "type": "module",
+  "description": "HTML 拆解为可复用组件库 - agent 驱动 + 确定性工具层",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "jsdom": "^29.1.1"
+  },
+  "scripts": {
+    "test": "python3 scripts/tests/run.py",
+    "verify": "python3 src/skill/scripts/validate_lib.py examples/cases/blackpink-v10/lib && python3 scripts/roundtrip.py examples/cases/blackpink-v10/original.html --lib examples/cases/blackpink-v10/lib",
+    "verify:all": "python3 scripts/verify_all.py --lib-dir examples/cases/blackpink-v10/lib"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "switch-details-tab",
+      "label": "Switch to details tab",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab[data-panel='details']",
+            "library": ".sg-tab[data-panel='details']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".panel[data-view='overview']",
+            "library": ".sg-panel[data-view='overview']"
+          },
+          "visible": false,
+          "classExcludes": ["active"]
+        },
+        {
+          "target": {
+            "reference": ".panel[data-view='details']",
+            "library": ".sg-panel[data-view='details']"
+          },
+          "visible": true,
+          "classIncludes": ["active"],
+          "text": "Details content"
+        }
+      ]
+    },
+    {
+      "id": "enter-display-name",
+      "label": "Enter a display name",
+      "steps": [
+        {
+          "action": "input",
+          "target": {
+            "reference": ".name-input",
+            "library": ".sg-name-input"
+          },
+          "value": "Ada Lovelace"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".name-input",
+            "library": ".sg-name-input"
+          },
+          "value": "Ada Lovelace",
+          "focused": true
+        },
+        {
+          "target": {
+            "reference": ".name-output",
+            "library": ".sg-name-output"
+          },
+          "text": "Ada Lovelace"
+        }
+      ]
+    },
+    {
+      "id": "open-dialog",
+      "label": "Open confirmation dialog",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".open-dialog",
+            "library": ".sg-open-dialog"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".dialog-overlay",
+            "library": ".sg-dialog-overlay"
+          },
+          "visible": true,
+          "classIncludes": ["open"]
+        },
+        {
+          "target": {
+            "reference": ".dialog",
+            "library": ".sg-dialog"
+          },
+          "visible": true,
+          "textContains": "Confirmation dialog"
+        }
+      ]
+    },
+    {
+      "id": "open-and-close-dialog-with-escape",
+      "label": "Close dialog with Escape",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".open-dialog",
+            "library": ".sg-open-dialog"
+          }
+        },
+        {
+          "action": "key",
+          "key": "Escape"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".dialog-overlay",
+            "library": ".sg-dialog-overlay"
+          },
+          "visible": false,
+          "classExcludes": ["open"]
+        }
+      ]
+    },
+    {
+      "id": "mobile-layout",
+      "label": "Render the mobile state",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "steps": [],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".layout-state",
+            "library": ".sg-layout-state"
+          },
+          "text": "mobile-state"
+        }
+      ]
+    }
+  ]
+}
