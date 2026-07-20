@@ -206,5 +206,42 @@
       "profile": "web-base",
       "reference": "WCAG 2.2 2.4.3 diagnostic; positive tabindex can override meaningful DOM focus order"
     }
+  },
+  {
+    "id": "system.web.reflow.horizontal-overflow",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "layout",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "reflow"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-reflow-horizontal-overflow",
+      "options": {
+        "maxViewportWidth": 320
+      }
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "responsive-layout",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component",
+        "region"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 1.4.10 diagnostic at 320 CSS px; bounded scroll containers and semantic exceptions are skipped"
+    }
   }
 ]

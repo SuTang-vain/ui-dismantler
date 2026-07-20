@@ -10,6 +10,7 @@ from ...uiir.validation import validate_uiir
 DEFAULT_VIEWPORTS = (
     {"id": "desktop", "width": 1280, "height": 720},
     {"id": "wise", "width": 390, "height": 844},
+    {"id": "reflow", "width": 320, "height": 800},
 )
 STYLE_FIELDS = (
     "display", "visibility", "opacity", "color", "backgroundColor",
@@ -77,6 +78,21 @@ def _empty(source: Path, targets: list[dict[str, str]], viewports: list[dict[str
     return {"schemaVersion": QUALITY_SCHEMA_VERSION, "format": "render-observation", "source": str(source), "targets": targets, "viewports": viewports, "observations": [], "browser": None}
 
 
+def _build_observation(item: dict[str, Any], viewport: dict[str, Any]) -> dict[str, Any]:
+    """Normalize one browser payload without dropping optional evidence contexts."""
+    return {
+        "targetKey": item["targetKey"], "selector": item["selector"],
+        "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]},
+        "tag": item.get("tag", ""), "role": item.get("role", ""),
+        "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")),
+        "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}),
+        "layoutContext": item.get("layoutContext", {}), "keyboardContext": item.get("keyboardContext", {}),
+        "focusContext": item.get("focusContext", {}), "accessibleName": item.get("accessibleName", ""),
+        "bounds": item["bounds"], "computedStyle": item["computedStyle"],
+        "visible": bool(item["visible"]), "clipped": bool(item["clipped"]),
+    }
+
+
 def observe_render(
     source_path: str | Path,
     targets: list[dict[str, str]],
@@ -115,6 +131,53 @@ def observe_render(
         for (const field of focusFields) values[field] = style[field] || '';
         values.content = pseudo ? (style.content || '') : '';
         return {scope, style: values};
+      }
+      function reflowExceptionKind(target, scrollContainer) {
+        const exceptionSelector = 'table,[role="table"],[role="grid"],[role="treegrid"],pre,code,[aria-roledescription="carousel"]';
+        const semantic = target.closest(exceptionSelector) || target.querySelector(exceptionSelector);
+        if (semantic) {
+          const tag = semantic.tagName.toLowerCase();
+          const role = semantic.getAttribute('role') || '';
+          if (tag === 'table' || role === 'table' || role === 'grid' || role === 'treegrid') return 'data-table';
+          if (tag === 'pre' || tag === 'code') return 'preformatted-content';
+          if ((semantic.getAttribute('aria-roledescription') || '').toLowerCase() === 'carousel') return 'carousel';
+        }
+        if (scrollContainer && scrollContainer.hasAttribute('data-quality-horizontal-scroll')) return 'explicit-horizontal-scroll';
+        return '';
+      }
+      function layoutSnapshot(target, rect) {
+        const root = document.documentElement;
+        const body = document.body;
+        const documentClientWidth = root.clientWidth || innerWidth;
+        const documentScrollWidth = Math.max(root.scrollWidth || 0, body ? body.scrollWidth || 0 : 0);
+        let containerElement = null;
+        let horizontalScrollContainer = null;
+        let current = target;
+        for (let depth = 0; current instanceof Element && depth < 16; depth++, current = current.parentElement) {
+          if (current === root || current === body) continue;
+          const style = getComputedStyle(current);
+          const overflowX = style.overflowX || style.overflow || 'visible';
+          if ((overflowX === 'auto' || overflowX === 'scroll') && current.scrollWidth > current.clientWidth + 1) {
+            containerElement = current;
+            horizontalScrollContainer = {
+              scope: depth === 0 ? 'target' : `ancestor:${depth}`,
+              tag: current.tagName.toLowerCase(),
+              role: current.getAttribute('role') || '',
+              clientWidth: current.clientWidth,
+              scrollWidth: current.scrollWidth,
+              overflowX
+            };
+            break;
+          }
+        }
+        return {
+          documentClientWidth,
+          documentScrollWidth,
+          pageHorizontalOverflow: documentScrollWidth > documentClientWidth + 1,
+          targetContributesToPageOverflow: rect.left < -1 || rect.right > documentClientWidth + 1,
+          horizontalScrollContainer,
+          exceptionKind: reflowExceptionKind(target, containerElement)
+        };
       }
       function focusSnapshot(target, item) {
         const records = [
@@ -173,6 +236,7 @@ def observe_render(
           });
         }
         const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
+        const layoutContext = layoutSnapshot(element, rect);
         const sequentiallyFocusable = interactive && !disabled && element.tabIndex >= 0;
         const keyboardContext = {
           sequentiallyFocusable,
@@ -194,7 +258,7 @@ def observe_render(
             try { previous.focus({preventScroll: true}); } catch (_) {}
           }
         }
-        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, layoutContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""
@@ -234,7 +298,7 @@ def observe_render(
                     for item in raw if isinstance(raw, list) else []:
                         if item.get("error"):
                             warnings.append(f"{viewport['id']} {item.get('targetKey')}: {item['error']}"); continue
-                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}), "focusContext": item.get("focusContext", {}), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
+                        observation = _build_observation(item, viewport)
                         errors = validate_render_observation(observation)
                         if errors: warnings.append(f"{viewport['id']} {item['targetKey']}: {'; '.join(errors)}")
                         else: result["observations"].append(observation)

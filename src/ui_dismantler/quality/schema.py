@@ -212,6 +212,34 @@ def validate_render_observation(value: Any) -> list[str]:
             layers = context.get("backgroundLayers")
             if not isinstance(layers, list) or any(not isinstance(item, dict) for item in layers):
                 errors.append("colorContext.backgroundLayers must be an array of objects")
+    if "layoutContext" in value:
+        layout = value["layoutContext"]
+        if not isinstance(layout, dict):
+            errors.append("layoutContext must be an object")
+        else:
+            for field in ("documentClientWidth", "documentScrollWidth"):
+                if field in layout:
+                    item = layout[field]
+                    if isinstance(item, bool) or not isinstance(item, (int, float)) or item < 0:
+                        errors.append(f"layoutContext.{field} must be non-negative numeric")
+            for field in ("pageHorizontalOverflow", "targetContributesToPageOverflow"):
+                if field in layout and not isinstance(layout[field], bool):
+                    errors.append(f"layoutContext.{field} must be boolean")
+            if "exceptionKind" in layout and not isinstance(layout["exceptionKind"], str):
+                errors.append("layoutContext.exceptionKind must be a string")
+            container = layout.get("horizontalScrollContainer")
+            if container is not None:
+                if not isinstance(container, dict):
+                    errors.append("layoutContext.horizontalScrollContainer must be an object or null")
+                else:
+                    for field in ("scope", "tag", "role", "overflowX"):
+                        if field in container and not isinstance(container[field], str):
+                            errors.append(f"layoutContext.horizontalScrollContainer.{field} must be a string")
+                    for field in ("clientWidth", "scrollWidth"):
+                        if field in container:
+                            item = container[field]
+                            if isinstance(item, bool) or not isinstance(item, (int, float)) or item < 0:
+                                errors.append(f"layoutContext.horizontalScrollContainer.{field} must be non-negative numeric")
     if "keyboardContext" in value:
         keyboard = value["keyboardContext"]
         if not isinstance(keyboard, dict):

@@ -9,6 +9,7 @@ from ui_dismantler.quality.focus import analyze_focus_indicator
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
+from ui_dismantler.quality.observation.render import _build_observation
 from ui_dismantler.quality.schema import (
     validate_guideline, validate_profile, validate_render_observation,
     validate_repair_proposal, validate_verification_result,
@@ -47,7 +48,7 @@ class TestQualitySchema(unittest.TestCase):
         self.assertTrue(validate_profile({"id": "x", "version": "1", "overrides": {"a": {"unknown": 1}}}))
 
     def test_future_phase_contract_boundaries_are_explicit(self):
-        observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
+        observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "layoutContext": {"documentClientWidth": 390, "documentScrollWidth": 390, "pageHorizontalOverflow": False, "targetContributesToPageOverflow": False, "horizontalScrollContainer": None, "exceptionKind": ""}, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
         proposal = {"id": "proposal:1", "findingIds": ["finding:1"], "targetKey": "element:x", "strategy": "local-attribute", "risk": "low", "changes": [{"attribute": "aria-label", "after": "Search"}], "verificationChecks": ["quality-rescan"], "rollback": "restore source span"}
         verification = {"proposalId": "proposal:1", "status": "accepted", "originalIssuesResolved": True, "contentPreserved": True, "behaviorPreserved": True, "newIssues": [], "checks": [{"name": "quality-rescan", "passed": True}]}
         self.assertEqual(validate_render_observation(observation), [])
@@ -275,6 +276,39 @@ class TestRenderFindings(unittest.TestCase):
         self.assertLess(observed["ratio"], 4.5)
 
 
+    def test_reflow_reports_page_overflow_and_skips_bounded_exceptions(self):
+        uiir = document([
+            ("element:reflow-bad", {"id":"reflow-bad"}),
+            ("element:reflow-table", {"id":"reflow-table"}),
+            ("element:reflow-scroll", {"id":"reflow-scroll"}),
+            ("element:reflow-good", {"id":"reflow-good"}),
+        ])
+        report = inspect_uiir(uiir, self.profile, fixture("render-reflow.json"))
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.reflow.horizontal-overflow"]
+        self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in findings], [("element:reflow-bad", "reflow")])
+        self.assertEqual(findings[0]["evidence"][0]["observed"]["documentScrollWidth"], 500)
+        skipped = [item for item in report["diagnostics"]["renderSkipped"] if item["guidelineId"] == "system.web.reflow.horizontal-overflow"]
+        self.assertCountEqual(skipped, [
+            {"guidelineId":"system.web.reflow.horizontal-overflow","targetKey":"element:reflow-table","viewportKey":"reflow","reason":"reflow-exception:data-table"},
+            {"guidelineId":"system.web.reflow.horizontal-overflow","targetKey":"element:reflow-scroll","viewportKey":"reflow","reason":"bounded-horizontal-scroll"},
+        ])
+
+    def test_optional_browser_reflow_probe_distinguishes_page_and_bounded_overflow(self):
+        uiir = document([
+            ("element:reflow-bad", {"id":"reflow-bad"}),
+            ("element:reflow-scroll", {"id":"reflow-scroll"}),
+        ])
+        render, warnings = observe_render(
+            FIXTURES / "render.html", targets_from_uiir(uiir),
+            viewports=[{"id":"reflow","width":320,"height":800}],
+        )
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        report = inspect_uiir(uiir, self.profile, render)
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.reflow.horizontal-overflow"]
+        self.assertEqual([item["targetKey"] for item in findings], ["element:reflow-bad"])
+        self.assertIn({"guidelineId":"system.web.reflow.horizontal-overflow","targetKey":"element:reflow-scroll","viewportKey":"reflow","reason":"bounded-horizontal-scroll"}, report["diagnostics"]["renderSkipped"])
+
     def test_render_target_must_exist_in_uiir(self):
         render = fixture("render-findings.json")
         render["observations"][0]["targetKey"] = "element:unknown"
@@ -296,6 +330,11 @@ class TestRenderFindings(unittest.TestCase):
         keyboard_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(keyboard_uiir, self.profile, render)
+        render = fixture("render-reflow.json")
+        render["observations"][0]["layoutContext"]["documentScrollWidth"] = "wide"
+        reflow_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1]}) for item in render["observations"]])
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(reflow_uiir, self.profile, render)
 
 
     def test_focus_finding_reports_only_conclusive_missing_indicator(self):
@@ -350,6 +389,26 @@ class TestRenderObservation(unittest.TestCase):
             {"targetKey": "element:action", "selector": "#action"},
             {"targetKey": "element:wide", "selector": "#wide"},
         ])
+
+    def test_browser_payload_preserves_layout_and_keyboard_contexts(self):
+        raw = {
+            "targetKey":"element:x", "selector":"#x", "tag":"button", "role":"",
+            "interactive":True, "disabled":False, "textContent":"X", "accessibleName":"X",
+            "bounds":{"x":0,"y":0,"width":44,"height":44}, "computedStyle":{},
+            "visible":True, "clipped":False, "colorContext":{"foreground":"","backgroundLayers":[]},
+            "layoutContext":{"documentClientWidth":320,"documentScrollWidth":500,"pageHorizontalOverflow":True,"targetContributesToPageOverflow":True,"horizontalScrollContainer":None,"exceptionKind":""},
+            "keyboardContext":{"sequentiallyFocusable":True,"tabIndex":0,"managedComposite":False,"compositeRole":""},
+            "focusContext":{"focusable":True,"focused":True,"focusVisible":True,"before":[],"after":[]},
+        }
+        observation = _build_observation(raw, {"id":"reflow","width":320,"height":800})
+        self.assertEqual(observation["layoutContext"], raw["layoutContext"])
+        self.assertEqual(observation["keyboardContext"], raw["keyboardContext"])
+        self.assertEqual(validate_render_observation(observation), [])
+
+    def test_default_viewports_include_reflow_probe(self):
+        report, warnings = observe_render(FIXTURES / "missing.html", [])
+        self.assertEqual([item["id"] for item in report["viewports"]], ["desktop", "wise", "reflow"])
+        self.assertTrue(warnings)
 
     def test_render_observation_enforces_resource_budgets(self):
         with self.assertRaisesRegex(ValueError, "max_targets"):

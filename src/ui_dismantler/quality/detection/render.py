@@ -6,7 +6,7 @@ from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
 from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -139,6 +139,43 @@ def inspect_render_findings(
                         "Positive tabindex overrides the document's natural sequential focus order",
                         {"tabIndex": tab_index},
                     ))
+            elif detector == "render-reflow-horizontal-overflow":
+                viewport = observation.get("viewport") or {}
+                max_width = options.get("maxViewportWidth", 320)
+                if not isinstance(viewport.get("width"), (int, float)) or viewport["width"] > max_width:
+                    continue
+                layout = observation.get("layoutContext")
+                if not isinstance(layout, dict):
+                    continue
+                if not layout.get("pageHorizontalOverflow") or not layout.get("targetContributesToPageOverflow"):
+                    continue
+                exception = str(layout.get("exceptionKind") or "").strip()
+                if exception:
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": f"reflow-exception:{exception}",
+                    })
+                    continue
+                container = layout.get("horizontalScrollContainer")
+                if isinstance(container, dict):
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": "bounded-horizontal-scroll",
+                    })
+                    continue
+                findings.append(_finding(
+                    guideline, observation,
+                    "Target contributes to page-level horizontal overflow at the reflow viewport",
+                    {
+                        "documentClientWidth": layout.get("documentClientWidth"),
+                        "documentScrollWidth": layout.get("documentScrollWidth"),
+                        "bounds": bounds,
+                    },
+                ))
             elif detector == "render-text-contrast":
                 if not str(observation.get("textContent") or "").strip():
                     continue

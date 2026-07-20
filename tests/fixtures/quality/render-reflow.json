@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0",
+  "format": "render-observation",
+  "source": "render.html",
+  "browser": "fixture",
+  "targets": [
+    {
+      "targetKey": "element:reflow-bad",
+      "selector": "#reflow-bad"
+    },
+    {
+      "targetKey": "element:reflow-table",
+      "selector": "#reflow-table"
+    },
+    {
+      "targetKey": "element:reflow-scroll",
+      "selector": "#reflow-scroll"
+    },
+    {
+      "targetKey": "element:reflow-good",
+      "selector": "#reflow-good"
+    }
+  ],
+  "viewports": [
+    {
+      "id": "reflow",
+      "width": 320,
+      "height": 800
+    },
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "observations": [
+    {
+      "targetKey": "element:reflow-bad",
+      "selector": "#reflow-bad",
+      "viewportKey": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 500,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": true,
+      "layoutContext": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 500,
+        "pageHorizontalOverflow": true,
+        "targetContributesToPageOverflow": true,
+        "horizontalScrollContainer": null,
+        "exceptionKind": ""
+      }
+    },
+    {
+      "targetKey": "element:reflow-table",
+      "selector": "#reflow-table",
+      "viewportKey": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "",
+      "bounds": {
+        "x": 0,
+        "y": 50,
+        "width": 500,
+        "height": 80
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": true,
+      "layoutContext": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 500,
+        "pageHorizontalOverflow": true,
+        "targetContributesToPageOverflow": true,
+        "horizontalScrollContainer": null,
+        "exceptionKind": "data-table"
+      }
+    },
+    {
+      "targetKey": "element:reflow-scroll",
+      "selector": "#reflow-scroll",
+      "viewportKey": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "",
+      "bounds": {
+        "x": 0,
+        "y": 140,
+        "width": 500,
+        "height": 60
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": true,
+      "layoutContext": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 500,
+        "pageHorizontalOverflow": true,
+        "targetContributesToPageOverflow": true,
+        "horizontalScrollContainer": {
+          "scope": "ancestor:1",
+          "tag": "div",
+          "role": "",
+          "clientWidth": 300,
+          "scrollWidth": 500,
+          "overflowX": "auto"
+        },
+        "exceptionKind": ""
+      }
+    },
+    {
+      "targetKey": "element:reflow-good",
+      "selector": "#reflow-good",
+      "viewportKey": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "",
+      "bounds": {
+        "x": 0,
+        "y": 210,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "layoutContext": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "pageHorizontalOverflow": false,
+        "targetContributesToPageOverflow": false,
+        "horizontalScrollContainer": null,
+        "exceptionKind": ""
+      }
+    },
+    {
+      "targetKey": "element:reflow-bad",
+      "selector": "#reflow-bad",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 500,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": true,
+      "layoutContext": {
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1400,
+        "pageHorizontalOverflow": true,
+        "targetContributesToPageOverflow": true,
+        "horizontalScrollContainer": null,
+        "exceptionKind": ""
+      }
+    }
+  ]
+}
