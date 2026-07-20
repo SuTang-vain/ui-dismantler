@@ -541,16 +541,26 @@ class HtmlAnalyzer:
         panels = self.soup.find_all(attrs={"role": "tabpanel"})
         if not panels:
             panels = self.soup.find_all(class_=re.compile(r"\bview\b|\bpanel\b|tabpanel", re.I))
+<<<<<<< HEAD
         # 页面级范式检测：对 body 整体跑 detector，识别 nav-panel / cause-chain /
         # graph 等需要全局视角的范式。这些范式无法在单个 panel 上识别（nav-panel
         # 需要看 nav + 所有 panel 的关系），所以无论有无 panel 都先跑一次。
         # 页面级范式与 panel 级范式互斥：命中页面级就不再列 panel。
         page_vtype: str | None = None
         if not minimal:
+=======
+        # 页面级范式检测：仅当无 role=tabpanel 容器时才对 body 整体跑
+        # detector，识别 cause-chain/nav-panel/graph 等全屏范式。
+        # 用 role=tabpanel 作为"有视图面板"的判据（而非 .panel 类名），
+        # 因为 nav-panel 范式自身的 .panel 子元素会干扰发现逻辑。
+        has_real_tabpanels = bool(self.soup.find_all(attrs={"role": "tabpanel"}))
+        if not has_real_tabpanels and not minimal:
+>>>>>>> codex/generic-agent-quality
             body = self.soup.find("body")
             if body:
                 candidate = self._classify_view(body)
                 if candidate in ("cause-chain", "nav-panel", "graph"):
+<<<<<<< HEAD
                     page_vtype = candidate
         if page_vtype is not None:
             body = self.soup.find("body")
@@ -558,6 +568,12 @@ class HtmlAnalyzer:
             view.update(self._extract_view_details(body, page_vtype))
             views.append(view)
             return views
+=======
+                    view = {"id": "", "tabId": "", "active": True, "type": candidate}
+                    view.update(self._extract_view_details(body, candidate))
+                    views.append(view)
+                    return views
+>>>>>>> codex/generic-agent-quality
         # 先判定是否有任何 panel 显式标 active（active/is-active/on 类）
         ACTIVE_CLS = re.compile(r"\b(active|is-active|on)\b", re.I)
         any_explicit = any(ACTIVE_CLS.search(" ".join(p.get("class") or [])) for p in panels)

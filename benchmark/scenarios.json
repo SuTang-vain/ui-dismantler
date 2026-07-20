@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "dismiss-splash",
+      "label": "Dismiss splash overlay",
+      "steps": [
+        {"action": "click", "target": ".sg-splash-cta"}
+      ],
+      "assertions": [
+        {"target": ".sg-splash", "classExcludes": ["hide"]},
+        {"target": ".sg-splash", "classIncludes": ["hide"]}
+      ]
+    },
+    {
+      "id": "quiz-answer-correct",
+      "label": "Answer quiz question correctly",
+      "steps": [
+        {"action": "click", "target": ".sg-opt[data-k='a']"},
+        {"action": "click", "target": ".sg-qz-next"}
+      ],
+      "assertions": [
+        {"target": ".sg-qz-fb", "classIncludes": ["show", "ok"]},
+        {"target": ".sg-qz-next", "classIncludes": ["show"]}
+      ]
+    },
+    {
+      "id": "comparison-toggle",
+      "label": "Toggle comparison perspective",
+      "steps": [
+        {"action": "click", "target": ".sg-cmp-btn"}
+      ],
+      "assertions": [
+        {"target": ".sg-whatif-card", "visible": true}
+      ]
+    },
+    {
+      "id": "graph-node-click",
+      "label": "Click graph node to see details",
+      "steps": [
+        {"action": "click", "target": ".sg-node[data-id='specificity']"}
+      ],
+      "assertions": [
+        {"target": ".sg-graph-info", "textContains": "Specificity"}
+      ]
+    },
+    {
+      "id": "nav-panel-switch",
+      "label": "Switch nav-panel tab",
+      "steps": [
+        {"action": "click", "target": ".sg-nav button[data-p='p2']"}
+      ],
+      "assertions": [
+        {"target": "#p2", "classIncludes": ["active"]},
+        {"target": "#p1", "classExcludes": ["active"]}
+      ]
+    },
+    {
+      "id": "cause-chain-navigate",
+      "label": "Navigate cause-chain timeline",
+      "steps": [
+        {"action": "click", "target": ".sg-timeline-nav button[data-event='1']"}
+      ],
+      "assertions": [
+        {"target": ".sg-cause-chain-content .event-title", "text": "Flexbox"}
+      ]
+    },
+    {
+      "id": "cause-chain-whatif",
+      "label": "Toggle whatif in cause-chain",
+      "steps": [
+        {"action": "click", "target": ".sg-whatif-btn"}
+      ],
+      "assertions": [
+        {"target": ".sg-whatif-result", "classIncludes": ["show"]}
+      ]
+    },
+    {
+      "id": "escape-closes-splash",
+      "label": "ESC closes splash",
+      "steps": [
+        {"action": "key", "target": "document", "key": "Escape"}
+      ],
+      "assertions": [
+        {"target": ".sg-splash", "classIncludes": ["hide"]}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "case": "original.html",
+  "render_ok": true,
+  "render_error": null,
+  "reference": {
+    "requested_mode": "static",
+    "mode": "static",
+    "fallback": false,
+    "runtime_error": null,
+    "runtime_errors": [],
+    "missing_files": [],
+    "remote_resources": [],
+    "unsupported_modules": [],
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    }
+  },
+  "library": {
+    "runtime_errors": [],
+    "missing_files": [],
+    "remote_resources": [],
+    "unsupported_modules": [],
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    }
+  },
+  "structure": {
+    "node_match_rate": 0.9,
+    "node_recall": 0.9,
+    "node_precision": 0.991,
+    "redundancy_penalty": 0.0,
+    "class_match_rate": 0.994,
+    "ref_nodes": 120,
+    "got_nodes": 109,
+    "matched_nodes": 108
+  },
+  "text": {
+    "text_match_rate": 0.75,
+    "text_precision": 0.407,
+    "exact_match": 24,
+    "contain_match": 0,
+    "ref_count": 32,
+    "got_count": 59,
+    "missing": [
+      "Panel 1: Quiz",
+      "Panel 2: Comparison",
+      "Panel 3: Graph",
+      "Panel 4: Nav + Panels",
+      "Panel 5: Cause Chain",
+      "Splash overlay",
+      "Tab bar",
+      "View stack"
+    ],
+    "extra": [
+      "Alternative",
+      "Before flexbox, layouts used floats and clearfix hacks, causing fragile code.",
+      "Browse related concepts",
+      "CSS",
+      "CSS Custom Properties",
+      "Causal Chain: CSS Evolution",
+      "Click a node to learn more",
+      "Click a node to see details",
+      "Color Models",
+      "Colors"
+    ]
+  },
+  "scores": {
+    "structure": 0.947,
+    "text": 0.75,
+    "overall": 0.849
+  }
+}

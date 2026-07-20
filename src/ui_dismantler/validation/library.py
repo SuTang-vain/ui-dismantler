@@ -118,7 +118,7 @@ class LibValidator:
         # 2) examples HTML 的 DOM 不应硬编码业务文案
         # 规范：可变内容（成员/作品/时间线/事实）必须走 <script> options/JSON，
         # 不应直接写在 DOM 可见文本里。剥离所有 <script> 块后检查 DOM 残留。
-        # 强业务特征（避免误伤"下一题/成员"等结构性文本，以及品牌名 BLACKPINK）：
+        # 强业务特征（避免误伤"下一题/成员"等结构性文本，以及品牌名/缩写）：
         # - 连续 4 位年份（如 2016、2022）：业务时间数据最可靠信号
         # - 长描述段落（≥15 连续中文字符，含具体业务信息）
         # 注：全大写人名易误伤品牌名/缩写，故不查；改靠年份+长描述定位硬编码业务文案
@@ -175,7 +175,7 @@ class LibValidator:
 
         # 从 blob 自身探测结构（不依赖外部 manifest）：
         # 库声明了 tab/modal 结构才强制对应 role，避免对纯展示库误报，
-        # 也避免 manifest 缺失时检查被全跳过（gold-standard 库无 manifest）。
+        # 也避免 manifest 缺失时检查被全跳过（benchmark 库无 manifest）。
         def _has_tab_switch():
             """有 Tab 切换的信号：role=tab/tablist、.sg-tab* 类、JS 里 tablist 关键字。"""
             if re.search(r"role[=:]\s*['\"]?tab(list)?['\"]?", blob):

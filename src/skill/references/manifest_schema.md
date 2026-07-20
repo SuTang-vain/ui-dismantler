@@ -131,8 +131,8 @@
       "shortName": "Jisoo",
       "state": "在团",
       "img": "https://...",
-      "photoSource": "百度百科",
-      "relations": [ ["所属团体","BLACKPINK"], ["队内角色","主唱 · 视觉"] ]
+      "photoSource": "Wikimedia Commons",
+      "relations": [ ["category","frontend"], ["role","layout"] ]
     }
   ],
   "timeline": [
