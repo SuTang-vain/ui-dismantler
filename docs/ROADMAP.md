@@ -50,8 +50,8 @@ v1 的 Python 脚本不丢弃，转为 agent 的**工具层**：
 | `analyze_html.py` | 工具：快速提取主题色令牌、结构清单（给 agent 当参考，不是唯一依据） |
 | `validate_lib.py` | 工具：8 项强约束校验（agent 自检） |
 | `roundtrip.py` | 工具：往返等价度（agent 自检 + 量化质量） |
-| `generate_lib.py` + 模板 | **退役**：agent 直接写代码，不套模板 |
-| `aggregate_vertical.py` | 暂缓：等 agent 拆解能力稳定后再做垂类聚合 |
+| ~~`generate_lib.py` + 模板~~ | **已删除**：agent 直接写代码，不再套模板（v1 模板链路一并移除） |
+| ~~`aggregate_vertical.py`~~ | **已删除**：垂类聚合等单案例稳定后再重做 |
 
 ## 产出标准（对标手工 BLACKPINK 组件库）
 
@@ -71,7 +71,7 @@ agent 产出的组件库必须达到当初手工拆解的质量：
 
 **质量门槛**（agent 自检必须全过）：
 1. `validate_lib.py` 8 项强约束全 PASS
-2. `roundtrip.py` 综合分 ≥ 0.7（结构 ≥ 0.5，文本 ≥ 0.8）
+2. `roundtrip.py` 综合分 ≥ 0.85（结构 ≥ 0.7，文本 ≥ 0.8）
 3. `node --check` JS 语法合法
 4. example.html 用原数据能还原原页面核心内容
 
@@ -91,7 +91,9 @@ agent 产出的组件库必须达到当初手工拆解的质量：
 ### P0-1 往返测试基线 ✅ 已完成
 
 `scripts/roundtrip.py` + `_roundtrip_render.mjs`，量化"忠于原 HTML"的等价度。
-基线报告见 `docs/baselines/`。
+基线报告见 `docs/baselines/`：
+- `roundtrip_blackpink_v10_agent.json`：agent 产出的 gold-standard 基线（综合 0.928，结构 0.965，文本 0.892），作为回归锚点
+- `archive-v1/`：v1 模板链路的历史 baseline（generate_lib 已删，不可复现，仅存档）
 
 ### P0-2 单元测试
 
@@ -125,7 +127,7 @@ SKILL.md 要包含：
 - 拆解思维框架（看 HTML 的顺序和关注点）
 - sg-* 强约束规范（命名/变量/响应式/A11y，引用 spec.md）
 - 工具调用方式（analyze/validate/roundtrip 的 CLI）
-- 质量门槛（validate 全过 + roundtrip ≥ 0.7）
+- 质量门槛（validate 全过 + roundtrip ≥ 0.85）
 - 标杆示例（BLACKPINK 组件库的结构和质量标准）
 
 ### P1-2 前向测试：agent 独立拆解新案例
@@ -141,7 +143,7 @@ SKILL.md 要包含：
 3. 纸上谈兵（nav+panel，agent 需理解 data-p 关联）
 4. 蜂鸟科图鉴（对比辨析，agent 需理解特征对比）
 
-每个案例的通过标准：validate 8/0 + roundtrip 综合 ≥ 0.6。
+每个案例的通过标准：validate 8/0 + roundtrip 综合 ≥ 0.85（未支持范式暂按 generic 兜底，不达 0.85 属预期）。
 
 ---
 
@@ -188,6 +190,6 @@ SKILL.md 要包含：
 ## 不做的事
 
 - **LLM 做运行时解析**：解析在开发期由 agent 完成，产出是确定性代码。运行时组件库是纯 JS，不需 LLM。
-- **保留 generate_lib.py 套模板路线**：agent 直接写代码，模板退役。
-- **垂类聚合**：等 agent 单案例拆解能力稳定（P1 前向测试全过）后再做。
+- **套模板生成（generate_lib + Jinja2）**：已删除。agent 直接写代码，组件库由 agent 产出后用 `roundtrip.py --lib` 验证。
+- **垂类聚合**：已删除（aggregate_vertical.py）。等 agent 单案例拆解能力稳定（P1 前向测试全过）后再重做。
 - **可视化 Playground**：浏览器打开 example.html 即可预览。

@@ -63,28 +63,28 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 113 个单元测试覆盖边界（`python3 scripts/tests/run.py`）。
+工具层有 174 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含黄金快照回归（blackpink-v10/lib 综合 ≥0.85）。
 
 ## 当前能力与基线
 
 | 案例 | 结构 | 文本 | 综合 | 状态 |
 |---|---|---|---|---|
-| BLACKPINK（v1 链路）| 0.952 | 0.838 | 0.895 | ✅ 支持范式 |
-| 手工标杆（明星组合）| 0.952 | 0.865 | 0.908 | ✅ gold standard |
-| 子代理产出（部分）| 0.952 | 0.892 | 0.922 | ✅ 超标杆，验证 agent 路线 |
-| 黄月英（因果链）| 0.000 | 0.062 | 0.031 | ❌ 未支持范式 |
-| 纸上谈兵（nav+panel）| 0.000 | 0.111 | 0.056 | ❌ 未支持范式 |
+| BLACKPINK v10（agent 产出）| 0.965 | 0.892 | 0.928 | ✅ gold-standard，回归锚点 |
+| 手工标杆（明星组合）| 0.952 | 0.865 | 0.908 | ✅ agent 产出超标杆 |
+| 黄月英（因果链）| - | - | - | ⏳ 待 agent 拆解（范式识别已扩 quiz/comparison/splash，因果链待补） |
+| 纸上谈兵（nav+panel）| - | - | - | ⏳ 待 agent 拆解（4 tabs 已识别，quiz 视图已识别） |
 
-未支持范式靠 agent 拆解提升（agent 理解因果链/nav-panel 结构，不走 v1 generic 兜底）。
+> v1 链路（generate_lib 模板）的 baseline 已归档至 `docs/baselines/archive-v1/`，不可复现。
+> 当前基线以 agent 产出为准：`docs/baselines/roundtrip_blackpink_v10_agent.json`。
+> 未支持范式靠 agent 拆解提升（agent 理解因果链/nav-panel 结构，不走 generic 兜底）。
 
 ## 目录
 
 ```
-src/skill/              ZCode Skill（SKILL.md + scripts + references + assets 模板）
+src/skill/              ZCode Skill（SKILL.md + scripts + references）
   ├── SKILL.md          agent 驱动拆解指南（5 步工作流 + 自检决策表）
-  ├── scripts/          工具脚本（analyze/validate/aggregate + _common.py）
-  ├── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
-  └── assets/templates/ Jinja2 模板（v1 generate_lib 用，agent 驱动后退役）
+  ├── scripts/          工具脚本（analyze/validate + _common.py）
+  └── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
 examples/cases/         案例样本（blackpink / huang-yueying / zhishang-tanbing）
 scripts/                roundtrip + verify_all + tests
 docs/                   ROADMAP + baselines
