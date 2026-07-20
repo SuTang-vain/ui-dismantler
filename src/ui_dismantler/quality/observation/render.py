@@ -118,7 +118,24 @@ def observe_render(
         const role = element.getAttribute('role') || '';
         const interactive = ['button','a','input','select','textarea','summary'].includes(tag) || ['button','link','tab','checkbox','radio','switch','menuitem'].includes(role) || element.hasAttribute('onclick');
         const disabled = Boolean(element.disabled) || element.getAttribute('aria-disabled') === 'true';
-        output.push({...item, tag, role, interactive, disabled, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        const textContent = (element.innerText || element.textContent || '').trim().slice(0, 500);
+        const backgroundLayers = [];
+        let backgroundTruncated = false;
+        let backgroundDepth = 0;
+        for (let current = element; current instanceof Element; current = current.parentElement) {
+          if (backgroundDepth++ >= 64) { backgroundTruncated = true; break; }
+          const currentStyle = getComputedStyle(current);
+          backgroundLayers.push({
+            selector: current === element ? item.selector : '',
+            backgroundColor: currentStyle.backgroundColor || '',
+            backgroundImage: currentStyle.backgroundImage || 'none',
+            opacity: currentStyle.opacity || '1',
+            mixBlendMode: currentStyle.mixBlendMode || 'normal',
+            backdropFilter: currentStyle.backdropFilter || 'none'
+          });
+        }
+        const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""
@@ -154,7 +171,7 @@ def observe_render(
                     for item in raw if isinstance(raw, list) else []:
                         if item.get("error"):
                             warnings.append(f"{viewport['id']} {item.get('targetKey')}: {item['error']}"); continue
-                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
+                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
                         errors = validate_render_observation(observation)
                         if errors: warnings.append(f"{viewport['id']} {item['targetKey']}: {'; '.join(errors)}")
                         else: result["observations"].append(observation)

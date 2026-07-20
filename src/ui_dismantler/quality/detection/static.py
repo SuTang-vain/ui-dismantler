@@ -98,11 +98,22 @@ def inspect_uiir(document: dict[str, Any], effective_profile: dict[str, Any], re
             if str(node[0]) in evidence:
                 finding_evidence.append({"method": "ui-ir-evidence", "record": evidence[str(node[0])]})
             findings.append({"id": f"finding:{digest}", "guidelineId": guideline["id"], "targetKey": target_key, "constraint": guideline["constraint"], "severity": guideline["severity"], "confidence": 1.0, "evidence": finding_evidence, "repairProposals": [], "status": "open"})
+    render_skipped: list[dict[str, Any]] = []
     if render_document is not None:
         from .render import inspect_render_findings
-        findings.extend(inspect_render_findings(render_document, effective_profile))
+        known_keys = {node[3]["key"] for node in document["nodes"]}
+        unknown_keys = sorted({
+            observation.get("targetKey")
+            for observation in render_document.get("observations", [])
+            if isinstance(observation, dict) and observation.get("targetKey") not in known_keys
+        })
+        if unknown_keys:
+            raise ValueError("render observations reference unknown UI-IR targets: " + ", ".join(unknown_keys))
+        findings.extend(inspect_render_findings(render_document, effective_profile, render_skipped))
     findings.sort(key=lambda item: (item["guidelineId"], item["targetKey"], item.get("viewportKey", "")))
     report = {"schemaVersion": QUALITY_SCHEMA_VERSION, "format": QUALITY_IR_FORMAT, "sourceFormat": "ui-ir", "sourceSchemaVersion": document["schemaVersion"], "profile": {key: effective_profile[key] for key in ("id", "version", "lineage", "guidelineIds")}, "findings": findings, "summary": {"total": len(findings), "hard": sum(item["constraint"] == "hard" for item in findings), "soft": sum(item["constraint"] == "soft" for item in findings)}}
+    if render_skipped:
+        report["diagnostics"] = {"renderSkipped": sorted(render_skipped, key=lambda item: (item["guidelineId"], item["targetKey"], item.get("viewportKey") or ""))}
     quality_errors = validate_quality_ir(report)
     if quality_errors:
         raise ValueError("generated invalid Quality IR: " + "; ".join(quality_errors))

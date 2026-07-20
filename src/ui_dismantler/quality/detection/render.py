@@ -2,8 +2,10 @@
 from __future__ import annotations
 from hashlib import sha1
 from typing import Any
+from ..colors import resolved_text_contrast
+from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -31,7 +33,11 @@ def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: st
     }
 
 
-def inspect_render_findings(render_document: dict[str, Any], effective_profile: dict[str, Any]) -> list[dict[str, Any]]:
+def inspect_render_findings(
+    render_document: dict[str, Any],
+    effective_profile: dict[str, Any],
+    diagnostics: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     """Run enabled render detectors without changing either input document."""
     if not isinstance(render_document, dict) or render_document.get("format") != "render-observation":
         raise ValueError("render_document must use format render-observation")
@@ -39,6 +45,11 @@ def inspect_render_findings(render_document: dict[str, Any], effective_profile: 
     if not isinstance(observations, list):
         raise ValueError("render_document.observations must be an array")
     findings: list[dict[str, Any]] = []
+    skipped = diagnostics if diagnostics is not None else []
+    for index, observation in enumerate(observations):
+        errors = validate_render_observation(observation)
+        if errors:
+            raise ValueError(f"invalid render observation[{index}]: {'; '.join(errors)}")
     for guideline in effective_profile["guidelines"]:
         detector = guideline["detector"]["name"]
         if detector not in RENDER_DETECTORS:
@@ -68,4 +79,36 @@ def inspect_render_findings(render_document: dict[str, Any], effective_profile: 
                     "Visible target extends outside the viewport",
                     {"bounds": bounds, "viewport": viewport},
                 ))
+            elif detector == "render-text-contrast":
+                if not str(observation.get("textContent") or "").strip():
+                    continue
+                contrast, uncertainty = resolved_text_contrast(observation)
+                if contrast is None:
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": uncertainty or "unresolved-contrast",
+                    })
+                    continue
+                style = observation.get("computedStyle") or {}
+                try:
+                    font_size = float(str(style.get("fontSize", "")).removesuffix("px"))
+                    font_weight = int(float(str(style.get("fontWeight", "400"))))
+                except ValueError:
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": "unparsed-font-metrics",
+                    })
+                    continue
+                large_text = font_size >= 24 or (font_size >= 18.66 and font_weight >= 700)
+                threshold = options.get("largeTextRatio", 3.0) if large_text else options.get("normalTextRatio", 4.5)
+                if contrast["ratio"] + 1e-9 < threshold:
+                    findings.append(_finding(
+                        guideline, observation,
+                        f"Text contrast is below the {threshold}:1 threshold",
+                        {**contrast, "threshold": threshold, "fontSizePx": font_size, "fontWeight": font_weight, "largeText": large_text},
+                    ))
     return findings

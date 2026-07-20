@@ -182,6 +182,18 @@ def validate_render_observation(value: Any) -> list[str]:
                     errors.append(f"bounds.{field} must be numeric")
     if not isinstance(value.get("computedStyle", {}), dict):
         errors.append("computedStyle must be an object")
+    if "textContent" in value and not isinstance(value["textContent"], str):
+        errors.append("textContent must be a string")
+    if "colorContext" in value:
+        context = value["colorContext"]
+        if not isinstance(context, dict):
+            errors.append("colorContext must be an object")
+        else:
+            if not isinstance(context.get("foreground", ""), str):
+                errors.append("colorContext.foreground must be a string")
+            layers = context.get("backgroundLayers")
+            if not isinstance(layers, list) or any(not isinstance(item, dict) for item in layers):
+                errors.append("colorContext.backgroundLayers must be an array of objects")
     if "viewportKey" in value and not _text(value.get("viewportKey")):
         errors.append("viewportKey must be a non-empty string")
     for field in ("visible", "clipped", "interactive", "disabled"):

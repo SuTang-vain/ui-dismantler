@@ -69,5 +69,43 @@
       "profile": "web-base",
       "reference": "WCAG 2.2 1.4.10 reflow diagnostic; intentional off-canvas layouts require review"
     }
+  },
+  {
+    "id": "system.web.text-contrast",
+    "version": "1.0.0",
+    "scope": "element",
+    "category": "color",
+    "constraint": "hard",
+    "severity": "error",
+    "protected": true,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-text-contrast",
+      "options": {
+        "normalTextRatio": 4.5,
+        "largeTextRatio": 3.0
+      }
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "color-token",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component",
+        "region"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 1.4.3 Contrast (Minimum); uncertain image/gradient/blend/opacity backgrounds are skipped"
+    }
   }
 ]

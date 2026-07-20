@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
+from ui_dismantler.quality.colors import composite, contrast_ratio, parse_css_color, resolve_background, resolved_text_contrast
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
@@ -51,6 +52,34 @@ class TestQualitySchema(unittest.TestCase):
         self.assertEqual(validate_render_observation(observation), [])
         self.assertEqual(validate_repair_proposal(proposal), [])
         self.assertEqual(validate_verification_result(verification), [])
+
+
+class TestContrastMath(unittest.TestCase):
+    def test_parses_modern_rgb_hex_and_alpha(self):
+        self.assertEqual(parse_css_color("rgb(255 0 128 / 50%)"), (255.0, 0.0, 128.0, 0.5))
+        self.assertEqual(parse_css_color("#0008"), (0.0, 0.0, 0.0, 136 / 255.0))
+        self.assertIsNone(parse_css_color("color(display-p3 1 0 0)"))
+
+    def test_wcag_reference_contrast_and_alpha_composition(self):
+        black, white = parse_css_color("#000"), parse_css_color("#fff")
+        self.assertAlmostEqual(contrast_ratio(black, white), 21.0, places=6)
+        half_black = composite(parse_css_color("rgba(0,0,0,.5)"), white)
+        self.assertAlmostEqual(half_black[0], 127.5, places=4)
+        self.assertAlmostEqual(contrast_ratio(half_black, white), 3.9767, places=3)
+
+    def test_gradient_blend_and_opacity_are_uncertain(self):
+        for layer, reason in [
+            ({"backgroundColor":"#fff","backgroundImage":"linear-gradient(red,blue)","opacity":"1","mixBlendMode":"normal","backdropFilter":"none"}, "background-image"),
+            ({"backgroundColor":"#fff","backgroundImage":"none","opacity":".5","mixBlendMode":"normal","backdropFilter":"none"}, "ancestor-opacity"),
+            ({"backgroundColor":"#fff","backgroundImage":"none","opacity":"1","mixBlendMode":"multiply","backdropFilter":"none"}, "mix-blend-mode"),
+        ]:
+            self.assertEqual(resolve_background({"backgroundLayers":[layer]}), (None, reason))
+
+    def test_transparent_foreground_is_composited_over_resolved_background(self):
+        observation = {"computedStyle":{"color":"rgba(0,0,0,.5)"}, "colorContext":{"foreground":"rgba(0,0,0,.5)","backgroundLayers":[{"backgroundColor":"#fff","backgroundImage":"none","opacity":"1","mixBlendMode":"normal","backdropFilter":"none"}]}}
+        result, reason = resolved_text_contrast(observation)
+        self.assertIsNone(reason)
+        self.assertAlmostEqual(result["ratio"], 3.9767, places=3)
 
 class TestProfileComposition(unittest.TestCase):
     def test_inheritance_selects_component_and_system_rules(self):
@@ -146,6 +175,9 @@ class TestRenderFindings(unittest.TestCase):
         uiir = document([
             ("element:small", {"id": "small", "role": "button", "text": "Small"}),
             ("element:wide", {"id": "wide"}),
+            ("element:low", {"id": "low"}),
+            ("element:large", {"id": "large"}),
+            ("element:gradient", {"id": "gradient"}),
         ])
         render, warnings = observe_render(
             FIXTURES / "render.html", targets_from_uiir(uiir),
@@ -156,7 +188,7 @@ class TestRenderFindings(unittest.TestCase):
         report = inspect_uiir(uiir, self.profile, render)
         self.assertEqual(
             {item["guidelineId"] for item in report["findings"]},
-            {"system.web.click-target.minimum", "system.web.viewport-clipping"},
+            {"system.web.click-target.minimum", "system.web.viewport-clipping", "system.web.text-contrast"},
         )
 
     def test_hidden_and_disabled_targets_do_not_produce_findings(self):
@@ -164,6 +196,34 @@ class TestRenderFindings(unittest.TestCase):
         render["observations"][0]["disabled"] = True
         report = inspect_uiir(self.uiir, self.profile, render)
         self.assertEqual([item["guidelineId"] for item in report["findings"]], ["system.web.viewport-clipping"])
+
+
+    def test_text_contrast_uses_normal_and_large_thresholds_and_skips_uncertain(self):
+        uiir = document([
+            ("element:low", {"id":"low"}),
+            ("element:large", {"id":"large"}),
+            ("element:gradient", {"id":"gradient"}),
+        ])
+        report = inspect_uiir(uiir, self.profile, fixture("render-contrast.json"))
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.text-contrast"]
+        self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in findings], [("element:low", "desktop")])
+        self.assertEqual(report["diagnostics"]["renderSkipped"], [{"guidelineId":"system.web.text-contrast","targetKey":"element:gradient","viewportKey":"desktop","reason":"background-image"}])
+        observed = findings[0]["evidence"][0]["observed"]
+        self.assertEqual(observed["threshold"], 4.5)
+        self.assertLess(observed["ratio"], 4.5)
+
+
+    def test_render_target_must_exist_in_uiir(self):
+        render = fixture("render-findings.json")
+        render["observations"][0]["targetKey"] = "element:unknown"
+        with self.assertRaisesRegex(ValueError, "unknown UI-IR targets"):
+            inspect_uiir(self.uiir, self.profile, render)
+
+    def test_malformed_render_observation_is_rejected(self):
+        render = fixture("render-findings.json")
+        render["observations"][0]["bounds"]["width"] = "tiny"
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(self.uiir, self.profile, render)
 
     def test_static_only_inspection_ignores_render_rules(self):
         report = inspect_uiir(self.uiir, self.profile)

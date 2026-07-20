@@ -29,4 +29,4 @@ python3 -m ui_dismantler.cli.inspect_quality page.uiir.json \
   --profile web-base --render page.render.json -o quality-findings.json
 ```
 
-下一阶段再处理 contrast；它需要透明度、祖先背景与渐变合成，不能直接比较两个 computed color 字符串。
+文本对比度检测现已覆盖浏览器 computed `rgb/rgba`、十六进制测试值、透明前景和纯色祖先背景合成；普通文本使用 4.5:1，大文本使用 3:1。以下情况明确记录为 `diagnostics.renderSkipped`，不生成误报：背景图片/渐变、祖先 opacity、blend mode、backdrop filter、截断的祖先链、无法解析的颜色或字体指标。该规则是受保护的 Web/A11y 硬约束，但只有证据可确定时才产生 finding。
