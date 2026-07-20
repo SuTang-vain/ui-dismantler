@@ -1,0 +1,38 @@
+{
+  "case": "original.html",
+  "referenceMode": "rendered",
+  "referenceFallback": false,
+  "viewport": {
+    "width": 1024,
+    "height": 768
+  },
+  "structure": {
+    "node_match_rate": 1.0,
+    "node_recall": 1.0,
+    "node_precision": 0.858,
+    "redundancy_penalty": 0.0,
+    "class_match_rate": 0.99,
+    "ref_nodes": 230,
+    "got_nodes": 268,
+    "matched_nodes": 230
+  },
+  "text": {
+    "text_match_rate": 0.99,
+    "text_precision": 0.99,
+    "exact_match": 102,
+    "contain_match": 0,
+    "ref_count": 103,
+    "got_count": 103,
+    "missing": [
+      "Jisoo、Jennie、Rosé、Lisa — 均为出道成员"
+    ],
+    "extra": [
+      "Jisoo、Jennie、Rosé、Lisa - 均为出道成员"
+    ]
+  },
+  "scores": {
+    "structure": 0.995,
+    "text": 0.99,
+    "overall": 0.992
+  }
+}

@@ -1,5 +1,7 @@
 {
   "case": "original.html",
+  "referenceMode": "static",
+  "referenceFallback": false,
   "render_ok": true,
   "render_error": null,
   "structure": {

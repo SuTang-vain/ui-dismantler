@@ -51,7 +51,7 @@ Agent（主控）─────────────────────
 |---|---|
 | `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
 | `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
-| `scripts/roundtrip.py` | 往返等价度（原 HTML ⇄ 库渲染 DOM，量化"忠于原 HTML"程度） |
+| `scripts/roundtrip.py` | 往返等价度（原页面运行后 DOM ⇄ 库渲染 DOM；失败回退会显式报告） |
 | `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
 | `node --check` | JS 语法检查 |
 
@@ -65,19 +65,20 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 182 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含黄金快照回归（blackpink-v10/lib 综合 ≥0.85）。
+工具层有 197 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照和技术特征矩阵。
 
 ## 当前能力与基线
 
 | 案例 | 结构 | 文本 | 综合 | 状态 |
 |---|---|---|---|---|
-| BLACKPINK v10（agent 产出）| 0.965 | 0.892 | 0.928 | ✅ gold-standard，回归锚点 |
+| BLACKPINK v10（运行态参照）| 0.995 | 0.990 | 0.992 | ✅ 主通用质量基线 |
+| BLACKPINK v10（历史静态参照）| 0.965 | 0.892 | 0.928 | ✅ 兼容性基线 |
 | 手工标杆（明星组合）| 0.952 | 0.865 | 0.908 | ✅ agent 产出超标杆 |
 | 黄月英（因果链）| - | - | - | ⏳ 待 agent 拆解（范式识别已扩 quiz/comparison/splash，因果链待补） |
 | 纸上谈兵（nav+panel）| - | - | - | ⏳ 待 agent 拆解（4 tabs 已识别，quiz 视图已识别） |
 
 > v1 链路（generate_lib 模板）的 baseline 已归档至 `docs/baselines/archive-v1/`，不可复现。
-> 当前基线以 agent 产出为准：`docs/baselines/roundtrip_blackpink_v10_agent.json`。
+> 运行态主基线：`docs/baselines/roundtrip_blackpink_v10_rendered.json`；历史静态兼容基线：`roundtrip_blackpink_v10_agent.json`。
 > 未支持范式靠 agent 拆解提升（agent 理解因果链/nav-panel 结构，不走 generic 兜底）。
 
 ## 目录

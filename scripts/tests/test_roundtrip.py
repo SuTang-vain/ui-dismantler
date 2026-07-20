@@ -245,21 +245,17 @@ class TestCount(unittest.TestCase):
 
 
 # ============================================================
-# 黄金快照：blackpink-v10/lib 端到端 roundtrip
-# 防止评分核心改动导致所有 case 分数漂移
+# 黄金快照：blackpink-v10/lib 双口径端到端 roundtrip
+# static 维持历史连续性；rendered 验证运行态真实内容。
 # ============================================================
 class TestGoldenSnapshotBlackpinkV10(unittest.TestCase):
-    """对 gold-standard 组件库跑完整 roundtrip，断言分数不低于门槛。
-
-    这是评分器的回归锚点：任何 compare_structure/compare_texts 的改动
-    若让此快照分数下降，测试会立即失败。
-    """
+    """对 gold-standard 组件库分别运行静态与运行态参照。"""
 
     REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     HTML = os.path.join(REPO, "examples", "cases", "blackpink-v10", "original.html")
     LIB = os.path.join(REPO, "examples", "cases", "blackpink-v10", "lib")
 
-    def test_roundtrip_meets_threshold(self):
+    def _run(self, reference_mode):
         # 跳过条件：fixture 不存在则跳过（不报失败，避免环境缺失误报）
         if not (os.path.isfile(self.HTML) and os.path.isdir(self.LIB)):
             self.skipTest(f"fixture 缺失: {self.HTML} 或 {self.LIB}")
@@ -268,21 +264,30 @@ class TestGoldenSnapshotBlackpinkV10(unittest.TestCase):
 
         proc = subprocess.run(
             [sys.executable, os.path.join(self.REPO, "scripts", "roundtrip.py"),
-             self.HTML, "--lib", self.LIB],
+             self.HTML, "--lib", self.LIB, "--reference-mode", reference_mode],
             capture_output=True, text=True, timeout=60,
             cwd=self.REPO,
         )
         self.assertEqual(proc.returncode, 0,
                          f"roundtrip 失败: {proc.stderr[:300]}")
-        report = json.loads(proc.stdout)
-        scores = report["scores"]
-        # 门槛：综合 ≥0.85（结构 ≥0.7，文本 ≥0.8）
-        self.assertGreaterEqual(scores["overall"], 0.85,
-            f"综合分 {scores['overall']} < 0.85，评分核心可能已漂移")
-        self.assertGreaterEqual(scores["structure"], 0.7,
-            f"结构分 {scores['structure']} < 0.7")
-        self.assertGreaterEqual(scores["text"], 0.8,
-            f"文本分 {scores['text']} < 0.8")
+        return json.loads(proc.stdout)
+
+    def test_static_baseline_remains_stable(self):
+        report = self._run("static")
+        self.assertEqual(report["reference"]["mode"], "static")
+        self.assertFalse(report["reference"]["fallback"])
+        self.assertGreaterEqual(report["scores"]["overall"], 0.92)
+        self.assertGreaterEqual(report["scores"]["structure"], 0.95)
+        self.assertGreaterEqual(report["scores"]["text"], 0.89)
+
+    def test_rendered_baseline_uses_runtime_reference(self):
+        report = self._run("rendered")
+        self.assertEqual(report["reference"]["mode"], "reference")
+        self.assertFalse(report["reference"]["fallback"])
+        self.assertEqual(report["reference"]["runtime_errors"], [])
+        self.assertGreaterEqual(report["scores"]["overall"], 0.95)
+        self.assertGreaterEqual(report["scores"]["structure"], 0.95)
+        self.assertGreaterEqual(report["scores"]["text"], 0.95)
 
 
 if __name__ == "__main__":

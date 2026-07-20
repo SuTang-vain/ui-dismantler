@@ -90,9 +90,10 @@ agent 产出的组件库必须达到当初手工拆解的质量：
 
 ### P0-1 往返测试基线 ✅ 已完成
 
-`scripts/roundtrip.py` + `_roundtrip_render.mjs`，量化"忠于原 HTML"的等价度。
+`scripts/roundtrip.py` + `_roundtrip_render.mjs`，对称执行原页面和组件库后量化等价度。`auto` 模式优先运行态参照，失败时显式记录并回退静态解析；`rendered` 严格模式禁止回退。
 基线报告见 `docs/baselines/`：
-- `roundtrip_blackpink_v10_agent.json`：agent 产出的 gold-standard 基线（综合 0.928，结构 0.965，文本 0.892），作为回归锚点
+- `roundtrip_blackpink_v10_rendered.json`：运行态主基线（综合 0.992，结构 0.995，文本 0.990）
+- `roundtrip_blackpink_v10_agent.json`：历史静态兼容基线（综合 0.928，结构 0.965，文本 0.892）
 - `archive-v1/`：v1 模板链路的历史 baseline（generate_lib 已删，不可复现，仅存档）
 
 ### P0-2 单元测试

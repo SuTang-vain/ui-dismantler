@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Responsive</title></head>
+<body>
+  <main id="app" class="responsive-shell"></main>
+  <script>
+    const mobile = window.matchMedia('(max-width: 500px)').matches;
+    document.getElementById('app').textContent = mobile ? 'mobile-layout' : 'desktop-layout';
+  </script>
+</body>
+</html>
