@@ -52,3 +52,8 @@ Render Observation 现在为每个显式目标记录 `aria-expanded`、`aria-sel
 ## Trusted scenario 状态转换诊断
 
 `observe_quality_render --scenarios` 可复用现有 runtime scenario JSON，但 Quality 路线进一步收紧：只接受无 `when` 条件、全部 action 均为 `click`、且每个 selector 与一个显式 UI-IR target 唯一对应的场景；默认最多 16 个场景、32 个动作。动作执行复用 runtime 的超时和错误脱敏边界，HTTP(S) 及越出本地 HTML 目录的 file 请求仍被阻断。点击前若目标没有 `aria-expanded`、`aria-pressed`，或目标不是带 `aria-selected` 的 Tab，动作不会执行。每个场景在独立页面中运行并记录 before/after `stateContext`。`system.web.controlled-state.transition` 对 disclosure/toggle/tab 未更新状态或更新后受控目标可见性仍矛盾生成 soft warning；动作失败、状态证据缺失和受控目标不完整进入 `diagnostics.renderSkipped`。若 trusted click 产生非法 ARIA token，复用受保护的 `system.web.aria-state.token-valid` hard rule。场景中的 assertions 当前不参与 Quality 判定，也不应用修复。
+
+
+## Acceptance Gate
+
+能力覆盖、真实浏览器验证状态与自动修复阻断条件见 [`quality-capability-matrix.md`](quality-capability-matrix.md)。当前 prototype 的 repair gate 必须保持 blocked。

@@ -38,8 +38,10 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "quality/observation/render.py",
             "quality/focus.py",
             "quality/states.py",
+            "quality/capabilities.py",
             "cli/observe_quality_render.py",
             "cli/inspect_quality.py",
+            "cli/check_quality_gate.py",
             "cli/manifest_to_uiir.py",
         ):
             with self.subTest(relative=relative):
