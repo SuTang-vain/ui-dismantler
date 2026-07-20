@@ -1,1 +1,11 @@
-{"id":"web-base","version":"1.0.0","extends":[],"enable":["component.*"],"disable":[],"overrides":{}}
+{
+  "id": "web-base",
+  "version": "1.0.0",
+  "extends": [],
+  "enable": [
+    "component.*",
+    "system.web.*"
+  ],
+  "disable": [],
+  "overrides": {}
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "format": "render-observation",
+  "source": "render.html",
+  "browser": "fixture",
+  "targets": [
+    {"targetKey": "element:small", "selector": "#small"},
+    {"targetKey": "element:wide", "selector": "#wide"},
+    {"targetKey": "element:hidden", "selector": "#hidden"}
+  ],
+  "viewports": [
+    {"id": "wise", "width": 390, "height": 844},
+    {"id": "desktop", "width": 1280, "height": 720}
+  ],
+  "observations": [
+    {"targetKey":"element:small","selector":"#small","viewportKey":"wise","viewport":{"width":390,"height":844},"tag":"button","role":"","interactive":true,"disabled":false,"accessibleName":"Small","bounds":{"x":10,"y":10,"width":20,"height":22},"computedStyle":{},"visible":true,"clipped":false},
+    {"targetKey":"element:small","selector":"#small","viewportKey":"desktop","viewport":{"width":1280,"height":720},"tag":"button","role":"","interactive":true,"disabled":false,"accessibleName":"Small","bounds":{"x":10,"y":10,"width":44,"height":44},"computedStyle":{},"visible":true,"clipped":false},
+    {"targetKey":"element:wide","selector":"#wide","viewportKey":"wise","viewport":{"width":390,"height":844},"tag":"div","role":"","interactive":false,"disabled":false,"accessibleName":"Wide","bounds":{"x":0,"y":70,"width":600,"height":30},"computedStyle":{},"visible":true,"clipped":true},
+    {"targetKey":"element:hidden","selector":"#hidden","viewportKey":"wise","viewport":{"width":390,"height":844},"tag":"button","role":"","interactive":true,"disabled":false,"accessibleName":"Hidden","bounds":{"x":0,"y":0,"width":10,"height":10},"computedStyle":{},"visible":false,"clipped":true}
+  ]
+}

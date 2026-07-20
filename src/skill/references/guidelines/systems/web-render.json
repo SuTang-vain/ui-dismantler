@@ -1,0 +1,73 @@
+[
+  {
+    "id": "system.web.click-target.minimum",
+    "version": "1.0.0",
+    "scope": "element",
+    "category": "clickable",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-click-target-minimum",
+      "options": {
+        "minimumCssPx": 24
+      }
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "local-layout",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 2.5.8 diagnostic; exceptions require later semantic/spacing analysis"
+    }
+  },
+  {
+    "id": "system.web.viewport-clipping",
+    "version": "1.0.0",
+    "scope": "page",
+    "category": "layout",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "desktop",
+      "wise"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-viewport-clipping"
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "responsive-layout",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component",
+        "region"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 1.4.10 reflow diagnostic; intentional off-canvas layouts require review"
+    }
+  }
+]

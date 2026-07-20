@@ -116,6 +116,59 @@ class TestStaticInspection(unittest.TestCase):
         self.assertEqual(uiir, original)
 
 
+
+class TestRenderFindings(unittest.TestCase):
+    def setUp(self):
+        rules, profiles = knowledge()
+        self.profile = compose_profile("web-base", profiles, rules)
+        self.uiir = document([
+            ("element:small", {"id": "small", "role": "button", "text": "Small"}),
+            ("element:wide", {"id": "wide"}),
+            ("element:hidden", {"id": "hidden", "role": "button", "text": "Hidden"}),
+        ])
+
+    def test_click_target_and_clipping_findings_are_viewport_scoped(self):
+        original = deepcopy(self.uiir)
+        render = fixture("render-findings.json")
+        report = inspect_uiir(self.uiir, self.profile, render)
+        findings = report["findings"]
+        self.assertEqual(report["summary"], {"total": 2, "hard": 0, "soft": 2})
+        by_rule = {item["guidelineId"]: item for item in findings}
+        self.assertEqual(by_rule["system.web.click-target.minimum"]["targetKey"], "element:small")
+        self.assertEqual(by_rule["system.web.click-target.minimum"]["viewportKey"], "wise")
+        self.assertEqual(by_rule["system.web.viewport-clipping"]["targetKey"], "element:wide")
+        self.assertEqual(by_rule["system.web.viewport-clipping"]["viewportKey"], "wise")
+        self.assertEqual(validate_quality_ir(report), [])
+        self.assertEqual(self.uiir, original)
+
+
+    def test_optional_browser_collection_drives_render_findings(self):
+        uiir = document([
+            ("element:small", {"id": "small", "role": "button", "text": "Small"}),
+            ("element:wide", {"id": "wide"}),
+        ])
+        render, warnings = observe_render(
+            FIXTURES / "render.html", targets_from_uiir(uiir),
+            viewports=[{"id": "wise", "width": 390, "height": 844}],
+        )
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        report = inspect_uiir(uiir, self.profile, render)
+        self.assertEqual(
+            {item["guidelineId"] for item in report["findings"]},
+            {"system.web.click-target.minimum", "system.web.viewport-clipping"},
+        )
+
+    def test_hidden_and_disabled_targets_do_not_produce_findings(self):
+        render = fixture("render-findings.json")
+        render["observations"][0]["disabled"] = True
+        report = inspect_uiir(self.uiir, self.profile, render)
+        self.assertEqual([item["guidelineId"] for item in report["findings"]], ["system.web.viewport-clipping"])
+
+    def test_static_only_inspection_ignores_render_rules(self):
+        report = inspect_uiir(self.uiir, self.profile)
+        self.assertEqual(report["findings"], [])
+
 class TestRenderObservation(unittest.TestCase):
     def test_targets_only_use_explicit_uiir_references(self):
         uiir = document([

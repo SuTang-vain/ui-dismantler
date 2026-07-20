@@ -114,7 +114,11 @@ def observe_render(
         for (const field of args.styleFields) computedStyle[field] = style[field] || '';
         const visible = !element.hidden && style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;
         const clipped = rect.left < 0 || rect.top < 0 || rect.right > innerWidth || rect.bottom > innerHeight;
-        output.push({...item, tag: element.tagName.toLowerCase(), role: element.getAttribute('role') || '', accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        const tag = element.tagName.toLowerCase();
+        const role = element.getAttribute('role') || '';
+        const interactive = ['button','a','input','select','textarea','summary'].includes(tag) || ['button','link','tab','checkbox','radio','switch','menuitem'].includes(role) || element.hasAttribute('onclick');
+        const disabled = Boolean(element.disabled) || element.getAttribute('aria-disabled') === 'true';
+        output.push({...item, tag, role, interactive, disabled, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""
@@ -150,7 +154,7 @@ def observe_render(
                     for item in raw if isinstance(raw, list) else []:
                         if item.get("error"):
                             warnings.append(f"{viewport['id']} {item.get('targetKey')}: {item['error']}"); continue
-                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
+                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
                         errors = validate_render_observation(observation)
                         if errors: warnings.append(f"{viewport['id']} {item['targetKey']}: {'; '.join(errors)}")
                         else: result["observations"].append(observation)

@@ -70,7 +70,7 @@ DETECTORS: dict[str, Detector] = {
     "image-alt-present": image_alt,
 }
 
-def inspect_uiir(document: dict[str, Any], effective_profile: dict[str, Any]) -> dict[str, Any]:
+def inspect_uiir(document: dict[str, Any], effective_profile: dict[str, Any], render_document: dict[str, Any] | None = None) -> dict[str, Any]:
     errors = validate_uiir(document)
     if errors:
         raise ValueError("invalid UI-IR: " + "; ".join(errors))
@@ -98,7 +98,10 @@ def inspect_uiir(document: dict[str, Any], effective_profile: dict[str, Any]) ->
             if str(node[0]) in evidence:
                 finding_evidence.append({"method": "ui-ir-evidence", "record": evidence[str(node[0])]})
             findings.append({"id": f"finding:{digest}", "guidelineId": guideline["id"], "targetKey": target_key, "constraint": guideline["constraint"], "severity": guideline["severity"], "confidence": 1.0, "evidence": finding_evidence, "repairProposals": [], "status": "open"})
-    findings.sort(key=lambda item: (item["guidelineId"], item["targetKey"]))
+    if render_document is not None:
+        from .render import inspect_render_findings
+        findings.extend(inspect_render_findings(render_document, effective_profile))
+    findings.sort(key=lambda item: (item["guidelineId"], item["targetKey"], item.get("viewportKey", "")))
     report = {"schemaVersion": QUALITY_SCHEMA_VERSION, "format": QUALITY_IR_FORMAT, "sourceFormat": "ui-ir", "sourceSchemaVersion": document["schemaVersion"], "profile": {key: effective_profile[key] for key in ("id", "version", "lineage", "guidelineIds")}, "findings": findings, "summary": {"total": len(findings), "hard": sum(item["constraint"] == "hard" for item in findings), "soft": sum(item["constraint"] == "soft" for item in findings)}}
     quality_errors = validate_quality_ir(report)
     if quality_errors:

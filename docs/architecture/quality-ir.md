@@ -20,4 +20,13 @@ python3 -m ui_dismantler.cli.observe_quality_render page.html page.uiir.json \
   --viewport wise:390x844 -o page.render.json
 ```
 
-系统视觉规则尚未启用；下一阶段应先为 contrast、overflow 和 click-target 建立确定性检测与缺陷注入基准。
+首批 Render Observation 规则已启用：交互目标小于 24×24 CSS px，以及可见元素超出 viewport。两者当前均为 **soft warning**：WCAG target-size 存在 spacing/inline 等例外，离屏布局也可能是有意设计；在补齐邻近元素间距、滚动容器和布局意图证据前，不自动修复。
+
+`inspect_quality` 可合并静态与渲染证据：
+
+```bash
+python3 -m ui_dismantler.cli.inspect_quality page.uiir.json \
+  --profile web-base --render page.render.json -o quality-findings.json
+```
+
+下一阶段再处理 contrast；它需要透明度、祖先背景与渐变合成，不能直接比较两个 computed color 字符串。

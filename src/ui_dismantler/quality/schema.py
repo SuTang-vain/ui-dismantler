@@ -129,6 +129,8 @@ def validate_quality_ir(value: Any) -> list[str]:
         for name in ("id", "guidelineId", "targetKey"):
             if not _text(finding.get(name)):
                 errors.append(f"{field}.{name} must be a non-empty string")
+        if "viewportKey" in finding and not _text(finding.get("viewportKey")):
+            errors.append(f"{field}.viewportKey must be a non-empty string")
         if finding.get("constraint") not in CONSTRAINT_LEVELS:
             errors.append(f"{field}.constraint is invalid")
         if finding.get("severity") not in SEVERITIES:
@@ -180,7 +182,9 @@ def validate_render_observation(value: Any) -> list[str]:
                     errors.append(f"bounds.{field} must be numeric")
     if not isinstance(value.get("computedStyle", {}), dict):
         errors.append("computedStyle must be an object")
-    for field in ("visible", "clipped"):
+    if "viewportKey" in value and not _text(value.get("viewportKey")):
+        errors.append("viewportKey must be a non-empty string")
+    for field in ("visible", "clipped", "interactive", "disabled"):
         if field in value and not isinstance(value[field], bool):
             errors.append(f"{field} must be boolean")
     return errors

@@ -12,6 +12,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("uiir", type=Path)
     parser.add_argument("--profile", default="web-base")
     parser.add_argument("--guidelines-root", type=Path, default=SKILL_ROOT / "references" / "guidelines")
+    parser.add_argument("--render", type=Path, help="optional Render Observation JSON")
     parser.add_argument("-o", "--output", type=Path)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
@@ -21,7 +22,8 @@ def main(argv: list[str] | None = None) -> int:
         guidelines.update(load_guidelines(args.guidelines_root / "systems"))
         profiles = load_profiles(args.guidelines_root / "profiles")
         effective = compose_profile(args.profile, profiles, guidelines)
-        report = inspect_uiir(document, effective)
+        render_document = json.loads(args.render.read_text(encoding="utf-8")) if args.render else None
+        report = inspect_uiir(document, effective, render_document)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"[quality] inspection failed: {exc}", file=sys.stderr); return 1
     if args.check:
