@@ -1,5 +1,8 @@
 # 图片来源与署名
 
+> **说明（2026-07-20 瘦身）**：为减小仓库体积，`assets/` 下的二进制图片（jpg/png）已从本分支剥离，仅保留本来源说明与 `star-group.{css,js}` 代码范式样本。如需完整渲染 `index.html`，请按下方表格从 Wikimedia Commons / Apple Music 重新获取图片至对应路径。
+
+
 本示例的成员肖像已下载至 `assets/members/`，来源均为 Wikimedia Commons 的公开授权文件。作品封面通过 Apple Music / iTunes Search API 获取，并下载至 `assets/works/` 供本地示例稳定展示；封面版权归相应权利方所有，仅用于词条组件演示。
 
 | 本地文件 | Commons 文件 | 授权 |
