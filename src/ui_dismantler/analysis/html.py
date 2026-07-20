@@ -541,6 +541,23 @@ class HtmlAnalyzer:
         panels = self.soup.find_all(attrs={"role": "tabpanel"})
         if not panels:
             panels = self.soup.find_all(class_=re.compile(r"\bview\b|\bpanel\b|tabpanel", re.I))
+        # 页面级范式检测：对 body 整体跑 detector，识别 nav-panel / cause-chain /
+        # graph 等需要全局视角的范式。这些范式无法在单个 panel 上识别（nav-panel
+        # 需要看 nav + 所有 panel 的关系），所以无论有无 panel 都先跑一次。
+        # 页面级范式与 panel 级范式互斥：命中页面级就不再列 panel。
+        page_vtype: str | None = None
+        if not minimal:
+            body = self.soup.find("body")
+            if body:
+                candidate = self._classify_view(body)
+                if candidate in ("cause-chain", "nav-panel", "graph"):
+                    page_vtype = candidate
+        if page_vtype is not None:
+            body = self.soup.find("body")
+            view = {"id": "", "tabId": "", "active": True, "type": page_vtype}
+            view.update(self._extract_view_details(body, page_vtype))
+            views.append(view)
+            return views
         # 先判定是否有任何 panel 显式标 active（active/is-active/on 类）
         ACTIVE_CLS = re.compile(r"\b(active|is-active|on)\b", re.I)
         any_explicit = any(ACTIVE_CLS.search(" ".join(p.get("class") or [])) for p in panels)
@@ -599,6 +616,12 @@ class HtmlAnalyzer:
             return self._extract_comparison_details(node)
         if vtype == "splash":
             return self._extract_splash_details(node)
+        if vtype == "cause-chain":
+            return self._extract_cause_chain_details(node)
+        if vtype == "nav-panel":
+            return self._extract_nav_panel_details(node)
+        if vtype == "graph":
+            return self._extract_graph_details(node)
         return {}
 
     def _extract_quiz_details(self, node) -> dict:
@@ -646,6 +669,63 @@ class HtmlAnalyzer:
             "hasOptions": bool(node.find(class_=re.compile(r"splash-?opt", re.I))),
             "ctaSelector": ".splash-cta" if cta else None,
             "ctaText": cta.get_text(strip=True)[:30] if cta else None,
+        }
+
+    def _extract_cause_chain_details(self, node) -> dict:
+        """因果链视图：timeline-nav + 因果链数据 + 可选 whatif 假设分支。"""
+        scripts_blob = "\n".join(self.scripts)
+        has_cause_chain_data = "causeChain" in scripts_blob or bool(
+            node.find(class_=re.compile(r"cause-?chain", re.I))
+        )
+        has_whatif = bool(node.find(class_=re.compile(r"whatif", re.I))) or "whatIf" in scripts_blob
+        timeline_nav = node.find(class_=re.compile(r"timeline-?nav", re.I))
+        return {
+            "hasTimelineNav": timeline_nav is not None,
+            "hasCauseChainData": has_cause_chain_data,
+            "hasWhatIf": has_whatif,
+            "navItems": len(timeline_nav.find_all(["button", "a"])) if timeline_nav else 0,
+        }
+
+    def _extract_nav_panel_details(self, node) -> dict:
+        """导航+面板视图：nav 触发器与对应面板的映射。"""
+        nav = node.find(class_=re.compile(r"^nav$", re.I)) or node.find("nav")
+        triggers: list[dict] = []
+        if nav:
+            for t in nav.find_all(attrs={"data-p": True}):
+                triggers.append({"target": t.get("data-p"), "label": t.get_text(strip=True)[:20]})
+            if not triggers:
+                for t in nav.find_all(attrs={"data-tab": True}):
+                    triggers.append({"target": t.get("data-tab"), "label": t.get_text(strip=True)[:20]})
+        panels = node.find_all(class_=re.compile(r"panel", re.I))
+        return {
+            "triggerCount": len(triggers),
+            "panelCount": len(panels),
+            "triggers": triggers[:10],  # 最多列 10 个，避免 manifest 过大
+        }
+
+    def _extract_graph_details(self, node) -> dict:
+        """关系图谱视图：svg 连线 + 节点 + 图谱数据。"""
+        scripts_blob = "\n".join(self.scripts)
+        svg = node.find("svg")
+        node_els = node.find_all(class_=re.compile(r"gnd|node|graph", re.I))
+        # 识别数据源类型（用于 agent 理解如何接入数据）
+        data_source = None
+        for token, source in (
+            ("NODES", "uppercase-const"),
+            ("nodes:", "object-property"),
+            ("relTypes", "mount-options"),
+            ("CharStoryGraph", "mount-api"),
+            ("nodeState", "runtime-state"),
+            ("buildGraph", "function-builder"),
+        ):
+            if token in scripts_blob:
+                data_source = source
+                break
+        return {
+            "hasSvg": svg is not None,
+            "nodeCount": len(node_els),
+            "dataSource": data_source,
+            "hasEdges": svg is not None and bool(svg.find("line") or svg.find("path")),
         }
 
     def _extract_member_grid_details(self, node) -> dict:

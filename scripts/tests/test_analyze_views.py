@@ -121,6 +121,88 @@ class TestClassifyModalLayoutComparison(unittest.TestCase):
         self.assertEqual(a._classify_modal_layout(node, "modal-overlay"), "comparison")
 
 
+class TestPageLevelPatternRecognition(unittest.TestCase):
+    """页面级范式（cause-chain/nav-panel/graph）的全屏识别 + details 提取。
+
+    这些范式无法在单个 panel 上识别（需要全局视角），_analyze_views
+    改造后会对 body 整体跑 detector，命中后作为唯一 view 返回。
+    """
+
+    def test_cause_chain_page_recognized_with_details(self):
+        """黄月英类页面：timeline-nav + causeChain -> cause-chain + details。"""
+        html = '''<body>
+<div class="timeline-nav"><button data-p="c1">事件1</button><button data-p="c2">事件2</button></div>
+<div class="cause-chain">因果链</div>
+<button class="whatif-btn">假设</button>
+<script>var causeChain=[{cause:'a',effect:'b'}]; var whatIf={};</script>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "cause-chain")
+        self.assertTrue(views[0]["hasTimelineNav"])
+        self.assertTrue(views[0]["hasCauseChainData"])
+        self.assertTrue(views[0]["hasWhatIf"])
+
+    def test_nav_panel_page_recognized_with_triggers(self):
+        """纸上谈兵类页面：nav + triggers + panels -> nav-panel + details。"""
+        html = '''<body>
+<nav><button data-p="p1">Tab1</button><button data-p="p2">Tab2</button>
+<button data-p="p3">Tab3</button><button data-p="p4">Tab4</button></nav>
+<div class="panel" id="p1">P1</div><div class="panel" id="p2">P2</div>
+<div class="panel" id="p3">P3</div><div class="panel" id="p4">P4</div>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "nav-panel")
+        self.assertEqual(views[0]["triggerCount"], 4)
+        self.assertEqual(views[0]["panelCount"], 4)
+        self.assertEqual(len(views[0]["triggers"]), 4)
+
+    def test_graph_page_recognized_with_data_source(self):
+        """庆余年类页面：数据驱动 graph -> graph + dataSource。"""
+        html = '''<body>
+<div id="mount"></div>
+<script>CharStoryGraph.mount(el, {relTypes:{family:'血缘'}});</script>
+</body>'''
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        self.assertEqual(len(views), 1)
+        self.assertEqual(views[0]["type"], "graph")
+        self.assertEqual(views[0]["dataSource"], "mount-options")
+
+    def test_panel_page_not_overridden_by_page_level(self):
+        """有 panel 且非页面级范式时，仍走 panel 级识别。"""
+        html = '<section class="panel" id="m"><div class="member-grid"><div class="member"></div></div></section>'
+        a = _make_analyzer(html)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        # member-grid 是 panel 级范式，不应被页面级兜底覆盖
+        types = [v["type"] for v in views]
+        self.assertIn("member-grid", types)
+        self.assertNotIn("cause-chain", types)
+        self.assertNotIn("nav-panel", types)
+
+    def test_minimal_mode_skips_page_level_detection(self):
+        """--minimal 模式不跑页面级范式检测（快速模式）。"""
+        html = '<body><div class="timeline-nav"></div><div class="cause-chain"></div></body>'
+        # minimal 通过构造函数传入，analyze() 不带参数
+        full = f"""<!doctype html><html><head><meta charset="utf-8">
+<title>test</title></head><body>{html}</body></html>"""
+        fd, path = tempfile.mkstemp(suffix=".html")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(full)
+        a = HtmlAnalyzer(path, minimal=True)
+        manifest = a.analyze()
+        views = manifest["structure"]["views"]
+        # minimal 模式下应为空（不跑 detect_view）
+        self.assertEqual(len(views), 0)
+
+
 class TestNoRegressionOnExistingTypes(unittest.TestCase):
     """回归：已有视图类型不被新分支误判。"""
 
