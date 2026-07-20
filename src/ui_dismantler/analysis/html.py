@@ -574,7 +574,7 @@ class HtmlAnalyzer:
 
     def detect_view(self, node) -> ViewDetection:
         """返回带结构类型、置信度和证据的视图识别结果。"""
-        result = self.detector_registry.detect(node, self.css)
+        result = self.detector_registry.detect(node, self.css, tuple(self.scripts))
         if result is not None:
             return result
         return ViewDetection(
