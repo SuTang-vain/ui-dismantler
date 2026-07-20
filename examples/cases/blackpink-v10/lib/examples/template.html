@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>明星组合 · 复用模板</title>
+<style>
+  html, body {
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+  }
+  body {
+    display: grid;
+    place-items: center;
+    background: #F8F8F8;
+    font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+</style>
+<link rel="stylesheet" href="../src/star-group.css">
+</head>
+<body>
+<div id="mount"></div>
+
+<script src="../src/star-group.js"></script>
+<script>
+/* -------------------------------------------------------------
+ * 明星组合 · 动态百科成员探索卡 - 空白复用模板
+ * 替换下方 options 中的占位数据即可生成新卡片。
+ * 数据契约见 ../README.md。
+ * ----------------------------------------------------------- */
+StarGroup.mount(document.getElementById('mount'), {
+  title: '组合名称',                         // 卡片标题（用于 a11y 标签）
+  ariaLabel: '组合名称 · 动态百科成员探索卡',   // 画布 aria-label
+
+  /* Tab 配置：前三个为面板切换，末位固定为 more（打开资料 Modal） */
+  tabs: [
+    { id: 'members',  label: '成员详情', count: 0 },  // count 显示在 <small>
+    { id: 'timeline', label: '经历',     count: 0 },
+    { id: 'works',    label: '团体作品', count: 0 },
+    { id: 'more',     label: '其它',     more: true }
+  ],
+
+  /* ---- 成员数据 ----
+     key: 唯一标识；name: 展示名；role: 队内定位（含「队内定位：」前缀，详情面板用全称，卡片用去前缀值）
+     shortName: 图片加载失败时的兜底文字；state: 状态徽标
+     img: 头像 URL；photoSource: 图片来源标注（小屏隐藏）
+     relations: 详情面板的 [label, value] 行 */
+  members: [
+    {
+      key: 'member-1', name: '成员一 · 中文名', role: '队内定位：主唱 · 视觉',
+      shortName: 'M1', state: '在团',
+      img: 'https://example.com/avatar-1.jpg',
+      photoSource: '来源',
+      relations: [
+        ['所属团体', '组合名称'],
+        ['队内角色', '主唱 · 视觉'],
+        ['加入阶段', '出道成员 · 2020'],
+        ['团体代表', '《作品 A》《作品 B》'],
+        ['当前状态', '在团']
+      ]
+    }
+    // ... 继续添加成员（建议 ≤ 8 人，每页 4 人自动分页）
+  ],
+
+  /* ---- 经历时间线 ----
+     time: 节点时间；title: 标题；desc: 简短描述（卡片折叠态可见）
+     img/alt: 节点配图；story: 经历背景长文（点击卡片原地展开后显示） */
+  timeline: [
+    {
+      time: '2020.01', title: '出道 ·《首张作品》', alt: '出道',
+      img: 'https://example.com/timeline-1.jpg',
+      desc: '简短描述，一行内概括该节点的关键事件。',
+      story: '这里是该节点的完整经历背景长文，点击卡片会原地展开显示。可以写多段创作背景、团队变迁、关键决策等。文字两端对齐、行高 1.8。'
+    }
+    // ... 继续添加时间线节点（建议 3-12 条，PC 每页 3 条 / 移动端 2 条）
+  ],
+
+  /* ---- 团体作品（3D 中心聚焦轮播） ----
+     img/alt: 封面；year: 年份+类型；title: 标题；desc: 简短描述（悬停中心卡可见）
+     story: 创作背景长文（点击中心卡或「展开创作故事」按钮弹出故事面板） */
+  works: [
+    {
+      img: 'https://example.com/cover-1.jpg', alt: '作品一',
+      year: '2020 · 单曲', title: '《作品一》',
+      desc: '简短描述，3 行内概括作品信息。',
+      story: '这里是该作品的完整创作背景长文。故事面板左侧显示封面、右侧显示年份、标题、分隔线、「创作背景」标签和正文。移动端自动纵向堆叠。'
+    }
+    // ... 继续添加作品（建议 ≥ 3 个以呈现 5 档位 3D 效果；轮播自动循环）
+  ],
+
+  /* ---- 资料与说明（"其它"Tab 触发，事实网格 Modal） ----
+     moreTitle/moreSub/moreDecl: 弹窗标题/副标/底栏声明
+     moreFacts: [{label, value, full?}] - full=true 时该行跨两列 */
+  moreTitle: '资料与说明',
+  moreSub: '本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。',
+  moreDecl: '动态百科 · 资料与说明',
+  moreFacts: [
+    { label: '词条类型', value: 'XX 演唱组合 · 编制' },
+    { label: '经纪机构', value: '经纪公司' },
+    { label: '出道日期', value: '20XX 年 X 月 X 日' },
+    { label: '资料声明', value: '事实中立,虚构履历或未公开状态一律不填写。', full: true }
+  ],
+
+  /* ---- 主题定制（可选，覆盖 --sg-* 变量） ----
+     theme: {
+       primary: '#6487FA',   // 主功能色（选中/激活/箭头）
+       accent:  '#E94F76',   // 强调色（更多/故事/年份）
+       ink:     '#1E1F24',   // 主文字
+       soft:    '#F2F4FB'     // 主色浅底
+     }, */
+
+  /* ---- 自动播放间隔（毫秒） ---- */
+  autoPlayMember: 3000,   // 成员轮播：进入即启动，任意交互停止
+  autoPlayWorks: 3500    // 作品轮播：进入作品 Tab 启动，离开/悬停/打开故事面板停止
+});
+</script>
+</body>
+</html>
