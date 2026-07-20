@@ -34,3 +34,7 @@ python3 -m ui_dismantler.cli.inspect_quality page.uiir.json \
 ## Focus-visible 诊断
 
 Focus 探针在每个 viewport 中仅处理显式 UI-IR 目标，采集目标、`::before`/`::after`、两级祖先及最多 8 个直接子元素的 focus 前后样式。只有浏览器确认目标获得焦点且匹配 `:focus-visible`，同时未观察到 outline、box-shadow、border、颜色、背景、文字装饰、transform/filter/opacity 等变化时，才生成 `system.web.focus-visible` soft warning。焦点未落到目标、`:focus-visible` 未激活或样式快照不完整时写入 `diagnostics.renderSkipped`。该版本不检查更远祖先、兄弟节点或像素级截图差异，因此暂不作为自动修复硬门禁。
+
+## 键盘可达性诊断
+
+Render Observation 现在记录显式 UI-IR 交互目标的 `tabIndex`、是否进入顺序焦点序列，以及是否属于由方向键管理焦点的复合控件。`system.web.keyboard-reachable` 仅在目标可见、交互、非禁用且浏览器确认其不在顺序焦点序列时生成 soft warning。位于 `tablist`、`menu`、`listbox`、`tree`、`grid`、`radiogroup` 或 `toolbar` 内的 `tabIndex=-1` 子项可能采用 roving tabindex，因此写入 `diagnostics.renderSkipped` 的 `managed-composite-focus`，等待后续方向键行为观察，不直接报告违规。旧版或合成观察缺少 `keyboardContext` 时同样不推断问题。本阶段不执行 tabindex/role 自动修复。

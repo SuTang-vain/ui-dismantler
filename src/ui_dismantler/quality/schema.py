@@ -212,6 +212,20 @@ def validate_render_observation(value: Any) -> list[str]:
             layers = context.get("backgroundLayers")
             if not isinstance(layers, list) or any(not isinstance(item, dict) for item in layers):
                 errors.append("colorContext.backgroundLayers must be an array of objects")
+    if "keyboardContext" in value:
+        keyboard = value["keyboardContext"]
+        if not isinstance(keyboard, dict):
+            errors.append("keyboardContext must be an object")
+        else:
+            for field in ("sequentiallyFocusable", "managedComposite"):
+                if field in keyboard and not isinstance(keyboard[field], bool):
+                    errors.append(f"keyboardContext.{field} must be boolean")
+            if "tabIndex" in keyboard:
+                item = keyboard["tabIndex"]
+                if isinstance(item, bool) or not isinstance(item, int):
+                    errors.append("keyboardContext.tabIndex must be an integer")
+            if "compositeRole" in keyboard and keyboard["compositeRole"] is not None and not isinstance(keyboard["compositeRole"], str):
+                errors.append("keyboardContext.compositeRole must be a string or null")
     if "focusContext" in value:
         focus = value["focusContext"]
         if not isinstance(focus, dict):

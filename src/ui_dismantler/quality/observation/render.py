@@ -148,8 +148,14 @@ def observe_render(
         const clipped = rect.left < 0 || rect.top < 0 || rect.right > innerWidth || rect.bottom > innerHeight;
         const tag = element.tagName.toLowerCase();
         const role = element.getAttribute('role') || '';
-        const interactive = ['button','a','input','select','textarea','summary'].includes(tag) || ['button','link','tab','checkbox','radio','switch','menuitem'].includes(role) || element.hasAttribute('onclick');
+        const nativeInteractive = ['button','input','select','textarea','summary'].includes(tag) || ((tag === 'a' || tag === 'area') && element.hasAttribute('href'));
+        const roleInteractive = ['button','link','tab','checkbox','radio','switch','menuitem','option','combobox','listbox','slider','spinbutton'].includes(role);
+        const handlerInteractive = element.hasAttribute('onclick') || typeof element.onclick === 'function';
+        const editableInteractive = element.isContentEditable;
+        const interactive = nativeInteractive || roleInteractive || handlerInteractive || editableInteractive;
         const disabled = Boolean(element.disabled) || element.getAttribute('aria-disabled') === 'true';
+        const composite = element.closest('[role="tablist"],[role="menu"],[role="listbox"],[role="tree"],[role="grid"],[role="radiogroup"],[role="toolbar"]');
+        const compositeRole = composite && composite !== element ? composite.getAttribute('role') || '' : '';
         const textContent = (element.innerText || element.textContent || '').trim().slice(0, 500);
         const backgroundLayers = [];
         let backgroundTruncated = false;
@@ -167,7 +173,14 @@ def observe_render(
           });
         }
         const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
-        const focusable = interactive && !disabled && element.tabIndex >= 0;
+        const sequentiallyFocusable = interactive && !disabled && element.tabIndex >= 0;
+        const keyboardContext = {
+          sequentiallyFocusable,
+          tabIndex: element.tabIndex,
+          managedComposite: Boolean(compositeRole),
+          compositeRole
+        };
+        const focusable = sequentiallyFocusable;
         let focusContext = {focusable, focused: false, focusVisible: false, before: [], after: []};
         if (focusable) {
           const previous = document.activeElement;
@@ -181,7 +194,7 @@ def observe_render(
             try { previous.focus({preventScroll: true}); } catch (_) {}
           }
         }
-        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""

@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "1.0",
+  "format": "render-observation",
+  "source": "render.html",
+  "browser": "fixture",
+  "targets": [
+    {
+      "targetKey": "element:keyboard-bad",
+      "selector": "#keyboard-bad"
+    },
+    {
+      "targetKey": "element:keyboard-good",
+      "selector": "#keyboard-good"
+    },
+    {
+      "targetKey": "element:keyboard-tab-inactive",
+      "selector": "#keyboard-tab-inactive"
+    }
+  ],
+  "viewports": [
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "observations": [
+    {
+      "targetKey": "element:keyboard-bad",
+      "selector": "#keyboard-bad",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "button",
+      "interactive": true,
+      "disabled": false,
+      "textContent": "keyboard-bad",
+      "accessibleName": "keyboard-bad",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 120,
+        "height": 32
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "keyboardContext": {
+        "sequentiallyFocusable": false,
+        "tabIndex": -1,
+        "managedComposite": false,
+        "compositeRole": ""
+      },
+      "focusContext": {
+        "focusable": false,
+        "focused": false,
+        "focusVisible": false,
+        "before": [],
+        "after": []
+      }
+    },
+    {
+      "targetKey": "element:keyboard-good",
+      "selector": "#keyboard-good",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "button",
+      "interactive": true,
+      "disabled": false,
+      "textContent": "keyboard-good",
+      "accessibleName": "keyboard-good",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 120,
+        "height": 32
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "keyboardContext": {
+        "sequentiallyFocusable": true,
+        "tabIndex": 0,
+        "managedComposite": false,
+        "compositeRole": ""
+      },
+      "focusContext": {
+        "focusable": true,
+        "focused": true,
+        "focusVisible": true,
+        "before": [
+          {
+            "scope": "target",
+            "style": {
+              "outlineStyle": "none",
+              "outlineWidth": "0px",
+              "outlineColor": "rgba(0,0,0,0)"
+            }
+          }
+        ],
+        "after": [
+          {
+            "scope": "target",
+            "style": {
+              "outlineStyle": "solid",
+              "outlineWidth": "2px",
+              "outlineColor": "rgb(0,95,204)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "targetKey": "element:keyboard-tab-inactive",
+      "selector": "#keyboard-tab-inactive",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "tab",
+      "interactive": true,
+      "disabled": false,
+      "textContent": "keyboard-tab-inactive",
+      "accessibleName": "keyboard-tab-inactive",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 120,
+        "height": 32
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "keyboardContext": {
+        "sequentiallyFocusable": false,
+        "tabIndex": -1,
+        "managedComposite": true,
+        "compositeRole": "tablist"
+      },
+      "focusContext": {
+        "focusable": false,
+        "focused": false,
+        "focusVisible": false,
+        "before": [],
+        "after": []
+      }
+    }
+  ]
+}

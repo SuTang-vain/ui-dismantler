@@ -47,7 +47,7 @@ class TestQualitySchema(unittest.TestCase):
         self.assertTrue(validate_profile({"id": "x", "version": "1", "overrides": {"a": {"unknown": 1}}}))
 
     def test_future_phase_contract_boundaries_are_explicit(self):
-        observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False}
+        observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
         proposal = {"id": "proposal:1", "findingIds": ["finding:1"], "targetKey": "element:x", "strategy": "local-attribute", "risk": "low", "changes": [{"attribute": "aria-label", "after": "Search"}], "verificationChecks": ["quality-rescan"], "rollback": "restore source span"}
         verification = {"proposalId": "proposal:1", "status": "accepted", "originalIssuesResolved": True, "contentPreserved": True, "behaviorPreserved": True, "newIssues": [], "checks": [{"name": "quality-rescan", "passed": True}]}
         self.assertEqual(validate_render_observation(observation), [])
@@ -233,6 +233,23 @@ class TestRenderFindings(unittest.TestCase):
         findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.focus-visible"]
         self.assertEqual([item["targetKey"] for item in findings], ["element:focus-bad"])
 
+    def test_optional_browser_keyboard_probe_distinguishes_reachable_and_managed_targets(self):
+        uiir = document([
+            ("element:keyboard-bad", {"id":"keyboard-bad","role":"button","text":"Keyboard bad"}),
+            ("element:keyboard-good", {"id":"keyboard-good","role":"button","text":"Keyboard good"}),
+            ("element:keyboard-tab-inactive", {"id":"keyboard-tab-inactive","role":"tab","text":"Inactive tab"}),
+        ])
+        render, warnings = observe_render(
+            FIXTURES / "render.html", targets_from_uiir(uiir),
+            viewports=[{"id":"desktop","width":1280,"height":720}],
+        )
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        report = inspect_uiir(uiir, self.profile, render)
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.keyboard-reachable"]
+        self.assertEqual([item["targetKey"] for item in findings], ["element:keyboard-bad"])
+        self.assertIn({"guidelineId":"system.web.keyboard-reachable","targetKey":"element:keyboard-tab-inactive","viewportKey":"desktop","reason":"managed-composite-focus"}, report["diagnostics"]["renderSkipped"])
+
     def test_hidden_and_disabled_targets_do_not_produce_findings(self):
         render = fixture("render-findings.json")
         render["observations"][0]["disabled"] = True
@@ -271,6 +288,11 @@ class TestRenderFindings(unittest.TestCase):
         focus_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(focus_uiir, self.profile, render)
+        render = fixture("render-keyboard.json")
+        render["observations"][0]["keyboardContext"]["tabIndex"] = "minus-one"
+        keyboard_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(keyboard_uiir, self.profile, render)
 
 
     def test_focus_finding_reports_only_conclusive_missing_indicator(self):
@@ -284,6 +306,18 @@ class TestRenderFindings(unittest.TestCase):
         focus_findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.focus-visible"]
         self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in focus_findings], [("element:focus-bad", "desktop")])
         self.assertIn({"guidelineId":"system.web.focus-visible","targetKey":"element:focus-uncertain","viewportKey":"desktop","reason":"focus-visible-not-observed"}, report["diagnostics"]["renderSkipped"])
+
+    def test_keyboard_reachability_reports_only_conclusive_unmanaged_target(self):
+        uiir = document([
+            ("element:keyboard-bad", {"id":"keyboard-bad","role":"button","text":"Keyboard bad"}),
+            ("element:keyboard-good", {"id":"keyboard-good","role":"button","text":"Keyboard good"}),
+            ("element:keyboard-tab-inactive", {"id":"keyboard-tab-inactive","role":"tab","text":"Inactive tab"}),
+        ])
+        report = inspect_uiir(uiir, self.profile, fixture("render-keyboard.json"))
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.keyboard-reachable"]
+        self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in findings], [("element:keyboard-bad", "desktop")])
+        self.assertEqual(findings[0]["evidence"][0]["observed"]["tabIndex"], -1)
+        self.assertIn({"guidelineId":"system.web.keyboard-reachable","targetKey":"element:keyboard-tab-inactive","viewportKey":"desktop","reason":"managed-composite-focus"}, report["diagnostics"]["renderSkipped"])
 
     def test_static_only_inspection_ignores_render_rules(self):
         report = inspect_uiir(self.uiir, self.profile)

@@ -6,7 +6,7 @@ from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
 from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -99,6 +99,33 @@ def inspect_render_findings(
                         "Focus-visible target has no observable visual indicator",
                         focus,
                     ))
+            elif detector == "render-keyboard-reachable":
+                if not observation.get("interactive") or observation.get("disabled"):
+                    continue
+                keyboard = observation.get("keyboardContext")
+                # Older/synthetic render fixtures may predate this optional evidence.
+                # Do not infer a keyboard violation without the bounded browser probe.
+                if not isinstance(keyboard, dict) or "sequentiallyFocusable" not in keyboard:
+                    continue
+                if keyboard.get("sequentiallyFocusable"):
+                    continue
+                if keyboard.get("managedComposite"):
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": "managed-composite-focus",
+                    })
+                    continue
+                findings.append(_finding(
+                    guideline, observation,
+                    "Interactive target is not reachable in the sequential keyboard focus order",
+                    {
+                        "tabIndex": keyboard.get("tabIndex"),
+                        "managedComposite": False,
+                        "compositeRole": keyboard.get("compositeRole"),
+                    },
+                ))
             elif detector == "render-text-contrast":
                 if not str(observation.get("textContent") or "").strip():
                     continue
