@@ -232,7 +232,7 @@ class TestExtractRootVars(unittest.TestCase):
         self.assertEqual(out, {"--primary": "#f00", "--ink": "#000"})
 
     def test_root_selector_group(self):
-        # :root 与 .sg-frame 共用声明块（BLACKPINK 实际场景）
+        # :root 与 .sg-frame 共用声明块（benchmark 实际场景）
         css = ":root, .sg-frame { --primary: #f00; --ink: #000; }"
         out = extract_root_vars(css)
         self.assertEqual(out, {"--primary": "#f00", "--ink": "#000"})
@@ -400,7 +400,7 @@ class TestExtractGradients(unittest.TestCase):
 
 class TestSlugify(unittest.TestCase):
     def test_english(self):
-        self.assertEqual(slugify("BLACKPINK"), "blackpink")
+        self.assertEqual(slugify("GlossaryExplorer"), "glossaryexplorer")
 
     def test_english_with_spaces(self):
         self.assertEqual(slugify("Hello World"), "hello-world")
@@ -409,7 +409,7 @@ class TestSlugify(unittest.TestCase):
         self.assertEqual(slugify("黄月英"), "黄月英")
 
     def test_mixed(self):
-        self.assertEqual(slugify("BLACKPINK 明星组合"), "blackpink-明星组合")
+        self.assertEqual(slugify("Glossary 术语表"), "glossary-术语表")
 
     def test_strips_version_suffix(self):
         self.assertEqual(slugify("case_v2"), "case")

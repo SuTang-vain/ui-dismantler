@@ -18,7 +18,7 @@ v1 的本质是"把 HTML 往预定义模板里套"——纯规则引擎（Beauti
 
 ### v2 方向：agent 驱动 + 工具辅助
 
-标杆是当初手工拆解 BLACKPINK 的过程（`明星组合/组件库`）—— agent 阅读 HTML，**理解**其主题色语义、交互模式、结构组织，产出完整的组件库。这种理解力是规则做不到的，也是"根据 HTML 创建"的真正含义。
+标杆是当初benchmark 组件库的构建过程（`benchmark/lib`）—— agent 阅读 HTML，**理解**其主题色语义、交互模式、结构组织，产出完整的组件库。这种理解力是规则做不到的，也是"根据 HTML 创建"的真正含义。
 
 v2 架构：
 
@@ -53,9 +53,9 @@ v1 的 Python 脚本不丢弃，转为 agent 的**工具层**：
 | ~~`generate_lib.py` + 模板~~ | **已删除**：agent 直接写代码，不再套模板（v1 模板链路一并移除） |
 | ~~`aggregate_vertical.py`~~ | **已删除**：垂类聚合等单案例稳定后再重做 |
 
-## 产出标准（对标手工 BLACKPINK 组件库）
+## 产出标准（对标 benchmark 组件库）
 
-agent 产出的组件库必须达到当初手工拆解的质量：
+agent 产出的组件库必须达到 benchmark 的质量：
 
 ```
 <库名>/
@@ -92,8 +92,13 @@ agent 产出的组件库必须达到当初手工拆解的质量：
 
 `scripts/roundtrip.py` + `_roundtrip_render.mjs`，对称执行原页面和组件库后量化等价度。`auto` 模式优先运行态参照，失败时显式记录并回退静态解析；`rendered` 严格模式禁止回退。
 基线报告见 `docs/baselines/`：
+<<<<<<< HEAD
 - `roundtrip_blackpink_v10_rendered.json`：运行态主基线（综合 0.992，结构 0.995，文本 0.990）
 - `roundtrip_blackpink_v10_agent.json`：历史静态兼容基线（综合 0.928，结构 0.965，文本 0.892）
+=======
+- `roundtrip_benchmark_rendered.json`：运行态主基线（综合 0.990，结构 0.997，文本 0.983）
+- `roundtrip_benchmark_static.json`：历史静态兼容基线（综合 0.849，结构 0.947，文本 0.750）
+>>>>>>> codex/generic-agent-quality
 - `archive-v1/`：v1 模板链路的历史 baseline（generate_lib 已删，不可复现，仅存档）
 
 ### P0-2 单元测试
@@ -129,7 +134,11 @@ SKILL.md 要包含：
 - sg-* 强约束规范（命名/变量/响应式/A11y，引用 spec.md）
 - 工具调用方式（analyze/validate/roundtrip 的 CLI）
 - 质量门槛（validate 全过 + roundtrip ≥ 0.85）
+<<<<<<< HEAD
 - 标杆示例（BLACKPINK 组件库的结构和质量标准）
+=======
+- 标杆示例（benchmark 组件库的结构和质量标准）
+>>>>>>> codex/generic-agent-quality
 
 ### P1-2 前向测试：agent 独立拆解新案例
 
@@ -139,7 +148,7 @@ SKILL.md 要包含：
 - 检查：是否过 8 约束、往返分多少、JS 语法、example 能否还原原页
 
 测试案例（覆盖不同结构）：
-1. BLACKPINK（明星组合，已知结构，应高分）
+1. Benchmark（6 范式覆盖，应高分）
 2. 黄月英（因果链，agent 需理解 splash+timeline-nav+modal）
 3. 纸上谈兵（nav+panel，agent 需理解 data-p 关联）
 4. 蜂鸟科图鉴（对比辨析，agent 需理解特征对比）

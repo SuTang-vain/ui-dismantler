@@ -40,7 +40,11 @@ _MIN_CSS = """:root {
 @media (max-width: 320px) { .sg-frame { padding: 4px; } }"""
 
 # 最小合法 JS（含全局对象 + A11y 基线）
+<<<<<<< HEAD
 _MIN_JS = """window.StarGroup = { mount: function(){} };
+=======
+_MIN_JS = """window.GlossaryExplorer = { mount: function(){} };
+>>>>>>> codex/generic-agent-quality
 var el = document.createElement('div');
 el.setAttribute('aria-label', 'main');
 el.setAttribute('aria-live', 'polite');"""
@@ -52,6 +56,7 @@ class TestDataSeparation(unittest.TestCase):
     def test_clean_library_passes(self):
         """业务文案全在 <script> options 内 -> PASS。"""
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": _MIN_CSS,
             "src/star-group.js": _MIN_JS,
             "examples/case.html": """<!doctype html><html><body>
@@ -59,11 +64,24 @@ class TestDataSeparation(unittest.TestCase):
 <script src="../src/star-group.js"></script>
 <script>
 StarGroup.mount(document.getElementById('mount'), {
+=======
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS,
+            "examples/case.html": """<!doctype html><html><body>
+<div id="mount"></div>
+<script src="../src/glossary.js"></script>
+<script>
+GlossaryExplorer.mount(document.getElementById('mount'), {
+>>>>>>> codex/generic-agent-quality
   members: [{name:'JISOO', year:2016, role:'主唱'}]
 });
 </script>
 </body></html>""",
+<<<<<<< HEAD
             "README.md": "# Lib\n\nStarGroup.mount(el, opts)\n",
+=======
+            "README.md": "# Lib\n\nGlossaryExplorer.mount(el, opts)\n",
+>>>>>>> codex/generic-agent-quality
             "docs/设计规范.md": "# 设计规范\n\n主题色：primary\n",
         })
         v.check_data_separation()
@@ -75,12 +93,21 @@ StarGroup.mount(document.getElementById('mount'), {
     def test_dom_hardcoded_years_fail(self):
         """DOM 残留 ≥2 个年份 -> FAIL。"""
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": _MIN_CSS,
             "src/star-group.js": _MIN_JS,
             "examples/bad.html": """<!doctype html><html><body>
 <div id="mount"></div>
 <div class="sg-timeline"><span>2016年出道</span><span>2022年回归</span></div>
 <script src="../src/star-group.js"></script>
+=======
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS,
+            "examples/bad.html": """<!doctype html><html><body>
+<div id="mount"></div>
+<div class="sg-timeline"><span>2016年出道</span><span>2022年回归</span></div>
+<script src="../src/glossary.js"></script>
+>>>>>>> codex/generic-agent-quality
 </body></html>""",
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
@@ -92,12 +119,21 @@ StarGroup.mount(document.getElementById('mount'), {
     def test_dom_long_description_fail(self):
         """DOM 残留长描述（≥15 中文字符）-> FAIL。"""
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": _MIN_CSS,
             "src/star-group.js": _MIN_JS,
             "examples/bad.html": """<!doctype html><html><body>
 <div id="mount"></div>
 <p class="sg-desc">该组合于二零一六年正式出道并迅速走红亚洲流行乐坛</p>
 <script src="../src/star-group.js"></script>
+=======
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS,
+            "examples/bad.html": """<!doctype html><html><body>
+<div id="mount"></div>
+<p class="sg-desc">该组合于二零一六年正式出道并迅速走红亚洲流行乐坛</p>
+<script src="../src/glossary.js"></script>
+>>>>>>> codex/generic-agent-quality
 </body></html>""",
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
@@ -107,6 +143,7 @@ StarGroup.mount(document.getElementById('mount'), {
         self.assertIn("长描述", v.results[0][2])
 
     def test_brand_name_in_dom_not_flagged(self):
+<<<<<<< HEAD
         """品牌名 BLACKPINK 在 DOM（标题）不应告警（避免误伤）。"""
         v = _make_validator({
             "src/star-group.css": _MIN_CSS,
@@ -116,6 +153,17 @@ StarGroup.mount(document.getElementById('mount'), {
 <h1>BLACKPINK 成员探索卡</h1>
 <script src="../src/star-group.js"></script>
 <script>StarGroup.mount(document.getElementById('mount'), {members:[]});</script>
+=======
+        """品牌名 GlossaryExplorer 在 DOM（标题）不应告警（避免误伤）。"""
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS,
+            "examples/case.html": """<!doctype html><html><body>
+<div id="mount"></div>
+<h1>GlossaryExplorer 技术术语探索卡</h1>
+<script src="../src/glossary.js"></script>
+<script>GlossaryExplorer.mount(document.getElementById('mount'), {tabs:[]});</script>
+>>>>>>> codex/generic-agent-quality
 </body></html>""",
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
@@ -126,9 +174,15 @@ StarGroup.mount(document.getElementById('mount'), {
     def test_js_hardcoded_url_fail(self):
         """JS 硬编码 https URL（非变量引用）-> FAIL。"""
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": _MIN_CSS,
             "src/star-group.js": _MIN_JS + "\nvar url = 'https://example.com/biz.jpg';",
             "examples/case.html": '<!doctype html><html><body><div id="mount"></div><script src="../src/star-group.js"></script></body></html>',
+=======
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + "\nvar url = 'https://example.com/biz.jpg';",
+            "examples/case.html": '<!doctype html><html><body><div id="mount"></div><script src="../src/glossary.js"></script></body></html>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -144,9 +198,15 @@ class TestA11yBlobDetection(unittest.TestCase):
         css = _MIN_CSS + "\n.sg-tab { display: flex; }"
         js = _MIN_JS  # 无 tablist/tabpanel
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": js,
             "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -159,9 +219,15 @@ class TestA11yBlobDetection(unittest.TestCase):
         css = _MIN_CSS + "\n.sg-modal-overlay { position: fixed; }"
         js = _MIN_JS  # 无 dialog/Escape
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": js,
             "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -178,9 +244,15 @@ var nav = '<nav role="tablist"><div role="tabpanel"></div></nav>';
 var modal = '<div role="dialog" aria-modal="true"></div>';
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){} });"""
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": js,
             "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -195,9 +267,15 @@ class TestNamingGenericWords(unittest.TestCase):
         """.card 裸类名 -> FAIL。"""
         css = _MIN_CSS + "\n.card { padding: 10px; }"
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": _MIN_JS + "\nwindow.StarGroup.mount = function(){};",
             "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": _MIN_JS + "\nwindow.GlossaryExplorer.mount = function(){};",
+            "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -210,9 +288,15 @@ class TestNamingGenericWords(unittest.TestCase):
         """.btn 裸类名 -> FAIL。"""
         css = _MIN_CSS + "\n.btn { color: red; }"
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": _MIN_JS + "\nwindow.StarGroup.mount = function(){};",
             "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": _MIN_JS + "\nwindow.GlossaryExplorer.mount = function(){};",
+            "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })
@@ -224,9 +308,15 @@ class TestNamingGenericWords(unittest.TestCase):
         """sg- 前缀的类名不告警。"""
         css = _MIN_CSS + "\n.sg-card { padding: 10px; }\n.sg-btn { color: red; }"
         v = _make_validator({
+<<<<<<< HEAD
             "src/star-group.css": css,
             "src/star-group.js": _MIN_JS + "\nwindow.StarGroup.mount = function(){};",
             "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/star-group.js"></script>',
+=======
+            "src/glossary.css": css,
+            "src/glossary.js": _MIN_JS + "\nwindow.GlossaryExplorer.mount = function(){};",
+            "examples/case.html": '<!doctype html><div id="sg-mount"><div id="mount"></div></div><script src="../src/glossary.js"></script>',
+>>>>>>> codex/generic-agent-quality
             "README.md": "# Lib\nmount\n",
             "docs/设计规范.md": "主题色\n",
         })

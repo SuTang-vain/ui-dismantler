@@ -1,0 +1,58 @@
+{
+  "case": "original.html",
+  "render_ok": true,
+  "render_error": null,
+  "reference": {
+    "requested_mode": "rendered",
+    "mode": "reference",
+    "fallback": false,
+    "runtime_error": null,
+    "runtime_errors": [],
+    "missing_files": [],
+    "remote_resources": [],
+    "unsupported_modules": [],
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    }
+  },
+  "library": {
+    "runtime_errors": [],
+    "missing_files": [],
+    "remote_resources": [],
+    "unsupported_modules": [],
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    }
+  },
+  "structure": {
+    "node_match_rate": 1.0,
+    "node_recall": 1.0,
+    "node_precision": 1.0,
+    "redundancy_penalty": 0.0,
+    "class_match_rate": 0.994,
+    "ref_nodes": 109,
+    "got_nodes": 109,
+    "matched_nodes": 109
+  },
+  "text": {
+    "text_match_rate": 0.983,
+    "text_precision": 0.983,
+    "exact_match": 58,
+    "contain_match": 0,
+    "ref_count": 59,
+    "got_count": 59,
+    "missing": [
+      "Before flexbox, layouts were built with floats and clearfix hacks. This caused fragile, hard-to-maintain code."
+    ],
+    "extra": [
+      "Before flexbox, layouts used floats and clearfix hacks, causing fragile code."
+    ]
+  },
+  "scores": {
+    "structure": 0.997,
+    "text": 0.983,
+    "overall": 0.99
+  }
+}
