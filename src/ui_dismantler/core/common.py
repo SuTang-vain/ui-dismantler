@@ -28,6 +28,26 @@ VAR_NORMALIZE_MAP: list[tuple[str, str]] = [
     (r"^(soft[-_]?pink|accent[-_]?l|accent[-_]?light)$", "soft-accent"),
     (r"^(accent[-_]?)?2$", "accent-2"),
     (r"^(primary[-_]?dark|primary[-_]?d)$", "primary-dark"),
+    # Tailwind / Material Design 3 语义色
+    (r"^on[-_]?primary$", "on-primary"),
+    (r"^on[-_]?secondary$", "on-accent"),
+    (r"^on[-_]?tertiary$", "on-tertiary"),
+    (r"^on[-_]?error$", "on-error"),
+    (r"^secondary$", "accent"),
+    (r"^tertiary$", "tertiary"),
+    (r"^(background|surface)$", "paper"),
+    (r"^surface[-_]?container[-_]?lowest$", "paper"),
+    (r"^surface[-_]?(container|dim|bright)$", "stage"),
+    (r"^(on[-_]?surface|on[-_]?background)$", "ink"),
+    (r"^on[-_]?surface[-_]?variant$", "muted"),
+    (r"^(outline|outline[-_]?variant)$", "line"),
+    (r"^(error|error[-_]?container)$", "error"),
+    (r"^primary[-_]?container$", "soft"),
+    (r"^secondary[-_]?container$", "soft-accent"),
+    (r"^primary[-_]?fixed$", "primary-fixed"),
+    (r"^primary[-_]?fixed[-_]?dim$", "primary-fixed-dim"),
+    (r"^inverse[-_]?surface$", "inverse-surface"),
+    (r"^inverse[-_]?primary$", "inverse-primary"),
 ]
 
 

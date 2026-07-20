@@ -67,6 +67,63 @@ class TestNormalizeVarName(unittest.TestCase):
             ("--2", "accent-2"),
             ("--primary-dark", "primary-dark"),
             ("--primary-d", "primary-dark"),
+            # Tailwind / Material Design 3 语义色
+            ("--on-primary", "on-primary"),
+            ("--on-primary", "on-primary"),
+            ("--on-secondary", "on-accent"),
+            ("--on-tertiary", "on-tertiary"),
+            ("--on-error", "on-error"),
+            ("--secondary", "accent"),
+            ("--tertiary", "tertiary"),
+            ("--background", "paper"),
+            ("--surface", "paper"),
+            ("--surface-container-lowest", "paper"),
+            ("--surface-container", "stage"),
+            ("--surface-dim", "stage"),
+            ("--surface-bright", "stage"),
+            ("--on-surface", "ink"),
+            ("--on-background", "ink"),
+            ("--on-surface-variant", "muted"),
+            ("--outline", "line"),
+            ("--outline-variant", "line"),
+            ("--error", "error"),
+            ("--error-container", "error"),
+            ("--primary-container", "soft"),
+            ("--secondary-container", "soft-accent"),
+            ("--primary-fixed", "primary-fixed"),
+            ("--primary-fixed-dim", "primary-fixed-dim"),
+            ("--inverse-surface", "inverse-surface"),
+            ("--inverse-primary", "inverse-primary"),
+        ]
+        for orig, expected in cases:
+            with self.subTest(orig=orig):
+                self.assertEqual(normalize_var_name(orig), expected)
+
+    def test_tailwind_material3_mappings_cover_full_palette(self):
+        """Tailwind / Material Design 3 调色板归一化覆盖测试。
+
+        这批映射从 experimental 分支迁移而来，用于支持 Tailwind CDN 页面
+        和 Material Design 3 主题色变量。验证关键语义角色的归一化正确性。
+        """
+        cases = [
+            # on-* 前景色（与对应背景色配对）
+            ("--on-primary", "on-primary"),
+            ("--on_secondary", "on-accent"),
+            # MD3 secondary/tertiary 映射到 generic 的 accent/tertiary
+            ("--secondary", "accent"),
+            ("--tertiary", "tertiary"),
+            # surface 系列分层：lowest → paper，container/dim/bright → stage
+            ("--surface-container-lowest", "paper"),
+            ("--surface-container", "stage"),
+            ("--surface_dim", "stage"),
+            # outline 映射到 line（边框语义）
+            ("--outline-variant", "line"),
+            # container 变体映射到 soft 系列
+            ("--primary-container", "soft"),
+            ("--secondary-container", "soft-accent"),
+            # fixed 系列（MD3 色调固定变体）
+            ("--primary-fixed", "primary-fixed"),
+            ("--primary-fixed-dim", "primary-fixed-dim"),
         ]
         for orig, expected in cases:
             with self.subTest(orig=orig):
