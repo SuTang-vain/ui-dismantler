@@ -28,6 +28,11 @@ class TestArchitectureBoundaries(unittest.TestCase):
         for relative in (
             "core/__init__.py",
             "core/common.py",
+            "analysis/__init__.py",
+            "analysis/html.py",
+            "analysis/detectors.py",
+            "cli/__init__.py",
+            "cli/analyze_html.py",
         ):
             with self.subTest(relative=relative):
                 self.assertTrue(
@@ -71,6 +76,47 @@ class TestArchitectureBoundaries(unittest.TestCase):
                 8,
                 f"_common.py 必须是 ≤8 行的薄桥接，当前 {len(code_lines)} 行代码",
             )
+
+    def test_legacy_entry_points_are_thin_wrappers(self):
+        """所有旧入口（analyze_html / view_detectors 等）必须是薄桥接。
+
+        确保业务逻辑全部住在规范包里，旧入口只负责透出符号和转发 CLI 调用。
+        """
+        # analyze_html.py 桥接到 analysis.html + cli.analyze_html，允许 if __main__ 转发
+        analyze_compat = COMPAT / "analyze_html.py"
+        self.assertTrue(analyze_compat.is_file(), "src/skill/scripts/analyze_html.py 缺失")
+        analyze_text = analyze_compat.read_text(encoding="utf-8")
+        with self.subTest(name="analyze_html.py"):
+            self.assertIn("from _bootstrap import expose", analyze_text)
+            self.assertIn('expose("ui_dismantler.analysis.html"', analyze_text)
+            self.assertIn('expose("ui_dismantler.cli.analyze_html"', analyze_text)
+            # 不允许出现 argparse / sys.exit 等业务逻辑（CLI 应在 cli/ 层）
+            self.assertNotIn("argparse", analyze_text, "analyze_html.py 桥接不应含 argparse")
+
+        # view_detectors.py 桥接到 analysis.detectors
+        detectors_compat = COMPAT / "view_detectors.py"
+        self.assertTrue(detectors_compat.is_file(), "src/skill/scripts/view_detectors.py 缺失")
+        detectors_text = detectors_compat.read_text(encoding="utf-8")
+        with self.subTest(name="view_detectors.py"):
+            self.assertIn("from _bootstrap import expose", detectors_text)
+            self.assertIn('expose("ui_dismantler.analysis.detectors"', detectors_text)
+
+    def test_analysis_html_has_no_cli_code(self):
+        """analysis/html.py 业务逻辑层不能含 CLI 代码（argparse / sys.exit / main 函数）。
+
+        这是 CLI 与业务分离的关键防线：业务层应可被任何代码 import 调用，
+        不能有进程级副作用（sys.exit）或参数解析（argparse）。
+        """
+        html = CORE / "analysis" / "html.py"
+        text = html.read_text(encoding="utf-8")
+        forbidden = ["argparse", "sys.exit", "ap.parse_args", "def main("]
+        for token in forbidden:
+            with self.subTest(token=token):
+                self.assertNotIn(
+                    token,
+                    text,
+                    f"analysis/html.py 不应含 CLI 代码: '{token}'（应移至 cli/ 层）",
+                )
 
     def test_bootstrap_exposes_canonical_modules(self):
         """_bootstrap.py 必须正确暴露规范包。"""
