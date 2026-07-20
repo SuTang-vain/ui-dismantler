@@ -30,3 +30,7 @@ python3 -m ui_dismantler.cli.inspect_quality page.uiir.json \
 ```
 
 文本对比度检测现已覆盖浏览器 computed `rgb/rgba`、十六进制测试值、透明前景和纯色祖先背景合成；普通文本使用 4.5:1，大文本使用 3:1。以下情况明确记录为 `diagnostics.renderSkipped`，不生成误报：背景图片/渐变、祖先 opacity、blend mode、backdrop filter、截断的祖先链、无法解析的颜色或字体指标。该规则是受保护的 Web/A11y 硬约束，但只有证据可确定时才产生 finding。
+
+## Focus-visible 诊断
+
+Focus 探针在每个 viewport 中仅处理显式 UI-IR 目标，采集目标、`::before`/`::after`、两级祖先及最多 8 个直接子元素的 focus 前后样式。只有浏览器确认目标获得焦点且匹配 `:focus-visible`，同时未观察到 outline、box-shadow、border、颜色、背景、文字装饰、transform/filter/opacity 等变化时，才生成 `system.web.focus-visible` soft warning。焦点未落到目标、`:focus-visible` 未激活或样式快照不完整时写入 `diagnostics.renderSkipped`。该版本不检查更远祖先、兄弟节点或像素级截图差异，因此暂不作为自动修复硬门禁。

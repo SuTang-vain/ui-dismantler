@@ -153,6 +153,24 @@ def validate_quality_ir(value: Any) -> list[str]:
     summary = value.get("summary")
     if not isinstance(summary, dict) or summary.get("total") != len(findings):
         errors.append("summary.total must equal findings length")
+    diagnostics = value.get("diagnostics")
+    if diagnostics is not None:
+        if not isinstance(diagnostics, dict):
+            errors.append("diagnostics must be an object")
+        else:
+            skipped = diagnostics.get("renderSkipped", [])
+            if not isinstance(skipped, list):
+                errors.append("diagnostics.renderSkipped must be an array")
+            else:
+                for index, item in enumerate(skipped):
+                    if not isinstance(item, dict):
+                        errors.append(f"diagnostics.renderSkipped[{index}] must be an object")
+                        continue
+                    for field in ("guidelineId", "targetKey", "reason"):
+                        if not _text(item.get(field)):
+                            errors.append(f"diagnostics.renderSkipped[{index}].{field} must be a non-empty string")
+                    if "viewportKey" in item and item["viewportKey"] is not None and not _text(item["viewportKey"]):
+                        errors.append(f"diagnostics.renderSkipped[{index}].viewportKey must be a non-empty string or null")
     return errors
 
 
@@ -194,6 +212,23 @@ def validate_render_observation(value: Any) -> list[str]:
             layers = context.get("backgroundLayers")
             if not isinstance(layers, list) or any(not isinstance(item, dict) for item in layers):
                 errors.append("colorContext.backgroundLayers must be an array of objects")
+    if "focusContext" in value:
+        focus = value["focusContext"]
+        if not isinstance(focus, dict):
+            errors.append("focusContext must be an object")
+        else:
+            for field in ("focusable", "focused", "focusVisible"):
+                if field in focus and not isinstance(focus[field], bool):
+                    errors.append(f"focusContext.{field} must be boolean")
+            for field in ("before", "after"):
+                records = focus.get(field, [])
+                if not isinstance(records, list) or any(
+                    not isinstance(record, dict)
+                    or not _text(record.get("scope"))
+                    or not isinstance(record.get("style"), dict)
+                    for record in records
+                ):
+                    errors.append(f"focusContext.{field} must contain scope/style objects")
     if "viewportKey" in value and not _text(value.get("viewportKey")):
         errors.append("viewportKey must be a non-empty string")
     for field in ("visible", "clipped", "interactive", "disabled"):

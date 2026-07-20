@@ -17,6 +17,11 @@ STYLE_FIELDS = (
     "paddingBottom", "paddingLeft", "marginTop", "marginRight",
     "marginBottom", "marginLeft", "gap", "overflow", "overflowX",
     "overflowY", "position", "zIndex", "outlineStyle", "outlineWidth",
+    "outlineColor", "outlineOffset", "boxShadow", "borderTopWidth",
+    "borderRightWidth", "borderBottomWidth", "borderLeftWidth",
+    "borderTopColor", "borderRightColor", "borderBottomColor", "borderLeftColor",
+    "textDecorationLine", "textDecorationColor", "textDecorationThickness",
+    "transform", "filter",
 )
 
 
@@ -103,6 +108,33 @@ def observe_render(
         return result, [f"Playwright unavailable; render observation skipped: {exc}"]
     script = """args => {
       const output = [];
+      const focusFields = args.focusFields;
+      function styleRecord(target, scope, pseudo = null) {
+        const style = getComputedStyle(target, pseudo);
+        const values = {};
+        for (const field of focusFields) values[field] = style[field] || '';
+        values.content = pseudo ? (style.content || '') : '';
+        return {scope, style: values};
+      }
+      function focusSnapshot(target, item) {
+        const records = [
+          styleRecord(target, 'target'),
+          styleRecord(target, 'target::before', '::before'),
+          styleRecord(target, 'target::after', '::after')
+        ];
+        let ancestor = target.parentElement;
+        for (let depth = 1; ancestor instanceof Element && depth <= 2; depth++, ancestor = ancestor.parentElement) {
+          records.push(styleRecord(ancestor, `ancestor:${depth}`));
+          records.push(styleRecord(ancestor, `ancestor:${depth}::before`, '::before'));
+          records.push(styleRecord(ancestor, `ancestor:${depth}::after`, '::after'));
+        }
+        Array.from(target.children).slice(0, 8).forEach((child, index) => {
+          records.push(styleRecord(child, `child:${index}`));
+          records.push(styleRecord(child, `child:${index}::before`, '::before'));
+          records.push(styleRecord(child, `child:${index}::after`, '::after'));
+        });
+        return records;
+      }
       for (const item of args.targets) {
         let element = null;
         try { element = document.querySelector(item.selector); }
@@ -135,7 +167,21 @@ def observe_render(
           });
         }
         const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
-        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        const focusable = interactive && !disabled && element.tabIndex >= 0;
+        let focusContext = {focusable, focused: false, focusVisible: false, before: [], after: []};
+        if (focusable) {
+          const previous = document.activeElement;
+          focusContext.before = focusSnapshot(element, item);
+          try { element.focus({preventScroll: true}); } catch (_) { try { element.focus(); } catch (_) {} }
+          focusContext.focused = document.activeElement === element;
+          try { focusContext.focusVisible = element.matches(':focus-visible'); } catch (_) {}
+          focusContext.after = focusSnapshot(element, item);
+          try { element.blur(); } catch (_) {}
+          if (previous instanceof HTMLElement && previous !== element) {
+            try { previous.focus({preventScroll: true}); } catch (_) {}
+          }
+        }
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""
@@ -167,11 +213,15 @@ def observe_render(
                 try:
                     page.goto(source.as_uri(), wait_until="domcontentloaded", timeout=timeout_ms)
                     page.wait_for_timeout(settle_ms)
-                    raw = page.evaluate(script, {"targets": normalized_targets, "styleFields": STYLE_FIELDS})
+                    try:
+                        page.keyboard.press("Tab")
+                    except Exception:
+                        pass
+                    raw = page.evaluate(script, {"targets": normalized_targets, "styleFields": STYLE_FIELDS, "focusFields": STYLE_FIELDS})
                     for item in raw if isinstance(raw, list) else []:
                         if item.get("error"):
                             warnings.append(f"{viewport['id']} {item.get('targetKey')}: {item['error']}"); continue
-                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
+                        observation = {"targetKey": item["targetKey"], "selector": item["selector"], "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]}, "tag": item.get("tag", ""), "role": item.get("role", ""), "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")), "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}), "focusContext": item.get("focusContext", {}), "accessibleName": item.get("accessibleName", ""), "bounds": item["bounds"], "computedStyle": item["computedStyle"], "visible": bool(item["visible"]), "clipped": bool(item["clipped"])}
                         errors = validate_render_observation(observation)
                         if errors: warnings.append(f"{viewport['id']} {item['targetKey']}: {'; '.join(errors)}")
                         else: result["observations"].append(observation)

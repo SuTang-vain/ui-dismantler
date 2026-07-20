@@ -1,0 +1,16 @@
+{
+  "schemaVersion":"1.0","format":"render-observation","source":"render.html","browser":"fixture",
+  "targets":[
+    {"targetKey":"element:focus-bad","selector":"#focus-bad"},
+    {"targetKey":"element:focus-good","selector":"#focus-good"},
+    {"targetKey":"element:focus-parent","selector":"#focus-parent"},
+    {"targetKey":"element:focus-uncertain","selector":"#focus-uncertain"}
+  ],
+  "viewports":[{"id":"desktop","width":1280,"height":720}],
+  "observations":[
+    {"targetKey":"element:focus-bad","selector":"#focus-bad","viewportKey":"desktop","viewport":{"width":1280,"height":720},"tag":"button","role":"","interactive":true,"disabled":false,"textContent":"Bad","accessibleName":"Bad","bounds":{"x":0,"y":0,"width":80,"height":32},"computedStyle":{},"visible":true,"clipped":false,"focusContext":{"focusable":true,"focused":true,"focusVisible":true,"before":[{"scope":"target","style":{"outlineStyle":"none","outlineWidth":"0px","outlineColor":"rgba(0, 0, 0, 0)","boxShadow":"none"}}],"after":[{"scope":"target","style":{"outlineStyle":"none","outlineWidth":"0px","outlineColor":"rgba(0, 0, 0, 0)","boxShadow":"none"}}]}},
+    {"targetKey":"element:focus-good","selector":"#focus-good","viewportKey":"desktop","viewport":{"width":1280,"height":720},"tag":"button","role":"","interactive":true,"disabled":false,"textContent":"Good","accessibleName":"Good","bounds":{"x":0,"y":40,"width":80,"height":32},"computedStyle":{},"visible":true,"clipped":false,"focusContext":{"focusable":true,"focused":true,"focusVisible":true,"before":[{"scope":"target","style":{"outlineStyle":"none","outlineWidth":"0px","outlineColor":"rgba(0, 0, 0, 0)","boxShadow":"none"}}],"after":[{"scope":"target","style":{"outlineStyle":"solid","outlineWidth":"3px","outlineColor":"rgb(0, 95, 204)","boxShadow":"none"}}]}},
+    {"targetKey":"element:focus-parent","selector":"#focus-parent","viewportKey":"desktop","viewport":{"width":1280,"height":720},"tag":"button","role":"","interactive":true,"disabled":false,"textContent":"Parent","accessibleName":"Parent","bounds":{"x":0,"y":80,"width":80,"height":32},"computedStyle":{},"visible":true,"clipped":false,"focusContext":{"focusable":true,"focused":true,"focusVisible":true,"before":[{"scope":"ancestor:1","style":{"boxShadow":"none"}}],"after":[{"scope":"ancestor:1","style":{"boxShadow":"rgb(0, 95, 204) 0px 0px 0px 3px"}}]}},
+    {"targetKey":"element:focus-uncertain","selector":"#focus-uncertain","viewportKey":"desktop","viewport":{"width":1280,"height":720},"tag":"button","role":"","interactive":true,"disabled":false,"textContent":"Uncertain","accessibleName":"Uncertain","bounds":{"x":0,"y":120,"width":80,"height":32},"computedStyle":{},"visible":true,"clipped":false,"focusContext":{"focusable":true,"focused":true,"focusVisible":false,"before":[{"scope":"target","style":{"outlineStyle":"none","outlineWidth":"0px","boxShadow":"none"}}],"after":[{"scope":"target","style":{"outlineStyle":"none","outlineWidth":"0px","boxShadow":"none"}}]}}
+  ]
+}

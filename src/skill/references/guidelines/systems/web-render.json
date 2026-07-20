@@ -107,5 +107,38 @@
       "profile": "web-base",
       "reference": "WCAG 2.2 1.4.3 Contrast (Minimum); uncertain image/gradient/blend/opacity backgrounds are skipped"
     }
+  },
+  {
+    "id": "system.web.focus-visible",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "focus",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "focus-visible"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-focus-visible"
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "focus-style",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WCAG 2.2 2.4.7 diagnostic; target/pseudo/two-ancestor/direct-child style evidence only"
+    }
   }
 ]

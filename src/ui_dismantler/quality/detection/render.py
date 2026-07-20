@@ -3,9 +3,10 @@ from __future__ import annotations
 from hashlib import sha1
 from typing import Any
 from ..colors import resolved_text_contrast
+from ..focus import analyze_focus_indicator
 from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -79,6 +80,25 @@ def inspect_render_findings(
                     "Visible target extends outside the viewport",
                     {"bounds": bounds, "viewport": viewport},
                 ))
+            elif detector == "render-focus-visible":
+                if not observation.get("interactive") or observation.get("disabled"):
+                    continue
+                focus, uncertainty = analyze_focus_indicator(observation.get("focusContext"))
+                if focus is None:
+                    if uncertainty != "not-focusable":
+                        skipped.append({
+                            "guidelineId": guideline["id"],
+                            "targetKey": observation["targetKey"],
+                            "viewportKey": observation.get("viewportKey"),
+                            "reason": uncertainty or "unresolved-focus-indicator",
+                        })
+                    continue
+                if not focus["indicatorDetected"]:
+                    findings.append(_finding(
+                        guideline, observation,
+                        "Focus-visible target has no observable visual indicator",
+                        focus,
+                    ))
             elif detector == "render-text-contrast":
                 if not str(observation.get("textContent") or "").strip():
                     continue

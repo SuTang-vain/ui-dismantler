@@ -5,6 +5,7 @@ from pathlib import Path
 import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
 from ui_dismantler.quality.colors import composite, contrast_ratio, parse_css_color, resolve_background, resolved_text_contrast
+from ui_dismantler.quality.focus import analyze_focus_indicator
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
@@ -80,6 +81,28 @@ class TestContrastMath(unittest.TestCase):
         result, reason = resolved_text_contrast(observation)
         self.assertIsNone(reason)
         self.assertAlmostEqual(result["ratio"], 3.9767, places=3)
+
+
+class TestFocusIndicatorAnalysis(unittest.TestCase):
+    def test_target_outline_and_parent_shadow_are_detected(self):
+        render = fixture("render-focus.json")
+        by_key = {item["targetKey"]: item for item in render["observations"]}
+        outline, reason = analyze_focus_indicator(by_key["element:focus-good"]["focusContext"])
+        self.assertIsNone(reason)
+        self.assertTrue(outline["indicatorDetected"])
+        parent, reason = analyze_focus_indicator(by_key["element:focus-parent"]["focusContext"])
+        self.assertIsNone(reason)
+        self.assertTrue(parent["indicatorDetected"])
+
+    def test_missing_indicator_is_conclusive_only_for_focus_visible(self):
+        render = fixture("render-focus.json")
+        by_key = {item["targetKey"]: item for item in render["observations"]}
+        missing, reason = analyze_focus_indicator(by_key["element:focus-bad"]["focusContext"])
+        self.assertIsNone(reason)
+        self.assertFalse(missing["indicatorDetected"])
+        uncertain, reason = analyze_focus_indicator(by_key["element:focus-uncertain"]["focusContext"])
+        self.assertIsNone(uncertain)
+        self.assertEqual(reason, "focus-visible-not-observed")
 
 class TestProfileComposition(unittest.TestCase):
     def test_inheritance_selects_component_and_system_rules(self):
@@ -191,6 +214,25 @@ class TestRenderFindings(unittest.TestCase):
             {"system.web.click-target.minimum", "system.web.viewport-clipping", "system.web.text-contrast"},
         )
 
+
+    def test_optional_browser_focus_probe_distinguishes_good_and_bad(self):
+        uiir = document([
+            ("element:focus-good", {"id":"focus-good","role":"button","text":"Focus good"}),
+            ("element:focus-bad", {"id":"focus-bad","role":"button","text":"Focus bad"}),
+        ])
+        render, warnings = observe_render(
+            FIXTURES / "render.html", targets_from_uiir(uiir),
+            viewports=[{"id":"desktop","width":1280,"height":720}],
+        )
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        contexts = {item["targetKey"]: item.get("focusContext") for item in render["observations"]}
+        if not all(context and context.get("focusVisible") for context in contexts.values()):
+            self.skipTest("browser did not expose :focus-visible for the bounded probe")
+        report = inspect_uiir(uiir, self.profile, render)
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.focus-visible"]
+        self.assertEqual([item["targetKey"] for item in findings], ["element:focus-bad"])
+
     def test_hidden_and_disabled_targets_do_not_produce_findings(self):
         render = fixture("render-findings.json")
         render["observations"][0]["disabled"] = True
@@ -224,6 +266,24 @@ class TestRenderFindings(unittest.TestCase):
         render["observations"][0]["bounds"]["width"] = "tiny"
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(self.uiir, self.profile, render)
+        render = fixture("render-focus.json")
+        render["observations"][0]["focusContext"]["after"] = "invalid"
+        focus_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(focus_uiir, self.profile, render)
+
+
+    def test_focus_finding_reports_only_conclusive_missing_indicator(self):
+        uiir = document([
+            ("element:focus-bad", {"id":"focus-bad","role":"button","text":"Bad"}),
+            ("element:focus-good", {"id":"focus-good","role":"button","text":"Good"}),
+            ("element:focus-parent", {"id":"focus-parent","role":"button","text":"Parent"}),
+            ("element:focus-uncertain", {"id":"focus-uncertain","role":"button","text":"Uncertain"}),
+        ])
+        report = inspect_uiir(uiir, self.profile, fixture("render-focus.json"))
+        focus_findings = [item for item in report["findings"] if item["guidelineId"] == "system.web.focus-visible"]
+        self.assertEqual([(item["targetKey"], item["viewportKey"]) for item in focus_findings], [("element:focus-bad", "desktop")])
+        self.assertIn({"guidelineId":"system.web.focus-visible","targetKey":"element:focus-uncertain","viewportKey":"desktop","reason":"focus-visible-not-observed"}, report["diagnostics"]["renderSkipped"])
 
     def test_static_only_inspection_ignores_render_rules(self):
         report = inspect_uiir(self.uiir, self.profile)
