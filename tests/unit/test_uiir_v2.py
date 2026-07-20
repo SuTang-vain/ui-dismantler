@@ -36,7 +36,11 @@ _BASELINES = _ROOT / "docs" / "baselines" / "manifests"
 
 
 def _load(name):
-    return json.loads((_BASELINES / name).read_text(encoding="utf-8"))
+    manifest = json.loads((_BASELINES / name).read_text(encoding="utf-8"))
+    source = manifest.get("meta", {}).get("source")
+    if source and not Path(source).is_absolute():
+        manifest["meta"]["source"] = str((_ROOT / source).resolve())
+    return manifest
 
 
 def _typed_nodes(uiir, node_type):
