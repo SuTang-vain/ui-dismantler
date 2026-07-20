@@ -234,6 +234,41 @@ class TestScenarioRoundtrip(unittest.TestCase):
         self.assertEqual(report["scenario_matrix"]["passed"], 0)
         self.assertEqual(report["scenario_matrix"]["total"], 1)
 
+    def test_interaction_coverage_is_reported_and_can_fail_gate(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            manifest_path = Path(temp_dir) / "manifest.json"
+            report_path = Path(temp_dir) / "coverage-report.json"
+            manifest_path.write_text(json.dumps({
+                "interactions": [{
+                    "type": "explicit-handler",
+                    "trigger": "click",
+                    "target": "#uncovered-control",
+                    "handler": "runUncoveredAction",
+                    "action": "uncovered-action",
+                }],
+            }), encoding="utf-8")
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(rt.__file__)),
+                    str(SOURCE),
+                    "--lib", str(LIB),
+                    "--reference-mode", "rendered",
+                    "--scenarios", str(SCENARIOS),
+                    "--manifest", str(manifest_path),
+                    "--coverage-threshold", "1.0",
+                    "--out", str(report_path),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(report["interaction_coverage"]["identified"], 1)
+        self.assertEqual(report["interaction_coverage"]["rate"], 0.0)
+        self.assertFalse(report["interaction_coverage"]["passed"])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

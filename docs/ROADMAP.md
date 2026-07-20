@@ -186,6 +186,13 @@ SKILL.md 要包含：
 `scripts/verify_all.py`：对一个目录下所有案例 HTML 批量跑 agent 拆解 + 自检，汇总通过率和平均往返分。
 用于回归：每次改 SKILL.md 或工具后，跑全量验证确认没退化。
 
+### P3-3 交互场景覆盖率 ✅ 已完成
+
+`scripts/generate_scenarios.py` 根据 manifest 的交互清单生成待审阅候选场景；
+`roundtrip.py --manifest` 输出已识别交互与正式场景的覆盖率，
+`--coverage-threshold` 可将覆盖率纳入质量门禁。候选场景默认不计入覆盖率，
+必须人工补齐 assertions 并移除 `candidate` 标记后才算正式验证。
+
 ---
 
 ## 不做的事

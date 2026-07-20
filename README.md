@@ -52,6 +52,7 @@ Agent（主控）─────────────────────
 | `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
 | `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
 | `scripts/roundtrip.py` | 往返等价度（原页面运行后 DOM ⇄ 库渲染 DOM；失败回退会显式报告） |
+| `scripts/generate_scenarios.py` | 从 manifest 生成待审阅的交互场景候选 |
 | `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
 | `node --check` | JS 语法检查 |
 
@@ -65,9 +66,10 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 209 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵和交互状态矩阵。
+工具层有 220 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵和交互状态矩阵。
 
 交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
+manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告 `interaction_coverage`；显式传入 `--coverage-threshold` 后，未被正式场景覆盖的交互会阻断门禁。
 
 ## 当前能力与基线
 

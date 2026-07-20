@@ -30,6 +30,8 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup, NavigableString
 
+from scenario_coverage import compute_interaction_coverage
+
 # 同目录脚本
 HERE = Path(__file__).resolve().parent
 SKILL_DIR_DEFAULT = HERE.parent / "src" / "skill"
@@ -305,8 +307,27 @@ def load_scenario_matrix(path: Path) -> list[dict]:
             "viewport": viewport,
             "steps": steps,
             "assertions": assertions,
+            **{
+                key: scenario[key]
+                for key in ("candidate", "covers", "notes")
+                if key in scenario
+            },
         })
     return normalized
+
+
+def load_manifest_interactions(path: Path) -> list[dict]:
+    """读取 analyzer manifest 中的交互清单。"""
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"manifest 读取失败: {exc}") from exc
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest 必须是 object")
+    interactions = manifest.get("interactions", [])
+    if not isinstance(interactions, list):
+        raise ValueError("manifest.interactions 必须是数组")
+    return interactions
 
 
 def _validate_scenario_step(scenario_id: str, index: int, step: object) -> None:
@@ -708,6 +729,9 @@ def main():
     ap.add_argument("--scenarios", help="交互场景 JSON；每个场景从全新页面实例执行")
     ap.add_argument("--state-threshold", type=float, default=0.85,
                     help="单个交互状态综合分门槛（默认 0.85）")
+    ap.add_argument("--manifest", help="analyze_html.py 生成的 manifest，用于交互覆盖率报告")
+    ap.add_argument("--coverage-threshold", type=float,
+                    help="交互覆盖率门槛；需要同时提供 --manifest 与 --scenarios")
     ap.add_argument("--out", help="报告输出路径（默认 stdout）")
     args = ap.parse_args()
 
@@ -727,6 +751,12 @@ def main():
     if not 0 <= args.state_threshold <= 1:
         print("ERROR: --state-threshold 必须位于 0..1", file=sys.stderr)
         sys.exit(2)
+    if args.coverage_threshold is not None and not 0 <= args.coverage_threshold <= 1:
+        print("ERROR: --coverage-threshold 必须位于 0..1", file=sys.stderr)
+        sys.exit(2)
+    if args.coverage_threshold is not None and (not args.manifest or not args.scenarios):
+        print("ERROR: --coverage-threshold 需要同时提供 --manifest 与 --scenarios", file=sys.stderr)
+        sys.exit(2)
     if args.scenarios and args.reference_mode == "static":
         print("ERROR: 交互场景不能与 --reference-mode static 同时使用", file=sys.stderr)
         sys.exit(2)
@@ -734,6 +764,13 @@ def main():
     scenario_file = Path(args.scenarios).resolve() if args.scenarios else None
     try:
         scenarios = load_scenario_matrix(scenario_file) if scenario_file else []
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(2)
+
+    manifest_file = Path(args.manifest).resolve() if args.manifest else None
+    try:
+        manifest_interactions = load_manifest_interactions(manifest_file) if manifest_file else []
     except ValueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(2)
@@ -804,12 +841,26 @@ def main():
                 args.height,
                 args.state_threshold,
             )
+        if manifest_file:
+            report["interaction_coverage"] = compute_interaction_coverage(
+                manifest_interactions, scenarios,
+            )
+            if args.coverage_threshold is not None:
+                report["interaction_coverage"]["threshold"] = args.coverage_threshold
+                report["interaction_coverage"]["passed"] = (
+                    report["interaction_coverage"]["rate"] >= args.coverage_threshold
+                )
         out = json.dumps(report, ensure_ascii=False, indent=2)
         if args.out:
             Path(args.out).write_text(out, encoding="utf-8")
             print(f"报告已写入 {args.out}", file=sys.stderr)
         print(out)
         if report.get("scenario_matrix", {}).get("passed") != report.get("scenario_matrix", {}).get("total"):
+            sys.exit(1)
+        if (
+            args.coverage_threshold is not None
+            and not report.get("interaction_coverage", {}).get("passed", False)
+        ):
             sys.exit(1)
     except Exception as e:
         print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)

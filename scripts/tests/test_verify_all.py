@@ -77,6 +77,24 @@ class TestRoundtripCommand(unittest.TestCase):
         self.assertIn("--state-threshold", command)
         self.assertIn("0.9", command)
 
+    def test_command_forwards_manifest_coverage_gate(self):
+        command = verify_all.build_roundtrip_command(
+            Path("input.html"),
+            Path("lib"),
+            Path("report.json"),
+            "rendered",
+            1024,
+            768,
+            Path("scenarios.json"),
+            0.9,
+            Path("manifest.json"),
+            0.8,
+        )
+        self.assertIn("--manifest", command)
+        self.assertIn("manifest.json", command)
+        self.assertIn("--coverage-threshold", command)
+        self.assertIn("0.8", command)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

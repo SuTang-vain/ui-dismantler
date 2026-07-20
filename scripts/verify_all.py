@@ -87,6 +87,8 @@ def build_roundtrip_command(
     height: int,
     scenarios: Path | None = None,
     state_threshold: float = 0.85,
+    manifest: Path | None = None,
+    coverage_threshold: float | None = None,
 ) -> list[str]:
     command = [
         sys.executable,
@@ -103,6 +105,10 @@ def build_roundtrip_command(
             "--scenarios", str(scenarios),
             "--state-threshold", str(state_threshold),
         ]
+    if manifest:
+        command += ["--manifest", str(manifest)]
+    if coverage_threshold is not None:
+        command += ["--coverage-threshold", str(coverage_threshold)]
     return command
 
 
@@ -115,11 +121,14 @@ def run_roundtrip(
     height: int,
     scenarios: Path | None = None,
     state_threshold: float = 0.85,
+    manifest: Path | None = None,
+    coverage_threshold: float | None = None,
 ) -> dict:
     """对单个案例跑 roundtrip，返回报告 dict。"""
     cmd = build_roundtrip_command(
         html, lib_dir, out_json, reference_mode, width, height,
         scenarios, state_threshold,
+        manifest, coverage_threshold,
     )
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
@@ -156,6 +165,9 @@ def main():
     ap.add_argument("--scenarios", help="交互场景 JSON（单案例验证使用）")
     ap.add_argument("--state-threshold", type=float, default=0.85,
                     help="交互状态综合分门槛（默认 0.85）")
+    ap.add_argument("--manifest", help="analyze manifest（单案例验证使用）")
+    ap.add_argument("--coverage-threshold", type=float,
+                    help="交互覆盖率门槛（需要 --manifest 与 --scenarios）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout 摘要）")
     args = ap.parse_args()
 
@@ -180,9 +192,19 @@ def main():
     if not 0 <= args.state_threshold <= 1:
         print("ERROR: --state-threshold 必须位于 0..1", file=sys.stderr)
         sys.exit(2)
+    if args.coverage_threshold is not None and not 0 <= args.coverage_threshold <= 1:
+        print("ERROR: --coverage-threshold 必须位于 0..1", file=sys.stderr)
+        sys.exit(2)
     scenario_file = Path(args.scenarios).resolve() if args.scenarios else None
     if scenario_file and not scenario_file.is_file():
         print(f"ERROR: 场景文件不存在: {scenario_file}", file=sys.stderr)
+        sys.exit(2)
+    manifest_file = Path(args.manifest).resolve() if args.manifest else None
+    if manifest_file and not manifest_file.is_file():
+        print(f"ERROR: manifest 文件不存在: {manifest_file}", file=sys.stderr)
+        sys.exit(2)
+    if args.coverage_threshold is not None and (not manifest_file or not scenario_file):
+        print("ERROR: --coverage-threshold 需要同时提供 --manifest 与 --scenarios", file=sys.stderr)
         sys.exit(2)
     # 单库模式：lib_root 本身是组件库（有 src/），只对能匹配的案例跑
     single_lib_mode = (lib_root / "src").is_dir()
@@ -226,17 +248,25 @@ def main():
             args.height,
             scenario_file,
             args.state_threshold,
+            manifest_file,
+            args.coverage_threshold,
         )
         if res["ok"]:
             scores = res["report"].get("scores", {})
             reference = res["report"].get("reference", {})
             scenario_matrix = res["report"].get("scenario_matrix")
+            interaction_coverage = res["report"].get("interaction_coverage")
             overall = scores.get("overall", 0)
             states_passed = (
                 scenario_matrix is None
                 or scenario_matrix.get("passed") == scenario_matrix.get("total")
             )
-            passed = overall >= args.threshold and states_passed
+            coverage_passed = (
+                interaction_coverage is None
+                or args.coverage_threshold is None
+                or interaction_coverage.get("passed", False)
+            )
+            passed = overall >= args.threshold and states_passed and coverage_passed
             results.append({
                 "case": name,
                 "ok": True,
@@ -245,6 +275,7 @@ def main():
                 "render_ok": res["report"].get("render_ok", False),
                 "reference": reference,
                 "scenario_matrix": scenario_matrix,
+                "interaction_coverage": interaction_coverage,
             })
             mark = "✓" if passed else "✗"
             print(f"{mark} 综合 {overall}", file=sys.stderr)
