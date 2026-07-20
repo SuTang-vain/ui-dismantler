@@ -1,27 +1,139 @@
 {
   "schemaVersion": "1.0",
-  "browserValidationStatus": "blocked-missing-playwright",
-  "browserValidationEvidence": "Current prototype environment skips Playwright-backed integration tests; synthetic evidence and graceful degradation are validated.",
+  "browserValidationStatus": "verified",
+  "browserValidationEvidence": "Verified July 20, 2026 with Playwright 1.61.0: tests.unit.test_quality passed 44/44 under Chromium 149.0.7827.55, WebKit 26.5, and Firefox 151.0; the full repository suite passed 241/241 under Chromium.",
   "repairGate": {
     "status": "blocked",
     "reason": "Automatic Repair Coordination requires verified browser coverage for every enabled hard rule and explicit repair eligibility."
   },
   "capabilities": [
-    {"guidelineId":"component.icon-button.accessible-name","evidence":"uiir-static","implementation":"implemented","browserCoverage":"not-required","repairEligibility":"manual-only","falsePositiveBoundary":"Icon-only classification depends on explicit UI-IR role/kind/iconOnly facts."},
-    {"guidelineId":"component.form-control.label","evidence":"uiir-static","implementation":"implemented","browserCoverage":"not-required","repairEligibility":"manual-only","falsePositiveBoundary":"Only explicit control tags/roles and accessible-name facts are inspected."},
-    {"guidelineId":"component.aria.reference-target","evidence":"uiir-static","implementation":"implemented","browserCoverage":"not-required","repairEligibility":"manual-only","falsePositiveBoundary":"Checks canonical UI-IR IDs/keys; dynamically created targets require runtime evidence."},
-    {"guidelineId":"component.tab.controls-tabpanel","evidence":"uiir-static","implementation":"implemented","browserCoverage":"not-required","repairEligibility":"manual-only","falsePositiveBoundary":"Requires explicit tab role and canonical controlled tabpanel target."},
-    {"guidelineId":"component.image.alt","evidence":"uiir-static","implementation":"implemented","browserCoverage":"not-required","repairEligibility":"manual-only","falsePositiveBoundary":"Checks alt presence only; decorative intent and text quality are not inferred."},
-    {"guidelineId":"system.spacing.sibling-consistency","evidence":"hybrid","implementation":"declared-only","browserCoverage":"not-validated","repairEligibility":"prohibited","falsePositiveBoundary":"No spacing-consistency detector is implemented in the inspect-only prototype."},
-    {"guidelineId":"system.web.click-target.minimum","evidence":"render","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Spacing, inline-target, equivalent-control, and user-agent exceptions are not fully modeled."},
-    {"guidelineId":"system.web.viewport-clipping","evidence":"render","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Intentional off-canvas and scroll layouts require review."},
-    {"guidelineId":"system.web.text-contrast","evidence":"render","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"prohibited","falsePositiveBoundary":"Image, gradient, blend, opacity, truncated background chain, and unparsed colors are skipped."},
-    {"guidelineId":"system.web.focus-visible","evidence":"render-focus","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Only target, pseudo-elements, two ancestors, and bounded direct children are compared; no pixel diff."},
-    {"guidelineId":"system.web.keyboard-reachable","evidence":"render-keyboard","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Managed composite descendants are skipped pending arrow-key behavior evidence."},
-    {"guidelineId":"system.web.tab-order.positive","evidence":"render-keyboard","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Flags local positive tabindex risk without reconstructing full visual/DOM focus order."},
-    {"guidelineId":"system.web.reflow.horizontal-overflow","evidence":"render-layout","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Bounded horizontal scroll containers and semantic table/pre/carousel exceptions are skipped."},
-    {"guidelineId":"system.web.aria-state.token-valid","evidence":"render-state-and-scenario","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"prohibited","falsePositiveBoundary":"Validates only aria-expanded, aria-selected, and aria-pressed token grammar."},
-    {"guidelineId":"system.web.controlled-state.visibility","evidence":"render-state","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"manual-only","falsePositiveBoundary":"Initial sampled state only; missing or truncated controlled targets are skipped."},
-    {"guidelineId":"system.web.controlled-state.transition","evidence":"trusted-click-scenario","implementation":"implemented","browserCoverage":"synthetic-only","repairEligibility":"prohibited","falsePositiveBoundary":"Condition-free explicit click actions only; no assertions, animations, keyboard actions, or arbitrary state inference."}
+    {
+      "guidelineId": "component.icon-button.accessible-name",
+      "evidence": "uiir-static",
+      "implementation": "implemented",
+      "browserCoverage": "not-required",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Icon-only classification depends on explicit UI-IR role/kind/iconOnly facts."
+    },
+    {
+      "guidelineId": "component.form-control.label",
+      "evidence": "uiir-static",
+      "implementation": "implemented",
+      "browserCoverage": "not-required",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Only explicit control tags/roles and accessible-name facts are inspected."
+    },
+    {
+      "guidelineId": "component.aria.reference-target",
+      "evidence": "uiir-static",
+      "implementation": "implemented",
+      "browserCoverage": "not-required",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Checks canonical UI-IR IDs/keys; dynamically created targets require runtime evidence."
+    },
+    {
+      "guidelineId": "component.tab.controls-tabpanel",
+      "evidence": "uiir-static",
+      "implementation": "implemented",
+      "browserCoverage": "not-required",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Requires explicit tab role and canonical controlled tabpanel target."
+    },
+    {
+      "guidelineId": "component.image.alt",
+      "evidence": "uiir-static",
+      "implementation": "implemented",
+      "browserCoverage": "not-required",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Checks alt presence only; decorative intent and text quality are not inferred."
+    },
+    {
+      "guidelineId": "system.spacing.sibling-consistency",
+      "evidence": "hybrid",
+      "implementation": "declared-only",
+      "browserCoverage": "not-validated",
+      "repairEligibility": "prohibited",
+      "falsePositiveBoundary": "No spacing-consistency detector is implemented in the inspect-only prototype."
+    },
+    {
+      "guidelineId": "system.web.click-target.minimum",
+      "evidence": "render",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Spacing, inline-target, equivalent-control, and user-agent exceptions are not fully modeled."
+    },
+    {
+      "guidelineId": "system.web.viewport-clipping",
+      "evidence": "render",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Intentional off-canvas and scroll layouts require review."
+    },
+    {
+      "guidelineId": "system.web.text-contrast",
+      "evidence": "render",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "prohibited",
+      "falsePositiveBoundary": "Image, gradient, blend, opacity, truncated background chain, and unparsed colors are skipped."
+    },
+    {
+      "guidelineId": "system.web.focus-visible",
+      "evidence": "render-focus",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Only target, pseudo-elements, two ancestors, and bounded direct children are compared; no pixel diff."
+    },
+    {
+      "guidelineId": "system.web.keyboard-reachable",
+      "evidence": "render-keyboard",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Managed composite descendants are skipped pending arrow-key behavior evidence."
+    },
+    {
+      "guidelineId": "system.web.tab-order.positive",
+      "evidence": "render-keyboard",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Flags local positive tabindex risk without reconstructing full visual/DOM focus order."
+    },
+    {
+      "guidelineId": "system.web.reflow.horizontal-overflow",
+      "evidence": "render-layout",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Bounded horizontal scroll containers and semantic table/pre/carousel exceptions are skipped."
+    },
+    {
+      "guidelineId": "system.web.aria-state.token-valid",
+      "evidence": "render-state-and-scenario",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "prohibited",
+      "falsePositiveBoundary": "Validates only aria-expanded, aria-selected, and aria-pressed token grammar."
+    },
+    {
+      "guidelineId": "system.web.controlled-state.visibility",
+      "evidence": "render-state",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "manual-only",
+      "falsePositiveBoundary": "Initial sampled state only; missing or truncated controlled targets are skipped."
+    },
+    {
+      "guidelineId": "system.web.controlled-state.transition",
+      "evidence": "trusted-click-scenario",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
+      "repairEligibility": "prohibited",
+      "falsePositiveBoundary": "Condition-free explicit click actions only; no assertions, animations, keyboard actions, or arbitrary state inference."
+    }
   ]
 }

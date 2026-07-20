@@ -34,9 +34,10 @@ class TestQualityCapabilities(unittest.TestCase):
         self.assertEqual(report["capabilityCount"], 16)
         codes = {item["code"] for item in report["blockers"]}
         self.assertEqual(codes, {
-            "implementation-incomplete", "hard-rule-unverified", "browser-suite-unverified",
-            "no-repair-eligible-capabilities", "registry-gate-blocked",
+            "implementation-incomplete", "no-repair-eligible-capabilities", "registry-gate-blocked",
         })
+        self.assertEqual(len(report["blockers"]), 3)
+        self.assertEqual(report["browserVerifiedCount"], 15)
         self.assertEqual(report["repairEligibleCount"], 0)
 
     def test_implemented_record_must_have_registered_detector(self):

@@ -13,6 +13,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--viewport", action="append", default=[], metavar="ID:WIDTHxHEIGHT")
     parser.add_argument("--timeout", type=int, default=5000)
     parser.add_argument("--settle", type=int, default=100)
+    parser.add_argument("--browser", choices=("auto", "chromium", "webkit", "firefox"), default="auto")
     parser.add_argument("--scenarios", type=Path, help="optional trusted scenario JSON; quality probe accepts explicit click actions only")
     parser.add_argument("--max-scenarios", type=int, default=16)
     parser.add_argument("--max-scenario-actions", type=int, default=32)
@@ -30,6 +31,7 @@ def main(argv: list[str] | None = None) -> int:
         report, warnings = observe_render(
             args.html, targets, viewports=viewports or None, timeout_ms=args.timeout, settle_ms=args.settle,
             scenarios=scenarios, max_scenarios=args.max_scenarios, max_scenario_actions=args.max_scenario_actions,
+            browser_name=args.browser,
         )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"[quality-render] failed: {exc}", file=sys.stderr); return 1

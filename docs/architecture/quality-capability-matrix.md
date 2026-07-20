@@ -4,7 +4,7 @@
 
 ## 当前结论
 
-**自动修复 Gate：BLOCKED。** 当前环境没有 Playwright，因此浏览器集成测试按设计跳过；运行时 hard 规则只有合成证据，且没有任何 capability 标记为 `repairEligibility=eligible`。在浏览器覆盖完成、误报边界复核和显式 repair eligibility 审批前，不实现或启用自动 Repair Coordination。
+**自动修复 Gate：BLOCKED。** 2026 年 7 月 20 日已使用 Playwright 1.61.0 完成 Chromium、WebKit、Firefox 三引擎质量矩阵：每个引擎 44/44 质量测试通过；Chromium 下全仓 241/241 通过且无跳过。浏览器证据已满足，但 Material spacing detector 尚未实现、没有 capability 标记为 `repairEligibility=eligible`，且顶层人工 Gate 未放行，因此仍不实现或启用自动 Repair Coordination。
 
 验证命令：
 
@@ -14,6 +14,16 @@ python3 -m ui_dismantler.cli.check_quality_gate --check
 ```
 
 第一条用于报告，Gate blocked 时仍返回 0；第二条用于 CI acceptance gate，blocked 时返回 2。
+
+三引擎复验命令：
+
+```bash
+for browser in chromium webkit firefox; do
+  UI_DISMANTLER_QUALITY_BROWSER="$browser" PYTHONPATH=src python3 -m unittest -q tests.unit.test_quality
+done
+```
+
+也可以通过 `observe_quality_render --browser chromium|webkit|firefox` 显式选择引擎。
 
 ## 能力分组
 
@@ -25,16 +35,16 @@ python3 -m ui_dismantler.cli.check_quality_gate --check
 | 静态语义 | `component.tab.controls-tabpanel` | UI-IR | hard | 不需要 | manual-only |
 | 静态语义 | `component.image.alt` | UI-IR | hard | 不需要 | manual-only |
 | Material | `system.spacing.sibling-consistency` | UI-IR + Render | soft | 未验证 | prohibited，尚未实现 |
-| Geometry | `system.web.click-target.minimum` | Render | soft | synthetic-only | manual-only |
-| Geometry | `system.web.viewport-clipping` | Render | soft | synthetic-only | manual-only |
-| Color | `system.web.text-contrast` | Render | hard | synthetic-only | prohibited |
-| Focus | `system.web.focus-visible` | Render focus | soft | synthetic-only | manual-only |
-| Keyboard | `system.web.keyboard-reachable` | Render keyboard | soft | synthetic-only | manual-only |
-| Keyboard | `system.web.tab-order.positive` | Render keyboard | soft | synthetic-only | manual-only |
-| Reflow | `system.web.reflow.horizontal-overflow` | Render layout | soft | synthetic-only | manual-only |
-| ARIA state | `system.web.aria-state.token-valid` | Render + Scenario | hard | synthetic-only | prohibited |
-| ARIA state | `system.web.controlled-state.visibility` | Render state | soft | synthetic-only | manual-only |
-| ARIA transition | `system.web.controlled-state.transition` | Trusted click | soft | synthetic-only | prohibited |
+| Geometry | `system.web.click-target.minimum` | Render | soft | Chromium/WebKit/Firefox verified | manual-only |
+| Geometry | `system.web.viewport-clipping` | Render | soft | Chromium/WebKit/Firefox verified | manual-only |
+| Color | `system.web.text-contrast` | Render | hard | Chromium/WebKit/Firefox verified | prohibited |
+| Focus | `system.web.focus-visible` | Render focus | soft | Chromium/WebKit/Firefox verified | manual-only |
+| Keyboard | `system.web.keyboard-reachable` | Render keyboard | soft | Chromium/WebKit/Firefox verified | manual-only |
+| Keyboard | `system.web.tab-order.positive` | Render keyboard | soft | Chromium/WebKit/Firefox verified | manual-only |
+| Reflow | `system.web.reflow.horizontal-overflow` | Render layout | soft | Chromium/WebKit/Firefox verified | manual-only |
+| ARIA state | `system.web.aria-state.token-valid` | Render + Scenario | hard | Chromium/WebKit/Firefox verified | prohibited |
+| ARIA state | `system.web.controlled-state.visibility` | Render state | soft | Chromium/WebKit/Firefox verified | manual-only |
+| ARIA transition | `system.web.controlled-state.transition` | Trusted click | soft | Chromium/WebKit/Firefox verified | prohibited |
 
 ## Gate 条件
 
@@ -42,7 +52,7 @@ python3 -m ui_dismantler.cli.check_quality_gate --check
 
 1. 所有 guideline 均有 capability 记录，且不存在未知记录。
 2. 所有启用能力均有实现；`declared-only` 不能通过。
-3. 所有运行时 hard 规则均有真实浏览器验证，而非仅 synthetic fixture。
+3. 所有运行时 hard 规则均有真实浏览器验证，而非仅 synthetic fixture；当前该条件已满足。
 4. 受保护 guideline 不得直接标记为 repair eligible。
 5. 至少一个规则经过明确审批标记为 `repairEligibility=eligible`。
 6. 顶层 `repairGate.status` 经人工评审改为 `eligible`。

@@ -1,5 +1,6 @@
 """Bounded Playwright collection of geometry and computed-style observations."""
 from __future__ import annotations
+import os
 from pathlib import Path
 from typing import Any
 from urllib.parse import unquote, urlparse
@@ -213,10 +214,14 @@ def observe_render(
     scenarios: list[Any] | None = None,
     max_scenarios: int = 16,
     max_scenario_actions: int = 32,
+    browser_name: str | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
     """Observe explicit local-page targets; network requests are always blocked."""
     source = Path(source_path).expanduser().resolve()
     normalized_viewports = _normalize_viewports(viewports)
+    requested_browser = str(browser_name or os.environ.get("UI_DISMANTLER_QUALITY_BROWSER") or "auto").strip().lower()
+    if requested_browser not in {"auto", "chromium", "webkit", "firefox"}:
+        raise ValueError("browser_name must be auto, chromium, webkit, or firefox")
     if not source.is_file() or source.suffix.lower() not in {".html", ".htm"}:
         return _empty(source, [], normalized_viewports), [f"render source is not a local HTML file: {source}"]
     if timeout_ms < 100 or settle_ms < 0:
@@ -411,7 +416,8 @@ def observe_render(
     try:
         with sync_playwright() as playwright:
             launch_errors: list[str] = []
-            for name in ("chromium", "webkit", "firefox"):
+            browser_candidates = ("chromium", "webkit", "firefox") if requested_browser == "auto" else (requested_browser,)
+            for name in browser_candidates:
                 try:
                     browser = getattr(playwright, name).launch(headless=True); result["browser"] = name; break
                 except Exception as exc:

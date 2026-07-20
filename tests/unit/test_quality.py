@@ -1,6 +1,7 @@
 """Quality schema, profile composition, and inspect-only detector tests."""
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
@@ -545,6 +546,21 @@ class TestRenderObservation(unittest.TestCase):
         report, warnings = observe_render(FIXTURES / "missing.html", [])
         self.assertEqual([item["id"] for item in report["viewports"]], ["desktop", "wise", "reflow"])
         self.assertTrue(warnings)
+
+    def test_render_observation_rejects_unknown_browser(self):
+        with self.assertRaisesRegex(ValueError, "browser_name"):
+            observe_render(FIXTURES / "render.html", [], browser_name="netscape")
+
+    def test_optional_explicit_browser_selection(self):
+        requested = os.environ.get("UI_DISMANTLER_QUALITY_BROWSER", "auto")
+        report, warnings = observe_render(
+            FIXTURES / "render.html", [{"targetKey":"element:action","selector":"#action"}],
+            viewports=[{"id":"desktop","width":1280,"height":720}], browser_name=requested,
+        )
+        if report["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        if requested != "auto":
+            self.assertEqual(report["browser"], requested)
 
     def test_render_observation_enforces_resource_budgets(self):
         with self.assertRaisesRegex(ValueError, "max_targets"):
