@@ -5,7 +5,7 @@ roundtrip.py — 往返等价度测试
 回答核心问题：组件库用原数据渲染后，和原 HTML 有多像？
 
 流程：
-  原 HTML ──解析──▶ 参照 DOM
+  原 HTML ──运行（失败时显式回退静态解析）──▶ 参照 DOM
   组件库 ──mount(原数据)──▶ 渲染后 DOM（jsdom）
   参照 DOM ⇄ 渲染后 DOM ──对比──▶ 等价度报告（结构 / 文本）
 
@@ -51,7 +51,13 @@ def extract_reference_dom(html_path: Path) -> dict:
     body = soup.find("body") or soup
     tree = _serialize(body)
     texts = _collect_texts(body)
-    return {"dom": tree, "texts": texts, "text_count": len(texts)}
+    return {
+        "ok": True,
+        "mode": "static",
+        "dom": tree,
+        "texts": texts,
+        "text_count": len(texts),
+    }
 
 
 def _decode_robust(raw: bytes) -> str:
@@ -142,25 +148,87 @@ def _is_dev_noise(text: str) -> bool:
 # ============================================================
 # 渲染 DOM：调 Node 渲染器拿 mount 后的 DOM
 # ============================================================
-def render_generated_dom(lib_dir: Path) -> dict:
+def _run_renderer(html_path: Path, *renderer_args: str, timeout: int = 30) -> dict:
+    """运行统一 jsdom 渲染器并解析 JSON 协议。"""
+    try:
+        proc = subprocess.run(
+            ["node", str(RENDERER), str(html_path), *renderer_args],
+            capture_output=True,
+            timeout=timeout,
+            cwd=str(HERE),
+            encoding="utf-8",
+            errors="replace",
+        )
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": f"jsdom 渲染超时（{timeout}s）"}
+    if proc.returncode != 0:
+        return {
+            "ok": False,
+            "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}",
+            "stderr": proc.stderr[:400],
+        }
+    try:
+        return json.loads(proc.stdout)
+    except json.JSONDecodeError as exc:
+        return {
+            "ok": False,
+            "error": f"渲染器输出非 JSON: {exc}",
+            "stderr": proc.stderr[:400],
+            "raw": proc.stdout[:200],
+        }
+
+
+def render_generated_dom(lib_dir: Path, width: int = 1024, height: int = 768) -> dict:
     """用 jsdom 执行生成库 example.html 的 mount，返回渲染后 DOM。"""
-    examples = list(lib_dir.glob("examples/*.html"))
+    examples = sorted(lib_dir.glob("examples/*.html"))
     if not examples:
         return {"ok": False, "error": f"{lib_dir}/examples/ 下无 HTML"}
     example = examples[0]
-    try:
-        proc = subprocess.run(
-            ["node", str(RENDERER), str(example)],
-            capture_output=True, text=True, timeout=30, cwd=str(HERE),
-        )
-    except subprocess.TimeoutExpired:
-        return {"ok": False, "error": "jsdom 渲染超时（30s）"}
-    if proc.returncode != 0:
-        return {"ok": False, "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}"}
-    try:
-        return json.loads(proc.stdout)
-    except json.JSONDecodeError as e:
-        return {"ok": False, "error": f"渲染器输出非 JSON: {e}", "raw": proc.stdout[:200]}
+    return _run_renderer(
+        example,
+        "--width", str(width),
+        "--height", str(height),
+    )
+
+
+def render_reference_dom(html_path: Path, width: int = 1024, height: int = 768) -> dict:
+    """执行原页面资源和脚本，返回用户运行时可见的 body DOM。"""
+    return _run_renderer(
+        html_path,
+        "--ref",
+        "--width", str(width),
+        "--height", str(height),
+    )
+
+
+def resolve_reference_dom(
+    html_path: Path,
+    mode: str = "auto",
+    width: int = 1024,
+    height: int = 768,
+) -> dict:
+    """按请求模式生成参照；auto 运行失败时显式回退静态解析。"""
+    if mode == "static":
+        result = extract_reference_dom(html_path)
+        result["requested_mode"] = mode
+        result["fallback"] = False
+        return result
+
+    rendered = render_reference_dom(html_path, width=width, height=height)
+    rendered["requested_mode"] = mode
+    rendered["fallback"] = False
+    if rendered.get("ok") or mode == "rendered":
+        return rendered
+
+    static = extract_reference_dom(html_path)
+    static.update({
+        "requested_mode": mode,
+        "fallback": True,
+        "runtime_error": rendered.get("error", "运行态参照失败"),
+        "runtime_errors": rendered.get("runtimeErrors", []),
+        "missing_files": rendered.get("missingFiles", []),
+    })
+    return static
 
 
 # ============================================================
@@ -394,6 +462,14 @@ def main():
     ap.add_argument("html", help="原 HTML 文件路径")
     ap.add_argument("--skill-dir", default=str(SKILL_DIR_DEFAULT), help="skill 目录（默认 src/skill，仅用于定位渲染器）")
     ap.add_argument("--lib", help="已生成组件库目录（必填：agent 产出的库，不再走 v1 模板链路）")
+    ap.add_argument(
+        "--reference-mode",
+        choices=("auto", "rendered", "static"),
+        default="auto",
+        help="参照模式：auto 优先运行态、失败显式回退静态（默认）",
+    )
+    ap.add_argument("--width", type=int, default=1024, help="jsdom 视口宽度（默认 1024）")
+    ap.add_argument("--height", type=int, default=768, help="jsdom 视口高度（默认 768）")
     ap.add_argument("--out", help="报告输出路径（默认 stdout）")
     args = ap.parse_args()
 
@@ -407,6 +483,10 @@ def main():
         print("       agent 驱动模式下组件库由 agent 产出，不再自动跑 analyze+generate。", file=sys.stderr)
         sys.exit(2)
 
+    if args.width <= 0 or args.height <= 0:
+        print("ERROR: --width/--height 必须为正整数", file=sys.stderr)
+        sys.exit(2)
+
     skill_dir = Path(args.skill_dir).resolve()
     if not RENDERER.exists():
         print(f"ERROR: 渲染器不存在: {RENDERER}", file=sys.stderr)
@@ -414,9 +494,18 @@ def main():
 
     try:
         # 1. 参照 DOM
-        print(f"[1/3] 解析原 HTML → 参照 DOM ...", file=sys.stderr)
-        ref = extract_reference_dom(html_path)
-        print(f"      参照节点数 {ref['text_count']} 文本", file=sys.stderr)
+        print(f"[1/3] 获取原 HTML 参照 DOM（{args.reference_mode}）...", file=sys.stderr)
+        ref = resolve_reference_dom(
+            html_path,
+            mode=args.reference_mode,
+            width=args.width,
+            height=args.height,
+        )
+        if not ref.get("ok"):
+            raise RuntimeError(f"参照 DOM 获取失败: {ref.get('error', '未知错误')}")
+        ref_text_count = ref.get("textCount", ref.get("text_count", len(ref.get("texts", []))))
+        fallback_note = "，已回退静态" if ref.get("fallback") else ""
+        print(f"      模式 {ref.get('mode')}，{ref_text_count} 条文本{fallback_note}", file=sys.stderr)
 
         # 2. 已生成库
         lib_dir = Path(args.lib).resolve()
@@ -427,7 +516,7 @@ def main():
 
         # 3. 渲染 + 对比
         print(f"[3/3] jsdom 渲染 + 对比 ...", file=sys.stderr)
-        got = render_generated_dom(lib_dir)
+        got = render_generated_dom(lib_dir, width=args.width, height=args.height)
         struct = compare_structure(ref, got)
         texts = compare_texts(ref, got)
 
@@ -437,6 +526,24 @@ def main():
             "case": html_path.name,
             "render_ok": got.get("ok", False),
             "render_error": got.get("error"),
+            "reference": {
+                "requested_mode": ref.get("requested_mode"),
+                "mode": ref.get("mode"),
+                "fallback": ref.get("fallback", False),
+                "runtime_error": ref.get("runtime_error"),
+                "runtime_errors": ref.get("runtimeErrors", ref.get("runtime_errors", [])),
+                "missing_files": ref.get("missingFiles", ref.get("missing_files", [])),
+                "remote_resources": ref.get("remoteResources", []),
+                "unsupported_modules": ref.get("unsupportedModules", []),
+                "viewport": ref.get("viewport", {"width": args.width, "height": args.height}),
+            },
+            "library": {
+                "runtime_errors": got.get("runtimeErrors", []),
+                "missing_files": got.get("missingFiles", []),
+                "remote_resources": got.get("remoteResources", []),
+                "unsupported_modules": got.get("unsupportedModules", []),
+                "viewport": got.get("viewport", {"width": args.width, "height": args.height}),
+            },
             "structure": struct,
             "text": texts,
             "scores": {

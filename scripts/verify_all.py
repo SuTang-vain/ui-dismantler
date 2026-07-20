@@ -48,11 +48,64 @@ def find_cases(cases_dir: Path) -> list[tuple[str, Path]]:
     return out
 
 
-def run_roundtrip(html: Path, lib_dir: Path | None, out_json: Path) -> dict:
+def select_cases(
+    cases: list[tuple[str, Path]],
+    lib_root: Path,
+    single_lib_mode: bool,
+    requested_case: str | None = None,
+) -> list[tuple[str, Path]]:
+    """选择待验证案例；单库模式必须与库目录名明确对应。"""
+    if requested_case:
+        selected = [item for item in cases if item[0] == requested_case]
+        if not selected:
+            raise ValueError(f"未找到案例: {requested_case}")
+        return selected
+    if not single_lib_mode:
+        return cases
+
+    aliases = {lib_root.name, lib_root.parent.name}
+    selected = [item for item in cases if item[0] in aliases]
+    if len(selected) == 1:
+        return selected
+    if len(cases) == 1:
+        return cases
+    raise ValueError(
+        "单库模式无法从目录名确定对应案例；请用 --case <案例名> 明确指定"
+    )
+
+
+def build_roundtrip_command(
+    html: Path,
+    lib_dir: Path,
+    out_json: Path,
+    reference_mode: str,
+    width: int,
+    height: int,
+) -> list[str]:
+    return [
+        sys.executable,
+        str(ROUNDTRIP),
+        str(html),
+        "--lib", str(lib_dir),
+        "--out", str(out_json),
+        "--reference-mode", reference_mode,
+        "--width", str(width),
+        "--height", str(height),
+    ]
+
+
+def run_roundtrip(
+    html: Path,
+    lib_dir: Path,
+    out_json: Path,
+    reference_mode: str,
+    width: int,
+    height: int,
+) -> dict:
     """对单个案例跑 roundtrip，返回报告 dict。"""
-    cmd = [sys.executable, str(ROUNDTRIP), str(html), "--out", str(out_json)]
-    if lib_dir:
-        cmd += ["--lib", str(lib_dir)]
+    cmd = build_roundtrip_command(
+        html, lib_dir, out_json, reference_mode, width, height,
+    )
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
     except subprocess.TimeoutExpired:
@@ -73,6 +126,15 @@ def main():
                     help="已生成组件库父目录（其下每个子目录名对应案例名）；必填，agent 产出库后验证")
     ap.add_argument("--threshold", type=float, default=0.85,
                     help="综合分门槛（默认 0.85）")
+    ap.add_argument("--case", help="只验证指定案例（名称对应 cases-dir 下的目录名）")
+    ap.add_argument(
+        "--reference-mode",
+        choices=("auto", "rendered", "static"),
+        default="rendered",
+        help="参照模式（批量回归默认严格 rendered，不允许静默回退）",
+    )
+    ap.add_argument("--width", type=int, default=1024, help="jsdom 视口宽度")
+    ap.add_argument("--height", type=int, default=768, help="jsdom 视口高度")
     ap.add_argument("--out", help="报告输出路径（默认 stdout 摘要）")
     args = ap.parse_args()
 
@@ -88,9 +150,24 @@ def main():
         sys.exit(2)
 
     lib_root = Path(args.lib_dir).resolve()
+    if not lib_root.is_dir():
+        print(f"ERROR: 组件库目录不存在: {lib_root}", file=sys.stderr)
+        sys.exit(2)
+    if args.width <= 0 or args.height <= 0:
+        print("ERROR: --width/--height 必须为正整数", file=sys.stderr)
+        sys.exit(2)
     # 单库模式：lib_root 本身是组件库（有 src/），只对能匹配的案例跑
     single_lib_mode = (lib_root / "src").is_dir()
-    print(f"批量验证：{len(cases)} 个案例，门槛 {args.threshold}\n", file=sys.stderr)
+    try:
+        cases = select_cases(cases, lib_root, single_lib_mode, args.case)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(2)
+    print(
+        f"批量验证：{len(cases)} 个案例，门槛 {args.threshold}，"
+        f"参照 {args.reference_mode}，视口 {args.width}x{args.height}\n",
+        file=sys.stderr,
+    )
 
     results: list[dict] = []
     import tempfile
@@ -98,9 +175,6 @@ def main():
         lib_dir = None
         if lib_root:
             if single_lib_mode:
-                # 单库：只对首个案例验证（一个库对应一个案例）
-                if results:
-                    continue  # 已验证过，跳过其余
                 lib_dir = lib_root
             else:
                 # 多库：lib_dir/<案例名>
@@ -112,9 +186,17 @@ def main():
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tf:
             tmp_json = Path(tf.name)
         print(f"  [{name}] roundtrip ...", file=sys.stderr, end=" ", flush=True)
-        res = run_roundtrip(html, lib_dir, tmp_json)
+        res = run_roundtrip(
+            html,
+            lib_dir,
+            tmp_json,
+            args.reference_mode,
+            args.width,
+            args.height,
+        )
         if res["ok"]:
             scores = res["report"].get("scores", {})
+            reference = res["report"].get("reference", {})
             overall = scores.get("overall", 0)
             passed = overall >= args.threshold
             results.append({
@@ -123,6 +205,7 @@ def main():
                 "scores": scores,
                 "passed": passed,
                 "render_ok": res["report"].get("render_ok", False),
+                "reference": reference,
             })
             mark = "✓" if passed else "✗"
             print(f"{mark} 综合 {overall}", file=sys.stderr)
@@ -130,6 +213,10 @@ def main():
             results.append({"case": name, "ok": False, "error": res["error"], "passed": False})
             print(f"✗ ERROR: {res['error'][:80]}", file=sys.stderr)
         tmp_json.unlink(missing_ok=True)
+
+    if not results:
+        print("ERROR: 没有找到与组件库对应的案例", file=sys.stderr)
+        sys.exit(2)
 
     # 汇总
     total = len(results)
@@ -154,6 +241,8 @@ def main():
 
     report = {
         "threshold": args.threshold,
+        "referenceMode": args.reference_mode,
+        "viewport": {"width": args.width, "height": args.height},
         "total": total,
         "rendered": ok_count,
         "passed": pass_count,
