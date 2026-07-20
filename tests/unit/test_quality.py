@@ -6,6 +6,7 @@ import unittest
 from ui_dismantler.quality import inspect_uiir, validate_quality_ir
 from ui_dismantler.quality.colors import composite, contrast_ratio, parse_css_color, resolve_background, resolved_text_contrast
 from ui_dismantler.quality.focus import analyze_focus_indicator
+from ui_dismantler.quality.states import controlled_visibility_consistency, invalid_aria_states
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
@@ -54,6 +55,26 @@ class TestQualitySchema(unittest.TestCase):
         self.assertEqual(validate_render_observation(observation), [])
         self.assertEqual(validate_repair_proposal(proposal), [])
         self.assertEqual(validate_verification_result(verification), [])
+
+
+class TestStateAnalysis(unittest.TestCase):
+    def test_invalid_state_tokens_are_deterministic(self):
+        self.assertEqual(invalid_aria_states({"ariaExpanded":"open","ariaSelected":"true","ariaPressed":"mixed"}), [{"attribute":"aria-expanded","value":"open"}])
+        self.assertEqual(invalid_aria_states({"ariaExpanded":None,"ariaSelected":None,"ariaPressed":None}), [])
+
+    def test_controlled_visibility_requires_complete_observation(self):
+        mismatch, reason = controlled_visibility_consistency({
+            "ariaExpanded":"true", "controlsTruncated":False,
+            "controlledTargets":[{"id":"panel","found":True,"visible":False}],
+        }, "button")
+        self.assertIsNone(reason)
+        self.assertEqual(mismatch["mismatches"][0]["attribute"], "aria-expanded")
+        mismatch, reason = controlled_visibility_consistency({
+            "ariaExpanded":"true", "controlsTruncated":False,
+            "controlledTargets":[{"id":"missing","found":False,"visible":False}],
+        }, "button")
+        self.assertIsNone(mismatch)
+        self.assertEqual(reason, "controlled-target-not-observed")
 
 
 class TestContrastMath(unittest.TestCase):
@@ -276,6 +297,38 @@ class TestRenderFindings(unittest.TestCase):
         self.assertLess(observed["ratio"], 4.5)
 
 
+    def test_aria_state_tokens_and_controlled_visibility_are_separate_findings(self):
+        render = fixture("render-state.json")
+        uiir = document([(item["targetKey"], {"id": item["selector"][1:], "role": item.get("role") or "button", "ariaControls": " ".join(item["stateContext"]["ariaControls"])}) for item in render["observations"]])
+        report = inspect_uiir(uiir, self.profile, render)
+        tokens = [item for item in report["findings"] if item["guidelineId"] == "system.web.aria-state.token-valid"]
+        self.assertEqual([item["targetKey"] for item in tokens], ["element:state-invalid-pressed"])
+        self.assertEqual(tokens[0]["constraint"], "hard")
+        visibility = [item for item in report["findings"] if item["guidelineId"] == "system.web.controlled-state.visibility"]
+        self.assertEqual({item["targetKey"] for item in visibility}, {"element:state-expanded-bad", "element:state-collapsed-bad", "element:state-tab-selected-bad"})
+        skipped = [item for item in report["diagnostics"]["renderSkipped"] if item["guidelineId"] == "system.web.controlled-state.visibility"]
+        self.assertCountEqual(skipped, [
+            {"guidelineId":"system.web.controlled-state.visibility","targetKey":"element:state-missing-control","viewportKey":"desktop","reason":"controlled-target-not-observed"},
+            {"guidelineId":"system.web.controlled-state.visibility","targetKey":"element:state-truncated","viewportKey":"desktop","reason":"controlled-targets-truncated"},
+        ])
+
+    def test_optional_browser_state_probe_matches_initial_visibility(self):
+        uiir = document([
+            ("element:state-expanded-bad", {"id":"state-expanded-bad","role":"button","ariaControls":"state-panel-hidden"}),
+            ("element:state-expanded-good", {"id":"state-expanded-good","role":"button","ariaControls":"state-panel-visible"}),
+            ("element:state-collapsed-bad", {"id":"state-collapsed-bad","role":"button","ariaControls":"state-panel-visible"}),
+            ("element:state-tab-selected-bad", {"id":"state-tab-selected-bad","role":"tab","ariaControls":"state-tabpanel-hidden"}),
+            ("element:state-invalid-pressed", {"id":"state-invalid-pressed","role":"button"}),
+        ])
+        render, warnings = observe_render(FIXTURES / "render.html", targets_from_uiir(uiir), viewports=[{"id":"desktop","width":1280,"height":720}])
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        report = inspect_uiir(uiir, self.profile, render)
+        tokens = [item for item in report["findings"] if item["guidelineId"] == "system.web.aria-state.token-valid"]
+        self.assertEqual([item["targetKey"] for item in tokens], ["element:state-invalid-pressed"])
+        visibility = [item for item in report["findings"] if item["guidelineId"] == "system.web.controlled-state.visibility"]
+        self.assertEqual({item["targetKey"] for item in visibility}, {"element:state-expanded-bad", "element:state-collapsed-bad", "element:state-tab-selected-bad"})
+
     def test_reflow_reports_page_overflow_and_skips_bounded_exceptions(self):
         uiir = document([
             ("element:reflow-bad", {"id":"reflow-bad"}),
@@ -330,6 +383,11 @@ class TestRenderFindings(unittest.TestCase):
         keyboard_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(keyboard_uiir, self.profile, render)
+        render = fixture("render-state.json")
+        render["observations"][0]["stateContext"]["controlledTargets"][0]["visible"] = "hidden"
+        state_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":item.get("role") or "button"}) for item in render["observations"]])
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(state_uiir, self.profile, render)
         render = fixture("render-reflow.json")
         render["observations"][0]["layoutContext"]["documentScrollWidth"] = "wide"
         reflow_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1]}) for item in render["observations"]])
@@ -396,11 +454,13 @@ class TestRenderObservation(unittest.TestCase):
             "interactive":True, "disabled":False, "textContent":"X", "accessibleName":"X",
             "bounds":{"x":0,"y":0,"width":44,"height":44}, "computedStyle":{},
             "visible":True, "clipped":False, "colorContext":{"foreground":"","backgroundLayers":[]},
+            "stateContext":{"ariaExpanded":"false","ariaSelected":None,"ariaPressed":None,"ariaControls":["panel"],"controlsTruncated":False,"controlledTargets":[{"id":"panel","found":True,"visible":False,"hiddenAttribute":True,"ariaHidden":"","role":""}]},
             "layoutContext":{"documentClientWidth":320,"documentScrollWidth":500,"pageHorizontalOverflow":True,"targetContributesToPageOverflow":True,"horizontalScrollContainer":None,"exceptionKind":""},
             "keyboardContext":{"sequentiallyFocusable":True,"tabIndex":0,"managedComposite":False,"compositeRole":""},
             "focusContext":{"focusable":True,"focused":True,"focusVisible":True,"before":[],"after":[]},
         }
         observation = _build_observation(raw, {"id":"reflow","width":320,"height":800})
+        self.assertEqual(observation["stateContext"], raw["stateContext"])
         self.assertEqual(observation["layoutContext"], raw["layoutContext"])
         self.assertEqual(observation["keyboardContext"], raw["keyboardContext"])
         self.assertEqual(validate_render_observation(observation), [])

@@ -212,6 +212,32 @@ def validate_render_observation(value: Any) -> list[str]:
             layers = context.get("backgroundLayers")
             if not isinstance(layers, list) or any(not isinstance(item, dict) for item in layers):
                 errors.append("colorContext.backgroundLayers must be an array of objects")
+    if "stateContext" in value:
+        state = value["stateContext"]
+        if not isinstance(state, dict):
+            errors.append("stateContext must be an object")
+        else:
+            for field in ("ariaExpanded", "ariaSelected", "ariaPressed"):
+                if field in state and state[field] is not None and not isinstance(state[field], str):
+                    errors.append(f"stateContext.{field} must be a string or null")
+            controls = state.get("ariaControls", [])
+            if not isinstance(controls, list) or any(not isinstance(item, str) for item in controls):
+                errors.append("stateContext.ariaControls must be an array of strings")
+            if "controlsTruncated" in state and not isinstance(state["controlsTruncated"], bool):
+                errors.append("stateContext.controlsTruncated must be boolean")
+            targets = state.get("controlledTargets", [])
+            if not isinstance(targets, list) or any(not isinstance(item, dict) for item in targets):
+                errors.append("stateContext.controlledTargets must be an array of objects")
+            else:
+                for index, target in enumerate(targets):
+                    if not _text(target.get("id")):
+                        errors.append(f"stateContext.controlledTargets[{index}].id must be a non-empty string")
+                    for field in ("found", "visible", "hiddenAttribute"):
+                        if field in target and not isinstance(target[field], bool):
+                            errors.append(f"stateContext.controlledTargets[{index}].{field} must be boolean")
+                    for field in ("ariaHidden", "role"):
+                        if field in target and not isinstance(target[field], str):
+                            errors.append(f"stateContext.controlledTargets[{index}].{field} must be a string")
     if "layoutContext" in value:
         layout = value["layoutContext"]
         if not isinstance(layout, dict):

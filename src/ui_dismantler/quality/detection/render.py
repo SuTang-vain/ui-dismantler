@@ -4,9 +4,10 @@ from hashlib import sha1
 from typing import Any
 from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
+from ..states import controlled_visibility_consistency, invalid_aria_states
 from ..schema import validate_render_observation
 
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow", "render-aria-state-token", "render-controlled-visibility"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -138,6 +139,32 @@ def inspect_render_findings(
                         guideline, observation,
                         "Positive tabindex overrides the document's natural sequential focus order",
                         {"tabIndex": tab_index},
+                    ))
+            elif detector == "render-aria-state-token":
+                invalid = invalid_aria_states(observation.get("stateContext"))
+                if invalid:
+                    findings.append(_finding(
+                        guideline, observation,
+                        "ARIA state attribute uses an invalid token",
+                        {"invalidStates": invalid},
+                    ))
+            elif detector == "render-controlled-visibility":
+                mismatch, uncertainty = controlled_visibility_consistency(
+                    observation.get("stateContext"), str(observation.get("role") or ""),
+                )
+                if uncertainty:
+                    skipped.append({
+                        "guidelineId": guideline["id"],
+                        "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"),
+                        "reason": uncertainty,
+                    })
+                    continue
+                if mismatch:
+                    findings.append(_finding(
+                        guideline, observation,
+                        "ARIA state does not match controlled-target visibility",
+                        mismatch,
                     ))
             elif detector == "render-reflow-horizontal-overflow":
                 viewport = observation.get("viewport") or {}

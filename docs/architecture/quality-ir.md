@@ -44,3 +44,7 @@ Render Observation 现在记录显式 UI-IR 交互目标的 `tabIndex`、是否�
 ## 320 CSS px Reflow 诊断
 
 默认 Render Observation 新增 `reflow:320x800` viewport，并为显式目标记录页面 `clientWidth/scrollWidth`、目标是否贡献页面级横向溢出、最多 16 层目标/祖先链内的横向滚动容器，以及有限语义例外。`system.web.reflow.horizontal-overflow` 仅在 viewport 不宽于 320 CSS px、页面确有横向溢出且该目标越出页面可视宽度时生成 soft warning。数据表格、预格式化内容、carousel、显式标记的横向滚动区以及实际受 `overflow-x:auto|scroll` 容器约束的内容进入 `diagnostics.renderSkipped`。该有界探针不尝试推断完整布局意图，也不将一般 viewport clipping 自动升级为硬错误。
+
+## ARIA 状态一致性诊断
+
+Render Observation 现在为每个显式目标记录 `aria-expanded`、`aria-selected`、`aria-pressed`、最多 16 个 `aria-controls` ID，以及对应目标是否存在和当前是否可见。`system.web.aria-state.token-valid` 对这三个状态属性的非法 token 生成受保护的 hard error；缺失属性不被视为非法。`system.web.controlled-state.visibility` 则保守比较初始状态：`aria-expanded=true/false` 与受控目标可见性，以及 `role=tab` 的 `aria-selected=true/false` 与受控 tabpanel 可见性。引用目标缺失或 controls 列表截断时进入 `diagnostics.renderSkipped`。本阶段只检查采样时刻，不触发点击，也不把 `aria-pressed` 与任意视觉 class 做推测性绑定。

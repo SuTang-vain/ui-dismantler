@@ -243,5 +243,77 @@
       "profile": "web-base",
       "reference": "WCAG 2.2 1.4.10 diagnostic at 320 CSS px; bounded scroll containers and semantic exceptions are skipped"
     }
+  },
+  {
+    "id": "system.web.aria-state.token-valid",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "state",
+    "constraint": "hard",
+    "severity": "error",
+    "protected": true,
+    "states": [
+      "default",
+      "active",
+      "selected",
+      "expanded"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-aria-state-token"
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "aria-state-token",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "WAI-ARIA state value grammar for aria-expanded, aria-selected, and aria-pressed"
+    }
+  },
+  {
+    "id": "system.web.controlled-state.visibility",
+    "version": "0.1.0",
+    "scope": "element",
+    "category": "state",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default",
+      "active",
+      "selected",
+      "expanded"
+    ],
+    "viewports": [
+      "all"
+    ],
+    "detector": {
+      "type": "deterministic",
+      "name": "render-controlled-visibility"
+    },
+    "evidenceRequired": [
+      "render"
+    ],
+    "repairStrategy": "controlled-visibility",
+    "appliesWhen": {
+      "nodeTypes": [
+        "element",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "web-base",
+      "reference": "ARIA controlled-state diagnostic; compares initial aria-expanded/tab aria-selected state with bounded aria-controls target visibility"
+    }
   }
 ]

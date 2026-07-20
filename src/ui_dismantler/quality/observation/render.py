@@ -86,7 +86,8 @@ def _build_observation(item: dict[str, Any], viewport: dict[str, Any]) -> dict[s
         "tag": item.get("tag", ""), "role": item.get("role", ""),
         "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")),
         "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}),
-        "layoutContext": item.get("layoutContext", {}), "keyboardContext": item.get("keyboardContext", {}),
+        "stateContext": item.get("stateContext", {}), "layoutContext": item.get("layoutContext", {}),
+        "keyboardContext": item.get("keyboardContext", {}),
         "focusContext": item.get("focusContext", {}), "accessibleName": item.get("accessibleName", ""),
         "bounds": item["bounds"], "computedStyle": item["computedStyle"],
         "visible": bool(item["visible"]), "clipped": bool(item["clipped"]),
@@ -131,6 +132,35 @@ def observe_render(
         for (const field of focusFields) values[field] = style[field] || '';
         values.content = pseudo ? (style.content || '') : '';
         return {scope, style: values};
+      }
+      function isVisiblyRendered(target) {
+        const rect = target.getBoundingClientRect();
+        const style = getComputedStyle(target);
+        return !target.hidden && target.getAttribute('aria-hidden') !== 'true'
+          && style.display !== 'none' && style.visibility !== 'hidden'
+          && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0
+          && target.getClientRects().length > 0;
+      }
+      function stateSnapshot(target) {
+        const controls = (target.getAttribute('aria-controls') || '').trim().split(/\\s+/).filter(Boolean);
+        const controlledTargets = controls.slice(0, 16).map(id => {
+          const controlled = document.getElementById(id);
+          if (!controlled) return {id, found: false, visible: false, hiddenAttribute: false, ariaHidden: ''};
+          return {
+            id, found: true, visible: isVisiblyRendered(controlled),
+            hiddenAttribute: controlled.hidden,
+            ariaHidden: controlled.getAttribute('aria-hidden') || '',
+            role: controlled.getAttribute('role') || ''
+          };
+        });
+        return {
+          ariaExpanded: target.getAttribute('aria-expanded'),
+          ariaSelected: target.getAttribute('aria-selected'),
+          ariaPressed: target.getAttribute('aria-pressed'),
+          ariaControls: controls.slice(0, 16),
+          controlsTruncated: controls.length > 16,
+          controlledTargets
+        };
       }
       function reflowExceptionKind(target, scrollContainer) {
         const exceptionSelector = 'table,[role="table"],[role="grid"],[role="treegrid"],pre,code,[aria-roledescription="carousel"]';
@@ -236,6 +266,7 @@ def observe_render(
           });
         }
         const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
+        const stateContext = stateSnapshot(element);
         const layoutContext = layoutSnapshot(element, rect);
         const sequentiallyFocusable = interactive && !disabled && element.tabIndex >= 0;
         const keyboardContext = {
@@ -258,7 +289,7 @@ def observe_render(
             try { previous.focus({preventScroll: true}); } catch (_) {}
           }
         }
-        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, layoutContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, stateContext, layoutContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""
