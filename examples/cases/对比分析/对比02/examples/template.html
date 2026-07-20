@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>{主角物种}·对比观察 — 复用模板</title>
+<link rel="stylesheet" href="../src/gan.css" />
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#f8f8f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;}
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/gan.js"></script>
+<script>
+  // ============ 数据契约（替换为你的真实数据）============
+  var options = {
+    title: '{主角物种名} - 交互式科普',
+    subject: {
+      key: 'main',
+      name: '{主角物种名}',
+      imageFront: '../../{正面图}',
+      imageSide: '../../{侧面图}',
+      stats: { d1: '{值}', d2: '{值}', d3: '{值}', d4: '{值}', d5: '{值}' },
+      imageMeta: { contentW: 470, contentH: 134 }   // 主图内容尺寸（scaleX 换算）
+    },
+    competitors: [
+      {
+        key: '{species_key}', name: '{物种名}',
+        image: '../../{图}',
+        stats: { d1: '{值}', d2: '{值}', d3: '{值}', d4: '{值}', d5: '{值}' },
+        chartScores: [100, 100, 100, 100, 80],      // 雷达图分数 0-100
+        imageMeta: { contentW: 480, contentH: 197 }
+      }
+      // ...更多对比物种
+    ],
+    subjectChartScores: [100, 75, 80, 88, 100],
+    dimensions: ['常见体长', '常见体重', '寿命', '适温', '繁殖量'],
+    compareWidthPct: 60.6,          // 对比图固定宽度 %
+    defaultCompetitorIdx: 0,        // 初始对比物种
+    hotspots: [
+      {
+        id: '{feature_id}', pose: 'front',     // front | side
+        left: 50, top: 72,                      // 热点百分比坐标
+        title: '{特征名}', subtitle: '{分类}',
+        text: '{特征说明}',
+        zoomImage: '../../{放大图}',
+        zoomLeft: 50, zoomTop: 72,              // 放大中心百分比
+        zoomSize: '300% auto'                    // 放大倍率
+      }
+      // ...更多热点
+    ],
+    disclaimer: '{对比说明文案}',
+    chartLegend: { base: '{主角名}', target: '对比物种' },
+    // 主题色覆盖（可选）
+    theme: {
+      // '--sg-primary': '#6487FA'
+    }
+  };
+
+  window.Gan.mount(document.getElementById('mount'), options);
+</script>
+</body>
+</html>

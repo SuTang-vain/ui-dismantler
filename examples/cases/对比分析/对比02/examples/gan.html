@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>鳡特征互动观察 — 组件库复刻</title>
+<link rel="stylesheet" href="../src/gan.css" />
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#f8f8f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;}
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/gan.js"></script>
+<script>
+  // 原案例数据（业务文案/图片路径，由 examples 注入，引擎不硬编码）
+  var options = {
+    title: '鳡 (Elopichthys bambusa) - 交互式科普',
+    subject: {
+      key: 'main',
+      name: '鳡',
+      imageFront: '../../yellowcheek_front.png',
+      imageSide: '../../yellowcheek_side.png',
+      stats: { d1: '100cm', d2: '15kg', d3: '12年', d4: '22℃', d5: '50万粒' },
+      imageMeta: { contentW: 470, contentH: 134 }
+    },
+    competitors: [
+      {
+        key: 'bighead', name: '鳙鱼',
+        image: '../../bighead_carp.png',
+        stats: { d1: '100cm', d2: '25kg', d3: '15年', d4: '25℃', d5: '40万粒' },
+        chartScores: [100, 100, 100, 100, 80],
+        imageMeta: { contentW: 480, contentH: 197 }
+      },
+      {
+        key: 'blackcarp', name: '青鱼',
+        image: '../../black_carp.png',
+        stats: { d1: '120cm', d2: '40kg', d3: '15年', d4: '25℃', d5: '100万粒' },
+        chartScores: [100, 100, 100, 100, 100],
+        imageMeta: { contentW: 456, contentH: 174 }
+      },
+      {
+        key: 'lianyong', name: '鲢鳙',
+        image: '../../lianyong.png',
+        stats: { d1: '80cm', d2: '20kg', d3: '15年', d4: '25℃', d5: '50万粒' },
+        chartScores: [100, 100, 100, 100, 100],
+        imageMeta: { contentW: 462, contentH: 149 }
+      }
+    ],
+    subjectChartScores: [100, 75, 80, 88, 100],
+    dimensions: ['常见体长', '常见体重', '寿命', '适温', '繁殖量'],
+    compareWidthPct: 60.6,
+    defaultCompetitorIdx: 0,
+    hotspots: [
+      {
+        id: 'mouth', pose: 'front', left: 50, top: 72,
+        title: '口部', subtitle: '掠食结构',
+        text: '鳡口裂宽大、下颌前突，口腔内密布细齿，是典型的淡水掠食性鱼类口型。这种结构使其能高效捕捉并固定鱼类、虾类等猎物。',
+        zoomImage: '../../yellowcheek_front.png', zoomLeft: 50, zoomTop: 72, zoomSize: '300% auto'
+      },
+      {
+        id: 'caudal_fin', pose: 'side', left: 88, top: 48,
+        title: '尾鳍', subtitle: '运动系统',
+        text: '鳡尾鳍分叉深、肌节发达，是淡水鱼类中速度最快的推进器官之一。强劲尾鳍赋予鳡短距离爆发冲刺能力，是其占据水域生态位顶端的关键。',
+        zoomImage: '../../yellowcheek_side.png', zoomLeft: 88, zoomTop: 48, zoomSize: '200% auto'
+      }
+    ],
+    disclaimer: '体型对比作为参考，具体因个体不同有略微差异',
+    chartLegend: { base: '鳡', target: '对比物种' }
+  };
+
+  window.Gan.mount(document.getElementById('mount'), options);
+</script>
+</body>
+</html>

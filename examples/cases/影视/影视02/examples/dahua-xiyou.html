@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>大话西游 · 人物关系与剧情全解析 — 组件库示例</title>
+<link rel="stylesheet" href="../src/dahua-xiyou.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/dahua-xiyou.js"></script>
+<script>
+DahuaXiyou.mount(document.getElementById('mount'), {
+  tabs: [
+    { key: 'graph', label: '故事图谱' },
+    { key: 'works', label: '作品推荐' }
+  ],
+  legend: [
+    { type: 'family', label: '前世今生' },
+    { type: 'romance', label: '情感' },
+    { type: 'master', label: '师徒' },
+    { type: 'friend', label: '结义' },
+    { type: 'enemy', label: '对立' }
+  ],
+  heroKey: 'zizunbao',
+  characters: {
+    zizunbao:    { name: '至尊宝', actor: '周星驰 饰', img: 'images/角色_至尊宝.webp', big: true, desc: '斧头帮帮主，孙悟空的转世。为人风流浪荡，后在与白晶晶、紫霞的爱恨纠葛中成长，最终戴上金箍，恢复孙悟空身份，踏上西天取经之路。' },
+    zixia:       { name: '紫霞仙子', actor: '朱茵 饰', img: 'images/角色_紫霞仙子.webp', desc: '如来佛祖座前日月神灯的灯芯，盘丝大仙。她为爱执着，相信谁能拔出她的紫青宝剑，谁就是她的意中人。最终为救孙悟空而死。' },
+    baijingjing: { name: '白晶晶', actor: '莫文蔚 饰', img: 'images/角色_白晶晶.webp', desc: '白骨精，盘丝大仙的二徒弟。五百年前与孙悟空有段情，后与至尊宝相恋，在误会与纠葛中为情所困，最终自刎。' },
+    tangsanzang: { name: '唐三藏', actor: '罗家英 饰', img: 'images/角色_唐三藏.webp', desc: '孙悟空的师父，以说话啰嗦闻名。为人慈悲，愿以命换悟空重生。是西天取经的核心人物。' },
+    niumowang:   { name: '牛魔王', actor: '陆树铭 饰', img: 'images/角色_牛魔王.webp', desc: '孙悟空的结拜大哥，法力高强。一心想吃唐僧肉，并喜欢紫霞仙子，是孙悟空在取经路上的主要对手之一。' },
+    chunsanniang:{ name: '春三十娘', actor: '蓝洁瑛 饰', img: 'images/角色_春三十娘.webp', desc: '蜘蛛精，盘丝大仙的大徒弟。为吃唐僧肉来到五岳山，与师妹白晶晶作对，后与二当家生下唐三藏的转世。' },
+    erdangjia:   { name: '二当家', actor: '吴孟达 饰', img: 'images/角色_二当家png.webp', desc: '斧头帮的二把手，猪八戒的转世。被春三十娘奴化后，阴差阳错与其生下唐三藏的转世。' },
+    puti:        { name: '菩提老祖', actor: '刘镇伟 饰', img: 'images/角色_菩提老祖.webp', desc: '至尊宝的引路人，向其揭示孙悟空转世的真相。在关键时刻出现，推动剧情发展。' },
+    guanyin:     { name: '观音大士', actor: '侯艳 饰', img: 'images/角色_观音大士.webp', desc: '慈悲为怀的神仙，因孙悟空与牛魔王合谋杀害唐三藏而出手惩罚，令其五百年后投胎为人赎罪。' },
+    qingxia:     { name: '青霞仙子', actor: '朱茵 饰', img: 'images/角色_青霞仙子.webp', desc: '如来佛祖座前日月神灯的另一灯芯，与紫霞一体两魂。白天是紫霞，晚上是青霞，二人仇恨颇深。' },
+    sunwukong:   { name: '孙悟空', actor: '周星驰 饰', img: 'images/角色_孙悟空.webp', desc: '至尊宝的前世，法力高强的齐天大圣。为救紫霞与师父而戴上金箍，恢复真身。' },
+    xiyangwushi: { name: '夕阳武士', actor: '周星驰 饰', img: 'images/角色_夕阳武士.webp', desc: '至尊宝在片尾的化身，与转世的紫霞在城楼上终成眷属，完成了对紫霞未了的情感告白。' }
+  },
+  edges: [
+    { a: 'zizunbao', b: 'sunwukong', type: 'family', label: '前世今生' },
+    { a: 'zizunbao', b: 'zixia', type: 'romance', label: '挚爱' },
+    { a: 'zizunbao', b: 'baijingjing', type: 'romance', label: '前缘' },
+    { a: 'sunwukong', b: 'baijingjing', type: 'romance', label: '旧情' },
+    { a: 'tangsanzang', b: 'sunwukong', type: 'master', label: '师徒' },
+    { a: 'niumowang', b: 'sunwukong', type: 'friend', label: '结拜兄弟' },
+    { a: 'niumowang', b: 'zizunbao', type: 'enemy', label: '情敌' },
+    { a: 'chunsanniang', b: 'baijingjing', type: 'enemy', label: '师姐妹' },
+    { a: 'chunsanniang', b: 'erdangjia', type: 'romance', label: '夫妻' },
+    { a: 'puti', b: 'zizunbao', type: 'master', label: '引路' },
+    { a: 'guanyin', b: 'sunwukong', type: 'enemy', label: '惩罚' },
+    { a: 'zixia', b: 'qingxia', type: 'family', label: '一体两魂' },
+    { a: 'erdangjia', b: 'zizunbao', type: 'friend', label: '兄弟' },
+    { a: 'xiyangwushi', b: 'zizunbao', type: 'family', label: '化身' },
+    { a: 'niumowang', b: 'zixia', type: 'romance', label: '追求' },
+    { a: 'tangsanzang', b: 'zizunbao', type: 'master', label: '师父' },
+    { a: 'guanyin', b: 'tangsanzang', type: 'master', label: '保护' },
+    { a: 'niumowang', b: 'tangsanzang', type: 'enemy', label: '想吃唐僧肉' },
+    { a: 'xiyangwushi', b: 'zixia', type: 'romance', label: '转世情缘' }
+  ],
+  heroRel: {
+    zixia: { type: 'romance', text: '挚爱' },
+    baijingjing: { type: 'romance', text: '前缘' },
+    tangsanzang: { type: 'master', text: '师父' },
+    niumowang: { type: 'enemy', text: '结拜大哥 · 对手' },
+    chunsanniang: { type: 'enemy', text: '师姐' },
+    erdangjia: { type: 'friend', text: '兄弟 · 前世' },
+    puti: { type: 'master', text: '引路人' },
+    guanyin: { type: 'enemy', text: '惩罚者' },
+    qingxia: { type: 'family', text: '一体两魂' },
+    sunwukong: { type: 'family', text: '前世' },
+    xiyangwushi: { type: 'family', text: '化身' }
+  },
+  stories: [
+    { key: 'plot1', name: '月光宝盒', desc: '五百年后，至尊宝与春三十娘、白晶晶相遇。为吃唐僧肉而来的两妖，与至尊宝展开纠缠。至尊宝对白晶晶一见钟情，开启了一段孽缘。', chars: ['zizunbao', 'baijingjing', 'chunsanniang'] },
+    { key: 'plot2', name: '偶遇紫霞', desc: '为救自刎的白晶晶，至尊宝使用月光宝盒，却意外回到五百年前。在水帘洞，他遇到了紫霞仙子，并被她在脚底留下了三颗痣的记号。', chars: ['zizunbao', 'zixia'] },
+    { key: 'plot3', name: '紫青宝剑', desc: '至尊宝无意中拔出紫霞的紫青宝剑，成为她的意中人。紫霞向他表白，但至尊宝心中仍挂念白晶晶，拒绝了她。两人的爱情宿命由此展开。', chars: ['zizunbao', 'zixia'] },
+    { key: 'plot4', name: '牛魔王抢亲', desc: '牛魔王出现，欲强娶紫霞。至尊宝在与牛魔王的对抗中逐渐意识到自己对紫霞的感情，但为时已晚，紫霞被牛魔王所困。', chars: ['zizunbao', 'zixia', 'niumowang'] },
+    { key: 'plot5', name: '戴上金箍', desc: '为救紫霞和师父，至尊宝决定戴上金箍，放弃凡人的情感，变回法力无边的孙悟空。这是他成长与救赎的关键一步。', chars: ['zizunbao', 'sunwukong', 'guanyin'] },
+    { key: 'plot6', name: '紫霞之死', desc: '孙悟空大战牛魔王，紫霞为救悟空而死。她的离去成为悟空心中永远的痛，也让他彻底断绝了尘缘，一心护送唐僧西天取经。', chars: ['sunwukong', 'zixia', 'niumowang'] },
+    { key: 'plot7', name: '城楼一吻', desc: '孙悟空看到夕阳武士与转世的紫霞在城楼上对峙，他借夕阳武士之身，给了紫霞一个深情的吻，了却了自己未了的尘缘。', chars: ['sunwukong', 'xiyangwushi', 'zixia'] },
+    { key: 'plot8', name: '西天取经', desc: '孙悟空转身离去，在"他好像一条狗"的议论声中，踏上了漫漫西行路。他的背影孤独而坚定，象征着成长与责任的代价。', chars: ['sunwukong', 'tangsanzang'] }
+  ],
+  worksTabs: {
+    theme: {
+      label: '同题材',
+      items: [
+        { n: '倩女幽魂', m: '张国荣 / 王祖贤', r: '人鬼情未了 · 经典奇幻', cover: 'images/推荐_倩女幽魂.webp' },
+        { n: '青蛇', m: '张曼玉 / 王祖贤', r: '妖凡之恋 · 爱欲纠葛', cover: 'images/推荐_青蛇.webp' },
+        { n: '画皮', m: '周迅 / 赵薇', r: '人妖殊途 · 爱情考验', cover: 'images/推荐_画皮.webp' },
+        { n: '新龙门客栈', m: '张曼玉 / 林青霞', r: '武侠经典 · 江湖儿女', cover: 'images/推荐_新龙门客栈.webp' }
+      ]
+    },
+    cast: {
+      label: '同主演',
+      items: [
+        { n: '喜剧之王', m: '周星驰 / 张柏芝', r: '周星驰自传式喜剧', cover: 'images/推荐_喜剧之王.webp' },
+        { n: '功夫', m: '周星驰 / 元秋', r: '周星驰功夫喜剧巅峰', cover: 'images/推荐_功夫.webp' },
+        { n: '射雕英雄传', m: '张智霖 / 朱茵', r: '朱茵版经典黄蓉', cover: 'images/推荐_射雕英雄传.webp' },
+        { n: '逃学威龙2', m: '周星驰 / 朱茵', r: '周星驰朱茵定情之作', cover: 'images/推荐_逃学威龙2.webp' }
+      ]
+    },
+    type: {
+      label: '同类型',
+      items: [
+        { n: '东成西就', m: '张国荣 / 林青霞', r: '全明星无厘头喜剧', cover: 'images/推荐_东成西就.webp' },
+        { n: '唐伯虎点秋香', m: '周星驰 / 巩俐', r: '周星驰古装喜剧代表作', cover: 'images/推荐_唐伯虎点秋香.webp' },
+        { n: '国产凌凌漆', m: '周星驰 / 袁咏仪', r: '周星驰特工喜剧', cover: 'images/推荐_国产凌凌漆.webp' }
+      ]
+    }
+  }
+});
+</script>
+</body>
+</html>

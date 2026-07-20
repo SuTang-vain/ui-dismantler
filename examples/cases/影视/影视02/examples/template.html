@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>大话西游 · 组件库模板</title>
+<link rel="stylesheet" href="../src/dahua-xiyou.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/dahua-xiyou.js"></script>
+<script>
+DahuaXiyou.mount(document.getElementById('mount'), {
+  tabs: [
+    { key: 'graph', label: '故事图谱' },
+    { key: 'works', label: '作品推荐' }
+  ],
+  legend: [
+    { type: 'family', label: '前世今生' },
+    { type: 'romance', label: '情感' },
+    { type: 'master', label: '师徒' },
+    { type: 'friend', label: '结义' },
+    { type: 'enemy', label: '对立' }
+  ],
+  heroKey: 'hero',
+  characters: {
+    hero: { name: '主角', actor: '演员甲 饰', img: '', big: true, desc: '主角简介描述文字。' },
+    ally: { name: '盟友', actor: '演员乙 饰', img: '', desc: '盟友简介描述文字。' },
+    foe:  { name: '对手', actor: '演员丙 饰', img: '', desc: '对手简介描述文字。' }
+  },
+  edges: [
+    { a: 'hero', b: 'ally', type: 'friend', label: '盟友' },
+    { a: 'hero', b: 'foe', type: 'enemy', label: '对手' }
+  ],
+  heroRel: {
+    ally: { type: 'friend', text: '盟友' },
+    foe:  { type: 'enemy', text: '对手' }
+  },
+  stories: [
+    { key: 'arc1', name: '示例剧情', desc: '示例剧情概要：起因、经过与转折。', chars: ['hero', 'ally', 'foe'] }
+  ],
+  worksTabs: {
+    series: {
+      label: '同系列',
+      items: [
+        { n: '示例剧 A', m: '演员甲 / 演员乙', r: '示例推荐理由甲', cover: '' },
+        { n: '示例剧 B', m: '演员丙 / 演员丁', r: '示例推荐理由乙', cover: '' }
+      ]
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>挟天子以令诸侯 · 关联词动态百科 — 组件库示例</title>
+<link rel="stylesheet" href="../src/xie-tianzi.css" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #e9edf7;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+</style>
+</head>
+<body>
+<div id="mount"></div>
+<script src="../src/xie-tianzi.js"></script>
+<script>
+XieTianzi.mount(document.getElementById('mount'), {
+  title: '挟天子以令诸侯',
+  pinyin: 'xie tian zi yi ling zhu hou',
+  cover: 'images/cover.png',
+  tags: ['贬义', '政治谋略', '借势掌权'],
+  oneLiner: '挟持天子号令诸侯，借权威谋私利。',
+  initial: 'graph',
+  nav: [
+    { key: 'home', label: '基本释义' },
+    { key: 'story', label: '典故出处' },
+    { key: 'graph', label: '关联词' },
+    { key: 'quiz', label: '测一测' }
+  ],
+  home: {
+    subtabs: [
+      { key: 'core', label: '核心信息' },
+      { key: 'examples', label: '典型例句' }
+    ],
+    core: [
+      { k: '字面义', v: '挟持天子号令诸侯' },
+      { k: '引申义', v: '借权威谋私利' },
+      { k: '出处摘要', v: '《后汉书·袁绍传》' },
+      { k: '使用语境', v: '政治权谋斗争' },
+      { k: '详细释义', v: '挟持天子以其名义号令诸侯，借权威谋利。', wide: true }
+    ],
+    examples: [
+      { text: '曹操**挟天子以令诸侯**，占据政治优势。' }
+    ],
+    synonyms: ['狐假虎威', '假公济私', '借势压人'],
+    antonyms: ['名正言顺', '光明正大', '师出有名']
+  },
+  story: {
+    subtabs: [
+      { key: 'stories', label: '词条典故' },
+      { key: 'src', label: '出处原文' }
+    ],
+    cards: [
+      { badge: '源', main: '沮授献策袁绍', sub: '首提挟天子计', body: '东汉沮授劝袁绍**挟天子以令诸侯**，绍未采纳。' },
+      { badge: '义', main: '曹操迎献帝许昌', sub: '实施挟天子策', body: '**曹操**迎献帝至许昌，借帝名义号令天下。' },
+      { badge: '传', main: '权谋策略流传', sub: '贬义借势之词', body: '**成语**流传，喻借权威谋私利的政治手段。' }
+    ],
+    source: {
+      from: '《后汉书·袁绍传》',
+      text: '沮授说绍曰："西迎大驾，即宫邺都，[xie]挟天子以令诸侯[/xie]，蓄士马以讨不庭，[shui]谁能御之[/shui]？"',
+      tr: '挟天子号令诸侯，征讨不服者，无人能挡。',
+      notes: {
+        xie: ['挟天子以令诸侯', '挟持天子，以其名义号令诸侯，借势谋利。'],
+        shui: ['谁能御之', '谁能抵挡？指此策略威力强大无人能敌。']
+      }
+    }
+  },
+  graph: {
+    center: { w: '挟天子以令诸侯', x: 50, y: 50 },
+    nodes: [
+      { w: '狐假虎威', rel: '近义词', x: 18, y: 25, desc: '借他人威势欺压他人，仗势欺人。' },
+      { w: '假公济私', rel: '近义词', x: 82, y: 25, desc: '借公家名义谋个人私利，中饱私囊。' },
+      { w: '奉天子以令不臣', rel: '衍生词义', x: 10, y: 50, desc: '曹操策略变体，以臣身份奉君号令。' },
+      { w: '挟天子以令天下', rel: '同类意象', x: 90, y: 50, desc: '与本成语同义，以天子名义号令天下。' },
+      { w: '名正言顺', rel: '反义词', x: 15, y: 78, desc: '名义正当，道理充足，行动合理。' },
+      { w: '后汉书·袁绍传', rel: '典籍关联', x: 85, y: 78, desc: '记载此典故出处的史书。' },
+      { w: '曹操', rel: '人物关联', x: 50, y: 12, desc: '东汉末年实际实施此策略的政治家。' },
+      { w: '光明正大', rel: '反义词', x: 35, y: 92, desc: '言行坦荡，正大光明，不搞阴谋。' },
+      { w: '师出有名', rel: '反义词', x: 65, y: 92, desc: '出兵有正当理由，名正言顺。' }
+    ],
+    nodeImgs: {
+      '曹操': 'images/caocao.png',
+      '后汉书·袁绍传': 'images/houhanshu.png'
+    }
+  },
+  quiz: {
+    questions: [
+      { t: '"挟"在句中是什么意思？', o: ['辅佐', '挟持', '帮助', '保护'], a: 1, fb: '挟指挟持、控制，即控制天子为己所用。' },
+      { t: '该成语出自哪部典籍？', o: ['史记', '汉书', '后汉书', '三国志'], a: 2, fb: '出自《后汉书·袁绍传》，沮授献策袁绍。' },
+      { t: '谁最先实施此策略？', o: ['袁绍', '曹操', '刘备', '孙权'], a: 1, fb: '曹操迎献帝至许昌，实施挟天子以令诸侯。' },
+      { t: '该成语含什么感情色彩？', o: ['褒义', '贬义', '中性', '赞美'], a: 1, fb: '含贬义，喻借权威谋私利的权谋手段。' },
+      { t: '以下哪项是该词语近义词？', o: ['名正言顺', '光明正大', '狐假虎威', '师出有名'], a: 2, fb: '狐假虎威与挟天子以令诸侯均指借势压人。' }
+    ],
+    resultDesc: '出自《后汉书·袁绍传》，代指借权威谋私利的政治手段。',
+    badges: { full: '三国达人·深谙权谋', ok: '典故积累尚可', low: '多读三国历史' }
+  }
+});
+</script>
+</body>
+</html>

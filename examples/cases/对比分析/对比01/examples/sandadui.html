@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>三大队：人物关系与剧情全解析</title>
+    <link rel="stylesheet" href="../src/sandadui.css" />
+    <style>
+      html, body {
+        width: 100%; height: 100%; margin: 0; overflow: hidden;
+        overscroll-behavior: none; touch-action: manipulation;
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #eef1f8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mount"></div>
+    <script src="../src/sandadui.js"></script>
+    <script>
+      // 真实数据：角色 / 故事模块 / 作品（源 index.html，12 角色 + 4 故事 + 11 作品 + 5 关系）
+      var IMG = "./images/";
+      var options = {
+        ariaLabel: '三大队：人物关系与剧情全解析',
+        heroKey: 'chengbing',
+        imgBase: IMG,
+        legend: [
+          { type: 'family',  label: '战友' },
+          { type: 'romance', label: '家人' },
+          { type: 'master',  label: '师徒' },
+          { type: 'friend',  label: '同行' },
+          { type: 'enemy',   label: '对立' }
+        ],
+        chars: [
+          { key: 'chengbing', name: '程兵', actor: '张译 饰', img: '角色_程兵.webp', big: true,
+            desc: '三大队队长，坚持正义和荣誉的警察。因审讯意外导致嫌犯死亡而入狱，出狱后放弃一切，以普通人身份万里追凶十二年，只为兑现承诺，给受害者一个交代。' },
+          { key: 'caibin', name: '蔡彬', actor: '曹炳琨 饰', img: '角色_蔡彬.webp',
+            desc: '三大队成员，心思缜密。入狱期间妻离子散，出狱后开了一家文玩店，试图寻找内心平静，但在程兵的感召下重燃追凶的火苗，贡献了关键线索。' },
+          { key: 'mazhenkun', name: '马振坤', actor: '王骁 饰', img: '角色_马振坤.webp',
+            desc: '三大队队员，性格火爆。出狱后在妻子的支持下经营大排档，生活回归正轨。面对程兵的追凶请求，他在家庭和兄弟情义之间艰难抉择。' },
+          { key: 'liaojian', name: '廖健', actor: '张子贤 饰', img: '角色_廖健.webp',
+            desc: '三大队成员，擅长后勤辅助。出狱后带着儿子卖保险为生，生活拮据。尽管对追凶犹豫不决，但仍在关键时刻为程兵提供了力所能及的帮助。' },
+          { key: 'xuyizhou', name: '徐一舟', actor: '魏晨 饰', img: '角色_徐一舟.webp',
+            desc: '三大队最年轻的队员，充满热血。出狱后成为一名沉默寡言的驯狗师，内心虽饱受创伤，但对正义的渴望从未熄灭，是追凶路上程兵的坚定追随者。' },
+          { key: 'yangjiantao', name: '杨剑涛', actor: '李晨 饰', img: '角色_杨剑涛.webp',
+            desc: '二大队队长，后接替程兵成为三大队负责人。他行事谨慎，讲究规矩，与程兵的办案风格形成对比，但在关键时刻守住了警察的底线和对三大队的承诺。' },
+          { key: 'laozhang', name: '老张', actor: '待定', img: '角色_老张.webp',
+            desc: '三大队的老前辈，程兵的师父。在追捕王大勇兄弟的过程中病倒，他的去世成为压垮三大队情绪的最后一根稻草，间接导致了审讯悲剧的发生。' },
+          { key: 'wangdayong', name: '王大勇', actor: '王雨甜 饰', img: '角色_王大勇.webp',
+            desc: '入室抢劫强奸案的主犯之一，凶狠残暴。在审讯过程中意外死亡，他的死彻底改变了三大队的命运，也开启了长达十二年的追凶序幕。' },
+          { key: 'wangeryong', name: '王二勇', actor: '张新成 饰', img: '角色_王二勇.webp',
+            desc: '王大勇的弟弟，命案的另一名在逃嫌犯。狡猾多端，隐姓埋名四处逃窜。他是程兵内心无法磨灭的执念，也是三大队誓要缉拿归案的最后目标。' },
+          { key: 'maqi', name: '马妻', actor: '高叶 饰', img: '角色_马妻.webp',
+            desc: '马振坤的妻子。坚韧善良，在丈夫入狱后不离不弃，撑起整个家。她是三大队兄弟们回归正常生活的一个缩影，代表着家庭的温暖与牵绊。' },
+          { key: 'chengbingqizi', name: '程兵妻子', actor: '待定', img: '角色_程兵妻子.webp',
+            desc: '程兵的妻子。深爱着丈夫，但无法承受丈夫为追凶而带来的家庭破碎，最终选择离开。她是程兵为执念所付出的家庭代价的体现。' },
+          { key: 'shouhainvhai', name: '受害女孩', actor: '待定', img: '角色_受害女孩.webp',
+            desc: '17岁的花季少女，奥数比赛获奖者。在家中不幸遭遇王氏兄弟入室抢劫，被残忍杀害。她的死是整个故事的开端，也是三大队无法释怀的痛。' }
+        ],
+        storyModules: [
+          {
+            key: 'mingan',
+            name: '恶性命案',
+            desc: '雨夜发生恶性入室抢劫案，三大队临危受命。在追捕主犯王大勇、王二勇的过程中，队长程兵的师父老张病倒。嫌犯王大勇在审讯中意外死亡，三大队全员命运急转直下。',
+            chars: ['chengbing','caibin','mazhenkun','liaojian','xuyizhou','laozhang','wangdayong','wangeryong','shouhainvhai'],
+            edges: [
+              { a: 'chengbing', b: 'caibin', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'liaojian', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'xuyizhou', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'laozhang', type: 'master', label: '师徒' },
+              { a: 'chengbing', b: 'wangdayong', type: 'enemy', label: '宿敌' },
+              { a: 'chengbing', b: 'wangeryong', type: 'enemy', label: '宿敌' },
+              { a: 'chengbing', b: 'shouhainvhai', type: 'enemy', label: '誓为追凶' },
+              { a: 'wangdayong', b: 'wangeryong', type: 'romance', label: '兄弟' },
+              { a: 'caibin', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'liaojian', b: 'xuyizhou', type: 'family', label: '昔日战友' }
+            ],
+            roles: {
+              chengbing:    { rel: ['三大队队长','追凶执念'], desc: '带领队员追捕王氏兄弟，审讯意外入狱。' },
+              caibin:       { rel: ['三大队成员','心思缜密'], desc: '在审讯现场，经历命运转折。' },
+              mazhenkun:    { rel: ['三大队队员','性格火爆'], desc: '参与审讯，因意外改变人生。' },
+              liaojian:     { rel: ['三大队成员','后勤辅助'], desc: '全程参与案件，命运随之改变。' },
+              xuyizhou:     { rel: ['最年轻队员','热血青年'], desc: '追捕王氏兄弟，卷入命运漩涡。' },
+              laozhang:     { rel: ['老前辈','师父'], desc: '程兵的师父，追捕中病倒。' },
+              wangdayong:   { rel: ['主犯','审讯死亡'], desc: '在审讯中意外死亡，改变三大队命运。' },
+              wangeryong:   { rel: ['在逃嫌犯','命案元凶'], desc: '案发后持续在逃。' },
+              shouhainvhai: { rel: ['17岁受害者','案件源头'], desc: '被王氏兄弟残忍杀害，故事由此开始。' }
+            }
+          },
+          {
+            key: 'xingtu',
+            name: '漫漫刑途',
+            desc: '三大队成员因刑讯逼供被判入狱。程兵被判八年，妻子提出离婚；蔡彬同样妻离子散；马振坤的妻子则选择坚守。曾经的英雄沦为阶下囚，在狱中承受着身心的双重煎熬。',
+            chars: ['chengbing','caibin','mazhenkun','liaojian','xuyizhou','chengbingqizi','maqi'],
+            edges: [
+              { a: 'chengbing', b: 'caibin', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'liaojian', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'xuyizhou', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'chengbingqizi', type: 'romance', label: '夫妻' },
+              { a: 'mazhenkun', b: 'maqi', type: 'romance', label: '夫妻' },
+              { a: 'caibin', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'liaojian', b: 'xuyizhou', type: 'family', label: '昔日战友' }
+            ],
+            roles: {
+              chengbing:      { rel: ['三大队队长','阶下囚'], desc: '被判八年，妻子提出离婚。' },
+              caibin:         { rel: ['三大队成员','妻离子散'], desc: '入狱期间妻离子散，内心创伤深重。' },
+              mazhenkun:      { rel: ['三大队队员','妻子坚守'], desc: '入狱后妻子不离不弃，出狱回归家庭。' },
+              liaojian:       { rel: ['三大队成员','单亲父亲'], desc: '带着儿子卖保险为生，生活拮据。' },
+              xuyizhou:       { rel: ['最年轻队员','驯狗师'], desc: '出狱后成为沉默寡言的驯狗师。' },
+              chengbingqizi:  { rel: ['程兵妻子','选择离开'], desc: '无法承受丈夫入狱，最终选择离婚。' },
+              maqi:           { rel: ['马振坤妻子','坚守等待'], desc: '在丈夫入狱后不离不弃，撑起整个家。' }
+            }
+          },
+          {
+            key: 'zhuizong',
+            name: '千里追凶',
+            desc: '程兵出狱后，受害者父亲的一跪让他决心追凶到底。他踏上孤独的旅程，昔日战友们被他的执着感召，相继加入。但现实的重压让大家陆续离开，最终只剩程兵一人。',
+            chars: ['chengbing','caibin','mazhenkun','liaojian','xuyizhou','yangjiantao','wangeryong'],
+            edges: [
+              { a: 'chengbing', b: 'caibin', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'liaojian', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'xuyizhou', type: 'family', label: '昔日战友' },
+              { a: 'chengbing', b: 'yangjiantao', type: 'friend', label: '同行' },
+              { a: 'chengbing', b: 'wangeryong', type: 'enemy', label: '宿敌' },
+              { a: 'caibin', b: 'mazhenkun', type: 'family', label: '昔日战友' },
+              { a: 'liaojian', b: 'xuyizhou', type: 'family', label: '昔日战友' }
+            ],
+            roles: {
+              chengbing:   { rel: ['追凶者','不灭执念'], desc: '被受害者父亲的一跪打动，决心追凶到底。' },
+              caibin:      { rel: ['昔日战友','内心挣扎'], desc: '短暂加入，后因现实压力选择放弃。' },
+              mazhenkun:   { rel: ['昔日战友','家庭牵绊'], desc: '在家庭与兄弟道义间艰难抉择后退出。' },
+              liaojian:    { rel: ['昔日战友','关键线索'], desc: '虽退出追凶但提供了关键线索。' },
+              xuyizhou:    { rel: ['昔日战友','坚定追随'], desc: '陪伴程兵走过追凶路上最艰难的阶段。' },
+              yangjiantao: { rel: ['同行','暗中相助'], desc: '作为在职警察，在力所能及处提供帮助。' },
+              wangeryong:  { rel: ['在逃嫌犯','终极目标'], desc: '隐姓埋名逃窜，是程兵追凶的最终目标。' }
+            }
+          },
+          {
+            key: 'huixiang',
+            name: '终有回响',
+            desc: '十二年间，程兵做过各种底层工作，辗转大半个中国。凭着一个模糊的背影和惊人的毅力，他最终在一个边陲小城锁定了已经改名换姓的王二勇，并配合当地警方将其抓获。正义虽迟但到。',
+            chars: ['chengbing','yangjiantao','wangeryong'],
+            edges: [
+              { a: 'chengbing', b: 'yangjiantao', type: 'friend', label: '同行' },
+              { a: 'chengbing', b: 'wangeryong', type: 'enemy', label: '宿敌' }
+            ],
+            roles: {
+              chengbing:   { rel: ['孤身追凶','正义实现'], desc: '十二年独行，终将王二勇缉拿归案。' },
+              yangjiantao: { rel: ['同行','见证者'], desc: '协助程兵，见证三大队使命的最终完成。' },
+              wangeryong:  { rel: ['在逃嫌犯','最终落网'], desc: '隐姓埋名十二年，最终被程兵发现并抓获。' }
+            }
+          }
+        ],
+        worksCats: [
+          { id: 'theme',  label: '同题材' },
+          { id: 'cast',   label: '同主演' },
+          { id: 'writer', label: '同编剧' }
+        ],
+        works: {
+          theme: [
+            { n: '解救吾先生', m: '刘德华 / 刘烨 / 吴若甫', r: '真实改编 · 警匪对峙', cover: '推荐_解救吾先生.webp', ep: '106分钟' },
+            { n: '烈日灼心',   m: '邓超 / 段奕宏 / 郭涛',   r: '人性拷问 · 警匪片',   cover: '推荐_烈日灼心.webp',   ep: '139分钟' },
+            { n: '白日焰火',   m: '廖凡 / 桂纶镁 / 王学兵', r: '金熊奖 · 黑色电影',   cover: '推荐_白日焰火.webp',   ep: '106分钟' },
+            { n: '万里归途',   m: '张译 / 王俊凯 / 殷桃',   r: '真实撤侨 · 文官之战', cover: '推荐_万里归途.webp',   ep: '137分钟' }
+          ],
+          cast: [
+            { n: '悬崖之上',   m: '张译 / 于和伟 / 秦海璐', r: '张译谍战 · 冰雪绝境', cover: '推荐_悬崖之上.webp', ep: '120分钟' },
+            { n: '八佰',       m: '王千源 / 张译 / 姜武',   r: '群星参演 · 四行仓库', cover: '推荐_八佰.webp',     ep: '147分钟' },
+            { n: '以家人之名', m: '谭松韵 / 宋威龙 / 张新成', r: '张新成治愈剧',       cover: '推荐_以家人之名.webp', ep: '46集' },
+            { n: '我不是药神', m: '徐峥 / 王传君 / 周一围',  r: '张子贤 · 现实力作',   cover: '推荐_我不是药神.webp', ep: '117分钟' }
+          ],
+          writer: [
+            { n: '亲爱的',     m: '赵薇 / 黄渤 / 佟大为',   r: '编剧张冀 · 打拐题材', cover: '推荐_亲爱的.webp',     ep: '130分钟' },
+            { n: '中国合伙人', m: '黄晓明 / 邓超 / 佟大为', r: '编剧张冀 · 创业史诗', cover: '推荐_中国合伙人.webp', ep: '112分钟' },
+            { n: '夺冠',       m: '巩俐 / 黄渤 / 吴刚',     r: '编剧张冀 · 女排传奇', cover: '推荐_夺冠.webp',       ep: '135分钟' }
+          ]
+        }
+      };
+      Sandadui.mount(document.getElementById('mount'), options);
+    </script>
+  </body>
+</html>
