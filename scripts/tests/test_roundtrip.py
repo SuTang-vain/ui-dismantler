@@ -5,11 +5,7 @@
 - compare_texts：文本对比器（精确 / 包含 / missing / 渲染失败）
 - _is_dev_noise：开发注释识别
 - _count：递归节点计数
-<<<<<<< HEAD
-- 黄金快照：blackpink-v10/lib 端到端 roundtrip 综合 ≥0.85（防止评分核心漂移）
-=======
 - 黄金快照：benchmark/lib 端到端 roundtrip（防止评分核心漂移）
->>>>>>> codex/generic-agent-quality
 
 运行：python3 scripts/tests/test_roundtrip.py
 """
@@ -249,17 +245,6 @@ class TestCount(unittest.TestCase):
 
 
 # ============================================================
-<<<<<<< HEAD
-# 黄金快照：blackpink-v10/lib 双口径端到端 roundtrip
-# static 维持历史连续性；rendered 验证运行态真实内容。
-# ============================================================
-class TestGoldenSnapshotBlackpinkV10(unittest.TestCase):
-    """对 gold-standard 组件库分别运行静态与运行态参照。"""
-
-    REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    HTML = os.path.join(REPO, "examples", "cases", "blackpink-v10", "original.html")
-    LIB = os.path.join(REPO, "examples", "cases", "blackpink-v10", "lib")
-=======
 # 黄金快照：benchmark/lib 双口径端到端 roundtrip
 # static 维持历史连续性；rendered 验证运行态真实内容。
 # ============================================================
@@ -269,7 +254,6 @@ class TestGoldenSnapshotBenchmark(unittest.TestCase):
     REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     HTML = os.path.join(REPO, "benchmark", "original.html")
     LIB = os.path.join(REPO, "benchmark", "lib")
->>>>>>> codex/generic-agent-quality
 
     def _run(self, reference_mode):
         # 跳过条件：fixture 不存在则跳过（不报失败，避免环境缺失误报）
@@ -292,14 +276,8 @@ class TestGoldenSnapshotBenchmark(unittest.TestCase):
         report = self._run("static")
         self.assertEqual(report["reference"]["mode"], "static")
         self.assertFalse(report["reference"]["fallback"])
-<<<<<<< HEAD
-        self.assertGreaterEqual(report["scores"]["overall"], 0.92)
-        self.assertGreaterEqual(report["scores"]["structure"], 0.95)
-        self.assertGreaterEqual(report["scores"]["text"], 0.89)
-=======
         self.assertGreaterEqual(report["scores"]["overall"], 0.80)
         self.assertGreaterEqual(report["scores"]["structure"], 0.90)
->>>>>>> codex/generic-agent-quality
 
     def test_rendered_baseline_uses_runtime_reference(self):
         report = self._run("rendered")

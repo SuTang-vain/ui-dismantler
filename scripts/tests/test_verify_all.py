@@ -20,29 +20,17 @@ from ui_dismantler.evaluation import batch as batch_mod  # noqa: E402
 
 class TestSelectCases(unittest.TestCase):
     CASES = [
-<<<<<<< HEAD
-        ("blackpink", Path("/cases/blackpink/original.html")),
-        ("blackpink-v10", Path("/cases/blackpink-v10/original.html")),
-=======
         ("benchmark", Path("/benchmark/original.html")),
         ("glossary-v2", Path("/cases/glossary-v2/original.html")),
->>>>>>> codex/generic-agent-quality
     ]
 
     def test_single_library_uses_parent_case_directory(self):
         selected = verify_all.select_cases(
             self.CASES,
-<<<<<<< HEAD
-            Path("/cases/blackpink-v10/lib"),
-            single_lib_mode=True,
-        )
-        self.assertEqual([name for name, _ in selected], ["blackpink-v10"])
-=======
             Path("/benchmark/lib"),
             single_lib_mode=True,
         )
         self.assertEqual([name for name, _ in selected], ["benchmark"])
->>>>>>> codex/generic-agent-quality
 
     def test_ambiguous_single_library_requires_explicit_case(self):
         with self.assertRaises(ValueError):
@@ -57,15 +45,9 @@ class TestSelectCases(unittest.TestCase):
             self.CASES,
             Path("/tmp/component-lib"),
             single_lib_mode=True,
-<<<<<<< HEAD
-            requested_case="blackpink",
-        )
-        self.assertEqual([name for name, _ in selected], ["blackpink"])
-=======
             requested_case="benchmark",
         )
         self.assertEqual([name for name, _ in selected], ["benchmark"])
->>>>>>> codex/generic-agent-quality
 
 
 class TestRoundtripCommand(unittest.TestCase):
