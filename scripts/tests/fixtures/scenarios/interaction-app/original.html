@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Interaction source</title></head>
+<body>
+  <main class="app-shell">
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-panel="overview">Overview</button>
+      <button class="tab" data-panel="details">Details</button>
+    </nav>
+    <section class="panel active" data-view="overview">Overview content</section>
+    <section class="panel" data-view="details" hidden>Details content</section>
+    <form class="profile-form">
+      <label for="source-name">Display name</label>
+      <input id="source-name" class="name-input">
+      <output class="name-output">No name</output>
+    </form>
+    <button class="open-dialog">Open dialog</button>
+    <div class="dialog-overlay" hidden>
+      <section class="dialog" role="dialog" aria-label="Confirmation">
+        <p>Confirmation dialog</p>
+        <button class="close-dialog">Close</button>
+      </section>
+    </div>
+    <p class="layout-state"></p>
+  </main>
+  <script>
+    const sourceTabs = [...document.querySelectorAll('.tab')];
+    sourceTabs.forEach((tab) => tab.addEventListener('click', () => {
+      sourceTabs.forEach((item) => item.classList.toggle('active', item === tab));
+      document.querySelectorAll('.panel').forEach((panel) => {
+        const active = panel.dataset.view === tab.dataset.panel;
+        panel.hidden = !active;
+        panel.classList.toggle('active', active);
+      });
+    }));
+    const sourceInput = document.querySelector('.name-input');
+    sourceInput.addEventListener('input', () => {
+      document.querySelector('.name-output').textContent = sourceInput.value || 'No name';
+    });
+    const sourceOverlay = document.querySelector('.dialog-overlay');
+    document.querySelector('.open-dialog').addEventListener('click', () => {
+      sourceOverlay.hidden = false;
+      sourceOverlay.classList.add('open');
+    });
+    document.querySelector('.close-dialog').addEventListener('click', () => {
+      sourceOverlay.hidden = true;
+      sourceOverlay.classList.remove('open');
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        sourceOverlay.hidden = true;
+        sourceOverlay.classList.remove('open');
+      }
+    });
+    document.querySelector('.layout-state').textContent =
+      window.matchMedia('(max-width: 500px)').matches ? 'mobile-state' : 'desktop-state';
+  </script>
+</body>
+</html>

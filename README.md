@@ -65,7 +65,9 @@ Agent（主控）─────────────────────
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 197 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照和技术特征矩阵。
+工具层有 209 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵和交互状态矩阵。
+
+交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
 
 ## 当前能力与基线
 
@@ -107,6 +109,9 @@ python3 src/skill/scripts/validate_lib.py <组件库目录>
 
 # 3. 往返等价度
 python3 scripts/roundtrip.py examples/cases/blackpink/original.html --lib <组件库目录>
+
+# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
+python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
 
 # 4. 批量回归验证
 python3 scripts/verify_all.py
