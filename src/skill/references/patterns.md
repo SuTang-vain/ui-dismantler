@@ -298,9 +298,107 @@
 
 ---
 
+## 18. 因果链 cause-chain
+
+**判定特征**（需同时满足）：
+- 节点 HTML 含 `timeline-?nav` 类名（顶部时间线导航）
+- 且至少满足以下之一：
+  - JS 含 `causeChain` 变量，或节点 HTML 含 `cause-?chain` 类名
+  - JS 含 `whatIf` 变量，或节点 HTML 含 `whatif` 类名
+
+**confidence**：双信号（causeChain + whatIf）0.95；单信号 0.88。
+
+**典型形态**：黄月英、奢香夫人--顶部时间线导航 + 因果链 JS 数据 + 可选的 whatif 假设分支。
+
+**页面级范式**：cause-chain 是页面级范式（无 panel 结构），`_analyze_views` 会对 body 整体跑 detector。
+
+**提取**：
+```json
+{
+  "type": "cause-chain",
+  "hasTimelineNav": true,
+  "hasCauseChainData": true,
+  "hasWhatIf": true,
+  "navItems": 7
+}
+```
+
+---
+
+## 19. 导航+面板 nav-panel
+
+**判定特征**（需同时满足）：
+- 节点含 `<nav>` 元素或 class=`nav` 的容器
+- nav 内有 ≥2 个触发器（`data-p` 或 `data-tab` 属性）
+- 节点内有 ≥2 个 class 含 `panel` 的元素
+
+**confidence**：0.92。
+
+**典型形态**：纸上谈兵--nav 里多个 data-p 触发器，下方对应多个 .panel 面板。
+
+**页面级范式**：nav-panel 是页面级范式（需要看 nav + 所有 panel 的关系），`_analyze_views` 会对 body 整体跑 detector。
+
+**提取**：
+```json
+{
+  "type": "nav-panel",
+  "triggerCount": 4,
+  "panelCount": 4,
+  "triggers": [
+    {"target": "p1", "label": "Tab1"},
+    {"target": "p2", "label": "Tab2"}
+  ]
+}
+```
+
+> triggers 最多列 10 个，避免 manifest 过大。
+
+---
+
+## 20. 关系图谱 graph
+
+**判定特征**（3 条识别路径，按强度递降）：
+
+1. **路径 1（0.95）**：svg 元素 + node/gnd/graph 类名 + 图谱 JS 数据
+2. **路径 2（0.85）**：svg 或 node 类名（任一）+ 图谱 JS 数据
+3. **路径 3（0.75）**：无 DOM 证据，但有强图谱数据信号 + mount/Graph 函数信号
+
+**JS 数据信号**（兼容多种命名约定）：
+- `NODES`（大写常量，experimental 原始案例）
+- `nodes:` / `nodes =`（谢天子，graph.nodes 结构）
+- `relTypes` / `CharStoryGraph`（庆余年，数据驱动 API）
+- `nodeState` / `buildGraph`（奢香夫人，驼峰命名 + 函数式）
+
+**路径 3 防误判**：要求图谱数据 + mount/Graph 信号同时存在，避免单关键字误判。
+
+**典型形态**：庆余年人物关系图谱、谢天子关联词图、奢香夫人关系视图。
+
+**页面级范式**：graph 多为页面级范式（全屏图谱），`_analyze_views` 会对 body 整体跑 detector。
+
+**提取**：
+```json
+{
+  "type": "graph",
+  "hasSvg": true,
+  "nodeCount": 9,
+  "dataSource": "mount-options",
+  "hasEdges": true
+}
+```
+
+`dataSource` 识别 6 种数据源类型，帮 agent 理解如何接入数据：
+- `uppercase-const`：`NODES` 大写常量
+- `object-property`：`nodes:` 对象属性
+- `mount-options`：`relTypes` mount 选项
+- `mount-api`：`CharStoryGraph` mount API
+- `runtime-state`：`nodeState` 运行时状态
+- `function-builder`：`buildGraph` 函数构建器
+
+---
+
 ## 识别失败处理
 
-当某视图类型无法被 4-10、15-17 任一规则匹配：
+当某视图类型无法被 4-10、15-20 任一规则匹配：
 - manifest 的 `warnings[]` 追加 `"view <id>: unknown type, fallback to generic"`
 - 该视图 `type` 标记为 `"generic"`，`data` 字段尝试通用 DOM 提取（文本+图片）
 - 生成阶段走 **generic 视图分支**（`has_generic_views`）：
@@ -308,7 +406,7 @@
   - 无 tabs（如因果链/地图导览等单视图范式）：生成一个兜底视图（id=`main`），确保 A11y 基线（tabpanel + aria-live）达标
 - README 标注「需人工细化」
 
-> 当前已支持：member-grid / timeline / carousel-3d / detail-panel / quiz / comparison / splash。
-> 仍未支持（走 generic 兜底）：因果链（causal-chain，需 JS 空壳渲染探测）、关系图谱（relation-graph）、词典释义卡、典故故事卡。
+> 当前已支持：member-grid / timeline / carousel-3d / detail-panel / quiz / comparison / splash / cause-chain / nav-panel / graph（共 10 种）。
+> 仍未支持（走 generic 兜底）：词典释义卡、典故故事卡。
 
 > **A11y 按需校验**（spec #5）：tablist/tabpanel 仅在 manifest `structure.tabs` 非空时强制；dialog/ESC 仅在 `structure.modals` 非空时强制；aria-live/aria-label 任何组件库都要求。这样因果链、地图导览等无 tab 切换的垂类不会因 tabpanel 缺失而误判失败。
