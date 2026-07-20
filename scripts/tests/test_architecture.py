@@ -41,6 +41,8 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "evaluation/scenario_generator.py",
             "evaluation/roundtrip.py",
             "evaluation/batch.py",
+            "aggregation/__init__.py",
+            "aggregation/vertical.py",
             "cli/__init__.py",
             "cli/analyze_html.py",
             "cli/validate_lib.py",
@@ -137,7 +139,7 @@ class TestArchitectureBoundaries(unittest.TestCase):
         不能有进程级副作用（sys.exit）或参数解析（argparse）。
         覆盖 core/ + analysis/ + generation/ + validation/ + evaluation/ 下所有 .py。
         """
-        business_dirs = ["core", "analysis", "generation", "validation", "evaluation"]
+        business_dirs = ["core", "analysis", "generation", "validation", "evaluation", "aggregation"]
         forbidden = ["argparse", "sys.exit", "ap.parse_args", "def main("]
         found_any = False
         for subdir in business_dirs:
