@@ -151,15 +151,16 @@ class TestGraphDetector(unittest.TestCase):
     """graph: svg + node 类名 + NODES JS。"""
 
     def test_svg_plus_node_class_plus_nodes_js_hits(self):
-        """svg + .node 类名 + JS 含 NODES → 命中 graph。"""
+        """svg + .node 类名 + JS 含 NODES → 命中 graph（confidence 0.95）。"""
         html = '<svg><line x1="0" y1="0" x2="10" y2="10"/></svg><div class="node">A</div>'
         result = _detect(html, scripts=("const NODES = [{id:1}];",))
         self.assertIsNotNone(result)
         self.assertEqual(result.semantic_type, "graph")
         self.assertEqual(result.structural_type, "collection")
+        self.assertEqual(result.confidence, 0.95)
         self.assertIn("element:svg", result.evidence)
         self.assertIn("class:graph-node", result.evidence)
-        self.assertIn("data:NODES", result.evidence)
+        self.assertIn("data:graph-nodes", result.evidence)
 
     def test_svg_plus_gnd_class_plus_nodes_js_hits(self):
         """svg + .gnd 类名 + NODES → 也命中（gnd 是 node 的变体）。"""
@@ -168,24 +169,69 @@ class TestGraphDetector(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result.semantic_type, "graph")
 
-    def test_svg_without_node_class_does_not_hit(self):
-        """svg 但无 node/gnd/graph 类名 → 不命中。"""
+    def test_svg_without_node_class_with_graph_data_still_hits(self):
+        """svg 但无 node/gnd/graph 类名，有图谱数据 → 命中（路径2，confidence 0.85）。
+
+        放宽后的行为：DOM 证据（svg 或 node 类名任一）+ 图谱数据即可命中。
+        这是为了支持奢香夫人类案例（svg 渲染但节点用动态生成而非类名标记）。
+        """
         html = '<svg></svg><div class="box">A</div>'
         result = _detect(html, scripts=("var NODES=[];",))
-        if result is not None:
-            self.assertNotEqual(result.semantic_type, "graph")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.semantic_type, "graph")
+        self.assertEqual(result.confidence, 0.85)
 
-    def test_node_class_without_svg_does_not_hit(self):
-        """有 .node 但无 svg → 不命中。"""
+    def test_node_class_without_svg_with_graph_data_hits(self):
+        """有 .node 但无 svg，有图谱数据 → 命中（路径2，confidence 0.85）。
+
+        放宽后的行为：node 类名 + 图谱数据即可命中，不强制要求 svg。
+        """
         html = '<div class="node">A</div>'
         result = _detect(html, scripts=("var NODES=[];",))
+        self.assertIsNotNone(result)
+        self.assertEqual(result.semantic_type, "graph")
+        self.assertEqual(result.confidence, 0.85)
+
+    def test_data_driven_graph_without_dom_evidence_hits(self):
+        """无 svg 也无 node 类名，但有图谱数据 + mount 信号 → 命中（路径3，0.75）。
+
+        支持庆余年/谢天子类数据驱动案例（DOM 未渲染，靠 JS mount 调用识别）。
+        """
+        html = '<div id="mount"></div>'
+        result = _detect(
+            html,
+            scripts=("CharStoryGraph.mount(el, {relTypes:{}});",),
+        )
+        self.assertIsNotNone(result)
+        self.assertEqual(result.semantic_type, "graph")
+        self.assertEqual(result.confidence, 0.75)
+        self.assertIn("signal:mount-api", result.evidence)
+
+    def test_node_state_camel_case_keyword_hits(self):
+        """nodeState / buildGraph 驼峰命名 → 命中（支持奢香夫人类案例）。"""
+        html = '<svg></svg>'
+        result = _detect(
+            html,
+            scripts=("let nodeState = {}; function buildGraph() {}",),
+        )
+        self.assertIsNotNone(result)
+        self.assertEqual(result.semantic_type, "graph")
+
+    def test_svg_and_node_without_graph_data_does_not_hit(self):
+        """svg + .node 但 JS 无图谱数据 → 不命中。"""
+        html = '<svg></svg><div class="node">A</div>'
+        result = _detect(html, scripts=("var data=[];",))
         if result is not None:
             self.assertNotEqual(result.semantic_type, "graph")
 
-    def test_svg_and_node_without_nodes_js_does_not_hit(self):
-        """svg + .node 但 JS 无 NODES → 不命中。"""
-        html = '<svg></svg><div class="node">A</div>'
-        result = _detect(html, scripts=("var data=[];",))
+    def test_graph_data_without_mount_signal_does_not_hit(self):
+        """无 DOM 证据、有图谱数据但无 mount/Graph 信号 → 不命中（避免误判）。
+
+        路径3 要求同时有图谱数据 + mount/Graph 信号，避免单关键字误判。
+        """
+        html = '<div id="mount"></div>'
+        # 只有 nodes: 但无 .mount/Graph/graph 信号
+        result = _detect(html, scripts=("var config = { nodes: [] };",))
         if result is not None:
             self.assertNotEqual(result.semantic_type, "graph")
 

@@ -226,23 +226,61 @@ def _detect_nav_panel(context: ViewContext) -> ViewDetection | None:
 
 
 def _detect_graph(context: ViewContext) -> ViewDetection | None:
-    """关系图谱范式：svg 连线 + 节点定位类名 + NODES JS 数据。
+    """关系图谱范式：svg 连线 + 节点定位类名 + 图谱 JS 数据。
 
-    典型形态：庆余年人物关系图谱、谢天子关系图——svg 画连线，节点用
-    gnd/node/graph 类名定位，JS 里有 NODES 数据数组。需三者同时具备。
+    典型形态：庆余年人物关系图谱、谢天子关系图、奢香夫人关系视图。
+
+    支持三种识别路径（按强度递降）:
+    1. svg + node 类名 + 图谱数据 → confidence 0.95（完整证据）
+    2. svg 或 node 类名 + 图谱数据 → confidence 0.85（部分 DOM 证据）
+    3. 仅强图谱数据信号（nodes:/NODES/relTypes/CharStoryGraph）→ confidence 0.75
+       （数据驱动图谱，DOM 未渲染时的兜底识别）
+
+    JS 信号兼容多种命名约定（案例实测）:
+    - ``NODES``（experimental 原始案例）
+    - ``nodes:`` / ``nodes =``（谢天子 graph.nodes 结构）
+    - ``relTypes`` / ``CharStoryGraph.mount``（庆余年数据驱动 API）
     """
     svg = context.node.find("svg")
-    if not svg:
-        return None
-    if not context.node.find(class_=re.compile(r"gnd|node|graph", re.I)):
-        return None
+    has_node_class = context.node.find(class_=re.compile(r"gnd|node|graph", re.I)) is not None
     scripts_blob = "\n".join(context.scripts)
-    if "NODES" not in scripts_blob:
-        return None
-    return _result(
-        "graph", "collection", 0.95,
-        "element:svg", "class:graph-node", "data:NODES",
+    # JS 图谱数据信号（兼容多种命名约定，案例实测）:
+    # - NODES（experimental 原始案例）
+    # - nodes: / nodes =（谢天子 graph.nodes 结构）
+    # - relTypes / CharStoryGraph（庆余年数据驱动 API）
+    # - nodeState / buildGraph（奢香夫人，驼峰命名 + 函数式）
+    graph_data_tokens = (
+        "NODES", "nodes:", "nodes =", "relTypes", "CharStoryGraph",
+        "nodeState", "buildGraph",
     )
+    has_graph_data = any(token in scripts_blob for token in graph_data_tokens)
+
+    # 路径 1+2：有 DOM 证据（svg 或 node 类名）+ 数据 → 命中
+    if (svg or has_node_class) and has_graph_data:
+        evidence = []
+        if svg:
+            evidence.append("element:svg")
+        if has_node_class:
+            evidence.append("class:graph-node")
+        evidence.append("data:graph-nodes")
+        confidence = 0.95 if (svg and has_node_class) else 0.85
+        return _result("graph", "collection", confidence, *evidence)
+
+    # 路径 3：无 DOM 证据但有强图谱数据信号（数据驱动，DOM 未渲染）
+    if not svg and not has_node_class:
+        graph_keywords = [tok for tok in graph_data_tokens if tok in scripts_blob]
+        if graph_keywords:
+            # 进一步确认：有 mount 调用、Graph 函数、或 svg 生成代码
+            mount_signal = any(
+                tok in scripts_blob for tok in (".mount(", "Graph", "graph")
+            )
+            if mount_signal:
+                return _result(
+                    "graph", "collection", 0.75,
+                    f"data:graph-keywords:{','.join(graph_keywords[:2])}",
+                    "signal:mount-api",
+                )
+    return None
 
 
 def default_view_detector_registry() -> ViewDetectorRegistry:
