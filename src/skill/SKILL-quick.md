@@ -16,6 +16,8 @@ User provides an HTML file (or directory) and asks to dismantle into a component
 1. **Read through the HTML**: Understand theme color semantics, Tab/view structure, interaction patterns, data organization, responsive breakpoints
 1.5 **Route by page scale first**: `python3 src/skill/scripts/plan_html.py <html> --out strategy-plan.json`. Use `compact` for one-pass componentization, `standard` for two-phase analysis, and `large/massive` for resource inventory → semantic skeleton → bounded section chunks before generation. The plan is routing evidence, not proof of quality.
 
+1.7 **Extract bounded sections for large pages**: `python3 src/skill/scripts/extract_sections.py <html> --out <analysis-dir> --with-cdp`. This creates `page-plan.json`, `inventory.json`, and section fragments before generation.
+
 1.75 **Optional Chromium CSS evidence for large pages**: `python3 src/skill/scripts/cdp_css.py <html> --manifest <mf.json> --out cdp-css-evidence.json`. This is only a browser-backed evidence layer; keep an explicit `unavailable` result when Chrome/CDP cannot run.
 2. **Call tools for data**: `python3 src/skill/scripts/analyze_html.py <html> --out <mf.json> --minimal` (fetches theme tokens + pattern recognition + structure list; auto-extracts from Tailwind config when `:root` is empty)
 3. **Produce component library** (in user-specified directory):

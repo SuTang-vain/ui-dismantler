@@ -50,6 +50,16 @@ python3 src/skill/scripts/analyze_html.py <html-path> --out <manifest.json> --st
 
 `compact` 页面可以单次完整分析；`standard` 页面采用页面清单 → 结构/数据双阶段；`large` 页面必须先做资源盘点、语义骨架和有界 section chunks，再进入组件生成；`massive` 页面还要采用流式/有界分块并延后 rendered reference。大小只是路由先验，不是质量分数；最终仍需 Roundtrip、断言和 verified coverage。
 
+对于 `large`/`massive` 页面，建议先生成有界 section 产物，再采集可选的 Chromium CSS 证据：
+
+```bash
+python3 src/skill/scripts/extract_sections.py <html-path> \
+  --out <analysis-dir> \
+  --with-cdp
+```
+
+该命令生成 `page-plan.json`、`inventory.json`、`sections/*.html`、`sections/*.json`；`main` 只作为上下文骨架，不重复复制进 section chunk。
+
 对于 `large`/`massive` 页面，建议在 section inventory 之后采集一次可选的 Chromium CSS 证据：
 
 ```bash
