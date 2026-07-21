@@ -49,6 +49,8 @@
 
 `analysisPlan.metrics` 是路由证据；`analysisPlan.passes` 是后续 agent/拆解器应执行的阶段，不代表这些阶段已经完成。对于 `large`/`massive`，`sectionInventory` 只保存有界的 section 摘要，不替代原始 HTML，也不代表 section 已经完成组件化。
 
+section chunk 的 JSON 还会包含 `componentContract`：它是基于 DOM 和可选 CDP 证据的 heuristic contract，记录推荐组件名、props/data 字段、布局快照、CSS token 候选、交互候选和验证目标；`confidence=heuristic` 不代表组件已生成或交互已验证。
+
 ### canvas
 
 ```json

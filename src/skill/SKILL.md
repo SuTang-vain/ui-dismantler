@@ -58,7 +58,7 @@ python3 src/skill/scripts/extract_sections.py <html-path> \
   --with-cdp
 ```
 
-该命令生成 `page-plan.json`、`inventory.json`、`sections/*.html`、`sections/*.json`；`main` 只作为上下文骨架，不重复复制进 section chunk。
+该命令生成 `page-plan.json`、`inventory.json`、`sections/*.html`、`sections/*.json`；`main` 只作为上下文骨架，不重复复制进 section chunk。每个可拆 section 的 JSON 还会写入 heuristic `componentContract`，供后续组件生成使用，但必须经过 Roundtrip/交互验证后才能晋级。
 
 对于 `large`/`massive` 页面，建议在 section inventory 之后采集一次可选的 Chromium CSS 证据：
 
