@@ -5,4 +5,5 @@
 - showcase.py: 设计令牌展示页生成
 - adapt_output.py: IIFE → ESM/UMD/Web Component 输出适配
 - section_contracts.py: section contract 校验与 generation-input 适配
+- section_scaffold.py: 从 generation-input 生成可运行 section-oriented scaffold
 """
