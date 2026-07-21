@@ -47,6 +47,9 @@
 
   /* ============================================================
    * 默认配置
+   *   - DEFAULTS 仅提供占位文案与结构骨架，不含任何案例数据
+   *   - members / timeline / works / moreFacts 默认为空数组
+   *   - 真实案例数据由调用方在 options 中传入（见 examples/blackpink.html）
    * ============================================================ */
   var DEFAULTS = {
     title: '组合名称',
@@ -58,6 +61,7 @@
     worksHeadTitle: '团体作品概览',
     worksHeadSub: '仅收录团体作品 · 个人作品另列',
     worksStoryCta: '展开创作故事',
+    worksStoryLabel: '创作背景',
     timelineStoryLabel: '经历背景',
     timelineHint: '了解背景 ›',
     timelineCollapse: '收起',
@@ -69,10 +73,10 @@
       { id: 'works',    label: '团体作品', count: 0 },
       { id: 'more',     label: '其它',     more: true }
     ],
-    members: [],
-    timeline: [],
-    works: [],
-    moreFacts: [],          // [{label, value, full?}]
+    members: [],            // [{key,name,role,shortName,color,state,img,photoSource,relations}]
+    timeline: [],           // [{time,title,alt,img,desc,story}]
+    works: [],              // [{img,alt,year,title,desc,story}]
+    moreFacts: [],          // [{label,value,full?}]
     moreTitle: '资料与说明',
     moreSub: '本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。',
     moreDecl: '动态百科 · 资料与说明',
@@ -289,6 +293,7 @@
   StarGroup.prototype._startMemberAutoPlay = function () {
     this._stopMemberAutoPlay();
     var self = this;
+    this._memberIdx = 0;
     this._memberTimer = setInterval(function () {
       self._memberIdx = (self._memberIdx + 1) % self.opts.members.length;
       self._selectMember(self.opts.members[self._memberIdx].key);
@@ -313,8 +318,8 @@
     section.appendChild(head);
 
     var wrap = el('div', 'sg-tl-scroll-wrap');
-    var prevPc = el('button', 'sg-arrow sg-tl-prev sg-tl-prev-pc is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
-    var nextPc = el('button', 'sg-arrow sg-tl-next sg-tl-next-pc is-hidden', { type: 'button', 'aria-label': '下一页', text: '›' });
+    var prevPc = el('button', 'sg-arrow sg-tl-prev-pc is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
+    var nextPc = el('button', 'sg-arrow sg-tl-next-pc is-hidden', { type: 'button', 'aria-label': '下一页', text: '›' });
     var track = el('div', 'sg-tl-track', { id: 'sg-tl-track' });
     wrap.appendChild(prevPc); wrap.appendChild(nextPc); wrap.appendChild(track);
 
@@ -356,8 +361,8 @@
 
     // 移动端控制栏
     var controls = el('div', 'sg-tl-controls');
-    var prevMb = el('button', 'sg-arrow sg-tl-prev sg-tl-prev-mobile is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
-    var nextMb = el('button', 'sg-arrow sg-tl-next sg-tl-next-mobile', { type: 'button', 'aria-label': '下一页', text: '›' });
+    var prevMb = el('button', 'sg-arrow sg-tl-prev-mobile is-hidden', { type: 'button', 'aria-label': '上一页', text: '‹' });
+    var nextMb = el('button', 'sg-arrow sg-tl-next-mobile', { type: 'button', 'aria-label': '下一页', text: '›' });
     var tlDots = el('div', 'sg-tl-dots', { id: 'sg-tl-dots' });
     controls.appendChild(prevMb);
     controls.appendChild(tlDots);
@@ -529,7 +534,7 @@
       c.appendChild(card);
       self._worksEls.cards.push(card);
 
-      var dot = el('button', 'sg-ws-dot' + (i === 0 ? ' is-active' : ''), { type: 'button', 'aria-label': '第 ' + (i + 1) + ' 个作品' });
+      var dot = el('button', 'sg-ws-dot' + (i === 0 ? ' sg-is-active' : ''), { type: 'button', 'aria-label': '第 ' + (i + 1) + ' 个作品' });
       on(dot, 'click', function () { self._goWork(i); });
       d.appendChild(dot);
 
@@ -545,12 +550,12 @@
     var total = this._worksEls.cards.length;
     var self = this;
     this._worksEls.cards.forEach(function (card, i) {
-      card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far');
-      if (i === self._workIdx) card.classList.add('is-center');
-      else if (i === (self._workIdx - 1 + total) % total) card.classList.add('is-prev-side');
-      else if (i === (self._workIdx + 1) % total) card.classList.add('is-next-side');
-      else if (i === (self._workIdx - 2 + total) % total) card.classList.add('is-prev-far');
-      else if (i === (self._workIdx + 2) % total) card.classList.add('is-next-far');
+      card.classList.remove('sg-is-center', 'sg-is-prev-side', 'sg-is-next-side', 'sg-is-prev-far', 'sg-is-next-far');
+      if (i === self._workIdx) card.classList.add('sg-is-center');
+      else if (i === (self._workIdx - 1 + total) % total) card.classList.add('sg-is-prev-side');
+      else if (i === (self._workIdx + 1) % total) card.classList.add('sg-is-next-side');
+      else if (i === (self._workIdx - 2 + total) % total) card.classList.add('sg-is-prev-far');
+      else if (i === (self._workIdx + 2) % total) card.classList.add('sg-is-next-far');
     });
     var dots = this._worksEls.dots.querySelectorAll('.sg-ws-dot');
     Array.prototype.forEach.call(dots, function (dt, i) {
@@ -598,7 +603,7 @@
         '<span class="sg-ws-year">' + d.year + '</span>' +
         '<h3>' + d.title + '</h3>' +
         '<div class="sg-ws-story-divider"></div>' +
-        '<span class="sg-ws-story-label">创作背景</span>' +
+        '<span class="sg-ws-story-label">' + this.opts.worksStoryLabel + '</span>' +
         '<p class="sg-ws-story-text">' + d.story + '</p>' +
       '</div>';
     this._worksEls.storyPanel.classList.add('open');
@@ -802,8 +807,8 @@
     on(document, 'keydown', function (e) {
       if (e.key !== 'Escape') return;
       if (self4._expandedTlItem) { self4._collapseTlItem(self4._expandedTlItem); return; }
-      if (!self4._memberModal.hidden) { self4._closeMemberModal(); return; }
       if (self4._worksEls && !self4._worksEls.storyPanel.hidden) { self4._closeWorkStory(); return; }
+      if (!self4._memberModal.hidden) { self4._closeMemberModal(); return; }
       if (!self4._modal.hidden) self4._closeModal();
     });
 

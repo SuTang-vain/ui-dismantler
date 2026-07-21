@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "switch-timeline",
+      "label": "切换到经历视图",
+      "steps": [
+        {"action": "click", "target": {"reference": "#tab-timeline", "library": "#sg-tab-timeline"}}
+      ],
+      "assertions": [
+        {"target": {"reference": "#panel-timeline", "library": "#sg-panel-timeline"}, "visible": true, "classIncludes": ["active"]}
+      ]
+    },
+    {
+      "id": "select-member",
+      "label": "选择 Jennie 成员",
+      "steps": [
+        {"action": "click", "target": {"reference": ".member[data-member='jennie']", "library": ".sg-member[data-member='jennie']"}}
+      ],
+      "assertions": [
+        {"target": {"reference": "#rel-name", "library": "#sg-rel-name"}, "text": "Jennie · 金珍妮"},
+        {"target": {"reference": ".member[data-member='jennie']", "library": ".sg-member[data-member='jennie']"}, "attributes": {"aria-pressed": "true"}}
+      ]
+    },
+    {
+      "id": "expand-timeline-story",
+      "label": "展开经历背景",
+      "steps": [
+        {"action": "click", "target": {"reference": "#tab-timeline", "library": "#sg-tab-timeline"}},
+        {"action": "click", "target": {"reference": "#tl-track .t-item", "library": "#sg-tl-track .sg-t-item"}}
+      ],
+      "assertions": [
+        {"target": {"reference": "#tl-track .t-item", "library": "#sg-tl-track .sg-t-item"}, "classIncludes": ["is-expanded"]},
+        {"target": {"reference": "#tl-track .t-story", "library": "#sg-tl-track .sg-t-story"}, "visible": true}
+      ]
+    },
+    {
+      "id": "open-more-modal",
+      "label": "打开资料说明弹层",
+      "steps": [
+        {"action": "click", "target": {"reference": "#tab-more", "library": "#sg-tab-more"}}
+      ],
+      "assertions": [
+        {"target": {"reference": "#modal", "library": "#sg-modal"}, "visible": true, "classIncludes": ["open"]},
+        {"target": {"reference": "#modal-title", "library": "#sg-modal-title"}, "text": "资料与说明"}
+      ]
+    },
+    {
+      "id": "open-work-story-and-escape",
+      "label": "打开作品故事并用 Escape 关闭",
+      "steps": [
+        {"action": "click", "target": {"reference": "#tab-works", "library": "#sg-tab-works"}},
+        {"action": "click", "target": {"reference": "#works-carousel .work-item.is-center", "library": "#sg-works-carousel .sg-work-item.sg-is-center"}},
+        {"action": "key", "key": "Escape"}
+      ],
+      "assertions": [
+        {"target": {"reference": "#work-story-panel", "library": "#sg-work-story-panel"}, "visible": false}
+      ]
+    }
+  ]
+}

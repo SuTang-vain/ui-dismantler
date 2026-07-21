@@ -1,0 +1,974 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/blackpink-v10/original.html",
+    "title": "BLACKPINK · 动态百科成员探索卡",
+    "templateId": "dtp_de_star_group_member_map",
+    "vertical": "cases",
+    "caseName": "blackpink-v10",
+    "canvas": {
+      "pc": [
+        788,
+        492
+      ],
+      "wise": null,
+      "extreme": null,
+      "frameSelector": ".pc-card-frame"
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "ink",
+        "value": "#1E1F24",
+        "original": "--ink",
+        "usage": [
+          "body",
+          "tab-bar .tab[aria-selected=\"true\"]",
+          "tab-bar .tab.tab-more[aria-selected=\"true\"]",
+          "avatar",
+          "relation-row .rel-value"
+        ],
+        "roles": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "name": "muted",
+        "value": "#848691",
+        "original": "--muted",
+        "usage": [
+          "tab-bar .tab",
+          "tab-bar .tab[aria-selected=\"true\"] small",
+          "tab-bar .tab.tab-more",
+          "section-head span",
+          "detail-panel .subtitle"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "subtle",
+        "value": "#B7B9C1",
+        "original": "--subtle",
+        "usage": [
+          "tab-bar .tab small",
+          "tab-bar .tab.tab-more[aria-selected=\"false\"]::after",
+          "member:hover",
+          "/* 引导提示（展开时可见） */\n.t-hint"
+        ],
+        "roles": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "name": "line",
+        "value": "#ECEDF1",
+        "original": "--line",
+        "usage": [
+          "/* Identity header */\n.identity",
+          "/* Top tab bar */\n.tab-bar",
+          "carousel-dots .dot",
+          "member",
+          "/* Relation detail panel */\n.detail-panel"
+        ],
+        "roles": [
+          "border",
+          "background"
+        ]
+      },
+      {
+        "name": "paper",
+        "value": "#FFFFFF",
+        "original": "--paper",
+        "usage": [
+          "/* Fixed canvas — PC 788x492 / WISE 380x456",
+          "/* Top tab bar */\n.tab-bar",
+          "t-story-close",
+          "/* ---- 展开态（PC：横向布局） ---- */\n.t-item.is-expanded",
+          "/* ---- 作品页「创作故事」引导按钮 + 故事面板 ---- */\n.ws-story-cta"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "stage",
+        "value": "#F8F8F8",
+        "original": "--stage",
+        "usage": [
+          "body"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "primary",
+        "value": "#6487FA",
+        "original": "--primary",
+        "usage": [
+          "status-chip",
+          "status-chip::before",
+          "tab-bar .tab[aria-selected=\"true\"]",
+          "/* 轮播箭头 */\n.carousel-arrow",
+          "carousel-arrow:hover"
+        ],
+        "roles": [
+          "text",
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "accent",
+        "value": "#E94F76",
+        "original": "--accent",
+        "usage": [
+          "tab-bar .tab.tab-more[aria-selected=\"true\"]",
+          "work-item .work-year",
+          "ws-story-cta::before",
+          "ws-story-close:hover",
+          "ws-story-content .ws-year"
+        ],
+        "roles": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "name": "accent-2",
+        "value": "#111111",
+        "original": "--accent-2",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "soft",
+        "value": "#F2F4FB",
+        "original": "--soft",
+        "usage": [
+          "status-chip",
+          "member[aria-pressed=\"true\"]",
+          "ws-story-cta:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "soft-accent",
+        "value": "#FFF0F4",
+        "original": "--soft-pink",
+        "usage": [],
+        "roles": []
+      }
+    ],
+    "gradients": [
+      {
+        "selector": ".member-info",
+        "value": "linear-gradient(to top, rgba(0,0,0,0.75), transparent)",
+        "normalized": "linear-gradient(to top, rgba(0,0,0,0.75), transparent)"
+      },
+      {
+        "selector": ".avatar .avatar-fallback",
+        "value": "linear-gradient(135deg, #2A2B33 0%, #1E1F24 100%)",
+        "normalized": "linear-gradient(135deg, #2A2B33 0%, var(--sg-ink) 100%)"
+      },
+      {
+        "selector": "/* Relation detail panel */\n.detail-panel",
+        "value": "linear-gradient(180deg, #FBFBFD 0%, #F5F7FC 100%)",
+        "normalized": "linear-gradient(180deg, #FBFBFD 0%, #F5F7FC 100%)"
+      },
+      {
+        "selector": "/* 悬停浮层信息 */\n.work-item .work-info",
+        "value": "linear-gradient(transparent, rgba(0, 0, 0, 0.82))",
+        "normalized": "linear-gradient(transparent, rgba(0, 0, 0, 0.82))"
+      },
+      {
+        "selector": ".member-info",
+        "value": "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+        "normalized": "linear-gradient(to top, rgba(0,0,0,0.7), transparent)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "members",
+        "label": "成员详情4",
+        "count": 4,
+        "more": false,
+        "ariaControls": "panel-members"
+      },
+      {
+        "id": "timeline",
+        "label": "经历6",
+        "count": 6,
+        "more": false,
+        "ariaControls": "panel-timeline"
+      },
+      {
+        "id": "works",
+        "label": "团体作品6",
+        "count": 6,
+        "more": false,
+        "ariaControls": "panel-works"
+      },
+      {
+        "id": "more",
+        "label": "其它",
+        "count": null,
+        "more": true,
+        "ariaControls": "modal-overlay-region"
+      }
+    ],
+    "views": [
+      {
+        "id": "panel-members",
+        "tabId": "members",
+        "active": true,
+        "type": "member-grid",
+        "layout": "2x2",
+        "perPage": 4,
+        "paginated": true,
+        "hasAvatarFallback": true,
+        "hasPhotoSource": true,
+        "hasState": true
+      },
+      {
+        "id": "panel-timeline",
+        "tabId": "timeline",
+        "active": false,
+        "type": "timeline",
+        "scrollSnap": true,
+        "perPage": {
+          "pc": 3,
+          "mobile": 2
+        },
+        "dualArrowStrategy": true,
+        "hasDots": true,
+        "hasPageLabel": true
+      },
+      {
+        "id": "panel-works",
+        "tabId": "works",
+        "active": false,
+        "type": "carousel-3d",
+        "perspective": 900,
+        "positions": [
+          {
+            "cls": "is-prev-far",
+            "width": 100,
+            "opacity": 0.28,
+            "blur": 2.5,
+            "translateX": -312.0,
+            "translateZ": -45.0,
+            "zIndex": 0
+          },
+          {
+            "cls": "is-prev-side",
+            "width": 132,
+            "opacity": 0.5,
+            "blur": 1.5,
+            "translateX": -180.0,
+            "translateZ": -20.0,
+            "zIndex": 1
+          },
+          {
+            "cls": "is-center",
+            "width": 280,
+            "opacity": 1.0,
+            "translateZ": 50.0,
+            "zIndex": 3
+          },
+          {
+            "cls": "is-next-side",
+            "width": 132,
+            "opacity": 0.5,
+            "blur": 1.5,
+            "translateX": 180.0,
+            "translateZ": -20.0,
+            "zIndex": 1
+          },
+          {
+            "cls": "is-next-far",
+            "width": 100,
+            "opacity": 0.28,
+            "blur": 2.5,
+            "translateX": 312.0,
+            "translateZ": -45.0,
+            "zIndex": 0
+          }
+        ],
+        "hasStoryPanel": true
+      }
+    ],
+    "modals": [
+      {
+        "id": "member-modal",
+        "trigger": "member-click",
+        "layout": "generic",
+        "hasClose": true,
+        "closeOn": [
+          "x-button",
+          "overlay-click",
+          "escape"
+        ]
+      },
+      {
+        "id": "modal",
+        "trigger": "tab-more",
+        "layout": "fact-grid",
+        "hasClose": true,
+        "closeOn": [
+          "x-button",
+          "overlay-click",
+          "escape"
+        ]
+      }
+    ],
+    "storyPanels": [
+      {
+        "id": "work-story-panel",
+        "trigger": [
+          "cta-button",
+          "center-card-click"
+        ],
+        "layout": "cover-text",
+        "hasClose": true
+      }
+    ]
+  },
+  "data": {
+    "meta": {
+      "title": "BLACKPINK · 动态百科成员探索卡",
+      "regionLabel": "BLACKPINK 动态百科成员探索卡",
+      "exploreLabel": "BLACKPINK 探索视图",
+      "status": "资料持续补充中",
+      "sourceNote": "资料为可核实的公开事实;未列出的个人作品或履历留待补充。"
+    },
+    "tabs": [
+      {
+        "id": "members",
+        "label": "成员详情",
+        "count": 4
+      },
+      {
+        "id": "timeline",
+        "label": "经历",
+        "count": 6
+      },
+      {
+        "id": "works",
+        "label": "团体作品",
+        "count": 6
+      },
+      {
+        "id": "more",
+        "label": "其它"
+      }
+    ],
+    "labels": {
+      "memberKicker": "成员 ↔ 团体 关系",
+      "memberModalTitle": "成员详情",
+      "memberModalHint": "点击卡片查看详情",
+      "timelineTitle": "组合阶段",
+      "timelineNote": "关键节点",
+      "timelineStoryLabel": "经历背景",
+      "timelineStoryClose": "收起",
+      "worksTitle": "团体作品概览",
+      "worksNote": "仅收录团体作品 · 个人作品另列",
+      "worksStoryCta": "展开创作故事",
+      "worksStoryLabel": "创作背景",
+      "worksStoryClose": "关闭故事",
+      "moreTitle": "资料与说明",
+      "moreSub": "本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。",
+      "moreFoot": "动态百科 · 资料与说明",
+      "moreTabAria": "打开资料与说明",
+      "sourcePrefix": "资料来源",
+      "state": "在团",
+      "learnMore": "了解背景 ›",
+      "prevPage": "上一页",
+      "nextPage": "下一页",
+      "previous": "上一个",
+      "next": "下一个",
+      "page": "第",
+      "pageSuffix": "页",
+      "of": "/",
+      "timelinePageSuffix": "· 关键节点",
+      "workPage": "第",
+      "workPageSuffix": "个作品"
+    },
+    "members": [
+      {
+        "key": "jisoo",
+        "name": "Jisoo · 金智秀",
+        "role": "队内定位:主唱 · 视觉",
+        "shortName": "Jisoo",
+        "state": "在团",
+        "img": "https://bkimg.cdn.bcebos.com/pic/bd315c6034a85edf8db167d391071e23dd54574edfbd?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "photoSource": "百度百科",
+        "relations": [
+          [
+            "所属团体",
+            "BLACKPINK"
+          ],
+          [
+            "队内角色",
+            "主唱 · 视觉"
+          ],
+          [
+            "加入阶段",
+            "出道成员 · 2016"
+          ],
+          [
+            "团体代表",
+            "《Square Up》《THE ALBUM》"
+          ],
+          [
+            "当前状态",
+            "在团"
+          ]
+        ]
+      },
+      {
+        "key": "jennie",
+        "name": "Jennie · 金珍妮",
+        "role": "队内定位:主唱 · 说唱 · 视觉",
+        "shortName": "Je",
+        "state": "在团",
+        "img": "https://bkimg.cdn.bcebos.com/pic/5243fbf2b2119313b07e4175a4621bd7912396dd27f9?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "photoSource": "百度百科",
+        "relations": [
+          [
+            "所属团体",
+            "BLACKPINK"
+          ],
+          [
+            "队内角色",
+            "主唱 · 说唱 · 视觉"
+          ],
+          [
+            "加入阶段",
+            "出道成员 · 2016"
+          ],
+          [
+            "团体代表",
+            "《SQUARE UP》《Kill This Love》"
+          ],
+          [
+            "当前状态",
+            "在团"
+          ]
+        ]
+      },
+      {
+        "key": "rose",
+        "name": "Rosé · 朴彩英",
+        "role": "队内定位:主唱 · 领舞",
+        "shortName": "Rö",
+        "state": "在团",
+        "img": "https://img2.baidu.com/it/u=1620513757,1085926222&fm=253&app=138&f=JPEG?w=800&h=800",
+        "photoSource": "百度图片",
+        "relations": [
+          [
+            "所属团体",
+            "BLACKPINK"
+          ],
+          [
+            "队内角色",
+            "主唱 · 领舞"
+          ],
+          [
+            "加入阶段",
+            "出道成员 · 2016"
+          ],
+          [
+            "团体代表",
+            "《THE ALBUM》《BORN PINK》"
+          ],
+          [
+            "当前状态",
+            "在团"
+          ]
+        ]
+      },
+      {
+        "key": "lisa",
+        "name": "Lisa · Lalisa",
+        "role": "队内定位:主舞 · 说唱 · 副唱",
+        "shortName": "Li",
+        "state": "在团",
+        "img": "https://n.sinaimg.cn/sinakd20109/120/w1120h1400/20251124/4d76-2860aac47ef6fb7cd99942bda74ce419.jpg",
+        "photoSource": "新浪图片",
+        "relations": [
+          [
+            "所属团体",
+            "BLACKPINK"
+          ],
+          [
+            "队内角色",
+            "主舞 · 说唱 · 副唱"
+          ],
+          [
+            "加入阶段",
+            "出道成员 · 2016"
+          ],
+          [
+            "团体代表",
+            "《Kill This Love》《Pink Venom》"
+          ],
+          [
+            "当前状态",
+            "在团"
+          ]
+        ]
+      }
+    ],
+    "timeline": [
+      {
+        "time": "2016.08",
+        "title": "出道 ·《Square One》",
+        "desc": "以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。",
+        "img": "https://bkimg.cdn.bcebos.com/pic/d058ccbf6c81800a5b3cdcbcb83533fa838b47a2?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "出道",
+        "story": "YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至六年的练习生训练,从多名练习生中脱颖而出。双主打《WHISTLE》与《BOOMBAYAH》的选拔历经数月,前者以空灵口哨 hook 搭配简约鼓点,后者融合电子舞曲。出道当日即登顶韩国音源榜单,《WHISTLE》成为团体首个音乐节目一位。"
+      },
+      {
+        "time": "2018.06",
+        "title": "《SQUARE UP》迷你专辑",
+        "desc": "凭《DDU-DU DDU-DU》刷新团体 MV 观看纪录,四人全员参与词曲与编舞。",
+        "img": "https://bkimg.cdn.bcebos.com/pic/c83d70cf3bc79f3d6f74cfdcb6a1cd11738b2940?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "SQUARE UP",
+        "story": "出道两年后的首张迷你专辑。主打曲《DDU-DU DDU-DU》以 Trap 节拍和标志性口哨旋律席卷全球,MV 在 YouTube 创下韩国女团最快破 10 亿观看纪录,并打入 Billboard Hot 100 榜单。收录曲《Forever Young》《Really》均由成员参与词曲创作,展现了从新人到音乐人的成长轨迹。"
+      },
+      {
+        "time": "2020.10",
+        "title": "首张正规专辑《THE ALBUM》",
+        "desc": "四位成员共同录制,与 Selena Gomez、Cardi B 等合作曲目列入团体作品。",
+        "img": "https://bkimg.cdn.bcebos.com/pic/9345d688d43f8794a4c27935615419f41bd5ad6e8cd3?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "THE ALBUM",
+        "story": "出道四年来的里程碑之作,在新冠疫情期间录制完成。收录了与 Selena Gomez 合作的《Ice Cream》、与 Cardi B 合作的《Bet You Wanna》等国际化曲目。主打曲《Lovesick Girls》由 Jennie 和 Rosé 参与作词,探讨爱情中的伤痛与治愈。预售量突破 100 万张,刷新韩国女团纪录。"
+      },
+      {
+        "time": "2022.09",
+        "title": "《Pink Venom》先行曲",
+        "desc": "收录于《BORN PINK》的回归先行曲,团体作品。",
+        "img": "https://bkimg.cdn.bcebos.com/pic/0d338744ebf81a4c510f73495e7d7759252dd52a08a1?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "Pink Venom",
+        "story": "作为《BORN PINK》正式回归前的预热单曲。该曲融合韩国传统乐器伽倻琴与现代嘻哈节拍,在 hook 部分采样了周杰伦《青花瓷》旋律片段,营造出东西方文化碰撞的独特听感。歌词以\"毒\"与\"粉\"的对比意象延续危险魅惑美学,发行后 24 小时内 YouTube 破亿。"
+      },
+      {
+        "time": "2022.09",
+        "title": "世界巡回演唱会",
+        "desc": "以《BORN PINK》为主题开展世界巡回,团体活动。",
+        "img": "https://i0.hdslb.com/bfs/new_dyn/eaca03ec96ad350d9ff5567e72ebbc29503647121.jpg@progressive.webp",
+        "alt": "世界巡回演唱会",
+        "story": "以《BORN PINK》为主题开启的世界巡回演唱会,覆盖北美、欧洲、亚洲多国。累计观众超过 150 万人次,是韩国女团历史上规模最大的巡回演出之一。巡演舞台设计融入古典与街头元素,主打曲《Shut Down》以帕格尼尼《钟》采样开场,成为标志性演出。"
+      },
+      {
+        "time": "当前",
+        "title": "团体状态",
+        "desc": "四人仍为 BLACKPINK 成员,具体行程以官方为准。",
+        "img": "https://bkimg.cdn.bcebos.com/pic/3801213fb80e7bec54e75a8fd578ae389b504fc23d1c?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "团体状态",
+        "story": "四人仍为 BLACKPINK 成员。2023 年底团体合约续约后,成员个人活动与团体活动并行发展。各成员相继开展个人音乐、影视、时尚等领域活动,团体回归时间以 YG 官方公告为准。组合整体仍保持活跃状态。"
+      }
+    ],
+    "works": [
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/faf2b2119313b07e60a8d1be04d7912397dd8c6b?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "Square One",
+        "year": "2016 · 单曲",
+        "title": "《Square One》",
+        "desc": "出道双主打《WHISTLE》《BOOMBAYAH》收录,团体首支作品。",
+        "story": "2016年8月8日,BLACKPINK 以《Square One》正式出道,这是 YG 娱乐时隔七年推出的全新女团。专辑收录双主打《WHISTLE》与《BOOMBAYAH》,前者以空灵口哨 hook 搭配简约鼓点,后者融合电子舞曲与异域风情。两首曲目均在发行当日登顶韩国音源榜单,《WHISTLE》更成为团体首个音乐节目一位获奖曲。这张作品确立了 Jisoo、Jennie、Rosé、Lisa 四人编制的主唱/主舞双轴定位,也为后续 BLACKPINK 横扫全球的征程奠定了基石。"
+      },
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/3ac79f3df8dcd100620612a97e8b4710b8122fa4?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "SQUARE UP",
+        "year": "2018 · 迷你专辑",
+        "title": "《SQUARE UP》",
+        "desc": "包含《DDU-DU DDU-DU》《Forever Young》等团体主打。",
+        "story": "2018年6月15日发行的首张迷你专辑,主打曲《DDU-DU DDU-DU》以强有力的Trap节拍和标志性口哨旋律席卷全球。该曲 MV 在YouTube 创下韩国女团最快破10亿观看纪录,并打入美国 Billboard Hot 100 榜单,刷新韩国女团历史最高排位。专辑收录曲《Forever Young》《Really》《See U Later》均由四位成员参与词曲创作与编舞设计,展现了团体从新人到音乐人的成长轨迹。这张专辑标志着 BLACKPINK 从韩国本土新人正式跃升为具有全球影响力的现象级团体。"
+      },
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/a9d3fd1f4134970a91b523949bcad1c8a6865d42?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "Kill This Love",
+        "year": "2019 · 单曲",
+        "title": "《Kill This Love》",
+        "desc": "同名主打及 EP,由团体全员参与录制与表演。",
+        "story": "2019年4月5日发行的回归先行曲及同名EP,主打曲《Kill This Love》以军乐鼓号元素搭配强烈铜管,营造出凌厉而富有戏剧张力的听感。该曲在发行后24小时内打破 YouTube 单日最高播放纪录,并再次刷新团体在 Billboard Hot 100 的排位。EP 收录《Don't Know What To Do》《Kick It》《Hope Not》等曲,全员参与录制与舞台表演,编舞中融入军鼓踏步与利落手势,成为 BLACKPINK 巡演的标志性舞台之一。这次回归确立了团体\"强烈概念\"的音乐美学方向。"
+      },
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/7c1ed21b0ef41bd5ad6ebd520d9096cb39dbb6fd9749?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "THE ALBUM",
+        "year": "2020 · 正规专辑",
+        "title": "《THE ALBUM》",
+        "desc": "首张韩国正规专辑,合作曲目含 Selena Gomez、Cardi B。",
+        "story": "2020年10月2日发行的首张韩国正规专辑,是 BLACKPINK 出道四年来的里程碑之作。专辑在新冠疫情期间录制完成,收录了与 Selena Gomez 合作的《Ice Cream》、与 Cardi B 合作的《Bet You Wanna》等国际化合作曲目。主打曲《Lovesick Girls》由 Jennie 和 Rosé 参与作词,探讨了爱情中的伤痛与治愈,展现出团体在音乐表达上的成熟蜕变。专辑预售量突破100万张,刷新韩国女团纪录,并登顶 Billboard 200 榜单第2位,标志着 BLACKPINK 正式跻身全球顶级流行团体行列。"
+      },
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/d439b6003af33a87e950fe7cbf0b07385343fbf21f07?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "Pink Venom",
+        "year": "2022 · 单曲",
+        "title": "《Pink Venom》",
+        "desc": "回归先行曲,团体作品,收录于《BORN PINK》。",
+        "story": "2022年8月19日发行的回归先行曲,作为《BORN PINK》正式回归前的预热单曲。该曲融合韩国传统乐器伽倻琴与现代嘻哈节拍,在 hook 部分采样了周杰伦《青花瓷》的旋律片段,营造出东西方文化碰撞的独特听感。歌词以\"毒\"与\"粉\"的对比意象,延续了 BLACKPINK 标志性的危险魅惑美学。《Pink Venom》发行后迅速登顶全球多国 Spotify 榜单,并在 YouTube 创下24小时内最快破亿观看纪录,为后续《BORN PINK》的全球性成功奠定了巨大声势。"
+      },
+      {
+        "img": "https://bkimg.cdn.bcebos.com/pic/aa64034f78f0f736afc3de4a3d00a419ebc4b745b579?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080",
+        "alt": "BORN PINK",
+        "year": "2022 · 正规专辑",
+        "title": "《BORN PINK》",
+        "desc": "第二张韩国正规专辑及世界巡回主题专辑。",
+        "story": "2022年9月16日发行的第二张韩国正规专辑,是 BLACKPINK 迄今最具野心的一张作品。主打曲《Shut Down》采样了帕格尼尼名曲《钟》,以古典小提琴与Trap节拍的碰撞营造出强烈的戏剧张力。专辑预售量突破200万张,刷新韩国女团历史纪录,并登顶 Billboard 200 榜单第1位,成为首个登顶该榜的韩国女团。以《BORN PINK》为主题,团体开启了覆盖北美、欧洲、亚洲的世界巡回演唱会,累计观众超过150万人次,标志着 BLACKPINK 进入团体发展的全新阶段——从现象级新人蜕变为具有持久影响力的全球流行文化符号。"
+      }
+    ],
+    "moreFacts": [
+      {
+        "label": "词条类型",
+        "value": "韩国女子演唱组合 · 四人编制",
+        "full": false
+      },
+      {
+        "label": "经纪机构",
+        "value": "YG Entertainment(韩国)",
+        "full": false
+      },
+      {
+        "label": "出道日期",
+        "value": "2016 年 8 月 8 日",
+        "full": false
+      },
+      {
+        "label": "当前成员",
+        "value": "Jisoo、Jennie、Rosé、Lisa — 均为出道成员",
+        "full": false
+      },
+      {
+        "label": "历任成员",
+        "value": "暂无退出成员;若以官方公告为准。",
+        "full": false
+      },
+      {
+        "label": "图片来源",
+        "value": "Jisoo 头像来源:百度百科 · 金智秀词条",
+        "full": false
+      },
+      {
+        "label": "资料声明",
+        "value": "事实中立,虚构履历或未公开状态一律不填写。",
+        "full": true
+      }
+    ]
+  },
+  "interactions": [
+    {
+      "type": "tab-switch",
+      "trigger": "click",
+      "target": ".tab-bar .tab",
+      "action": "switchPanel"
+    },
+    {
+      "type": "modal-open",
+      "trigger": "click",
+      "target": ".tab-more",
+      "action": "openModal"
+    },
+    {
+      "type": "modal-close",
+      "trigger": [
+        "keydown:Escape",
+        "overlay-click"
+      ],
+      "target": ".modal-overlay"
+    },
+    {
+      "type": "select",
+      "trigger": "click",
+      "target": ".member",
+      "action": "selectMember",
+      "sideEffect": "updateDetailPanel"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "load",
+      "target": "img",
+      "handler": "addEventListener",
+      "action": "handle-load"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "error",
+      "target": "img",
+      "handler": "addEventListener",
+      "action": "handle-error"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "btn",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "dot",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".carousel-prev",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".carousel-next",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".carousel-dots",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".member-grid",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#member-modal-close",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#member-modal",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "tab",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".tl-prev-pc",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".tl-next-pc",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".tl-prev-mobile",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".tl-next-mobile",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "scroll",
+      "target": "#tl-track",
+      "handler": "addEventListener",
+      "action": "update-scroll-state"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "resize",
+      "target": "window",
+      "handler": "addEventListener",
+      "action": "update-viewport"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#tab-more",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#modal-close",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#modal",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "keydown",
+      "target": "document",
+      "handler": "addEventListener",
+      "action": "handle-keyboard:escape"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "card",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".ws-prev",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": ".ws-next",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "mouseenter",
+      "target": "#works-carousel",
+      "handler": "addEventListener",
+      "action": "handle-mouseenter"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "mouseleave",
+      "target": "#works-carousel",
+      "handler": "addEventListener",
+      "action": "handle-mouseleave"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#ws-story-cta",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#ws-story-close",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "#work-story-panel",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    },
+    {
+      "type": "event-listener",
+      "trigger": "click",
+      "target": "it",
+      "handler": "addEventListener",
+      "action": "handle-click"
+    }
+  ],
+  "responsive": [
+    {
+      "breakpoint": "(max-width: 500px)",
+      "changes": [
+        "tab-bar .tab font-size: 12.5px → 11.5px",
+        "member-grid grid-template-columns: repeat(2, minmax(0, 1fr)) → repeat(2, 1fr)",
+        "avatar display: flex → block",
+        "avatar flex: 1 → 1 1 0",
+        "member-name font-size: 12px → 11px",
+        "member-role font-size: 10px → 9px",
+        "member-state font-size: 9px → 8px",
+        "t-item flex: 0 0 calc((100% - 20px) / 3) → 0 0 calc((100% - 10px) / 2)",
+        "t-story-text font-size: 14px → 13px",
+        "ws-story-content h3 font-size: 20px → 17px",
+        "ws-story-text font-size: 14px → 13px"
+      ],
+      "canvas": [
+        380,
+        456
+      ]
+    },
+    {
+      "breakpoint": "(max-width: 320px), (max-height: 380px)",
+      "changes": [
+        "tab-bar .tab font-size: 12.5px → 10px",
+        "member-stage display: grid → flex",
+        "member-grid grid-template-columns: repeat(2, minmax(0, 1fr)) → repeat(2, 1fr)",
+        "carousel-arrow font-size: 13px → 10px",
+        "avatar .photo-source display: none → block",
+        "member-name font-size: 12px → 10px",
+        "member-role font-size: 10px → 8px",
+        "member-state font-size: 9px → 7px",
+        "tl-prev-mobile font-size: 13px → 10px",
+        "t-item flex: 0 0 calc((100% - 20px) / 3) → 0 0 calc((100% - 6px) / 2)",
+        "t-item .t-info display: flex → block",
+        "t-item .t-info flex: 1 1 0 → 0 0 auto",
+        "t-story-text font-size: 14px → 11px",
+        "t-story-label font-size: 12px → 10px",
+        "t-story-close font-size: 11px → 10px"
+      ],
+      "canvas": [
+        280,
+        340
+      ]
+    },
+    {
+      "breakpoint": "(max-width: 500px)",
+      "changes": []
+    },
+    {
+      "breakpoint": "(max-width: 320px), (max-height: 380px)",
+      "changes": []
+    }
+  ],
+  "a11y": {
+    "hasTablist": true,
+    "hasTabpanel": true,
+    "hasDialog": true,
+    "hasAriaLive": true,
+    "hasAriaPressed": true,
+    "hasAriaLabel": true,
+    "closeOnEscape": true,
+    "closeOnOverlayClick": true
+  },
+  "warnings": []
+}

@@ -40,7 +40,11 @@ StarGroup.mount(document.getElementById('mount'), {
     { id: 'more',     label: '其它',     more: true }
   ],
 
-  /* ---- 4 成员（含队内定位 + 关系列表 + 图片兜底） ---- */
+  /* ---- 4 成员（含队内定位 + 关系列表 + 图片兜底） ----
+     key: 唯一标识；name: 展示名；role: 队内定位（含「队内定位：」前缀，详情面板用全称，卡片用去前缀值）
+     shortName: 图片加载失败时的兜底文字；state: 状态徽标
+     img: 头像 URL；photoSource: 图片来源标注（小屏隐藏）
+     relations: 详情面板的 [label, value] 行 */
   members: [
     {
       key: 'jisoo', name: 'Jisoo · 金智秀', role: '队内定位：主唱 · 视觉',
@@ -96,7 +100,10 @@ StarGroup.mount(document.getElementById('mount'), {
     }
   ],
 
-  /* ---- 6 时间线（含经历背景故事长文） ---- */
+  /* ---- 6 时间线（含经历背景故事长文） ----
+     time: 节点时间；title: 标题；alt: 配图 alt 文本
+     img: 节点配图；desc: 简短描述（卡片折叠态可见）
+     story: 经历背景长文（点击卡片原地展开后显示） */
   timeline: [
     {
       time: '2016.08', title: '出道 ·《Square One》', alt: '出道',
@@ -136,7 +143,10 @@ StarGroup.mount(document.getElementById('mount'), {
     }
   ],
 
-  /* ---- 6 团体作品（含完整创作背景故事长文） ---- */
+  /* ---- 6 团体作品（含完整创作背景故事长文） ----
+     img/alt: 封面；year: 年份+类型；title: 标题
+     desc: 简短描述（悬停中心卡可见）
+     story: 创作背景长文（点击中心卡或「展开创作故事」按钮弹出故事面板） */
   works: [
     {
       img: 'https://bkimg.cdn.bcebos.com/pic/faf2b2119313b07e60a8d1be04d7912397dd8c6b?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080',
@@ -176,7 +186,9 @@ StarGroup.mount(document.getElementById('mount'), {
     }
   ],
 
-  /* ---- 资料与说明（"其它"Tab 触发，7 条事实） ---- */
+  /* ---- 资料与说明（"其它"Tab 触发，7 条事实） ----
+     moreTitle/moreSub/moreDecl: 弹窗标题/副标/底栏声明
+     moreFacts: [{label, value, full?}] - full=true 时该行跨两列 */
   moreTitle: '资料与说明',
   moreSub: '本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。',
   moreDecl: '动态百科 · 资料与说明',
@@ -190,8 +202,9 @@ StarGroup.mount(document.getElementById('mount'), {
     { label: '资料声明', value: '事实中立,虚构履历或未公开状态一律不填写。', full: true }
   ],
 
-  autoPlayMember: 3000,
-  autoPlayWorks: 3500
+  /* ---- 自动播放间隔（毫秒） ---- */
+  autoPlayMember: 3000,   // 成员轮播：进入即启动，任意交互停止
+  autoPlayWorks: 3500    // 作品轮播：进入作品 Tab 启动，离开/悬停/打开故事面板停止
 });
 </script>
 </body>

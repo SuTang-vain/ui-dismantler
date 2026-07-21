@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-CN" class="ds-showcase-root">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<title>lib · 设计系统 Design System</title>
+<!-- 先加载组件库，再由 showcase 宿主样式接管页面级布局 -->
+<link rel="stylesheet" href="src/star-group.css" />
+<style>
+/* === Showcase host: 与被预览组件库的全局 html/body 规则隔离 === */
+:root {
+  --ds-accent: #6487FA;
+  --ds-ink: #17181c;
+  --ds-muted: #737681;
+  --ds-subtle: #a3a6af;
+  --ds-line: rgba(23, 24, 28, 0.09);
+  --ds-surface: rgba(255, 255, 255, 0.92);
+  --ds-canvas: #f1f2f4;
+  --ds-radius-lg: 28px;
+  --ds-radius-md: 18px;
+  --ds-shadow: 0 24px 70px rgba(20, 24, 35, 0.08);
+}
+* { box-sizing: border-box; }
+html.ds-showcase-root {
+  width: auto !important; height: auto !important; min-height: 100% !important;
+  overflow: auto !important; display: block !important; scroll-behavior: smooth;
+  background: var(--ds-canvas) !important;
+}
+body.ds-showcase-body {
+  width: auto !important; height: auto !important; min-height: 100vh !important;
+  overflow: auto !important; display: block !important;
+  align-items: initial !important; justify-content: initial !important;
+  margin: 0 !important; padding: 0 !important;
+  color: var(--ds-ink) !important; background: var(--ds-canvas) !important;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif !important;
+  font-size: 16px; line-height: 1.6 !important; -webkit-font-smoothing: antialiased;
+}
+body.ds-showcase-body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(105,109,120,.19) 1.2px, transparent 1.3px);
+  background-position: 0 0; background-size: 26px 26px;
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.72) 54%, transparent 100%);
+}
+.ds-shell { position: relative; z-index: 1; width: min(1480px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0 72px; }
+
+/* Header and compact navigation */
+.ds-topbar { position: relative !important; inset: auto !important; width: auto !important; height: auto !important; display: flex !important; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 18px; padding: 0 4px; }
+.ds-brand { min-width: 0; display: flex !important; align-items: center; gap: 12px; }
+.ds-brand-mark { flex: 0 0 auto; width: 38px; height: 38px; display: grid; place-items: center; color: var(--ds-muted); border: 1px solid rgba(23,24,28,.1); border-radius: 12px; background: rgba(255,255,255,.72); box-shadow: 0 8px 22px rgba(20,24,35,.06); }
+.ds-brand-mark svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ds-brand-copy { min-width: 0; display: flex; align-items: baseline; gap: 9px; }
+.ds-brand-copy h1 { max-width: 100%; margin: 0 !important; overflow: hidden; color: #686c77 !important; font-size: clamp(1.35rem, 2.5vw, 1.75rem) !important; font-weight: 580 !important; letter-spacing: -.035em; line-height: 1.1 !important; text-overflow: ellipsis; white-space: nowrap; }
+.ds-brand-copy small { color: var(--ds-subtle); font: 650 .63rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; }
+.ds-top-tools { min-width: 0; display: flex !important; align-items: center; justify-content: flex-end; gap: 12px; }
+.ds-meta { display: flex !important; align-items: center; gap: 5px; }
+.ds-meta > span { min-width: 58px; display: flex; align-items: baseline; justify-content: center; gap: 4px; padding: 7px 9px; border: 1px solid rgba(23,24,28,.08); border-radius: 999px; background: rgba(255,255,255,.65); }
+.ds-meta strong { color: var(--ds-ink); font: 750 .72rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+.ds-meta small { color: var(--ds-subtle); font-size: .54rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.ds-nav { display: flex !important; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }
+.ds-nav a { padding: 7px 10px; color: var(--ds-muted); border-radius: 999px; text-decoration: none; font-size: .68rem; font-weight: 680; transition: color .2s ease, background .2s ease; }
+.ds-nav a:hover { color: var(--ds-ink); background: rgba(255,255,255,.78); }
+
+/* Bento overview */
+.ds-overview { position: relative !important; inset: auto !important; display: block !important; width: auto !important; height: auto !important; padding: 17px !important; overflow: hidden; scroll-margin-top: 18px; border: 4px solid color-mix(in srgb, var(--ds-accent) 78%, #5F50FF) !important; border-radius: 29px !important; background: #0F1012 !important; box-shadow: 0 28px 76px rgba(14,16,23,.23), 0 0 0 1px rgba(255,255,255,.08) inset, 0 0 32px color-mix(in srgb, var(--ds-accent) 18%, transparent); }
+.ds-bento-grid { display: grid !important; grid-template-columns: 1.03fr 1.12fr 1.12fr 1.12fr; grid-template-areas: "palette headline controls search" "palette body metrics navigation" "palette label actions icons"; grid-template-rows: repeat(3, minmax(170px, auto)); gap: 16px; }
+.ds-bento-card { min-width: 0; min-height: 170px; display: flex !important; align-items: center; justify-content: center; padding: 22px !important; overflow: hidden; border: 1px solid rgba(255,255,255,.025); border-radius: 23px !important; background: #1D1E20 !important; box-shadow: 0 1px 0 rgba(255,255,255,.025) inset; }
+.ds-bento-palette { grid-area: palette; min-width: 0; display: flex !important; flex-direction: column !important; gap: 12px; }
+.ds-palette-item { min-width: 0; flex: 1 1 0; display: flex !important; flex-direction: column !important; overflow: hidden; border-radius: 21px; background: #090A0B; box-shadow: 0 1px 0 rgba(255,255,255,.05) inset; }
+.ds-palette-main { min-height: 82px; flex: 1 1 auto; display: grid !important; grid-template-columns: 1fr auto; grid-template-rows: auto auto; align-content: center; gap: 3px 12px; padding: 18px 20px; color: var(--role-text); background: var(--role-color); }
+.ds-palette-main strong { align-self: end; font-size: .82rem; font-weight: 760; }
+.ds-palette-main span { align-self: end; font: 700 .72rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-palette-main small { grid-column: 1 / -1; max-width: 100%; overflow: hidden; opacity: .66; font: 560 .57rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.ds-palette-scale { height: 36px; display: grid !important; grid-template-columns: repeat(10, minmax(0, 1fr)); overflow: hidden; }
+.ds-palette-scale span { min-width: 0; }
+.ds-area-headline { grid-area: headline; }
+.ds-area-body { grid-area: body; }
+.ds-area-label { grid-area: label; }
+.ds-area-controls { grid-area: controls; }
+.ds-area-search { grid-area: search; }
+.ds-area-metrics { grid-area: metrics; }
+.ds-area-navigation { grid-area: navigation; }
+.ds-area-actions { grid-area: actions; }
+.ds-area-icons { grid-area: icons; }
+.ds-type-card { position: relative; flex-direction: column !important; align-items: stretch !important; justify-content: space-between !important; }
+.ds-card-label { width: 100%; display: flex !important; align-items: center; justify-content: space-between; gap: 12px; color: #A98F97; }
+.ds-card-label strong, .ds-card-label span { overflow: hidden; font-size: .72rem; font-weight: 680; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.ds-card-label span { opacity: .82; }
+.ds-type-sample { margin: auto 0; color: var(--sample-color); font-family: var(--sample-font) !important; font-size: clamp(4.7rem, 8vw, 7rem); font-weight: 470; letter-spacing: -.08em; line-height: .92; text-align: center; }
+.ds-overview button, .ds-overview input { font-family: inherit !important; }
+.ds-demo-buttons { width: min(100%, 310px); display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ds-demo-btn { min-width: 0 !important; min-height: 42px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; padding: 9px 13px !important; border: 0 !important; border-radius: 999px !important; box-shadow: none !important; cursor: default; font-size: .76rem !important; font-weight: 680 !important; line-height: 1 !important; transform: none !important; }
+.ds-demo-primary { color: #1C1015 !important; background: color-mix(in srgb, var(--ds-accent) 55%, #FFD0DD) !important; }
+.ds-demo-secondary { color: #DDBAC4 !important; background: #29292C !important; }
+.ds-demo-inverted { color: #252528 !important; background: #DEDEE0 !important; }
+.ds-demo-outlined { color: #E4BCC7 !important; border: 1px solid #A47783 !important; background: transparent !important; }
+.ds-demo-search { width: min(100%, 320px); min-height: 48px; display: flex !important; align-items: center; gap: 12px; padding: 0 16px; border: 1px solid color-mix(in srgb, var(--ds-accent) 36%, #765964); border-radius: 18px; background: #29292B; }
+.ds-demo-search svg { flex: 0 0 auto; width: 19px; height: 19px; fill: none; stroke: #B19099; stroke-width: 1.8; stroke-linecap: round; }
+.ds-demo-search input { position: static !important; inset: auto !important; min-width: 0 !important; width: 100% !important; height: auto !important; margin: 0 !important; padding: 0 !important; color: #DBB9C3 !important; border: 0 !important; outline: 0 !important; background: transparent !important; box-shadow: none !important; font-size: .8rem !important; }
+.ds-demo-metrics { width: min(100%, 330px); display: flex !important; flex-direction: column !important; gap: 15px; }
+.ds-demo-metrics span { height: 8px; display: block; overflow: hidden; border-radius: 999px; background: #2A2A2D; }
+.ds-demo-metrics i { width: var(--metric-width); height: 100%; display: block; border-radius: inherit; background: var(--metric-color); }
+.ds-demo-nav { width: min(100%, 320px); display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 10px; border-radius: 24px; background: #29292B; }
+.ds-demo-nav button { width: 48px !important; height: 48px !important; display: grid !important; place-items: center; justify-self: center; margin: 0 !important; padding: 0 !important; color: #DDB8C2 !important; border: 0 !important; border-radius: 50% !important; background: transparent !important; box-shadow: none !important; transform: none !important; }
+.ds-demo-nav button.is-active { color: #521528 !important; background: color-mix(in srgb, var(--ds-accent) 48%, #FFC5D4) !important; }
+.ds-overview svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ds-demo-nav svg, .ds-round-action svg, .ds-label-action svg, .ds-icon-cluster svg { width: 20px; height: 20px; }
+.ds-area-actions { gap: 28px; }
+.ds-round-action, .ds-label-action, .ds-icon-cluster button { display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; border: 0 !important; box-shadow: none !important; transform: none !important; }
+.ds-round-action { width: 56px !important; height: 56px !important; padding: 0 !important; color: #092C30 !important; border-radius: 19px !important; background: color-mix(in srgb, var(--ds-accent) 52%, #17CFD8) !important; }
+.ds-label-action { gap: 9px; min-height: 44px !important; padding: 9px 18px !important; color: #2D1020 !important; border-radius: 999px !important; background: color-mix(in srgb, var(--ds-accent) 66%, #FF4F91) !important; font-size: .78rem !important; font-weight: 700 !important; }
+.ds-icon-cluster { display: flex !important; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.ds-icon-cluster button { width: 46px !important; height: 46px !important; padding: 0 !important; border-radius: 50% !important; }
+.ds-icon-pink { color: #5A1630 !important; background: color-mix(in srgb, var(--ds-accent) 48%, #FFC4D4) !important; }
+.ds-icon-neutral { color: #3B3B40 !important; background: #D2D2D4 !important; }
+.ds-icon-cyan { color: #05383D !important; background: color-mix(in srgb, var(--ds-accent) 40%, #0ED2DD) !important; }
+.ds-icon-coral { color: #7A2025 !important; background: #FFAAA5 !important; }
+
+/* Main sections */
+.ds-main { position: relative !important; inset: auto !important; width: auto !important; height: auto !important; display: block !important; }
+.ds-section {
+  position: relative !important; inset: auto !important; transform: none !important; opacity: 1 !important;
+  display: block !important; width: auto !important; height: auto !important; max-width: none !important;
+  margin: 20px 0 0 !important; padding: 28px !important; overflow: hidden;
+  scroll-margin-top: 20px; border: 1px solid rgba(255,255,255,.75); border-radius: var(--ds-radius-lg) !important;
+  background: var(--ds-surface) !important; box-shadow: var(--ds-shadow) !important; backdrop-filter: blur(18px);
+}
+.ds-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
+.ds-section-kicker { display: block; margin-bottom: 7px; color: var(--ds-accent); font-size: .66rem; font-weight: 800; letter-spacing: .14em; }
+.ds-section-title { margin: 0 !important; padding: 0 !important; border: 0 !important; color: var(--ds-ink) !important; font-size: clamp(1.35rem, 2.4vw, 1.85rem) !important; line-height: 1.2 !important; letter-spacing: -.025em; }
+.ds-section-title span { margin-left: .3em; color: var(--ds-subtle); font-size: .58em; font-weight: 520; letter-spacing: -.01em; }
+.ds-section-count { flex: 0 0 auto; padding: 7px 10px; color: var(--ds-muted); border: 1px solid var(--ds-line); border-radius: 999px; background: #f8f8fa; font: 700 .64rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; }
+
+/* Colors */
+.ds-color-board { display: flex; flex-direction: column; gap: 12px; }
+.ds-color-row { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--ds-line); border-radius: var(--ds-radius-md); background: #f8f8fa; }
+.ds-color-label { display: flex; align-items: center; gap: 8px; min-height: 24px; color: var(--ds-ink); }
+.ds-color-label span { font-size: .8rem; font-weight: 750; }
+.ds-color-label small { color: var(--ds-subtle); font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; }
+.ds-color-label em { margin-left: auto; color: var(--ds-subtle); font: normal 650 .66rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.ds-chip { min-width: 0; min-height: 86px; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 3px; padding: 14px; overflow: hidden; border-radius: 13px; box-shadow: inset 0 0 0 1px rgba(15,18,25,.075); transition: transform .22s ease, box-shadow .22s ease; }
+.ds-chip:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px rgba(15,18,25,.08), 0 12px 24px rgba(20,24,35,.1); }
+.ds-chip-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 750 .76rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-chip-val { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .72; font: 500 .65rem/1.25 ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* Foundation tokens */
+.ds-tokens-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ds-tokens-row { min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 18px; border: 1px solid var(--ds-line); border-radius: var(--ds-radius-md); background: #f8f8fa; }
+.ds-tokens-label { display: flex; align-items: baseline; gap: 8px; }
+.ds-tokens-label span { color: var(--ds-ink); font-size: .82rem; font-weight: 750; }
+.ds-tokens-label small { color: var(--ds-subtle); font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; }
+.ds-tokens-chips { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+.ds-font-chip, .ds-token-chip, .ds-gradient-token { min-width: 130px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: #3f424b; border: 1px solid rgba(23,24,28,.075); border-radius: 12px; background: #fff; font-size: .76rem; }
+.ds-font-chip { flex-direction: column; align-items: flex-start; gap: 2px; font-size: .9rem; }
+.ds-font-chip small, .ds-token-chip small, .ds-gradient-token small { display: block; max-width: 190px; margin-top: 2px; overflow: hidden; color: var(--ds-subtle); font: 500 .6rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.ds-radius-box { flex: 0 0 auto; width: 42px; height: 42px; display: inline-block; background: linear-gradient(135deg, var(--ds-accent), #a7b4ff); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+.ds-shadow-box { flex: 0 0 auto; width: 48px; height: 38px; display: inline-block; border-radius: 9px; background: #fff; }
+.ds-gradient-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); width: 100%; }
+.ds-gradient-token { min-width: 0; flex-direction: column; align-items: stretch; gap: 7px; }
+.ds-grad-chip { width: 100%; height: 38px; display: block; border-radius: 9px; box-shadow: inset 0 0 0 1px rgba(15,18,25,.06); }
+
+/* Component inventory and previews */
+.ds-inventory { overflow: hidden; margin-bottom: 14px; border: 1px solid var(--ds-line); border-radius: var(--ds-radius-md); background: #f8f8fa; }
+.ds-inventory summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 17px; cursor: pointer; list-style: none; user-select: none; }
+.ds-inventory summary::-webkit-details-marker { display: none; }
+.ds-inventory summary strong { color: var(--ds-ink); font-size: .8rem; }
+.ds-inventory summary em { color: var(--ds-muted); font: normal 700 .62rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-inventory summary::after { content: "+"; order: 3; display: grid; place-items: center; width: 24px; height: 24px; color: var(--ds-muted); border: 1px solid var(--ds-line); border-radius: 50%; background: #fff; font-size: .9rem; }
+.ds-inventory[open] summary::after { content: "−"; }
+.ds-comp-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 17px 17px; }
+.ds-comp-tag { padding: 5px 8px; color: #555966; border: 1px solid var(--ds-line); border-radius: 8px; background: #fff; font: 550 .64rem/1.25 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-interact-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 12px; padding: 12px 14px; border: 1px solid var(--ds-line); border-radius: 14px; background: #f8f8fa; }
+.ds-interact-toolbar strong { font-size: .8rem; }
+.ds-toggle-btn { appearance: none; display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px; min-height: 36px; padding: 8px 13px !important; color: #fff !important; border: 0 !important; border-radius: 999px !important; background: var(--ds-ink) !important; box-shadow: 0 8px 18px rgba(23,24,28,.14); cursor: pointer; font: 650 .7rem/1 sans-serif !important; transition: transform .2s ease, background .2s ease; }
+.ds-toggle-btn:hover { transform: translateY(-1px); background: #2d3038 !important; }
+.ds-toggle-btn[aria-pressed="true"] { background: var(--ds-accent) !important; }
+.ds-toggle-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px rgba(255,255,255,.13); }
+.ds-toggle-label { color: inherit !important; font-size: inherit !important; }
+.ds-interact-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 10px; }
+.ds-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; padding: 24px; color: var(--ds-muted); border: 1px dashed var(--ds-line); border-radius: var(--ds-radius-md); background: #f8f8fa; text-align: center; }
+.ds-empty-state strong { color: var(--ds-ink); font-size: .82rem; }
+.ds-interact-item { min-width: 0; display: flex !important; flex-direction: column !important; gap: 11px; padding: 14px !important; overflow: hidden; border: 1px solid var(--ds-line); border-radius: 15px; background: #f8f8fa; }
+.ds-interact-name { color: #424650; font: 700 .7rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ds-interact-cells { min-width: 0; display: flex; align-items: stretch; flex-wrap: wrap; gap: 7px; }
+.ds-interact-cell { min-width: 0; flex: 1 1 120px; display: flex; flex-direction: column; align-items: stretch; gap: 5px; }
+.ds-interact-mini-label { color: var(--ds-subtle); font: 700 .56rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.ds-interact-mini { min-width: 0; min-height: 74px; display: flex; align-items: center; justify-content: center; padding: 10px; overflow: hidden; contain: layout paint; position: relative; border: 1px solid rgba(23,24,28,.065); border-radius: 11px; background: #fff; }
+.ds-interact-mini > * { max-width: 100%; transform: scale(.86); transform-origin: center; }
+/* 隔离 absolute/fixed 组件，防止覆盖展示页 */
+.ds-interact-mini .sg-modal-overlay, .ds-interact-mini .sg-splash, .ds-interact-mini .sg-cause-chain-svg,
+.ds-interact-mini .sg-modal-content, .ds-interact-mini .sg-whatif-modal,
+.ds-interact-mini .sg-progress-wrap, .ds-interact-mini .sg-timeline-nav > svg {
+  position: relative !important; inset: auto !important; top: auto !important; right: auto !important;
+  left: auto !important; bottom: auto !important; z-index: auto !important;
+  display: flex !important; opacity: 1 !important; transform: scale(.86) !important;
+  width: auto !important; height: auto !important; max-width: 100% !important; min-height: 24px;
+  padding: 6px 10px !important; overflow: hidden !important; border-radius: 8px !important;
+  background: rgba(23,24,28,.045) !important; backdrop-filter: none !important;
+}
+.ds-interact-mini .sg-modal-overlay.active, .ds-interact-mini .sg-splash.hide { display: flex !important; opacity: 1 !important; }
+
+/* Breakpoint table */
+.ds-table-wrap { overflow-x: auto; border: 1px solid var(--ds-line); border-radius: var(--ds-radius-md); }
+.ds-bp-table { width: 100% !important; border-collapse: collapse !important; background: #fff; font-size: .78rem; }
+.ds-bp-table th { padding: 12px 16px; color: var(--ds-subtle); background: #f8f8fa; border-bottom: 1px solid var(--ds-line); font-size: .62rem; font-weight: 750; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+.ds-bp-table td { padding: 15px 16px; color: var(--ds-muted); border-bottom: 1px solid var(--ds-line); vertical-align: middle; }
+.ds-bp-table tr:last-child td { border-bottom: 0; }
+.ds-bp-table strong { color: var(--ds-ink); font-variant-numeric: tabular-nums; }
+.ds-bp-rule { display: inline-flex; padding: 5px 8px; color: #50545e; border-radius: 7px; background: #f1f2f4; font-size: .68rem; font-weight: 650; }
+.ds-bp-table code { color: #555a67; font: 550 .68rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: normal; word-break: break-word; }
+
+.ds-footer { display: flex; justify-content: flex-end; padding: 18px 8px 0; color: var(--ds-subtle); font-size: .65rem; }
+.ds-footer code { color: var(--ds-muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+@media (max-width: 1160px) {
+  .ds-topbar { align-items: flex-start; }
+  .ds-top-tools { flex-direction: column; align-items: flex-end; gap: 7px; }
+  .ds-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "palette headline" "palette body" "palette label" "controls search" "metrics navigation" "actions icons";
+    grid-template-rows: repeat(6, minmax(166px, auto));
+  }
+}
+@media (max-width: 820px) {
+  .ds-shell { width: min(100% - 28px, 1480px); padding-top: 18px; }
+  .ds-topbar { flex-direction: column; gap: 12px; }
+  .ds-top-tools { width: 100%; align-items: stretch; }
+  .ds-meta { justify-content: flex-start; flex-wrap: wrap; }
+  .ds-nav { justify-content: flex-start; }
+  .ds-overview { padding: 12px !important; border-width: 3px !important; border-radius: 24px !important; }
+  .ds-bento-grid { gap: 12px; }
+  .ds-bento-card { padding: 18px !important; border-radius: 19px !important; }
+  .ds-section { padding: 21px !important; border-radius: 22px !important; }
+  .ds-section-head { flex-direction: column; gap: 12px; }
+  .ds-tokens-grid { grid-template-columns: 1fr; }
+  .ds-interact-list { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .ds-shell { width: min(100% - 20px, 1480px); padding-top: 14px; }
+  .ds-brand-mark { width: 34px; height: 34px; }
+  .ds-brand-copy { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .ds-meta > span { min-width: 0; padding: 7px 9px; }
+  .ds-nav { overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding-bottom: 2px; }
+  .ds-nav a { flex: 0 0 auto; }
+  .ds-bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "palette" "headline" "body" "label" "controls" "search" "metrics" "navigation" "actions" "icons";
+    grid-template-rows: none;
+  }
+  .ds-bento-palette { gap: 10px; }
+  .ds-palette-item { min-height: 118px; flex-basis: auto; }
+  .ds-bento-card { min-height: 158px; }
+  .ds-type-sample { font-size: clamp(4.5rem, 28vw, 6.2rem); }
+  .ds-section { padding: 17px !important; margin-top: 12px !important; }
+  .ds-section-title span { display: block; margin: .32em 0 0; }
+  .ds-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ds-chip { min-height: 78px; padding: 11px; }
+  .ds-interact-toolbar { align-items: flex-start; flex-direction: column; }
+  .ds-toggle-btn { width: 100%; }
+  .ds-interact-cell { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.ds-showcase-root { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+</style>
+</head>
+<body class="ds-showcase-body">
+<div class="ds-shell">
+<header class="ds-topbar">
+  <div class="ds-brand">
+    <span class="ds-brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18h1.2a1.8 1.8 0 0 0 0-3.6h-.8a1.6 1.6 0 0 1 0-3.2H15A6 6 0 0 0 21 8.2C21 5.3 17 3 12 3Z"/><circle cx="7.7" cy="10.2" r="1"/><circle cx="10.4" cy="7" r="1"/><circle cx="14.4" cy="6.8" r="1"/><circle cx="17.2" cy="9.5" r="1"/></svg></span>
+    <div class="ds-brand-copy"><h1>lib</h1><small>star-group.css</small></div>
+  </div>
+  <div class="ds-top-tools">
+    <div class="ds-meta" aria-label="设计系统统计">
+      <span><strong>29</strong><small>Vars</small></span>
+      <span><strong>91</strong><small>Classes</small></span>
+      <span><strong>2</strong><small>BP</small></span>
+      <span><strong>5</strong><small>Grad</small></span>
+    </div>
+    <nav class="ds-nav" aria-label="页面分区"><a href="#overview">总览</a><a href="#colors">色彩</a><a href="#tokens">令牌</a><a href="#components">组件</a><a href="#breakpoints">断点</a></nav>
+  </div>
+</header>
+
+<section id="overview" class="ds-overview" aria-label="设计系统视觉总览">
+  <div class="ds-bento-grid">
+    <article class="ds-bento-palette"><div class="ds-palette-item"><div class="ds-palette-main" style="--role-color:#6487FA;--role-text:#ffffff"><strong>Primary</strong><span>#6487FA</span><small>primary</small></div><div class="ds-palette-scale"><span style="background:#0A0E19"></span><span style="background:#1C2646"></span><span style="background:#2E3E73"></span><span style="background:#4056A0"></span><span style="background:#5471D2"></span><span style="background:#6487FA"></span><span style="background:#839FFB"></span><span style="background:#A5B9FC"></span><span style="background:#CAD6FD"></span><span style="background:#E6ECFE"></span></div></div><div class="ds-palette-item"><div class="ds-palette-main" style="--role-color:#1E1F24;--role-text:#ffffff"><strong>Secondary</strong><span>#1E1F24</span><small>ink</small></div><div class="ds-palette-scale"><span style="background:#030304"></span><span style="background:#08090A"></span><span style="background:#0E0E11"></span><span style="background:#131417"></span><span style="background:#191A1E"></span><span style="background:#1E1F24"></span><span style="background:#4B4C50"></span><span style="background:#7C7D80"></span><span style="background:#B2B3B5"></span><span style="background:#DBDBDC"></span></div></div><div class="ds-palette-item"><div class="ds-palette-main" style="--role-color:#848691;--role-text:#ffffff"><strong>Tertiary</strong><span>#848691</span><small>muted</small></div><div class="ds-palette-scale"><span style="background:#0D0D0E"></span><span style="background:#252629"></span><span style="background:#3D3E43"></span><span style="background:#54565D"></span><span style="background:#6F717A"></span><span style="background:#848691"></span><span style="background:#9D9EA7"></span><span style="background:#B8B9BF"></span><span style="background:#D5D6DA"></span><span style="background:#EBECED"></span></div></div><div class="ds-palette-item"><div class="ds-palette-main" style="--role-color:#FAFAFB;--role-text:#111214"><strong>Neutral</strong><span>#FAFAFB</span><small>neutral-soft</small></div><div class="ds-palette-scale"><span style="background:#191919"></span><span style="background:#464646"></span><span style="background:#737373"></span><span style="background:#A0A0A1"></span><span style="background:#D2D2D3"></span><span style="background:#FAFAFB"></span><span style="background:#FBFBFC"></span><span style="background:#FCFCFD"></span><span style="background:#FDFDFE"></span><span style="background:#FEFEFE"></span></div></div></article>
+    <article class="ds-bento-card ds-type-card ds-area-headline" style="--sample-font:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, &quot;PingFang SC&quot;, sans-serif;--sample-color:#F0F0F1"><div class="ds-card-label"><strong>Headline</strong><span>System</span></div><div class="ds-type-sample">Aa</div></article><article class="ds-bento-card ds-type-card ds-area-body" style="--sample-font:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, &quot;PingFang SC&quot;, sans-serif;--sample-color:color-mix(in srgb, var(--ds-accent) 38%, #F2F2F3)"><div class="ds-card-label"><strong>Body</strong><span>System</span></div><div class="ds-type-sample">Aa</div></article><article class="ds-bento-card ds-type-card ds-area-label" style="--sample-font:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, &quot;PingFang SC&quot;, sans-serif;--sample-color:color-mix(in srgb, var(--ds-accent) 38%, #F2F2F3)"><div class="ds-card-label"><strong>Label</strong><span>System</span></div><div class="ds-type-sample">Aa</div></article>
+    <article class="ds-bento-card ds-area-controls">
+      <div class="ds-demo-buttons">
+        <button type="button" class="ds-demo-btn ds-demo-primary">Primary</button>
+        <button type="button" class="ds-demo-btn ds-demo-secondary">Secondary</button>
+        <button type="button" class="ds-demo-btn ds-demo-inverted">Inverted</button>
+        <button type="button" class="ds-demo-btn ds-demo-outlined">Outlined</button>
+      </div>
+    </article>
+    <article class="ds-bento-card ds-area-search">
+      <label class="ds-demo-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input type="text" value="Search" readonly aria-label="搜索框样张" /></label>
+    </article>
+    <article class="ds-bento-card ds-area-metrics">
+      <div class="ds-demo-metrics" aria-label="令牌覆盖度">
+        <span><i style="--metric-width:86%;--metric-color:color-mix(in srgb, var(--ds-accent) 58%, #FFB8C9)"></i></span>
+        <span><i style="--metric-width:94%;--metric-color:#D8D8DB"></i></span>
+        <span><i style="--metric-width:55%;--metric-color:color-mix(in srgb, var(--ds-accent) 54%, #18D1DB)"></i></span>
+      </div>
+    </article>
+    <article class="ds-bento-card ds-area-navigation">
+      <div class="ds-demo-nav" aria-label="导航组件样张">
+        <button type="button" class="is-active" aria-label="主页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v9H4Z"/><path d="M9 20v-6h6v6"/></svg></button>
+        <button type="button" aria-label="搜索"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></button>
+        <button type="button" aria-label="用户"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6"/></svg></button>
+      </div>
+    </article>
+    <article class="ds-bento-card ds-area-actions">
+      <button type="button" class="ds-round-action" aria-label="编辑"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.2-1 10.6-10.6-3.2-3.2L5 15.8Z"/><path d="m13.8 7 3.2 3.2"/></svg></button>
+      <button type="button" class="ds-label-action"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.2-1 10.6-10.6-3.2-3.2L5 15.8Z"/><path d="m13.8 7 3.2 3.2"/></svg><span>Label</span></button>
+    </article>
+    <article class="ds-bento-card ds-area-icons">
+      <div class="ds-icon-cluster">
+        <button type="button" class="ds-icon-pink" aria-label="自动增强"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5Z"/><path d="m18 15 .8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8Z"/></svg></button>
+        <button type="button" class="ds-icon-neutral" aria-label="组件网格"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></button>
+        <button type="button" class="ds-icon-cyan" aria-label="标签"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5v6l8 8 7-7-8-8Z"/><circle cx="8" cy="8" r="1"/></svg></button>
+        <button type="button" class="ds-icon-coral" aria-label="删除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7"/></svg></button>
+      </div>
+    </article>
+  </div>
+</section>
+<main class="ds-main">
+<section id="colors" class="ds-section ds-section-colors"><div class="ds-section-head"><div><span class="ds-section-kicker">01 / PALETTE</span><h2 class="ds-section-title">色卡系统 <span>Color Tokens</span></h2></div><span class="ds-section-count">17 COLORS</span></div><div class="ds-color-board"><div class="ds-color-row"><div class="ds-color-label"><span>功能色</span><small>Functional</small><em>09</em></div><div class="ds-chips"><div class="ds-chip" style="background:#90929a;color:#ffffff"><span class="ds-chip-name">note</span><span class="ds-chip-val">#90929a</span></div><div class="ds-chip" style="background:#6487FA;color:#ffffff"><span class="ds-chip-name">primary</span><span class="ds-chip-val">#6487FA</span></div><div class="ds-chip" style="background:#E94F76;color:#ffffff"><span class="ds-chip-name">accent</span><span class="ds-chip-val">#E94F76</span></div><div class="ds-chip" style="background:#111111;color:#ffffff"><span class="ds-chip-name">accent-2</span><span class="ds-chip-val">#111111</span></div><div class="ds-chip" style="background:#FFFFFF;color:#111214"><span class="ds-chip-name">white</span><span class="ds-chip-val">#FFFFFF</span></div><div class="ds-chip" style="background:#FAFAFB;color:#111214"><span class="ds-chip-name">neutral-soft</span><span class="ds-chip-val">#FAFAFB</span></div><div class="ds-chip" style="background:#2A2B33;color:#ffffff"><span class="ds-chip-name">ink-soft</span><span class="ds-chip-val">#2A2B33</span></div><div class="ds-chip" style="background:#FBFBFD;color:#111214"><span class="ds-chip-name">panel-top</span><span class="ds-chip-val">#FBFBFD</span></div><div class="ds-chip" style="background:#F5F7FC;color:#111214"><span class="ds-chip-name">panel-bottom</span><span class="ds-chip-val">#F5F7FC</span></div></div></div><div class="ds-color-row"><div class="ds-color-label"><span>文字色</span><small>Text</small><em>03</em></div><div class="ds-chips"><div class="ds-chip" style="background:#1E1F24;color:#ffffff"><span class="ds-chip-name">ink</span><span class="ds-chip-val">#1E1F24</span></div><div class="ds-chip" style="background:#848691;color:#ffffff"><span class="ds-chip-name">muted</span><span class="ds-chip-val">#848691</span></div><div class="ds-chip" style="background:#B7B9C1;color:#111214"><span class="ds-chip-name">subtle</span><span class="ds-chip-val">#B7B9C1</span></div></div></div><div class="ds-color-row"><div class="ds-color-label"><span>背景色</span><small>Background</small><em>04</em></div><div class="ds-chips"><div class="ds-chip" style="background:#FFFFFF;color:#111214"><span class="ds-chip-name">paper</span><span class="ds-chip-val">#FFFFFF</span></div><div class="ds-chip" style="background:#F8F8F8;color:#111214"><span class="ds-chip-name">stage</span><span class="ds-chip-val">#F8F8F8</span></div><div class="ds-chip" style="background:#F2F4FB;color:#111214"><span class="ds-chip-name">soft</span><span class="ds-chip-val">#F2F4FB</span></div><div class="ds-chip" style="background:#FFF0F4;color:#111214"><span class="ds-chip-name">soft-accent</span><span class="ds-chip-val">#FFF0F4</span></div></div></div><div class="ds-color-row"><div class="ds-color-label"><span>分割线</span><small>Border</small><em>01</em></div><div class="ds-chips"><div class="ds-chip" style="background:#ECEDF1;color:#111214"><span class="ds-chip-name">line</span><span class="ds-chip-val">#ECEDF1</span></div></div></div></div></section>
+<section id="tokens" class="ds-section"><div class="ds-section-head"><div><span class="ds-section-kicker">02 / FOUNDATIONS</span><h2 class="ds-section-title">令牌速览 <span>Foundation Tokens</span></h2></div><span class="ds-section-count">5 TOKENS</span></div><div class="ds-tokens-grid"><div class="ds-tokens-row"><div class="ds-tokens-label"><span>渐变</span><small>Gradients</small></div><div class="ds-tokens-chips ds-gradient-list"><span class="ds-gradient-token"><span class="ds-grad-chip" style="background:linear-gradient(135deg, var(--sg-ink-soft) 0%, var(--sg-ink) 100%)"></span><small>Gradient 01</small></span><span class="ds-gradient-token"><span class="ds-grad-chip" style="background:linear-gradient(to top, rgba(0,0,0,0.75), transparent)"></span><small>Gradient 02</small></span><span class="ds-gradient-token"><span class="ds-grad-chip" style="background:linear-gradient(180deg, var(--sg-panel-top) 0%, var(--sg-panel-bottom) 100%)"></span><small>Gradient 03</small></span><span class="ds-gradient-token"><span class="ds-grad-chip" style="background:linear-gradient(transparent, rgba(0, 0, 0, 0.82))"></span><small>Gradient 04</small></span><span class="ds-gradient-token"><span class="ds-grad-chip" style="background:linear-gradient(to top, rgba(0,0,0,0.7), transparent)"></span><small>Gradient 05</small></span></div></div></div></section>
+<section id="components" class="ds-section"><div class="ds-section-head"><div><span class="ds-section-kicker">03 / COMPONENTS</span><h2 class="ds-section-title">组件与交互态 <span>Component States</span></h2></div><span class="ds-section-count">16 / 91</span></div><details class="ds-inventory"><summary><strong>组件类清单</strong><em>91 ITEMS</em></summary><div class="ds-comp-list"><span class="ds-comp-tag">sg-frame</span><span class="ds-comp-tag">sg-tab-bar</span><span class="ds-comp-tag">sg-tab</span><span class="ds-comp-tag">sg-tab-more</span><span class="ds-comp-tag">sg-view-stack</span><span class="ds-comp-tag">sg-view</span><span class="ds-comp-tag">sg-section-head</span><span class="ds-comp-tag">sg-arrow</span><span class="ds-comp-tag">sg-prev</span><span class="ds-comp-tag">sg-next</span><span class="ds-comp-tag">sg-dots</span><span class="ds-comp-tag">sg-dot</span><span class="ds-comp-tag">sg-members-view</span><span class="ds-comp-tag">sg-member-stage</span><span class="ds-comp-tag">sg-member-grid</span><span class="ds-comp-tag">sg-member</span><span class="ds-comp-tag">sg-avatar</span><span class="ds-comp-tag">sg-avatar-fallback</span><span class="ds-comp-tag">sg-photo-source</span><span class="ds-comp-tag">sg-member-info</span><span class="ds-comp-tag">sg-member-name</span><span class="ds-comp-tag">sg-member-role</span><span class="ds-comp-tag">sg-member-state</span><span class="ds-comp-tag">sg-detail-panel</span><span class="ds-comp-tag">sg-detail-kicker</span><span class="ds-comp-tag">sg-subtitle</span><span class="ds-comp-tag">sg-relation-list</span><span class="ds-comp-tag">sg-relation-row</span><span class="ds-comp-tag">sg-rel-label</span><span class="ds-comp-tag">sg-rel-value</span><span class="ds-comp-tag">sg-source-note</span><span class="ds-comp-tag">sg-timeline-view</span><span class="ds-comp-tag">sg-tl-scroll-wrap</span><span class="ds-comp-tag">sg-tl-track</span><span class="ds-comp-tag">sg-t-item</span><span class="ds-comp-tag">sg-t-hint</span><span class="ds-comp-tag">sg-t-story</span><span class="ds-comp-tag">sg-t-story-head</span><span class="ds-comp-tag">sg-t-story-label</span><span class="ds-comp-tag">sg-t-story-text</span><span class="ds-comp-tag">sg-t-story-close</span><span class="ds-comp-tag">sg-t-img</span><span class="ds-comp-tag">sg-t-info</span><span class="ds-comp-tag">sg-tl-prev-pc</span><span class="ds-comp-tag">sg-tl-next-pc</span><span class="ds-comp-tag">sg-tl-prev-mobile</span><span class="ds-comp-tag">sg-tl-next-mobile</span><span class="ds-comp-tag">sg-tl-controls</span><span class="ds-comp-tag">sg-tl-dots</span><span class="ds-comp-tag">sg-works-view</span><span class="ds-comp-tag">sg-ws-scroll-wrap</span><span class="ds-comp-tag">sg-works-carousel</span><span class="ds-comp-tag">sg-work-item</span><span class="ds-comp-tag">sg-is-center</span><span class="ds-comp-tag">sg-is-prev-side</span><span class="ds-comp-tag">sg-is-next-side</span><span class="ds-comp-tag">sg-is-prev-far</span><span class="ds-comp-tag">sg-is-next-far</span><span class="ds-comp-tag">sg-w-img</span><span class="ds-comp-tag">sg-work-info</span><span class="ds-comp-tag">sg-work-year</span><span class="ds-comp-tag">sg-ws-prev</span><span class="ds-comp-tag">sg-ws-next</span><span class="ds-comp-tag">sg-ws-dots</span><span class="ds-comp-tag">sg-ws-dot</span><span class="ds-comp-tag">sg-is-active</span><span class="ds-comp-tag">sg-ws-story-cta</span><span class="ds-comp-tag">sg-work-story-panel</span><span class="ds-comp-tag">sg-ws-story-close</span><span class="ds-comp-tag">sg-ws-story-body</span><span class="ds-comp-tag">sg-ws-story-cover</span><span class="ds-comp-tag">sg-ws-story-content</span><span class="ds-comp-tag">sg-ws-year</span><span class="ds-comp-tag">sg-ws-story-divider</span><span class="ds-comp-tag">sg-ws-story-label</span><span class="ds-comp-tag">sg-ws-story-text</span><span class="ds-comp-tag">sg-modal-overlay</span><span class="ds-comp-tag">sg-modal-card</span><span class="ds-comp-tag">sg-modal-head</span><span class="ds-comp-tag">sg-modal-sub</span><span class="ds-comp-tag">sg-modal-body</span><span class="ds-comp-tag">sg-m-row</span><span class="ds-comp-tag">sg-modal-foot</span><span class="ds-comp-tag">sg-modal-decl</span><span class="ds-comp-tag">sg-modal-close</span><span class="ds-comp-tag">sg-modal-x-btn</span><span class="ds-comp-tag">sg-mdm-header</span><span class="ds-comp-tag">sg-mdm-avatar</span><span class="ds-comp-tag">sg-mdm-head-text</span><span class="ds-comp-tag">sg-tl-dot</span><span class="ds-comp-tag">sg-member-detail-modal</span></div></details><div class="ds-interact-toolbar"><strong>状态预览</strong><button class="ds-toggle-btn" type="button" aria-pressed="false" onclick="dsToggleAllStates(this)"><span class="ds-toggle-dot"></span><span class="ds-toggle-label">预览全部交互态</span></button></div><div class="ds-interact-list"><article class="ds-interact-item"><span class="ds-interact-name">sg-arrow</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-arrow" style="padding:8px 12px;font-size:0.85rem">sg-arrow</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-arrow force-hover" style="padding:8px 12px;font-size:0.85rem">sg-arrow</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-is-center</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-is-center" style="padding:8px 12px;font-size:0.85rem">sg-is-center</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-is-center force-hover" style="padding:8px 12px;font-size:0.85rem">sg-is-center</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-member</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-member" style="padding:8px 12px;font-size:0.85rem">sg-member</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-member force-hover" style="padding:8px 12px;font-size:0.85rem">sg-member</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-modal-overlay</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-modal-overlay" style="padding:8px 12px;font-size:0.85rem">sg-modal-overlay</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">open</span><div class="ds-interact-mini"><div class="sg-modal-overlay open" style="padding:8px 12px;font-size:0.85rem">sg-modal-overlay</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-modal-x-btn</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><button class="sg-modal-x-btn">按钮</button></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><button class="sg-modal-x-btn force-hover">悬停</button></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-t-hint</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-t-hint" style="padding:8px 12px;font-size:0.85rem">sg-t-hint</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-t-hint force-hover" style="padding:8px 12px;font-size:0.85rem">sg-t-hint</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-t-item</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-t-item" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-t-item force-hover" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-t-story-close</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-t-story-close" style="padding:8px 12px;font-size:0.85rem">sg-t-story-close</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-t-story-close force-hover" style="padding:8px 12px;font-size:0.85rem">sg-t-story-close</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-view</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-view" style="padding:8px 12px;font-size:0.85rem">sg-view</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">active</span><div class="ds-interact-mini"><div class="sg-view active" style="padding:8px 12px;font-size:0.85rem">sg-view</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-work-info</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-work-info" style="padding:8px 12px;font-size:0.85rem">sg-work-info</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-work-info force-hover" style="padding:8px 12px;font-size:0.85rem">sg-work-info</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-work-item</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-work-item" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-work-item force-hover" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-work-story-panel</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-work-story-panel" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">open</span><div class="ds-interact-mini"><div class="sg-work-story-panel open" style="padding:8px 12px"><div style="font-size:0.8rem;font-weight:600">模块标题</div></div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-ws-next</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-ws-next" style="padding:8px 12px;font-size:0.85rem">sg-ws-next</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-ws-next force-hover" style="padding:8px 12px;font-size:0.85rem">sg-ws-next</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-ws-prev</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-ws-prev" style="padding:8px 12px;font-size:0.85rem">sg-ws-prev</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-ws-prev force-hover" style="padding:8px 12px;font-size:0.85rem">sg-ws-prev</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-ws-story-close</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><div class="sg-ws-story-close" style="padding:8px 12px;font-size:0.85rem">sg-ws-story-close</div></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><div class="sg-ws-story-close force-hover" style="padding:8px 12px;font-size:0.85rem">sg-ws-story-close</div></div></div></div></article><article class="ds-interact-item"><span class="ds-interact-name">sg-ws-story-cta</span><div class="ds-interact-cells"><div class="ds-interact-cell"><span class="ds-interact-mini-label">默认</span><div class="ds-interact-mini"><button class="sg-ws-story-cta">按钮</button></div></div><div class="ds-interact-cell"><span class="ds-interact-mini-label">hover</span><div class="ds-interact-mini"><button class="sg-ws-story-cta force-hover">悬停</button></div></div></div></article></div></section>
+<section id="breakpoints" class="ds-section"><div class="ds-section-head"><div><span class="ds-section-kicker">04 / RESPONSIVE</span><h2 class="ds-section-title">响应式断点 <span>Breakpoints</span></h2></div><span class="ds-section-count">2 RULES</span></div><div class="ds-table-wrap"><table class="ds-bp-table"><thead><tr><th>规则</th><th>断点</th><th>媒体查询</th></tr></thead><tbody><tr><td><span class="ds-bp-rule">最大宽度</span></td><td><strong>≤ 320px</strong></td><td><code>(max-width: 320px), (max-height: 380px)</code></td></tr><tr><td><span class="ds-bp-rule">最大宽度</span></td><td><strong>≤ 500px</strong></td><td><code>(max-width: 500px)</code></td></tr></tbody></table></div></section>
+</main>
+<footer class="ds-footer"><code>star-group.css</code></footer>
+</div>
+<script>
+(function() {
+  var sheets = document.styleSheets;
+  var hoverRules = [];
+  for (var i = 0; i < sheets.length; i++) {
+    try {
+      var rules = sheets[i].cssRules || sheets[i].rules;
+      for (var j = 0; j < rules.length; j++) {
+        var r = rules[j];
+        if (r.selectorText && r.selectorText.indexOf(':hover') > -1) {
+          var newSel = r.selectorText.replace(/:hover/g, '.force-hover');
+          hoverRules.push(newSel + ' { ' + r.style.cssText + ' }');
+        }
+      }
+    } catch(e) {}
+  }
+  if (hoverRules.length) {
+    var style = document.createElement('style');
+    style.textContent = hoverRules.join('\n');
+    document.head.appendChild(style);
+  }
+})();
+var dsToggleState = false;
+function dsToggleAllStates(button) {
+  dsToggleState = !dsToggleState;
+  if (button) {
+    button.setAttribute('aria-pressed', dsToggleState ? 'true' : 'false');
+    var text = button.querySelector('.ds-toggle-label');
+    if (text) text.textContent = dsToggleState ? '恢复默认状态' : '预览全部交互态';
+  }
+  document.querySelectorAll('.ds-interact-mini').forEach(function(stage) {
+    var el = stage.firstElementChild;
+    if (!el) return;
+    var label = stage.parentElement.querySelector('.ds-interact-mini-label');
+    var labelText = label ? label.textContent : '';
+    if (dsToggleState) {
+      el.classList.add('force-hover');
+      ['active','open','on','picked','right','wrong'].forEach(function(s) {
+        if (labelText.indexOf(s) > -1) el.classList.add(s);
+      });
+    } else {
+      el.classList.remove('force-hover');
+      ['active','open','on','picked','right','wrong'].forEach(function(s) { el.classList.remove(s); });
+    }
+  });
+}
+</script>
+</body>
+</html>
