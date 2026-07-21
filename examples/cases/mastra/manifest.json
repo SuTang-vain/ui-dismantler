@@ -1,0 +1,786 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/mastra/original.html",
+    "title": "TypeScript AI Framework for Agents and Apps | Mastra",
+    "templateId": null,
+    "vertical": "cases",
+    "caseName": "mastra",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "c15t-primary",
+        "value": "#ffffff",
+        "original": "--c15t-primary",
+        "usage": [
+          "c15t-ui-trigger-YLS2g:focus-visible",
+          ":root"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "c15t-primary-hover",
+        "value": "rgba(255,255,255,0.9)",
+        "original": "--c15t-primary-hover",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-surface",
+        "value": "#0f0f0f",
+        "original": "--c15t-surface",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-surface-hover",
+        "value": "#171717",
+        "original": "--c15t-surface-hover",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-border",
+        "value": "#1c1c1c",
+        "original": "--c15t-border",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-border-hover",
+        "value": "#393939",
+        "original": "--c15t-border-hover",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-text",
+        "value": "#f0f0f0",
+        "original": "--c15t-text",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-text-muted",
+        "value": "#939393",
+        "original": "--c15t-text-muted",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-text-on-primary",
+        "value": "#000000",
+        "original": "--c15t-text-on-primary",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-overlay",
+        "value": "rgba(0,0,0,0.6)",
+        "original": "--c15t-overlay",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-switch-track",
+        "value": "#262626",
+        "original": "--c15t-switch-track",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-switch-track-active",
+        "value": "#ffffff",
+        "original": "--c15t-switch-track-active",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-switch-thumb",
+        "value": "#000000",
+        "original": "--c15t-switch-thumb",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-family",
+        "value": "var(--greed),ui-sans-serif,system-ui,sans-serif",
+        "original": "--c15t-font-family",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-size-sm",
+        "value": "0.875rem",
+        "original": "--c15t-font-size-sm",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-size-base",
+        "value": "1rem",
+        "original": "--c15t-font-size-base",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-size-lg",
+        "value": "1.125rem",
+        "original": "--c15t-font-size-lg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-weight-normal",
+        "value": "400",
+        "original": "--c15t-font-weight-normal",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-weight-medium",
+        "value": "500",
+        "original": "--c15t-font-weight-medium",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-font-weight-semibold",
+        "value": "600",
+        "original": "--c15t-font-weight-semibold",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-line-height-tight",
+        "value": "1.25",
+        "original": "--c15t-line-height-tight",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-line-height-normal",
+        "value": "1.5",
+        "original": "--c15t-line-height-normal",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-line-height-relaxed",
+        "value": "1.75",
+        "original": "--c15t-line-height-relaxed",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-space-xs",
+        "value": "0.25rem",
+        "original": "--c15t-space-xs",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-space-sm",
+        "value": "0.5rem",
+        "original": "--c15t-space-sm",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-space-md",
+        "value": "1rem",
+        "original": "--c15t-space-md",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-space-lg",
+        "value": "1.5rem",
+        "original": "--c15t-space-lg",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-space-xl",
+        "value": "2rem",
+        "original": "--c15t-space-xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-radius-sm",
+        "value": "0.44rem",
+        "original": "--c15t-radius-sm",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-radius-md",
+        "value": "10px",
+        "original": "--c15t-radius-md",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-radius-lg",
+        "value": "0.44rem",
+        "original": "--c15t-radius-lg",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-radius-full",
+        "value": "9999px",
+        "original": "--c15t-radius-full",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-shadow-sm",
+        "value": "0 1px 2px hsla(0,0%,0%,0.05)",
+        "original": "--c15t-shadow-sm",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-shadow-md",
+        "value": "0 4px 12px hsla(0,0%,0%,0.08)",
+        "original": "--c15t-shadow-md",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-shadow-lg",
+        "value": "0 8px 24px hsla(0,0%,0%,0.12)",
+        "original": "--c15t-shadow-lg",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-duration-fast",
+        "value": "80ms",
+        "original": "--c15t-duration-fast",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-duration-normal",
+        "value": "150ms",
+        "original": "--c15t-duration-normal",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-duration-slow",
+        "value": "200ms",
+        "original": "--c15t-duration-slow",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-easing",
+        "value": "cubic-bezier(0.4,0,0.2,1)",
+        "original": "--c15t-easing",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c15t-easing-out",
+        "value": "cubic-bezier(0.215,0.61,0.355,1)",
+        "original": "--c15t-easing-out",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "c15t-easing-in-out",
+        "value": "cubic-bezier(0.645,0.045,0.355,1)",
+        "original": "--c15t-easing-in-out",
+        "usage": [],
+        "roles": []
+      }
+    ],
+    "gradients": [
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": ".before\\:bg-linear-to-r:before",
+        "value": "linear-gradient(var(--tw-gradient-stops))",
+        "normalized": "linear-gradient(var(--tw-gradient-stops))"
+      },
+      {
+        "selector": "@property --tw-mask-linear",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-radial",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-conic",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-left",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-right",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-bottom",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-top",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": ".nav-col-product",
+        "value": "linear-gradient(180deg,#0f0f0f 0%,var(--productColBgColor) 40.38%,#1c1c1c 100%)",
+        "normalized": "linear-gradient(180deg,var(--sg-c15t-surface) 0%,var(--productColBgColor) 40.38%,var(--sg-c15t-border) 100%)"
+      },
+      {
+        "selector": ".subscribe-form-module__GWK2aq__labelText",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": ".subscribe-form-module__GWK2aq__labelText",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": ".ds-dotted-separator:not(:last-child):after",
+        "value": "radial-gradient(circle closest-side,var(--color-ds-border-antigrid) 100%,transparent 100%)",
+        "normalized": "radial-gradient(circle closest-side,var(--color-ds-border-antigrid) 100%,transparent 100%)"
+      },
+      {
+        "selector": ".ds-dotted-separator:not(:last-child):after",
+        "value": "radial-gradient(circle closest-side,var(--color-ds-border-antigrid) 100%,transparent 100%)",
+        "normalized": "radial-gradient(circle closest-side,var(--color-ds-border-antigrid) 100%,transparent 100%)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "*,:before,:after,::backdrop",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": ".c15t-ui-thumb-mP7_o:before",
+        "value": "radial-gradient(circle farthest-side,#0000 1.95px,#000 2.05px 100%)",
+        "normalized": "radial-gradient(circle farthest-side,#0000 1.95px,#000 2.05px 100%)"
+      },
+      {
+        "selector": ".c15t-ui-thumb-mP7_o:before",
+        "value": "radial-gradient(circle farthest-side,#0000 1.95px,#000 2.05px 100%)",
+        "normalized": "radial-gradient(circle farthest-side,#0000 1.95px,#000 2.05px 100%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(90deg\\,\\#f3eee2_0\\%\\,\\#e7e0cf_100\\%\\)\\]",
+        "value": "linear-gradient(90deg,#f3eee2 0%,#e7e0cf 100%)",
+        "normalized": "linear-gradient(90deg,#f3eee2 0%,#e7e0cf 100%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(90deg\\,rgba\\(0\\,0\\,0\\,0\\.5\\)\\,rgba\\(0\\,0\\,0\\,0\\.15\\)_45\\%\\,rgba\\(0\\,0\\,0\\,0\\)_100\\%\\)\\]",
+        "value": "linear-gradient(90deg,#00000080,#00000026 45%,#0000 100%)",
+        "normalized": "linear-gradient(90deg,var(--sg-c15t-text-on-primary)80,var(--sg-c15t-text-on-primary)26 45%,#0000 100%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(90deg\\,rgba\\(15\\,15\\,15\\,0\\.42\\)_0\\%\\,rgba\\(15\\,15\\,15\\,0\\.12\\)_52\\%\\,rgba\\(15\\,15\\,15\\,0\\.22\\)_100\\%\\)\\]",
+        "value": "linear-gradient(90deg,#0f0f0f6b 0%,#0f0f0f1f 52%,#0f0f0f38 100%)",
+        "normalized": "linear-gradient(90deg,var(--sg-c15t-surface)6b 0%,var(--sg-c15t-surface)1f 52%,var(--sg-c15t-surface)38 100%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(113deg\\,rgba\\(0\\,0\\,0\\,0\\.6\\)_8\\.24\\%\\,rgba\\(0\\,0\\,0\\,0\\)_43\\.62\\%\\)\\]",
+        "value": "linear-gradient(113deg,#0009 8.24%,#0000 43.62%)",
+        "normalized": "linear-gradient(113deg,#0009 8.24%,#0000 43.62%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(132deg\\,rgba\\(15\\,15\\,15\\,0\\)_37\\%\\,\\#0f0f0f_81\\%\\)\\]",
+        "value": "linear-gradient(132deg,#0f0f0f00 37%,#0f0f0f 81%)",
+        "normalized": "linear-gradient(132deg,var(--sg-c15t-surface)00 37%,var(--sg-c15t-surface) 81%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(161deg\\,rgba\\(255\\,255\\,255\\,0\\.1\\)_2\\.8\\%\\,rgba\\(255\\,255\\,255\\,0\\)_50\\.7\\%\\)\\,linear-gradient\\(180deg\\,rgba\\(0\\,0\\,0\\,0\\)_20\\.5\\%\\,rgba\\(15\\,15\\,15\\,0\\.7\\)_72\\.3\\%\\)\\]",
+        "value": "linear-gradient(161deg,#ffffff1a 2.8%,#fff0 50.7%)",
+        "normalized": "linear-gradient(161deg,var(--sg-c15t-primary)1a 2.8%,#fff0 50.7%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(161deg\\,rgba\\(255\\,255\\,255\\,0\\.1\\)_2\\.8\\%\\,rgba\\(255\\,255\\,255\\,0\\)_50\\.7\\%\\)\\,linear-gradient\\(180deg\\,rgba\\(0\\,0\\,0\\,0\\)_20\\.5\\%\\,rgba\\(15\\,15\\,15\\,0\\.7\\)_72\\.3\\%\\)\\]",
+        "value": "linear-gradient(#0000 20.5%,#0f0f0fb3 72.3%)",
+        "normalized": "linear-gradient(#0000 20.5%,var(--sg-c15t-surface)b3 72.3%)"
+      },
+      {
+        "selector": ".bg-\\[linear-gradient\\(to_top\\,rgba\\(0\\,0\\,0\\,0\\.3\\)_0\\%\\,rgba\\(0\\,0\\,0\\,0\\)_62\\%\\)\\]",
+        "value": "linear-gradient(#0000 38%,#0000004d 100%)",
+        "normalized": "linear-gradient(#0000 38%,var(--sg-c15t-text-on-primary)4d 100%)"
+      },
+      {
+        "selector": ".bg-\\[radial-gradient\\(circle\\,rgba\\(255\\,255\\,255\\,0\\.07\\)_0\\%\\,rgba\\(255\\,255\\,255\\,0\\)_62\\%\\)\\]",
+        "value": "radial-gradient(circle,#ffffff12 0%,#fff0 62%)",
+        "normalized": "radial-gradient(circle,var(--sg-c15t-primary)12 0%,#fff0 62%)"
+      },
+      {
+        "selector": ".bg-\\[repeating-linear-gradient\\(90deg\\,rgba\\(0\\,0\\,0\\,0\\.06\\)_0px\\,rgba\\(0\\,0\\,0\\,0\\.06\\)_1px\\,transparent_1px\\,transparent_2\\.5px\\)\\]",
+        "value": "linear-gradient(90deg,#0000000f 0 1px,#0000 1px 2.5px)",
+        "normalized": "linear-gradient(90deg,var(--sg-c15t-text-on-primary)0f 0 1px,#0000 1px 2.5px)"
+      },
+      {
+        "selector": ".\\[mask-image\\:linear-gradient\\(180deg\\,transparent_0\\%\\,\\#000_14\\%\\,\\#000_86\\%\\,transparent_100\\%\\)\\]",
+        "value": "linear-gradient(#0000 0%,#000 14% 86%,#0000 100%)",
+        "normalized": "linear-gradient(#0000 0%,#000 14% 86%,#0000 100%)"
+      },
+      {
+        "selector": ".\\[mask-image\\:linear-gradient\\(180deg\\,transparent_0\\%\\,\\#000_14\\%\\,\\#000_86\\%\\,transparent_100\\%\\)\\]",
+        "value": "linear-gradient(#0000 0%,#000 14% 86%,#0000 100%)",
+        "normalized": "linear-gradient(#0000 0%,#000 14% 86%,#0000 100%)"
+      },
+      {
+        "selector": ".\\[mask-image\\:linear-gradient\\(180deg\\,transparent_8\\%\\,rgba\\(0\\,0\\,0\\,0\\.28\\)_34\\%\\,\\#000_60\\%\\)\\]",
+        "value": "linear-gradient(#0000 8%,#00000047 34%,#000 60%)",
+        "normalized": "linear-gradient(#0000 8%,var(--sg-c15t-text-on-primary)47 34%,#000 60%)"
+      },
+      {
+        "selector": ".\\[mask-image\\:linear-gradient\\(180deg\\,transparent_8\\%\\,rgba\\(0\\,0\\,0\\,0\\.28\\)_34\\%\\,\\#000_60\\%\\)\\]",
+        "value": "linear-gradient(#0000 8%,#00000047 34%,#000 60%)",
+        "normalized": "linear-gradient(#0000 8%,var(--sg-c15t-text-on-primary)47 34%,#000 60%)"
+      },
+      {
+        "selector": ".before\\:\\[background\\:linear-gradient\\(to_bottom\\,var\\(--color-ds-surface-bg\\)_0\\%\\,var\\(--color-ds-surface-bg\\)_75\\%\\,transparent_100\\%\\)\\]:before",
+        "value": "linear-gradient(to bottom,var(--color-ds-surface-bg) 0%,var(--color-ds-surface-bg) 75%,transparent 100%)",
+        "normalized": "linear-gradient(to bottom,var(--color-ds-surface-bg) 0%,var(--color-ds-surface-bg) 75%,transparent 100%)"
+      },
+      {
+        "selector": "@property --tw-mask-linear",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-radial",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-conic",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-left",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-right",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-bottom",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "@property --tw-mask-top",
+        "value": "linear-gradient(#fff,#fff)",
+        "normalized": "linear-gradient(#fff,#fff)"
+      },
+      {
+        "selector": "0%",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": "0%",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": "70%,to",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": "70%,to",
+        "value": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)",
+        "normalized": "linear-gradient(60deg,#000 25%,#0006 50%,#000 75%)"
+      },
+      {
+        "selector": ".new-brand-hero-base-layer",
+        "value": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)",
+        "normalized": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)"
+      },
+      {
+        "selector": ".new-brand-hero-base-layer",
+        "value": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)",
+        "normalized": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)"
+      },
+      {
+        "selector": ".new-brand-hero-rainbow-clip",
+        "value": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)",
+        "normalized": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)"
+      },
+      {
+        "selector": ".new-brand-hero-rainbow-clip",
+        "value": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)",
+        "normalized": "radial-gradient(56.74% 62.6%at 52.14% 27.69%,#d9d9d9 37.39%,#73737300 100%)"
+      },
+      {
+        "selector": ".new-brand-hero-rainbow-spotlight",
+        "value": "radial-gradient(180px circle at var(--hero-rainbow-x) var(--hero-rainbow-y),#fff 0%,#ffffffc7 34%,#fff0 72%)",
+        "normalized": "radial-gradient(180px circle at var(--hero-rainbow-x) var(--hero-rainbow-y),#fff 0%,var(--sg-c15t-primary)c7 34%,#fff0 72%)"
+      },
+      {
+        "selector": ".new-brand-hero-rainbow-spotlight",
+        "value": "radial-gradient(180px circle at var(--hero-rainbow-x) var(--hero-rainbow-y),#fff 0%,#ffffffc7 34%,#fff0 72%)",
+        "normalized": "radial-gradient(180px circle at var(--hero-rainbow-x) var(--hero-rainbow-y),#fff 0%,var(--sg-c15t-primary)c7 34%,#fff0 72%)"
+      },
+      {
+        "selector": ".new-brand-hero-rainbow-layer",
+        "value": "conic-gradient(from 90deg at var(--hero-rainbow-x) var(--hero-rainbow-y),#b588fe 0deg,#e7e67b 72deg,#7aff78 144deg,#fdac53 216deg,#ff69cc 288deg,#b588fe 360deg)",
+        "normalized": "conic-gradient(from 90deg at var(--hero-rainbow-x) var(--hero-rainbow-y),#b588fe 0deg,#e7e67b 72deg,#7aff78 144deg,#fdac53 216deg,#ff69cc 288deg,#b588fe 360deg)"
+      },
+      {
+        "selector": ".auc-bar",
+        "value": "linear-gradient(#143619 0%,#3f9038 42%,#e0a64e 82%,#f8bd63 100%)",
+        "normalized": "linear-gradient(#143619 0%,#3f9038 42%,#e0a64e 82%,#f8bd63 100%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "_R_inn9nb_-agents-trigger",
+        "label": "Agents",
+        "count": null,
+        "more": false,
+        "ariaControls": "_R_inn9nb_-panel"
+      },
+      {
+        "id": "_R_inn9nb_-workflows-trigger",
+        "label": "Workflows",
+        "count": null,
+        "more": false,
+        "ariaControls": "_R_inn9nb_-panel"
+      },
+      {
+        "id": "_R_inn9nb_-harness-trigger",
+        "label": "Harness",
+        "count": null,
+        "more": false,
+        "ariaControls": "_R_inn9nb_-panel"
+      },
+      {
+        "id": "_R_inn9nb_-memory-trigger",
+        "label": "Memory",
+        "count": null,
+        "more": false,
+        "ariaControls": "_R_inn9nb_-panel"
+      },
+      {
+        "id": "_R_inn9nb_-server-trigger",
+        "label": "Server",
+        "count": null,
+        "more": false,
+        "ariaControls": "_R_inn9nb_-panel"
+      }
+    ],
+    "views": [
+      {
+        "id": "_R_inn9nb_-panel",
+        "tabId": "_R_inn9nb_-agents-trigger",
+        "active": true,
+        "type": "generic"
+      },
+      {
+        "id": "_R_qnn9nb_-panel",
+        "tabId": "_R_qnn9nb_-evals-trigger",
+        "active": false,
+        "type": "generic"
+      }
+    ],
+    "modals": [],
+    "storyPanels": []
+  },
+  "data": {},
+  "interactions": [
+    {
+      "type": "click",
+      "trigger": "click",
+      "target": "summary:first-of-type",
+      "label": "FAQ toggle",
+      "component": "faq",
+      "scenarioIds": [
+        "faq-native-open"
+      ]
+    },
+    {
+      "type": "input",
+      "trigger": "input",
+      "target": "#email",
+      "label": "CTA email input",
+      "component": "cta",
+      "scenarioIds": [
+        "cta-email-input"
+      ]
+    },
+    {
+      "type": "click",
+      "trigger": "click",
+      "target": "#_R_inn9nb_-workflows-trigger",
+      "label": "Feature tab switch",
+      "component": "feature-tabs",
+      "scenarioIds": [
+        "feature-tab-workflows"
+      ]
+    },
+    {
+      "type": "explicit-handler",
+      "trigger": "keydown",
+      "target": "#_R_inn9nb_-agents-trigger",
+      "label": "Feature tab keyboard navigation",
+      "component": "feature-tabs",
+      "scenarioIds": [
+        "feature-tab-arrow-right"
+      ]
+    }
+  ],
+  "responsive": [],
+  "a11y": {},
+  "warnings": []
+}

@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "logo": "<svg>...</svg>",
+    "links": [
+      { "label": "Product", "href": "#product" },
+      { "label": "Docs", "href": "#docs" },
+      { "label": "Pricing", "href": "#pricing" },
+      { "label": "Blog", "href": "#blog" }
+    ],
+    "cta": { "label": "Get Started", "href": "#get-started" }
+  },
+  "hero": {
+    "badge": "New · v0.5",
+    "title": "Workflows. Memory. Harness.<br>Mastra agents have the tools<br>you need to ship fast.",
+    "subtitle": "TypeScript AI framework for building production-ready agents. Open source, extensible, and built for teams.",
+    "primaryCta": { "label": "Get Started", "href": "#get-started" },
+    "secondaryCta": { "label": "View on GitHub", "href": "#github" }
+  },
+  "tabs": [
+    { "id": "agents", "label": "Agents", "title": "Build sophisticated AI agents with ease", "desc": "Create agents with custom tools, memory, and context management.", "cta": "Explore Agents" },
+    { "id": "workflows", "label": "Workflows", "title": "Orchestrate complex multi-step workflows", "desc": "Define, execute, and monitor workflows that chain multiple AI calls.", "cta": "Explore Workflows" },
+    { "id": "harness", "label": "Harness", "title": "Test and evaluate your agents rigorously", "desc": "Built-in testing framework for AI agents. Run evals, measure performance.", "cta": "Explore Harness" },
+    { "id": "memory", "label": "Memory", "title": "Persistent context for your agents", "desc": "Give your agents long-term memory with semantic search.", "cta": "Explore Memory" },
+    { "id": "server", "label": "Server", "title": "Deploy agents as production APIs", "desc": "Expose your agents via REST APIs, WebSockets, or MCP servers.", "cta": "Explore Server" }
+  ],
+  "customerStories": [
+    { "title": "How Acme Corp built their AI support agent in 2 weeks", "desc": "From zero to production with Mastra.", "tag": "Case Study", "wide": true },
+    { "title": "StartupX scales customer onboarding with AI", "desc": "Automated 90% of manual onboarding tasks.", "tag": "Case Study", "wide": false },
+    { "title": "EnterpriseY transforms document processing", "desc": "Processing 10,000+ documents daily.", "tag": "Case Study", "wide": false }
+  ],
+  "faq": [
+    { "q": "What is Mastra?", "a": "Mastra is a TypeScript AI framework for building production-ready agents." },
+    { "q": "Is Mastra open source?", "a": "Yes, Mastra is open source and available on GitHub." }
+  ],
+  "cta": {
+    "title": "Empower your customers,<br>turbo-charge your company.",
+    "desc": "Mastra agents can do it all. Start building today.",
+    "placeholder": "Enter your email",
+    "button": "Get Started"
+  },
+  "footer": {
+    "brand": "Mastra",
+    "desc": "TypeScript AI Framework for Agents and Apps",
+    "columns": [
+      { "title": "Product", "links": [{ "label": "Agents", "href": "#agents" }, { "label": "Workflows", "href": "#workflows" }] },
+      { "title": "Resources", "links": [{ "label": "Documentation", "href": "#docs" }, { "label": "GitHub", "href": "#github" }] },
+      { "title": "Company", "links": [{ "label": "About", "href": "#about" }, { "label": "Contact", "href": "#contact" }] }
+    ],
+    "copyright": "© 2026 Mastra. All rights reserved.",
+    "social": [{ "label": "GitHub", "href": "#" }, { "label": "Twitter", "href": "#" }]
+  }
+}

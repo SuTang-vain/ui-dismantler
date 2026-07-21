@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "feature-tab-workflows",
+      "label": "切换 Workflows Tab（待参照 hydration）",
+      "candidate": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "#_R_inn9nb_-workflows-trigger",
+            "library": ".sg-tab[data-tab-id=workflows]"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#_R_inn9nb_-workflows-trigger",
+            "library": ".sg-tab[data-tab-id=workflows]"
+          },
+          "attributes": {
+            "aria-selected": "true"
+          }
+        }
+      ],
+      "covers": [
+        "feature-tab-switch"
+      ],
+      "notes": "原始页面离线 HTML 没有可执行 hydration，当前结果应保持 candidate，不进入 verified coverage。"
+    },
+    {
+      "id": "feature-tab-arrow-right",
+      "label": "键盘 ArrowRight 切换 Tab（待参照 hydration）",
+      "candidate": true,
+      "steps": [
+        {
+          "action": "key",
+          "target": {
+            "reference": "#_R_inn9nb_-agents-trigger",
+            "library": ".sg-tab[data-tab-id=agents]"
+          },
+          "key": "ArrowRight",
+          "code": "ArrowRight"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#_R_inn9nb_-workflows-trigger",
+            "library": ".sg-tab[data-tab-id=workflows]"
+          },
+          "focused": true
+        }
+      ],
+      "covers": [
+        "feature-tab-keyboard"
+      ],
+      "notes": "保留为候选，直到能提供原页面 hydration 或录制的状态证据。"
+    }
+  ]
+}

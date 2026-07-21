@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "faq-native-open",
+      "label": "打开第一个 FAQ",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "summary:first-of-type",
+            "library": "summary:first-of-type"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "details:first-of-type",
+            "library": "details:first-of-type"
+          },
+          "visible": true
+        }
+      ],
+      "covers": [
+        "faq-toggle"
+      ],
+      "notes": "details/summary 原生展开是当前离线参照与组件库都可验证的交互。"
+    },
+    {
+      "id": "cta-email-input",
+      "label": "填写 CTA 邮箱",
+      "steps": [
+        {
+          "action": "input",
+          "target": {
+            "reference": "#email",
+            "library": ".sg-cta-input"
+          },
+          "value": "research@example.com"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#email",
+            "library": ".sg-cta-input"
+          },
+          "value": "research@example.com"
+        }
+      ],
+      "covers": [
+        "cta-email-input"
+      ],
+      "notes": "仅验证输入状态，不宣称外部订阅 API 已接通。"
+    }
+  ]
+}
