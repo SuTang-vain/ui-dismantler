@@ -123,6 +123,18 @@ GlossaryExplorer.mount(document.getElementById('mount'), {
         v.check_data_separation()
         self.assertTrue(v.results[0][1], f"品牌名不应告警: {v.results[0][2]}")
 
+    def test_svg_namespace_url_is_structural_not_business_data(self):
+        """SVG namespace/schema URL 不应触发业务 URL 硬编码告警。"""
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + "\nvar SVG_NS = 'http://www.w3.org/2000/svg';",
+            "examples/case.html": '<!doctype html><html><body><div id="mount"></div><script src="../src/glossary.js"></script></body></html>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_data_separation()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
     def test_js_hardcoded_url_fail(self):
         """JS 硬编码 https URL（非变量引用）-> FAIL。"""
         v = _make_validator({

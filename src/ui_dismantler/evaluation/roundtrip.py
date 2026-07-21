@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import tempfile
 from pathlib import Path
 
 from bs4 import BeautifulSoup, NavigableString
@@ -144,33 +145,69 @@ def _is_dev_noise(text: str) -> bool:
 # 渲染 DOM：调 Node 渲染器拿 mount 后的 DOM
 # ============================================================
 def _run_renderer(html_path: Path, *renderer_args: str, timeout: int = 30) -> dict:
-    """运行统一 jsdom 渲染器并解析 JSON 协议。"""
+    """运行统一 jsdom 渲染器并解析 JSON 协议。
+
+    渲染后的 DOM 可能达到数 MB（尤其是原始 Tailwind/落地页）。因此默认
+    让 Node 将完整结果写入临时 JSON 文件，stdout 只保留小型元数据；未升级
+    的/被测试替身直接返回 JSON 时仍兼容旧协议。
+    """
+    result_path: Path | None = None
     try:
-        proc = subprocess.run(
-            ["node", str(RENDERER), str(html_path), *renderer_args],
-            capture_output=True,
-            timeout=timeout,
-            cwd=str(PROJECT_ROOT),
-            encoding="utf-8",
-            errors="replace",
-        )
-    except subprocess.TimeoutExpired:
-        return {"ok": False, "error": f"jsdom 渲染超时（{timeout}s）"}
-    if proc.returncode != 0:
-        return {
-            "ok": False,
-            "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}",
-            "stderr": proc.stderr[:400],
-        }
-    try:
-        return json.loads(proc.stdout)
-    except json.JSONDecodeError as exc:
-        return {
-            "ok": False,
-            "error": f"渲染器输出非 JSON: {exc}",
-            "stderr": proc.stderr[:400],
-            "raw": proc.stdout[:200],
-        }
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".roundtrip.json", prefix="ui-dismantler-", delete=False
+        ) as handle:
+            result_path = Path(handle.name)
+        command = [
+            "node", str(RENDERER), str(html_path), *renderer_args,
+            "--result-file", str(result_path),
+        ]
+        try:
+            proc = subprocess.run(
+                command,
+                capture_output=True,
+                timeout=timeout,
+                cwd=str(PROJECT_ROOT),
+                encoding="utf-8",
+                errors="replace",
+            )
+        except subprocess.TimeoutExpired:
+            return {"ok": False, "error": f"jsdom 渲染超时（{timeout}s）"}
+
+        if proc.returncode != 0:
+            return {
+                "ok": False,
+                "error": f"node 退出码 {proc.returncode}: {proc.stderr[:200]}",
+                "stderr": proc.stderr[:400],
+            }
+        stdout = proc.stdout.strip()
+        try:
+            metadata = json.loads(stdout) if stdout else {}
+        except json.JSONDecodeError as exc:
+            return {
+                "ok": False,
+                "error": f"渲染器输出非 JSON: {exc}",
+                "stderr": proc.stderr[:400],
+                "raw": stdout[:200],
+            }
+        if result_path.exists() and metadata.get("protocol") == "roundtrip-result-file-v1":
+            raw = result_path.read_text(encoding="utf-8", errors="replace")
+            try:
+                return json.loads(raw)
+            except json.JSONDecodeError as exc:
+                return {
+                    "ok": False,
+                    "status": "inconclusive",
+                    "comparable": False,
+                    "error": f"结果文件 JSON 不完整: {exc}",
+                    "stderr": proc.stderr[:400],
+                    "result_file": str(result_path),
+                    "result_bytes": len(raw.encode("utf-8")),
+                }
+        # Compatibility with old renderer output and unit-test substitutes.
+        return metadata
+    finally:
+        if result_path:
+            result_path.unlink(missing_ok=True)
 
 
 def _scenario_renderer_args(
@@ -253,7 +290,11 @@ def resolve_reference_dom(
     rendered = render_reference_dom(html_path, width=width, height=height)
     rendered["requested_mode"] = mode
     rendered["fallback"] = False
-    if rendered.get("ok") or mode == "rendered":
+    if rendered.get("ok"):
+        return rendered
+    if mode == "rendered":
+        rendered.setdefault("status", "inconclusive")
+        rendered["comparable"] = False
         return rendered
 
     static = extract_reference_dom(html_path)
@@ -264,6 +305,12 @@ def resolve_reference_dom(
         "runtime_errors": rendered.get("runtimeErrors", []),
         "missing_files": rendered.get("missingFiles", []),
     })
+    if not static.get("dom"):
+        static.update({
+            "status": "inconclusive",
+            "comparable": False,
+            "error": "运行态参照失败且静态回退没有可比较 DOM",
+        })
     return static
 
 
@@ -421,8 +468,49 @@ def _validate_scenario_assertion(
 
 
 def score_comparison(reference: dict, library: dict) -> dict:
-    """对任一初始/场景状态执行与主报告一致的评分。"""
+    """对任一初始/场景状态执行与主报告一致的评分。
+
+    参照 DOM 不可比较时必须返回 ``scores: null``，而不是把失败伪装成
+    0 分。这样大页面渲染失败、结果 JSON 截断或只有一个根节点时不会被
+    误判为组件质量退化。
+    """
+    if reference.get("status") == "inconclusive" or reference.get("comparable") is False:
+        return {
+            "status": "inconclusive",
+            "comparable": False,
+            "reason": reference.get("error", "参照 DOM 不可比较"),
+            "structure": None,
+            "text": None,
+            "scores": None,
+            "class_coverage": library.get("classCoverage"),
+        }
+    if not reference.get("ok") or not library.get("ok"):
+        reason = reference.get("error") or library.get("error") or "渲染失败"
+        return {
+            "status": "inconclusive",
+            "comparable": False,
+            "reason": reason,
+            "structure": None,
+            "text": None,
+            "scores": None,
+            "class_coverage": library.get("classCoverage"),
+        }
     structure = compare_structure(reference, library)
+    # compare_structure may intentionally unwrap a multi-root body to its
+    # semantic entry node. Only call it inconclusive when the serialized
+    # reference itself is genuinely tiny; otherwise retain the diagnostic
+    # structure score instead of hiding a real (possibly low) comparison.
+    reference_node_count = reference.get("serializedNodes", reference.get("node_count", 0))
+    if structure.get("ref_nodes", 0) <= 1 and reference_node_count <= 1:
+        return {
+            "status": "inconclusive",
+            "comparable": False,
+            "reason": "参照 DOM 只有一个可比较节点（ref_nodes <= 1）",
+            "structure": structure,
+            "text": None,
+            "scores": None,
+            "class_coverage": library.get("classCoverage"),
+        }
     text = compare_texts(reference, library)
     structure_score = (
         structure.get("node_match_rate", 0) + structure.get("class_match_rate", 0)
@@ -433,6 +521,8 @@ def score_comparison(reference: dict, library: dict) -> dict:
         "overall": round((structure_score + text.get("text_match_rate", 0)) * 0.5, 3),
     }
     return {
+        "status": "comparable",
+        "comparable": True,
         "structure": structure,
         "text": text,
         "scores": scores,
@@ -482,14 +572,19 @@ def evaluate_scenario_matrix(
             "reference_error": reference.get("error"),
             "library_error": library.get("error"),
         }
-        if reference.get("ok") and library.get("ok"):
-            state.update(score_comparison(reference, library))
-            state["passed"] = state["scores"]["overall"] >= threshold
-        else:
-            state["scores"] = {"structure": 0.0, "text": 0.0, "overall": 0.0}
-            state["passed"] = False
+        comparison = score_comparison(reference, library)
+        state.update(comparison)
+        state["passed"] = bool(
+            comparison.get("comparable")
+            and comparison.get("scores")
+            and comparison["scores"].get("overall", 0.0) >= threshold
+        )
         states.append(state)
-    overalls = [state["scores"]["overall"] for state in states]
+    overalls = [
+        state["scores"]["overall"]
+        for state in states
+        if isinstance(state.get("scores"), dict) and isinstance(state["scores"].get("overall"), (int, float))
+    ]
     return {
         "schemaVersion": "1.0",
         "source": str(scenario_file),
@@ -498,6 +593,8 @@ def evaluate_scenario_matrix(
         "passed": sum(1 for state in states if state["passed"]),
         "avgOverall": round(sum(overalls) / len(overalls), 3) if overalls else 0.0,
         "minOverall": min(overalls, default=0.0),
+        "comparable": all(state.get("comparable") is True for state in states),
+        "status": "comparable" if all(state.get("comparable") is True for state in states) else "inconclusive",
         "states": states,
     }
 
@@ -568,10 +665,14 @@ def compare_structure(ref: dict, got: dict) -> dict:
             if len(ch) == 1:
                 node = ch[0]
                 continue
-            # 多子：找第一个带 class 的子节点（跳过 #text 等噪音）
+            # 多子：找第一个有语义 class 的子节点；跳过隐藏/辅助
+            # 噪音节点（例如原页面的 sf-hidden），否则参照会被压缩成
+            # 一个隐藏占位节点，造成 ref_nodes=1 的假象。
             picked = None
+            hidden_tokens = {"hidden", "sf-hidden", "sr-only", "screen-reader-only"}
             for c in ch:
-                if c.get("tag") != "#text" and c.get("classes"):
+                classes = set(c.get("classes", []) or [])
+                if c.get("tag") != "#text" and classes and not classes.intersection(hidden_tokens):
                     picked = c
                     break
             node = picked if picked else ch[0]

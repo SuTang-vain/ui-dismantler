@@ -6,7 +6,7 @@
 //
 // 本地 CSS/JS 会按 DOM 顺序内联；远程资源不会发起网络请求。
 
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
@@ -15,6 +15,7 @@ const htmlPath = args[0];
 const isReference = args.includes('--ref');
 const scenarioFile = readStringArg('--scenario-file');
 const scenarioId = readStringArg('--scenario-id');
+const resultFile = readStringArg('--result-file');
 const selectedScenario = loadScenario(scenarioFile, scenarioId);
 const defaultWidth = readPositiveIntArg('--width', 1024);
 const defaultHeight = readPositiveIntArg('--height', 768);
@@ -61,7 +62,31 @@ function loadScenario(path, id) {
 }
 
 function output(value) {
-  console.log(JSON.stringify(value));
+  const serialized = JSON.stringify(value);
+  if (!resultFile) {
+    console.log(serialized);
+    return;
+  }
+  const absoluteResultFile = resolve(resultFile);
+  try {
+    writeFileSync(absoluteResultFile, serialized, 'utf-8');
+    // Keep stdout deliberately tiny. Large rendered DOMs can exceed the
+    // parent process transport limit; the parent reads the complete JSON file.
+    console.log(JSON.stringify({
+      ok: true,
+      protocol: 'roundtrip-result-file-v1',
+      resultFile: absoluteResultFile,
+      resultBytes: Buffer.byteLength(serialized, 'utf-8'),
+    }));
+  } catch (error) {
+    console.log(JSON.stringify({
+      ok: false,
+      protocol: 'roundtrip-result-file-v1',
+      status: 'inconclusive',
+      comparable: false,
+      error: `结果文件写入失败: ${String(error && error.message || error)}`,
+    }));
+  }
 }
 
 function cleanResourcePath(resource) {

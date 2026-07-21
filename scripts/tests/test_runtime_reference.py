@@ -77,6 +77,35 @@ class TestRenderedReference(unittest.TestCase):
         self.assertEqual(result["mode"], "reference")
         self.assertFalse(result["fallback"])
 
+    def test_large_result_uses_file_protocol_without_stdout_truncation(self):
+        """大 DOM 结果写入文件，stdout 只保留协议元数据。"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            html = root / "large.html"
+            result_file = root / "result.json"
+            html.write_text(
+                "<!doctype html><body>"
+                + "".join(f"<p>{'x' * 400}</p>" for _ in range(3500))
+                + "</body>",
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [
+                    "node", str(rt.RENDERER), str(html), "--ref",
+                    "--result-file", str(result_file),
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            metadata = json.loads(proc.stdout)
+            self.assertEqual(metadata["protocol"], "roundtrip-result-file-v1")
+            self.assertLess(len(proc.stdout), 1024)
+            self.assertGreater(result_file.stat().st_size, 64 * 1024)
+            payload = json.loads(result_file.read_text(encoding="utf-8"))
+            self.assertTrue(payload["ok"])
+            self.assertGreater(payload["serializedNodes"], 3000)
+
     def test_missing_local_resource_is_reported(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             html = Path(temp_dir) / "missing.html"

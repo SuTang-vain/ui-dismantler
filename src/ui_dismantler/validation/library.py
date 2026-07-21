@@ -74,8 +74,9 @@ class LibValidator:
                 for cls in re.findall(r"\.([a-z][\w-]*)", subject):
                     if cls.lower() in generic_words:
                         issues.append(f"无前缀类 .{cls}（应改为 .sg-{cls}）")
-        # JS 全局对象 window.<X>
-        if not re.search(r"global\.\w+\s*=\s*API", self.js) and not re.search(r"window\.\w+\s*=", self.js):
+        # JS 全局对象 window.<X>/global.<X>；IIFE 类 API 也允许
+        # `Mastra.mount = function` 这种静态工厂导出形式。
+        if not re.search(r"(?:global|window)\.\w+\s*=", self.js):
             issues.append("JS 未暴露全局对象 window.<LibName>")
         # DOM id 前缀（认单/双引号）
         for html in self.html_files:
@@ -105,16 +106,23 @@ class LibValidator:
     # ---------- 3. 数据分离 ----------
     def check_data_separation(self):
         issues = []
-        # 1) JS 中不应硬编码业务 URL（http）
-        # 排除注释和模板字符串里的 src 拼接
+        # 1) JS 中不应硬编码业务 URL（http）。SVG namespace/schema URL
+        # 是结构性协议常量，不属于业务数据，必须与业务 URL 分开处理。
+        structural_urls = {
+            "http://www.w3.org/2000/svg",
+            "http://www.w3.org/1999/xlink",
+        }
         for m in re.finditer(r'https?://[^\s"\'`]+', self.js):
+            url = m.group(0).rstrip("),;]")
+            if url in structural_urls:
+                continue
             ctx = self.js[max(0, m.start()-30):m.end()+10]
             # 允许：在 .src = 赋值中从 options 取值的模板，或注释
             if "//" in ctx[:30] or "/*" in ctx[:30]:
                 continue
             # 检查是否是硬编码（非 w.img / m.img 等变量引用）
             if not re.search(r"[\w.]+\.(img|src)\s*[,;)]", ctx):
-                issues.append(f"JS 疑似硬编码 URL: {m.group()[:50]}...")
+                issues.append(f"JS 疑似硬编码 URL: {url[:50]}...")
                 if len(issues) >= 5:
                     break
         # 2) examples HTML 的 DOM 不应硬编码业务文案
@@ -373,11 +381,11 @@ class LibValidator:
     def check_gold_quality(self):
         issues = []
         # Stable reusable-library API. A case-specific mount-only wrapper is not a gold library.
-        if not re.search(r"\bmount\s*:\s*function\b", self.js):
+        if not re.search(r"(?:\bmount\s*:\s*function\b|\bmount\s*=\s*function\b)", self.js):
             issues.append("全局 API 缺少 mount(container, options)")
-        if not re.search(r"\bcreate\s*:\s*function\b", self.js):
+        if not re.search(r"(?:\bcreate\s*:\s*function\b|\bcreate\s*=\s*function\b)", self.js):
             issues.append("全局 API 缺少 create(options)")
-        if not re.search(r'\bversion\s*:\s*["\'][^"\']+["\']', self.js):
+        if not re.search(r'(?:\bversion\s*:\s*["\'][^"\']+["\']|\bversion\s*=\s*["\'][^"\']+["\'])', self.js):
             issues.append("全局 API 缺少 version")
 
         readme = self.dir / "README.md"

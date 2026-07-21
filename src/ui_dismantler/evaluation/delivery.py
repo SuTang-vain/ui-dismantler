@@ -111,15 +111,9 @@ def verify_delivery(
     template_passed = bool(template_render.get("ok") and template_render.get("childCount", 0) > 0)
     if not template_passed:
         errors.append(template_render.get("error") or "template.html did not mount a visible component root")
-    if ref.get("ok") and got.get("ok"):
-        initial = score_comparison(ref, got)
-    else:
-        initial = {
-            "structure": {"error": ref.get("error") or got.get("error")},
-            "text": {"text_match_rate": 0.0},
-            "scores": {"structure": 0.0, "text": 0.0, "overall": 0.0},
-        }
-        errors.append(ref.get("error") or got.get("error") or "render failed")
+    initial = score_comparison(ref, got)
+    if not initial.get("comparable"):
+        errors.append(initial.get("reason") or ref.get("error") or got.get("error") or "render failed")
 
     scenarios = load_scenario_matrix(scenarios_path) if scenarios_path else []
     scenario_matrix = None
@@ -175,7 +169,12 @@ def verify_delivery(
         class_coverage["threshold"] = class_coverage_threshold
         class_coverage["passed"] = class_coverage_passed
         initial["class_coverage"] = class_coverage
-    score_passed = initial["scores"]["overall"] >= overall_threshold
+    comparable = initial.get("comparable", initial.get("status") != "inconclusive")
+    score_passed = bool(
+        comparable
+        and isinstance(initial.get("scores"), dict)
+        and initial["scores"].get("overall", 0.0) >= overall_threshold
+    )
     total_ms = sum(timings.values())
     regression = {"compared": False, "passed": True}
     if baseline_report:
@@ -186,9 +185,14 @@ def verify_delivery(
         score_regression_passed = True
         for metric in ("structure", "text", "overall"):
             previous = float(baseline_scores.get(metric, 0.0))
-            current = float(initial["scores"].get(metric, 0.0))
-            delta = round(current - previous, 3)
-            metric_passed = delta >= -max_score_drop
+            current_value = initial.get("scores", {})
+            current = (
+                float(current_value.get(metric))
+                if isinstance(current_value, dict) and current_value.get(metric) is not None
+                else None
+            )
+            delta = round(current - previous, 3) if current is not None else None
+            metric_passed = delta is not None and delta >= -max_score_drop
             score_regression_passed = score_regression_passed and metric_passed
             score_checks[metric] = {
                 "baseline": previous,

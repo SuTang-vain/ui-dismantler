@@ -186,7 +186,9 @@ class TestScenarioExecution(unittest.TestCase):
         self.assertEqual(matrix["passed"], 0)
         self.assertFalse(matrix["states"][0]["reference_ok"])
         self.assertFalse(matrix["states"][0]["library_ok"])
-        self.assertEqual(matrix["states"][0]["scores"]["overall"], 0.0)
+        self.assertIsNone(matrix["states"][0]["scores"])
+        self.assertEqual(matrix["states"][0]["status"], "inconclusive")
+        self.assertFalse(matrix["states"][0]["comparable"])
 
 
 class TestExplicitExampleSelection(unittest.TestCase):
