@@ -29,6 +29,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--skill-dir", default=str(SKILL_DIR_DEFAULT), help="skill 目录（默认 src/skill，仅用于定位渲染器）")
     ap.add_argument("--lib", help="已生成组件库目录（必填：agent 产出的库，不再走 v1 模板链路）")
     ap.add_argument(
+        "--example",
+        help="组件库中的主案例 HTML（相对 --lib 或绝对路径）；不传时兼容旧的排序选择",
+    )
+    ap.add_argument(
         "--reference-mode",
         choices=("auto", "rendered", "static"),
         default="auto",
@@ -109,11 +113,31 @@ def main(argv: list[str] | None = None) -> int:
         if not lib_dir.is_dir():
             print(f"ERROR: 组件库目录不存在: {lib_dir}", file=sys.stderr)
             return 2
+        example_path = None
+        if args.example:
+            example_path = Path(args.example)
+            if not example_path.is_absolute():
+                example_path = lib_dir / example_path
+            example_path = example_path.resolve()
+            examples_root = (lib_dir / "examples").resolve()
+            if not example_path.is_file() or example_path.suffix.lower() != ".html":
+                print(f"ERROR: --example 不是 HTML 文件: {example_path}", file=sys.stderr)
+                return 2
+            if examples_root not in example_path.parents:
+                print(f"ERROR: --example 必须位于 {examples_root} 下: {example_path}", file=sys.stderr)
+                return 2
         print(f"[2/3] 使用组件库: {lib_dir}", file=sys.stderr)
+        if example_path:
+            print(f"      主案例: {example_path}", file=sys.stderr)
 
         # 3. 渲染 + 对比
         print(f"[3/3] jsdom 渲染 + 对比 ...", file=sys.stderr)
-        got = render_generated_dom(lib_dir, width=args.width, height=args.height)
+        got = render_generated_dom(
+            lib_dir,
+            width=args.width,
+            height=args.height,
+            example=example_path,
+        )
         initial = score_comparison(ref, got)
         report = {
             "case": html_path.name,
@@ -131,6 +155,7 @@ def main(argv: list[str] | None = None) -> int:
                 "viewport": ref.get("viewport", {"width": args.width, "height": args.height}),
             },
             "library": {
+                "example": str(example_path) if example_path else None,
                 "runtime_errors": got.get("runtimeErrors", []),
                 "missing_files": got.get("missingFiles", []),
                 "remote_resources": got.get("remoteResources", []),
@@ -149,6 +174,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.width,
                 args.height,
                 args.state_threshold,
+                example=example_path,
             )
         if manifest_file:
             report["interaction_coverage"] = compute_interaction_coverage(

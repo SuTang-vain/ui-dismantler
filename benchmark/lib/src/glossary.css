@@ -353,8 +353,8 @@ body {
   background: var(--sg-paper);
   transition: opacity var(--sg-dur-fast) var(--sg-ease);
 }
-.sg-whatif-card.real { border-color: var(--sg-accent-2); }
-.sg-whatif-card.alt { border-color: var(--sg-accent); }
+.sg-whatif-card.sg-real { border-color: var(--sg-accent-2); }
+.sg-whatif-card.sg-alt { border-color: var(--sg-accent); }
 .sg-whatif-card h3 {
   font-size: 0.95rem;
   font-weight: 700;
@@ -374,11 +374,11 @@ body {
   font-weight: 600;
   margin-bottom: 8px;
 }
-.sg-whatif-card.real .sg-tag {
+.sg-whatif-card.sg-real .sg-tag {
   background: var(--sg-success-bg);
   color: var(--sg-accent-2);
 }
-.sg-whatif-card.alt .sg-tag {
+.sg-whatif-card.sg-alt .sg-tag {
   background: var(--sg-soft-accent);
   color: var(--sg-accent);
 }
@@ -409,8 +409,8 @@ body {
   stroke: var(--sg-primary);
   stroke-width: 2;
 }
-.sg-graph-container .sg-node.center circle { fill: var(--sg-primary); }
-.sg-graph-container .sg-node.center text { fill: var(--sg-paper); }
+.sg-graph-container .sg-node.sg-center circle { fill: var(--sg-primary); }
+.sg-graph-container .sg-node.sg-center text { fill: var(--sg-paper); }
 .sg-graph-info {
   margin-top: 12px;
   padding: 12px;

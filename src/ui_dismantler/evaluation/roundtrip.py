@@ -190,14 +190,30 @@ def render_generated_dom(
     height: int = 768,
     scenario_file: Path | None = None,
     scenario_id: str | None = None,
+    example: Path | None = None,
 ) -> dict:
-    """用 jsdom 执行生成库 example.html 的 mount，返回渲染后 DOM。"""
+    """用 jsdom 执行指定组件库 example 的 mount，返回渲染后 DOM。
+
+    ``example`` 未提供时保留旧的第一个 HTML 行为；完整案例验证应显式传入
+    ``examples/<case>.html``，避免新增 template.html 后因文件名排序而选错入口。
+    """
     examples = sorted(lib_dir.glob("examples/*.html"))
     if not examples:
         return {"ok": False, "error": f"{lib_dir}/examples/ 下无 HTML"}
-    example = examples[0]
+    if example is None:
+        selected = examples[0]
+    else:
+        selected = Path(example)
+        if not selected.is_absolute():
+            selected = lib_dir / selected
+        selected = selected.resolve()
+        if selected not in {candidate.resolve() for candidate in examples}:
+            return {
+                "ok": False,
+                "error": f"指定 example 不在 {lib_dir}/examples/ 下: {selected}",
+            }
     return _run_renderer(
-        example,
+        selected,
         "--width", str(width),
         "--height", str(height),
         *_scenario_renderer_args(scenario_file, scenario_id),
@@ -416,7 +432,12 @@ def score_comparison(reference: dict, library: dict) -> dict:
         "text": text.get("text_match_rate", 0),
         "overall": round((structure_score + text.get("text_match_rate", 0)) * 0.5, 3),
     }
-    return {"structure": structure, "text": text, "scores": scores}
+    return {
+        "structure": structure,
+        "text": text,
+        "scores": scores,
+        "class_coverage": library.get("classCoverage"),
+    }
 
 
 def evaluate_scenario_matrix(
@@ -427,6 +448,7 @@ def evaluate_scenario_matrix(
     default_width: int,
     default_height: int,
     threshold: float,
+    example: Path | None = None,
 ) -> dict:
     """在独立页面实例中对称执行每个场景并逐状态评分。"""
     states: list[dict] = []
@@ -447,6 +469,7 @@ def evaluate_scenario_matrix(
             height=height,
             scenario_file=scenario_file,
             scenario_id=scenario["id"],
+            example=example,
         )
         state = {
             "id": scenario["id"],

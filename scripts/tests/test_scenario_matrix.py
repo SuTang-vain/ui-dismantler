@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 # 优先 import 规范包（subprocess 调用走 cli 模块，patch 需要作用于业务模块本身）
 _SRC = os.path.join(os.path.dirname(__file__), "..", "..", "src")
@@ -186,6 +187,37 @@ class TestScenarioExecution(unittest.TestCase):
         self.assertFalse(matrix["states"][0]["reference_ok"])
         self.assertFalse(matrix["states"][0]["library_ok"])
         self.assertEqual(matrix["states"][0]["scores"]["overall"], 0.0)
+
+
+class TestExplicitExampleSelection(unittest.TestCase):
+    """template.html 不应改变主案例 roundtrip 的入口选择。"""
+
+    def test_render_generated_dom_uses_explicit_example(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            examples = root / "examples"
+            examples.mkdir()
+            case = examples / "case.html"
+            template = examples / "template.html"
+            case.write_text("<!doctype html>", encoding="utf-8")
+            template.write_text("<!doctype html>", encoding="utf-8")
+            with patch.object(rt, "_run_renderer", return_value={"ok": True}) as renderer:
+                result = rt.render_generated_dom(root, example=case)
+            self.assertTrue(result["ok"])
+            self.assertEqual(renderer.call_args.args[0], case.resolve())
+
+    def test_explicit_example_must_be_inside_examples(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            examples = root / "examples"
+            examples.mkdir()
+            case = examples / "case.html"
+            case.write_text("<!doctype html>", encoding="utf-8")
+            outside = root / "outside.html"
+            outside.write_text("<!doctype html>", encoding="utf-8")
+            result = rt.render_generated_dom(root, example=outside)
+            self.assertFalse(result["ok"])
+            self.assertIn("不在", result["error"])
 
 
 class TestScenarioRoundtrip(unittest.TestCase):

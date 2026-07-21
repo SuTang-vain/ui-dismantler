@@ -233,8 +233,39 @@ const SKIP_TAGS = new Set(['script', 'style', 'link', 'meta', 'title', 'head']);
 const MAX_NODES = 5000;
 const MAX_DEPTH = 40;
 
+/**
+ * Collect class names declared by the loaded CSS rules. This is diagnostic
+ * evidence for the roundtrip report, not a replacement for visual review.
+ * Nested @media/@supports rules are traversed recursively; inaccessible
+ * cross-origin sheets are ignored without failing the render.
+ */
+function collectCssClassSelectors(document) {
+  const cssClasses = new Set();
+  function visitRules(rules) {
+    if (!rules) return;
+    for (const rule of rules) {
+      if (rule.selectorText) {
+        for (const match of rule.selectorText.matchAll(/\.([A-Za-z][\w-]*)/g)) {
+          cssClasses.add(match[1]);
+        }
+      }
+      if (rule.cssRules && rule.cssRules.length) visitRules(rule.cssRules);
+    }
+  }
+  try {
+    for (const sheet of document.styleSheets || []) {
+      try { visitRules(sheet.cssRules || sheet.rules); } catch (error) { /* cross-origin */ }
+    }
+  } catch (error) { /* styleSheets unavailable */ }
+  return cssClasses;
+}
+
 function serialize(root) {
   let nodeCount = 0;
+  const cssClasses = collectCssClassSelectors(root.ownerDocument);
+  let totalClassUses = 0;
+  let coveredClassUses = 0;
+  const missingClasses = new Set();
 
   function visit(node, depth = 0) {
     if (nodeCount >= MAX_NODES || depth > MAX_DEPTH) return null;
@@ -249,6 +280,15 @@ function serialize(root) {
     if (SKIP_TAGS.has(tag)) return null;
     nodeCount += 1;
     const classes = (node.getAttribute('class') || '').split(/\s+/).filter(Boolean);
+    for (const cls of classes) {
+      // Only the library-owned sg-* namespace is part of this contract.
+      // Data/status modifiers such as .real/.alt/.center may intentionally be
+      // unprefixed descendants of an sg-* component and are not orphan classes.
+      if (!cls.startsWith('sg-')) continue;
+      totalClassUses += 1;
+      if (cssClasses.has(cls)) coveredClassUses += 1;
+      else missingClasses.add(cls);
+    }
     const children = [];
     for (const child of node.childNodes) {
       const result = visit(child, depth + 1);
@@ -263,7 +303,18 @@ function serialize(root) {
     return result;
   }
 
-  return { tree: visit(root), nodeCount };
+  const tree = visit(root);
+  const rate = totalClassUses > 0 ? coveredClassUses / totalClassUses : 1.0;
+  return {
+    tree,
+    nodeCount,
+    classCoverage: {
+      rate: Math.round(rate * 1000) / 1000,
+      totalClassUses,
+      coveredClassUses,
+      missingClasses: [...missingClasses].sort(),
+    },
+  };
 }
 
 function collectTexts(root) {
@@ -537,6 +588,7 @@ try {
     childCount: root.children.length,
     dom: serialized.tree,
     serializedNodes: serialized.nodeCount,
+    classCoverage: serialized.classCoverage,
     texts,
     textCount: texts.length,
     runtimeErrors: [...(window.__roundtripErrors || []), ...jsdomErrors].slice(0, 5),
