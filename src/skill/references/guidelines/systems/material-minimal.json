@@ -1,3 +1,41 @@
 [
-  {"id":"system.spacing.sibling-consistency","version":"0.1.0","scope":"group","category":"spacing","constraint":"soft","severity":"warning","protected":false,"states":["default"],"viewports":["desktop","wise"],"detector":{"type":"hybrid","name":"spacing-consistency"},"evidenceRequired":["uiir","render"],"repairStrategy":"shared-token","appliesWhen":{"nodeTypes":["region","component"]},"source":{"profile":"material-minimal","reference":"Material Design 3 Layout"}}
+  {
+    "id": "system.spacing.sibling-consistency",
+    "version": "0.1.0",
+    "scope": "group",
+    "category": "spacing",
+    "constraint": "soft",
+    "severity": "warning",
+    "protected": false,
+    "states": [
+      "default"
+    ],
+    "viewports": [
+      "desktop",
+      "wise"
+    ],
+    "detector": {
+      "type": "hybrid",
+      "name": "spacing-consistency",
+      "options": {
+        "toleranceCssPx": 1.0,
+        "minimumSiblings": 3
+      }
+    },
+    "evidenceRequired": [
+      "uiir",
+      "render"
+    ],
+    "repairStrategy": "shared-token",
+    "appliesWhen": {
+      "nodeTypes": [
+        "region",
+        "component"
+      ]
+    },
+    "source": {
+      "profile": "material-minimal",
+      "reference": "Material Design 3 Layout diagnostic; bounded homogeneous no-wrap flex siblings only"
+    }
+  }
 ]

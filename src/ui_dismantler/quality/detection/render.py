@@ -5,10 +5,11 @@ from typing import Any
 from ..colors import resolved_text_contrast
 from ..focus import analyze_focus_indicator
 from ..states import controlled_visibility_consistency, invalid_aria_states, state_transition_consistency
+from ..spacing import analyze_sibling_spacing
 from ..schema import validate_render_observation, validate_state_transition
 
 TRANSITION_DETECTORS = {"render-aria-state-token", "render-controlled-state-transition"}
-RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow", "render-aria-state-token", "render-controlled-visibility"}
+RENDER_DETECTORS = {"render-click-target-minimum", "render-viewport-clipping", "render-text-contrast", "render-focus-visible", "render-keyboard-reachable", "render-positive-tabindex", "render-reflow-horizontal-overflow", "render-aria-state-token", "render-controlled-visibility", "spacing-consistency"}
 
 
 def _finding(guideline: dict[str, Any], observation: dict[str, Any], message: str, observed: dict[str, Any]) -> dict[str, Any]:
@@ -164,6 +165,26 @@ def inspect_render_findings(
                         guideline, observation,
                         "Positive tabindex overrides the document's natural sequential focus order",
                         {"tabIndex": tab_index},
+                    ))
+            elif detector == "spacing-consistency":
+                allowed_types = set((guideline.get("appliesWhen") or {}).get("nodeTypes") or [])
+                if observation.get("targetType") not in allowed_types:
+                    continue
+                spacing, uncertainty = analyze_sibling_spacing(
+                    observation.get("spacingContext"),
+                    tolerance_css_px=float(options.get("toleranceCssPx", 1.0)),
+                    minimum_siblings=int(options.get("minimumSiblings", 3)),
+                )
+                if uncertainty:
+                    skipped.append({
+                        "guidelineId": guideline["id"], "targetKey": observation["targetKey"],
+                        "viewportKey": observation.get("viewportKey"), "reason": uncertainty,
+                    })
+                    continue
+                if spacing and spacing["inconsistent"]:
+                    findings.append(_finding(
+                        guideline, observation,
+                        "Sibling spacing differs beyond the configured tolerance", spacing,
                     ))
             elif detector == "render-aria-state-token":
                 invalid = invalid_aria_states(observation.get("stateContext"))

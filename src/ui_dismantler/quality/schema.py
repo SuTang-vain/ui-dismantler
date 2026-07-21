@@ -181,6 +181,8 @@ def validate_render_observation(value: Any) -> list[str]:
     errors: list[str] = []
     if not _text(value.get("targetKey")):
         errors.append("targetKey must be a non-empty string")
+    if "targetType" in value and value["targetType"] not in {"", "element", "component", "region"}:
+        errors.append("targetType must be element, component, region, or empty")
     viewport = value.get("viewport")
     if not isinstance(viewport, dict):
         errors.append("viewport must be an object")
@@ -266,6 +268,34 @@ def validate_render_observation(value: Any) -> list[str]:
                             item = container[field]
                             if isinstance(item, bool) or not isinstance(item, (int, float)) or item < 0:
                                 errors.append(f"layoutContext.horizontalScrollContainer.{field} must be non-negative numeric")
+    if "spacingContext" in value:
+        spacing = value["spacingContext"]
+        if not isinstance(spacing, dict):
+            errors.append("spacingContext must be an object")
+        else:
+            for field in ("display", "flexDirection", "flexWrap", "rowGap", "columnGap"):
+                if field in spacing and not isinstance(spacing[field], str):
+                    errors.append(f"spacingContext.{field} must be a string")
+            if "childrenTruncated" in spacing and not isinstance(spacing["childrenTruncated"], bool):
+                errors.append("spacingContext.childrenTruncated must be boolean")
+            children = spacing.get("children", [])
+            if not isinstance(children, list) or any(not isinstance(item, dict) for item in children):
+                errors.append("spacingContext.children must be an array of objects")
+            else:
+                for index, child in enumerate(children):
+                    if isinstance(child.get("index"), bool) or not isinstance(child.get("index"), int) or child["index"] < 0:
+                        errors.append(f"spacingContext.children[{index}].index must be a non-negative integer")
+                    for field in ("tag", "role", "position", "transform", "marginTop", "marginRight", "marginBottom", "marginLeft"):
+                        if field in child and not isinstance(child[field], str):
+                            errors.append(f"spacingContext.children[{index}].{field} must be a string")
+                    bounds = child.get("bounds")
+                    if not isinstance(bounds, dict):
+                        errors.append(f"spacingContext.children[{index}].bounds must be an object")
+                    else:
+                        for field in ("x", "y", "width", "height"):
+                            item = bounds.get(field)
+                            if isinstance(item, bool) or not isinstance(item, (int, float)):
+                                errors.append(f"spacingContext.children[{index}].bounds.{field} must be numeric")
     if "keyboardContext" in value:
         keyboard = value["keyboardContext"]
         if not isinstance(keyboard, dict):

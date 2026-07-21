@@ -56,4 +56,9 @@ Render Observation 现在为每个显式目标记录 `aria-expanded`、`aria-sel
 
 ## Acceptance Gate
 
-能力覆盖、Profile-scoped inspect readiness、真实浏览器验证状态与自动修复阻断条件见 [`quality-capability-matrix.md`](quality-capability-matrix.md)。`web-base` 当前 inspect-ready；`material-accessible` 因 spacing detector 尚未实现而 blocked。`observe_quality_render --browser chromium|webkit|firefox` 可显式选择验证引擎。两个 Profile 的 repair gate 都必须保持 blocked。
+能力覆盖、Profile-scoped inspect readiness、真实浏览器验证状态与自动修复阻断条件见 [`quality-capability-matrix.md`](quality-capability-matrix.md)。`web-base` 与 `material-accessible` 当前均 inspect-ready。`observe_quality_render --browser chromium|webkit|firefox` 可显式选择验证引擎。两个 Profile 的 repair gate 都必须保持 blocked。
+
+
+## Material sibling spacing
+
+`system.spacing.sibling-consistency` 仅分析 UI-IR 明确标记的 region/component 中，至少 3 个同质、可见、直接、no-wrap flex 子元素的实际几何间距。容差默认 1 CSS px。换行、grid、异质子元素、transform、绝对/固定定位、重叠、截断和子元素不足全部写入 `diagnostics.renderSkipped`。Material Profile 将该 soft finding 的 severity 覆盖为 `info`，不自动修改 gap 或 margin。

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "browserValidationStatus": "verified",
-  "browserValidationEvidence": "Verified July 20, 2026 with Playwright 1.61.0: tests.unit.test_quality passed 44/44 under Chromium 149.0.7827.55, WebKit 26.5, and Firefox 151.0; refreshed July 21, 2026, the full repository suite passed 243/243 under Chromium.",
+  "browserValidationEvidence": "Verified July 21, 2026 with Playwright 1.61.0: tests.unit.test_quality passed 48/48 under Chromium 149.0.7827.55, WebKit 26.5, and Firefox 151.0; the full repository suite passed 247/247 under Chromium.",
   "repairGate": {
     "status": "blocked",
     "reason": "Browser coverage is verified, but no capability has explicit automatic-repair eligibility and Repair Coordination remains intentionally disabled."
@@ -50,10 +50,10 @@
     {
       "guidelineId": "system.spacing.sibling-consistency",
       "evidence": "hybrid",
-      "implementation": "declared-only",
-      "browserCoverage": "not-validated",
+      "implementation": "implemented",
+      "browserCoverage": "verified",
       "repairEligibility": "prohibited",
-      "falsePositiveBoundary": "No spacing-consistency detector is implemented in the inspect-only prototype."
+      "falsePositiveBoundary": "Only explicit region/component bounded no-wrap homogeneous flex siblings are compared; wrapped, transformed, out-of-flow, heterogeneous, and insufficient groups are skipped."
     },
     {
       "guidelineId": "system.web.click-target.minimum",

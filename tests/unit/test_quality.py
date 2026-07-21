@@ -8,6 +8,7 @@ from ui_dismantler.quality import inspect_uiir, validate_quality_ir
 from ui_dismantler.quality.colors import composite, contrast_ratio, parse_css_color, resolve_background, resolved_text_contrast
 from ui_dismantler.quality.focus import analyze_focus_indicator
 from ui_dismantler.quality.states import controlled_visibility_consistency, invalid_aria_states, state_transition_consistency
+from ui_dismantler.quality.spacing import analyze_sibling_spacing
 from ui_dismantler.quality.knowledge import compose_profile, load_guidelines, load_profiles
 from ui_dismantler.quality.knowledge.profiles import ProfileCompositionError
 from ui_dismantler.quality.observation import observe_render, targets_from_uiir
@@ -50,7 +51,7 @@ class TestQualitySchema(unittest.TestCase):
         self.assertTrue(validate_profile({"id": "x", "version": "1", "overrides": {"a": {"unknown": 1}}}))
 
     def test_future_phase_contract_boundaries_are_explicit(self):
-        observation = {"targetKey": "element:x", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "layoutContext": {"documentClientWidth": 390, "documentScrollWidth": 390, "pageHorizontalOverflow": False, "targetContributesToPageOverflow": False, "horizontalScrollContainer": None, "exceptionKind": ""}, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
+        observation = {"targetKey": "element:x", "targetType":"region", "viewport": {"width": 390, "height": 844}, "bounds": {"x": 0, "y": 0, "width": 44, "height": 44}, "computedStyle": {}, "visible": True, "clipped": False, "layoutContext": {"documentClientWidth": 390, "documentScrollWidth": 390, "pageHorizontalOverflow": False, "targetContributesToPageOverflow": False, "horizontalScrollContainer": None, "exceptionKind": ""}, "spacingContext":{"display":"flex","flexDirection":"row","flexWrap":"nowrap","rowGap":"0px","columnGap":"8px","childrenTruncated":False,"children":[]}, "keyboardContext": {"sequentiallyFocusable": True, "tabIndex": 0, "managedComposite": False, "compositeRole": ""}}
         proposal = {"id": "proposal:1", "findingIds": ["finding:1"], "targetKey": "element:x", "strategy": "local-attribute", "risk": "low", "changes": [{"attribute": "aria-label", "after": "Search"}], "verificationChecks": ["quality-rescan"], "rollback": "restore source span"}
         verification = {"proposalId": "proposal:1", "status": "accepted", "originalIssuesResolved": True, "contentPreserved": True, "behaviorPreserved": True, "newIssues": [], "checks": [{"name": "quality-rescan", "passed": True}]}
         transition = {"scenarioId":"toggle","actionIndex":0,"action":"click","selector":"#x","targetKey":"element:x","viewportKey":"desktop","viewport":{"width":1280,"height":720},"status":"completed","role":"button","stateObservable":True,"before":{"ariaExpanded":"false","ariaSelected":None,"ariaPressed":None,"ariaControls":[],"controlsTruncated":False,"controlledTargets":[]},"after":{"ariaExpanded":"true","ariaSelected":None,"ariaPressed":None,"ariaControls":[],"controlsTruncated":False,"controlledTargets":[]}}
@@ -58,6 +59,23 @@ class TestQualitySchema(unittest.TestCase):
         self.assertEqual(validate_state_transition(transition), [])
         self.assertEqual(validate_repair_proposal(proposal), [])
         self.assertEqual(validate_verification_result(verification), [])
+
+
+class TestSpacingAnalysis(unittest.TestCase):
+    def test_consistent_and_inconsistent_flex_gaps(self):
+        def child(index, x):
+            return {"index":index,"tag":"div","role":"","position":"static","transform":"none","marginTop":"0px","marginRight":"0px","marginBottom":"0px","marginLeft":"0px","bounds":{"x":x,"y":0,"width":40,"height":32}}
+        base = {"display":"flex","flexDirection":"row","flexWrap":"nowrap","childrenTruncated":False}
+        good, reason = analyze_sibling_spacing({**base,"children":[child(0,0),child(1,48),child(2,96)]})
+        self.assertIsNone(reason); self.assertFalse(good["inconsistent"])
+        bad, reason = analyze_sibling_spacing({**base,"children":[child(0,0),child(1,48),child(2,104)]})
+        self.assertIsNone(reason); self.assertTrue(bad["inconsistent"])
+        self.assertEqual(bad["gapsCssPx"], [8.0, 16.0])
+
+    def test_complex_spacing_layouts_are_skipped(self):
+        child = {"index":0,"tag":"div","role":"","position":"absolute","transform":"none","marginTop":"0px","marginRight":"0px","marginBottom":"0px","marginLeft":"0px","bounds":{"x":0,"y":0,"width":40,"height":32}}
+        value, reason = analyze_sibling_spacing({"display":"flex","flexDirection":"row","flexWrap":"nowrap","childrenTruncated":False,"children":[child,dict(child,index=1),dict(child,index=2)]})
+        self.assertIsNone(value); self.assertEqual(reason, "out-of-flow-spacing-child")
 
 
 class TestStateAnalysis(unittest.TestCase):
@@ -388,6 +406,41 @@ class TestRenderFindings(unittest.TestCase):
         visibility = [item for item in report["findings"] if item["guidelineId"] == "system.web.controlled-state.visibility"]
         self.assertEqual({item["targetKey"] for item in visibility}, {"element:state-expanded-bad", "element:state-collapsed-bad", "element:state-tab-selected-bad"})
 
+    def test_material_spacing_reports_only_bounded_region_inconsistency(self):
+        rules, profiles = knowledge()
+        material = compose_profile("material-accessible", profiles, rules)
+        builder = UIIRBuilder(); page = builder.add_node("page", "page:spacing", None, {"title":"Spacing"})
+        for key, node_type in [
+            ("element:spacing-good","region"), ("element:spacing-bad","region"),
+            ("element:spacing-wrapped","region"), ("element:spacing-heterogeneous","region"),
+            ("element:spacing-element","element"),
+        ]:
+            builder.add_node(node_type, key, page, {"id":key.split(":",1)[1]}, {"source":"render.html","observations":[{"sourceSpan":[0,1],"method":"fixture","confidence":1.0}]})
+        report = inspect_uiir(builder.build(), material, fixture("render-spacing.json"))
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.spacing.sibling-consistency"]
+        self.assertEqual([(item["targetKey"],item["viewportKey"]) for item in findings], [("element:spacing-bad","desktop")])
+        self.assertEqual(findings[0]["severity"], "info")
+        self.assertEqual(findings[0]["evidence"][0]["observed"]["gapsCssPx"], [8.0,16.0])
+        skipped = [item for item in report["diagnostics"]["renderSkipped"] if item["guidelineId"] == "system.spacing.sibling-consistency"]
+        self.assertCountEqual(skipped, [
+            {"guidelineId":"system.spacing.sibling-consistency","targetKey":"element:spacing-wrapped","viewportKey":"desktop","reason":"wrapped-spacing-layout"},
+            {"guidelineId":"system.spacing.sibling-consistency","targetKey":"element:spacing-heterogeneous","viewportKey":"desktop","reason":"heterogeneous-spacing-siblings"},
+        ])
+
+    def test_optional_browser_material_spacing_distinguishes_good_and_bad(self):
+        rules, profiles = knowledge()
+        material = compose_profile("material-accessible", profiles, rules)
+        builder = UIIRBuilder(); page = builder.add_node("page", "page:spacing-browser", None, {"title":"Spacing"})
+        for key, node_type in [("spacing-good","region"),("spacing-bad","region"),("spacing-wrapped","region"),("spacing-heterogeneous","region"),("spacing-element","element")]:
+            builder.add_node(node_type, f"element:{key}", page, {"id":key}, {"source":"render.html","observations":[{"sourceSpan":[0,1],"method":"fixture","confidence":1.0}]})
+        uiir = builder.build()
+        render, warnings = observe_render(FIXTURES / "render.html", targets_from_uiir(uiir), viewports=[{"id":"desktop","width":1280,"height":720}])
+        if render["browser"] is None:
+            self.skipTest(warnings[0] if warnings else "Playwright browser unavailable")
+        report = inspect_uiir(uiir, material, render)
+        findings = [item for item in report["findings"] if item["guidelineId"] == "system.spacing.sibling-consistency"]
+        self.assertEqual([item["targetKey"] for item in findings], ["element:spacing-bad"])
+
     def test_reflow_reports_page_overflow_and_skips_bounded_exceptions(self):
         uiir = document([
             ("element:reflow-bad", {"id":"reflow-bad"}),
@@ -442,6 +495,11 @@ class TestRenderFindings(unittest.TestCase):
         keyboard_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":"button"}) for item in render["observations"]])
         with self.assertRaisesRegex(ValueError, "invalid render observation"):
             inspect_uiir(keyboard_uiir, self.profile, render)
+        render = fixture("render-spacing.json")
+        render["observations"][0]["spacingContext"]["children"][0]["bounds"]["width"] = "wide"
+        spacing_uiir = document([(item["targetKey"], {"id":item["selector"][1:]}) for item in render["observations"]])
+        with self.assertRaisesRegex(ValueError, "invalid render observation"):
+            inspect_uiir(spacing_uiir, self.profile, render)
         render = fixture("render-transitions.json")
         render["stateTransitions"][0]["actionIndex"] = -1
         transition_uiir = document([(item["targetKey"], {"id": item["targetKey"].split(":", 1)[1], "role":item.get("role") or "button"}) for item in render["stateTransitions"]])
@@ -508,8 +566,8 @@ class TestRenderObservation(unittest.TestCase):
             ("element:prose", {"text": "do not guess this as a selector"}),
         ])
         self.assertEqual(targets_from_uiir(uiir), [
-            {"targetKey": "element:action", "selector": "#action"},
-            {"targetKey": "element:wide", "selector": "#wide"},
+            {"targetKey": "element:action", "selector": "#action", "targetType":"element"},
+            {"targetKey": "element:wide", "selector": "#wide", "targetType":"element"},
         ])
 
     def test_quality_scenarios_only_accept_explicit_condition_free_clicks(self):
@@ -527,17 +585,20 @@ class TestRenderObservation(unittest.TestCase):
 
     def test_browser_payload_preserves_layout_and_keyboard_contexts(self):
         raw = {
-            "targetKey":"element:x", "selector":"#x", "tag":"button", "role":"",
+            "targetKey":"element:x", "selector":"#x", "targetType":"region", "tag":"button", "role":"",
             "interactive":True, "disabled":False, "textContent":"X", "accessibleName":"X",
             "bounds":{"x":0,"y":0,"width":44,"height":44}, "computedStyle":{},
             "visible":True, "clipped":False, "colorContext":{"foreground":"","backgroundLayers":[]},
             "stateContext":{"ariaExpanded":"false","ariaSelected":None,"ariaPressed":None,"ariaControls":["panel"],"controlsTruncated":False,"controlledTargets":[{"id":"panel","found":True,"visible":False,"hiddenAttribute":True,"ariaHidden":"","role":""}]},
             "layoutContext":{"documentClientWidth":320,"documentScrollWidth":500,"pageHorizontalOverflow":True,"targetContributesToPageOverflow":True,"horizontalScrollContainer":None,"exceptionKind":""},
+            "spacingContext":{"display":"flex","flexDirection":"row","flexWrap":"nowrap","rowGap":"0px","columnGap":"8px","childrenTruncated":False,"children":[]},
             "keyboardContext":{"sequentiallyFocusable":True,"tabIndex":0,"managedComposite":False,"compositeRole":""},
             "focusContext":{"focusable":True,"focused":True,"focusVisible":True,"before":[],"after":[]},
         }
         observation = _build_observation(raw, {"id":"reflow","width":320,"height":800})
+        self.assertEqual(observation["targetType"], "region")
         self.assertEqual(observation["stateContext"], raw["stateContext"])
+        self.assertEqual(observation["spacingContext"], raw["spacingContext"])
         self.assertEqual(observation["layoutContext"], raw["layoutContext"])
         self.assertEqual(observation["keyboardContext"], raw["keyboardContext"])
         self.assertEqual(validate_render_observation(observation), [])

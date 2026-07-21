@@ -2,6 +2,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+from unittest.mock import patch
 import tempfile
 import unittest
 from ui_dismantler.cli.check_quality_gate import main as gate_main
@@ -33,11 +34,11 @@ class TestQualityCapabilities(unittest.TestCase):
         self.assertEqual(report["guidelineCount"], 16)
         self.assertEqual(report["capabilityCount"], 16)
         codes = {item["code"] for item in report["blockers"]}
-        self.assertEqual(codes, {
-            "implementation-incomplete", "no-repair-eligible-capabilities", "registry-gate-blocked",
-        })
-        self.assertEqual(len(report["blockers"]), 3)
-        self.assertEqual(report["browserVerifiedCount"], 15)
+        self.assertEqual(codes, {"no-repair-eligible-capabilities", "registry-gate-blocked"})
+        self.assertEqual(len(report["blockers"]), 2)
+        self.assertEqual(report["inspectStatus"], "ready")
+        self.assertEqual(report["implementedCount"], 16)
+        self.assertEqual(report["browserVerifiedCount"], 16)
         self.assertEqual(report["repairEligibleCount"], 0)
 
     def test_web_base_is_inspect_ready_but_repair_blocked(self):
@@ -55,23 +56,22 @@ class TestQualityCapabilities(unittest.TestCase):
             "no-repair-eligible-capabilities", "registry-gate-blocked",
         })
 
-    def test_material_profile_is_not_inspect_ready(self):
+    def test_material_profile_is_inspect_ready_but_repair_blocked(self):
         report = assess_acceptance_gate(self.registry, GUIDELINES, profile_id="material-accessible")
         self.assertEqual(report["profile"]["lineage"], ["web-base", "material-accessible"])
         self.assertEqual(report["enabledGuidelineCount"], 16)
-        self.assertEqual(report["inspectStatus"], "blocked")
+        self.assertEqual(report["implementedCount"], 16)
+        self.assertEqual(report["browserVerifiedCount"], 16)
+        self.assertEqual(report["inspectStatus"], "ready")
         self.assertEqual(report["status"], "blocked")
-        self.assertIn({
-            "code":"implementation-incomplete", "guidelineId":"system.spacing.sibling-consistency",
-            "message":"detector is not implemented", "phase":"inspect",
-        }, report["blockers"])
+        self.assertEqual(report["inspectBlockerCount"], 0)
+        self.assertEqual(report["repairBlockerCount"], 2)
 
     def test_implemented_record_must_have_registered_detector(self):
-        registry = deepcopy(self.registry)
-        guideline = self.guidelines["system.spacing.sibling-consistency"]
-        record = next(item for item in registry["capabilities"] if item["guidelineId"] == guideline["id"])
-        record["implementation"] = "implemented"
-        report = assess_acceptance_gate(registry, GUIDELINES)
+        from ui_dismantler.quality.detection import render as render_detection
+        without_spacing = set(render_detection.RENDER_DETECTORS) - {"spacing-consistency"}
+        with patch.object(render_detection, "RENDER_DETECTORS", without_spacing):
+            report = assess_acceptance_gate(self.registry, GUIDELINES)
         blockers = {(item["code"], item["guidelineId"]) for item in report["blockers"]}
         self.assertIn(("detector-missing", "system.spacing.sibling-consistency"), blockers)
 
@@ -89,8 +89,8 @@ class TestQualityCapabilities(unittest.TestCase):
         self.assertEqual(gate_main([]), 0)
         self.assertEqual(gate_main(["--check-inspect"]), 0)
         self.assertEqual(gate_main(["--check"]), 2)
-        self.assertEqual(gate_main(["--profile", "material-accessible", "--check-inspect"]), 2)
-        self.assertEqual(gate_main(["--profile", "all", "--check-inspect"]), 2)
+        self.assertEqual(gate_main(["--profile", "material-accessible", "--check-inspect"]), 0)
+        self.assertEqual(gate_main(["--profile", "all", "--check-inspect"]), 0)
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "gate.json"
             self.assertEqual(gate_main(["-o", str(output)]), 0)

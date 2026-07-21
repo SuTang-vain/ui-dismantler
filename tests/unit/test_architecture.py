@@ -38,6 +38,7 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "quality/observation/render.py",
             "quality/focus.py",
             "quality/states.py",
+            "quality/spacing.py",
             "quality/capabilities.py",
             "cli/observe_quality_render.py",
             "cli/inspect_quality.py",

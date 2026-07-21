@@ -1,0 +1,473 @@
+{
+  "schemaVersion": "1.0",
+  "format": "render-observation",
+  "source": "render.html",
+  "browser": "fixture",
+  "targets": [
+    {
+      "targetKey": "element:spacing-good",
+      "selector": "#spacing-good",
+      "targetType": "region"
+    },
+    {
+      "targetKey": "element:spacing-bad",
+      "selector": "#spacing-bad",
+      "targetType": "region"
+    },
+    {
+      "targetKey": "element:spacing-wrapped",
+      "selector": "#spacing-wrapped",
+      "targetType": "region"
+    },
+    {
+      "targetKey": "element:spacing-heterogeneous",
+      "selector": "#spacing-heterogeneous",
+      "targetType": "region"
+    },
+    {
+      "targetKey": "element:spacing-element",
+      "selector": "#spacing-element",
+      "targetType": "element"
+    }
+  ],
+  "viewports": [
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "observations": [
+    {
+      "targetKey": "element:spacing-good",
+      "selector": "#spacing-good",
+      "targetType": "region",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "spacing-good",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "spacingContext": {
+        "display": "flex",
+        "flexDirection": "row",
+        "flexWrap": "nowrap",
+        "rowGap": "0px",
+        "columnGap": "8px",
+        "childrenTruncated": false,
+        "children": [
+          {
+            "index": 0,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 1,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 48,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 2,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 96,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          }
+        ]
+      }
+    },
+    {
+      "targetKey": "element:spacing-bad",
+      "selector": "#spacing-bad",
+      "targetType": "region",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "spacing-bad",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "spacingContext": {
+        "display": "flex",
+        "flexDirection": "row",
+        "flexWrap": "nowrap",
+        "rowGap": "0px",
+        "columnGap": "8px",
+        "childrenTruncated": false,
+        "children": [
+          {
+            "index": 0,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 1,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 48,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 2,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 104,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          }
+        ]
+      }
+    },
+    {
+      "targetKey": "element:spacing-wrapped",
+      "selector": "#spacing-wrapped",
+      "targetType": "region",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "spacing-wrapped",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "spacingContext": {
+        "display": "flex",
+        "flexDirection": "row",
+        "flexWrap": "wrap",
+        "rowGap": "0px",
+        "columnGap": "8px",
+        "childrenTruncated": false,
+        "children": [
+          {
+            "index": 0,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 1,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 48,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 2,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 96,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          }
+        ]
+      }
+    },
+    {
+      "targetKey": "element:spacing-heterogeneous",
+      "selector": "#spacing-heterogeneous",
+      "targetType": "region",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "spacing-heterogeneous",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "spacingContext": {
+        "display": "flex",
+        "flexDirection": "row",
+        "flexWrap": "nowrap",
+        "rowGap": "0px",
+        "columnGap": "8px",
+        "childrenTruncated": false,
+        "children": [
+          {
+            "index": 0,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 1,
+            "tag": "button",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 48,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 2,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 96,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          }
+        ]
+      }
+    },
+    {
+      "targetKey": "element:spacing-element",
+      "selector": "#spacing-element",
+      "targetType": "element",
+      "viewportKey": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "tag": "div",
+      "role": "",
+      "interactive": false,
+      "disabled": false,
+      "textContent": "",
+      "accessibleName": "spacing-element",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 40
+      },
+      "computedStyle": {},
+      "visible": true,
+      "clipped": false,
+      "spacingContext": {
+        "display": "flex",
+        "flexDirection": "row",
+        "flexWrap": "nowrap",
+        "rowGap": "0px",
+        "columnGap": "8px",
+        "childrenTruncated": false,
+        "children": [
+          {
+            "index": 0,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 1,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 48,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          },
+          {
+            "index": 2,
+            "tag": "div",
+            "role": "",
+            "position": "static",
+            "transform": "none",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bounds": {
+              "x": 104,
+              "y": 0,
+              "width": 40,
+              "height": 32
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "stateTransitions": []
+}

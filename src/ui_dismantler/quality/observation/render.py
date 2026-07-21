@@ -177,7 +177,7 @@ def targets_from_uiir(document: dict[str, Any], *, limit: int = 256) -> list[dic
         key = (props["key"], selector.strip())
         if key in seen:
             continue
-        seen.add(key); result.append({"targetKey": key[0], "selector": key[1]})
+        seen.add(key); result.append({"targetKey": key[0], "selector": key[1], "targetType": NODE_TYPES[node[1]]})
         if len(result) >= limit:
             break
     return result
@@ -190,13 +190,13 @@ def _empty(source: Path, targets: list[dict[str, str]], viewports: list[dict[str
 def _build_observation(item: dict[str, Any], viewport: dict[str, Any]) -> dict[str, Any]:
     """Normalize one browser payload without dropping optional evidence contexts."""
     return {
-        "targetKey": item["targetKey"], "selector": item["selector"],
+        "targetKey": item["targetKey"], "selector": item["selector"], "targetType": item.get("targetType", ""),
         "viewportKey": viewport["id"], "viewport": {"width": viewport["width"], "height": viewport["height"]},
         "tag": item.get("tag", ""), "role": item.get("role", ""),
         "interactive": bool(item.get("interactive")), "disabled": bool(item.get("disabled")),
         "textContent": item.get("textContent", ""), "colorContext": item.get("colorContext", {}),
         "stateContext": item.get("stateContext", {}), "layoutContext": item.get("layoutContext", {}),
-        "keyboardContext": item.get("keyboardContext", {}),
+        "spacingContext": item.get("spacingContext", {}), "keyboardContext": item.get("keyboardContext", {}),
         "focusContext": item.get("focusContext", {}), "accessibleName": item.get("accessibleName", ""),
         "bounds": item["bounds"], "computedStyle": item["computedStyle"],
         "visible": bool(item["visible"]), "clipped": bool(item["clipped"]),
@@ -232,7 +232,10 @@ def observe_render(
     for index, item in enumerate(targets[:max_targets]):
         if not isinstance(item, dict) or not str(item.get("targetKey") or "").strip() or not str(item.get("selector") or "").strip():
             raise ValueError(f"targets[{index}] must contain targetKey and selector")
-        normalized_targets.append({"targetKey": str(item["targetKey"])[:512], "selector": str(item["selector"])[:512]})
+        normalized_targets.append({
+            "targetKey": str(item["targetKey"])[:512], "selector": str(item["selector"])[:512],
+            "targetType": str(item.get("targetType") or "")[:32],
+        })
     result = _empty(source, normalized_targets, normalized_viewports)
     normalized_scenarios, scenario_warnings = _normalize_state_scenarios(
         scenarios, normalized_targets, max_scenarios=max_scenarios, max_actions=max_scenario_actions,
@@ -259,6 +262,26 @@ def observe_render(
           && style.display !== 'none' && style.visibility !== 'hidden'
           && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0
           && target.getClientRects().length > 0;
+      }
+      function spacingSnapshot(target) {
+        const style = getComputedStyle(target);
+        const visibleChildren = Array.from(target.children).filter(isVisiblyRendered);
+        return {
+          display: style.display || '', flexDirection: style.flexDirection || '',
+          flexWrap: style.flexWrap || '', rowGap: style.rowGap || '', columnGap: style.columnGap || '',
+          childrenTruncated: visibleChildren.length > 24,
+          children: visibleChildren.slice(0, 24).map((child, index) => {
+            const rect = child.getBoundingClientRect();
+            const childStyle = getComputedStyle(child);
+            return {
+              index, tag: child.tagName.toLowerCase(), role: child.getAttribute('role') || '',
+              position: childStyle.position || 'static', transform: childStyle.transform || 'none',
+              marginTop: childStyle.marginTop || '0px', marginRight: childStyle.marginRight || '0px',
+              marginBottom: childStyle.marginBottom || '0px', marginLeft: childStyle.marginLeft || '0px',
+              bounds: {x:rect.x, y:rect.y, width:rect.width, height:rect.height}
+            };
+          })
+        };
       }
       function stateSnapshot(target) {
         const controls = (target.getAttribute('aria-controls') || '').trim().split(/\\s+/).filter(Boolean);
@@ -387,6 +410,7 @@ def observe_render(
         const colorContext = {foreground: style.color || '', backgroundLayers, backgroundTruncated};
         const stateContext = stateSnapshot(element);
         const layoutContext = layoutSnapshot(element, rect);
+        const spacingContext = ['region','component'].includes(item.targetType) ? spacingSnapshot(element) : {};
         const sequentiallyFocusable = interactive && !disabled && element.tabIndex >= 0;
         const keyboardContext = {
           sequentiallyFocusable,
@@ -408,7 +432,7 @@ def observe_render(
             try { previous.focus({preventScroll: true}); } catch (_) {}
           }
         }
-        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, stateContext, layoutContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
+        output.push({...item, tag, role, interactive, disabled, textContent, colorContext, stateContext, layoutContext, spacingContext, keyboardContext, focusContext, accessibleName: element.getAttribute('aria-label') || element.innerText.trim().slice(0, 200), bounds: {x: rect.x, y: rect.y, width: rect.width, height: rect.height}, computedStyle, visible, clipped});
       }
       return output;
     }"""

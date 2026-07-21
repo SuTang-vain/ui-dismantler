@@ -4,7 +4,7 @@
 
 ## 当前结论
 
-**自动修复 Gate：BLOCKED。** 2026 年 7 月 20 日已使用 Playwright 1.61.0 完成 Chromium、WebKit、Firefox 三引擎质量矩阵：每个引擎 44/44 质量测试通过；Chromium 下全仓已于 2026 年 7 月 21 日刷新为 243/243 通过且无跳过。Gate 现按 Profile 评估 inspect readiness：`web-base` 为 READY，`material-accessible` 因 spacing detector 尚未实现而 BLOCKED。两个 Profile 均没有 capability 标记为 `repairEligibility=eligible`，且顶层人工 Repair Gate 未放行，因此自动 Repair Coordination 仍为 BLOCKED。
+**自动修复 Gate：BLOCKED。** 2026 年 7 月 20 日已使用 Playwright 1.61.0 完成 Chromium、WebKit、Firefox 三引擎质量矩阵：每个引擎 48/48 质量测试通过；Chromium 下全仓已于 2026 年 7 月 21 日刷新为 247/247 通过且无跳过。Gate 现按 Profile 评估 inspect readiness：`web-base` 与 `material-accessible` 均为 READY，Material spacing detector 已完成三浏览器验证。两个 Profile 均没有 capability 标记为 `repairEligibility=eligible`，且顶层人工 Repair Gate 未放行，因此自动 Repair Coordination 仍为 BLOCKED。
 
 验证命令：
 
@@ -15,7 +15,7 @@ python3 -m ui_dismantler.cli.check_quality_gate
 # web-base inspect readiness，当前返回 0
 python3 -m ui_dismantler.cli.check_quality_gate --check-inspect
 
-# material-accessible inspect readiness，当前返回 2
+# material-accessible inspect readiness，当前返回 0
 python3 -m ui_dismantler.cli.check_quality_gate --profile material-accessible --check-inspect
 
 # 自动修复 Gate，两个 Profile 当前均返回 2
@@ -42,8 +42,8 @@ done
 | Profile | 启用 Guideline | Inspect | Repair | 说明 |
 |---|---:|---|---|---|
 | `web-base` | 15 | READY | BLOCKED | 所有启用 detector 已实现且浏览器覆盖已验证；无 repair-eligible capability。 |
-| `material-accessible` | 16 | BLOCKED | BLOCKED | 继承 `web-base`，额外启用尚未实现的 `system.spacing.sibling-consistency`。 |
-| `all` | 16 | BLOCKED | BLOCKED | 仓库级汇总，包含 declared-only Material spacing。 |
+| `material-accessible` | 16 | READY | BLOCKED | 继承 `web-base`，spacing detector 已实现并完成三浏览器验证。 |
+| `all` | 16 | READY | BLOCKED | 全部 16 条 capability 均已实现并完成所需浏览器验证。 |
 
 ## 能力分组
 
@@ -54,7 +54,7 @@ done
 | 静态语义 | `component.aria.reference-target` | UI-IR | hard | 不需要 | manual-only |
 | 静态语义 | `component.tab.controls-tabpanel` | UI-IR | hard | 不需要 | manual-only |
 | 静态语义 | `component.image.alt` | UI-IR | hard | 不需要 | manual-only |
-| Material | `system.spacing.sibling-consistency` | UI-IR + Render | soft | 未验证 | prohibited，尚未实现 |
+| Material | `system.spacing.sibling-consistency` | UI-IR + Render | soft/info | Chromium/WebKit/Firefox verified | prohibited |
 | Geometry | `system.web.click-target.minimum` | Render | soft | Chromium/WebKit/Firefox verified | manual-only |
 | Geometry | `system.web.viewport-clipping` | Render | soft | Chromium/WebKit/Firefox verified | manual-only |
 | Color | `system.web.text-contrast` | Render | hard | Chromium/WebKit/Firefox verified | prohibited |
