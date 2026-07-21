@@ -13,9 +13,11 @@
 Agent（主控）──────────────────────────────────────┐
    │ 1. 读 HTML，理解结构/样式/交互                  │  工具层（确定性，可复现）
    │ 2. 调工具拿确定性数据（主题色/变量/CSS 规则）     │  - analyze_html.py（提取主题色/CSS，含语义角色）
-   │ 3. 产出组件库各文件（css/js/html/docs）         │  - validate_lib.py（8 项强约束校验）
-   │ 4. 自检：调 validate + roundtrip 验证           │  - roundtrip.py（往返等价度）
-   │ 5. 不达标则按决策表修订                          │  - _common.py（颜色/CSS/数据契约工具函数）
+   │ 3. 产出组件库各文件（css/js/html/docs）         │  - generate_scaffold.py（快速脚手架）
+   │ 4. 自检：调 validate + roundtrip 验证           │  - validate_lib.py（9 项强约束 + Gold）
+   │ 5. 交付回归：质量与耗时不可回退                 │  - verify_delivery.py（统一门禁）
+                                                    │  - roundtrip.py（往返等价度）
+   │ 6. 不达标则按决策表修订                          │  - _common.py（颜色/CSS/数据契约工具函数）
     └───────────────────────────────────────────────┘
 ```
 
@@ -48,6 +50,7 @@ cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_a
 
 ```
 <库名>/
+├── showcase.html              设计令牌 / 组件 / 交互态展示页
 ├── README.md                 介绍 + 快速开始 + API + 数据契约 + 主题定制
 ├── docs/设计规范.md           主题色系统 / Tab 结构 / 交互模式 / 逻辑设置 / 响应式
 ├── src/
@@ -58,7 +61,7 @@ cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_a
     └── template.html         空白复用模板（带示例数据）
 ```
 
-**质量门槛**：validate 8 项全 PASS + node --check 通过 + roundtrip 综合 ≥ 0.85（结构 ≥ 0.7 / 文本 ≥ 0.8）。
+**质量门槛**：基础档为 validate 9 项全 PASS + `node --check` + roundtrip 综合 ≥ 0.85（结构 ≥ 0.7 / 文本 ≥ 0.8）；支持范式的完整 Gold 交付再要求 `create/version`、完整文档、Bento Showcase、交互场景和综合 ≥ 0.98。脚手架只缩短起步时间，不降低最终门槛。
 
 ## 工具层
 
@@ -67,8 +70,11 @@ cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_a
 | 脚本 | 用途 |
 |---|---|
 | `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
-| `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
-| `scripts/roundtrip.py` | 往返等价度（原页面运行后 DOM ⇄ 库渲染 DOM；失败回退会显式报告） |
+| `src/skill/scripts/generate_scaffold.py` | manifest -> 可精修脚手架（确定性、快速，不是最终质量输出） |
+| `src/skill/scripts/generate_showcase.py` | 生成设计令牌 / 组件 / 交互态 Showcase |
+| `src/skill/scripts/validate_lib.py` | 9 项强约束校验；`--require-showcase --quality-profile gold` 为完整 Gold 门禁 |
+| `src/skill/scripts/verify_delivery.py` | 一键执行 Showcase、Gold、语法、Roundtrip、场景、覆盖率和耗时回归 |
+| `scripts/roundtrip.py` | 往返等价度（结构/文本/class coverage；失败回退会显式报告） |
 | `scripts/generate_scenarios.py` | 从 manifest 生成待审阅的交互场景候选 |
 | `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
 | `node --check` | JS 语法检查 |
@@ -83,7 +89,7 @@ cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_a
 | `parse_color` / `to_hex` | 颜色值解析与归一化 |
 | `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
 
-工具层有 276 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵、交互状态矩阵和架构守护断言。
+工具层有 352 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵、交互状态矩阵和架构守护断言。
 
 交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
 manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告声明、执行和已验证三层 `interaction_coverage`；显式传入 `--coverage-threshold` 后，`verifiedCoverage.rate` 不足会阻断门禁。
@@ -103,9 +109,9 @@ manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告声明�
 
 ```
 src/skill/              ZCode Skill（SKILL.md + scripts + references）
-  ├── SKILL.md          agent 驱动拆解指南（5 步工作流 + 自检决策表）
-  ├── scripts/          工具脚本（analyze/validate + _common.py）
-  └── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
+  ├── SKILL.md          agent 驱动拆解指南（脚手架 + Gold 自检 + 回归）
+  ├── scripts/          工具脚本（analyze/scaffold/showcase/validate/delivery）
+  └── references/       spec.md（9 项强约束）/ patterns.md / manifest_schema.md
 benchmark/               通用 benchmark（6 范式覆盖）
 scripts/                roundtrip + verify_all + tests
 docs/                   ROADMAP + baselines
@@ -117,24 +123,37 @@ docs/                   ROADMAP + baselines
 # 装依赖
 pip install --user --break-system-packages beautifulsoup4
 
-# 1. 分析 HTML（拿主题色/结构参考）
+# 1. 分析 HTML，获取主题色/结构/交互参考
 python3 src/skill/scripts/analyze_html.py benchmark/original.html --out /tmp/mf.json --minimal
 
-# 2. 校验组件库（8 项强约束）
-python3 src/skill/scripts/validate_lib.py <组件库目录>
+# 2. 可选：快速生成可精修脚手架，避免从零重写 CSS/JS
+python3 src/skill/scripts/generate_scaffold.py /tmp/mf.json --out <组件库目录> --name <库名>
 
-# 3. 往返等价度
-python3 scripts/roundtrip.py benchmark/original.html --lib <组件库目录>
+# 3. Agent 精修 src/、examples/、README 和 docs/设计规范.md
 
-# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
-python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
+# 4. 生成完整交付所需的 Bento Showcase
+python3 src/skill/scripts/generate_showcase.py <组件库目录>
 
-# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
-python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
+# 5. 基础/Gold 组件库门禁
+python3 src/skill/scripts/validate_lib.py <组件库目录> --require-showcase --quality-profile gold
 
-# 4. 批量回归验证
+# 6. 主案例往返验证（必须显式指定真实案例，不能误选 template.html）
+python3 scripts/roundtrip.py benchmark/original.html --lib <组件库目录> --example examples/<案例>.html --out /tmp/roundtrip.json
+
+# 7. 有交互时，补 assertions 后执行场景矩阵
+python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --example examples/<案例>.html --scenarios <场景.json> --manifest <manifest.json> --coverage-threshold 0.10
+
+# 8. 推荐：一键交付验证，并记录耗时/基线回归
+python3 src/skill/scripts/verify_delivery.py <原页面> --lib <组件库目录> --example examples/<案例>.html --scenarios <场景.json> --manifest <manifest.json> --overall-threshold 0.98 --coverage-threshold 0.10 --class-coverage-threshold 0.98 --out delivery-report.json
+cp delivery-report.json previous-delivery-report.json
+# 后续迭代后，以“上一版报告”作为基线，不要把当前报告自比自
+python3 src/skill/scripts/verify_delivery.py <原页面> --lib <组件库目录> --example examples/<案例>.html --scenarios <场景.json> --manifest <manifest.json> --baseline-report previous-delivery-report.json --out delivery-report.json
+
+# 9. 多案例回归
 python3 scripts/verify_all.py
 ```
+
+`verify_delivery.py` 的 `--baseline-report` 会同时阻止结构/文本/综合分下降和总耗时超过基线 `--max-time-ratio`；它不能替代人工视觉检查，但能阻止“质量下降且变慢”悄悄进入主线。
 
 agent 拆解工作流详见 [src/skill/SKILL.md](src/skill/SKILL.md)，规划详见 [docs/ROADMAP.md](docs/ROADMAP.md)。
 

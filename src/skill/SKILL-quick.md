@@ -19,14 +19,21 @@ User provides an HTML file (or directory) and asks to dismantle into a component
    - `src/<lib>.css`: Parametric styles (`sg-` prefix, `--sg-*` vars, three-tier responsive)
    - `src/<lib>.js`: Rendering engine (`<Lib>.mount(container, opts)` API, data-driven, A11y)
    - `examples/<case>.html`: Reproduce original case with real data
+   - `examples/template.html`: Clean reuse template with placeholder data and field comments (**required**)
+   - `showcase.html`: Generate with `python3 src/skill/scripts/generate_showcase.py <lib-dir>` (**required for complete delivery**)
    - `docs/设计规范.md` + `README.md`: Documentation
-4. **Self-check** (all three must pass):
-   - `python3 src/skill/scripts/validate_lib.py <lib-dir>` -> 8 items all PASS
+3.5 **Optional scaffold**: `python3 src/skill/scripts/generate_scaffold.py <manifest.json> --out <lib-dir>` creates a fast, reviewable starting point; it is not final output.
+
+4. **Self-check** (all steps must pass):
+   - `python3 src/skill/scripts/generate_showcase.py <lib-dir>` -> writes `<lib-dir>/showcase.html`
+   - `python3 src/skill/scripts/validate_lib.py <lib-dir> --require-showcase --quality-profile gold` -> baseline + Gold artifact/API/docs checks all PASS
    - `node --check src/<lib>.js` -> no syntax errors
-   - `python3 scripts/roundtrip.py <original.html> --lib <lib-dir> --out <report.json>` -> overall >= 0.70 (GOLD >= 0.85)
+   - `python3 scripts/roundtrip.py <original.html> --lib <lib-dir> --example examples/<case>.html --out <report.json>` -> baseline overall >= 0.85 (structure >= 0.70, text >= 0.80)
+4.5 **Preferred complete gate**: `python3 src/skill/scripts/verify_delivery.py <original.html> --lib <lib-dir> --example examples/<case>.html --scenarios <scenarios.json> --manifest <manifest.json> --overall-threshold 0.98 --class-coverage-threshold 0.98`
+
 5. **Revise**: Fix per error report, rerun all self-checks, loop until passing or 3-round cap
 
-## 8 Strong Constraints (validate_lib.py)
+## 9 Strong Constraints (validate_lib.py)
 
 1. Naming prefix: CSS `sg-`, vars `--sg-`, JS PascalCase, DOM ids `sg-`
 2. Variable normalization: Map original vars to `--sg-primary/accent/ink/muted/line/paper/stage/soft`
@@ -35,12 +42,13 @@ User provides an HTML file (or directory) and asks to dismantle into a component
 5. A11y: tablist/tabpanel/dialog/aria-live/aria-label/ESC (as needed)
 6. Theme customizable: All colors via variables, no hardcoded `#hex` (`:root` and pure B/W overlays excepted)
 7. Zero deps: No external JS/CSS (font CDN excepted)
-8. Docs complete: README.md + docs/设计规范.md present
+8. Docs + artifacts complete: README.md + docs/设计规范.md + examples/template.html; complete delivery also requires showcase.html
+9. Class alignment: JS-referenced `sg-*` classes must have a CSS contract; Roundtrip reports runtime `class_coverage`
 
 ## Quality Thresholds
 
-- **PASS**: roundtrip overall >= 0.70 (structure + text equally weighted)
-- **GOLD**: roundtrip overall >= 0.85
+- **BASELINE**: roundtrip overall >= 0.85, structure >= 0.70, text >= 0.80
+- **GOLD**: supported patterns target overall >= 0.98, plus `create/version`, complete docs, Bento Showcase, and verified interaction coverage and class coverage >= 0.98 when interactions/styles exist
 - Tailwind pages: tag topology rate (0.95+) and text match rate (1.0) are more faithful measures; class similarity is naturally low — this is normal
 
 ## When to Read the Full Version
