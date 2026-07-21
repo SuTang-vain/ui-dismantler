@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PROBE = ROOT / "scripts" / "cdp_css_probe.mjs"
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 FIXTURE = ROOT / "scripts/tests/fixtures/roundtrip/responsive.html"
+MASTRA = ROOT / "examples/cases/mastra/original.html"
 
 
 @unittest.skipUnless(shutil.which("node"), "需要 Node.js")
@@ -34,6 +35,27 @@ class TestCdpCssProbe(unittest.TestCase):
             result = json.loads(out.read_text(encoding="utf-8"))
         self.assertEqual(result["status"], "unavailable")
         self.assertFalse(result["comparable"])
+
+    @unittest.skipUnless(CHROME.is_file(), "本机没有 Google Chrome，跳过真实 CDP 测试")
+    def test_large_page_evidence_is_bounded(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            out = Path(temp_dir) / "large-cdp.json"
+            subprocess.run(
+                [
+                    "node", str(PROBE), str(MASTRA),
+                    "--selector", "main",
+                    "--chrome", str(CHROME),
+                    "--out", str(out),
+                    "--max-samples", "1",
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            result = json.loads(out.read_text(encoding="utf-8"))
+            result_bytes = out.stat().st_size
+        self.assertEqual(result["status"], "ok")
+        self.assertLess(result_bytes, 2_000_000)
 
     @unittest.skipUnless(CHROME.is_file(), "本机没有 Google Chrome，跳过真实 CDP 测试")
     def test_real_chrome_returns_matched_and_computed_styles(self):

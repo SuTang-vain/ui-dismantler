@@ -142,25 +142,35 @@ class CdpConnection {
   }
 }
 
-function compactProperties(properties = []) {
+const MAX_MATCHED_RULES = 120;
+const MAX_RULE_PROPERTIES = 48;
+const MAX_INHERITED_RULES = 12;
+const MAX_SELECTOR_TEXT = 300;
+
+function boundedSelector(text) {
+  const value = String(text || '');
+  return value.length > MAX_SELECTOR_TEXT ? `${value.slice(0, MAX_SELECTOR_TEXT)}...` : value;
+}
+
+function compactProperties(properties = [], limit = MAX_RULE_PROPERTIES) {
   return properties
-    .filter((property) => property && property.name && property.value !== undefined)
+    .filter((property) => property && property.name && property.value !== undefined && !property.disabled && !property.implicit)
+    .slice(0, limit)
     .map((property) => ({
       name: property.name,
-      value: property.value,
+      value: String(property.value).slice(0, 240),
       important: Boolean(property.important),
-      disabled: Boolean(property.disabled),
       implicit: Boolean(property.implicit),
     }));
 }
 
 function compactMatchedStyles(styles) {
-  const rules = (styles.matchedCSSRules || []).map((entry) => {
+  const rules = (styles.matchedCSSRules || []).slice(0, MAX_MATCHED_RULES).map((entry) => {
     const rule = entry.rule || {};
     return {
       origin: rule.origin,
       styleSheetId: rule.styleSheetId,
-      selectors: (rule.selectorList && rule.selectorList.selectors || []).map((selector) => selector.text),
+      selectors: (rule.selectorList && rule.selectorList.selectors || []).map((selector) => boundedSelector(selector.text)),
       media: (rule.media || []).map((media) => ({
         text: media.text,
         source: media.source,
@@ -172,18 +182,17 @@ function compactMatchedStyles(styles) {
   return {
     matchedRules: rules,
     inlineStyle: styles.inlineStyle ? compactProperties(styles.inlineStyle.cssProperties) : [],
-    inherited: (styles.inherited || []).map((entry) => ({
-      matchedRules: (entry.matchedCSSRules || []).map((item) => ({
-        selectors: (item.rule && item.rule.selectorList && item.rule.selectorList.selectors || []).map((selector) => selector.text),
-        properties: compactProperties(item.rule && item.rule.style && item.rule.style.cssProperties),
+    inherited: (styles.inherited || []).slice(0, 12).map((entry) => ({
+      matchedRules: (entry.matchedCSSRules || []).slice(0, MAX_INHERITED_RULES).map((item) => ({
+        selectors: (item.rule && item.rule.selectorList && item.rule.selectorList.selectors || []).map((selector) => boundedSelector(selector.text)),
       })),
-      inlineStyle: entry.inlineStyle ? compactProperties(entry.inlineStyle.cssProperties) : [],
+      inlineStyle: entry.inlineStyle ? compactProperties(entry.inlineStyle.cssProperties, 12) : [],
     })),
-    pseudoElements: (styles.pseudoElements || []).map((entry) => ({
+    pseudoElements: (styles.pseudoElements || []).slice(0, 8).map((entry) => ({
       pseudo: entry.pseudoType,
-      matchedRules: (entry.matches || []).map((item) => ({
-        selectors: (item.rule && item.rule.selectorList && item.rule.selectorList.selectors || []).map((selector) => selector.text),
-        properties: compactProperties(item.rule && item.rule.style && item.rule.style.cssProperties),
+      matchedRules: (entry.matches || []).slice(0, 24).map((item) => ({
+        selectors: (item.rule && item.rule.selectorList && item.rule.selectorList.selectors || []).map((selector) => boundedSelector(selector.text)),
+        properties: compactProperties(item.rule && item.rule.style && item.rule.style.cssProperties, 16),
       })),
     })),
   };
@@ -230,6 +239,26 @@ async function collectNodeEvidence(cdp, nodeId) {
   return {
     node: description,
     matchedStyles: compactMatchedStyles(matched),
+    computedStyle: compactComputedStyle(computed.computedStyle),
+  };
+}
+
+async function collectNodeSampleEvidence(cdp, nodeId) {
+  const [description, matched, computed] = await Promise.all([
+    describeNode(cdp, nodeId),
+    cdp.call('CSS.getMatchedStylesForNode', { nodeId }),
+    cdp.call('CSS.getComputedStyleForNode', { nodeId }),
+  ]);
+  const matchedSelectors = [...new Set(
+    (matched.matchedCSSRules || [])
+      .flatMap((entry) => entry.rule && entry.rule.selectorList && entry.rule.selectorList.selectors || [])
+      .map((selector) => boundedSelector(selector.text))
+      .filter(Boolean),
+  )].slice(0, 120);
+  return {
+    node: description,
+    matchedSelectors,
+    matchedRuleCount: (matched.matchedCSSRules || []).length,
     computedStyle: compactComputedStyle(computed.computedStyle),
   };
 }
@@ -321,7 +350,7 @@ async function main() {
           } catch { /* optional sample */ }
           const samples = [];
           for (const sampleId of sampleIds.slice(0, Math.max(0, maxSamples))) {
-            try { samples.push(await collectNodeEvidence(cdp, sampleId)); } catch { /* one sample should not fail all */ }
+            try { samples.push(await collectNodeSampleEvidence(cdp, sampleId)); } catch { /* one sample should not fail all */ }
           }
           sectionEvidence[sectionEvidence.length - 1].samples = samples;
         } catch (error) {

@@ -50,6 +50,7 @@ def build_section_inventory(soup: BeautifulSoup, *, max_sections: int = 64) -> l
     """返回页面级/主内容级 section 边界，按文档顺序稳定输出。"""
     body = soup.find("body") or soup
     candidates = []
+    seen_ids: set[str] = set()
     ordinal = 0
     for node in body.find_all(list(_SEMANTIC_TAGS), recursive=True):
         nearest = None
@@ -75,9 +76,15 @@ def build_section_inventory(soup: BeautifulSoup, *, max_sections: int = 64) -> l
         ):
             continue
         classes = [c for c in node.get("class", []) if c]
+        base_id = _slug(node.get("id") or heading_text or node.name, f"section-{ordinal + 1}")
+        section_id = base_id
+        if section_id in seen_ids:
+            section_id = f"{base_id}-{ordinal + 1}"
+        seen_ids.add(section_id)
         candidates.append({
-            "id": _slug(node.get("id") or heading_text or node.name, f"section-{ordinal + 1}"),
+            "id": section_id,
             "tag": node.name,
+            "chunkable": node.name != "main",
             "selector": _selector(node, ordinal),
             "heading": heading_text[:120],
             "aria": str(aria_label)[:120],
