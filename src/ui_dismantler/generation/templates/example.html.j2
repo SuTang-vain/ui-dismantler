@@ -1,0 +1,24 @@
+{# example.html.j2 — 数据驱动示例 #}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{{ manifest.meta.title | default(lib_name, true) }} · 组件库示例</title>
+<style>
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden;
+    overscroll-behavior: none; touch-action: manipulation; }
+  body { display: grid; place-items: center; background: #F8F8F8;
+    font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+</style>
+<link rel="stylesheet" href="../src/{{ lib_name }}.css">
+</head>
+<body>
+<div id="mount"></div>
+
+<script src="../src/{{ lib_name }}.js"></script>
+<script>
+{{ lib_pascal }}.mount(document.getElementById('mount'), {{ options_json | safe }});
+</script>
+</body>
+</html>

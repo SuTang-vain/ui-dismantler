@@ -10,7 +10,9 @@ import os
 import sys
 import tempfile
 import unittest
+import subprocess
 from pathlib import Path
+from bs4 import BeautifulSoup
 
 _SRC = os.path.join(os.path.dirname(__file__), "..", "..", "src")
 sys.path.insert(0, os.path.abspath(_SRC))
@@ -73,8 +75,9 @@ class TestGenerateShowcase(unittest.TestCase):
     def test_output_contains_design_tokens(self):
         """输出包含 --sg-* 变量信息。"""
         html = generate_showcase(self.lib_dir)
-        self.assertIn("sg-primary", html)
+        self.assertIn("primary", html)
         self.assertIn("#4f46e5", html)
+        self.assertIn('id="overview"', html)
 
     def test_output_contains_responsive_info(self):
         """输出包含响应式断点信息。"""
@@ -84,6 +87,23 @@ class TestGenerateShowcase(unittest.TestCase):
             "500" in html or "media" in html.lower(),
             "展示页应包含响应式信息",
         )
+
+    def test_embedded_javascript_is_syntax_valid(self):
+        """生成的内联脚本必须可被 Node 解析，避免展示页静默失效。"""
+        html = generate_showcase(self.lib_dir)
+        soup = BeautifulSoup(html, "html.parser")
+        scripts = [script.string or script.get_text() for script in soup.find_all("script")]
+        self.assertTrue(scripts)
+        for index, source in enumerate(scripts):
+            with tempfile.NamedTemporaryFile("w", suffix=f"-{index}.js", encoding="utf-8") as handle:
+                handle.write(source)
+                handle.flush()
+                proc = subprocess.run(
+                    ["node", "--check", handle.name],
+                    capture_output=True,
+                    text=True,
+                )
+            self.assertEqual(proc.returncode, 0, proc.stderr)
 
     def test_output_has_no_external_deps(self):
         """输出是自包含的（无外部 CSS/JS 依赖）。"""
