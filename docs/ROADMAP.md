@@ -30,8 +30,9 @@ Agent（主控）─────────────────────
    │ 1. 读 HTML，理解结构/样式/交互                  │
    │ 2. 调工具拿确定性数据（主题色/变量/CSS 规则）     │  工具层（确定性，可复现）
    │ 3. 产出组件库各文件（css/js/html/docs）         │  - analyze_html.py（提取主题色/CSS）
-   │ 4. 自检：调 validate + roundtrip 验证           │  - validate_lib.py（8 项强约束）
-   │ 5. 不达标则修订                                │  - roundtrip.py（往返等价度）
+   │ 4. 自检：调 validate + roundtrip 验证           │  - generate_scaffold.py（快速起点）
+   │ 5. 不达标则修订                                │  - validate/showcase/delivery（统一门禁）
+                                                    │  - roundtrip.py（往返等价度）
     └───────────────────────────────────────────────┘
 ```
 
@@ -48,9 +49,9 @@ v1 的 Python 脚本不丢弃，转为 agent 的**工具层**：
 |---|---|
 | `_common.py` | 工具：颜色解析、CSS 变量提取、media 拆分（确定性，agent 调用） |
 | `analyze_html.py` | 工具：快速提取主题色令牌、结构清单（给 agent 当参考，不是唯一依据） |
-| `validate_lib.py` | 工具：8 项强约束校验（agent 自检） |
+| `validate_lib.py` | 工具：9 项强约束校验（agent 自检） |
 | `roundtrip.py` | 工具：往返等价度（agent 自检 + 量化质量） |
-| ~~`generate_lib.py` + 模板~~ | **已删除**：agent 直接写代码，不再套模板（v1 模板链路一并移除） |
+| ~~`generate_lib.py` + 模板~~ | **最终生成已删除**：保留 `generate_scaffold.py` 作为精修起点，不能冒充最终质量输出 |
 | ~~`aggregate_vertical.py`~~ | **已删除**：垂类聚合等单案例稳定后再重做 |
 
 ## 产出标准（对标 benchmark 组件库）
@@ -59,6 +60,7 @@ agent 产出的组件库必须达到 benchmark 的质量：
 
 ```
 <库名>/
+├── showcase.html              设计令牌 / 组件 / 交互态展示页
 ├── README.md                 介绍 + 快速开始 + API + 主题定制
 ├── docs/设计规范.md           主题色系统 / Tab 结构 / 交互模式 / 逻辑设置 / 响应式
 ├── src/
@@ -70,10 +72,11 @@ agent 产出的组件库必须达到 benchmark 的质量：
 ```
 
 **质量门槛**（agent 自检必须全过）：
-1. `validate_lib.py` 8 项强约束全 PASS
-2. `roundtrip.py` 综合分 ≥ 0.85（结构 ≥ 0.7，文本 ≥ 0.8）
-3. `node --check` JS 语法合法
-4. example.html 用原数据能还原原页面核心内容
+1. 基础档：`validate_lib.py` 9 项强约束全 PASS、`node --check` 通过
+2. 基础档：`roundtrip.py` 综合分 ≥ 0.85（结构 ≥ 0.7，文本 ≥ 0.8）
+3. 交付物：`examples/template.html` 可挂载，`showcase.html` 已生成
+4. Gold 档：`create/version`、完整 API/数据/主题文档、Bento Showcase、交互 verified coverage、class coverage ≥ 0.98；支持范式综合分目标 ≥ 0.98
+5. 纵向回归：`verify_delivery.py --baseline-report` 不允许分数下降或耗时超过倍率门限
 
 ## 优化项总览
 
@@ -119,16 +122,18 @@ agent 拿到 HTML 后该怎么做：
    - `src/<lib>.js`：渲染引擎，`<LibName>.mount(el, options)` API，数据驱动，完整 A11y
    - `examples/<案例>.html`：用原数据复刻原案例
    - `examples/template.html`：空白复用模板
+   - `showcase.html`：通过 `generate_showcase.py` 生成并纳入完整交付门禁
    - `docs/设计规范.md`：主题色/Tab/交互/逻辑的完整规范
    - `README.md`：介绍 + 快速开始 + API
-4. **自检**：跑 `validate_lib.py`（8 约束）+ `roundtrip.py`（往返等价度）+ `node --check`（语法）
+3.5. **大案例加速**：可先跑 `generate_scaffold.py` 生成可精修脚手架，再由 agent 做结构和视觉修订。
+4. **自检**：先跑 `generate_showcase.py`，再跑 `validate_lib.py --require-showcase --quality-profile gold`（8 约束 + Gold 交付物完整性）+ `roundtrip.py --example examples/<案例>.html`（往返等价度）+ `node --check`（语法）+ `verify_delivery.py`（耗时/纵向回归）
 5. **修订**：不达标则修改对应文件，重跑自检，直到全过
 
 SKILL.md 要包含：
 - 拆解思维框架（看 HTML 的顺序和关注点）
 - sg-* 强约束规范（命名/变量/响应式/A11y，引用 spec.md）
 - 工具调用方式（analyze/validate/roundtrip 的 CLI）
-- 质量门槛（validate 全过 + roundtrip ≥ 0.85）
+- 质量门槛（baseline ≥ 0.85；支持范式 Gold ≥ 0.98 + 完整交付物 + 纵向不回退）
 - 标杆示例（benchmark 组件库的结构和质量标准）
 
 ### P1-2 前向测试：agent 独立拆解新案例
@@ -144,7 +149,7 @@ SKILL.md 要包含：
 3. 纸上谈兵（nav+panel，agent 需理解 data-p 关联）
 4. 蜂鸟科图鉴（对比辨析，agent 需理解特征对比）
 
-每个案例的通过标准：validate 8/0 + roundtrip 综合 ≥ 0.85（未支持范式暂按 generic 兜底，不达 0.85 属预期）。
+每个案例的通过标准：validate 9/0 + roundtrip 综合 ≥ 0.85（未支持范式暂按 generic 兜底，不达 0.85 属预期）。
 
 ---
 
@@ -184,7 +189,7 @@ SKILL.md 要包含：
 ### P3-2 批量验证脚本
 
 `scripts/verify_all.py`：对一个目录下所有案例 HTML 批量跑 agent 拆解 + 自检，汇总通过率和平均往返分。
-用于回归：每次改 SKILL.md 或工具后，跑全量验证确认没退化。
+用于回归：每次改 SKILL.md 或工具后，跑全量验证确认没退化。单案例交付使用 `verify_delivery.py` 生成耗时报告；后续运行传入 `--baseline-report`，同时阻止质量分下降和耗时回退。
 
 ### P3-3 交互场景覆盖率 ✅ 已完成
 
@@ -199,6 +204,6 @@ SKILL.md 要包含：
 ## 不做的事
 
 - **LLM 做运行时解析**：解析在开发期由 agent 完成，产出是确定性代码。运行时组件库是纯 JS，不需 LLM。
-- **套模板生成（generate_lib + Jinja2）**：已删除。agent 直接写代码，组件库由 agent 产出后用 `roundtrip.py --lib` 验证。
+- **旧式套模板最终生成（generate_lib + Jinja2）**：已删除。它曾让模板输出冒充最终组件库质量；现在仅保留 `generate_scaffold.py` 作为确定性、可审阅的精修起点，最终产出必须由 agent 修订并通过 Gold/交付门禁。
 - **垂类聚合**：已删除（aggregate_vertical.py）。等 agent 单案例拆解能力稳定（P1 前向测试全过）后再重做。
 - **可视化 Playground**：浏览器打开 example.html 即可预览。

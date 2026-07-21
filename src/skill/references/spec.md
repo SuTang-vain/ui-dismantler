@@ -1,6 +1,6 @@
 # 强约束规范（spec.md）
 
-所有由本 skill 生成的组件库必须遵循以下 8 项强约束。`validate_lib.py` 据此校验。
+所有由本 skill 生成的组件库必须遵循以下 9 项强约束。`validate_lib.py` 据此校验。
 
 ## 1. 命名前缀
 
@@ -75,7 +75,7 @@
 - 唯一例外：字体 CDN（`font-family` 引用的 Google Fonts 等）
 - 生成的 `.css`/`.js` 之间可互相引用，但不得依赖第三方库
 
-## 8. 文档完备
+## 8. 文档与交付物完备
 
 每个生成的组件库必须含：
 
@@ -83,10 +83,19 @@
 |---|---|
 | `README.md` | 快速开始 + API + 数据契约 + 主题定制说明 |
 | `docs/设计规范.md` | 主题色令牌表 + Tab 结构 + 交互模式 + 逻辑设置 |
+| `examples/template.html` | 可挂载的空复用模板 + 占位数据 + 字段注释 |
+| `showcase.html` | 由 `generate_showcase.py` 生成的设计令牌 / 组件 / 交互态展示页；完整交付门禁要求 |
+
+## 9. CSS / JS 类名对齐
+
+- JS 通过 `el()`、`className`、`classList` 或 `querySelector()` 引用的 `sg-*` 类名必须有 CSS 契约；
+- 允许只作为组合锚点的语义基类，但 CSS 必须存在对应后缀变体；
+- Roundtrip 运行态报告 `class_coverage.rate`、总使用次数和 `missingClasses`，用于补充静态检查；
+- Gold 推荐使用 `--class-coverage-threshold 0.98`，状态类应优先使用 `sg-is-*` 命名。
 
 ## 校验脚本行为
 
-`validate_lib.py <组件库目录>` 逐项检查，输出：
+`validate_lib.py <组件库目录> --require-showcase` 逐项检查，输出：
 
 ```
 [PASS] 1. 命名前缀
@@ -95,11 +104,33 @@
   ↳ src/glossary.js:142  img.src = 'https://...'
 [PASS] 4. 响应式三档
 ...
+[PASS] 9. 类名对齐
 ```
 
 退出码：全过 0，有失败 1。
 
-## 9. 输出形态（P3 输出泛化）
+### Gold 完整交付档
+
+`--quality-profile gold` 不是替代 9 项强约束，而是在其上增加可复用性与展示质量门槛。完整交付应使用：
+
+```bash
+python3 src/skill/scripts/validate_lib.py <组件库目录> \
+  --require-showcase --quality-profile gold
+```
+
+Gold 额外要求：
+
+- 全局 API 同时提供 `mount(container, options)`、`create(options)` 和 `version`；
+- README 明确 API、数据契约和主题定制；
+- `docs/设计规范.md` 明确主题色、交互、响应式、A11y 和组件清单；
+- `showcase.html` 包含 `#overview`、`#colors`、`#components`、`#breakpoints` 和 `.ds-bento-grid`；
+- 受支持范式的 Roundtrip 综合分目标为 `>= 0.98`，交互页面还必须提供带 assertions 的场景，并以 `verifiedCoverage.rate` 作为覆盖率门禁；
+- 运行态 `class_coverage.rate` 推荐不低于 `0.98`；
+- 使用 `verify_delivery.py --baseline-report` 时，结构、文本、综合分不得下降，且总耗时不得超过 `--max-time-ratio`。
+
+脚手架生成器只负责恢复确定性起点（CSS/JS/template/文档），不代表通过 Gold，也不应替代 Agent 对原页面结构、视觉和交互的精修。
+
+## 10. 输出形态（P3 输出泛化）
 
 组件库支持三种输出形态，由 `adapt_output.py` 从 IIFE 源码生成：
 

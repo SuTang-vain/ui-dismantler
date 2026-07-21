@@ -96,6 +96,7 @@ In the user-specified directory (or `/tmp/<lib-name>/`), create the complete com
 
 ```
 <lib-name>/
+├── showcase.html              Generated design-token/component-state showcase (must produce)
 ├── README.md                 Intro + quick start + API + data contract + theming
 ├── docs/设计规范.md           Theme color system / Tab structure / interaction patterns / logic settings / responsive
 ├── src/
@@ -181,24 +182,45 @@ Covers:
 - Theming (how to override `--sg-*` variables, dark mode example)
 - File structure explanation
 
+### Step 3.7: Optional Fast Scaffold
+
+When the case is large, run `python3 src/skill/scripts/generate_scaffold.py <manifest.json> --out <component-lib-dir>` before manual refinement. The scaffold restores mount/create/A11y/responsive boilerplate and writes a placeholder `examples/template.html`; it is a starting point, not a quality pass.
+
 ### Step 4: Self-Check (must all pass)
 
 ```bash
-# 4a. 8-item strong-constraint validation
-python3 src/skill/scripts/validate_lib.py <component-lib-dir>
+# 4a. Optional fast scaffold (before manual refinement)
+python3 src/skill/scripts/generate_scaffold.py <manifest.json> --out <component-lib-dir>
 
-# 4b. JS syntax check
+# 4b. Generate the required showcase artifact
+python3 src/skill/scripts/generate_showcase.py <component-lib-dir>
+
+# 4c. 9-item strong-constraint + artifact-completeness validation
+python3 src/skill/scripts/validate_lib.py <component-lib-dir> --require-showcase --quality-profile gold
+
+# 4d. JS syntax check
 node --check src/<lib-name>.js
 
-# 4c. Roundtrip equivalence (quantifies "how faithful to the original HTML")
-python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --out <report.json>
+# 4e. Roundtrip equivalence (quantifies "how faithful to the original HTML")
+python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --example examples/<case>.html --out <report.json>
+
+# 4f. Full delivery report and longitudinal regression gate
+python3 src/skill/scripts/verify_delivery.py <original-html-path> --lib <component-lib-dir> --example examples/<case>.html --manifest <manifest.json> --scenarios <scenarios.json> --overall-threshold 0.98 --out delivery-report.json
+cp delivery-report.json previous-delivery-report.json
+# After a later iteration, compare against the previous report rather than itself.
+python3 src/skill/scripts/verify_delivery.py <original-html-path> --lib <component-lib-dir> --example examples/<case>.html --manifest <manifest.json> --scenarios <scenarios.json> --baseline-report previous-delivery-report.json --out delivery-report.json
 ```
 
+**One-command delivery gate**: `python3 src/skill/scripts/verify_delivery.py <original> --lib <lib> --example examples/<case>.html --scenarios <scenarios.json> --manifest <manifest.json> --overall-threshold 0.98` combines generation, Gold validation, syntax, Roundtrip, state matrix, verified coverage and timing evidence. The compatibility entry point is intentionally thin; implementation lives under `src/ui_dismantler/`.
+
 **Quality thresholds** (all must pass to count as complete):
-- `validate_lib.py`: all 8 items PASS
+- `examples/template.html`: present and mountable with placeholder data
+- `showcase.html`: generated before validation
+- `validate_lib.py --require-showcase`: all 8 items PASS
 - `node --check`: no syntax errors
 - `roundtrip.py`: defaults to rendered reference; when `reference.fallback=true`, fix the reference rendering or record the compatibility contract with `--reference-mode static`
-- Runtime main threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
+- Baseline threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
+- Gold threshold for supported patterns: overall ≥ 0.98; also require `create/version`, complete API/data/theme docs, Bento Showcase, verified interaction coverage, and runtime class coverage ≥ 0.98
 - When the page has Tab/Dialog/form interactions, add `--scenarios <scenarios.json>`; each scenario must have assertions proving the state was actually reached
 
 > Threshold basis: the benchmark library has roundtrip overall 0.99;
@@ -231,6 +253,7 @@ After each self-check round, use this table to locate the revision point. After 
 | validate: 6. theme customizable | Rules hardcode `#hex` or `rgb()` (non-:root, non pure-black/white overlay) | Replace with `var(--sg-xxx)`; colors inside gradients also go through variables |
 | validate: 7. zero deps | examples HTML references external JS/CSS (font CDN excluded) | Remove external references, use local src/ resources |
 | validate: 8. docs complete | Missing README.md or docs/设计规范.md, or README has no API docs | Complete docs; README includes mount/create API, design spec includes theme-color section |
+| validate: 9. class alignment | JS creates or queries an `sg-*` class with no CSS rule | Add the missing CSS contract or correct the JS class; use Roundtrip `class_coverage.missingClasses` for runtime evidence |
 | node --check error | JS syntax error (missing semicolon / unbalanced parens / illegal char) | Locate and fix by line number; common: unclosed template literal, trailing comma in object |
 | roundtrip text score <0.8 | Check report `text.missing`, missing real content (member roles/work titles etc.); `text.extra` is got-side noise (data-driven text like timeline years, not penalized) | Add missing text into `examples/<case>.html` options data; extra needs no action |
 | roundtrip structure score <0.7 | Check `structure.node_match_rate` (with redundancy penalty); compare `node_recall`: high recall but low match_rate means `redundancy_penalty>0` (got nodes > 1.5× ref, redundant DOM); low `node_precision` also signals redundancy | Missing view layer (timeline/works not rendered) / nesting misaligned / modal not mounted -> add view; got redundant DOM (placeholder/debug containers) -> slim rendering, only output structures present in original HTML. The comparator already tolerates sg- prefix and class renames |
@@ -246,7 +269,7 @@ Locate revision points using the "Self-Check Decision Table" above. After fixing
 
 ## Key Constraints (see references/spec.md for details)
 
-8 strong constraints, validated by `validate_lib.py`:
+9 strong constraints, validated by `validate_lib.py`:
 
 1. **Naming prefix**: CSS classes `sg-`, variables `--sg-`, JS globals PascalCase, DOM ids `sg-`
 2. **Variable normalization**: Original variable names normalize to `--sg-*` per the table (primary/accent/ink/muted/subtle/line/paper/stage/soft...). Tailwind/Material Design 3 semantic colors are also covered (on-primary/on-secondary→on-accent/surface→paper/on-surface→ink/outline→line/primary-container→soft/...)
@@ -255,7 +278,8 @@ Locate revision points using the "Self-Check Decision Table" above. After fixing
 5. **A11y**: tablist/tabpanel, dialog, aria-live, aria-label, ESC to close (as needed)
 6. **Theme customizable**: All colors go through variables; no hardcoded `#hex` (`:root` and pure-black/white overlays are exceptions)
 7. **Zero dependency**: No external JS/CSS (font CDN is the exception)
-8. **Docs complete**: README.md + docs/设计规范.md both present
+8. **Docs + artifacts complete**: README.md + docs/设计规范.md + mountable template; Showcase for complete delivery
+9. **Class alignment**: JS-referenced `sg-*` classes must have CSS rules; runtime Roundtrip reports `class_coverage`
 
 ## Benchmark Reference
 
@@ -272,8 +296,8 @@ When dismantling, target the quality of the benchmark component library:
 | Script | Purpose | When to call |
 |---|---|---|
 | `src/skill/scripts/analyze_html.py --minimal` | Extract theme color tokens + pattern recognition + structure list | Step 2, fetch reference data |
-| `src/skill/scripts/validate_lib.py` | 8-item strong-constraint validation | Step 4 self-check |
-| `scripts/roundtrip.py` | Roundtrip equivalence (rendered version vs reference + tag topology + class + text three-way comparison) | Step 4 self-check |
+| `src/skill/scripts/validate_lib.py` | 9-item strong-constraint validation | Step 4 self-check |
+| `scripts/roundtrip.py` | Roundtrip equivalence (rendered version vs reference + tag topology + class + text + runtime class coverage comparison) | Step 4 self-check |
 | `src/skill/scripts/adapt_output.py` | Output adapter: IIFE -> ESM/UMD / Web Component | Step 3, generate other forms as needed |
 | `src/skill/scripts/generate_showcase.py` | Extract design tokens from `src/*.css` and generate `showcase.html` design-system showcase page | After Step 3 output, before Step 4 |
 | `scripts/generate_scenarios.py` | Generate reviewable interaction-scenario candidates from manifest | Before Step 4, when page has interactions |
@@ -302,7 +326,7 @@ In Step 1 when understanding HTML or Step 2 when fetching reference data, you ca
 
 ### Package Architecture
 
-Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤16 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, 296 tests covering unit + architecture-guard + interaction-matrix edge cases).
+Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤16 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, currently 352 tests covering unit + architecture-guard + interaction-matrix + delivery regressions).
 
 ```
 src/ui_dismantler/
@@ -311,12 +335,14 @@ src/ui_dismantler/
 │   ├── html.py           # HtmlAnalyzer (HTML -> manifest)
 │   └── detectors.py      # ViewDetectorRegistry + 10 pattern detectors
 ├── generation/
-│   ├── showcase.py       # design-token showcase page generator
+│   ├── showcase.py       # design-token/component-state showcase generator
+│   ├── scaffold.py       # deterministic fast refinement starting point
 │   └── adapt_output.py   # IIFE -> ESM/Web Component adapter
-├── validation/library.py # 8-item strict-constraint validator
+├── validation/library.py # 9 baseline constraints + optional Gold contract
 └── evaluation/
-    ├── roundtrip.py      # roundtrip equivalence comparator
+    ├── roundtrip.py      # equivalence + runtime class coverage
     ├── batch.py          # batch verification (parallel + cache)
+    ├── delivery.py       # Gold/template/scenario/time regression gate
     ├── scenario_coverage.py  # interaction coverage calculator
     └── scenario_generator.py # scenario candidate generator
 ```
@@ -340,6 +366,7 @@ Multi-case aggregation, batch vertical generation, and domain assets are not par
 - Stub injection: Tailwind/marked/dompurify/mermaid/localStorage/canvas getContext all stubbed, prevents crashes from missing external deps
 - VirtualConsole: silences jsdom's "Not implemented" warnings
 - Large JSON output: >40KB goes through a temp file (prevents pipe truncation)
+- Runtime class coverage: compares rendered DOM class uses with loaded CSS selectors and reports missing classes
 - Limits: jsdom has no real layout engine (clientWidth=0), no canvas pixel rendering, limited support for Web Component connectedCallback timing
 
 ## Failure Handling
@@ -351,6 +378,6 @@ Multi-case aggregation, batch vertical generation, and domain assets are not par
 
 ## Reference Files
 
-- `references/spec.md` - detailed spec for the 8 strong constraints + variable normalization mapping table
+- `references/spec.md` - detailed spec for the 9 strong constraints + variable normalization mapping table
 - `references/patterns.md` - structure-recognition features (decision rules for Tab/carousel/Modal/cause-chain/nav-panel/graph etc., useful in Step 1 when understanding HTML)
 - `references/manifest_schema.md` - manifest.json field definitions (Step 2 tool output)
