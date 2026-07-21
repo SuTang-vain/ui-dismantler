@@ -121,6 +121,8 @@ class TestAnalysisStrategy(unittest.TestCase):
         self.assertGreaterEqual(len(plan["sectionInventory"]), 8)
         self.assertLessEqual(len(plan["sectionInventory"]), 64)
         self.assertTrue(all("textChars" in item and "selector" in item for item in plan["sectionInventory"]))
+        selectors = [item["selector"] for item in plan["sectionInventory"]]
+        self.assertEqual(len(selectors), len(set(selectors)))
 
 
 if __name__ == "__main__":

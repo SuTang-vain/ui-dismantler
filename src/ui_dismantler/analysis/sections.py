@@ -19,12 +19,31 @@ def _slug(value: str, fallback: str) -> str:
 
 
 def _selector(node, index: int) -> str:
-    if node.get("id"):
-        return f"#{node['id']}"
-    classes = [c for c in node.get("class", []) if re.match(r"^[A-Za-z_][\w-]*$", c)]
-    if classes:
-        return f"{node.name}." + ".".join(classes[:2])
-    return f"{node.name}:nth-of-type({index + 1})"
+    """生成尽量稳定且唯一的 section selector。
+
+    仅使用可直接放进 CSS selector 的 id/class；当同类节点重复时加入
+    :nth-of-type，并向上保留到 header/main/footer 或带 id 的锚点。
+    """
+    parts: list[str] = []
+    current = node
+    while current is not None and getattr(current, "name", None) not in {None, "body", "html", "[document]"}:
+        if current.get("id") and re.match(r"^[A-Za-z_][\w-]*$", current["id"]):
+            parts.insert(0, f"#{current['id']}")
+            break
+        classes = [c for c in current.get("class", []) if re.match(r"^[A-Za-z_][\w-]*$", c)]
+        piece = current.name
+        if classes:
+            piece += "." + ".".join(classes[:2])
+        parent = current.parent
+        if parent is not None:
+            siblings = [child for child in parent.find_all(current.name, recursive=False)]
+            if len(siblings) > 1:
+                piece += f":nth-of-type({siblings.index(current) + 1})"
+        parts.insert(0, piece)
+        if current.name in {"header", "main", "footer"}:
+            break
+        current = parent
+    return " > ".join(parts) if parts else f"{node.name}:nth-of-type({index + 1})"
 
 
 def build_section_inventory(soup: BeautifulSoup, *, max_sections: int = 64) -> list[dict]:
@@ -49,7 +68,11 @@ def build_section_inventory(soup: BeautifulSoup, *, max_sections: int = 64) -> l
         heading = node.find(["h1", "h2", "h3"])
         heading_text = " ".join(heading.get_text(" ", strip=True).split()) if heading else ""
         aria_label = node.get("aria-label") or node.get("aria-labelledby") or ""
-        if not text and not heading_text and not aria_label:
+        if not text and (
+            not heading_text
+            or node.has_attr("aria-live")
+            or "notification" in str(aria_label).lower()
+        ):
             continue
         classes = [c for c in node.get("class", []) if c]
         candidates.append({
