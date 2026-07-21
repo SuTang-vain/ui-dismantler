@@ -11,6 +11,8 @@ from pathlib import Path
 import re
 from typing import Any
 
+from bs4 import BeautifulSoup
+
 from ui_dismantler.generation.showcase import generate_showcase
 
 
@@ -43,6 +45,88 @@ def _safe_css(value: Any) -> str:
     return text.replace(";", "")
 
 
+
+
+def _bounded_text(node, limit: int = 1200) -> str:
+    if node is None:
+        return ""
+    text = " ".join(node.get_text(" ", strip=True).split())
+    return text[:limit]
+
+
+def _content_defaults(section: dict, generation_input: dict) -> dict:
+    """从原 section chunk 提取 example options；不写入组件 JS 默认值。"""
+    inventory = generation_input.get("inventory")
+    chunk_file = section.get("chunkFile")
+    if not inventory or not chunk_file:
+        return {}
+    chunk_path = Path(chunk_file)
+    if not chunk_path.is_absolute():
+        chunk_path = Path(inventory).resolve().parent / chunk_path
+    if not chunk_path.is_file():
+        return {}
+    soup = BeautifulSoup(chunk_path.read_text(encoding="utf-8", errors="replace"), "html.parser")
+    result: dict[str, Any] = {}
+    heading = soup.find(["h1", "h2", "h3"])
+    if heading:
+        result["title"] = _bounded_text(heading, 240)
+        result["label"] = result["title"]
+    result["description"] = _bounded_text(soup, 1200)
+
+    tabs = []
+    for index, button in enumerate(soup.select('[role="tab"]')):
+        label = _bounded_text(button, 160)
+        if not label:
+            continue
+        tab = {"id": button.get("id") or f"tab-{index + 1}", "label": label}
+        panel_id = button.get("aria-controls")
+        panel = soup.find(id=panel_id) if panel_id else None
+        panel_text = _bounded_text(panel, 700)
+        if panel_text:
+            tab["title"] = panel_text
+        tabs.append(tab)
+    if tabs:
+        result["tabs"] = tabs[:12]
+
+    faq = []
+    for details in soup.find_all("details"):
+        summary = details.find("summary")
+        q = _bounded_text(summary, 240)
+        if not q:
+            continue
+        summary.extract()
+        a = _bounded_text(details, 900)
+        faq.append({"q": q, "a": a})
+    if faq:
+        result["faq"] = faq[:24]
+
+    items = []
+    candidates = soup.find_all("article")
+    if len(candidates) < 3:
+        candidates = soup.find_all("li")
+    if len(candidates) < 3:
+        candidates = soup.find_all("a")
+    seen = set()
+    for node in candidates:
+        label = _bounded_text(node, 280)
+        if not label or label in seen:
+            continue
+        seen.add(label)
+        items.append({"label": label})
+        if len(items) >= 24:
+            break
+    if items:
+        result["items"] = items
+
+    input_node = soup.find("input")
+    if input_node and input_node.get("placeholder"):
+        result["emailPlaceholder"] = input_node.get("placeholder")
+    submit = soup.find("button", attrs={"type": "submit"})
+    if submit:
+        result["submitLabel"] = _bounded_text(submit, 120) or "Submit"
+    return result
+
+
 def _contract_defaults(section: dict) -> dict:
     contract = section.get("contract") or {}
     required = contract.get("props", {}).get("required", [])
@@ -60,7 +144,7 @@ def _contract_defaults(section: dict) -> dict:
 def _section_js(section: dict) -> str:
     sid = _slug(section.get("id", "section"), "section")
     component = section.get("contract", {}).get("component") or _pascal(sid)
-    heading = section.get("heading") or component
+    heading = component
     defaults = _contract_defaults(section)
     contract = section.get("contract") or {}
     required = set(contract.get("props", {}).get("required", []))
@@ -303,7 +387,8 @@ def generate_section_scaffold(generation_input: dict, out_dir: str | Path, lib_n
     sections = generation_input.get("sections", [])
     section_js = []
     section_css = []
-    options: dict[str, Any] = {}
+    example_options: dict[str, Any] = {}
+    template_options: dict[str, Any] = {}
     for section in sections:
         sid = _slug(section.get("id", "section"), "section")
         js_name = f"{sid}.js"
@@ -312,7 +397,21 @@ def generate_section_scaffold(generation_input: dict, out_dir: str | Path, lib_n
         (sections_src / css_name).write_text(_section_css(section), encoding="utf-8")
         section_js.append(js_name)
         section_css.append(css_name)
-        options[sid] = {"label": section.get("heading") or section.get("contract", {}).get("component", sid)}
+        extracted = _content_defaults(section, generation_input)
+        example_options[sid] = {
+            "label": section.get("heading") or section.get("contract", {}).get("component", sid),
+            **extracted,
+        }
+        placeholders = _contract_defaults(section)
+        template_options[sid] = {
+            "label": section.get("contract", {}).get("component", sid),
+            "title": section.get("contract", {}).get("component", sid),
+            "description": "Replace with reviewed section content.",
+            "tabs": placeholders["tabs"],
+            "faq": placeholders["faq"],
+            "items": placeholders["items"],
+            "emailPlaceholder": placeholders["emailPlaceholder"],
+        }
     assembly_name = f"{_slug(lib_name, 'section-library')}.js"
     css_bundle_name = f"{_slug(lib_name, 'section-library')}.css"
     css_bundle = _base_css() + "\n" + "\n".join(_section_css(section) for section in sections)
@@ -320,9 +419,10 @@ def generate_section_scaffold(generation_input: dict, out_dir: str | Path, lib_n
     (src / css_bundle_name).write_text(css_bundle, encoding="utf-8")
     (src / assembly_name).write_text(_assembly_js(sections, lib_name), encoding="utf-8")
     pascal = _pascal(lib_name, "SectionLibrary")
-    template = _template_html(section_js, css_bundle_name, assembly_name, pascal, options)
+    template = _template_html(section_js, css_bundle_name, assembly_name, pascal, template_options)
+    example = _template_html(section_js, css_bundle_name, assembly_name, pascal, example_options).replace("Section Scaffold", "Example")
     (examples / "template.html").write_text(template, encoding="utf-8")
-    (examples / f"{_slug(lib_name, 'section-library')}.html").write_text(template.replace("Section Scaffold", "Example"), encoding="utf-8")
+    (examples / f"{_slug(lib_name, 'section-library')}.html").write_text(example, encoding="utf-8")
     (out / "generation-input.json").write_text(json.dumps(generation_input, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (out / "README.md").write_text(
         f"# {pascal} section scaffold\n\n"

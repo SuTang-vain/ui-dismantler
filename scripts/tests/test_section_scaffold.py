@@ -69,6 +69,34 @@ class TestSectionScaffold(unittest.TestCase):
             ).evaluate()
         self.assertTrue(all(ok for _, ok, _ in results), results)
 
+    def test_example_uses_real_chunk_content_but_template_stays_placeholder(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            chunk_dir = root / "sections"
+            chunk_dir.mkdir()
+            (chunk_dir / "001-feature-tabs.html").write_text(
+                "<section><h2>Original Feature Title</h2>"
+                "<button role='tab' aria-controls='p1'>Agents</button>"
+                "<button role='tab' aria-controls='p2'>Workflows</button>"
+                "<div id='p1'>Build agents with memory</div>"
+                "<div id='p2'>Orchestrate workflows</div></section>",
+                encoding="utf-8",
+            )
+            inventory = root / "inventory.json"
+            inventory.write_text("{}", encoding="utf-8")
+            document = self._input()
+            document["inventory"] = str(inventory)
+            document["sections"][0]["chunkFile"] = "sections/001-feature-tabs.html"
+            out = root / "lib"
+            generate_section_scaffold(document, out, "demo-sectioned")
+            example = (out / "examples/demo-sectioned.html").read_text(encoding="utf-8")
+            template = (out / "examples/template.html").read_text(encoding="utf-8")
+        self.assertIn("Original Feature Title", example)
+        self.assertIn("Agents", example)
+        self.assertIn("Workflows", example)
+        self.assertNotIn("Original Feature Title", template)
+        self.assertIn("Replace with reviewed section content.", template)
+
     def test_invalid_generation_input_is_blocked(self):
         bad = self._input()
         bad["status"] = "invalid"
