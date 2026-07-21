@@ -4,4 +4,5 @@
 - library.py: 模板化组件库生成（已退役，保留兼容）
 - showcase.py: 设计令牌展示页生成
 - adapt_output.py: IIFE → ESM/UMD/Web Component 输出适配
+- section_contracts.py: section contract 校验与 generation-input 适配
 """
