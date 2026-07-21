@@ -233,6 +233,164 @@ class TestNamingGenericWords(unittest.TestCase):
         v.check_naming()
         self.assertTrue(v.results[0][1], f"sg- 前缀不应告警: {v.results[0][2]}")
 
+class TestArtifactCompleteness(unittest.TestCase):
+    """稳定交付物：template 必须存在，showcase 可由完整门禁显式要求。"""
+
+    _BASE_FILES = {
+        "src/glossary.css": _MIN_CSS,
+        "src/glossary.js": _MIN_JS,
+        "README.md": "# Lib\n\nGlossaryExplorer.mount(el, opts)\n",
+        "docs/设计规范.md": "# 设计规范\n\n主题色\n",
+        "examples/case.html": "<!doctype html><div id='mount'></div>",
+    }
+
+    def test_template_is_required(self):
+        v = _make_validator(self._BASE_FILES)
+        v.check_docs()
+        self.assertFalse(v.results[0][1])
+        self.assertIn("template.html", v.results[0][2])
+
+    def test_template_passes_without_showcase_legacy_mode(self):
+        files = dict(self._BASE_FILES)
+        files["examples/template.html"] = "<!doctype html><div id='mount'></div><script>GlossaryExplorer.mount(document.getElementById('mount'))</script>"
+        v = _make_validator(files)
+        v.check_docs()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
+    def test_complete_gate_requires_showcase(self):
+        files = dict(self._BASE_FILES)
+        files["examples/template.html"] = "<!doctype html><div id='mount'></div><script>GlossaryExplorer.mount(document.getElementById('mount'))</script>"
+        v = _make_validator(files)
+        v.require_showcase = True
+        v.check_docs()
+        self.assertFalse(v.results[0][1])
+        self.assertIn("showcase.html", v.results[0][2])
+
+    def test_complete_gate_accepts_template_and_showcase(self):
+        files = dict(self._BASE_FILES)
+        files["examples/template.html"] = "<!doctype html><div id='mount'></div><script>GlossaryExplorer.mount(document.getElementById('mount'))</script>"
+        files["showcase.html"] = "<!doctype html><html><body>showcase</body></html>"
+        v = _make_validator(files)
+        v.require_showcase = True
+        v.check_docs()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
+    def test_gold_profile_rejects_mount_only_thin_docs(self):
+        files = dict(self._BASE_FILES)
+        files["examples/template.html"] = "<!doctype html><div id='mount'></div><script>GlossaryExplorer.mount(document.getElementById('mount'))</script>"
+        files["showcase.html"] = "<!doctype html><html><body>showcase</body></html>"
+        v = _make_validator(files)
+        v.require_showcase = True
+        v.quality_profile = "gold"
+        v.check_gold_quality()
+        self.assertFalse(v.results[0][1])
+        self.assertIn("create", v.results[0][2])
+
+    def test_gold_profile_accepts_complete_api_docs_and_bento(self):
+        files = dict(self._BASE_FILES)
+        files["src/glossary.js"] = """window.GlossaryExplorer = {
+  version: '1.0.0',
+  create: function(options){ return document.createElement('div'); },
+  mount: function(container, options){ return container; }
+};"""
+        files["README.md"] = "# Lib\n\n## API\nmount/create\n## 数据契约\nfields\n## 主题\ntokens\n"
+        files["docs/设计规范.md"] = "# 设计规范\n主题色 交互 响应式 A11y 组件\n"
+        files["examples/template.html"] = "<!doctype html><div id='mount'></div><script>GlossaryExplorer.mount(document.getElementById('mount'))</script>"
+        files["showcase.html"] = """<!doctype html><section id="overview"><div class="ds-bento-grid"></div></section>
+<section id="colors"></section><section id="components"></section><section id="breakpoints"></section>"""
+        v = _make_validator(files)
+        v.require_showcase = True
+        v.quality_profile = "gold"
+        v.check_gold_quality()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
+
+class TestClassAlignment(unittest.TestCase):
+    """check_class_alignment：JS 引用的 sg-* 类名必须在 CSS 中有定义。"""
+
+    def test_pass_when_js_classes_all_defined(self):
+        """JS 引用的类全在 CSS 定义 -> PASS。"""
+        css = _MIN_CSS + "\n.sg-carousel-dots { gap: 4px; }\n.sg-stage { padding: 10px; }"
+        js = _MIN_JS + """
+function el(tag, cls, attrs) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+var dots = el('div', 'sg-carousel-dots');
+var stage = el('div', 'sg-stage');"""
+        v = _make_validator({
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_class_alignment()
+        self.assertEqual(len(v.results), 1)
+        self.assertTrue(v.results[0][1], f"应 PASS: {v.results[0][2]}")
+
+    def test_fail_when_js_class_missing_from_css(self):
+        """JS 用 sg-carousel-dots 但 CSS 只有 sg-carousel-arrow -> FAIL（拦截类名脱节）。"""
+        css = _MIN_CSS + "\n.sg-carousel-arrow { cursor: pointer; }"
+        js = _MIN_JS + """
+function el(tag, cls, attrs) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+var dots = el('div', 'sg-carousel-dots');"""
+        v = _make_validator({
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_class_alignment()
+        self.assertEqual(len(v.results), 1)
+        self.assertFalse(v.results[0][1], "应 FAIL: JS 用 sg-carousel-dots 但 CSS 未定义")
+        self.assertIn("sg-carousel-dots", v.results[0][2])
+
+    def test_exempt_dynamic_id_prefixes(self):
+        """动态拼接的 ID 前缀（sg-tab-xxx / sg-panel-xxx）不是类名，不报 FAIL。"""
+        css = _MIN_CSS + "\n.sg-tab { color: red; }\n.sg-view { display: grid; }"
+        js = _MIN_JS + """
+function el(tag, cls, attrs) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+var tab = el('button', 'sg-tab');
+tab.id = 'sg-tab-members';
+var panel = el('section', 'sg-view');
+panel.id = 'sg-panel-members';"""
+        v = _make_validator({
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_class_alignment()
+        self.assertTrue(v.results[0][1], f"动态 ID 前缀应豁免: {v.results[0][2]}")
+
+    def test_exempt_semantic_base_classes(self):
+        """语义基类（sg-tl-prev/sg-tl-next 用于组合选择器）不报 FAIL。"""
+        css = _MIN_CSS + "\n.sg-arrow { display: flex; }\n.sg-tl-prev-pc { left: 0; }\n.sg-tl-next-pc { right: 0; }"
+        js = _MIN_JS + """
+function el(tag, cls, attrs) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+var prev = el('button', 'sg-arrow sg-tl-prev sg-tl-prev-pc');
+var next = el('button', 'sg-arrow sg-tl-next sg-tl-next-pc');"""
+        v = _make_validator({
+            "src/glossary.css": css,
+            "src/glossary.js": js,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_class_alignment()
+        self.assertTrue(v.results[0][1], f"语义基类应豁免: {v.results[0][2]}")
+
+    def test_pass_with_min_fixture(self):
+        """_MIN_CSS + _MIN_JS 应 PASS（无 sg-* 类引用或全在 CSS 定义）。"""
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS,
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_class_alignment()
+        self.assertTrue(v.results[0][1], f"最小 fixture 应 PASS: {v.results[0][2]}")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -289,6 +289,46 @@ class TestGoldenSnapshotBenchmark(unittest.TestCase):
         self.assertGreaterEqual(report["scores"]["text"], 0.95)
 
 
+class TestClassCoverage(unittest.TestCase):
+    """roundtrip 报告应含 class_coverage 维度，衡量渲染 DOM 的 class 是否在 CSS 中有定义。"""
+
+    REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    HTML = os.path.join(REPO, "benchmark", "original.html")
+    LIB = os.path.join(REPO, "benchmark", "lib")
+
+    def _run(self):
+        if not (os.path.isfile(self.HTML) and os.path.isdir(self.LIB)):
+            self.skipTest("benchmark fixture 缺失")
+        import json
+        import subprocess
+        proc = subprocess.run(
+            [sys.executable, os.path.join(self.REPO, "scripts", "roundtrip.py"),
+             self.HTML, "--lib", self.LIB, "--reference-mode", "rendered"],
+            capture_output=True, text=True, timeout=60,
+            cwd=self.REPO,
+        )
+        self.assertEqual(proc.returncode, 0, f"roundtrip 失败: {proc.stderr[:300]}")
+        return json.loads(proc.stdout)
+
+    def test_class_coverage_field_present(self):
+        """roundtrip 输出必须含 class_coverage 字段。"""
+        report = self._run()
+        self.assertIn("class_coverage", report)
+        cc = report["class_coverage"]
+        self.assertIsNotNone(cc, "class_coverage 不应为 None")
+        self.assertIn("rate", cc)
+        self.assertIn("totalClassUses", cc)
+        self.assertIn("coveredClassUses", cc)
+        self.assertIn("missingClasses", cc)
+
+    def test_class_coverage_rate_high(self):
+        """合规库的 class_coverage.rate 应 > 0.9（绝大多数 class 有 CSS 定义）。"""
+        report = self._run()
+        cc = report["class_coverage"]
+        self.assertGreater(cc["rate"], 0.9,
+                           f"class_coverage.rate 过低: {cc['rate']}, missing: {cc['missingClasses']}")
+
+
 class TestBenchmarkScenarioMatrix(unittest.TestCase):
     """Benchmark 交互场景矩阵回归：8 个场景全部通过。"""
 
