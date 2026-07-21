@@ -33,6 +33,12 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "analysis/detectors.py",
             "generation/__init__.py",
             "generation/showcase.py",
+            "generation/scaffold.py",
+            "generation/templates/example.html.j2",
+            "generation/templates/lib.css.j2",
+            "generation/templates/lib.js.j2",
+            "generation/templates/readme.md.j2",
+            "generation/templates/spec.md.j2",
             "generation/adapt_output.py",
             "validation/__init__.py",
             "validation/library.py",
@@ -41,15 +47,18 @@ class TestArchitectureBoundaries(unittest.TestCase):
             "evaluation/scenario_generator.py",
             "evaluation/roundtrip.py",
             "evaluation/batch.py",
+            "evaluation/delivery.py",
             "aggregation/__init__.py",
             "aggregation/vertical.py",
             "cli/__init__.py",
             "cli/analyze_html.py",
             "cli/validate_lib.py",
             "cli/generate_showcase.py",
+            "cli/generate_scaffold.py",
             "cli/adapt_output.py",
             "cli/roundtrip.py",
             "cli/verify_all.py",
+            "cli/verify_delivery.py",
             "cli/generate_scenarios.py",
         ):
             with self.subTest(relative=relative):
@@ -110,6 +119,8 @@ class TestArchitectureBoundaries(unittest.TestCase):
         biz_cli_pairs = [
             ("analyze_html.py", "ui_dismantler.analysis.html", "ui_dismantler.cli.analyze_html"),
             ("validate_lib.py", "ui_dismantler.validation.library", "ui_dismantler.cli.validate_lib"),
+            ("generate_scaffold.py", "ui_dismantler.generation.scaffold", "ui_dismantler.cli.generate_scaffold"),
+            ("verify_delivery.py", "ui_dismantler.evaluation.delivery", "ui_dismantler.cli.verify_delivery"),
             ("generate_showcase.py", "ui_dismantler.generation.showcase", "ui_dismantler.cli.generate_showcase"),
             ("adapt_output.py", "ui_dismantler.generation.adapt_output", "ui_dismantler.cli.adapt_output"),
         ]
@@ -179,6 +190,7 @@ class TestArchitectureBoundaries(unittest.TestCase):
         scripts_biz_cli_pairs = [
             ("roundtrip.py", "ui_dismantler.evaluation.roundtrip", "ui_dismantler.cli.roundtrip"),
             ("verify_all.py", "ui_dismantler.evaluation.batch", "ui_dismantler.cli.verify_all"),
+            ("verify_delivery.py", "ui_dismantler.evaluation.delivery", "ui_dismantler.cli.verify_delivery"),
             ("generate_scenarios.py", "ui_dismantler.evaluation.scenario_generator", "ui_dismantler.cli.generate_scenarios"),
         ]
         for name, biz_mod, cli_mod in scripts_biz_cli_pairs:
