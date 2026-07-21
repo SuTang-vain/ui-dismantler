@@ -16,6 +16,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from ui_dismantler.analysis.sections import build_section_inventory
+from ui_dismantler.analysis.contracts import infer_component_contract
 from ui_dismantler.analysis.strategy import choose_analysis_strategy, inspect_html
 from ui_dismantler.paths import PROJECT_ROOT
 
@@ -71,6 +72,12 @@ def _evidence_summary(item: dict | None, default_status: str = "not-requested") 
         for selector in rule.get("selectors", [])
         if selector
     })
+    css_custom_properties = sorted({
+        prop.get("name")
+        for rule in rules
+        for prop in rule.get("properties", [])
+        if isinstance(prop, dict) and str(prop.get("name", "")).startswith("--")
+    })
     sample_summaries = []
     for sample in node.get("samples", [])[:12]:
         sample_summaries.append({
@@ -85,6 +92,7 @@ def _evidence_summary(item: dict | None, default_status: str = "not-requested") 
         "matchedNodeCount": item.get("matchedNodeCount", 0),
         "matchedRuleCount": len(rules),
         "matchedSelectors": matched_selectors[:200],
+        "cssCustomProperties": css_custom_properties[:160],
         "computedStyle": node.get("computedStyle", {}),
         "sampleCount": len(node.get("samples", [])),
         "samples": sample_summaries,
@@ -152,6 +160,7 @@ def extract_section_chunks(
         "strategy": selected.to_dict(),
         "sectionCount": len(inventory),
         "chunkableSectionCount": sum(1 for item in inventory if item.get("chunkable")),
+        "contractMode": "heuristic-evidence-bounded",
     }
     inventory_doc = {
         "schemaVersion": "1.0",
@@ -192,6 +201,11 @@ def extract_section_chunks(
             ),
         }
         if not item.get("chunkable"):
+            record["componentContract"] = {
+                "component": "PageSkeleton",
+                "confidence": "structural",
+                "verification": ["section-selector-visible"],
+            }
             record["skipReason"] = "页面主骨架只用于上下文锚定，避免与子 section 重复复制"
             chunk_records.append(record)
             continue
@@ -211,6 +225,11 @@ def extract_section_chunks(
             "chunkFile": str(html_file.relative_to(out)),
             "metadataFile": str(metadata_file.relative_to(out)),
             "htmlBytes": len(fragment.encode("utf-8")),
+            "componentContract": infer_component_contract(
+                item,
+                fragment,
+                record["cssEvidence"],
+            ),
         })
         metadata_file.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         chunk_records.append(record)
