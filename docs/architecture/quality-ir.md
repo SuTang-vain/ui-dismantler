@@ -56,4 +56,4 @@ Render Observation 现在为每个显式目标记录 `aria-expanded`、`aria-sel
 
 ## Acceptance Gate
 
-能力覆盖、真实浏览器验证状态与自动修复阻断条件见 [`quality-capability-matrix.md`](quality-capability-matrix.md)。`observe_quality_render --browser chromium|webkit|firefox` 可显式选择验证引擎。当前 prototype 的 repair gate 必须保持 blocked。
+能力覆盖、Profile-scoped inspect readiness、真实浏览器验证状态与自动修复阻断条件见 [`quality-capability-matrix.md`](quality-capability-matrix.md)。`web-base` 当前 inspect-ready；`material-accessible` 因 spacing detector 尚未实现而 blocked。`observe_quality_render --browser chromium|webkit|firefox` 可显式选择验证引擎。两个 Profile 的 repair gate 都必须保持 blocked。

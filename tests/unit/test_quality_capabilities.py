@@ -40,6 +40,32 @@ class TestQualityCapabilities(unittest.TestCase):
         self.assertEqual(report["browserVerifiedCount"], 15)
         self.assertEqual(report["repairEligibleCount"], 0)
 
+    def test_web_base_is_inspect_ready_but_repair_blocked(self):
+        report = assess_acceptance_gate(self.registry, GUIDELINES, profile_id="web-base")
+        self.assertEqual(report["scope"], "profile")
+        self.assertEqual(report["profile"]["id"], "web-base")
+        self.assertEqual(report["enabledGuidelineCount"], 15)
+        self.assertEqual(report["implementedCount"], 15)
+        self.assertEqual(report["browserVerifiedCount"], 15)
+        self.assertEqual(report["inspectStatus"], "ready")
+        self.assertEqual(report["status"], "blocked")
+        self.assertEqual(report["inspectBlockerCount"], 0)
+        self.assertEqual(report["repairBlockerCount"], 2)
+        self.assertEqual({item["code"] for item in report["blockers"]}, {
+            "no-repair-eligible-capabilities", "registry-gate-blocked",
+        })
+
+    def test_material_profile_is_not_inspect_ready(self):
+        report = assess_acceptance_gate(self.registry, GUIDELINES, profile_id="material-accessible")
+        self.assertEqual(report["profile"]["lineage"], ["web-base", "material-accessible"])
+        self.assertEqual(report["enabledGuidelineCount"], 16)
+        self.assertEqual(report["inspectStatus"], "blocked")
+        self.assertEqual(report["status"], "blocked")
+        self.assertIn({
+            "code":"implementation-incomplete", "guidelineId":"system.spacing.sibling-consistency",
+            "message":"detector is not implemented", "phase":"inspect",
+        }, report["blockers"])
+
     def test_implemented_record_must_have_registered_detector(self):
         registry = deepcopy(self.registry)
         guideline = self.guidelines["system.spacing.sibling-consistency"]
@@ -59,13 +85,18 @@ class TestQualityCapabilities(unittest.TestCase):
         self.assertIn(("protected-auto-repair", "system.web.text-contrast"), blockers)
         self.assertEqual(report["status"], "blocked")
 
-    def test_gate_cli_reports_and_check_mode_blocks(self):
+    def test_gate_cli_reports_profile_specific_exit_codes(self):
         self.assertEqual(gate_main([]), 0)
+        self.assertEqual(gate_main(["--check-inspect"]), 0)
         self.assertEqual(gate_main(["--check"]), 2)
+        self.assertEqual(gate_main(["--profile", "material-accessible", "--check-inspect"]), 2)
+        self.assertEqual(gate_main(["--profile", "all", "--check-inspect"]), 2)
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "gate.json"
             self.assertEqual(gate_main(["-o", str(output)]), 0)
             report = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(report["profile"]["id"], "web-base")
+            self.assertEqual(report["inspectStatus"], "ready")
             self.assertEqual(report["status"], "blocked")
 
 

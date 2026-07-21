@@ -1,10 +1,10 @@
 {
   "schemaVersion": "1.0",
   "browserValidationStatus": "verified",
-  "browserValidationEvidence": "Verified July 20, 2026 with Playwright 1.61.0: tests.unit.test_quality passed 44/44 under Chromium 149.0.7827.55, WebKit 26.5, and Firefox 151.0; the full repository suite passed 241/241 under Chromium.",
+  "browserValidationEvidence": "Verified July 20, 2026 with Playwright 1.61.0: tests.unit.test_quality passed 44/44 under Chromium 149.0.7827.55, WebKit 26.5, and Firefox 151.0; refreshed July 21, 2026, the full repository suite passed 243/243 under Chromium.",
   "repairGate": {
     "status": "blocked",
-    "reason": "Automatic Repair Coordination requires verified browser coverage for every enabled hard rule and explicit repair eligibility."
+    "reason": "Browser coverage is verified, but no capability has explicit automatic-repair eligibility and Repair Coordination remains intentionally disabled."
   },
   "capabilities": [
     {
