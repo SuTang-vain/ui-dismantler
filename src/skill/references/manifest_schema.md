@@ -45,6 +45,8 @@
 | `large` | 资源盘点 → 语义骨架 → section chunks → token 聚类 | 延后 rendered reference，交互候选必须晋级 |
 | `massive` | 流式资源盘点 → 有界 section chunks → 延迟数据契约 | 采样渲染后再晋级 Gold |
 
+`large`/`massive` 的 `cssEvidenceMode` 推荐/要求接入 Chromium CDP 的 `CSS.getMatchedStylesForNode` 与 `CSS.getComputedStyleForNode`；CDP 不可用时必须记录 `unavailable`，不能伪造为静态 CSS 已判定。
+
 `analysisPlan.metrics` 是路由证据；`analysisPlan.passes` 是后续 agent/拆解器应执行的阶段，不代表这些阶段已经完成。对于 `large`/`massive`，`sectionInventory` 只保存有界的 section 摘要，不替代原始 HTML，也不代表 section 已经完成组件化。
 
 ### canvas

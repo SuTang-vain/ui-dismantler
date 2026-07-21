@@ -50,6 +50,16 @@ python3 src/skill/scripts/analyze_html.py <html-path> --out <manifest.json> --st
 
 `compact` 页面可以单次完整分析；`standard` 页面采用页面清单 → 结构/数据双阶段；`large` 页面必须先做资源盘点、语义骨架和有界 section chunks，再进入组件生成；`massive` 页面还要采用流式/有界分块并延后 rendered reference。大小只是路由先验，不是质量分数；最终仍需 Roundtrip、断言和 verified coverage。
 
+对于 `large`/`massive` 页面，建议在 section inventory 之后采集一次可选的 Chromium CSS 证据：
+
+```bash
+python3 src/skill/scripts/cdp_css.py <html-path> \
+  --manifest <manifest.json> \
+  --out <cdp-css-evidence.json>
+```
+
+该探针通过 CDP 调用 `CSS.getMatchedStylesForNode` 和 `CSS.getComputedStyleForNode`，用于确认 utility class 在真实 Chromium 中的匹配规则、媒体查询和最终计算样式。Chrome 不可用时必须输出 `status=unavailable`，不能把静态 CSS 抽取结果冒充浏览器判定；`compact` 页面默认不启用该额外开销。
+
 ### Step 2: Call Tools to Fetch Deterministic Data (reference only, not the sole basis)
 
 ```bash
