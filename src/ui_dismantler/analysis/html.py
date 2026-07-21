@@ -23,6 +23,10 @@ from ui_dismantler.core.common import (
 from ui_dismantler.analysis.detectors import (
     ViewDetection, ViewDetectorRegistry, default_view_detector_registry,
 )
+from ui_dismantler.analysis.strategy import (
+    StrategyOverride, choose_analysis_strategy, inspect_html,
+)
+from ui_dismantler.analysis.sections import build_section_inventory
 
 try:
     from bs4 import BeautifulSoup, NavigableString  # type: ignore
@@ -43,6 +47,7 @@ class HtmlAnalyzer:
         minimal: bool = False,
         detector_registry: ViewDetectorRegistry | None = None,
         profile: str | None = None,
+        strategy: StrategyOverride = "auto",
     ):
         self.html_path = Path(html_path).resolve()
         if profile and vertical and profile != vertical:
@@ -53,6 +58,8 @@ class HtmlAnalyzer:
         self.minimal = minimal
         self.detector_registry = detector_registry or default_view_detector_registry()
         self.warnings: list[str] = []
+        self.page_metrics = inspect_html(self.html_path)
+        self.analysis_strategy = choose_analysis_strategy(self.page_metrics, strategy)
         self.html = self._read_html_robust()
         self.soup = BeautifulSoup(self.html, "html.parser")
         # 提取 <style> 与 <script>
@@ -226,6 +233,16 @@ class HtmlAnalyzer:
             "vertical": self.vertical,
             "caseName": slugify(self.html_path.parent.name or title or "case"),
             "canvas": canvas,
+            "analysisPlan": {
+                **self.analysis_strategy.to_dict(),
+                "metrics": self.page_metrics.to_dict(),
+                "minimal": self.minimal,
+                "sectionInventory": (
+                    build_section_inventory(self.soup)
+                    if self.analysis_strategy.name in {"large", "massive"}
+                    else []
+                ),
+            },
         }
 
     def _analyze_canvas(self) -> dict:

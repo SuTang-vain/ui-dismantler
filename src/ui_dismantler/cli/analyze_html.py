@@ -22,6 +22,12 @@ def main(argv: list[str] | None = None) -> int:
     context.add_argument("--profile", help="可选领域上下文标签（不参与核心识别）")
     context.add_argument("--vertical", help="兼容别名：等同 --profile")
     ap.add_argument("--minimal", action="store_true", help="最小提取模式（仅主题色+结构清单）")
+    ap.add_argument(
+        "--strategy",
+        choices=("auto", "compact", "standard", "large", "massive"),
+        default="auto",
+        help="页面规模策略；auto 根据文件、DOM、内嵌资源和框架信号路由",
+    )
     args = ap.parse_args(argv)
 
     if not Path(args.html).is_file():
@@ -34,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
             vertical=args.vertical,
             minimal=args.minimal,
             profile=args.profile,
+            strategy=args.strategy,
         )
         manifest = analyzer.analyze()
     except Exception as e:
@@ -48,6 +55,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"✓ 已生成 manifest: {out_path}")
     print(f"  标题: {manifest['meta']['title']}")
     print(f"  Profile: {manifest['meta']['vertical']}")
+    plan = manifest["meta"]["analysisPlan"]
+    print(f"  分析策略: {plan['name']} ({plan['source']})")
+    print(f"  估算规模: {plan['metrics']['fileBytes']} bytes / {plan['metrics']['estimatedTokens']} tokens")
     print(f"  主题色令牌: {len(manifest['theme']['tokens'])} 个")
     print(f"  Tab: {len(manifest['structure']['tabs'])} 个")
     print(f"  视图: {[v['type'] for v in manifest['structure']['views']]}")
