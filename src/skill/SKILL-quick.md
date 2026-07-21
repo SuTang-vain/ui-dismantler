@@ -20,6 +20,8 @@ User provides an HTML file (or directory) and asks to dismantle into a component
 
 1.8 **Prepare generation input**: `python3 src/skill/scripts/prepare_section_generation.py <analysis-dir>/inventory.json --out <analysis-dir>/generation-input.json`. Do not generate directly from an unvalidated inventory.
 
+1.9 **Generate a section scaffold**: `python3 src/skill/scripts/generate_section_scaffold.py <analysis-dir>/generation-input.json --out <section-lib> --showcase`. Treat it as a reviewable scaffold, not a final quality pass.
+
 1.75 **Optional Chromium CSS evidence for large pages**: `python3 src/skill/scripts/cdp_css.py <html> --manifest <mf.json> --out cdp-css-evidence.json`. This is only a browser-backed evidence layer; keep an explicit `unavailable` result when Chrome/CDP cannot run.
 2. **Call tools for data**: `python3 src/skill/scripts/analyze_html.py <html> --out <mf.json> --minimal` (fetches theme tokens + pattern recognition + structure list; auto-extracts from Tailwind config when `:root` is empty)
 3. **Produce component library** (in user-specified directory):

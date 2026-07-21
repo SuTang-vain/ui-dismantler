@@ -70,6 +70,18 @@ python3 src/skill/scripts/prepare_section_generation.py \
 
 该输入只包含有界 section contract，不包含整页 HTML；`candidate` 交互会进入 `doNotPromote`，不允许生成流程直接当作 verified 行为。
 
+生成可运行的 section-oriented scaffold：
+
+```bash
+python3 src/skill/scripts/generate_section_scaffold.py \
+  <analysis-dir>/generation-input.json \
+  --out <section-lib> \
+  --name mastra-sectioned \
+  --showcase
+```
+
+该脚手架用于比较 section 边界、mount/API、template 和 CSS 契约；它不是最终高保真实现，必须继续通过 section/整页 Roundtrip 和交互断言。
+
 对于 `large`/`massive` 页面，建议在 section inventory 之后采集一次可选的 Chromium CSS 证据：
 
 ```bash
