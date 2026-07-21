@@ -54,6 +54,7 @@ class TestAnalysisStrategy(unittest.TestCase):
         self.assertIn("section-chunks", plan.passes)
         self.assertEqual(plan.dismantle_mode, "skeleton-then-section-chunks")
         self.assertEqual(plan.verification_mode, "rendered-reference-late-and-candidate-gated")
+        self.assertEqual(plan.css_evidence_mode, "cdp-matched-styles-recommended")
 
     def test_massive_route_precedes_large(self):
         metrics = PageMetrics(

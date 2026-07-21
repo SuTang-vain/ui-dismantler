@@ -73,6 +73,7 @@ class AnalysisStrategy:
     passes: tuple[str, ...]
     dismantle_mode: str
     verification_mode: str
+    css_evidence_mode: str
 
     def to_dict(self) -> dict:
         return {
@@ -82,6 +83,7 @@ class AnalysisStrategy:
             "passes": list(self.passes),
             "dismantleMode": self.dismantle_mode,
             "verificationMode": self.verification_mode,
+            "cssEvidenceMode": self.css_evidence_mode,
         }
 
 
@@ -186,24 +188,28 @@ def _strategy_for_scale(scale: PageScale, source: Literal["auto", "override"], r
             ("full-parse", "theme-structure-data", "interaction-inventory"),
             "single-pass-component",
             "full-roundtrip-and-interaction",
+            "static-selector-extraction",
         ),
         "standard": AnalysisStrategy(
             scale, source, tuple(reason),
             ("page-inventory", "structure-and-data", "interaction-inventory"),
             "two-pass-section-aware",
             "roundtrip-plus-scenarios",
+            "static-plus-computed-sampling",
         ),
         "large": AnalysisStrategy(
             scale, source, tuple(reason),
             ("resource-inventory", "semantic-skeleton", "section-chunks", "token-clusters", "interaction-candidates"),
             "skeleton-then-section-chunks",
             "rendered-reference-late-and-candidate-gated",
+            "cdp-matched-styles-recommended",
         ),
         "massive": AnalysisStrategy(
             scale, source, tuple(reason),
             ("streaming-inventory", "section-boundaries", "bounded-chunks", "deferred-data-contract", "interaction-candidates"),
             "streaming-section-chunks",
             "sampled-render-then-promoted-gold",
+            "cdp-matched-styles-required-if-available",
         ),
     }
     return plans[scale]
