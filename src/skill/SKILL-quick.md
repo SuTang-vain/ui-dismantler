@@ -18,6 +18,8 @@ User provides an HTML file (or directory) and asks to dismantle into a component
 
 1.7 **Extract bounded sections for large pages**: `python3 src/skill/scripts/extract_sections.py <html> --out <analysis-dir> --with-cdp`. This creates `page-plan.json`, `inventory.json`, and section fragments before generation.
 
+1.8 **Prepare generation input**: `python3 src/skill/scripts/prepare_section_generation.py <analysis-dir>/inventory.json --out <analysis-dir>/generation-input.json`. Do not generate directly from an unvalidated inventory.
+
 1.75 **Optional Chromium CSS evidence for large pages**: `python3 src/skill/scripts/cdp_css.py <html> --manifest <mf.json> --out cdp-css-evidence.json`. This is only a browser-backed evidence layer; keep an explicit `unavailable` result when Chrome/CDP cannot run.
 2. **Call tools for data**: `python3 src/skill/scripts/analyze_html.py <html> --out <mf.json> --minimal` (fetches theme tokens + pattern recognition + structure list; auto-extracts from Tailwind config when `:root` is empty)
 3. **Produce component library** (in user-specified directory):

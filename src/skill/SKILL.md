@@ -60,6 +60,16 @@ python3 src/skill/scripts/extract_sections.py <html-path> \
 
 该命令生成 `page-plan.json`、`inventory.json`、`sections/*.html`、`sections/*.json`；`main` 只作为上下文骨架，不重复复制进 section chunk。每个可拆 section 的 JSON 还会写入 heuristic `componentContract`，供后续组件生成使用，但必须经过 Roundtrip/交互验证后才能晋级。
 
+在交给生成器/agent 之前，先执行 contract gate：
+
+```bash
+python3 src/skill/scripts/prepare_section_generation.py \
+  <analysis-dir>/inventory.json \
+  --out <analysis-dir>/generation-input.json
+```
+
+该输入只包含有界 section contract，不包含整页 HTML；`candidate` 交互会进入 `doNotPromote`，不允许生成流程直接当作 verified 行为。
+
 对于 `large`/`massive` 页面，建议在 section inventory 之后采集一次可选的 Chromium CSS 证据：
 
 ```bash
