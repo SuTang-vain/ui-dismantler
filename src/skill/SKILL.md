@@ -34,6 +34,22 @@ Benchmark quality: `benchmark/lib` (the domain-neutral benchmark library, 1346 l
 
 **For anything unclear, read the corresponding CSS rule and JS snippet to confirm**. The quality of this step determines all downstream output.
 
+### Step 1.5: Route by Page Scale Before Dismantling
+
+先执行便宜且不执行脚本的规模盘点：
+
+```bash
+python3 src/skill/scripts/plan_html.py <html-path> --out <strategy-plan.json>
+```
+
+或在完整分析时使用：
+
+```bash
+python3 src/skill/scripts/analyze_html.py <html-path> --out <manifest.json> --strategy auto
+```
+
+`compact` 页面可以单次完整分析；`standard` 页面采用页面清单 → 结构/数据双阶段；`large` 页面必须先做资源盘点、语义骨架和有界 section chunks，再进入组件生成；`massive` 页面还要采用流式/有界分块并延后 rendered reference。大小只是路由先验，不是质量分数；最终仍需 Roundtrip、断言和 verified coverage。
+
 ### Step 2: Call Tools to Fetch Deterministic Data (reference only, not the sole basis)
 
 ```bash

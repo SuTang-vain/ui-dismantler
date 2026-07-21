@@ -32,6 +32,20 @@
 | `vertical` | string | 否 | manifest v1 兼容字段，记录可选领域上下文；新调用使用 `--profile`，`--vertical` 仅为兼容别名。该字段不参与核心识别分支 |
 | `caseName` | string | 否 | 案例名（slug 化，用于命名库） |
 | `canvas` | object | 是 | 见下 |
+| `analysisPlan` | object | 是 | 页面规模路由与分析/拆解阶段计划 |
+
+### analysisPlan
+
+分析器在读取原始 HTML 后先做确定性的轻量盘点，再根据文件大小、DOM 标签数、内嵌 CSS/JS、Tailwind utility 密度和框架辅助节点选择策略。页面大小不是质量指标，只用于避免把不同复杂度的页面放进同一拆解上下文。
+
+| 策略 | 默认拆解方式 | 默认验证方式 |
+|---|---|---|
+| `compact` | 单次完整分析，直接组件化 | 完整 Roundtrip + 交互断言 |
+| `standard` | 页面清单 → 结构/数据双阶段 | Roundtrip + 场景矩阵 |
+| `large` | 资源盘点 → 语义骨架 → section chunks → token 聚类 | 延后 rendered reference，交互候选必须晋级 |
+| `massive` | 流式资源盘点 → 有界 section chunks → 延迟数据契约 | 采样渲染后再晋级 Gold |
+
+`analysisPlan.metrics` 是路由证据；`analysisPlan.passes` 是后续 agent/拆解器应执行的阶段，不代表这些阶段已经完成。对于 `large`/`massive`，`sectionInventory` 只保存有界的 section 摘要，不替代原始 HTML，也不代表 section 已经完成组件化。
 
 ### canvas
 

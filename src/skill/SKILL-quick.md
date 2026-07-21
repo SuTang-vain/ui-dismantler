@@ -14,6 +14,7 @@ User provides an HTML file (or directory) and asks to dismantle into a component
 ## 5-Step Workflow
 
 1. **Read through the HTML**: Understand theme color semantics, Tab/view structure, interaction patterns, data organization, responsive breakpoints
+1.5 **Route by page scale first**: `python3 src/skill/scripts/plan_html.py <html> --out strategy-plan.json`. Use `compact` for one-pass componentization, `standard` for two-phase analysis, and `large/massive` for resource inventory → semantic skeleton → bounded section chunks before generation. The plan is routing evidence, not proof of quality.
 2. **Call tools for data**: `python3 src/skill/scripts/analyze_html.py <html> --out <mf.json> --minimal` (fetches theme tokens + pattern recognition + structure list; auto-extracts from Tailwind config when `:root` is empty)
 3. **Produce component library** (in user-specified directory):
    - `src/<lib>.css`: Parametric styles (`sg-` prefix, `--sg-*` vars, three-tier responsive)
