@@ -1,0 +1,2373 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/diegovz-home-0722-ts/original.html",
+  "generatedAt": "2026-07-22T13:46:44.493Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "carousel-3d-1",
+      "componentName": "Carousel3d",
+      "targetFile": "src/components/Carousel3d.ts",
+      "sourceSelector": "div.slot1-carousel",
+      "sourceSelectors": [
+        "div.slot1-carousel"
+      ],
+      "responsibility": "复现 carousel-3d 视图：$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Tu",
+      "parentId": "section-4-fragments-of-me",
+      "dependencies": [
+        "section-4-fragments-of-me"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Turbo delivery launch 10–15 min deliveries. 30M+ monthly activ"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 134,
+        "score": 0.89,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）",
+          "carousel-3d 属于高复杂度视图"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "timeline-2",
+      "componentName": "Timeline",
+      "targetFile": "src/components/Timeline.ts",
+      "sourceSelector": "div.elementor-element-193daf3",
+      "sourceSelectors": [
+        "div.elementor-element-193daf3"
+      ],
+      "responsibility": "复现 timeline 视图：Rappi2021—CurrentlyVP of Design Executive leadership of Rappi’s entire design organization, driving ",
+      "parentId": "section-6-experience",
+      "dependencies": [
+        "section-6-experience"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Rappi2021—CurrentlyVP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strategy, and execution across all products. Own"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-header-1",
+      "componentName": "PageHeader",
+      "targetFile": "src/components/PageHeader.ts",
+      "sourceSelector": "div.elementor-5114",
+      "sourceSelectors": [
+        "div.elementor-5114"
+      ],
+      "responsibility": "复现 page-header 视图：Based in Madrid, Spain 10:27 GMT+1 · 28ºC",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.elementor-element-f1f46c6 > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Based in Madrid, Spain 10:27 GMT+1 · 28ºC"
+        ],
+        "states": [
+          "click: div.elementor-element-f1f46c6 > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 111,
+        "score": 0.74,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-footer-1",
+      "componentName": "PageFooter",
+      "targetFile": "src/components/PageFooter.ts",
+      "sourceSelector": "div.elementor-9974",
+      "sourceSelectors": [
+        "div.elementor-9974"
+      ],
+      "responsibility": "复现 page-footer 视图：diegovz.com/ Design, coding and motion graphics by me. You were visitor number 550,384 By the way, c",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.elementor-element-b4c7266 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-16ba846 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-24c1b5d > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-9100740 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "diegovz.com/ Design, coding and motion graphics by me. You were visitor number 550,384 By the way, can you beat me? :)"
+        ],
+        "states": [
+          "click: div.elementor-element-b4c7266 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-16ba846 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-24c1b5d > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-9100740 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "4 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-1-designing-stuff-since-2011",
+      "componentName": "HeroProfile",
+      "targetFile": "src/components/HeroProfile.ts",
+      "sourceSelector": "section.elementor-element-8bf15b0",
+      "sourceSelectors": [
+        "section.elementor-element-8bf15b0"
+      ],
+      "responsibility": "复现 hero-profile 视图：Designing stuff since 2011",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|a.underline-dvz|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Designing stuff since 2011"
+        ],
+        "states": [
+          "click: a.underline-dvz"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 129,
+        "score": 0.86,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-2-some-projects",
+      "componentName": "SomeProjects",
+      "targetFile": "src/components/SomeProjects.ts",
+      "sourceSelector": "div.elementor-element-3dc9bd8",
+      "sourceSelectors": [
+        "div.elementor-element-3dc9bd8"
+      ],
+      "responsibility": "复现 content-section 视图：Some projects",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Some projects"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-3-writing",
+      "componentName": "Writing",
+      "targetFile": "src/components/Writing.ts",
+      "sourceSelector": "div.elementor-element-01dbacf",
+      "sourceSelectors": [
+        "div.elementor-element-01dbacf"
+      ],
+      "responsibility": "复现 content-section 视图：Writing",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Writing"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-4-fragments-of-me",
+      "componentName": "FragmentsOfMe",
+      "targetFile": "src/components/FragmentsOfMe.ts",
+      "sourceSelector": "div.elementor-element-74d565c",
+      "sourceSelectors": [
+        "div.elementor-element-74d565c"
+      ],
+      "responsibility": "复现 content-section 视图：Fragments of me",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Fragments of me"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-5-education",
+      "componentName": "Education",
+      "targetFile": "src/components/Education.ts",
+      "sourceSelector": "div.elementor-element-024b67c",
+      "sourceSelectors": [
+        "div.elementor-element-024b67c"
+      ],
+      "responsibility": "复现 content-section 视图：Education",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Education"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-6-experience",
+      "componentName": "Experience",
+      "targetFile": "src/components/Experience.ts",
+      "sourceSelector": "div.elementor-element-090fbce",
+      "sourceSelectors": [
+        "div.elementor-element-090fbce"
+      ],
+      "responsibility": "复现 content-section 视图：Experience",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Experience"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-7-readings",
+      "componentName": "Readings",
+      "targetFile": "src/components/Readings.ts",
+      "sourceSelector": "div.elementor-element-12b8bab",
+      "sourceSelectors": [
+        "div.elementor-element-12b8bab"
+      ],
+      "responsibility": "复现 content-section 视图：Readings",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Readings"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-8-awards-features",
+      "componentName": "AwardsFeatures",
+      "targetFile": "src/components/AwardsFeatures.ts",
+      "sourceSelector": "div.elementor-element-f74185b",
+      "sourceSelectors": [
+        "div.elementor-element-f74185b"
+      ],
+      "responsibility": "复现 content-section 视图：Awards & features",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.elementor-element-6816a38 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Awards & features"
+        ],
+        "states": [
+          "click: div.elementor-element-6816a38 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 119,
+        "score": 0.79,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "carousel-3d-item",
+      "componentName": "Carousel3dItem",
+      "targetFile": "src/components/Carousel3dItem.ts",
+      "sourceSelector": "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+      "sourceSelectors": [
+        "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(2) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(3) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(4) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(5) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(6) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(7) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(8) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(9) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(10) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(11) > div:nth-child(2) > h4:nth-child(1)",
+        "div.slot1-carousel-track > div:nth-child(12) > div:nth-child(2) > h4:nth-child(1)"
+      ],
+      "responsibility": "复现 repeated-item 视图：$1 billion raised",
+      "parentId": "carousel-3d-1",
+      "dependencies": [
+        "carousel-3d-1"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "$1 billion raised"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 94,
+        "score": 0.63,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "timeline-item",
+      "componentName": "TimelineItem",
+      "targetFile": "src/components/TimelineItem.ts",
+      "sourceSelector": "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+      "sourceSelectors": [
+        "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+        "article.elementor-repeater-item-2a37755 > div:nth-child(2)",
+        "article.elementor-repeater-item-218e3a3 > div:nth-child(2)",
+        "article.elementor-repeater-item-dc77abf > div:nth-child(2)",
+        "article.elementor-repeater-item-439bfba > div:nth-child(2)",
+        "article.elementor-repeater-item-528a050 > div:nth-child(2)"
+      ],
+      "responsibility": "复现 repeated-item 视图：VP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strateg",
+      "parentId": "timeline-2",
+      "dependencies": [
+        "timeline-2"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+        "click|article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+        "click|article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+        "click|article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "VP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strategy, and execution across all products. Ownership of the Desig"
+        ],
+        "states": [
+          "click: article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+          "click: article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+          "click: article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+          "click: article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 119,
+        "score": 0.79,
+        "reasons": [
+          "4 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-footer-item",
+      "componentName": "PageFooterItem",
+      "targetFile": "src/components/PageFooterItem.ts",
+      "sourceSelector": "div.elementor-element-393ff04",
+      "sourceSelectors": [
+        "div.elementor-element-393ff04",
+        "div.elementor-element-72fac51",
+        "div.elementor-element-95a798c"
+      ],
+      "responsibility": "复现 repeated-item 视图：diegovz.com/",
+      "parentId": "page-footer-1",
+      "dependencies": [
+        "page-footer-1"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "diegovz.com/"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 101,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "some-projects-item",
+      "componentName": "SomeProjectsItem",
+      "targetFile": "src/components/SomeProjectsItem.ts",
+      "sourceSelector": "div.elementor-element-000204e",
+      "sourceSelectors": [
+        "div.elementor-element-000204e",
+        "div.elementor-element-9393a3a",
+        "div.elementor-element-bbfdba0",
+        "div.elementor-element-e42ed18",
+        "div.elementor-element-9c9c9db"
+      ],
+      "responsibility": "复现 repeated-item 视图：Mustache Overall improvement of Rappi's Design System.",
+      "parentId": "section-2-some-projects",
+      "dependencies": [
+        "section-2-some-projects"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Mustache Overall improvement of Rappi's Design System."
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 103,
+        "score": 0.69,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "fragments-of-me-interactive-shell",
+      "componentName": "FragmentsOfMeInteractiveShell",
+      "targetFile": "src/components/FragmentsOfMeInteractiveShell.ts",
+      "sourceSelector": "div.my-story-bento",
+      "sourceSelectors": [
+        "div.my-story-bento"
+      ],
+      "responsibility": "复现 component-shell 视图：$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Tu",
+      "parentId": "section-4-fragments-of-me",
+      "dependencies": [
+        "section-4-fragments-of-me"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Turbo delivery launch 10–15 min deliveries. 30M+ monthly activ"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 99,
+        "score": 0.66,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "fragments-of-me-bento-slot-2",
+      "componentName": "FragmentsOfMeBentoSlot2",
+      "targetFile": "src/components/FragmentsOfMeBentoSlot2.ts",
+      "sourceSelector": "div.bento-slot-2",
+      "sourceSelectors": [
+        "div.bento-slot-2"
+      ],
+      "responsibility": "复现 interactive-slot 视图：Clear I started as illustrator But I’ve drawn enough already, now it’s your turn!",
+      "parentId": "fragments-of-me-interactive-shell",
+      "dependencies": [
+        "fragments-of-me-interactive-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|button.slot2-clear-btn|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Clear I started as illustrator But I’ve drawn enough already, now it’s your turn!"
+        ],
+        "states": [
+          "click: button.slot2-clear-btn"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "fragments-of-me-bento-slot-5",
+      "componentName": "FragmentsOfMeBentoSlot5",
+      "targetFile": "src/components/FragmentsOfMeBentoSlot5.ts",
+      "sourceSelector": "div.bento-slot-5",
+      "sourceSelectors": [
+        "div.bento-slot-5"
+      ],
+      "responsibility": "复现 interactive-slot 视图：Lost Verdania · Christopher Larkin 0:00",
+      "parentId": "fragments-of-me-interactive-shell",
+      "dependencies": [
+        "fragments-of-me-interactive-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "input|div.slot5-left > div:nth-child(2) > input:nth-child(1)|semantic-control",
+        "click|div.slot5-player > button:nth-child(2)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Lost Verdania · Christopher Larkin 0:00"
+        ],
+        "states": [
+          "input: div.slot5-left > div:nth-child(2) > input:nth-child(1)",
+          "click: div.slot5-player > button:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 130,
+        "score": 0.87,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "fragments-of-me-bento-slot-7",
+      "componentName": "FragmentsOfMeBentoSlot7",
+      "targetFile": "src/components/FragmentsOfMeBentoSlot7.ts",
+      "sourceSelector": "div.bento-slot-7",
+      "sourceSelectors": [
+        "div.bento-slot-7"
+      ],
+      "responsibility": "复现 interactive-slot 视图：Hands-on design leader I lead by example, staying close to my team, the craft and the product.",
+      "parentId": "fragments-of-me-interactive-shell",
+      "dependencies": [
+        "fragments-of-me-interactive-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.slot7-toolbar > button:nth-child(1)|semantic-control",
+        "click|div.slot7-toolbar > button:nth-child(2)|semantic-control",
+        "click|div.slot7-toolbar > button:nth-child(3)|semantic-control",
+        "click|div.slot7-toolbar > button:nth-child(4)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Hands-on design leader I lead by example, staying close to my team, the craft and the product."
+        ],
+        "states": [
+          "click: div.slot7-toolbar > button:nth-child(1)",
+          "click: div.slot7-toolbar > button:nth-child(2)",
+          "click: div.slot7-toolbar > button:nth-child(3)",
+          "click: div.slot7-toolbar > button:nth-child(4)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 115,
+        "score": 0.77,
+        "reasons": [
+          "4 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "fragments-of-me-overlay-1",
+      "componentName": "FragmentsOfMeInteractivePanel",
+      "targetFile": "src/components/FragmentsOfMeInteractivePanel.ts",
+      "sourceSelector": "#floating-player",
+      "sourceSelectors": [
+        "#floating-player"
+      ],
+      "responsibility": "复现 interactive-panel 视图：Lost Verdania · Christopher Larkin 0:00",
+      "parentId": "section-4-fragments-of-me",
+      "dependencies": [
+        "section-4-fragments-of-me"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|button.floating-close-btn|semantic-control",
+        "input|input.floating-progress|semantic-control",
+        "click|button.floating-play-btn|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Lost Verdania · Christopher Larkin 0:00"
+        ],
+        "states": [
+          "click: button.floating-close-btn",
+          "input: input.floating-progress",
+          "click: button.floating-play-btn"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 131,
+        "score": 0.87,
+        "reasons": [
+          "3 个关联交互（2 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "education-item",
+      "componentName": "EducationItem",
+      "targetFile": "src/components/EducationItem.ts",
+      "sourceSelector": "div.elementor-element-bfc9485",
+      "sourceSelectors": [
+        "div.elementor-element-bfc9485",
+        "div.elementor-element-ad1fc83",
+        "div.elementor-element-4c35103",
+        "div.elementor-element-9e51840",
+        "div.elementor-element-e05d6e1",
+        "div.elementor-element-e1c3f2a",
+        "div.elementor-element-b2c5cd3",
+        "div.elementor-element-52a25c0",
+        "div.elementor-element-e195a16",
+        "div.elementor-element-788ddca"
+      ],
+      "responsibility": "复现 repeated-item 视图：ThePowerMBA · Credentials",
+      "parentId": "section-5-education",
+      "dependencies": [
+        "section-5-education"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "ThePowerMBA · Credentials"
+        ],
+        "states": [
+          "click: div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 120,
+        "score": 0.8,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "readings-item",
+      "componentName": "ReadingsItem",
+      "targetFile": "src/components/ReadingsItem.ts",
+      "sourceSelector": "div.elementor-element-f08ccdf",
+      "sourceSelectors": [
+        "div.elementor-element-f08ccdf",
+        "div.elementor-element-9271ba9",
+        "div.elementor-element-b07ea33",
+        "div.elementor-element-165030b"
+      ],
+      "responsibility": "复现 repeated-item 视图：Updated → 08/2025",
+      "parentId": "section-7-readings",
+      "dependencies": [
+        "section-7-readings"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Updated → 08/2025"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 101,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "awards-features-item",
+      "componentName": "AwardsFeaturesItem",
+      "targetFile": "src/components/AwardsFeaturesItem.ts",
+      "sourceSelector": "div.elementor-element-d0e4471",
+      "sourceSelectors": [
+        "div.elementor-element-d0e4471",
+        "div.elementor-element-631ad57",
+        "div.elementor-element-06cc4fa",
+        "div.elementor-element-abcd27a",
+        "div.elementor-element-ee073df",
+        "div.elementor-element-6c2ea15",
+        "div.elementor-element-f604499",
+        "div.elementor-element-b579d72",
+        "div.elementor-element-89120e3",
+        "div.elementor-element-b6f6517"
+      ],
+      "responsibility": "复现 repeated-item 视图：Featured Portfolio A1 Gallery",
+      "parentId": "section-8-awards-features",
+      "dependencies": [
+        "section-8-awards-features"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.elementor-element-793f6fb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--direction-multiplier",
+        "--page-title-display",
+        "--swiper-theme-color",
+        "--swiper-navigation-size",
+        "#999",
+        "rgba(14,165,233,.2)",
+        "hsla(0,0%,100%,.1)",
+        "#d3e6f3",
+        "#d2e3f9",
+        "#fff",
+        "rgba(0,0,0,0.2)",
+        "rgba(0,0,0,0.3)",
+        "#FFF",
+        "#eee",
+        "#1e1e1e",
+        "#000000",
+        "#777",
+        "rgba(255,255,255,0.5)",
+        "rgba(255,255,255,0.1)",
+        "#24D5B4",
+        "#586c80",
+        "#eebf56",
+        "#f46ca3",
+        "#1b9edf"
+      ],
+      "responsiveQueries": [
+        "(max-width:700px)",
+        "(max-width:700px)",
+        "screen and (max-width:576px)",
+        "(min-width:1024px)",
+        "(max-width:1023px)",
+        "(max-width:1024px)",
+        "(min-width:768px)",
+        "(min-width:768px)",
+        "(max-width:767px)",
+        "(min-width:1025px)",
+        "(min-width:-1)",
+        "(max-width:-1)",
+        "(max-width:1024px)",
+        "(max-width:-1)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:no-preference)",
+        "(max-width:767px)",
+        "(prefers-reduced-motion:reduce)",
+        "(max-width:767px)",
+        "(min-width:768px) and (max-width:1024px)",
+        "(min-width:1025px) and (max-width:99999px)",
+        "(max-width:1024px)",
+        "(max-width:767px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Featured Portfolio A1 Gallery"
+        ],
+        "states": [
+          "click: div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+          "click: div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 120,
+        "score": 0.8,
+        "reasons": [
+          "9 个关联交互（1 类实现行为）",
+          "0 个数据契约",
+          "23 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "carousel-3d-1",
+      "detail": "预计复杂度已达预算的 89%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "section-1-designing-stuff-since-2011",
+      "detail": "预计复杂度已达预算的 86%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "fragments-of-me-bento-slot-5",
+      "detail": "预计复杂度已达预算的 87%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "fragments-of-me-overlay-1",
+      "detail": "预计复杂度已达预算的 87%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "education-item",
+      "detail": "预计复杂度已达预算的 80%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "awards-features-item",
+      "detail": "预计复杂度已达预算的 80%"
+    }
+  ],
+  "summary": {
+    "components": 24,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 6,
+    "interactions": 31,
+    "ownedInteractions": 31,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

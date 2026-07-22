@@ -2,58 +2,149 @@ import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
-import type { DataContract, Interaction, Manifest, AnalyzedView } from "../types.js";
+import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
 const PROFILE_FALLBACK = "generic";
+const DEFAULT_MAX_CSS_BYTES = 300_000;
+const DEFAULT_MAX_STYLE_BYTES = 150_000;
+const DEFAULT_MAX_SCRIPT_BYTES = 1_000_000;
+
+interface SourceBudget {
+  maxCssBytes: number;
+  maxStyleBytes: number;
+  maxScriptBytes: number;
+}
+
+interface CollectedSource {
+  text: string;
+  warnings: string[];
+}
+
+function byteLength(value: string): number { return Buffer.byteLength(value, "utf8"); }
+
+function executableScriptType(type: string | null): boolean {
+  const normalized = (type ?? "").trim().toLowerCase().split(";")[0];
+  return !normalized || normalized === "module" || /^(?:text|application)\/(?:java|ecma)script$/.test(normalized);
+}
+
+function appendWithinBudget(chunks: string[], value: string, remaining: number): { used: number; truncated: boolean } {
+  if (remaining <= 0) return { used: 0, truncated: Boolean(value) };
+  if (byteLength(value) <= remaining) { chunks.push(value); return { used: byteLength(value), truncated: false }; }
+  let end = Math.min(value.length, remaining);
+  while (end > 0 && byteLength(value.slice(0, end)) > remaining) end = Math.floor(end * 0.9);
+  chunks.push(value.slice(0, end));
+  return { used: byteLength(value.slice(0, end)), truncated: true };
+}
 
 function readText(path: string): string {
   return readFileSync(path, "utf8");
 }
 
-function cssFromDocument(dom: JSDOM, htmlPath: string): string {
+function compactArchiveSource(source: string, budget: SourceBudget): CollectedSource {
+  const warnings: string[] = [];
+  if (byteLength(source) < 5_000_000) return { text: source, warnings };
+  let skippedStyleBytes = 0;
+  let skippedScriptBytes = 0;
+  let skippedScripts = 0;
+  let dataUris = 0;
+  let scriptBudget = budget.maxScriptBytes;
+  let cssBudget = budget.maxCssBytes;
+  let text = source.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi, (_match, open, body: string, close) => {
+    const allowed = Math.max(0, Math.min(body.length, budget.maxStyleBytes, cssBudget));
+    const compacted = body.slice(0, allowed);
+    cssBudget -= byteLength(compacted);
+    skippedStyleBytes += byteLength(body) - byteLength(compacted);
+    return compacted ? `${open}${compacted}${close}` : "";
+  });
+  text = text.replace(/(<script\b([^>]*)>)([\s\S]*?)(<\/script>)/gi, (_match, open, attributes: string, body: string, close) => {
+    const type = attributes.match(/\btype\s*=\s*["']([^"']+)["']/i)?.[1] ?? null;
+    if (!executableScriptType(type)) { skippedScripts += 1; skippedScriptBytes += byteLength(body); return `${open}${close}`; }
+    if (byteLength(body) <= scriptBudget) { scriptBudget -= byteLength(body); return `${open}${body}${close}`; }
+    const compacted = body.slice(0, Math.max(0, scriptBudget));
+    skippedScriptBytes += byteLength(body) - byteLength(compacted);
+    scriptBudget = 0;
+    return `${open}${compacted}${close}`;
+  });
+  text = text.replace(/data:[^"'()\s<>]+/gi, () => { dataUris += 1; return "data:,"; });
+  text = text.replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, "");
+  text = text.replace(/<!--[\s\S]*?-->/g, "");
+  warnings.push(`大型归档预处理：压缩 ${dataUris} 个 data URI，跳过 ${skippedStyleBytes} CSS bytes、${skippedScriptBytes} script bytes`);
+  if (skippedScripts) warnings.push(`归档预处理已跳过 ${skippedScripts} 个非可执行 script`);
+  return { text, warnings };
+}
+
+function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
   const document = dom.window.document;
-  const chunks: string[] = [...document.querySelectorAll("style")].map((node) => node.textContent ?? "");
+  const chunks: string[] = [];
+  const warnings: string[] = [];
+  let used = 0;
+  let skipped = 0;
+  const append = (raw: string, label: string) => {
+    const rawBytes = byteLength(raw);
+    const perStyle = Math.min(rawBytes, budget.maxStyleBytes);
+    const allowed = Math.max(0, Math.min(perStyle, budget.maxCssBytes - used));
+    const result = appendWithinBudget(chunks, raw, allowed);
+    used += result.used;
+    skipped += rawBytes - result.used;
+    void label;
+  };
+  [...document.querySelectorAll("style")].forEach((node, index) => append(node.textContent ?? "", `style[${index + 1}]`));
   for (const link of [...document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][href]')]) {
     const href = link.getAttribute("href");
     if (!href || /^[a-z]+:/i.test(href)) continue;
     const path = resolve(dirname(htmlPath), decodeURIComponent(href.split("#")[0].split("?")[0]));
-    try {
-      if (statSync(path).isFile()) chunks.push(readText(path));
-    } catch {
-      // Remote and missing resources are intentionally reported as warnings elsewhere.
-    }
+    try { if (statSync(path).isFile()) append(readText(path), `stylesheet ${href}`); }
+    catch { /* Missing local resources are reported by runtime validation. */ }
   }
-  return chunks.join("\n");
+  if (skipped) warnings.push(`CSS 分析预算生效：读取 ${used} bytes，跳过 ${skipped} bytes；DOM/文本分析保持完整`);
+  return { text: chunks.join("\n"), warnings };
 }
 
-function scriptsFromDocument(dom: JSDOM, htmlPath: string): string[] {
-  const scripts: string[] = [];
+function scriptsFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
+  const chunks: string[] = [];
+  const warnings: string[] = [];
+  let used = 0;
+  let skippedNonExecutable = 0;
+  let skippedBytes = 0;
   for (const script of [...dom.window.document.scripts]) {
+    if (!executableScriptType(script.getAttribute("type"))) { skippedNonExecutable += 1; continue; }
+    let value = "";
     if (script.src) {
       try {
         const path = resolve(dirname(htmlPath), decodeURIComponent(new URL(script.src, `file://${htmlPath}`).pathname));
-        if (statSync(path).isFile()) scripts.push(readText(path));
-      } catch {
-        // Keep going; a missing external script should not make static analysis impossible.
-      }
-    } else if (script.textContent?.trim()) {
-      scripts.push(script.textContent);
-    }
+        if (statSync(path).isFile()) value = readText(path);
+      } catch { /* Keep static analysis available when an external script is absent. */ }
+    } else value = script.textContent ?? "";
+    if (!value.trim()) continue;
+    const result = appendWithinBudget(chunks, value, Math.max(0, budget.maxScriptBytes - used));
+    used += result.used;
+    skippedBytes += byteLength(value) - result.used;
   }
-  return scripts;
+  if (skippedNonExecutable) warnings.push(`已跳过 ${skippedNonExecutable} 个非可执行 script（JSON-LD/归档元数据等）`);
+  if (skippedBytes) warnings.push(`脚本分析预算生效：读取 ${used} bytes，跳过 ${skippedBytes} bytes`);
+  return { text: chunks.join("\n;\n"), warnings };
 }
 
 function escapeSelector(value: string): string { return value.replace(/[^a-zA-Z0-9_-]/g, (char) => `\\${char.charCodeAt(0).toString(16)} `); }
 
 function stableSelector(element: Element): string {
   if (element.id) return `#${escapeSelector(element.id)}`;
-  const classes = [...element.classList].filter((item) => item.length > 1).slice(0, 2);
-  if (classes.length) return `${element.tagName.toLowerCase()}.${classes.map((item) => escapeSelector(item)).join(".")}`;
+  const tag = element.tagName.toLowerCase();
+  const classes = [...element.classList].filter((item) => item.length > 1);
+  const preferred = [...classes].sort((a, b) => Number(/^elementor-element-[a-f0-9]+$/i.test(b)) - Number(/^elementor-element-[a-f0-9]+$/i.test(a)));
+  for (const item of preferred) {
+    const candidate = `${tag}.${escapeSelector(item)}`;
+    try { if (element.ownerDocument.querySelectorAll(candidate).length === 1) return candidate; } catch { /* Try a structural selector. */ }
+  }
+  for (let size = Math.min(3, preferred.length); size >= 1; size -= 1) {
+    const candidate = `${tag}.${preferred.slice(0, size).map((item) => escapeSelector(item)).join(".")}`;
+    try { if (element.ownerDocument.querySelectorAll(candidate).length === 1) return candidate; } catch { /* Try a structural selector. */ }
+  }
   const parent = element.parentElement;
-  if (!parent) return element.tagName.toLowerCase();
+  if (!parent) return tag;
   const index = [...parent.children].indexOf(element) + 1;
-  return `${stableSelector(parent)} > ${element.tagName.toLowerCase()}:nth-child(${index})`;
+  return `${stableSelector(parent)} > ${tag}:nth-child(${index})`;
 }
 
 function slug(value: string): string {
@@ -62,6 +153,72 @@ function slug(value: string): string {
 
 function textOf(element: Element): string {
   return (element.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
+function controlsOf(element: Element): Element[] {
+  return [...element.querySelectorAll("button, a, input, select, summary, [onclick], [data-action]")];
+}
+
+function repeatedSignature(element: Element): string {
+  const classes = [...element.classList]
+    .filter((item) => !/^(?:elementor-element|elementor-repeater-item)-[a-f0-9]+$/i.test(item))
+    .filter((item) => !/^(?:wpr-)?(?:left|right)-aligned$/i.test(item))
+    .sort();
+  return `${element.tagName.toLowerCase()}.${classes.join(".")}`;
+}
+
+function componentCandidates(element: Element, semanticType: string): AnalyzedView[] {
+  const parentSelector = stableSelector(element);
+  const candidates: AnalyzedView[] = [];
+  const repeated = [...element.querySelectorAll("article, [class*=card], [class*=entry], .e-con.e-child")]
+    .filter((item) => textOf(item).length >= 5 && ![...item.querySelectorAll("article, [class*=card], [class*=entry], .e-con.e-child")].some((child) => child !== item && textOf(child).length >= 5));
+  const groups = new Map<string, Element[]>();
+  for (const item of repeated) {
+    const signature = repeatedSignature(item);
+    const group = groups.get(signature) ?? [];
+    group.push(item); groups.set(signature, group);
+  }
+  const repeatedGroup = [...groups.values()].filter((group) => group.length >= 3).sort((a, b) => b.length - a.length)[0];
+  if (repeatedGroup) {
+    const representative = repeatedGroup[0];
+    const interactionSelectors = repeatedGroup.flatMap(controlsOf).map(stableSelector);
+    candidates.push({
+      id: `${slug(semanticType)}-item`, type: "repeated-item", structuralType: "collection-item", semanticType: `${slug(semanticType)}-item`, confidence: 0.88,
+      evidence: [{ signal: "repeated-structure", value: repeatedGroup.length }], selector: stableSelector(representative),
+      details: { text: textOf(representative).slice(0, 160), className: `${representative.className ?? ""}`, parentSelector, repeatedCount: repeatedGroup.length, repeatedSelectors: repeatedGroup.map(stableSelector), interactionSelectors },
+    });
+  }
+
+  const slotElements = [...element.querySelectorAll('[class~="bento-slot"], [class*="interactive-slot"]')]
+    .filter((item) => controlsOf(item).length > 0 && !item.parentElement?.closest('[class~="bento-slot"], [class*="interactive-slot"]'));
+  const slotShell = slotElements.length >= 2 ? slotElements[0].parentElement : null;
+  let slotParentSelector = parentSelector;
+  if (slotShell && slotElements.every((item) => item.parentElement === slotShell)) {
+    slotParentSelector = stableSelector(slotShell);
+    candidates.push({
+      id: `${slug(semanticType)}-interactive-shell`, type: "component-shell", structuralType: "collection", semanticType: `${slug(semanticType)}-interactive-shell`, confidence: 0.86,
+      evidence: [{ signal: "interactive-slot-shell", value: slotElements.length }], selector: slotParentSelector,
+      details: { text: textOf(slotShell).slice(0, 160), className: `${slotShell.className ?? ""}`, parentSelector, interactionSelectors: [] },
+    });
+  }
+  slotElements.forEach((slot, index) => {
+    const identity = [...slot.classList].find((item) => /(?:slot|panel)[-_]?\d+/i.test(item)) ?? `slot-${index + 1}`;
+    candidates.push({
+      id: `${slug(semanticType)}-${slug(identity)}`, type: "interactive-slot", structuralType: "content-region", semanticType: `${slug(semanticType)}-${slug(identity)}`, confidence: 0.9,
+      evidence: [{ signal: "localized-interaction-cluster", value: controlsOf(slot).length }], selector: stableSelector(slot),
+      details: { text: textOf(slot).slice(0, 160), className: `${slot.className ?? ""}`, parentSelector: slotParentSelector, interactionSelectors: controlsOf(slot).map(stableSelector) },
+    });
+  });
+
+  const overlays = [...element.querySelectorAll('[id][class*="floating"], [id][class*="player"]')]
+    .filter((item) => controlsOf(item).length >= 2 && !item.closest('[class~="bento-slot"], [class*="interactive-slot"]'))
+    .filter((item, index, items) => items.findIndex((other) => other.contains(item) || item.contains(other)) === index);
+  overlays.forEach((overlay, index) => candidates.push({
+    id: `${slug(semanticType)}-overlay-${index + 1}`, type: "interactive-panel", structuralType: "overlay", semanticType: `${slug(semanticType)}-interactive-panel`, confidence: 0.86,
+    evidence: [{ signal: "overlay-controls", value: controlsOf(overlay).length }], selector: stableSelector(overlay),
+    details: { text: textOf(overlay).slice(0, 160), className: `${overlay.className ?? ""}`, parentSelector, interactionSelectors: controlsOf(overlay).map(stableSelector) },
+  }));
+  return candidates;
 }
 
 function parseCssColors(css: string): string[] {
@@ -139,44 +296,95 @@ function estimateArrayCount(body: string): number {
   return body.trim() ? commas + 1 : 0;
 }
 
+function graphEvidence(element: Element, classes: string, text: string): { hit: boolean; evidence: ViewEvidence[]; confidence: number } {
+  const nodes = element.querySelectorAll('[class~="node"], [data-node], [data-id]').length;
+  const edges = element.querySelectorAll('[class~="edge"], [class~="link"], line, polyline, svg path').length;
+  const semantics = /(?:^|[\s_-])(graph|network|relationship|relation|关系|图谱)(?:$|[\s_-])/.test(`${classes} ${text.slice(0, 240)}`);
+  const hit = nodes >= 3 && edges >= 2 && semantics;
+  return { hit, confidence: hit ? Math.min(0.98, 0.82 + Math.min(nodes, 8) * 0.015 + Math.min(edges, 8) * 0.01) : 0, evidence: [{ signal: "graph-semantics", value: semantics }, { signal: "graph-nodes", value: nodes }, { signal: "graph-edges", value: edges }] };
+}
+
 function detectView(element: Element, index: number): AnalyzedView | null {
   const classes = `${element.className ?? ""}`.toLowerCase();
   const text = textOf(element).toLowerCase();
-  const signals: Array<[string, string, string, number]> = [
-    ["carousel-3d", "collection", "carousel", 0.9],
-    ["cause-chain", "sequence", "causechain", 0.95],
-    ["nav-panel", "content-region", "data-p", 0.86],
-    ["graph", "collection", "svg/node", 0.9],
-    ["timeline", "sequence", "timeline", 0.88],
-    ["member-grid", "collection", "member-grid", 0.9],
-    ["detail-panel", "content-region", "detail-panel", 0.86],
-    ["quiz", "form", "quiz", 0.86],
-    ["comparison", "content-region", "whatif/cmp", 0.9],
-    ["splash", "overlay", "splash", 0.85],
+  const graph = graphEvidence(element, classes, text);
+  const signals: Array<{ type: string; structuralType: string; signal: string; confidence: number; hit: boolean; evidence?: ViewEvidence[] }> = [
+    { type: "carousel-3d", structuralType: "collection", signal: "carousel", confidence: 0.9, hit: classes.includes("carousel") && element.children.length >= 2 && !element.parentElement?.closest("[class*=carousel]") },
+    { type: "cause-chain", structuralType: "sequence", signal: "causechain", confidence: 0.95, hit: classes.includes("cause-chain") || text.includes("causechain") },
+    { type: "nav-panel", structuralType: "content-region", signal: "data-p", confidence: 0.86, hit: element.querySelectorAll("[data-p], [data-tab]").length >= 2 && element.querySelectorAll("[role=tabpanel], .panel").length >= 2 },
+    { type: "graph", structuralType: "collection", signal: "graph-structure", confidence: graph.confidence, hit: graph.hit, evidence: graph.evidence },
+    { type: "timeline", structuralType: "sequence", signal: "timeline", confidence: 0.88, hit: classes.includes("timeline") && element.querySelectorAll("[class*=timeline-entry], article").length >= 2 && !element.parentElement?.closest("[class*=timeline]") },
+    { type: "member-grid", structuralType: "collection", signal: "member-grid", confidence: 0.9, hit: classes.includes("member-grid") || text.includes("member-grid") },
+    { type: "detail-panel", structuralType: "content-region", signal: "detail-panel", confidence: 0.86, hit: classes.includes("detail-panel") || text.includes("detail-panel") },
+    { type: "quiz", structuralType: "form", signal: "quiz", confidence: 0.86, hit: classes.includes("quiz") || text.includes("quiz") },
+    { type: "comparison", structuralType: "content-region", signal: "whatif/cmp", confidence: 0.9, hit: /whatif|cmp-btn|comparison/.test(classes + text) },
+    { type: "splash", structuralType: "overlay", signal: "splash", confidence: 0.85, hit: classes.includes("splash") || text.includes("splash") },
   ];
-  let best: [string, string, string, number] | null = null;
-  for (const signal of signals) {
-    const [type, structuralType, needle, confidence] = signal;
-    const hit = needle === "svg/node"
-      ? Boolean(element.querySelector("svg, [class*=node]"))
-      : needle === "data-p"
-        ? element.querySelectorAll("[data-p], [data-tab]").length >= 2 && element.querySelectorAll("[role=tabpanel], .panel").length >= 2
-        : needle === "whatif/cmp"
-          ? /whatif|cmp-btn|comparison/.test(classes + text)
-          : classes.includes(needle) || text.includes(needle);
-    if (hit && (!best || confidence > best[3])) best = signal;
-  }
+  const best = signals.filter((item) => item.hit).sort((a, b) => b.confidence - a.confidence)[0];
   if (!best) return null;
-  const [type, structuralType, needle, confidence] = best;
   return {
-    id: `${type}-${index + 1}`,
-    type,
-    structuralType,
-    semanticType: type,
-    confidence,
-    evidence: [{ signal: needle }],
-    selector: stableSelector(element),
-    details: { text: textOf(element).slice(0, 160), className: `${element.className ?? ""}` },
+    id: `${best.type}-${index + 1}`, type: best.type, structuralType: best.structuralType, semanticType: best.type, confidence: best.confidence,
+    evidence: best.evidence ?? [{ signal: best.signal }], selector: stableSelector(element),
+    details: { text: textOf(element).slice(0, 160), className: `${element.className ?? ""}`, interactionSelectors: controlsOf(element).slice(0, 80).map(stableSelector) }, componentCandidates: componentCandidates(element, best.type),
+  };
+}
+
+const GENERIC_SECTION_NAMES = new Set(["some projects", "projects", "writing", "fragments of me", "education", "experience", "readings", "awards & features"]);
+
+function sectionHeading(element: Element): string {
+  const direct = [...element.children].find((child) => /^H[1-3]$/.test(child.tagName));
+  const nested = [...element.children].flatMap((child) => [...child.querySelectorAll("h1, h2, h3")]).find((heading) => !heading.closest("article, [class*=card], [class*=item], [class*=entry]") || element.contains(heading.closest("article, [class*=card], [class*=item], [class*=entry]")));
+  const heading = direct ?? nested ?? null;
+  return heading ? textOf(heading).replace(/[.。]+$/, "").trim() : "";
+}
+
+function shellView(element: Element, type: "page-header" | "page-footer", index: number): AnalyzedView {
+  const text = textOf(element);
+  return {
+    id: `${type}-${index + 1}`, type, structuralType: "content-region", semanticType: type, confidence: 0.9,
+    evidence: [{ signal: "page-shell-region", value: type }], selector: stableSelector(element),
+    details: { text: text.slice(0, 160), className: `${element.className ?? ""}`, interactionSelectors: controlsOf(element).slice(0, 80).map(stableSelector) },
+    componentCandidates: componentCandidates(element, type),
+  };
+}
+
+function pageShellElements(document: Document, type: "page-header" | "page-footer"): Element[] {
+  const semantic = type === "page-header"
+    ? document.querySelector('header, [class~="site-header"], [class*="header-"]')
+    : document.querySelector('footer, [class~="site-footer"], [class*="footer-"]');
+  if (semantic) return [semantic];
+  if (type === "page-header") {
+    const first = [...document.body.children].find((element) => controlsOf(element).length > 0 && textOf(element).length >= 5);
+    if (first) return [first];
+  }
+  if (type === "page-footer") {
+    const roots = [...document.body.children].filter((element) => controlsOf(element).length > 0);
+    const trailing = roots.at(-1);
+    if (trailing && !trailing.matches("script, style") && textOf(trailing).length >= 10) return [trailing];
+  }
+  return [];
+}
+
+function isSectionCandidate(element: Element): boolean {
+  const headingElement = [...element.children].find((child) => /^H[1-3]$/.test(child.tagName)) ?? [...element.querySelectorAll("h1, h2, h3")][0] ?? null;
+  const heading = headingElement ? textOf(headingElement).replace(/[.。]+$/, "").trim() : "";
+  if (element.matches("header, footer")) return false;
+  if (!heading || heading.length > 100 || textOf(element).length < heading.length + 5) return false;
+  const headingCount = element.querySelectorAll("h1, h2, h3").length;
+  const direct = element.matches("section, article, main") && (headingCount === 1 || (element.matches("section") && headingCount <= 3 && /designing|currently|profile|intro|hero/i.test(heading))) && !element.closest("section section");
+  const builder = element.matches(".e-con-inner > .elementor-element") && (headingElement?.tagName === "H1" || GENERIC_SECTION_NAMES.has(heading.toLowerCase()));
+  return direct || builder;
+}
+
+function sectionView(element: Element, index: number): AnalyzedView {
+  const heading = sectionHeading(element) || (element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`);
+  const hero = /designing|currently|profile|intro|hero/i.test(heading) || element.matches("header, [class*=hero]");
+  const type = element.matches("footer") ? "page-footer" : hero ? "hero-profile" : "content-section";
+  const repeated = [...element.children].filter((child) => child.children.length > 0).length;
+  return {
+    id: `section-${index + 1}-${slug(heading)}`, type, structuralType: "content-region", semanticType: slug(heading), confidence: 0.82,
+    evidence: [{ signal: "heading-led-section", value: heading }, { signal: "direct-child-regions", value: repeated }], selector: stableSelector(element),
+    details: { text: heading, className: `${element.className ?? ""}`, heading, childRegions: repeated, interactionSelectors: controlsOf(element).slice(0, 80).map(stableSelector) }, componentCandidates: componentCandidates(element, slug(heading)),
   };
 }
 
@@ -184,18 +392,26 @@ export class HtmlAnalyzer {
   readonly htmlPath: string;
   constructor(
     htmlPath: string,
-    readonly options: { profile?: string; vertical?: string; minimal?: boolean } = {},
+    readonly options: { profile?: string; vertical?: string; minimal?: boolean; maxCssBytes?: number; maxStyleBytes?: number; maxScriptBytes?: number } = {},
   ) {
     this.htmlPath = resolve(htmlPath);
   }
 
   analyze(): Manifest {
     const source = readText(this.htmlPath);
-    const dom = new JSDOM(source);
+    const budget: SourceBudget = {
+      maxCssBytes: this.options.maxCssBytes ?? DEFAULT_MAX_CSS_BYTES,
+      maxStyleBytes: this.options.maxStyleBytes ?? DEFAULT_MAX_STYLE_BYTES,
+      maxScriptBytes: this.options.maxScriptBytes ?? DEFAULT_MAX_SCRIPT_BYTES,
+    };
+    const compacted = compactArchiveSource(source, budget);
+    const dom = new JSDOM(compacted.text);
     const { document } = dom.window;
-    const css = cssFromDocument(dom, this.htmlPath);
-    const scripts = scriptsFromDocument(dom, this.htmlPath);
-    const warnings: string[] = [];
+    const cssSource = cssFromDocument(dom, this.htmlPath, budget);
+    const scriptSource = scriptsFromDocument(dom, this.htmlPath, budget);
+    const css = cssSource.text;
+    const scripts = scriptSource.text ? [scriptSource.text] : [];
+    const warnings: string[] = [...compacted.warnings, ...cssSource.warnings, ...scriptSource.warnings];
     const profile = this.options.profile ?? this.options.vertical ?? PROFILE_FALLBACK;
     const views = this.analyzeViews(document);
     const contracts = extractContracts(scripts);
@@ -260,15 +476,28 @@ export class HtmlAnalyzer {
 
   private analyzeViews(document: Document): AnalyzedView[] {
     const candidates = [...document.body.querySelectorAll("section, main, article, [class], [role=tabpanel], [data-view]")];
-    const views: AnalyzedView[] = [];
+    const specialized: AnalyzedView[] = [];
     for (const element of candidates) {
-      const view = detectView(element, views.length);
-      if (!view) continue;
-      if (views.some((item) => item.selector === view.selector)) continue;
-      views.push(view);
-      if (["cause-chain", "nav-panel", "graph"].includes(view.type)) break;
+      const view = detectView(element, specialized.length);
+      if (!view || specialized.some((item) => item.selector === view.selector)) continue;
+      specialized.push(view);
+      if (specialized.length >= 40) break;
     }
-    return views;
+    const sections = candidates.filter(isSectionCandidate).filter((element, index, items) => !items.some((other, otherIndex) => otherIndex < index && other.contains(element) && sectionHeading(other).toLowerCase() === sectionHeading(element).toLowerCase()));
+    const filteredSections = sections.filter((section) => !sections.some((other) => other !== section && section.contains(other) && sectionHeading(section).toLowerCase() === sectionHeading(other).toLowerCase()));
+    const sectionViews = filteredSections.slice(0, 40).map(sectionView);
+    const shellViews = [
+      ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
+      ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
+    ];
+    for (const view of specialized) {
+      let element: Element | null = null;
+      try { element = document.querySelector(view.selector); } catch { /* Stable selectors should be valid; retain a flat plan if not. */ }
+      const parent = element ? [...filteredSections].filter((section) => section !== element && section.contains(element)).sort((a, b) => textOf(a).length - textOf(b).length)[0] : undefined;
+      if (parent) view.details.parentSelector = stableSelector(parent);
+    }
+    const combined = [...specialized, ...shellViews, ...sectionViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
+    return combined.slice(0, 60);
   }
 
   private analyzeInteractions(document: Document, scripts: string[]): Interaction[] {
@@ -309,6 +538,6 @@ export class HtmlAnalyzer {
   }
 }
 
-export function analyzeHtml(htmlPath: string, options?: { profile?: string; vertical?: string; minimal?: boolean }): Manifest {
+export function analyzeHtml(htmlPath: string, options?: { profile?: string; vertical?: string; minimal?: boolean; maxCssBytes?: number; maxStyleBytes?: number; maxScriptBytes?: number }): Manifest {
   return new HtmlAnalyzer(htmlPath, options).analyze();
 }

@@ -1,0 +1,1423 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/diegovz-home-0722-ts/original.html",
+    "title": "Home — Diegovz",
+    "templateId": null,
+    "vertical": "portfolio",
+    "profile": "portfolio",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "direction-multiplier",
+        "value": "1",
+        "original": "--direction-multiplier",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "page-title-display",
+        "value": "block",
+        "original": "--page-title-display",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "swiper-theme-color",
+        "value": "#007aff",
+        "original": "--swiper-theme-color",
+        "usage": [
+          ":root",
+          ".elementor-element"
+        ],
+        "roles": []
+      },
+      {
+        "name": "swiper-navigation-size",
+        "value": "44px",
+        "original": "--swiper-navigation-size",
+        "usage": [
+          ":root",
+          ".swiper-button-next:after,.swiper-button-prev:after",
+          ".elementor-element"
+        ],
+        "roles": []
+      },
+      {
+        "name": "999",
+        "value": "#999",
+        "original": "#999",
+        "usage": [],
+        "roles": [
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-14-165-233-2",
+        "value": "rgba(14,165,233,.2)",
+        "original": "rgba(14,165,233,.2)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "hsla-0-0-100-1",
+        "value": "hsla(0,0%,100%,.1)",
+        "original": "hsla(0,0%,100%,.1)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "d3e6f3",
+        "value": "#d3e6f3",
+        "original": "#d3e6f3",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "d2e3f9",
+        "value": "#d2e3f9",
+        "original": "#d2e3f9",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-2",
+        "value": "rgba(0,0,0,0.2)",
+        "original": "rgba(0,0,0,0.2)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-3",
+        "value": "rgba(0,0,0,0.3)",
+        "original": "rgba(0,0,0,0.3)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#FFF",
+        "original": "#FFF",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "eee",
+        "value": "#eee",
+        "original": "#eee",
+        "usage": [],
+        "roles": [
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "1e1e1e",
+        "value": "#1e1e1e",
+        "original": "#1e1e1e",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "000000",
+        "value": "#000000",
+        "original": "#000000",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "777",
+        "value": "#777",
+        "original": "#777",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-5",
+        "value": "rgba(255,255,255,0.5)",
+        "original": "rgba(255,255,255,0.5)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-1",
+        "value": "rgba(255,255,255,0.1)",
+        "original": "rgba(255,255,255,0.1)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "24d5b4",
+        "value": "#24D5B4",
+        "original": "#24D5B4",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "586c80",
+        "value": "#586c80",
+        "original": "#586c80",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "eebf56",
+        "value": "#eebf56",
+        "original": "#eebf56",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f46ca3",
+        "value": "#f46ca3",
+        "original": "#f46ca3",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "1b9edf",
+        "value": "#1b9edf",
+        "original": "#1b9edf",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(to left,#eebf56,#f46ca3)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to left,#1b9edf,#af74c3)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(0deg,#000 8%,transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.18))"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to right,#000 0%,#0000 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to left,#000 0%,#0000 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to right,#0A0A0A 0%,rgba(10,10,10,0) 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to left,#0A0A0A 0%,rgba(10,10,10,0) 100%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "tab-1",
+        "label": "",
+        "selector": "div.elementor-element-ee28250",
+        "target": null
+      },
+      {
+        "id": "tab-2",
+        "label": "",
+        "selector": "div.elementor-element-b2b6f61",
+        "target": null
+      },
+      {
+        "id": "tab-3",
+        "label": "",
+        "selector": "div.elementor-element-b6148a3",
+        "target": null
+      },
+      {
+        "id": "tab-4",
+        "label": "",
+        "selector": "div.elementor-element-6c0d629",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "carousel-3d-1",
+        "type": "carousel-3d",
+        "structuralType": "collection",
+        "semanticType": "carousel-3d",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "carousel"
+          }
+        ],
+        "selector": "div.slot1-carousel",
+        "details": {
+          "text": "$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Turbo delivery launch 10–15 min deliveries. 30M+ monthly activ",
+          "className": "slot1-carousel",
+          "interactionSelectors": [],
+          "parentSelector": "div.elementor-element-74d565c"
+        },
+        "componentCandidates": [
+          {
+            "id": "carousel-3d-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "carousel-3d-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 12
+              }
+            ],
+            "selector": "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+            "details": {
+              "text": "$1 billion raised",
+              "className": "slot1-card-title",
+              "parentSelector": "div.slot1-carousel",
+              "repeatedCount": 12,
+              "repeatedSelectors": [
+                "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(2) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(3) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(4) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(5) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(6) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(7) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(8) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(9) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(10) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(11) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(12) > div:nth-child(2) > h4:nth-child(1)"
+              ],
+              "interactionSelectors": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "timeline-2",
+        "type": "timeline",
+        "structuralType": "sequence",
+        "semanticType": "timeline",
+        "confidence": 0.88,
+        "evidence": [
+          {
+            "signal": "timeline"
+          }
+        ],
+        "selector": "div.elementor-element-193daf3",
+        "details": {
+          "text": "Rappi2021—CurrentlyVP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strategy, and execution across all products. Own",
+          "className": "elementor-element elementor-element-193daf3 underline-dvz ul-experience wpr-list-style-none elementor-widget elementor-widget-wpr-posts-timeline",
+          "interactionSelectors": [
+            "article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)"
+          ],
+          "parentSelector": "div.elementor-element-090fbce"
+        },
+        "componentCandidates": [
+          {
+            "id": "timeline-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "timeline-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 6
+              }
+            ],
+            "selector": "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+            "details": {
+              "text": "VP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strategy, and execution across all products. Ownership of the Desig",
+              "className": "wpr-timeline-entry-inner",
+              "parentSelector": "div.elementor-element-193daf3",
+              "repeatedCount": 6,
+              "repeatedSelectors": [
+                "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+                "article.elementor-repeater-item-2a37755 > div:nth-child(2)",
+                "article.elementor-repeater-item-218e3a3 > div:nth-child(2)",
+                "article.elementor-repeater-item-dc77abf > div:nth-child(2)",
+                "article.elementor-repeater-item-439bfba > div:nth-child(2)",
+                "article.elementor-repeater-item-528a050 > div:nth-child(2)"
+              ],
+              "interactionSelectors": [
+                "article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "page-header-1",
+        "type": "page-header",
+        "structuralType": "content-region",
+        "semanticType": "page-header",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-header"
+          }
+        ],
+        "selector": "div.elementor-5114",
+        "details": {
+          "text": "Based in Madrid, Spain 10:27 GMT+1 · 28ºC",
+          "className": "elementor elementor-5114",
+          "interactionSelectors": [
+            "div.elementor-element-f1f46c6 > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "page-footer-1",
+        "type": "page-footer",
+        "structuralType": "content-region",
+        "semanticType": "page-footer",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-footer"
+          }
+        ],
+        "selector": "div.elementor-9974",
+        "details": {
+          "text": "diegovz.com/ Design, coding and motion graphics by me. You were visitor number 550,384 By the way, can you beat me? :)",
+          "className": "elementor elementor-9974",
+          "interactionSelectors": [
+            "div.elementor-element-b4c7266 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-16ba846 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-24c1b5d > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-9100740 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "page-footer-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "page-footer-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 3
+              }
+            ],
+            "selector": "div.elementor-element-393ff04",
+            "details": {
+              "text": "diegovz.com/",
+              "className": "elementor-element elementor-element-393ff04 e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+              "parentSelector": "div.elementor-9974",
+              "repeatedCount": 3,
+              "repeatedSelectors": [
+                "div.elementor-element-393ff04",
+                "div.elementor-element-72fac51",
+                "div.elementor-element-95a798c"
+              ],
+              "interactionSelectors": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-1-designing-stuff-since-2011",
+        "type": "hero-profile",
+        "structuralType": "content-region",
+        "semanticType": "designing-stuff-since-2011",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Designing stuff since 2011"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 3
+          }
+        ],
+        "selector": "section.elementor-element-8bf15b0",
+        "details": {
+          "text": "Designing stuff since 2011",
+          "className": "wavo-column-gap-default wavo-particles elementor-section elementor-top-section elementor-element elementor-element-8bf15b0 elementor-section-stretched elementor-section-height-full elementor-section-content-bottom elementor-section-boxed elementor-section-height-default elementor-section-items-middle wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no",
+          "heading": "Designing stuff since 2011",
+          "childRegions": 3,
+          "interactionSelectors": [
+            "a.underline-dvz"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-2-some-projects",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "some-projects",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Some projects"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-3dc9bd8",
+        "details": {
+          "text": "Some projects",
+          "className": "elementor-element elementor-element-3dc9bd8 e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Some projects",
+          "childRegions": 2,
+          "interactionSelectors": []
+        },
+        "componentCandidates": [
+          {
+            "id": "some-projects-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "some-projects-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 5
+              }
+            ],
+            "selector": "div.elementor-element-000204e",
+            "details": {
+              "text": "Mustache Overall improvement of Rappi's Design System.",
+              "className": "elementor-element elementor-element-000204e e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+              "parentSelector": "div.elementor-element-3dc9bd8",
+              "repeatedCount": 5,
+              "repeatedSelectors": [
+                "div.elementor-element-000204e",
+                "div.elementor-element-9393a3a",
+                "div.elementor-element-bbfdba0",
+                "div.elementor-element-e42ed18",
+                "div.elementor-element-9c9c9db"
+              ],
+              "interactionSelectors": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-3-writing",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "writing",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Writing"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-01dbacf",
+        "details": {
+          "text": "Writing",
+          "className": "elementor-element elementor-element-01dbacf e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Writing",
+          "childRegions": 2,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-4-fragments-of-me",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "fragments-of-me",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Fragments of me"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 3
+          }
+        ],
+        "selector": "div.elementor-element-74d565c",
+        "details": {
+          "text": "Fragments of me",
+          "className": "elementor-element elementor-element-74d565c e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Fragments of me",
+          "childRegions": 3,
+          "interactionSelectors": [
+            "button.slot2-clear-btn",
+            "div.slot5-left > div:nth-child(2) > input:nth-child(1)",
+            "div.slot5-player > button:nth-child(2)",
+            "div.slot7-toolbar > button:nth-child(1)",
+            "div.slot7-toolbar > button:nth-child(2)",
+            "div.slot7-toolbar > button:nth-child(3)",
+            "div.slot7-toolbar > button:nth-child(4)",
+            "button.floating-close-btn",
+            "input.floating-progress",
+            "button.floating-play-btn"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "fragments-of-me-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "fragments-of-me-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 12
+              }
+            ],
+            "selector": "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+            "details": {
+              "text": "$1 billion raised",
+              "className": "slot1-card-title",
+              "parentSelector": "div.elementor-element-74d565c",
+              "repeatedCount": 12,
+              "repeatedSelectors": [
+                "div.slot1-carousel-track > div:nth-child(1) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(2) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(3) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(4) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(5) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(6) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(7) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(8) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(9) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(10) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(11) > div:nth-child(2) > h4:nth-child(1)",
+                "div.slot1-carousel-track > div:nth-child(12) > div:nth-child(2) > h4:nth-child(1)"
+              ],
+              "interactionSelectors": []
+            }
+          },
+          {
+            "id": "fragments-of-me-interactive-shell",
+            "type": "component-shell",
+            "structuralType": "collection",
+            "semanticType": "fragments-of-me-interactive-shell",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "signal": "interactive-slot-shell",
+                "value": 3
+              }
+            ],
+            "selector": "div.my-story-bento",
+            "details": {
+              "text": "$1 billion raised From Sequoia Capital. Rappi reaches 100M+ downloads Mass adoption across LATAM. Turbo delivery launch 10–15 min deliveries. 30M+ monthly activ",
+              "className": "my-story-bento",
+              "parentSelector": "div.elementor-element-74d565c",
+              "interactionSelectors": []
+            }
+          },
+          {
+            "id": "fragments-of-me-bento-slot-2",
+            "type": "interactive-slot",
+            "structuralType": "content-region",
+            "semanticType": "fragments-of-me-bento-slot-2",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "signal": "localized-interaction-cluster",
+                "value": 1
+              }
+            ],
+            "selector": "div.bento-slot-2",
+            "details": {
+              "text": "Clear I started as illustrator But I’ve drawn enough already, now it’s your turn!",
+              "className": "bento-slot bento-slot-2",
+              "parentSelector": "div.my-story-bento",
+              "interactionSelectors": [
+                "button.slot2-clear-btn"
+              ]
+            }
+          },
+          {
+            "id": "fragments-of-me-bento-slot-5",
+            "type": "interactive-slot",
+            "structuralType": "content-region",
+            "semanticType": "fragments-of-me-bento-slot-5",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "signal": "localized-interaction-cluster",
+                "value": 2
+              }
+            ],
+            "selector": "div.bento-slot-5",
+            "details": {
+              "text": "Lost Verdania · Christopher Larkin 0:00",
+              "className": "bento-slot bento-slot-5",
+              "parentSelector": "div.my-story-bento",
+              "interactionSelectors": [
+                "div.slot5-left > div:nth-child(2) > input:nth-child(1)",
+                "div.slot5-player > button:nth-child(2)"
+              ]
+            }
+          },
+          {
+            "id": "fragments-of-me-bento-slot-7",
+            "type": "interactive-slot",
+            "structuralType": "content-region",
+            "semanticType": "fragments-of-me-bento-slot-7",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "signal": "localized-interaction-cluster",
+                "value": 4
+              }
+            ],
+            "selector": "div.bento-slot-7",
+            "details": {
+              "text": "Hands-on design leader I lead by example, staying close to my team, the craft and the product.",
+              "className": "bento-slot bento-slot-7",
+              "parentSelector": "div.my-story-bento",
+              "interactionSelectors": [
+                "div.slot7-toolbar > button:nth-child(1)",
+                "div.slot7-toolbar > button:nth-child(2)",
+                "div.slot7-toolbar > button:nth-child(3)",
+                "div.slot7-toolbar > button:nth-child(4)"
+              ]
+            }
+          },
+          {
+            "id": "fragments-of-me-overlay-1",
+            "type": "interactive-panel",
+            "structuralType": "overlay",
+            "semanticType": "fragments-of-me-interactive-panel",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "signal": "overlay-controls",
+                "value": 3
+              }
+            ],
+            "selector": "#floating-player",
+            "details": {
+              "text": "Lost Verdania · Christopher Larkin 0:00",
+              "className": "floating-player hidden",
+              "parentSelector": "div.elementor-element-74d565c",
+              "interactionSelectors": [
+                "button.floating-close-btn",
+                "input.floating-progress",
+                "button.floating-play-btn"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-5-education",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "education",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Education"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-024b67c",
+        "details": {
+          "text": "Education",
+          "className": "elementor-element elementor-element-024b67c e-con-full underline-dvz e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Education",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "education-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "education-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 10
+              }
+            ],
+            "selector": "div.elementor-element-bfc9485",
+            "details": {
+              "text": "ThePowerMBA · Credentials",
+              "className": "elementor-element elementor-element-bfc9485 e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+              "parentSelector": "div.elementor-element-024b67c",
+              "repeatedCount": 10,
+              "repeatedSelectors": [
+                "div.elementor-element-bfc9485",
+                "div.elementor-element-ad1fc83",
+                "div.elementor-element-4c35103",
+                "div.elementor-element-9e51840",
+                "div.elementor-element-e05d6e1",
+                "div.elementor-element-e1c3f2a",
+                "div.elementor-element-b2c5cd3",
+                "div.elementor-element-52a25c0",
+                "div.elementor-element-e195a16",
+                "div.elementor-element-788ddca"
+              ],
+              "interactionSelectors": [
+                "div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-6-experience",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "experience",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Experience"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-090fbce",
+        "details": {
+          "text": "Experience",
+          "className": "elementor-element elementor-element-090fbce e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Experience",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "experience-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "experience-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 6
+              }
+            ],
+            "selector": "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+            "details": {
+              "text": "VP of Design Executive leadership of Rappi’s entire design organization, driving the vision, strategy, and execution across all products. Ownership of the Desig",
+              "className": "wpr-timeline-entry-inner",
+              "parentSelector": "div.elementor-element-090fbce",
+              "repeatedCount": 6,
+              "repeatedSelectors": [
+                "article.elementor-repeater-item-545f13a > div:nth-child(2)",
+                "article.elementor-repeater-item-2a37755 > div:nth-child(2)",
+                "article.elementor-repeater-item-218e3a3 > div:nth-child(2)",
+                "article.elementor-repeater-item-dc77abf > div:nth-child(2)",
+                "article.elementor-repeater-item-439bfba > div:nth-child(2)",
+                "article.elementor-repeater-item-528a050 > div:nth-child(2)"
+              ],
+              "interactionSelectors": [
+                "article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+                "article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-7-readings",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "readings",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Readings"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-12b8bab",
+        "details": {
+          "text": "Readings",
+          "className": "elementor-element elementor-element-12b8bab e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Readings",
+          "childRegions": 2,
+          "interactionSelectors": []
+        },
+        "componentCandidates": [
+          {
+            "id": "readings-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "readings-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 4
+              }
+            ],
+            "selector": "div.elementor-element-f08ccdf",
+            "details": {
+              "text": "Updated → 08/2025",
+              "className": "elementor-element elementor-element-f08ccdf e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+              "parentSelector": "div.elementor-element-12b8bab",
+              "repeatedCount": 4,
+              "repeatedSelectors": [
+                "div.elementor-element-f08ccdf",
+                "div.elementor-element-9271ba9",
+                "div.elementor-element-b07ea33",
+                "div.elementor-element-165030b"
+              ],
+              "interactionSelectors": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-8-awards-features",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "awards-features",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Awards & features"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "div.elementor-element-f74185b",
+        "details": {
+          "text": "Awards & features",
+          "className": "elementor-element elementor-element-f74185b e-con-full underline-dvz e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+          "heading": "Awards & features",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-6816a38 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+            "div.elementor-element-793f6fb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "awards-features-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "awards-features-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 10
+              }
+            ],
+            "selector": "div.elementor-element-d0e4471",
+            "details": {
+              "text": "Featured Portfolio A1 Gallery",
+              "className": "elementor-element elementor-element-d0e4471 e-con-full e-flex wpr-particle-no wpr-jarallax-no wpr-parallax-no wpr-sticky-section-no wpr-column-slider-no wpr-equal-height-no e-con e-child",
+              "parentSelector": "div.elementor-element-f74185b",
+              "repeatedCount": 10,
+              "repeatedSelectors": [
+                "div.elementor-element-d0e4471",
+                "div.elementor-element-631ad57",
+                "div.elementor-element-06cc4fa",
+                "div.elementor-element-abcd27a",
+                "div.elementor-element-ee073df",
+                "div.elementor-element-6c2ea15",
+                "div.elementor-element-f604499",
+                "div.elementor-element-b579d72",
+                "div.elementor-element-89120e3",
+                "div.elementor-element-b6f6517"
+              ],
+              "interactionSelectors": [
+                "div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+                "div.elementor-element-793f6fb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "modals": [],
+    "landmarks": []
+  },
+  "data": {
+    "contracts": [],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "div.elementor-element-f1f46c6 > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-f1f46c6 > div:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "a.underline-dvz",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|a.underline-dvz|semantic-control"
+    },
+    {
+      "trigger": "button.slot2-clear-btn",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.slot2-clear-btn|semantic-control"
+    },
+    {
+      "trigger": "div.slot5-left > div:nth-child(2) > input:nth-child(1)",
+      "event": "input",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "input|div.slot5-left > div:nth-child(2) > input:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.slot5-player > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.slot5-player > button:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "div.slot7-toolbar > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.slot7-toolbar > button:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.slot7-toolbar > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.slot7-toolbar > button:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "div.slot7-toolbar > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.slot7-toolbar > button:nth-child(3)|semantic-control"
+    },
+    {
+      "trigger": "div.slot7-toolbar > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.slot7-toolbar > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "button.floating-close-btn",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.floating-close-btn|semantic-control"
+    },
+    {
+      "trigger": "input.floating-progress",
+      "event": "input",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "input|input.floating-progress|semantic-control"
+    },
+    {
+      "trigger": "button.floating-play-btn",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.floating-play-btn|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-a6f7693 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|article.elementor-repeater-item-545f13a > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|article.elementor-repeater-item-2a37755 > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|article.elementor-repeater-item-dc77abf > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|article.elementor-repeater-item-439bfba > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-abf0e2b > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-6fd7012 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-a056ac3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-06f0a7a > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-f1751de > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-6816a38 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-6816a38 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-ccfc4eb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-72840ea > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-50641c3 > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-793f6fb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-793f6fb > div:nth-child(1) > p:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-b4c7266 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-b4c7266 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-16ba846 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-16ba846 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-24c1b5d > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-24c1b5d > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.elementor-element-9100740 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|div.elementor-element-9100740 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width:700px)",
+      "minWidth": null,
+      "maxWidth": 700
+    },
+    {
+      "query": "(max-width:700px)",
+      "minWidth": null,
+      "maxWidth": 700
+    },
+    {
+      "query": "screen and (max-width:576px)",
+      "minWidth": null,
+      "maxWidth": 576
+    },
+    {
+      "query": "(min-width:1024px)",
+      "minWidth": 1024,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:1023px)",
+      "minWidth": null,
+      "maxWidth": 1023
+    },
+    {
+      "query": "(max-width:1024px)",
+      "minWidth": null,
+      "maxWidth": 1024
+    },
+    {
+      "query": "(min-width:768px)",
+      "minWidth": 768,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:768px)",
+      "minWidth": 768,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:767px)",
+      "minWidth": null,
+      "maxWidth": 767
+    },
+    {
+      "query": "(min-width:1025px)",
+      "minWidth": 1025,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:-1)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:-1)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:1024px)",
+      "minWidth": null,
+      "maxWidth": 1024
+    },
+    {
+      "query": "(max-width:-1)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:767px)",
+      "minWidth": null,
+      "maxWidth": 767
+    },
+    {
+      "query": "(prefers-reduced-motion:no-preference)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:767px)",
+      "minWidth": null,
+      "maxWidth": 767
+    },
+    {
+      "query": "(prefers-reduced-motion:reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width:767px)",
+      "minWidth": null,
+      "maxWidth": 767
+    },
+    {
+      "query": "(min-width:768px) and (max-width:1024px)",
+      "minWidth": 768,
+      "maxWidth": 1024
+    },
+    {
+      "query": "(min-width:1025px) and (max-width:99999px)",
+      "minWidth": 1025,
+      "maxWidth": 99999
+    },
+    {
+      "query": "(max-width:1024px)",
+      "minWidth": null,
+      "maxWidth": 1024
+    },
+    {
+      "query": "(max-width:767px)",
+      "minWidth": null,
+      "maxWidth": 767
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 8,
+    "unlabeledButtons": 2,
+    "images": 41,
+    "imagesWithoutAlt": 5,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": [
+    "大型归档预处理：压缩 60 个 data URI，跳过 4842907 CSS bytes、0 script bytes",
+    "已跳过 1 个非可执行 script（JSON-LD/归档元数据等）",
+    "包含远程资源，运行态 roundtrip 可能无法完全复现",
+    "5 个图片缺少 alt 文本"
+  ]
+}

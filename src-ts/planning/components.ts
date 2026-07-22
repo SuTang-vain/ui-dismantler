@@ -10,7 +10,10 @@ export interface ComponentPlan {
   componentName: string;
   targetFile: string;
   sourceSelector: string;
+  sourceSelectors: string[];
   responsibility: string;
+  parentId: string | null;
+  dependencies: string[];
   interactionModel: InteractionModel;
   interactionFingerprints: string[];
   dataContracts: string[];
@@ -34,7 +37,7 @@ export interface ComponentPlanningReport {
   lineBudget: number;
   components: ComponentPlan[];
   issues: PlanningIssue[];
-  summary: { components: number; overBudget: number; errors: number; warnings: number; ready: boolean };
+  summary: { components: number; overBudget: number; errors: number; warnings: number; interactions: number; ownedInteractions: number; unownedInteractions: number; ready: boolean };
 }
 
 export interface ComponentPlanningOptions { lineBudget?: number }
@@ -51,14 +54,17 @@ function pascal(value: string): string {
   return /^[A-Za-z_$]/.test(name) ? name : `View${name || "Component"}`;
 }
 
-function selectorAffinity(interaction: Interaction, selector: string): boolean {
+function selectorAffinity(interaction: Interaction, view: AnalyzedView): boolean {
   if (interaction.trigger === "event-listener") return false;
-  if (interaction.trigger === selector) return true;
-  const anchor = selector.match(/(?:#|\.)[A-Za-z0-9_-]+/)?.[0];
+  if (interaction.trigger === view.selector) return true;
+  const triggers = Array.isArray(view.details.interactionSelectors) ? view.details.interactionSelectors.filter((item): item is string => typeof item === "string") : [];
+  if (triggers.includes(interaction.trigger)) return true;
+  const anchor = view.selector.match(/(?:#|\.)[A-Za-z0-9_-]+/)?.[0];
   return Boolean(anchor && (interaction.trigger.includes(anchor) || interaction.target?.includes(anchor.slice(1))));
 }
 
 function inferInteractionModel(interactions: Interaction[], view: AnalyzedView): InteractionModel {
+  if (!interactions.length) return "static";
   const evidence = `${view.type} ${view.semanticType} ${JSON.stringify(view.details)}`.toLowerCase();
   const actions = interactions.map((item) => `${item.event} ${item.action}`).join(" ").toLowerCase();
   const models = new Set<InteractionModel>();
@@ -82,14 +88,16 @@ function acceptanceStates(model: InteractionModel, interactions: Interaction[]):
 }
 
 function estimatedComplexity(view: AnalyzedView, interactions: Interaction[], manifest: Manifest): ComponentPlan["complexity"] {
-  const detailsLength = JSON.stringify(view.details).length;
-  const interactionWeight = interactions.length * 18;
-  const dataWeight = manifest.data.contracts.length * 8;
-  const tokenWeight = Math.min(manifest.theme.tokens.length, 20) * 2;
-  const responsiveWeight = manifest.responsive.length * 8;
+  const localDetails = Object.fromEntries(Object.entries(view.details).filter(([key]) => !["interactionSelectors", "repeatedSelectors"].includes(key)));
+  const detailsLength = JSON.stringify(localDetails).length;
+  const interactionKinds = new Set(interactions.map((item) => `${item.event}|${item.action}|${Boolean(item.target)}`)).size;
+  const interactionWeight = interactionKinds * 18;
+  const dataWeight = Math.min(manifest.data.contracts.length, 8) * 8;
+  const tokenWeight = Math.min(manifest.theme.tokens.length, 20);
+  const responsiveWeight = Math.min(manifest.responsive.length, 8) * 3;
   const viewWeight = ["graph", "carousel-3d", "cause-chain"].includes(view.type) ? 80 : 45;
   const estimatedLines = Math.max(40, Math.round(viewWeight + detailsLength / 24 + interactionWeight + dataWeight + tokenWeight + responsiveWeight));
-  const reasons = [`${interactions.length} 个关联交互`, `${manifest.data.contracts.length} 个数据契约`, `${manifest.responsive.length} 个响应式查询`];
+  const reasons = [`${interactions.length} 个关联交互（${interactionKinds} 类实现行为）`, `${manifest.data.contracts.length} 个数据契约`, `${manifest.responsive.length} 个响应式查询（复杂度计入前 8 个）`];
   if (["graph", "carousel-3d", "cause-chain"].includes(view.type)) reasons.push(`${view.type} 属于高复杂度视图`);
   return { estimatedLines, score: Number((estimatedLines / DEFAULT_LINE_BUDGET).toFixed(2)), reasons, budget: DEFAULT_LINE_BUDGET, overBudget: false };
 }
@@ -98,28 +106,77 @@ function fallbackView(manifest: Manifest): AnalyzedView {
   return { id: "page-shell-1", type: "page-shell", structuralType: "content-region", semanticType: "page-shell", confidence: 0.5, evidence: [{ signal: "planning-fallback" }], selector: "body", details: { text: manifest.meta.title || manifest.meta.caseName } };
 }
 
+function candidateViews(view: AnalyzedView): AnalyzedView[] {
+  return view.componentCandidates ?? [];
+}
+
+function expandPlanningViews(views: AnalyzedView[]): AnalyzedView[] {
+  const result: AnalyzedView[] = [];
+  const selectors = new Set<string>();
+  const append = (view: AnalyzedView) => { if (!selectors.has(view.selector)) { selectors.add(view.selector); result.push(view); } };
+  for (const view of views) append(view);
+  for (const view of views) for (const candidate of candidateViews(view)) append(candidate);
+  return result;
+}
+
+function viewDepth(view: AnalyzedView, views: AnalyzedView[]): number {
+  let depth = 0;
+  let parentSelector = typeof view.details.parentSelector === "string" ? view.details.parentSelector : "";
+  const visited = new Set<string>();
+  while (parentSelector && !visited.has(parentSelector)) {
+    visited.add(parentSelector);
+    const parent = views.find((candidate) => candidate.selector === parentSelector);
+    if (!parent) break;
+    depth += 1;
+    parentSelector = typeof parent.details.parentSelector === "string" ? parent.details.parentSelector : "";
+  }
+  return depth;
+}
+
 export function planComponents(manifest: Manifest, options: ComponentPlanningOptions = {}): ComponentPlanningReport {
   const lineBudget = options.lineBudget ?? DEFAULT_LINE_BUDGET;
   if (!Number.isFinite(lineBudget) || lineBudget < 40) throw new Error("lineBudget 必须是不小于 40 的数字");
-  const views = manifest.structure.views.length ? manifest.structure.views : [fallbackView(manifest)];
+  const baseViews = manifest.structure.views.length ? manifest.structure.views : [fallbackView(manifest)];
+  const views = expandPlanningViews(baseViews);
+  const ids = views.map((view, index) => slug(view.id || `${view.type}-${index + 1}`));
+  const depths = views.map((view) => viewDepth(view, views));
+  const interactionOwner = new Map<string, number>();
+  for (const interaction of manifest.interactions) {
+    const owner = views.map((view, index) => ({ index, depth: depths[index], matches: selectorAffinity(interaction, view) }))
+      .filter((item) => item.matches).sort((a, b) => b.depth - a.depth || a.index - b.index)[0]?.index ?? -1;
+    if (owner >= 0) interactionOwner.set(interaction.fingerprint, owner);
+    else if (views.length === 1) interactionOwner.set(interaction.fingerprint, 0);
+  }
+  const nameCounts = new Map<string, number>();
   const components = views.map((view, index): ComponentPlan => {
-    const interactions = manifest.interactions.filter((item) => selectorAffinity(item, view.selector));
-    const effectiveInteractions = interactions.length ? interactions : views.length === 1 ? manifest.interactions : [];
-    const componentName = pascal(`${view.type}-${index + 1}`);
-    const interactionModel = inferInteractionModel(effectiveInteractions, view);
-    const complexity = estimatedComplexity(view, effectiveInteractions, manifest);
+    const interactions = manifest.interactions.filter((item) => interactionOwner.get(item.fingerprint) === index);
+    const preferredName = view.type === "content-section" || ["repeated-item", "interactive-slot", "interactive-panel", "component-shell"].includes(view.type) ? view.semanticType : view.type;
+    const baseName = pascal(preferredName);
+    const occurrence = (nameCounts.get(baseName) ?? 0) + 1;
+    nameCounts.set(baseName, occurrence);
+    const componentName = occurrence === 1 ? baseName : `${baseName}${occurrence}`;
+    const interactionModel = inferInteractionModel(interactions, view);
+    const complexity = estimatedComplexity(view, interactions, manifest);
     complexity.budget = lineBudget;
     complexity.score = Number((complexity.estimatedLines / lineBudget).toFixed(2));
     complexity.overBudget = complexity.estimatedLines > lineBudget;
+    const parentSelector = typeof view.details.parentSelector === "string" ? view.details.parentSelector : "";
+    const parentIndex = parentSelector ? views.findIndex((candidate) => candidate.selector === parentSelector) : -1;
+    const parentId = parentIndex >= 0 ? ids[parentIndex] : null;
     return {
-      id: slug(view.id || componentName), componentName, targetFile: `src/components/${componentName}.ts`, sourceSelector: view.selector,
-      responsibility: responsibility(view), interactionModel, interactionFingerprints: effectiveInteractions.map((item) => item.fingerprint),
-      dataContracts: manifest.data.contracts.map((item) => item.name), designTokens: manifest.theme.tokens.slice(0, 24).map((item) => item.original), responsiveQueries: manifest.responsive.map((item) => item.query),
-      acceptance: { text: typeof view.details.text === "string" && view.details.text.trim() ? [view.details.text.trim().slice(0, 200)] : [], states: acceptanceStates(interactionModel, effectiveInteractions), viewports: ["desktop", "tablet", "mobile", "tiny"] }, complexity,
+      id: ids[index], componentName, targetFile: `src/components/${componentName}.ts`, sourceSelector: view.selector,
+      sourceSelectors: Array.isArray(view.details.repeatedSelectors) ? view.details.repeatedSelectors.filter((item): item is string => typeof item === "string") : [view.selector],
+      responsibility: responsibility(view), parentId, dependencies: parentId ? [parentId] : [], interactionModel,
+      interactionFingerprints: interactions.map((item) => item.fingerprint), dataContracts: manifest.data.contracts.map((item) => item.name),
+      designTokens: manifest.theme.tokens.slice(0, 24).map((item) => item.original), responsiveQueries: manifest.responsive.map((item) => item.query),
+      acceptance: { text: typeof view.details.text === "string" && view.details.text.trim() ? [view.details.text.trim().slice(0, 200)] : [], states: acceptanceStates(interactionModel, interactions), viewports: ["desktop", "tablet", "mobile", "tiny"] }, complexity,
     };
   });
   const issues = validateComponentPlans(components);
-  return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, generatedAt: new Date().toISOString(), lineBudget, components, issues, summary: { components: components.length, overBudget: components.filter((item) => item.complexity.overBudget).length, errors: issues.filter((item) => item.severity === "error").length, warnings: issues.filter((item) => item.severity === "warning").length, ready: !issues.some((item) => item.severity === "error") } };
+  const ownedInteractions = new Set(components.flatMap((component) => component.interactionFingerprints));
+  const unowned = manifest.interactions.filter((interaction) => interaction.source !== "event-listener" && !ownedInteractions.has(interaction.fingerprint));
+  if (unowned.length) issues.push({ severity: "error", code: "unowned-interactions", detail: `${unowned.length} 个 DOM 交互未分配到组件边界：${unowned.slice(0, 4).map((item) => item.fingerprint).join("；")}` });
+  return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, generatedAt: new Date().toISOString(), lineBudget, components, issues, summary: { components: components.length, overBudget: components.filter((item) => item.complexity.overBudget).length, errors: issues.filter((item) => item.severity === "error").length, warnings: issues.filter((item) => item.severity === "warning").length, interactions: manifest.interactions.length, ownedInteractions: ownedInteractions.size, unownedInteractions: unowned.length, ready: !issues.some((item) => item.severity === "error") } };
 }
 
 export function validateComponentPlans(components: ComponentPlan[]): PlanningIssue[] {
@@ -130,6 +187,7 @@ export function validateComponentPlans(components: ComponentPlan[]): PlanningIss
     if (files.has(component.targetFile)) issues.push({ severity: "error", code: "duplicate-target", componentId: component.id, detail: `目标文件重复：${component.targetFile}` });
     names.add(component.componentName); files.add(component.targetFile);
     if (!component.sourceSelector.trim()) issues.push({ severity: "error", code: "missing-selector", componentId: component.id, detail: "缺少源页面选择器" });
+    if (!component.sourceSelectors.length || component.sourceSelectors.some((selector) => !selector.trim())) issues.push({ severity: "error", code: "missing-selector-instances", componentId: component.id, detail: "缺少可审计的源实例选择器" });
     if (!component.responsibility.trim()) issues.push({ severity: "error", code: "missing-responsibility", componentId: component.id, detail: "缺少组件职责" });
     if (!component.acceptance.viewports.length) issues.push({ severity: "error", code: "missing-viewports", componentId: component.id, detail: "缺少多视口验收矩阵" });
     if (!component.acceptance.states.length) issues.push({ severity: "error", code: "missing-states", componentId: component.id, detail: "缺少状态验收条件" });
@@ -144,7 +202,7 @@ export function validateComponentPlans(components: ComponentPlan[]): PlanningIss
 
 function renderPlan(plan: ComponentPlan): string {
   const list = (items: string[], empty = "None") => items.length ? items.map((item) => `- ${item}`).join("\n") : empty;
-  return `# ${plan.componentName} Specification\n\n## Overview\n- **Target file:** \`${plan.targetFile}\`\n- **Source selector:** \`${plan.sourceSelector}\`\n- **Interaction model:** ${plan.interactionModel}\n- **Responsibility:** ${plan.responsibility}\n\n## DOM Structure\n- Preserve the source subtree rooted at \`${plan.sourceSelector}\`.\n\n## Computed Styles\n${list(plan.designTokens.map((item) => `Token: \`${item}\``))}\n\n## States & Behaviors\n${list(plan.acceptance.states)}\n\n## Per-State Content\n${list(plan.interactionFingerprints.map((item) => `Covers: \`${item}\``), "N/A (static component)")}\n\n## Assets & Data\n${list(plan.dataContracts.map((item) => `Data contract: \`${item}\``))}\n\n## Text Content (verbatim)\n${list(plan.acceptance.text)}\n\n## Responsive Behavior\n${list(plan.acceptance.viewports.map((item) => `${item}: must pass visual quality matrix`))}\n${plan.responsiveQueries.length ? `\nSource media queries:\n${list(plan.responsiveQueries.map((item) => `\`${item}\``))}\n` : ""}\n## Complexity Budget\n- Estimated lines: ${plan.complexity.estimatedLines}\n- Budget: ${plan.complexity.budget}\n- Status: ${plan.complexity.overBudget ? "SPLIT REQUIRED" : "READY"}\n`;
+  return `# ${plan.componentName} Specification\n\n## Overview\n- **Target file:** \`${plan.targetFile}\`\n- **Source selector:** \`${plan.sourceSelector}\`\n- **Source instances:** ${plan.sourceSelectors.length}\n- **Interaction model:** ${plan.interactionModel}\n- **Responsibility:** ${plan.responsibility}\n- **Parent:** ${plan.parentId ? `\`${plan.parentId}\`` : "root"}\n- **Dependencies:** ${plan.dependencies.length ? plan.dependencies.map((item) => `\`${item}\``).join(", ") : "None"}\n\n## DOM Structure\n- Preserve the source subtree rooted at \`${plan.sourceSelector}\`.\n${plan.sourceSelectors.length > 1 ? `- Reuse this component for all source instances:\n${list(plan.sourceSelectors.map((item) => `\`${item}\``))}\n` : ""}\n## Computed Styles\n${list(plan.designTokens.map((item) => `Token: \`${item}\``))}\n\n## States & Behaviors\n${list(plan.acceptance.states)}\n\n## Per-State Content\n${list(plan.interactionFingerprints.map((item) => `Covers: \`${item}\``), "N/A (static component)")}\n\n## Assets & Data\n${list(plan.dataContracts.map((item) => `Data contract: \`${item}\``))}\n\n## Text Content (verbatim)\n${list(plan.acceptance.text)}\n\n## Responsive Behavior\n${list(plan.acceptance.viewports.map((item) => `${item}: must pass visual quality matrix`))}\n${plan.responsiveQueries.length ? `\nSource media queries:\n${list(plan.responsiveQueries.map((item) => `\`${item}\``))}\n` : ""}\n## Complexity Budget\n- Estimated lines: ${plan.complexity.estimatedLines}\n- Budget: ${plan.complexity.budget}\n- Status: ${plan.complexity.overBudget ? "SPLIT REQUIRED" : "READY"}\n`;
 }
 
 export async function writeComponentPlanningReport(path: string, report: ComponentPlanningReport): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(report, null, 2)}\n`, "utf8"); }

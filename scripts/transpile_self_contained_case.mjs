@@ -17,9 +17,21 @@ const source = readFileSync(sourcePath, 'utf8');
 const dom = new JSDOM(source);
 const document = dom.window.document;
 const cssSource = [...document.querySelectorAll('style')].map((node) => node.textContent || '').join('\n');
-const scriptSource = [...document.querySelectorAll('script:not([src])')].map((node) => node.textContent || '').join('\n');
+const executableScriptType = (type) => {
+  const normalized = (type || '').trim().toLowerCase().split(';')[0];
+  return !normalized || normalized === 'module' || /^(?:text|application)\/(?:java|ecma)script$/.test(normalized);
+};
+const scriptNodes = [...document.querySelectorAll('script:not([src])')];
+const executableScripts = scriptNodes.filter((node) => executableScriptType(node.getAttribute('type')));
+const skippedScripts = scriptNodes.length - executableScripts.length;
+const scriptSource = executableScripts.map((node) => node.textContent || '').join('\n;\n');
 
-const cssAst = csstree.parse(cssSource, { positions: true, parseValue: true, parseCustomProperty: true });
+let cssAst;
+try { cssAst = csstree.parse(cssSource, { positions: true, parseValue: true, parseCustomProperty: true }); }
+catch (error) {
+  console.warn(`WARN: CSS parser recovered from archive stylesheet: ${error.message}`);
+  cssAst = csstree.parse(cssSource, { positions: true, parseValue: false, parseCustomProperty: false, onParseError: () => {} });
+}
 const classNames = new Set();
 const idNames = new Set();
 for (const match of scriptSource.matchAll(/getElementById\(\s*['"]([^'"]+)['"]|id=["']([^"']+)["']/g)) idNames.add(match[1] || match[2]);
@@ -107,9 +119,14 @@ function transformString(input) {
   return value;
 }
 
-const jsAst = parseJs(scriptSource, { ecmaVersion: 'latest', sourceType: 'script' });
+let jsAst = null;
+let scriptParseWarning = null;
+if (scriptSource.trim()) {
+  try { jsAst = parseJs(scriptSource, { ecmaVersion: 'latest', sourceType: 'script' }); }
+  catch (error) { scriptParseWarning = error.message; }
+}
 const edits = [];
-walkJs(jsAst, {
+if (jsAst) walkJs(jsAst, {
   Literal(node) {
     if (typeof node.value !== 'string') return;
     const next = transformString(node.value);
@@ -150,8 +167,7 @@ mkdirSync(resolve(outDir, 'examples'), { recursive: true });
 mkdirSync(resolve(outDir, 'docs'), { recursive: true });
 mkdirSync(resolve(outDir, 'assets'), { recursive: true });
 const assetSource = ['image', 'images'].map((name) => resolve(dirname(sourcePath), name)).find((path) => existsSync(path));
-if (!assetSource) throw new Error('source asset directory must be image/ or images/');
-cpSync(assetSource, resolve(outDir, 'assets'), { recursive: true });
+if (assetSource) cpSync(assetSource, resolve(outDir, 'assets'), { recursive: true });
 writeFileSync(resolve(outDir, 'src', `${fileStem}.css`), css);
 writeFileSync(resolve(outDir, 'src', `${fileStem}.js`), libraryJs);
 const pageTitle = document.title || globalName;
@@ -162,4 +178,4 @@ const readmePath = resolve(outDir, 'README.md');
 if (!existsSync(readmePath)) writeFileSync(readmePath, `# ${pageTitle}组件库\n\n从自包含 HTML 页面通过 TypeScript visual quality gates 工具链拆分出的零依赖组件库。\n\n## 快速开始\n\n\`\`\`html\n<link rel="stylesheet" href="src/${fileStem}.css">\n<div id="mount"></div>\n<script src="src/${fileStem}.js"></script>\n<script>${globalName}.mount(document.getElementById('mount'));</script>\n\`\`\`\n\n## API\n\n- \`${globalName}.mount(root, options)\`：挂载到指定容器；识别出的业务数据可通过 \`options\` 覆盖。\n- \`${globalName}.create(options)\`：创建并返回独立组件容器。\n\n## 主题定制\n\n可覆盖 \`--sg-primary\`、\`--sg-ink\`、\`--sg-muted\`、\`--sg-line\`、\`--sg-paper\` 等 CSS 变量。\n`);
 const specPath = resolve(outDir, 'docs', '设计规范.md');
 if (!existsSync(specPath)) writeFileSync(specPath, `# 设计规范\n\n## 主题色\n\n组件颜色统一通过 \`--sg-*\` CSS 变量管理。核心变量包括主色 \`--sg-primary\`、正文 \`--sg-ink\`、弱化文本 \`--sg-muted\`、分割线 \`--sg-line\` 与卡片背景 \`--sg-paper\`。\n\n## 命名与隔离\n\n组件类名、ID 与自定义属性均使用 \`sg-\` 前缀，避免与宿主页面冲突。\n\n## 响应式\n\n保留源页面断点，并补充窄屏和极端小屏保护规则。\n`);
-console.log(JSON.stringify({ sourcePath, outDir, classes: classMap.size, ids: idMap.size, cssBytes: css.length, jsBytes: libraryJs.length }, null, 2));
+console.log(JSON.stringify({ sourcePath, outDir, classes: classMap.size, ids: idMap.size, cssBytes: css.length, jsBytes: libraryJs.length, executableScripts: executableScripts.length, skippedScripts, scriptParseWarning, assetsCopied: Boolean(assetSource) }, null, 2));

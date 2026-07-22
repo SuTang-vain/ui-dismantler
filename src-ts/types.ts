@@ -22,6 +22,7 @@ export interface AnalyzedView {
   evidence: ViewEvidence[];
   selector: string;
   details: Record<string, JsonValue>;
+  componentCandidates?: AnalyzedView[];
 }
 
 export interface Interaction {
