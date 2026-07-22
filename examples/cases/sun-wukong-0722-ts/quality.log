@@ -1,0 +1,16 @@
+[PASS] validation: 10/10 校验通过
+[PASS] render: 原页面和组件库均成功渲染
+[PASS] overall: finalOverall=0.9928（dom=0.998，visual=0.9894），门槛=0.85
+[PASS] structure: structure=0.997，门槛=0.7
+[PASS] text: text=1，门槛=0.8
+[PASS] viewport-matrix: 4/4 视口通过，worst=tablet
+[PASS] scenario-viewport-matrix: 2/2 关键交互状态矩阵通过
+[PASS] visual-runtime: initialViewports=4，runtimeErrors=0
+[PASS] selector-coverage: worstSelectorCoverage=1，门槛=1
+[PASS] computed-style: worstComputedStyle=0.9887，门槛=0.98
+[PASS] pixel-diff: worstPixelDiff=0.014119，门槛=0.02
+[PASS] scenario-protocol: 正式场景=7，candidate=0，waiver=3
+[PASS] scenarios: 7/7 正式场景通过
+[PASS] coverage: verifiedCoverage=1.000，门槛=0.8，eligible=5，waived=3
+
+质量门禁: PASS

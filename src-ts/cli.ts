@@ -6,6 +6,7 @@ import { generateScenarios } from "./evaluation/scenarios.js";
 import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
 import { evaluateRoundtrip } from "./evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/library.js";
+import { planComponents, writeComponentPlanningReport, writeComponentSpecs } from "./planning/components.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
@@ -19,7 +20,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--out <report.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--out <report.json>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -42,6 +43,21 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  交互: ${manifest.interactions.length} 个`);
       if (manifest.warnings.length) console.log(`  ⚠ 告警: ${manifest.warnings.join("；")}`);
       return 0;
+    }
+    if (command === "plan") {
+      const html = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!html || !out) throw new Error("plan 需要 <html> 和 --out");
+      const rawBudget = flag(args, "--line-budget");
+      const lineBudget = rawBudget === undefined ? undefined : Number(rawBudget);
+      const manifest = analyzeHtml(html, { profile: flag(args, "--profile"), minimal: has(args, "--minimal") });
+      const report = planComponents(manifest, { lineBudget });
+      await writeComponentPlanningReport(out, report);
+      const specDir = flag(args, "--spec-dir");
+      if (specDir) await writeComponentSpecs(specDir, report);
+      console.log(`✓ 已生成组件计划: ${resolve(out)}`);
+      console.log(`  组件: ${report.summary.components}，超预算: ${report.summary.overBudget}，错误: ${report.summary.errors}，警告: ${report.summary.warnings}`);
+      if (specDir) console.log(`  specs: ${resolve(specDir)}`);
+      return report.summary.ready ? 0 : 1;
     }
     if (command === "validate") {
       const dir = args[0]; if (!dir) throw new Error("validate 需要 <lib-dir>");

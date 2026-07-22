@@ -88,3 +88,25 @@ node dist-ts/cli.js quality <original.html> --lib <lib-dir> --visual-artifacts /
 - **截图像素差异**：Chrome headless 在相同 viewport 下截图，默认 pixel diff 不能超过 2%。
 
 旧的 DOM/text roundtrip 仍保留作为快速诊断层，但不再被视为视觉质量的充分证明。
+
+## 组件规划与产出前门禁
+
+参考 `ai-website-cloner-template` 中“先写完整 spec、控制单任务复杂度、实现前执行 checklist”的有效机制，TypeScript 流程新增确定性的组件规划层。它不复制模板实现，也不替代 Agent 判断，而是把 manifest 转换为可审阅、可门禁的交付契约：
+
+```bash
+node dist-ts/cli.js plan <original.html> \
+  --out /tmp/component-plan.json \
+  --spec-dir /tmp/component-specs \
+  --line-budget 150
+```
+
+规划产出包含：
+
+- 每个组件的源选择器、职责和目标文件；
+- interaction model 与源交互 fingerprint；
+- 数据契约、设计令牌、媒体查询；
+- desktop/tablet/mobile/tiny 多视口验收矩阵；
+- 预计实现行数和 150 行复杂度预算；
+- preflight issues。超预算、缺状态验收、缺视口矩阵或交互无证据时，命令以非零状态退出，阻止进入产出阶段。
+
+这层解决的是“拆什么、每块做到什么程度、什么时候允许开始写”的流程质量；现有 Gold+ 继续负责“最终实现是否高保真”的结果质量。两者不可互相替代。

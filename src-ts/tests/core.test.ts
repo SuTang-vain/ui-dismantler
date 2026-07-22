@@ -7,6 +7,7 @@ import { analyzeHtml } from "../analysis/analyzer.js";
 import { computeCoverage, generateScenarios, loadScenarios } from "../evaluation/scenarios.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { validateLibrary } from "../validation/library.js";
+import { planComponents, validateComponentPlans } from "../planning/components.js";
 import { DISMANTLING_WORKFLOW, runQualityGate } from "../workflow/pipeline.js";
 import type { Interaction } from "../types.js";
 
@@ -52,7 +53,7 @@ test("quality gate combines validation, render, structure and text gates when co
   const report = await runQualityGate({ htmlPath: fixture, libDir: library, visual: false, thresholds: { interactionCoverage: null } });
   assert.equal(report.passed, true);
   assert.deepEqual(report.gates.map((gate) => gate.id), ["validation", "render", "overall", "structure", "text"]);
-  assert.equal(DISMANTLING_WORKFLOW.length, 6);
+  assert.equal(DISMANTLING_WORKFLOW.length, 7);
 });
 
 test("strict quality gate rejects interactions without reviewed scenarios", async () => {
@@ -91,4 +92,32 @@ test("coverage waivers exclude explicitly unreachable interactions with reasons"
   assert.equal(coverage.waivedInteractions, 1);
   assert.equal(coverage.verifiedRate, 1);
   assert.equal(coverage.waivers[0].reason, "基线状态不可达");
+});
+
+
+test("component planner turns manifest evidence into reviewable component specs", () => {
+  const manifest = analyzeHtml(fixture, { profile: "benchmark" });
+  const report = planComponents(manifest, { lineBudget: 1000 });
+  assert.equal(report.schemaVersion, "1.0");
+  assert.ok(report.components.length > 0);
+  assert.equal(report.summary.ready, true);
+  assert.ok(report.components.every((component) => component.sourceSelector.length > 0));
+  assert.ok(report.components.every((component) => component.acceptance.viewports.length === 4));
+  assert.ok(report.components.some((component) => component.interactionFingerprints.length > 0));
+});
+
+test("component planner blocks dispatch when the complexity budget is exceeded", () => {
+  const report = planComponents(analyzeHtml(fixture), { lineBudget: 40 });
+  assert.equal(report.summary.ready, false);
+  assert.ok(report.issues.some((issue) => issue.code === "complexity-budget"));
+});
+
+test("component plan preflight catches missing state and viewport acceptance", () => {
+  const report = planComponents(analyzeHtml(fixture), { lineBudget: 1000 });
+  const broken = structuredClone(report.components[0]);
+  broken.acceptance.states = [];
+  broken.acceptance.viewports = [];
+  const issues = validateComponentPlans([broken]);
+  assert.ok(issues.some((issue) => issue.code === "missing-states"));
+  assert.ok(issues.some((issue) => issue.code === "missing-viewports"));
 });

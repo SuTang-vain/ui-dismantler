@@ -1,0 +1,664 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/original.html",
+    "title": "孙悟空：人物图谱与角色档案全解析",
+    "templateId": null,
+    "vertical": "sun-wukong",
+    "profile": "sun-wukong",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".tab-btn",
+          ".tab-btn:hover",
+          ".tab-btn.active",
+          ".story-btn",
+          ".story-index",
+          ".story-btn:hover",
+          ".story-btn.active"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#4a6ee0",
+        "original": "--primary-dark",
+        "usage": [
+          ":root",
+          ".tab-btn",
+          ".story-btn",
+          ".story-index",
+          ".char-panel .close:hover",
+          ".cast-panel.is-paged .cast-nav",
+          ".cast-nav.cast-nav-next:not(.is-disabled):hover,.cast-nav.cast-nav-prev:not(.is-disabled):hover",
+          ".cast-card .cast-cover .cast-cover-badge"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-light",
+        "value": "#8aa5ff",
+        "original": "--primary-light",
+        "usage": [
+          ":root",
+          ".tab-btn.active",
+          ".story-btn.active"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-white",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          ":root",
+          ".graph-wrap",
+          ".works-wrap"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "text-main",
+        "value": "#1e1f24",
+        "original": "--text-main",
+        "usage": [
+          ":root",
+          "html,body",
+          ".story-desc",
+          ".legend-item.enemy",
+          ".lg-svg.enemy line",
+          ".edge.enemy",
+          ".edge-label.enemy",
+          ".char-panel .p-desc"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "text-sec",
+        "value": "#848691",
+        "original": "--text-sec",
+        "usage": [
+          ":root",
+          ".graph-legend",
+          ".char-panel .p-actor",
+          ".identity-duo .fact small",
+          ".cast-card .cast-work",
+          ".cast-card .cast-tag"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 2px 8px rgba(0,0,0,.08)",
+        "original": "--shadow-sm",
+        "usage": [
+          ":root",
+          ".graph-wrap",
+          ".works-wrap",
+          ".profile-card"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "gold",
+        "value": "#c8a35a",
+        "original": "--gold",
+        "usage": [
+          ":root",
+          ".legend-item.master",
+          ".lg-svg.master line",
+          ".edge.master",
+          ".edge-label.master"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "red",
+        "value": "#d94b4b",
+        "original": "--red",
+        "usage": [
+          ":root",
+          ".legend-item.family",
+          ".lg-svg.family line",
+          ".edge.family",
+          ".edge-label.family"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "green",
+        "value": "#4aa06e",
+        "original": "--green",
+        "usage": [
+          ":root",
+          ".legend-item.friend",
+          ".lg-svg.friend line",
+          ".edge.friend",
+          ".edge-label.friend"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "pink",
+        "value": "#e07aa8",
+        "original": "--pink",
+        "usage": [
+          ":root",
+          ".legend-item.romance",
+          ".lg-svg.romance line",
+          ".edge.romance",
+          ".edge-label.romance"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-08",
+        "value": "rgba(0,0,0,.08)",
+        "original": "rgba(0,0,0,.08)",
+        "usage": [],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "eef1f8",
+        "value": "#eef1f8",
+        "original": "#eef1f8",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-42",
+        "value": "rgba(100,135,250,.42)",
+        "original": "rgba(100,135,250,.42)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "f5f8ff",
+        "value": "#f5f8ff",
+        "original": "#f5f8ff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "eaeff9",
+        "value": "#eaeff9",
+        "original": "#eaeff9",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "dee6f4",
+        "value": "#dee6f4",
+        "original": "#dee6f4",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-35",
+        "value": "rgba(100,135,250,.35)",
+        "original": "rgba(100,135,250,.35)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "6487fa29",
+        "value": "#6487fa29",
+        "original": "#6487fa29",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "6487fa42",
+        "value": "#6487fa42",
+        "original": "#6487fa42",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "6487fa70",
+        "value": "#6487fa70",
+        "original": "#6487fa70",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-28",
+        "value": "rgba(100,135,250,.28)",
+        "original": "rgba(100,135,250,.28)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "6487fa24",
+        "value": "#6487fa24",
+        "original": "#6487fa24",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "6487fa1f",
+        "value": "#6487fa1f",
+        "original": "#6487fa1f",
+        "usage": [],
+        "roles": [
+          "background",
+          "shadow"
+        ]
+      },
+      {
+        "name": "6487fa3d",
+        "value": "#6487fa3d",
+        "original": "#6487fa3d",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "6487fa61",
+        "value": "#6487fa61",
+        "original": "#6487fa61",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "ffffff3d",
+        "value": "#ffffff3d",
+        "original": "#ffffff3d",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "ffffffb8",
+        "value": "#ffffffb8",
+        "original": "#ffffffb8",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-14",
+        "value": "rgba(100,135,250,.14)",
+        "original": "rgba(100,135,250,.14)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "0000000a",
+        "value": "#0000000a",
+        "original": "#0000000a",
+        "usage": [],
+        "roles": [
+          "background",
+          "shadow"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(160deg,#f5f8ff,#eaeff9 60%,#dee6f4)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,var(--primary),var(--primary-light))"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(circle at 50% 44%,rgba(100,135,250,.07),transparent 62%),var(--bg-white)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg,#1e1f24d6,#1e1f247a)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#eef1f8,#dfe7f4)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#e8eeff,#c9d6ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#efe8ff,#d5c8f5)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#ffe8f0,#ffc9db)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#e8f4ff,#c5e0ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#e8f8ee,#c5ebd4)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#eceef3,#d0d5e0)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "tab-1",
+        "label": "人物图谱演员对照角色档案",
+        "selector": "div.tabs",
+        "target": null
+      },
+      {
+        "id": "tab-2",
+        "label": "人物图谱",
+        "selector": "button.tab-btn.active",
+        "target": null
+      },
+      {
+        "id": "tab-3",
+        "label": "演员对照",
+        "selector": "button.tab-btn",
+        "target": null
+      },
+      {
+        "id": "tab-4",
+        "label": "角色档案",
+        "selector": "button.tab-btn",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "graph-1",
+        "type": "graph",
+        "structuralType": "collection",
+        "semanticType": "graph",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "svg/node"
+          }
+        ],
+        "selector": "div.main",
+        "details": {
+          "text": "›协助坐骑师徒兄弟对立×",
+          "className": "main"
+        }
+      }
+    ],
+    "modals": [
+      {
+        "id": "castModal",
+        "selector": "#castModal",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-2",
+        "selector": "div.cast-modal-card",
+        "role": "dialog",
+        "closeSelector": null
+      },
+      {
+        "id": "castModalClose",
+        "selector": "#castModalClose",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "castModalCover",
+        "selector": "#castModalCover",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-5",
+        "selector": "div.cast-modal-body",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "castModalTitle",
+        "selector": "#castModalTitle",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "castModalFacts",
+        "selector": "#castModalFacts",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-8",
+        "selector": "div.cast-modal-action",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "castModalOk",
+        "selector": "#castModalOk",
+        "role": null,
+        "closeSelector": null
+      }
+    ],
+    "landmarks": [
+      {
+        "tag": "div",
+        "role": "dialog",
+        "selector": "div.cast-modal-card"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "profileCloudTokens",
+        "kind": "array",
+        "fields": {
+          "text": "string",
+          "className": "string"
+        },
+        "count": 8
+      },
+      {
+        "name": "t",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      },
+      {
+        "name": "r",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "sorted",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "button.tab-btn.active",
+      "event": "click",
+      "action": "toggle",
+      "source": "html-attribute",
+      "fingerprint": "click|button.tab-btn.active|toggle"
+    },
+    {
+      "trigger": "button.tab-btn",
+      "event": "click",
+      "action": "toggle",
+      "source": "html-attribute",
+      "fingerprint": "click|button.tab-btn|toggle"
+    },
+    {
+      "trigger": "button.tab-btn",
+      "event": "click",
+      "action": "toggle",
+      "source": "html-attribute",
+      "fingerprint": "click|button.tab-btn|toggle"
+    },
+    {
+      "trigger": "#storyScrollHint",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#storyScrollHint|semantic-control"
+    },
+    {
+      "trigger": "#charClose",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#charClose|semantic-control"
+    },
+    {
+      "trigger": "#castModalClose",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#castModalClose|semantic-control"
+    },
+    {
+      "trigger": "#castModalOk",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#castModalOk|semantic-control"
+    },
+    {
+      "trigger": "event-listener",
+      "event": "click",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "click|event-listener|addEventListener(\"click\""
+    },
+    {
+      "trigger": "event-listener",
+      "event": "keydown",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "keydown|event-listener|addEventListener(\"keydown\""
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width:768px)",
+      "minWidth": null,
+      "maxWidth": 768
+    },
+    {
+      "query": "(max-width:768px)",
+      "minWidth": null,
+      "maxWidth": 768
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 7,
+    "unlabeledButtons": 0,
+    "images": 0,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 1
+  },
+  "warnings": []
+}

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "candidatePolicy": "Formal scenarios cover the three primary tabs, graph detail panel, cast modal, modal dismissal, and story switching. Story-strip scrolling is waived because scrollLeft is not available as a stable assertion.",
+  "scenarios": [
+    {
+      "id": "open-character-panel",
+      "label": "打开孙悟空人物详情",
+      "critical": true,
+      "covers": ["click|event-listener|addEventListener(\"click\""],
+      "steps": [{"action": "click", "target": {"reference": ".node[data-key='wukong']", "library": ".sg-node[data-key='wukong']"}}],
+      "assertions": [
+        {"target": {"reference": "#graphWrap", "library": "#sg-graphWrap"}, "classIncludes": [{"reference": "panel-open", "library": "sg-panel-open"}]},
+        {"target": {"reference": "#cName", "library": "#sg-cName"}, "textContains": "孙悟空"}
+      ]
+    },
+    {
+      "id": "close-character-panel",
+      "label": "关闭人物详情",
+      "covers": ["click|#charClose|semantic-control"],
+      "steps": [
+        {"action": "click", "target": {"reference": ".node[data-key='wukong']", "library": ".sg-node[data-key='wukong']"}},
+        {"action": "click", "target": {"reference": "#charClose", "library": "#sg-charClose"}}
+      ],
+      "assertions": [{"target": {"reference": "#graphWrap", "library": "#sg-graphWrap"}, "classExcludes": [{"reference": "panel-open", "library": "sg-panel-open"}]}]
+    },
+    {
+      "id": "switch-story",
+      "label": "切换到龙宫闹海",
+      "steps": [{"action": "click", "target": {"reference": ".story-btn[data-story='longgong']", "library": ".sg-story-btn[data-story='longgong']"}}],
+      "assertions": [
+        {"target": {"reference": ".story-btn[data-story='longgong']", "library": ".sg-story-btn[data-story='longgong']"}, "classIncludes": [{"reference": "active", "library": "sg-active"}]},
+        {"target": {"reference": "#storyDesc", "library": "#sg-storyDesc"}, "textContains": "东海龙宫"}
+      ]
+    },
+    {
+      "id": "open-cast-modal",
+      "label": "打开演员版本详情",
+      "critical": true,
+      "steps": [
+        {"action": "click", "target": {"reference": ".tab-btn[data-tab='cast']", "library": ".sg-tab-btn[data-tab='cast']"}},
+        {"action": "click", "target": {"reference": ".cast-card[data-cast-idx='0']", "library": ".sg-cast-card[data-cast-idx='0']"}}
+      ],
+      "assertions": [
+        {"target": {"reference": "#castModal", "library": "#sg-castModal"}, "visible": true, "classIncludes": [{"reference": "open", "library": "sg-open"}]},
+        {"target": {"reference": "#castModalTitle", "library": "#sg-castModalTitle"}, "textContains": "版"}
+      ]
+    },
+    {
+      "id": "escape-close-cast-modal",
+      "label": "Escape 关闭演员版本详情",
+      "covers": ["keydown|event-listener|addEventListener(\"keydown\""],
+      "steps": [
+        {"action": "click", "target": {"reference": ".tab-btn[data-tab='cast']", "library": ".sg-tab-btn[data-tab='cast']"}},
+        {"action": "click", "target": {"reference": ".cast-card[data-cast-idx='0']", "library": ".sg-cast-card[data-cast-idx='0']"}},
+        {"action": "key", "key": "Escape", "code": "Escape"}
+      ],
+      "assertions": [{"target": {"reference": "#castModal", "library": "#sg-castModal"}, "classExcludes": [{"reference": "open", "library": "sg-open"}]}]
+    },
+    {
+      "id": "close-cast-modal-button",
+      "label": "按钮关闭演员版本详情",
+      "covers": ["click|#castModalClose|semantic-control", "click|#castModalOk|semantic-control"],
+      "steps": [
+        {"action": "click", "target": {"reference": ".tab-btn[data-tab='cast']", "library": ".sg-tab-btn[data-tab='cast']"}},
+        {"action": "click", "target": {"reference": ".cast-card[data-cast-idx='0']", "library": ".sg-cast-card[data-cast-idx='0']"}},
+        {"action": "click", "target": {"reference": "#castModalOk", "library": "#sg-castModalOk"}}
+      ],
+      "assertions": [{"target": {"reference": "#castModal", "library": "#sg-castModal"}, "classExcludes": [{"reference": "open", "library": "sg-open"}]}]
+    },
+    {
+      "id": "switch-profile-tab",
+      "label": "切换角色档案",
+      "steps": [{"action": "click", "target": {"reference": ".tab-btn[data-tab='profile']", "library": ".sg-tab-btn[data-tab='profile']"}}],
+      "assertions": [{"target": {"reference": ".view[data-view='profile']", "library": ".sg-view[data-view='profile']"}, "visible": true, "classIncludes": [{"reference": "active", "library": "sg-active"}]}]
+    }
+  ],
+  "coverageWaivers": [
+    {"fingerprint": "click|#storyScrollHint|semantic-control", "reason": "Only scrolls the horizontal story strip; the assertion protocol has no stable scrollLeft field."},
+    {"fingerprint": "click|button.tab-btn.active|toggle", "reason": "The initially active graph tab is already represented by the baseline state."},
+    {"fingerprint": "click|button.tab-btn|toggle", "reason": "Analyzer emits duplicate generic fingerprints for both non-active tabs; formal cast/profile scenarios verify both states."}
+  ]
+}

@@ -21,6 +21,7 @@ export const DEFAULT_THRESHOLDS: QualityThresholds = {
 export const DISMANTLING_WORKFLOW = [
   { id: "understand", label: "通读 HTML，建立页面结构、主题色、交互和数据理解" },
   { id: "analyze", label: "调用确定性分析器，生成 manifest 作为事实参考" },
+  { id: "plan", label: "生成组件边界、交互模型、复杂度预算和多视口验收规格，并通过 preflight" },
   { id: "produce", label: "按组件库规范产出 README/docs/src/examples" },
   { id: "validate", label: "运行 9 项强约束校验和 node --check" },
   { id: "roundtrip", label: "运行原页面与组件库往返对比" },
