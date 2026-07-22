@@ -150,7 +150,8 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
   const nameCounts = new Map<string, number>();
   const components = views.map((view, index): ComponentPlan => {
     const interactions = manifest.interactions.filter((item) => interactionOwner.get(item.fingerprint) === index);
-    const preferredName = view.type === "content-section" || ["repeated-item", "interactive-slot", "interactive-panel", "component-shell"].includes(view.type) ? view.semanticType : view.type;
+    const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details"];
+    const preferredName = semanticTypes.includes(view.type) ? view.semanticType : view.type;
     const baseName = pascal(preferredName);
     const occurrence = (nameCounts.get(baseName) ?? 0) + 1;
     nameCounts.set(baseName, occurrence);

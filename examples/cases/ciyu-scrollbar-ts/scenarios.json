@@ -1,0 +1,521 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
+  "candidatePolicy": "Formal scenarios cover both statically detected controls and representative scripted navigation, graph, modal and quiz states.",
+  "scenarios": [
+    {
+      "id": "switch-basic-panel",
+      "label": "切换到基本释义",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='home']",
+            "library": ".sg-nav .sg-n[data-p='sg-home']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#home",
+            "library": "#sg-home"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#home .big",
+            "library": "#sg-home .sg-big"
+          },
+          "textContains": "白月光和朱砂痣"
+        }
+      ],
+      "covers": [
+        "click|#nav > span:nth-child(1)|home"
+      ]
+    },
+    {
+      "id": "switch-home-subtabs",
+      "label": "切换基本释义子页签",
+      "covers": [
+        "click|div.home-r > div:nth-child(1) > span:nth-child(1)|script-assignment",
+        "click|div.home-r > div:nth-child(1) > span:nth-child(2)|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='home']",
+            "library": ".sg-nav .sg-n[data-p='sg-home']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#home .m-subtab .ms[data-mt='examples']",
+            "library": "#sg-home .sg-m-subtab .sg-ms[data-mt='examples']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#home .m-subtab .ms[data-mt='core']",
+            "library": "#sg-home .sg-m-subtab .sg-ms[data-mt='core']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#home",
+            "library": "#sg-home"
+          },
+          "attributes": {
+            "data-mt": "core"
+          }
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "open-story-note",
+      "label": "打开典故词义注解",
+      "critical": false,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='story']",
+            "library": ".sg-nav .sg-n[data-p='sg-story']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#story .m-subtab .ms[data-mt='src']",
+            "library": "#sg-story .sg-m-subtab .sg-ms[data-mt='src']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hl[data-k='baiyueguang']",
+            "library": ".sg-hl[data-k='baiyueguang']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#pop",
+            "library": "#sg-pop"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#pt",
+            "library": "#sg-pt"
+          },
+          "textContains": "白月光"
+        }
+      ],
+      "covers": [
+        "click|#nav > span:nth-child(2)|story",
+        "click|#story > div:nth-child(1) > span:nth-child(2)|script-assignment",
+        "click|div.text > span:nth-child(1)|script-assignment"
+      ]
+    },
+    {
+      "id": "story-tabs-and-close-note",
+      "label": "切换典故子页签并关闭注解",
+      "covers": [
+        "click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment",
+        "click|div.text > span:nth-child(2)|script-assignment",
+        "click|#pclose|script-assignment"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='story']",
+            "library": ".sg-nav .sg-n[data-p='sg-story']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#story .m-subtab .ms[data-mt='src']",
+            "library": "#sg-story .sg-m-subtab .sg-ms[data-mt='src']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hl[data-k='zhushazhi']",
+            "library": ".sg-hl[data-k='zhushazhi']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#pclose",
+            "library": "#sg-pclose"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#story .m-subtab .ms[data-mt='stories']",
+            "library": "#sg-story .sg-m-subtab .sg-ms[data-mt='stories']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#pop",
+            "library": "#sg-pop"
+          },
+          "classExcludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#story",
+            "library": "#sg-story"
+          },
+          "attributes": {
+            "data-mt": "stories"
+          }
+        }
+      ]
+    },
+    {
+      "id": "filter-graph-relations",
+      "label": "按关系筛选图谱",
+      "covers": [
+        "click|.f|script-assignment"
+      ],
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='graph-p']",
+            "library": ".sg-nav .sg-n[data-p='sg-graph-p']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#filters .f[data-r='近义词']",
+            "library": "#sg-filters .sg-f[data-r='近义词']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#filters .f[data-r='近义词']",
+            "library": "#sg-filters .sg-f[data-r='近义词']"
+          },
+          "classIncludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "select-graph-node",
+      "label": "选择关联词图谱节点",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='graph-p']",
+            "library": ".sg-nav .sg-n[data-p='sg-graph-p']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".gnd:not(.center)",
+            "library": ".sg-gnd:not(.sg-center)"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".gnd:not(.center)",
+            "library": ".sg-gnd:not(.sg-center)"
+          },
+          "classIncludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#detail",
+            "library": "#sg-detail"
+          },
+          "textContains": "意难平"
+        }
+      ],
+      "covers": [
+        "click|#nav > span:nth-child(3)|graph-p",
+        "click|.gnd:not(.center)|script-assignment"
+      ]
+    },
+    {
+      "id": "answer-first-question",
+      "label": "进入测验并回答第一题",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='quiz']",
+            "library": ".sg-nav .sg-n[data-p='sg-quiz']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='1']",
+            "library": "#sg-opts .sg-opt[data-k='1']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#opts .opt[data-k='1']",
+            "library": "#sg-opts .sg-opt[data-k='1']"
+          },
+          "classIncludes": [
+            {
+              "reference": "right",
+              "library": "sg-right"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "on",
+              "library": "sg-on"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#score",
+            "library": "#sg-score"
+          },
+          "textContains": "1 / 5"
+        }
+      ],
+      "covers": [
+        "click|#nav > span:nth-child(4)|quiz",
+        "click|#opts .opt|script-assignment"
+      ]
+    },
+    {
+      "id": "advance-quiz-question",
+      "label": "测验进入下一题",
+      "covers": [
+        "click|#qznext|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='quiz']",
+            "library": ".sg-nav .sg-n[data-p='sg-quiz']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='1']",
+            "library": "#sg-opts .sg-opt[data-k='1']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#qno",
+            "library": "#sg-qno"
+          },
+          "textContains": "第 2 题"
+        },
+        {
+          "target": {
+            "reference": "#qt",
+            "library": "#sg-qt"
+          },
+          "textContains": "白月光核心指代"
+        }
+      ]
+    },
+    {
+      "id": "restart-quiz",
+      "label": "完成后重新开始测验",
+      "covers": [
+        "click|#again|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav .n[data-p='quiz']",
+            "library": ".sg-nav .sg-n[data-p='sg-quiz']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='1']",
+            "library": "#sg-opts .sg-opt[data-k='1']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='1']",
+            "library": "#sg-opts .sg-opt[data-k='1']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='0']",
+            "library": "#sg-opts .sg-opt[data-k='0']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='2']",
+            "library": "#sg-opts .sg-opt[data-k='2']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#opts .opt[data-k='2']",
+            "library": "#sg-opts .sg-opt[data-k='2']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#qznext",
+            "library": "#sg-qznext"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#again",
+            "library": "#sg-again"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#qno",
+            "library": "#sg-qno"
+          },
+          "textContains": "第 1 题"
+        },
+        {
+          "target": {
+            "reference": "#score",
+            "library": "#sg-score"
+          },
+          "text": "0 / 5"
+        }
+      ]
+    }
+  ]
+}

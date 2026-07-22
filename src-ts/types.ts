@@ -30,7 +30,7 @@ export interface Interaction {
   event: string;
   action: string;
   target?: string;
-  source: "html-attribute" | "event-listener" | "semantic-control";
+  source: "html-attribute" | "event-listener" | "script-assignment" | "semantic-control";
   fingerprint: string;
 }
 

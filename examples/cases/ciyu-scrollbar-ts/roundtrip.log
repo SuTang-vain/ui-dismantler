@@ -1,0 +1,327 @@
+{
+  "score": {
+    "structure": {
+      "nodeMatchRate": 1,
+      "nodeRecall": 1,
+      "nodePrecision": 1,
+      "redundancyPenalty": 0,
+      "classMatchRate": 1,
+      "refNodes": 5,
+      "gotNodes": 5,
+      "matchedNodes": 5
+    },
+    "text": {
+      "textMatchRate": 1,
+      "textPrecision": 1,
+      "exactMatch": 87,
+      "containMatch": 0,
+      "refCount": 87,
+      "gotCount": 87,
+      "missing": [],
+      "extra": []
+    },
+    "classCoverage": {
+      "rate": 1,
+      "totalClassUses": 189,
+      "coveredClassUses": 189,
+      "missingClasses": []
+    },
+    "scores": {
+      "structure": 1,
+      "text": 1,
+      "overall": 1
+    },
+    "overall": 1
+  },
+  "browser": {
+    "passed": true,
+    "score": 1,
+    "selectorCoverage": {
+      "passed": true,
+      "sgElements": 178,
+      "sgClassUses": 189,
+      "requiredSgClassUses": 189,
+      "matchedSgClassUses": 189,
+      "coverageRate": 1,
+      "unmatchedClasses": [],
+      "exemptClasses": [],
+      "inactiveClasses": [],
+      "activeMatchRate": 1,
+      "orphanSgSelectors": [
+        {
+          "selector": ".sg-library-host",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-app-container.sg-is-large-canvas",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-nav::-webkit-scrollbar",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-nav .sg-n .sg-ic",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-nav .sg-n.sg-on .sg-ic",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btns",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btn",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btn.sg-k1",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btn.sg-k2",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btn.sg-k3",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-btn:hover",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-cmp-pop .sg-pt-tag",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-home.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-home-l .sg-top",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-home-l .sg-play",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-home-l .sg-play:hover",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-story.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-gnd.sg-on .sg-dot",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-gp-side .sg-img",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-quiz.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-right",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-right .sg-key",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-right::after",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-wrong",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-wrong .sg-key",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-opt.sg-wrong::after",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-qz-next.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-qz-next.sg-on:hover",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-qz-result.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-pop.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-toast.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-home.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-home-l .sg-top",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-home[data-mt=\"examples\"] .sg-core",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-story.sg-on",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-story[data-mt=\"src\"] .sg-story-l",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-pop .sg-nd-tag",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": ".sg-pop .sg-nd-img",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-sec",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-cmp",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-vs",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col .sg-h::before",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col .sg-h",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col.sg-a .sg-h",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col.sg-b .sg-h",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col .sg-li",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col .sg-li:nth-child(n+4)",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-col .sg-li b",
+          "count": 0,
+          "examples": []
+        },
+        {
+          "selector": "#sg-cmp .sg-row",
+          "count": 0,
+          "examples": []
+        }
+      ],
+      "mismatchHints": []
+    },
+    "styles": {
+      "matched": 181,
+      "referenceCount": 182,
+      "generatedCount": 182,
+      "propertyCount": 10317,
+      "matchingProperties": 10317,
+      "rate": 1,
+      "mismatches": []
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 768,
+      "differentPixels": 0,
+      "totalPixels": 786432,
+      "diffRate": 0,
+      "passed": true,
+      "threshold": 0.02
+    },
+    "runtimeErrors": {
+      "reference": [],
+      "generated": []
+    }
+  }
+}

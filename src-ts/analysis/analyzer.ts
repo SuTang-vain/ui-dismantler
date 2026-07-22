@@ -156,7 +156,60 @@ function textOf(element: Element): string {
 }
 
 function controlsOf(element: Element): Element[] {
-  return [...element.querySelectorAll("button, a, input, select, summary, [onclick], [data-action]")];
+  return [...element.querySelectorAll("button, a, input, select, summary, [onclick], [data-action], [data-p], [data-mt], [data-k]")];
+}
+
+function regionView(element: Element, id: string, type: string, semanticType: string, parentSelector: string, interactionSelectors: string[] = []): AnalyzedView {
+  return {
+    id, type, structuralType: "content-region", semanticType, confidence: 0.92,
+    evidence: [{ signal: "application-region", value: semanticType }], selector: stableSelector(element),
+    details: { text: textOf(element).slice(0, 160), className: `${element.className ?? ""}`, parentSelector, interactionSelectors: [...new Set([...controlsOf(element).map(stableSelector), ...interactionSelectors])] },
+  };
+}
+
+function applicationViews(document: Document): AnalyzedView[] {
+  const navControls = [...document.querySelectorAll<HTMLElement>("[data-p]")];
+  const targets = navControls.map((control) => control.dataset.p ?? "").filter(Boolean);
+  const panels = [...new Set(targets)].map((id) => document.getElementById(id)).filter((element): element is HTMLElement => Boolean(element));
+  if (panels.length < 2) return [];
+  const shell = navControls[0]?.closest("nav, [role=tablist]")?.parentElement ?? navControls[0]?.parentElement?.parentElement ?? panels[0].parentElement?.parentElement ?? document.body;
+  const shellSelector = stableSelector(shell);
+  const views: AnalyzedView[] = [{
+    id: "application-shell", type: "app-shell", structuralType: "application", semanticType: "application-shell", confidence: 0.96,
+    evidence: [{ signal: "data-p-navigation", value: panels.length }], selector: shellSelector,
+    details: { text: textOf(shell).slice(0, 160), className: `${shell.className ?? ""}`, interactionSelectors: navControls.map(stableSelector) },
+  }];
+  for (const panel of panels) {
+    const rawId = panel.id || `panel-${views.length}`;
+    const label = navControls.find((control) => control.dataset.p === rawId)?.textContent?.trim() ?? rawId;
+    const normalized = `${rawId} ${panel.className} ${label}`.toLowerCase();
+    const type = /quiz|测一测|测试/.test(normalized) ? "quiz-panel" : /graph|relation|关联|图谱/.test(normalized) ? "relationship-panel" : /story|典故|出处/.test(normalized) ? "story-panel" : "content-panel";
+    const semanticType = type === "content-panel" ? `${slug(rawId)}-panel` : type;
+    const dynamicSelectors = type === "relationship-panel" ? [".f", ".gnd:not(.center)"] : type === "quiz-panel" ? ["#opts .opt"] : [];
+    const panelView = regionView(panel, `panel-${slug(rawId)}`, type, semanticType, shellSelector, dynamicSelectors);
+    const candidates = componentCandidates(panel, semanticType);
+    const regions: Array<[string, string, string, string[]]> = type === "relationship-panel"
+      ? [["#filters", "graph-filters", "graph-filters", [".f"]], ["#graph", "relationship-canvas", "relationship-canvas", [".gnd:not(.center)"]], ["#detail", "relationship-detail", "relationship-detail", []]]
+      : type === "quiz-panel"
+        ? [["#qzbody", "quiz-question", "quiz-question", ["#opts .opt"]], ["#qzresult", "quiz-result", "quiz-result", []]]
+        : type === "story-panel"
+          ? [[".story-l", "story-origins", "story-origins", []], [".story-r", "story-source", "story-source", []]]
+          : [[".home-l", "definition-hero", "definition-hero", []], [".home-r", "definition-details", "definition-details", []]];
+    for (const [selector, childType, childSemantic, interactions] of regions) {
+      const child = panel.querySelector(selector);
+      if (child) candidates.push(regionView(child, `${slug(rawId)}-${childType}`, childType, childSemantic, stableSelector(panel), interactions));
+    }
+    panelView.componentCandidates = candidates.filter((candidate, index, items) => items.findIndex((item) => item.selector === candidate.selector) === index);
+    views.push(panelView);
+  }
+  const dialogScope = shell === document.body ? document.body : shell;
+  const dialogs = [...dialogScope.querySelectorAll<HTMLElement>('.pop[id], .modal[id], [role="dialog"][id]')];
+  for (const [index, dialog] of dialogs.entries()) {
+    const dialogView = regionView(dialog, `dialog-${slug(dialog.id || `${index + 1}`)}`, "dialog", `${slug(dialog.id || "detail")}-dialog`, shellSelector);
+    dialogView.details.interactionSelectors = [...new Set([...(dialogView.details.interactionSelectors as string[]), ...[...dialog.querySelectorAll("[id]")].map(stableSelector)])];
+    views.push(dialogView);
+  }
+  return views;
 }
 
 function repeatedSignature(element: Element): string {
@@ -355,7 +408,7 @@ function pageShellElements(document: Document, type: "page-header" | "page-foote
   if (semantic) return [semantic];
   if (type === "page-header") {
     const first = [...document.body.children].find((element) => controlsOf(element).length > 0 && textOf(element).length >= 5);
-    if (first) return [first];
+    if (first && first.querySelectorAll("[data-p]").length < 2) return [first];
   }
   if (type === "page-footer") {
     const roots = [...document.body.children].filter((element) => controlsOf(element).length > 0);
@@ -486,6 +539,7 @@ export class HtmlAnalyzer {
     const sections = candidates.filter(isSectionCandidate).filter((element, index, items) => !items.some((other, otherIndex) => otherIndex < index && other.contains(element) && sectionHeading(other).toLowerCase() === sectionHeading(element).toLowerCase()));
     const filteredSections = sections.filter((section) => !sections.some((other) => other !== section && section.contains(other) && sectionHeading(section).toLowerCase() === sectionHeading(other).toLowerCase()));
     const sectionViews = filteredSections.slice(0, 40).map(sectionView);
+    const appViews = applicationViews(document);
     const shellViews = [
       ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
       ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
@@ -496,13 +550,13 @@ export class HtmlAnalyzer {
       const parent = element ? [...filteredSections].filter((section) => section !== element && section.contains(element)).sort((a, b) => textOf(a).length - textOf(b).length)[0] : undefined;
       if (parent) view.details.parentSelector = stableSelector(parent);
     }
-    const combined = [...specialized, ...shellViews, ...sectionViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
+    const combined = [...appViews, ...specialized, ...shellViews, ...sectionViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
     return combined.slice(0, 60);
   }
 
   private analyzeInteractions(document: Document, scripts: string[]): Interaction[] {
     const items: Interaction[] = [];
-    for (const element of [...document.querySelectorAll("[onclick], [onchange], [oninput], [onkeydown], [data-action], [data-target], [data-tab], [aria-controls]")]) {
+    for (const element of [...document.querySelectorAll("[onclick], [onchange], [oninput], [onkeydown], [data-action], [data-target], [data-tab], [data-p], [aria-controls]")]) {
       const trigger = stableSelector(element);
       const event = element.hasAttribute("onclick") ? "click" : element.hasAttribute("onchange") ? "change" : element.hasAttribute("oninput") ? "input" : element.hasAttribute("onkeydown") ? "keydown" : "click";
       const action = element.getAttribute("data-action") || element.getAttribute(`on${event}`) || "toggle";
@@ -515,6 +569,22 @@ export class HtmlAnalyzer {
       items.push({ trigger: stableSelector(element), event, action: "semantic-control", source: "semantic-control", fingerprint: `${event}|${stableSelector(element)}|semantic-control` });
     }
     const scriptText = scripts.join("\n");
+    const appendScriptInteraction = (trigger: string, event: string, action: string) => {
+      const fingerprint = `${event}|${trigger}|script-assignment`;
+      if (!items.some((item) => item.event === event && item.trigger === trigger)) items.push({ trigger, event, action, source: "script-assignment", fingerprint });
+    };
+    for (const match of scriptText.matchAll(/(?:[\w$.]+)\.querySelectorAll\(\s*(["'])([^"']+)\1\s*\)\.forEach\(\s*function\(\s*([A-Za-z_$][\w$]*)\s*\)\s*\{[\s\S]{0,800}?\b\3\.on(click|change|input|keydown)\s*=/g)) {
+      const selector = match[2]; const event = match[4];
+      let elements: Element[] = [];
+      try { elements = [...document.querySelectorAll(selector)]; } catch { /* Preserve the raw selector as dynamic evidence. */ }
+      if (elements.length) for (const element of elements) appendScriptInteraction(stableSelector(element), event, `script assigns on${event} via ${selector}`);
+      else appendScriptInteraction(selector, event, `script assigns on${event} to dynamic ${selector}`);
+    }
+    for (const match of scriptText.matchAll(/document\.getElementById\(\s*(["'])([^"']+)\1\s*\)\.on(click|change|input|keydown)\s*=/g)) {
+      const element = document.getElementById(match[2]);
+      appendScriptInteraction(element ? stableSelector(element) : `#${escapeSelector(match[2])}`, match[3], `script assigns on${match[3]} by id`);
+    }
+    if (/\.className\s*=\s*["']gnd/.test(scriptText) && /\bel\.onclick\s*=/.test(scriptText)) appendScriptInteraction(".gnd:not(.center)", "click", "dynamic graph node handler");
     for (const match of scriptText.matchAll(/addEventListener\(\s*["'](click|change|input|keydown)["']/g)) {
       const fingerprint = `${match[1]}|event-listener|${match[0]}`;
       if (!items.some((item) => item.fingerprint === fingerprint)) items.push({ trigger: "event-listener", event: match[1], action: "listener", source: "event-listener", fingerprint });

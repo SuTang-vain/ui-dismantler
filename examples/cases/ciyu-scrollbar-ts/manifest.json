@@ -1,0 +1,1088 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
+    "title": "白月光和朱砂痣 · 动态百科",
+    "templateId": null,
+    "vertical": "interactive-encyclopedia",
+    "profile": "interactive-encyclopedia",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".nav .n:hover",
+          ".nav .n.on",
+          "h3.sec::before",
+          ".cmp-btn.k1",
+          ".core .c",
+          ".core .c.wide",
+          ".ex-item .dot"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-d",
+        "value": "#4a6fe0",
+        "original": "--primary-d",
+        "usage": [
+          ":root",
+          ".nav .n:hover",
+          ".core .c.wide",
+          ".ex-item b",
+          ".scard .body .bd-inner em",
+          ".src-card .from",
+          ".src-card .text .hl",
+          ".gnd.on .dot"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-l",
+        "value": "#eef2ff",
+        "original": "--primary-l",
+        "usage": [
+          ":root",
+          ".nav .n:hover",
+          ".cmp-btn:hover,.cmp-btn:active"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-white",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          ":root",
+          "#app"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-gray",
+        "value": "#f8f8f8",
+        "original": "--bg-gray",
+        "usage": [
+          ":root",
+          ".core .c",
+          ".ex-item",
+          ".ex-foot .gc",
+          ".f",
+          ".gp-side",
+          ".m-subtab .ms"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "t1",
+        "value": "#1e1f24",
+        "original": "--t1",
+        "usage": [
+          ":root",
+          ".nav .n",
+          "h3.sec",
+          ".core .c .v",
+          ".ex-item",
+          ".ex-foot .gc .v",
+          ".scard .head .ht .h-main",
+          ".scard .body .bd-inner"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "t2",
+        "value": "#848691",
+        "original": "--t2",
+        "usage": [
+          ":root",
+          ".scard .head .ht .h-sub",
+          ".src-card .tr",
+          ".f",
+          ".gp-side .dd",
+          ".qz-fb",
+          ".pop .pd",
+          ".m-subtab .ms"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "t3",
+        "value": "#b7b9c1",
+        "original": "--t3",
+        "usage": [
+          ":root",
+          ".core .c .k",
+          ".ex-foot .gc .k",
+          ".gnd .rel",
+          ".pop .nd-img"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "line",
+        "value": "rgba(0,0,0,0.06)",
+        "original": "--line",
+        "usage": [
+          ":root",
+          ".nav",
+          ".scard",
+          ".scard .head",
+          ".f",
+          ".gnd .dot",
+          ".m-subtab .ms",
+          ".cmp-btn"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "sd-md",
+        "value": "0 4px 16px rgba(0,0,0,0.1)",
+        "original": "--sd-md",
+        "usage": [
+          ":root",
+          "#app"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "green",
+        "value": "#34c759",
+        "original": "--green",
+        "usage": [
+          ":root",
+          ".cmp-btn.k3",
+          ".opt.right",
+          ".opt.right .key",
+          ".opt.right::after"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "orange",
+        "value": "#ff9500",
+        "original": "--orange",
+        "usage": [
+          ":root",
+          ".cmp-btn.k2"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "red",
+        "value": "#ff3b30",
+        "original": "--red",
+        "usage": [
+          ":root",
+          ".opt.wrong",
+          ".opt.wrong .key",
+          ".opt.wrong::after"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "r-s",
+        "value": "8px",
+        "original": "--r-s",
+        "usage": [
+          ":root",
+          ".home-l .cover",
+          ".core .c",
+          ".ex-item",
+          ".src-card",
+          ".graph",
+          ".gp-side"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "r-m",
+        "value": "12px",
+        "original": "--r-m",
+        "usage": [
+          ":root",
+          ".home-l",
+          ".scard",
+          ".qz-body",
+          ".qz-result",
+          ".pop .box"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "r-l",
+        "value": "16px",
+        "original": "--r-l",
+        "usage": [
+          ":root",
+          "#app"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-1",
+        "value": "rgba(0,0,0,0.1)",
+        "original": "rgba(0,0,0,0.1)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "e9edf7",
+        "value": "#e9edf7",
+        "original": "#e9edf7",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f1f3f9",
+        "value": "#f1f3f9",
+        "original": "#f1f3f9",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-05",
+        "value": "rgba(0,0,0,0.05)",
+        "original": "rgba(0,0,0,0.05)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-04",
+        "value": "rgba(0,0,0,0.04)",
+        "original": "rgba(0,0,0,0.04)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-35",
+        "value": "rgba(100,135,250,0.35)",
+        "original": "rgba(100,135,250,0.35)",
+        "usage": [],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-38",
+        "value": "rgba(100,135,250,0.38)",
+        "original": "rgba(100,135,250,0.38)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "3d52a0",
+        "value": "#3d52a0",
+        "original": "#3d52a0",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "8aa6ff",
+        "value": "#8aa6ff",
+        "original": "#8aa6ff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-22",
+        "value": "rgba(255,255,255,0.22)",
+        "original": "rgba(255,255,255,0.22)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-38",
+        "value": "rgba(255,255,255,0.38)",
+        "original": "rgba(255,255,255,0.38)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-6",
+        "value": "rgba(255,255,255,0.6)",
+        "original": "rgba(255,255,255,0.6)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-06",
+        "value": "rgba(255,255,255,0.06)",
+        "original": "rgba(255,255,255,0.06)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-16",
+        "value": "rgba(100,135,250,0.16)",
+        "original": "rgba(100,135,250,0.16)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "f5f8ff",
+        "value": "#f5f8ff",
+        "original": "#f5f8ff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-22",
+        "value": "rgba(100,135,250,0.22)",
+        "original": "rgba(100,135,250,0.22)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-1",
+        "value": "rgba(100,135,250,0.1)",
+        "original": "rgba(100,135,250,0.1)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f4f7ff",
+        "value": "#f4f7ff",
+        "original": "#f4f7ff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-4",
+        "value": "rgba(100,135,250,0.4)",
+        "original": "rgba(100,135,250,0.4)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(160deg,#3d52a0,#6487fa 60%,#8aa6ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(160deg,#f5f8ff,#eef2ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(transparent 60%,rgba(100,135,250,0.22) 60%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#f5f8ff,#eef2ff)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(circle at 50% 45%,#f4f7ff,#fff 70%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg,#6487fa,#8aa6ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(160deg,#f5f8ff,#fbfcff 60%,#fff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#eef2ff,#e3e9ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#eaf7ee,#f3fbf5)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg,#fdecec,#fff5f5)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(160deg,#6487fa,#8aa6ff)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(45deg,#eef1f8,#eef1f8 9px,#e5eaf6 9px,#e5eaf6 18px)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "tab-1",
+        "label": "核心信息 典型例句",
+        "selector": "div.home-r > div:nth-child(1)",
+        "target": null
+      },
+      {
+        "id": "tab-2",
+        "label": "词条典故 出处原文",
+        "selector": "#story > div:nth-child(1)",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "application-shell",
+        "type": "app-shell",
+        "structuralType": "application",
+        "semanticType": "application-shell",
+        "confidence": 0.96,
+        "evidence": [
+          {
+            "signal": "data-p-navigation",
+            "value": 4
+          }
+        ],
+        "selector": "#app",
+        "details": {
+          "text": "基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指",
+          "className": "",
+          "interactionSelectors": [
+            "#nav > span:nth-child(1)",
+            "#nav > span:nth-child(2)",
+            "#nav > span:nth-child(3)",
+            "#nav > span:nth-child(4)"
+          ]
+        }
+      },
+      {
+        "id": "panel-home",
+        "type": "content-panel",
+        "structuralType": "content-region",
+        "semanticType": "home-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "home-panel"
+          }
+        ],
+        "selector": "#home",
+        "details": {
+          "text": "白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典",
+          "className": "panel",
+          "parentSelector": "#app",
+          "interactionSelectors": [
+            "div.home-r > div:nth-child(1) > span:nth-child(1)",
+            "div.home-r > div:nth-child(1) > span:nth-child(2)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "home-definition-hero",
+            "type": "definition-hero",
+            "structuralType": "content-region",
+            "semanticType": "definition-hero",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "definition-hero"
+              }
+            ],
+            "selector": "div.home-l",
+            "details": {
+              "text": "白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。",
+              "className": "home-l",
+              "parentSelector": "#home",
+              "interactionSelectors": []
+            }
+          },
+          {
+            "id": "home-definition-details",
+            "type": "definition-details",
+            "structuralType": "content-region",
+            "semanticType": "definition-details",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "definition-details"
+              }
+            ],
+            "selector": "div.home-r",
+            "details": {
+              "text": "核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典型例句 每个人心中都有专属的白月光和朱砂痣。 近义词念念不忘 · 意难平 · 旧情难忘 反义词释怀放下 · 过往云烟 · 心如止水",
+              "className": "home-r",
+              "parentSelector": "#home",
+              "interactionSelectors": [
+                "div.home-r > div:nth-child(1) > span:nth-child(1)",
+                "div.home-r > div:nth-child(1) > span:nth-child(2)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-story",
+        "type": "story-panel",
+        "structuralType": "content-region",
+        "semanticType": "story-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "story-panel"
+          }
+        ],
+        "selector": "#story",
+        "details": {
+          "text": "词条典故 出处原文 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。 出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊",
+          "className": "panel",
+          "parentSelector": "#app",
+          "interactionSelectors": [
+            "#story > div:nth-child(1) > span:nth-child(1)",
+            "#story > div:nth-child(1) > span:nth-child(2)",
+            "div.text > span:nth-child(1)",
+            "div.text > span:nth-child(2)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "story-panel-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "story-panel-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 3
+              }
+            ],
+            "selector": "div.story-l > div:nth-child(2)",
+            "details": {
+              "text": "源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。",
+              "className": "scard",
+              "parentSelector": "#story",
+              "repeatedCount": 3,
+              "repeatedSelectors": [
+                "div.story-l > div:nth-child(2)",
+                "div.story-l > div:nth-child(3)",
+                "div.story-l > div:nth-child(4)"
+              ],
+              "interactionSelectors": []
+            }
+          },
+          {
+            "id": "story-story-origins",
+            "type": "story-origins",
+            "structuralType": "content-region",
+            "semanticType": "story-origins",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "story-origins"
+              }
+            ],
+            "selector": "div.story-l",
+            "details": {
+              "text": "词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。",
+              "className": "story-l",
+              "parentSelector": "#story",
+              "interactionSelectors": []
+            }
+          },
+          {
+            "id": "story-story-source",
+            "type": "story-source",
+            "structuralType": "content-region",
+            "semanticType": "story-source",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "story-source"
+              }
+            ],
+            "selector": "div.story-r",
+            "details": {
+              "text": "出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊子血，白为白月光；娶白玫瑰，白成饭粘子，红为朱砂痣。 未得之人纯白难忘，所得之人刻骨铭心。",
+              "className": "story-r",
+              "parentSelector": "#story",
+              "interactionSelectors": [
+                "div.text > span:nth-child(1)",
+                "div.text > span:nth-child(2)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-graph-p",
+        "type": "relationship-panel",
+        "structuralType": "content-region",
+        "semanticType": "relationship-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "relationship-panel"
+          }
+        ],
+        "selector": "#graph-p",
+        "details": {
+          "text": "关联词语图谱 · 点击查看",
+          "className": "panel on",
+          "parentSelector": "#app",
+          "interactionSelectors": [
+            ".f",
+            ".gnd:not(.center)"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "graph-p-graph-filters",
+            "type": "graph-filters",
+            "structuralType": "content-region",
+            "semanticType": "graph-filters",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "graph-filters"
+              }
+            ],
+            "selector": "#filters",
+            "details": {
+              "text": "",
+              "className": "gp-head",
+              "parentSelector": "#graph-p",
+              "interactionSelectors": [
+                ".f"
+              ]
+            }
+          },
+          {
+            "id": "graph-p-relationship-canvas",
+            "type": "relationship-canvas",
+            "structuralType": "content-region",
+            "semanticType": "relationship-canvas",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "relationship-canvas"
+              }
+            ],
+            "selector": "#graph",
+            "details": {
+              "text": "",
+              "className": "graph",
+              "parentSelector": "#graph-p",
+              "interactionSelectors": [
+                ".gnd:not(.center)"
+              ]
+            }
+          },
+          {
+            "id": "graph-p-relationship-detail",
+            "type": "relationship-detail",
+            "structuralType": "content-region",
+            "semanticType": "relationship-detail",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "relationship-detail"
+              }
+            ],
+            "selector": "#detail",
+            "details": {
+              "text": "",
+              "className": "gp-side",
+              "parentSelector": "#graph-p",
+              "interactionSelectors": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-quiz",
+        "type": "quiz-panel",
+        "structuralType": "content-region",
+        "semanticType": "quiz-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "quiz-panel"
+          }
+        ],
+        "selector": "#quiz",
+        "details": {
+          "text": "0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次",
+          "className": "panel",
+          "parentSelector": "#app",
+          "interactionSelectors": [
+            "#qznext",
+            "#again",
+            "#opts .opt"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "quiz-quiz-question",
+            "type": "quiz-question",
+            "structuralType": "content-region",
+            "semanticType": "quiz-question",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "quiz-question"
+              }
+            ],
+            "selector": "#qzbody",
+            "details": {
+              "text": "下一题 →",
+              "className": "qz-body",
+              "parentSelector": "#quiz",
+              "interactionSelectors": [
+                "#qznext",
+                "#opts .opt"
+              ]
+            }
+          },
+          {
+            "id": "quiz-quiz-result",
+            "type": "quiz-result",
+            "structuralType": "content-region",
+            "semanticType": "quiz-result",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "quiz-result"
+              }
+            ],
+            "selector": "#qzresult",
+            "details": {
+              "text": "你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次",
+              "className": "qz-result",
+              "parentSelector": "#quiz",
+              "interactionSelectors": [
+                "#again"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "dialog-pop",
+        "type": "dialog",
+        "structuralType": "content-region",
+        "semanticType": "pop-dialog",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "pop-dialog"
+          }
+        ],
+        "selector": "#pop",
+        "details": {
+          "text": "知道了",
+          "className": "pop",
+          "parentSelector": "#app",
+          "interactionSelectors": [
+            "#pt",
+            "#pd",
+            "#pclose"
+          ]
+        }
+      }
+    ],
+    "modals": [],
+    "landmarks": [
+      {
+        "tag": "aside",
+        "role": null,
+        "selector": "#detail"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "NODES",
+        "kind": "array",
+        "fields": {
+          "w": "string",
+          "rel": "string",
+          "x": "number",
+          "y": "number",
+          "desc": "string",
+          "img": "number"
+        },
+        "count": 9
+      },
+      {
+        "name": "rels",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      },
+      {
+        "name": "QS",
+        "kind": "array",
+        "fields": {
+          "t": "string",
+          "o": "array",
+          "a": "number",
+          "fb": "string"
+        },
+        "count": 20
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "#nav > span:nth-child(1)",
+      "event": "click",
+      "action": "toggle",
+      "target": "home",
+      "source": "html-attribute",
+      "fingerprint": "click|#nav > span:nth-child(1)|home"
+    },
+    {
+      "trigger": "#nav > span:nth-child(2)",
+      "event": "click",
+      "action": "toggle",
+      "target": "story",
+      "source": "html-attribute",
+      "fingerprint": "click|#nav > span:nth-child(2)|story"
+    },
+    {
+      "trigger": "#nav > span:nth-child(3)",
+      "event": "click",
+      "action": "toggle",
+      "target": "graph-p",
+      "source": "html-attribute",
+      "fingerprint": "click|#nav > span:nth-child(3)|graph-p"
+    },
+    {
+      "trigger": "#nav > span:nth-child(4)",
+      "event": "click",
+      "action": "toggle",
+      "target": "quiz",
+      "source": "html-attribute",
+      "fingerprint": "click|#nav > span:nth-child(4)|quiz"
+    },
+    {
+      "trigger": "#qznext",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#qznext|semantic-control"
+    },
+    {
+      "trigger": "#again",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#again|semantic-control"
+    },
+    {
+      "trigger": "div.home-r > div:nth-child(1) > span:nth-child(1)",
+      "event": "click",
+      "action": "script assigns onclick via .ms",
+      "source": "script-assignment",
+      "fingerprint": "click|div.home-r > div:nth-child(1) > span:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "div.home-r > div:nth-child(1) > span:nth-child(2)",
+      "event": "click",
+      "action": "script assigns onclick via .ms",
+      "source": "script-assignment",
+      "fingerprint": "click|div.home-r > div:nth-child(1) > span:nth-child(2)|script-assignment"
+    },
+    {
+      "trigger": "#story > div:nth-child(1) > span:nth-child(1)",
+      "event": "click",
+      "action": "script assigns onclick via .ms",
+      "source": "script-assignment",
+      "fingerprint": "click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "#story > div:nth-child(1) > span:nth-child(2)",
+      "event": "click",
+      "action": "script assigns onclick via .ms",
+      "source": "script-assignment",
+      "fingerprint": "click|#story > div:nth-child(1) > span:nth-child(2)|script-assignment"
+    },
+    {
+      "trigger": "div.text > span:nth-child(1)",
+      "event": "click",
+      "action": "script assigns onclick via .hl",
+      "source": "script-assignment",
+      "fingerprint": "click|div.text > span:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "div.text > span:nth-child(2)",
+      "event": "click",
+      "action": "script assigns onclick via .hl",
+      "source": "script-assignment",
+      "fingerprint": "click|div.text > span:nth-child(2)|script-assignment"
+    },
+    {
+      "trigger": ".f",
+      "event": "click",
+      "action": "script assigns onclick to dynamic .f",
+      "source": "script-assignment",
+      "fingerprint": "click|.f|script-assignment"
+    },
+    {
+      "trigger": "#opts .opt",
+      "event": "click",
+      "action": "script assigns onclick to dynamic #opts .opt",
+      "source": "script-assignment",
+      "fingerprint": "click|#opts .opt|script-assignment"
+    },
+    {
+      "trigger": "#pclose",
+      "event": "click",
+      "action": "script assigns onclick by id",
+      "source": "script-assignment",
+      "fingerprint": "click|#pclose|script-assignment"
+    },
+    {
+      "trigger": ".gnd:not(.center)",
+      "event": "click",
+      "action": "dynamic graph node handler",
+      "source": "script-assignment",
+      "fingerprint": "click|.gnd:not(.center)|script-assignment"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width:520px)",
+      "minWidth": null,
+      "maxWidth": 520
+    },
+    {
+      "query": "(min-width:396px) and (max-width:520px)",
+      "minWidth": 396,
+      "maxWidth": 520
+    },
+    {
+      "query": "(max-width:330px)",
+      "minWidth": null,
+      "maxWidth": 330
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 2,
+    "unlabeledButtons": 0,
+    "images": 1,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": []
+}

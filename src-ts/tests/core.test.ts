@@ -168,6 +168,22 @@ test("portfolio planner splits repeated items and localized interaction clusters
   assert.equal(report.summary.ready, true);
 });
 
+test("interactive encyclopedia analyzer decomposes data-p panels and assigned handlers", () => {
+  const ciyu = `${root}examples/cases/ciyu-scrollbar-ts/original.html`;
+  const manifest = analyzeHtml(ciyu, { profile: "interactive-encyclopedia" });
+  const types = new Set(manifest.structure.views.map((view) => view.type));
+  for (const expected of ["app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog"]) assert.equal(types.has(expected), true, `missing ${expected}`);
+  assert.equal(manifest.structure.views.some((view) => view.type === "page-header" && view.selector === "#app"), false);
+  const triggers = new Set(manifest.interactions.map((interaction) => interaction.trigger));
+  for (const expected of ["#qznext", "#again", ".gnd:not(.center)"]) assert.equal(triggers.has(expected), true, `missing interaction ${expected}`);
+  assert.ok(manifest.interactions.some((interaction) => interaction.source === "script-assignment"));
+
+  const report = planComponents(manifest, { lineBudget: 150 });
+  for (const expected of ["ApplicationShell", "HomePanel", "StoryPanel", "RelationshipPanel", "QuizPanel", "PopDialog", "RelationshipCanvas", "QuizQuestion"]) assert.equal(report.components.some((component) => component.componentName === expected), true, `missing component ${expected}`);
+  assert.equal(report.summary.unownedInteractions, 0);
+  assert.equal(report.summary.ready, true);
+});
+
 test("analyzer budgets oversized styles and skips non-executable archive scripts", async (context) => {
   const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-budget-"));
   context.after(() => rm(dir, { recursive: true, force: true }));
@@ -192,4 +208,20 @@ test("self-contained transpiler ignores JSON-LD and supports pages without asset
   assert.equal(summary.assetsCopied, false);
   assert.equal(summary.scriptParseWarning, null);
   assert.match(await readFile(join(out, "src", "static.js"), "utf8"), /StaticFixture/);
+});
+
+test("self-contained transpiler preserves id-linked data attributes and rewrites assets", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-linked-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "linked.html");
+  const out = join(dir, "lib");
+  await writeFile(html, `<!doctype html><html><head><style>:root{--primary:#6487fa}.panel{display:none}.panel.on{display:block}@media(max-width:320px){.panel{font-size:12px}}</style></head><body><div id="app"><span data-p="home">Home</span><section class="panel on" id="home"><img src="images/cover.webp" alt="cover"></section></div><script>var QS=[{t:'${"x".repeat(1300)}'}];document.querySelectorAll('[data-p]').forEach(function(n){n.onclick=function(){document.getElementById(n.dataset.p).classList.add('on')}})</script></body></html>`);
+  const { stdout } = await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "LinkedFixture", "linked"]);
+  assert.equal(JSON.parse(stdout).scriptParseWarning, null);
+  const js = await readFile(join(out, "src", "linked.js"), "utf8");
+  assert.match(js, /data-p="sg-home"/);
+  assert.match(js, /src="\.\.\/assets\/cover\.webp"/);
+  assert.match(js, /options\.questions/);
+  assert.match(js, /role="tab"/);
+  assert.match(js, /role="tabpanel"/);
 });

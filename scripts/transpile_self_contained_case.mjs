@@ -51,6 +51,18 @@ const idMap = new Map([...idNames].map((name) => [name, prefixed(name)]));
 
 for (const element of document.querySelectorAll('[class]')) element.setAttribute('class', [...element.classList].map((name) => classMap.get(name) || name).join(' '));
 for (const element of document.querySelectorAll('[id]')) element.id = idMap.get(element.id) || element.id;
+for (const element of document.querySelectorAll('[data-p]')) {
+  const value = element.getAttribute('data-p');
+  if (value && idMap.has(value)) element.setAttribute('data-p', idMap.get(value));
+}
+for (const element of document.querySelectorAll('[data-group]')) {
+  const value = element.getAttribute('data-group');
+  if (value && idMap.has(value)) element.setAttribute('data-group', idMap.get(value));
+}
+for (const element of document.querySelectorAll('[src]')) {
+  const value = element.getAttribute('src');
+  if (value) element.setAttribute('src', value.replace(/^(?:\.\/)?(?:image|images)\//, '../assets/'));
+}
 for (const tabs of document.querySelectorAll(`.${classMap.get('tabs') || 'sg-tabs'}`)) tabs.setAttribute('role', 'tablist');
 for (const button of document.querySelectorAll(`.${classMap.get('tabs') || 'sg-tabs'} [data-tab]`)) {
   button.setAttribute('role', 'tab');
@@ -63,6 +75,20 @@ for (const view of document.querySelectorAll(`.${classMap.get('view') || 'sg-vie
 }
 for (const tabs of document.querySelectorAll(`.${classMap.get('works-tabs') || 'sg-works-tabs'}`)) tabs.setAttribute('role', 'tablist');
 for (const button of document.querySelectorAll(`.${classMap.get('works-tabs') || 'sg-works-tabs'} [data-cat]`)) button.setAttribute('role', 'tab');
+for (const nav of document.querySelectorAll('[data-p]')) {
+  nav.setAttribute('role', 'tab');
+  const panelId = nav.getAttribute('data-p');
+  if (panelId) nav.setAttribute('aria-controls', panelId);
+}
+for (const nav of document.querySelectorAll('[data-p]')) {
+  const panel = document.getElementById(nav.getAttribute('data-p') || '');
+  if (panel) panel.setAttribute('role', 'tabpanel');
+}
+for (const dialog of document.querySelectorAll('.pop[id], .modal[id], [role="dialog"]')) {
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  if (!dialog.hasAttribute('aria-label') && !dialog.hasAttribute('aria-labelledby')) dialog.setAttribute('aria-label', document.title || '详情');
+}
 for (const script of [...document.scripts]) script.remove();
 for (const style of [...document.querySelectorAll('style')]) style.remove();
 const template = [...document.body.children].map((element) => element.outerHTML).join('\n');
@@ -111,7 +137,7 @@ for (const [original, mapped] of classMap) {
 }
 const tokenPairs = [...new Map([...idMap, ...classMap, ...dynamicIdPrefixes, ...dynamicClassPrefixes])].sort((a, b) => b[0].length - a[0].length);
 function transformString(input) {
-  let value = input.replaceAll('./image/', '../assets/').replaceAll('./images/', '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
+  let value = input.replace(/(?:^|\.\/)(?:image|images)\//g, '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
   for (const [before, after] of tokenPairs) {
     const escaped = before.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     value = value.replace(new RegExp(`(^|[^\\w-])${escaped}(?=$|[^\\w-])`, 'g'), (_, lead) => `${lead}${after}`);
@@ -150,6 +176,12 @@ const dataBindings = new Map([
   ['chars', 'chars'],
   ['storyModules', 'storyModules'],
   ['ALL_EDGES', 'allEdges'],
+  ['NODES', 'nodes'],
+  ['CENTER', 'center'],
+  ['COLORS', 'colors'],
+  ['NODE_IMG', 'nodeImages'],
+  ['NOTE', 'notes'],
+  ['QS', 'questions'],
 ]);
 for (const [name, optionName] of dataBindings) {
   const declaration = new RegExp(`\\b(?:var|let|const)\\s+${name}\\s*=\\s*([\\[{])`);

@@ -1,0 +1,1344 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
+  "generatedAt": "2026-07-22T15:13:28.381Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "application-shell",
+      "componentName": "ApplicationShell",
+      "targetFile": "src/components/ApplicationShell.ts",
+      "sourceSelector": "#app",
+      "sourceSelectors": [
+        "#app"
+      ],
+      "responsibility": "复现 app-shell 视图：基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 106,
+        "score": 0.71,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-home",
+      "componentName": "HomePanel",
+      "targetFile": "src/components/HomePanel.ts",
+      "sourceSelector": "#home",
+      "sourceSelectors": [
+        "#home"
+      ],
+      "responsibility": "复现 content-panel 视图：白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#nav > span:nth-child(1)|home"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典"
+        ],
+        "states": [
+          "click: #nav > span:nth-child(1) → home"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 125,
+        "score": 0.83,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-story",
+      "componentName": "StoryPanel",
+      "targetFile": "src/components/StoryPanel.ts",
+      "sourceSelector": "#story",
+      "sourceSelectors": [
+        "#story"
+      ],
+      "responsibility": "复现 story-panel 视图：词条典故 出处原文 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#nav > span:nth-child(2)|story",
+        "click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment",
+        "click|#story > div:nth-child(1) > span:nth-child(2)|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "词条典故 出处原文 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。 出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊"
+        ],
+        "states": [
+          "click: #nav > span:nth-child(2) → story",
+          "click: #story > div:nth-child(1) > span:nth-child(1)",
+          "click: #story > div:nth-child(1) > span:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 143,
+        "score": 0.95,
+        "reasons": [
+          "3 个关联交互（2 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-graph-p",
+      "componentName": "RelationshipPanel",
+      "targetFile": "src/components/RelationshipPanel.ts",
+      "sourceSelector": "#graph-p",
+      "sourceSelectors": [
+        "#graph-p"
+      ],
+      "responsibility": "复现 relationship-panel 视图：关联词语图谱 · 点击查看",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "关联词语图谱 · 点击查看"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 101,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-quiz",
+      "componentName": "QuizPanel",
+      "targetFile": "src/components/QuizPanel.ts",
+      "sourceSelector": "#quiz",
+      "sourceSelectors": [
+        "#quiz"
+      ],
+      "responsibility": "复现 quiz-panel 视图：0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#nav > span:nth-child(4)|quiz"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次"
+        ],
+        "states": [
+          "click: #nav > span:nth-child(4) → quiz"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 120,
+        "score": 0.8,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "dialog-pop",
+      "componentName": "PopDialog",
+      "targetFile": "src/components/PopDialog.ts",
+      "sourceSelector": "#pop",
+      "sourceSelectors": [
+        "#pop"
+      ],
+      "responsibility": "复现 dialog 视图：知道了",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#pclose|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "知道了"
+        ],
+        "states": [
+          "click: #pclose"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 118,
+        "score": 0.79,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "home-definition-hero",
+      "componentName": "DefinitionHero",
+      "targetFile": "src/components/DefinitionHero.ts",
+      "sourceSelector": "div.home-l",
+      "sourceSelectors": [
+        "div.home-l"
+      ],
+      "responsibility": "复现 definition-hero 视图：白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。",
+      "parentId": "panel-home",
+      "dependencies": [
+        "panel-home"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 103,
+        "score": 0.69,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "home-definition-details",
+      "componentName": "DefinitionDetails",
+      "targetFile": "src/components/DefinitionDetails.ts",
+      "sourceSelector": "div.home-r",
+      "sourceSelectors": [
+        "div.home-r"
+      ],
+      "responsibility": "复现 definition-details 视图：核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典型例句 每个人心",
+      "parentId": "panel-home",
+      "dependencies": [
+        "panel-home"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.home-r > div:nth-child(1) > span:nth-child(1)|script-assignment",
+        "click|div.home-r > div:nth-child(1) > span:nth-child(2)|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典型例句 每个人心中都有专属的白月光和朱砂痣。 近义词念念不忘 · 意难平 · 旧情难忘 反义词释怀放下 · 过往云烟 · 心如止水"
+        ],
+        "states": [
+          "click: div.home-r > div:nth-child(1) > span:nth-child(1)",
+          "click: div.home-r > div:nth-child(1) > span:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 125,
+        "score": 0.83,
+        "reasons": [
+          "2 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "story-panel-item",
+      "componentName": "StoryPanelItem",
+      "targetFile": "src/components/StoryPanelItem.ts",
+      "sourceSelector": "div.story-l > div:nth-child(2)",
+      "sourceSelectors": [
+        "div.story-l > div:nth-child(2)",
+        "div.story-l > div:nth-child(3)",
+        "div.story-l > div:nth-child(4)"
+      ],
+      "responsibility": "复现 repeated-item 视图：源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。",
+      "parentId": "panel-story",
+      "dependencies": [
+        "panel-story"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 103,
+        "score": 0.69,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "story-story-origins",
+      "componentName": "StoryOrigins",
+      "targetFile": "src/components/StoryOrigins.ts",
+      "sourceSelector": "div.story-l",
+      "sourceSelectors": [
+        "div.story-l"
+      ],
+      "responsibility": "复现 story-origins 视图：词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及",
+      "parentId": "panel-story",
+      "dependencies": [
+        "panel-story"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "story-story-source",
+      "componentName": "StorySource",
+      "targetFile": "src/components/StorySource.ts",
+      "sourceSelector": "div.story-r",
+      "sourceSelectors": [
+        "div.story-r"
+      ],
+      "responsibility": "复现 story-source 视图：出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊子血，白为白月光；娶白玫瑰，白成饭粘子，红为朱砂痣。 未得之人纯白难忘，所得之人刻骨铭心。",
+      "parentId": "panel-story",
+      "dependencies": [
+        "panel-story"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.text > span:nth-child(1)|script-assignment",
+        "click|div.text > span:nth-child(2)|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊子血，白为白月光；娶白玫瑰，白成饭粘子，红为朱砂痣。 未得之人纯白难忘，所得之人刻骨铭心。"
+        ],
+        "states": [
+          "click: div.text > span:nth-child(1)",
+          "click: div.text > span:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 122,
+        "score": 0.81,
+        "reasons": [
+          "2 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-p-graph-filters",
+      "componentName": "GraphFilters",
+      "targetFile": "src/components/GraphFilters.ts",
+      "sourceSelector": "#filters",
+      "sourceSelectors": [
+        "#filters"
+      ],
+      "responsibility": "复现 graph-filters 视图的结构、样式与状态",
+      "parentId": "panel-graph-p",
+      "dependencies": [
+        "panel-graph-p"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|.f|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: .f"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 119,
+        "score": 0.79,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-p-relationship-canvas",
+      "componentName": "RelationshipCanvas",
+      "targetFile": "src/components/RelationshipCanvas.ts",
+      "sourceSelector": "#graph",
+      "sourceSelectors": [
+        "#graph"
+      ],
+      "responsibility": "复现 relationship-canvas 视图的结构、样式与状态",
+      "parentId": "panel-graph-p",
+      "dependencies": [
+        "panel-graph-p"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#nav > span:nth-child(3)|graph-p",
+        "click|.gnd:not(.center)|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: #nav > span:nth-child(3) → graph-p",
+          "click: .gnd:not(.center)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 136,
+        "score": 0.91,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-p-relationship-detail",
+      "componentName": "RelationshipDetail",
+      "targetFile": "src/components/RelationshipDetail.ts",
+      "sourceSelector": "#detail",
+      "sourceSelectors": [
+        "#detail"
+      ],
+      "responsibility": "复现 relationship-detail 视图的结构、样式与状态",
+      "parentId": "panel-graph-p",
+      "dependencies": [
+        "panel-graph-p"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 101,
+        "score": 0.67,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "quiz-quiz-question",
+      "componentName": "QuizQuestion",
+      "targetFile": "src/components/QuizQuestion.ts",
+      "sourceSelector": "#qzbody",
+      "sourceSelectors": [
+        "#qzbody"
+      ],
+      "responsibility": "复现 quiz-question 视图：下一题 →",
+      "parentId": "panel-quiz",
+      "dependencies": [
+        "panel-quiz"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#qznext|semantic-control",
+        "click|#opts .opt|script-assignment"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "下一题 →"
+        ],
+        "states": [
+          "click: #qznext",
+          "click: #opts .opt"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 137,
+        "score": 0.91,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "quiz-quiz-result",
+      "componentName": "QuizResult",
+      "targetFile": "src/components/QuizResult.ts",
+      "sourceSelector": "#qzresult",
+      "sourceSelectors": [
+        "#qzresult"
+      ],
+      "responsibility": "复现 quiz-result 视图：你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次",
+      "parentId": "panel-quiz",
+      "dependencies": [
+        "panel-quiz"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#again|semantic-control"
+      ],
+      "dataContracts": [
+        "NODES",
+        "rels",
+        "QS"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-d",
+        "--primary-l",
+        "--bg-white",
+        "--bg-gray",
+        "--t1",
+        "--t2",
+        "--t3",
+        "--line",
+        "--sd-md",
+        "--green",
+        "--orange",
+        "--red",
+        "--r-s",
+        "--r-m",
+        "--r-l",
+        "rgba(0,0,0,0.1)",
+        "#e9edf7",
+        "#f1f3f9",
+        "rgba(0,0,0,0.05)",
+        "rgba(0,0,0,0.04)",
+        "rgba(100,135,250,0.35)",
+        "#fff",
+        "rgba(100,135,250,0.38)"
+      ],
+      "responsiveQueries": [
+        "(max-width:520px)",
+        "(min-width:396px) and (max-width:520px)",
+        "(max-width:330px)"
+      ],
+      "acceptance": {
+        "text": [
+          "你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次"
+        ],
+        "states": [
+          "click: #again"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 120,
+        "score": 0.8,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个数据契约",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-home",
+      "detail": "预计复杂度已达预算的 83%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-story",
+      "detail": "预计复杂度已达预算的 95%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-quiz",
+      "detail": "预计复杂度已达预算的 80%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "home-definition-details",
+      "detail": "预计复杂度已达预算的 83%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "story-story-source",
+      "detail": "预计复杂度已达预算的 81%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-p-graph-filters",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "graph-p-relationship-canvas",
+      "detail": "预计复杂度已达预算的 91%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-p-relationship-canvas",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-p-relationship-detail",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "quiz-quiz-question",
+      "detail": "预计复杂度已达预算的 91%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "quiz-quiz-result",
+      "detail": "预计复杂度已达预算的 80%"
+    }
+  ],
+  "summary": {
+    "components": 16,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 11,
+    "interactions": 16,
+    "ownedInteractions": 16,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}
