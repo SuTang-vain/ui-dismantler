@@ -28,13 +28,24 @@
 | text | 1.000 |
 | DOM overall | 1.000 |
 | selector coverage | 1.000 |
-| computed style | 0.9984 |
-| pixel diff | 0.2481% |
-| visual score | 0.9983 |
-| final overall | 0.999 |
+| computed style（四视口最差） | 0.9871 |
+| pixel diff（四视口最差） | 0.0000% |
+| visual score（四视口最差） | 0.9929 |
+| final overall | 0.9957 |
 | 正式交互场景 | 4/4 PASS |
 | 可验证交互覆盖 | 6/6（100%，2 个分页指纹显式 waiver） |
 | runtime errors | 0 |
+| 多视口矩阵 | 4/4 PASS |
+| 最差视口 | mobile |
+
+## 多视口质量矩阵
+
+- Desktop：`1024×768`；
+- Tablet portrait：`768×1024`；
+- Mobile：`390×844`；
+- Extreme mobile：`320×568`。
+
+四个视口均执行 selector coverage、computed style、pixel diff 和 runtime error 检查；最终 visual score 采用最差视口结果，而不是平均值。桌面截图继续位于 `artifacts/`，其他视口位于 `artifacts/tablet/`、`artifacts/mobile/` 和 `artifacts/tiny/`。
 
 ## 交互场景
 

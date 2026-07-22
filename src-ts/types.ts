@@ -229,9 +229,11 @@ export interface SelectorCoverageReport {
   passed: boolean;
   sgElements: number;
   sgClassUses: number;
+  requiredSgClassUses: number;
   matchedSgClassUses: number;
   coverageRate: number;
   unmatchedClasses: SelectorCoverageIssue[];
+  exemptClasses: SelectorCoverageIssue[];
   inactiveClasses: SelectorCoverageIssue[];
   activeMatchRate: number;
   orphanSgSelectors: SelectorCoverageIssue[];
@@ -274,6 +276,35 @@ export interface PixelDiffReport {
   diffImagePath?: string;
   referenceImagePath?: string;
   generatedImagePath?: string;
+}
+
+export interface QualityViewport {
+  id: string;
+  label: string;
+  width: number;
+  height: number;
+}
+
+export interface BrowserViewportReport extends QualityViewport {
+  available: boolean;
+  error?: string;
+  runtimeErrors: number;
+  selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
+  styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
+  pixels?: PixelDiffReport;
+  score?: number;
+  passed: boolean;
+}
+
+export interface BrowserQualityMatrixReport {
+  viewports: BrowserViewportReport[];
+  passed: boolean;
+  score: number;
+  worstViewport: string;
+  worstSelectorCoverage: number;
+  worstComputedStyle: number;
+  worstPixelDiff: number;
+  runtimeErrors: number;
 }
 
 export interface BrowserQualityReport {

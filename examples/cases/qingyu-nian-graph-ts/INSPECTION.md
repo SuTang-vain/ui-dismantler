@@ -35,3 +35,12 @@
 - pixel diff: 0.2481%
 - scenarios: 4/4 PASS
 - final overall: 0.999
+
+## 多视口截图
+
+- Desktop：`artifacts/reference.png`、`artifacts/generated.png`、`artifacts/diff.png`；
+- Tablet：`artifacts/tablet/`；
+- Mobile：`artifacts/mobile/`；
+- Extreme mobile：`artifacts/tiny/`。
+
+最终质量门禁使用四个视口中的最差 selector coverage、computed style 和 pixel diff。

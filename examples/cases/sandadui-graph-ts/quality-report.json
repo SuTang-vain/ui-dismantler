@@ -782,7 +782,7 @@
         "id": "selector-runtime",
         "name": "10. 选择器实际命中",
         "passed": true,
-        "detail": "所有 sg-* DOM 类均有实际匹配规则（100.0%）"
+        "detail": "所有需匹配的 sg-* DOM 类均有实际规则（100.0%）"
       }
     ]
   },
@@ -18966,9 +18966,11 @@
         "passed": true,
         "sgElements": 0,
         "sgClassUses": 0,
+        "requiredSgClassUses": 0,
         "matchedSgClassUses": 0,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [],
         "activeMatchRate": 1,
         "orphanSgSelectors": [],
@@ -30453,9 +30455,11 @@
         "passed": true,
         "sgElements": 161,
         "sgClassUses": 190,
+        "requiredSgClassUses": 190,
         "matchedSgClassUses": 190,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [
           {
             "selector": ".sg-is-large-canvas",
@@ -42196,9 +42200,11 @@
       "passed": true,
       "sgElements": 161,
       "sgClassUses": 190,
+      "requiredSgClassUses": 190,
       "matchedSgClassUses": 190,
       "coverageRate": 1,
       "unmatchedClasses": [],
+      "exemptClasses": [],
       "inactiveClasses": [
         {
           "selector": ".sg-is-large-canvas",
@@ -42548,6 +42554,448 @@
     "score": 0.9994,
     "passed": true
   },
+  "browserMatrix": {
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1024,
+        "height": 768,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 0.9947368421052631,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9989,
+          "matched": 163,
+          "referenceCount": 163,
+          "generatedCount": 163,
+          "propertyCount": 9291,
+          "matchingProperties": 9281,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "1024px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "768px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "512px 384px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-color",
+              "reference": "rgb(238, 241, 248)",
+              "generated": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "1024",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "768",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 1024,
+          "height": 768,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/diff.png"
+        },
+        "score": 0.9994,
+        "passed": true
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet portrait",
+        "width": 768,
+        "height": 1024,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [
+            {
+              "selector": ".sg-is-small-canvas",
+              "count": 1,
+              "examples": [
+                "#sg-app"
+              ]
+            }
+          ],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9989,
+          "matched": 163,
+          "referenceCount": 163,
+          "generatedCount": 163,
+          "propertyCount": 9291,
+          "matchingProperties": 9281,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "768px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "1024px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "384px 512px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-color",
+              "reference": "rgb(238, 241, 248)",
+              "generated": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "768",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "1024",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 768,
+          "height": 1024,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/diff.png"
+        },
+        "score": 0.9994,
+        "passed": true
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [
+            {
+              "selector": ".sg-is-small-canvas",
+              "count": 1,
+              "examples": [
+                "#sg-app"
+              ]
+            }
+          ],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9989,
+          "matched": 163,
+          "referenceCount": 163,
+          "generatedCount": 163,
+          "propertyCount": 9291,
+          "matchingProperties": 9281,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "390px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "844px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "195px 422px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-color",
+              "reference": "rgb(238, 241, 248)",
+              "generated": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "390",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "844",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 390,
+          "height": 844,
+          "differentPixels": 0,
+          "totalPixels": 329160,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/diff.png"
+        },
+        "score": 0.9994,
+        "passed": true
+      },
+      {
+        "id": "tiny",
+        "label": "Extreme mobile",
+        "width": 320,
+        "height": 568,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [
+            {
+              "selector": ".sg-is-small-canvas",
+              "count": 1,
+              "examples": [
+                "#sg-app"
+              ]
+            },
+            {
+              "selector": ".sg-is-tiny-canvas",
+              "count": 1,
+              "examples": [
+                "#sg-app"
+              ]
+            }
+          ],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9989,
+          "matched": 163,
+          "referenceCount": 163,
+          "generatedCount": 163,
+          "propertyCount": 9291,
+          "matchingProperties": 9281,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "320px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "568px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "160px 284px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-color",
+              "reference": "rgb(238, 241, 248)",
+              "generated": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "320",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "568",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 320,
+          "height": 568,
+          "differentPixels": 0,
+          "totalPixels": 181760,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/diff.png"
+        },
+        "score": 0.9994,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "score": 0.9994,
+    "worstViewport": "desktop",
+    "worstSelectorCoverage": 1,
+    "worstComputedStyle": 0.9989,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0
+  },
   "scores": {
     "dom": 0.999,
     "visual": 0.9994,
@@ -42580,24 +43028,29 @@
       "detail": "text=1，门槛=0.8"
     },
     {
+      "id": "viewport-matrix",
+      "passed": true,
+      "detail": "4/4 视口通过，worst=desktop"
+    },
+    {
       "id": "visual-runtime",
       "passed": true,
-      "detail": "Chrome 渲染完成，runtimeErrors=0"
+      "detail": "viewports=4，runtimeErrors=0"
     },
     {
       "id": "selector-coverage",
       "passed": true,
-      "detail": "selectorCoverage=1，门槛=1"
+      "detail": "worstSelectorCoverage=1，门槛=1"
     },
     {
       "id": "computed-style",
       "passed": true,
-      "detail": "computedStyle=0.9989，门槛=0.98"
+      "detail": "worstComputedStyle=0.9989，门槛=0.98"
     },
     {
       "id": "pixel-diff",
       "passed": true,
-      "detail": "pixelDiff=0，门槛=0.02"
+      "detail": "worstPixelDiff=0，门槛=0.02"
     },
     {
       "id": "scenario-protocol",

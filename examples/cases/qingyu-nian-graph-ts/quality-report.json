@@ -769,7 +769,7 @@
         "id": "selector-runtime",
         "name": "10. 选择器实际命中",
         "passed": true,
-        "detail": "所有 sg-* DOM 类均有实际匹配规则（100.0%）"
+        "detail": "所有需匹配的 sg-* DOM 类均有实际规则（100.0%）"
       }
     ]
   },
@@ -16354,9 +16354,11 @@
         "passed": true,
         "sgElements": 0,
         "sgClassUses": 0,
+        "requiredSgClassUses": 0,
         "matchedSgClassUses": 0,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [],
         "activeMatchRate": 1,
         "orphanSgSelectors": [],
@@ -29158,9 +29160,11 @@
         "passed": true,
         "sgElements": 180,
         "sgClassUses": 193,
+        "requiredSgClassUses": 193,
         "matchedSgClassUses": 193,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [],
         "activeMatchRate": 1,
         "orphanSgSelectors": [
@@ -42135,9 +42139,11 @@
       "passed": true,
       "sgElements": 180,
       "sgClassUses": 193,
+      "requiredSgClassUses": 193,
       "matchedSgClassUses": 193,
       "coverageRate": 1,
       "unmatchedClasses": [],
+      "exemptClasses": [],
       "inactiveClasses": [],
       "activeMatchRate": 1,
       "orphanSgSelectors": [
@@ -42434,22 +42440,1597 @@
     "pixels": {
       "width": 1024,
       "height": 768,
-      "differentPixels": 1994,
+      "differentPixels": 0,
       "totalPixels": 786432,
-      "diffRate": 0.002536,
+      "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
       "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/reference.png",
       "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/generated.png",
       "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/diff.png"
     },
-    "score": 0.9982,
+    "score": 0.9991,
     "passed": true
+  },
+  "browserMatrix": {
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1024,
+        "height": 768,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9984,
+          "matched": 181,
+          "referenceCount": 182,
+          "generatedCount": 182,
+          "propertyCount": 10317,
+          "matchingProperties": 10300,
+          "mismatches": [
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%89%A7%E6%83%85_06_%E8%82%96%E6%81%A9%E4%B8%B4%E7%BB%88.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%89%A7%E6%83%85_06_%E8%82%96%E6%81%A9%E4%B8%B4%E7%BB%88.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%A8%80%E5%86%B0%E4%BA%91.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%A8%80%E5%86%B0%E4%BA%91.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%B8%80%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%B8%80%E5%AD%A3.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%BA%8C%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%BA%8C%E5%AD%A3.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%B8%89%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%B8%89%E5%AD%A3.webp\")"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 1024,
+          "height": 768,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/diff.png"
+        },
+        "score": 0.9991,
+        "passed": true
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet portrait",
+        "width": 768,
+        "height": 1024,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9984,
+          "matched": 181,
+          "referenceCount": 182,
+          "generatedCount": 182,
+          "propertyCount": 10317,
+          "matchingProperties": 10300,
+          "mismatches": [
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%89%A7%E6%83%85_06_%E8%82%96%E6%81%A9%E4%B8%B4%E7%BB%88.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%89%A7%E6%83%85_06_%E8%82%96%E6%81%A9%E4%B8%B4%E7%BB%88.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%A8%80%E5%86%B0%E4%BA%91.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%A8%80%E5%86%B0%E4%BA%91.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%B8%80%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%B8%80%E5%AD%A3.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%BA%8C%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%BA%8C%E5%AD%A3.webp\")"
+            },
+            {
+              "key": "div.cover ↔ div.sg-cover",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E5%AD%A3_%E7%AC%AC%E4%B8%89%E5%AD%A3.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E5%AD%A3_%E7%AC%AC%E4%B8%89%E5%AD%A3.webp\")"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 768,
+          "height": 1024,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tablet/diff.png"
+        },
+        "score": 0.9991,
+        "passed": true
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9871,
+          "matched": 181,
+          "referenceCount": 182,
+          "generatedCount": 182,
+          "propertyCount": 10317,
+          "matchingProperties": 10184,
+          "mismatches": [
+            {
+              "key": "#app-container ↔ #sg-app-container",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.main ↔ div.sg-main",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.view.active ↔ #sg-view-graph",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#graphWrap ↔ #sg-graphWrap",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#graphCanvas ↔ #sg-graphCanvas",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#graphEdges ↔ #sg-graphEdges",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.master ↔ line.sg-edge.master",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.master ↔ g.sg-edge-label.master",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.romance ↔ line.sg-edge.romance",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.romance ↔ g.sg-edge-label.romance",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node.big ↔ div.sg-node.sg-big",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node.big ↔ div.sg-node.sg-big",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 390,
+          "height": 844,
+          "differentPixels": 0,
+          "totalPixels": 329160,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/mobile/diff.png"
+        },
+        "score": 0.9929,
+        "passed": true
+      },
+      {
+        "id": "tiny",
+        "label": "Extreme mobile",
+        "width": 320,
+        "height": 568,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 1,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9871,
+          "matched": 181,
+          "referenceCount": 182,
+          "generatedCount": 182,
+          "propertyCount": 10317,
+          "matchingProperties": 10184,
+          "mismatches": [
+            {
+              "key": "#app-container ↔ #sg-app-container",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.main ↔ div.sg-main",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.view.active ↔ #sg-view-graph",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#graphWrap ↔ #sg-graphWrap",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#graphCanvas ↔ #sg-graphCanvas",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#graphEdges ↔ #sg-graphEdges",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.family ↔ g.sg-edge-label.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.master ↔ line.sg-edge.master",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.master ↔ g.sg-edge-label.master",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.romance ↔ line.sg-edge.romance",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.romance ↔ g.sg-edge-label.romance",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.family ↔ line.sg-edge.family",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.enemy ↔ g.sg-edge-label.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.enemy ↔ line.sg-edge.enemy",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.friend ↔ line.sg-edge.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "g.edge-label.friend ↔ g.sg-edge-label.friend",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "rect.edge-label-bg ↔ rect.sg-edge-label-bg",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node.big ↔ div.sg-node.sg-big",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E9%97%B2.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node.big ↔ div.sg-node.sg-big",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%BA%86%E5%B8%9D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%8C%83%E5%BB%BA.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%99%88%E8%90%8D%E8%90%8D.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E8%B4%B9%E4%BB%8B.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%94%E7%AB%B9.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%9E%97%E5%A9%89%E5%84%BF.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E9%95%BF%E5%85%AC%E4%B8%BB.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E4%BA%8C%E7%9A%87%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%A4%AA%E5%AD%90.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E5%8F%B6%E8%BD%BB%E7%9C%89.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "background-image",
+              "reference": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/images/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")",
+              "generated": "url(\"file:///Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/lib/assets/%E8%A7%92%E8%89%B2_%E6%B5%B7%E6%A3%A0%E6%9C%B5%E6%9C%B5.webp\")"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.node ↔ div.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 320,
+          "height": 568,
+          "differentPixels": 0,
+          "totalPixels": 181760,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/tiny/diff.png"
+        },
+        "score": 0.9929,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "score": 0.9929,
+    "worstViewport": "mobile",
+    "worstSelectorCoverage": 1,
+    "worstComputedStyle": 0.9871,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0
   },
   "scores": {
     "dom": 1,
-    "visual": 0.9982,
-    "overall": 0.9989
+    "visual": 0.9929,
+    "overall": 0.9957
   },
   "gates": [
     {
@@ -42465,7 +44046,7 @@
     {
       "id": "overall",
       "passed": true,
-      "detail": "finalOverall=0.9989（dom=1，visual=0.9982），门槛=0.85"
+      "detail": "finalOverall=0.9957（dom=1，visual=0.9929），门槛=0.85"
     },
     {
       "id": "structure",
@@ -42478,24 +44059,29 @@
       "detail": "text=1，门槛=0.8"
     },
     {
+      "id": "viewport-matrix",
+      "passed": true,
+      "detail": "4/4 视口通过，worst=mobile"
+    },
+    {
       "id": "visual-runtime",
       "passed": true,
-      "detail": "Chrome 渲染完成，runtimeErrors=0"
+      "detail": "viewports=4，runtimeErrors=0"
     },
     {
       "id": "selector-coverage",
       "passed": true,
-      "detail": "selectorCoverage=1，门槛=1"
+      "detail": "worstSelectorCoverage=1，门槛=1"
     },
     {
       "id": "computed-style",
       "passed": true,
-      "detail": "computedStyle=0.9984，门槛=0.98"
+      "detail": "worstComputedStyle=0.9871，门槛=0.98"
     },
     {
       "id": "pixel-diff",
       "passed": true,
-      "detail": "pixelDiff=0.002536，门槛=0.02"
+      "detail": "worstPixelDiff=0，门槛=0.02"
     },
     {
       "id": "scenario-protocol",

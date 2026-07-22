@@ -176,7 +176,7 @@ export function appendRuntimeSelectorCheck(
         name: "10. 选择器实际命中",
         passed: coverage.passed,
         detail: coverage.passed
-          ? `所有 sg-* DOM 类均有实际匹配规则（${(coverage.coverageRate * 100).toFixed(1)}%）`
+          ? `所有需匹配的 sg-* DOM 类均有实际规则（${(coverage.coverageRate * 100).toFixed(1)}%）${coverage.exemptClasses.length ? `；运行时状态标记豁免：${coverage.exemptClasses.map((item) => item.selector).join("、")}` : ""}`
           : `未命中类：${coverage.unmatchedClasses.map((item) => `${item.selector} ×${item.count}`).join("；")}${coverage.mismatchHints.length ? `；疑似错配：${coverage.mismatchHints.map((hint) => `${hint.domClass} ↔ ${hint.cssSelector}（${hint.reason}）`).join("；")}` : ""}`,
       }
     : {

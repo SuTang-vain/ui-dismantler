@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage } from "../evaluation/browser.js";
+import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateLibrarySelectorCoverage } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -68,4 +68,26 @@ test("computed style and pixel gates catch execution-order position errors with 
   assert.equal(browser.passed, false);
   assert.ok(browser.styles?.mismatches.some((issue) => issue.property === "left" || issue.property === "rect.x"));
   assert.ok((browser.pixels?.diffRate ?? 0) > 0.02);
+});
+
+
+test("multi-viewport matrix catches a mobile-only visual regression", async () => {
+  const item = await fixture(
+    "viewport-matrix",
+    `<!doctype html><html><head><style>body{margin:0}.app{display:flex;width:420px;height:240px;background:#e11d48}.item{width:200px;height:200px;margin:10px;background:#fff}@media(max-width:500px){.item{width:80px}}</style></head><body><div class="app"><div class="item">A</div><div class="item">B</div></div></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{display:flex;width:420px;height:240px;background:var(--sg-primary)}.sg-item{width:200px;height:200px;margin:10px;background:var(--sg-paper)}@media(max-width:500px){.sg-item{width:140px}}@media(max-width:320px){.sg-item{width:60px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><div class="sg-item">A</div><div class="sg-item">B</div></div>'}global.Fixture={mount:mount};})(window);`,
+  );
+  const result = await evaluateBrowserQualityMatrix(item.original, item.lib, {
+    viewports: [
+      { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+      { id: "mobile", label: "Mobile", width: 390, height: 844 },
+    ],
+  });
+  assert.equal(result.matrix.viewports.length, 2);
+  assert.equal(result.matrix.viewports.find((viewport) => viewport.id === "desktop")?.passed, true);
+  assert.equal(result.matrix.viewports.find((viewport) => viewport.id === "mobile")?.passed, false);
+  assert.equal(result.matrix.passed, false);
+  assert.equal(result.matrix.worstViewport, "mobile");
+  assert.ok(result.matrix.worstPixelDiff > 0.02);
 });

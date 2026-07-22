@@ -3,7 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { analyzeHtml } from "./analysis/analyzer.js";
 import { generateScenarios } from "./evaluation/scenarios.js";
-import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage } from "./evaluation/browser.js";
+import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
 import { evaluateRoundtrip } from "./evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/library.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
@@ -19,7 +19,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--out <report.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--out <report.json>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -69,7 +69,9 @@ async function main(argv: string[]): Promise<number> {
       const html = args[0]; const lib = flag(args, "--lib"); if (!html || !lib) throw new Error("quality 需要 <html> 和 --lib");
       const interactionCoverage = optionalThreshold(args, "--interaction-coverage");
       const thresholds = interactionCoverage === undefined ? undefined : { interactionCoverage };
-      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), thresholds });
+      const viewportFlag = flag(args, "--viewports");
+      const viewports = viewportFlag ? resolveQualityViewports(viewportFlag) : undefined;
+      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, thresholds });
       const out = flag(args, "--out"); const serialized = `${JSON.stringify(report, null, 2)}\n`;
       if (out) await writeFile(resolve(out), serialized, "utf8"); for (const gate of report.gates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`); console.log(`\n质量门禁: ${report.passed ? "PASS" : "FAIL"}`); return report.passed ? 0 : 1;
     }

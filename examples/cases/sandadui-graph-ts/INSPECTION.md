@@ -32,3 +32,12 @@ http://localhost:4173/examples/cases/sandadui-graph-ts/lib/examples/sandadui.htm
 4. 切换到“作品推荐”；
 5. 切换“同题材 / 同主演 / 同编剧”；
 6. 缩放浏览器到移动端尺寸，检查画布缩放、标签和详情面板。
+
+## 多视口截图
+
+- Desktop：`artifacts/reference.png`、`artifacts/generated.png`、`artifacts/diff.png`；
+- Tablet：`artifacts/tablet/`；
+- Mobile：`artifacts/mobile/`；
+- Extreme mobile：`artifacts/tiny/`。
+
+最终质量门禁使用四个视口中的最差 selector coverage、computed style 和 pixel diff。

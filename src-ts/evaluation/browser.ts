@@ -9,6 +9,9 @@ import type {
   BrowserQualityReport,
   ComputedStyleSnapshot,
   PixelDiffReport,
+  BrowserQualityMatrixReport,
+  BrowserViewportReport,
+  QualityViewport,
   SelectorCoverageReport,
   StyleComparisonReport,
 } from "../types.js";
@@ -43,6 +46,25 @@ export interface BrowserQualityOptions {
   styleThreshold?: number;
   artifactDir?: string;
   executablePath?: string;
+}
+
+export interface BrowserQualityMatrixOptions extends Omit<BrowserQualityOptions, "width" | "height"> {
+  viewports?: QualityViewport[];
+}
+
+export const DEFAULT_QUALITY_VIEWPORTS: QualityViewport[] = [
+  { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+  { id: "tablet", label: "Tablet portrait", width: 768, height: 1024 },
+  { id: "mobile", label: "Mobile", width: 390, height: 844 },
+  { id: "tiny", label: "Extreme mobile", width: 320, height: 568 },
+];
+
+export function resolveQualityViewports(value?: string): QualityViewport[] {
+  if (!value) return DEFAULT_QUALITY_VIEWPORTS.map((viewport) => ({ ...viewport }));
+  const byId = new Map(DEFAULT_QUALITY_VIEWPORTS.map((viewport) => [viewport.id, viewport]));
+  const selected = value.split(",").map((item) => item.trim()).filter(Boolean).map((id) => byId.get(id));
+  if (!selected.length || selected.some((viewport) => !viewport)) throw new Error(`未知质量视口：${value}；可选值：${DEFAULT_QUALITY_VIEWPORTS.map((viewport) => viewport.id).join(",")}`);
+  return selected.map((viewport) => ({ ...viewport as QualityViewport }));
 }
 
 function chromeCandidates(): string[] {
@@ -126,11 +148,14 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     const classUses = new Map<string, Element[]>();
     for (const element of sgElements) for (const name of element.classList) if (name.startsWith("sg-")) classUses.set(name, [...(classUses.get(name) ?? []), element]);
     const unmatchedClasses = [];
+    const exemptClasses = [];
     const inactiveClasses = [];
     for (const [className, elements] of classUses) {
       const candidates = allSelectors.filter((item) => item.includes(`.${className}`));
       if (!candidates.length) {
-        unmatchedClasses.push({ selector: `.${className}`, count: elements.length, examples: elements.slice(0, 3).map(stableSelector) });
+        const issue = { selector: `.${className}`, count: elements.length, examples: elements.slice(0, 3).map(stableSelector) };
+        if (className.startsWith("sg-is-")) exemptClasses.push(issue);
+        else unmatchedClasses.push(issue);
         continue;
       }
       const active = candidates.some((candidate) => {
@@ -147,6 +172,8 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     }).slice(0, 50);
     const sgClassUses = [...classUses.values()].reduce((total, elements) => total + elements.length, 0);
     const unmatchedUses = unmatchedClasses.reduce((total, issue) => total + issue.count, 0);
+    const exemptUses = exemptClasses.reduce((total, issue) => total + issue.count, 0);
+    const requiredSgClassUses = sgClassUses - exemptUses;
     const inactiveUses = inactiveClasses.reduce((total, issue) => total + issue.count, 0);
     const mismatchHints = unmatchedClasses.flatMap((issue) => {
       const token = issue.selector.replace(/^\.sg-/, "").split("-").at(-1) ?? "";
@@ -165,11 +192,13 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       passed: unmatchedClasses.length === 0,
       sgElements: sgElements.length,
       sgClassUses,
-      matchedSgClassUses: sgClassUses - unmatchedUses,
-      coverageRate: sgClassUses ? (sgClassUses - unmatchedUses) / sgClassUses : 1,
+      requiredSgClassUses,
+      matchedSgClassUses: requiredSgClassUses - unmatchedUses,
+      coverageRate: requiredSgClassUses ? (requiredSgClassUses - unmatchedUses) / requiredSgClassUses : 1,
       unmatchedClasses,
+      exemptClasses,
       inactiveClasses,
-      activeMatchRate: sgClassUses ? (sgClassUses - unmatchedUses - inactiveUses) / sgClassUses : 1,
+      activeMatchRate: requiredSgClassUses ? (requiredSgClassUses - unmatchedUses - inactiveUses) / requiredSgClassUses : 1,
       orphanSgSelectors,
       mismatchHints,
     };
@@ -278,15 +307,22 @@ async function comparePixels(reference: Buffer, generated: Buffer, threshold: nu
   return report;
 }
 
-export async function evaluateBrowserQuality(htmlPath: string, libDir: string, options: BrowserQualityOptions = {}): Promise<BrowserQualityReport> {
+async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}): Promise<BrowserQualityReport> {
   const width = options.width ?? 1024, height = options.height ?? 768;
   const pixelThreshold = options.pixelThreshold ?? 0.02;
   const selectorThreshold = options.selectorCoverageThreshold ?? 1;
   const styleThreshold = options.styleThreshold ?? 0.98;
-  let browser: Browser | undefined;
+  let context;
   try {
-    browser = await launchBrowser(options.executablePath);
-    const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
+    context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
+    await context.addInitScript(() => {
+      let state = 0x6d2b79f5;
+      Math.random = () => {
+        state = Math.imul(state ^ state >>> 15, state | 1);
+        state ^= state + Math.imul(state ^ state >>> 7, state | 61);
+        return ((state ^ state >>> 14) >>> 0) / 4294967296;
+      };
+    });
     const referencePage = await context.newPage(), generatedPage = await context.newPage();
     const example = await firstExample(libDir);
     const [reference, generated] = await Promise.all([
@@ -307,10 +343,98 @@ export async function evaluateBrowserQuality(htmlPath: string, libDir: string, o
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
   } finally {
+    await context?.close();
+  }
+}
+
+export async function evaluateBrowserQuality(htmlPath: string, libDir: string, options: BrowserQualityOptions = {}): Promise<BrowserQualityReport> {
+  let browser: Browser | undefined;
+  try {
+    browser = await launchBrowser(options.executablePath);
+    return await evaluateBrowserQualityInBrowser(browser, htmlPath, libDir, options);
+  } catch (error) {
+    return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
+  } finally {
     await browser?.close();
   }
 }
 
+function summarizeViewport(viewport: QualityViewport, report: BrowserQualityReport): BrowserViewportReport {
+  const runtimeErrors = (report.reference?.runtimeErrors.length ?? 0) + (report.generated?.runtimeErrors.length ?? 0);
+  return {
+    ...viewport,
+    available: report.available,
+    error: report.error,
+    runtimeErrors,
+    selectorCoverage: report.selectorCoverage && {
+      passed: report.selectorCoverage.passed,
+      coverageRate: report.selectorCoverage.coverageRate,
+      activeMatchRate: report.selectorCoverage.activeMatchRate,
+      unmatchedClasses: report.selectorCoverage.unmatchedClasses,
+      exemptClasses: report.selectorCoverage.exemptClasses,
+      mismatchHints: report.selectorCoverage.mismatchHints,
+    },
+    styles: report.styles && {
+      rate: report.styles.rate,
+      matched: report.styles.matched,
+      referenceCount: report.styles.referenceCount,
+      generatedCount: report.styles.generatedCount,
+      propertyCount: report.styles.propertyCount,
+      matchingProperties: report.styles.matchingProperties,
+      mismatches: report.styles.mismatches,
+    },
+    pixels: report.pixels,
+    score: report.score,
+    passed: report.passed === true,
+  };
+}
+
+export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
+  const viewports = options.viewports?.length ? options.viewports : DEFAULT_QUALITY_VIEWPORTS;
+  let browser: Browser | undefined;
+  try {
+    browser = await launchBrowser(options.executablePath);
+    const reports: BrowserQualityReport[] = [];
+    for (const [index, viewport] of viewports.entries()) {
+      const artifactDir = options.artifactDir
+        ? index === 0 ? options.artifactDir : resolve(options.artifactDir, viewport.id)
+        : undefined;
+      reports.push(await evaluateBrowserQualityInBrowser(browser, htmlPath, libDir, {
+        ...options,
+        width: viewport.width,
+        height: viewport.height,
+        artifactDir,
+      }));
+    }
+    const entries = viewports.map((viewport, index) => summarizeViewport(viewport, reports[index]));
+    const primary = reports[0] ?? { available: false, error: "没有可用质量视口", passed: false };
+    const score = entries.length ? Number(Math.min(...entries.map((entry) => entry.score ?? 0)).toFixed(4)) : 0;
+    const worstEntry = entries.reduce((worst, entry) => (entry.score ?? 0) < (worst.score ?? 0) ? entry : worst, entries[0]);
+    const worstSelectorEntry = entries.reduce((worst, entry) => (entry.selectorCoverage?.coverageRate ?? 0) < (worst.selectorCoverage?.coverageRate ?? 0) ? entry : worst, entries[0]);
+    const worstStyle = entries.length ? Math.min(...entries.map((entry) => entry.styles?.rate ?? 0)) : 0;
+    const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
+    const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
+    const matrix: BrowserQualityMatrixReport = {
+      viewports: entries,
+      passed: entries.length > 0 && entries.every((entry) => entry.passed),
+      score,
+      worstViewport: worstEntry?.id ?? "unknown",
+      worstSelectorCoverage: worstSelectorEntry?.selectorCoverage?.coverageRate ?? 0,
+      worstComputedStyle: worstStyle,
+      worstPixelDiff: worstPixel,
+      runtimeErrors,
+    };
+    return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
+  } catch (error) {
+    const primary: BrowserQualityReport = { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
+    return {
+      primary,
+      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0 },
+    };
+  } finally {
+    await browser?.close();
+  }
+}
 
 export async function evaluateLibrarySelectorCoverage(libDir: string, options: Pick<BrowserQualityOptions, "width" | "height" | "executablePath"> = {}): Promise<{ available: boolean; error?: string; coverage?: SelectorCoverageReport; runtimeErrors?: string[] }> {
   let browser: Browser | undefined;

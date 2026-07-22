@@ -591,7 +591,7 @@
         "id": "selector-runtime",
         "name": "10. 选择器实际命中",
         "passed": true,
-        "detail": "所有 sg-* DOM 类均有实际匹配规则（100.0%）"
+        "detail": "所有需匹配的 sg-* DOM 类均有实际规则（100.0%）"
       }
     ]
   },
@@ -9751,9 +9751,11 @@
         "passed": true,
         "sgElements": 0,
         "sgClassUses": 0,
+        "requiredSgClassUses": 0,
         "matchedSgClassUses": 0,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [],
         "activeMatchRate": 1,
         "orphanSgSelectors": [],
@@ -15536,9 +15538,11 @@
         "passed": true,
         "sgElements": 80,
         "sgClassUses": 109,
+        "requiredSgClassUses": 109,
         "matchedSgClassUses": 109,
         "coverageRate": 1,
         "unmatchedClasses": [],
+        "exemptClasses": [],
         "inactiveClasses": [
           {
             "selector": ".sg-graph-wrap",
@@ -21622,9 +21626,11 @@
       "passed": true,
       "sgElements": 80,
       "sgClassUses": 109,
+      "requiredSgClassUses": 109,
       "matchedSgClassUses": 109,
       "coverageRate": 1,
       "unmatchedClasses": [],
+      "exemptClasses": [],
       "inactiveClasses": [
         {
           "selector": ".sg-graph-wrap",
@@ -22025,10 +22031,985 @@
     "score": 0.9987,
     "passed": true
   },
+  "browserMatrix": {
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1024,
+        "height": 768,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 0.7522935779816514,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9976,
+          "matched": 82,
+          "referenceCount": 82,
+          "generatedCount": 82,
+          "propertyCount": 4674,
+          "matchingProperties": 4663,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "1024px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "768px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "min-height",
+              "reference": "100%",
+              "generated": "0px"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "512px 384px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-image",
+              "reference": "radial-gradient(circle at 12% 8%, rgba(100, 135, 250, 0.14), rgba(0, 0, 0, 0) 30%), radial-gradient(circle at 88% 6%, rgba(255, 213, 226, 0.6), rgba(0, 0, 0, 0) 26%), linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(248, 250, 255) 52%, rgb(248, 248, 248) 100%)",
+              "generated": "none"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "1024",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "768",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 1024,
+          "height": 768,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
+        },
+        "score": 0.9987,
+        "passed": true
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet portrait",
+        "width": 768,
+        "height": 1024,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 0.9908256880733946,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.9976,
+          "matched": 82,
+          "referenceCount": 82,
+          "generatedCount": 82,
+          "propertyCount": 4674,
+          "matchingProperties": 4663,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "768px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "1024px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "min-height",
+              "reference": "100%",
+              "generated": "0px"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "384px 512px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-image",
+              "reference": "radial-gradient(circle at 12% 8%, rgba(100, 135, 250, 0.14), rgba(0, 0, 0, 0) 30%), radial-gradient(circle at 88% 6%, rgba(255, 213, 226, 0.6), rgba(0, 0, 0, 0) 26%), linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(248, 250, 255) 52%, rgb(248, 248, 248) 100%)",
+              "generated": "none"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "768",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "1024",
+              "generated": "0"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 768,
+          "height": 1024,
+          "differentPixels": 0,
+          "totalPixels": 786432,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/diff.png"
+        },
+        "score": 0.9987,
+        "passed": true
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 0.9908256880733946,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.988,
+          "matched": 82,
+          "referenceCount": 82,
+          "generatedCount": 82,
+          "propertyCount": 4674,
+          "matchingProperties": 4618,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "390px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "844px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "min-height",
+              "reference": "100%",
+              "generated": "0px"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "195px 422px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-image",
+              "reference": "radial-gradient(circle at 12% 8%, rgba(100, 135, 250, 0.14), rgba(0, 0, 0, 0) 30%), radial-gradient(circle at 88% 6%, rgba(255, 213, 226, 0.6), rgba(0, 0, 0, 0) 26%), linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(248, 250, 255) 52%, rgb(248, 248, 248) 100%)",
+              "generated": "none"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "390",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "844",
+              "generated": "0"
+            },
+            {
+              "key": "#app-container ↔ #sg-app-container",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "main.stage ↔ main.sg-stage",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#view-costars ↔ #sg-view-costars",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#costarGraphWrap ↔ #sg-costarGraphWrap",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#costarGraphCanvas ↔ #sg-costarGraphCanvas",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.radar-center-ring ↔ div.sg-radar-center-ring",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.radar-center ↔ button.sg-radar-center",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#costarGraphEdges ↔ #sg-costarGraphEdges",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.multi ↔ line.sg-edge.sg-multi",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#view-identity ↔ #sg-view-identity",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#photoCard ↔ #sg-photoCard",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.gallery-arrows ↔ div.sg-gallery-arrows",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.info-card ↔ div.sg-info-card",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.tag-row ↔ div.sg-tag-row",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.facts ↔ div.sg-facts",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "div.identity-cloud ↔ div.sg-identity-cloud",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "#modal ↔ #sg-modal",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            },
+            {
+              "key": "nav.nav ↔ nav.sg-nav",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "14px"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 390,
+          "height": 844,
+          "differentPixels": 0,
+          "totalPixels": 329160,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/diff.png"
+        },
+        "score": 0.9934,
+        "passed": true
+      },
+      {
+        "id": "tiny",
+        "label": "Extreme mobile",
+        "width": 320,
+        "height": 568,
+        "available": true,
+        "runtimeErrors": 0,
+        "selectorCoverage": {
+          "passed": true,
+          "coverageRate": 1,
+          "activeMatchRate": 0.990909090909091,
+          "unmatchedClasses": [],
+          "exemptClasses": [],
+          "mismatchHints": []
+        },
+        "styles": {
+          "rate": 0.988,
+          "matched": 82,
+          "referenceCount": 82,
+          "generatedCount": 82,
+          "propertyCount": 4674,
+          "matchingProperties": 4618,
+          "mismatches": [
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "display",
+              "reference": "block",
+              "generated": "contents"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "width",
+              "reference": "320px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "height",
+              "reference": "568px",
+              "generated": "auto"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "min-height",
+              "reference": "100%",
+              "generated": "0px"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "transform-origin",
+              "reference": "160px 284px",
+              "generated": "50% 50%"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-x",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "overflow-y",
+              "reference": "hidden",
+              "generated": "visible"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "background-image",
+              "reference": "radial-gradient(circle at 12% 8%, rgba(100, 135, 250, 0.14), rgba(0, 0, 0, 0) 30%), radial-gradient(circle at 88% 6%, rgba(255, 213, 226, 0.6), rgba(0, 0, 0, 0) 26%), linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(248, 250, 255) 52%, rgb(248, 248, 248) 100%)",
+              "generated": "none"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.width",
+              "reference": "320",
+              "generated": "0"
+            },
+            {
+              "key": "body.is-scaled-canvas ↔ #mount",
+              "property": "rect.height",
+              "reference": "568",
+              "generated": "0"
+            },
+            {
+              "key": "#app-container ↔ #sg-app-container",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "main.stage ↔ main.sg-stage",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#view-costars ↔ #sg-view-costars",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#costarGraphWrap ↔ #sg-costarGraphWrap",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#costarGraphCanvas ↔ #sg-costarGraphCanvas",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.radar-center-ring ↔ div.sg-radar-center-ring",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.radar-center ↔ button.sg-radar-center",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#costarGraphEdges ↔ #sg-costarGraphEdges",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.multi ↔ line.sg-edge.sg-multi",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "line.edge.film ↔ line.sg-edge.sg-film",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "button.node ↔ button.sg-node",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.float-inner ↔ div.sg-float-inner",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.avatar ↔ div.sg-avatar",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#view-identity ↔ #sg-view-identity",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#photoCard ↔ #sg-photoCard",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.gallery-arrows ↔ div.sg-gallery-arrows",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.info-card ↔ div.sg-info-card",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.tag-row ↔ div.sg-tag-row",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.facts ↔ div.sg-facts",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.fact ↔ div.sg-fact",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "div.identity-cloud ↔ div.sg-identity-cloud",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "#modal ↔ #sg-modal",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            },
+            {
+              "key": "nav.nav ↔ nav.sg-nav",
+              "property": "font-size",
+              "reference": "16px",
+              "generated": "12px"
+            }
+          ]
+        },
+        "pixels": {
+          "width": 320,
+          "height": 568,
+          "differentPixels": 0,
+          "totalPixels": 181760,
+          "diffRate": 0,
+          "passed": true,
+          "threshold": 0.02,
+          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/diff.png"
+        },
+        "score": 0.9934,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "score": 0.9934,
+    "worstViewport": "mobile",
+    "worstSelectorCoverage": 1,
+    "worstComputedStyle": 0.988,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0
+  },
   "scores": {
     "dom": 0.998,
-    "visual": 0.9987,
-    "overall": 0.9984
+    "visual": 0.9934,
+    "overall": 0.9952
   },
   "gates": [
     {
@@ -22044,7 +23025,7 @@
     {
       "id": "overall",
       "passed": true,
-      "detail": "finalOverall=0.9984（dom=0.998，visual=0.9987），门槛=0.85"
+      "detail": "finalOverall=0.9952（dom=0.998，visual=0.9934），门槛=0.85"
     },
     {
       "id": "structure",
@@ -22057,24 +23038,29 @@
       "detail": "text=1，门槛=0.8"
     },
     {
+      "id": "viewport-matrix",
+      "passed": true,
+      "detail": "4/4 视口通过，worst=mobile"
+    },
+    {
       "id": "visual-runtime",
       "passed": true,
-      "detail": "Chrome 渲染完成，runtimeErrors=0"
+      "detail": "viewports=4，runtimeErrors=0"
     },
     {
       "id": "selector-coverage",
       "passed": true,
-      "detail": "selectorCoverage=1，门槛=1"
+      "detail": "worstSelectorCoverage=1，门槛=1"
     },
     {
       "id": "computed-style",
       "passed": true,
-      "detail": "computedStyle=0.9976，门槛=0.98"
+      "detail": "worstComputedStyle=0.988，门槛=0.98"
     },
     {
       "id": "pixel-diff",
       "passed": true,
-      "detail": "pixelDiff=0，门槛=0.02"
+      "detail": "worstPixelDiff=0，门槛=0.02"
     },
     {
       "id": "scenario-protocol",

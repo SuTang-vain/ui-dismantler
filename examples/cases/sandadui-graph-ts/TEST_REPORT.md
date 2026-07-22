@@ -41,13 +41,15 @@
 | text | 1.000 |
 | DOM overall | 0.999 |
 | selector coverage | 1.000 |
-| computed style | 0.9989 |
-| pixel diff | 0.0000% |
-| visual score | 0.9994 |
+| computed style（四视口最差） | 0.9989 |
+| pixel diff（四视口最差） | 0.0000% |
+| visual score（四视口最差） | 0.9994 |
 | final overall | 0.9992 |
 | 正式交互场景 | 5/5 PASS |
 | 可验证交互覆盖 | 6/6（100%，另有 3 个基线不可达指纹获显式 waiver） |
 | runtime errors | 0 |
+| 多视口矩阵 | 4/4 PASS |
+| 最差视口 | desktop |
 | Gold+ | PASS |
 
 ## 正式交互场景
@@ -57,6 +59,15 @@
 3. 切换到“漫漫刑途”剧情阶段；
 4. 切换到作品推荐；
 5. 切换作品推荐到“同主演”。
+
+## 多视口质量矩阵
+
+- Desktop：`1024×768`；
+- Tablet portrait：`768×1024`；
+- Mobile：`390×844`；
+- Extreme mobile：`320×568`。
+
+四个视口均执行 selector coverage、computed style、pixel diff 和 runtime error 检查；最终 visual score 采用最差视口结果，而不是平均值。桌面截图继续位于 `artifacts/`，其他视口位于 `artifacts/tablet/`、`artifacts/mobile/` 和 `artifacts/tiny/`。
 
 ## 交互覆盖说明
 
@@ -79,5 +90,5 @@
 ## 回归测试
 
 - Python：321/321 PASS
-- TypeScript：7/7 PASS
+- TypeScript：11/11 PASS
 - TypeScript build/typecheck：PASS

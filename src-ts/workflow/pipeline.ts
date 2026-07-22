@@ -2,10 +2,10 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { generateScenarios, computeCoverage, loadScenarios } from "../evaluation/scenarios.js";
-import { evaluateBrowserQuality } from "../evaluation/browser.js";
+import { evaluateBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip, evaluateScenario } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
-import type { Manifest, QualityThresholds, ScenarioDocument } from "../types.js";
+import type { BrowserQualityMatrixReport, Manifest, QualityThresholds, QualityViewport, ScenarioDocument } from "../types.js";
 
 export const DEFAULT_THRESHOLDS: QualityThresholds = {
   overall: 0.85,
@@ -33,7 +33,8 @@ export interface QualityGateReport {
   roundtrip: Awaited<ReturnType<typeof evaluateRoundtrip>>;
   scenarios?: Array<Awaited<ReturnType<typeof evaluateScenario>>>;
   coverage?: ReturnType<typeof computeCoverage>;
-  browser?: Awaited<ReturnType<typeof evaluateBrowserQuality>>;
+  browser?: Awaited<ReturnType<typeof evaluateBrowserQualityMatrix>>["primary"];
+  browserMatrix?: BrowserQualityMatrixReport;
   scores: { dom: number; visual: number | null; overall: number };
   passed: boolean;
   gates: Array<{ id: string; passed: boolean; detail: string }>;
@@ -46,6 +47,7 @@ export async function runQualityGate(options: {
   scenarioPath?: string;
   visual?: boolean;
   visualArtifactsDir?: string;
+  viewports?: QualityViewport[];
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
   const thresholds = { ...DEFAULT_THRESHOLDS, ...options.thresholds };
@@ -54,13 +56,16 @@ export async function runQualityGate(options: {
     : analyzeHtml(options.htmlPath);
   const staticValidation = validateLibrary(options.libDir);
   const roundtrip = await evaluateRoundtrip(options.htmlPath, options.libDir);
-  const browser = options.visual === false ? undefined : await evaluateBrowserQuality(options.htmlPath, options.libDir, {
+  const browserEvaluation = options.visual === false ? undefined : await evaluateBrowserQualityMatrix(options.htmlPath, options.libDir, {
     artifactDir: options.visualArtifactsDir,
     pixelThreshold: thresholds.pixelDiff,
     selectorCoverageThreshold: thresholds.selectorCoverage,
     styleThreshold: thresholds.style,
+    viewports: options.viewports,
   });
-  const validation = browser ? appendRuntimeSelectorCheck(staticValidation, browser.selectorCoverage ?? null) : staticValidation;
+  const browser = browserEvaluation?.primary;
+  const browserMatrix = browserEvaluation?.matrix;
+  const validation = browserEvaluation ? appendRuntimeSelectorCheck(staticValidation, browserEvaluation.worstSelectorCoverage ?? null) : staticValidation;
   let scenarios: QualityGateReport["scenarios"];
   let coverage: QualityGateReport["coverage"];
   let scenarioDocument: ScenarioDocument | undefined;
@@ -78,8 +83,8 @@ export async function runQualityGate(options: {
     }
     coverage = computeCoverage(manifest.interactions, scenarioDocument, verified);
   }
-  const visualScore = browser?.score ?? 0;
-  const finalOverall = browser ? Number(((roundtrip.score?.overall ?? 0) * 0.4 + visualScore * 0.6).toFixed(4)) : (roundtrip.score?.overall ?? 0);
+  const visualScore = browserMatrix?.score ?? 0;
+  const finalOverall = browserMatrix ? Number(((roundtrip.score?.overall ?? 0) * 0.4 + visualScore * 0.6).toFixed(4)) : (roundtrip.score?.overall ?? 0);
   const gates = [
     { id: "validation", passed: validation.ok, detail: `${validation.passed}/${validation.total} 校验通过` },
     { id: "render", passed: Boolean(roundtrip.reference.ok && roundtrip.generated.ok), detail: roundtrip.reference.ok && roundtrip.generated.ok ? "原页面和组件库均成功渲染" : "原页面或组件库渲染失败" },
@@ -87,11 +92,13 @@ export async function runQualityGate(options: {
     { id: "structure", passed: Boolean(roundtrip.score && roundtrip.score.scores.structure >= thresholds.structure), detail: `structure=${roundtrip.score?.scores.structure ?? 0}，门槛=${thresholds.structure}` },
     { id: "text", passed: Boolean(roundtrip.score && roundtrip.score.text.textMatchRate >= thresholds.text), detail: `text=${roundtrip.score?.text.textMatchRate ?? 0}，门槛=${thresholds.text}` },
   ];
-  if (browser) {
-    gates.push({ id: "visual-runtime", passed: browser.available && !(browser.reference?.runtimeErrors.length || browser.generated?.runtimeErrors.length), detail: browser.available ? `Chrome 渲染完成，runtimeErrors=${(browser.reference?.runtimeErrors.length ?? 0) + (browser.generated?.runtimeErrors.length ?? 0)}` : `Chrome 渲染不可用：${browser.error ?? "unknown"}` });
-    gates.push({ id: "selector-coverage", passed: Boolean(browser.selectorCoverage && browser.selectorCoverage.coverageRate >= thresholds.selectorCoverage), detail: `selectorCoverage=${browser.selectorCoverage?.coverageRate ?? 0}，门槛=${thresholds.selectorCoverage}` });
-    gates.push({ id: "computed-style", passed: Boolean(browser.styles && browser.styles.rate >= thresholds.style), detail: `computedStyle=${browser.styles?.rate ?? 0}，门槛=${thresholds.style}` });
-    gates.push({ id: "pixel-diff", passed: Boolean(browser.pixels && browser.pixels.diffRate <= thresholds.pixelDiff), detail: `pixelDiff=${browser.pixels?.diffRate ?? 1}，门槛=${thresholds.pixelDiff}` });
+  if (browserMatrix) {
+    const passedViewports = browserMatrix.viewports.filter((viewport) => viewport.passed).length;
+    gates.push({ id: "viewport-matrix", passed: browserMatrix.passed, detail: `${passedViewports}/${browserMatrix.viewports.length} 视口通过，worst=${browserMatrix.worstViewport}` });
+    gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0, detail: `viewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors}` });
+    gates.push({ id: "selector-coverage", passed: browserMatrix.worstSelectorCoverage >= thresholds.selectorCoverage, detail: `worstSelectorCoverage=${browserMatrix.worstSelectorCoverage}，门槛=${thresholds.selectorCoverage}` });
+    gates.push({ id: "computed-style", passed: browserMatrix.worstComputedStyle >= thresholds.style, detail: `worstComputedStyle=${browserMatrix.worstComputedStyle}，门槛=${thresholds.style}` });
+    gates.push({ id: "pixel-diff", passed: browserMatrix.worstPixelDiff <= thresholds.pixelDiff, detail: `worstPixelDiff=${browserMatrix.worstPixelDiff}，门槛=${thresholds.pixelDiff}` });
   }
   const interactionGateEnabled = thresholds.interactionCoverage !== null && manifest.interactions.length > 0;
   if (interactionGateEnabled) {
@@ -115,7 +122,7 @@ export async function runQualityGate(options: {
         : `未生成交互覆盖报告，门槛=${thresholds.interactionCoverage}`,
     });
   }
-  return { manifest, validation, roundtrip, scenarios, coverage, browser, scores: { dom: roundtrip.score?.overall ?? 0, visual: browser?.score ?? null, overall: finalOverall }, gates, passed: gates.every((gate) => gate.passed) };
+  return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix?.score ?? null, overall: finalOverall }, gates, passed: gates.every((gate) => gate.passed) };
 }
 
 export async function writeManifest(path: string, manifest: Manifest): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(manifest, null, 2)}\n`, "utf8"); }
