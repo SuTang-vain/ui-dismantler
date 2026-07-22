@@ -33,9 +33,13 @@
 | visual score | 0.9983 |
 | final overall | 0.999 |
 | 正式交互场景 | 4/4 PASS |
+| 可验证交互覆盖 | 6/6（100%，2 个分页指纹显式 waiver） |
 | runtime errors | 0 |
 
 ## 交互场景
+
+分页按钮在基线数据规模下处于隐藏状态，`#worksPrev` 和 `#worksNext` 以明确原因登记为 coverage waiver，不计入当前可验证交互分母。
+
 
 - 打开庆帝人物详情；
 - 关闭人物详情；

@@ -47,6 +47,7 @@
 | visual score | 0.9987 |
 | final overall | 0.9984 |
 | 正式交互场景 | 4/4 PASS |
+| 可验证交互覆盖 | 4/4（100%） |
 | runtime errors | 0 |
 
 ## 交互覆盖

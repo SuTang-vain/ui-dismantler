@@ -172,10 +172,16 @@ export interface Scenario {
   assertions: ScenarioAssertion[];
 }
 
+export interface ScenarioCoverageWaiver {
+  fingerprint: string;
+  reason: string;
+}
+
 export interface ScenarioDocument {
   schemaVersion: "1.0";
   generatedFrom?: string;
   candidatePolicy?: string;
+  coverageWaivers?: ScenarioCoverageWaiver[];
   scenarios: Scenario[];
 }
 

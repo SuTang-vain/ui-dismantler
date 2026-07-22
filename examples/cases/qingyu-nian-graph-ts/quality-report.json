@@ -16327,19 +16327,22 @@
   ],
   "coverage": {
     "totalInteractions": 8,
-    "declaredCovered": 0,
-    "verifiedCovered": 0,
-    "declaredRate": 0,
-    "verifiedRate": 0,
-    "missing": [
-      "click|button.tab-btn.active|toggle",
-      "click|button.tab-btn|toggle",
-      "click|#charClose|semantic-control",
-      "click|button.works-tab.active|semantic-control",
-      "click|button.works-tab|semantic-control",
-      "click|#worksPrev|semantic-control",
-      "click|#worksNext|semantic-control",
-      "click|event-listener|addEventListener(\"click\""
+    "eligibleInteractions": 6,
+    "waivedInteractions": 2,
+    "declaredCovered": 6,
+    "verifiedCovered": 6,
+    "declaredRate": 1,
+    "verifiedRate": 1,
+    "missing": [],
+    "waivers": [
+      {
+        "fingerprint": "click|#worksPrev|semantic-control",
+        "reason": "基线视口下每个作品分类不超过单页容量，上一页控件保持隐藏，无法形成有效状态转移。"
+      },
+      {
+        "fingerprint": "click|#worksNext|semantic-control",
+        "reason": "基线视口下每个作品分类不超过单页容量，下一页控件保持隐藏，无法形成有效状态转移。"
+      }
     ]
   },
   "browser": {
@@ -42431,22 +42434,22 @@
     "pixels": {
       "width": 1024,
       "height": 768,
-      "differentPixels": 1951,
+      "differentPixels": 1994,
       "totalPixels": 786432,
-      "diffRate": 0.002481,
+      "diffRate": 0.002536,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/tmp/qingyu-nian-gold-final-2/reference.png",
-      "generatedImagePath": "/tmp/qingyu-nian-gold-final-2/generated.png",
-      "diffImagePath": "/tmp/qingyu-nian-gold-final-2/diff.png"
+      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qingyu-nian-graph-ts/artifacts/diff.png"
     },
-    "score": 0.9983,
+    "score": 0.9982,
     "passed": true
   },
   "scores": {
     "dom": 1,
-    "visual": 0.9983,
-    "overall": 0.999
+    "visual": 0.9982,
+    "overall": 0.9989
   },
   "gates": [
     {
@@ -42462,7 +42465,7 @@
     {
       "id": "overall",
       "passed": true,
-      "detail": "finalOverall=0.999（dom=1，visual=0.9983），门槛=0.85"
+      "detail": "finalOverall=0.9989（dom=1，visual=0.9982），门槛=0.85"
     },
     {
       "id": "structure",
@@ -42492,12 +42495,22 @@
     {
       "id": "pixel-diff",
       "passed": true,
-      "detail": "pixelDiff=0.002481，门槛=0.02"
+      "detail": "pixelDiff=0.002536，门槛=0.02"
+    },
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "正式场景=4，candidate=0，waiver=2"
     },
     {
       "id": "scenarios",
       "passed": true,
       "detail": "4/4 正式场景通过"
+    },
+    {
+      "id": "coverage",
+      "passed": true,
+      "detail": "verifiedCoverage=1.000，门槛=0.8，eligible=6，waived=2"
     }
   ],
   "passed": true

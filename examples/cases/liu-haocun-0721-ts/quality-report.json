@@ -9733,16 +9733,14 @@
   ],
   "coverage": {
     "totalInteractions": 4,
-    "declaredCovered": 0,
-    "verifiedCovered": 0,
-    "declaredRate": 0,
-    "verifiedRate": 0,
-    "missing": [
-      "click|button.nav-btn.active|semantic-control",
-      "click|button.nav-btn|semantic-control",
-      "click|event-listener|addEventListener(\"click\"",
-      "keydown|event-listener|addEventListener(\"keydown\""
-    ]
+    "eligibleInteractions": 4,
+    "waivedInteractions": 0,
+    "declaredCovered": 4,
+    "verifiedCovered": 4,
+    "declaredRate": 1,
+    "verifiedRate": 1,
+    "missing": [],
+    "waivers": []
   },
   "browser": {
     "available": true,
@@ -9765,6 +9763,7 @@
         {
           "key": "body|is-scaled-canvas",
           "tag": "body",
+          "id": "",
           "classes": [
             "is-scaled-canvas"
           ],
@@ -9834,6 +9833,7 @@
         {
           "key": "div|app-frame",
           "tag": "div",
+          "id": "app-frame",
           "classes": [],
           "selector": "#app-frame",
           "rect": {
@@ -9901,6 +9901,7 @@
         {
           "key": "div|is-large-canvas.is-scaled",
           "tag": "div",
+          "id": "app-container",
           "classes": [
             "is-scaled",
             "is-large-canvas"
@@ -9971,6 +9972,7 @@
         {
           "key": "main|stage",
           "tag": "main",
+          "id": "",
           "classes": [
             "stage"
           ],
@@ -10040,6 +10042,7 @@
         {
           "key": "section|active.costar-view.view",
           "tag": "section",
+          "id": "view-costars",
           "classes": [
             "view",
             "costar-view",
@@ -10111,6 +10114,7 @@
         {
           "key": "div|graph-wrap.radar-stage",
           "tag": "div",
+          "id": "costarGraphWrap",
           "classes": [
             "radar-stage",
             "graph-wrap"
@@ -10181,6 +10185,7 @@
         {
           "key": "div|graph-legend",
           "tag": "div",
+          "id": "",
           "classes": [
             "graph-legend"
           ],
@@ -10250,6 +10255,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "legend-item"
           ],
@@ -10319,6 +10325,7 @@
         {
           "key": "i|legend-line.multi",
           "tag": "i",
+          "id": "",
           "classes": [
             "legend-line",
             "multi"
@@ -10389,6 +10396,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "legend-item"
           ],
@@ -10458,6 +10466,7 @@
         {
           "key": "i|film.legend-line",
           "tag": "i",
+          "id": "",
           "classes": [
             "legend-line",
             "film"
@@ -10528,6 +10537,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "legend-item"
           ],
@@ -10597,6 +10607,7 @@
         {
           "key": "i|legend-line.series",
           "tag": "i",
+          "id": "",
           "classes": [
             "legend-line",
             "series"
@@ -10667,6 +10678,7 @@
         {
           "key": "div|graph-canvas",
           "tag": "div",
+          "id": "costarGraphCanvas",
           "classes": [
             "graph-canvas"
           ],
@@ -10736,6 +10748,7 @@
         {
           "key": "div|radar-center-ring",
           "tag": "div",
+          "id": "",
           "classes": [
             "radar-center-ring"
           ],
@@ -10805,6 +10818,7 @@
         {
           "key": "button|radar-center",
           "tag": "button",
+          "id": "",
           "classes": [
             "radar-center"
           ],
@@ -10874,6 +10888,7 @@
         {
           "key": "svg|edges",
           "tag": "svg",
+          "id": "costarGraphEdges",
           "classes": [
             "edges"
           ],
@@ -10943,6 +10958,7 @@
         {
           "key": "line|edge.multi",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "multi"
@@ -11013,6 +11029,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "film"
@@ -11083,6 +11100,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "film"
@@ -11153,6 +11171,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "film"
@@ -11223,6 +11242,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "film"
@@ -11293,6 +11313,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "edge",
             "film"
@@ -11363,6 +11384,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -11432,6 +11454,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -11501,6 +11524,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -11570,6 +11594,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -11639,6 +11664,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -11708,6 +11734,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -11777,6 +11804,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -11846,6 +11874,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -11915,6 +11944,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -11984,6 +12014,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -12053,6 +12084,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -12122,6 +12154,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -12191,6 +12224,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -12260,6 +12294,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -12329,6 +12364,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -12398,6 +12434,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -12467,6 +12504,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -12536,6 +12574,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -12605,6 +12644,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -12674,6 +12714,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -12743,6 +12784,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "node"
           ],
@@ -12812,6 +12854,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "float-inner"
           ],
@@ -12881,6 +12924,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "avatar"
           ],
@@ -12950,6 +12994,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "name"
           ],
@@ -13019,6 +13064,7 @@
         {
           "key": "section|identity-view.view",
           "tag": "section",
+          "id": "view-identity",
           "classes": [
             "view",
             "identity-view"
@@ -13089,6 +13135,7 @@
         {
           "key": "div|photo-card",
           "tag": "div",
+          "id": "photoCard",
           "classes": [
             "photo-card"
           ],
@@ -13158,6 +13205,7 @@
         {
           "key": "div|gallery-arrows",
           "tag": "div",
+          "id": "",
           "classes": [
             "gallery-arrows"
           ],
@@ -13227,6 +13275,7 @@
         {
           "key": "button|arrow",
           "tag": "button",
+          "id": "",
           "classes": [
             "arrow"
           ],
@@ -13296,6 +13345,7 @@
         {
           "key": "button|arrow",
           "tag": "button",
+          "id": "",
           "classes": [
             "arrow"
           ],
@@ -13365,6 +13415,7 @@
         {
           "key": "div|photo-caption",
           "tag": "div",
+          "id": "",
           "classes": [
             "photo-caption"
           ],
@@ -13434,6 +13485,7 @@
         {
           "key": "div|role-tags",
           "tag": "div",
+          "id": "",
           "classes": [
             "role-tags"
           ],
@@ -13503,6 +13555,7 @@
         {
           "key": "div|info-card",
           "tag": "div",
+          "id": "",
           "classes": [
             "info-card"
           ],
@@ -13572,6 +13625,7 @@
         {
           "key": "div|tag-row",
           "tag": "div",
+          "id": "",
           "classes": [
             "tag-row"
           ],
@@ -13641,6 +13695,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "tag"
           ],
@@ -13710,6 +13765,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "tag"
           ],
@@ -13779,6 +13835,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "tag"
           ],
@@ -13848,6 +13905,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "tag"
           ],
@@ -13917,6 +13975,7 @@
         {
           "key": "div|facts",
           "tag": "div",
+          "id": "",
           "classes": [
             "facts"
           ],
@@ -13986,6 +14045,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "fact"
           ],
@@ -14055,6 +14115,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "fact"
           ],
@@ -14124,6 +14185,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "fact"
           ],
@@ -14193,6 +14255,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "fact"
           ],
@@ -14262,6 +14325,7 @@
         {
           "key": "div|identity-cloud",
           "tag": "div",
+          "id": "",
           "classes": [
             "identity-cloud"
           ],
@@ -14331,6 +14395,7 @@
         {
           "key": "span|cloud-token.size-l",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-l"
@@ -14401,6 +14466,7 @@
         {
           "key": "span|cloud-token.size-l.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-l",
@@ -14472,6 +14538,7 @@
         {
           "key": "span|cloud-token.size-l.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-l",
@@ -14543,6 +14610,7 @@
         {
           "key": "span|cloud-token.size-m",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-m"
@@ -14613,6 +14681,7 @@
         {
           "key": "span|cloud-token.size-m.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-m",
@@ -14684,6 +14753,7 @@
         {
           "key": "span|cloud-token.size-m",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-m"
@@ -14754,6 +14824,7 @@
         {
           "key": "span|cloud-token.size-m.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "size-m",
@@ -14825,6 +14896,7 @@
         {
           "key": "span|cloud-token",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token"
           ],
@@ -14894,6 +14966,7 @@
         {
           "key": "span|cloud-token.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "tone-rose"
@@ -14964,6 +15037,7 @@
         {
           "key": "span|cloud-token.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "tone-warm"
@@ -15034,6 +15108,7 @@
         {
           "key": "span|cloud-token.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token",
             "tone-warm"
@@ -15104,6 +15179,7 @@
         {
           "key": "span|cloud-token",
           "tag": "span",
+          "id": "",
           "classes": [
             "cloud-token"
           ],
@@ -15173,6 +15249,7 @@
         {
           "key": "div|modal",
           "tag": "div",
+          "id": "modal",
           "classes": [
             "modal"
           ],
@@ -15242,6 +15319,7 @@
         {
           "key": "nav|nav",
           "tag": "nav",
+          "id": "",
           "classes": [
             "nav"
           ],
@@ -15311,6 +15389,7 @@
         {
           "key": "button|active.nav-btn",
           "tag": "button",
+          "id": "",
           "classes": [
             "nav-btn",
             "active"
@@ -15381,6 +15460,7 @@
         {
           "key": "button|nav-btn",
           "tag": "button",
+          "id": "",
           "classes": [
             "nav-btn"
           ],
@@ -15772,6 +15852,7 @@
         {
           "key": "div|is-scaled-canvas",
           "tag": "div",
+          "id": "mount",
           "classes": [
             "sg-is-scaled-canvas"
           ],
@@ -15841,6 +15922,7 @@
         {
           "key": "div|sg-app-frame",
           "tag": "div",
+          "id": "sg-app-frame",
           "classes": [],
           "selector": "#sg-app-frame",
           "rect": {
@@ -15908,6 +15990,7 @@
         {
           "key": "div|is-large-canvas.is-scaled",
           "tag": "div",
+          "id": "sg-app-container",
           "classes": [
             "sg-is-scaled",
             "sg-is-large-canvas"
@@ -15978,6 +16061,7 @@
         {
           "key": "main|stage",
           "tag": "main",
+          "id": "",
           "classes": [
             "sg-stage"
           ],
@@ -16047,6 +16131,7 @@
         {
           "key": "section|active.costar-view.view",
           "tag": "section",
+          "id": "sg-view-costars",
           "classes": [
             "sg-view",
             "sg-costar-view",
@@ -16118,6 +16203,7 @@
         {
           "key": "div|graph-wrap.radar-stage",
           "tag": "div",
+          "id": "sg-costarGraphWrap",
           "classes": [
             "sg-radar-stage",
             "sg-graph-wrap"
@@ -16188,6 +16274,7 @@
         {
           "key": "div|graph-legend",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-graph-legend"
           ],
@@ -16257,6 +16344,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-legend-item"
           ],
@@ -16326,6 +16414,7 @@
         {
           "key": "i|legend-line.multi",
           "tag": "i",
+          "id": "",
           "classes": [
             "sg-legend-line",
             "sg-multi"
@@ -16396,6 +16485,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-legend-item"
           ],
@@ -16465,6 +16555,7 @@
         {
           "key": "i|film.legend-line",
           "tag": "i",
+          "id": "",
           "classes": [
             "sg-legend-line",
             "sg-film"
@@ -16535,6 +16626,7 @@
         {
           "key": "div|legend-item",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-legend-item"
           ],
@@ -16604,6 +16696,7 @@
         {
           "key": "i|legend-line.series",
           "tag": "i",
+          "id": "",
           "classes": [
             "sg-legend-line",
             "sg-series"
@@ -16674,6 +16767,7 @@
         {
           "key": "div|graph-canvas",
           "tag": "div",
+          "id": "sg-costarGraphCanvas",
           "classes": [
             "sg-graph-canvas"
           ],
@@ -16743,6 +16837,7 @@
         {
           "key": "div|radar-center-ring",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-radar-center-ring"
           ],
@@ -16812,6 +16907,7 @@
         {
           "key": "button|radar-center",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-radar-center"
           ],
@@ -16881,6 +16977,7 @@
         {
           "key": "svg|edges",
           "tag": "svg",
+          "id": "sg-costarGraphEdges",
           "classes": [
             "sg-edges"
           ],
@@ -16950,6 +17047,7 @@
         {
           "key": "line|edge.multi",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-multi"
@@ -17020,6 +17118,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-film"
@@ -17090,6 +17189,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-film"
@@ -17160,6 +17260,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-film"
@@ -17230,6 +17331,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-film"
@@ -17300,6 +17402,7 @@
         {
           "key": "line|edge.film",
           "tag": "line",
+          "id": "",
           "classes": [
             "sg-edge",
             "sg-film"
@@ -17370,6 +17473,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -17439,6 +17543,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -17508,6 +17613,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -17577,6 +17683,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -17646,6 +17753,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -17715,6 +17823,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -17784,6 +17893,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -17853,6 +17963,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -17922,6 +18033,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -17991,6 +18103,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -18060,6 +18173,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -18129,6 +18243,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -18198,6 +18313,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -18267,6 +18383,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -18336,6 +18453,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -18405,6 +18523,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -18474,6 +18593,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -18543,6 +18663,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -18612,6 +18733,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -18681,6 +18803,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -18750,6 +18873,7 @@
         {
           "key": "button|node",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-node"
           ],
@@ -18819,6 +18943,7 @@
         {
           "key": "div|float-inner",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-float-inner"
           ],
@@ -18888,6 +19013,7 @@
         {
           "key": "div|avatar",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-avatar"
           ],
@@ -18957,6 +19083,7 @@
         {
           "key": "div|name",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-name"
           ],
@@ -19026,6 +19153,7 @@
         {
           "key": "section|identity-view.view",
           "tag": "section",
+          "id": "sg-view-identity",
           "classes": [
             "sg-view",
             "sg-identity-view"
@@ -19096,6 +19224,7 @@
         {
           "key": "div|photo-card",
           "tag": "div",
+          "id": "sg-photoCard",
           "classes": [
             "sg-photo-card"
           ],
@@ -19165,6 +19294,7 @@
         {
           "key": "div|gallery-arrows",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-gallery-arrows"
           ],
@@ -19234,6 +19364,7 @@
         {
           "key": "button|arrow",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-arrow"
           ],
@@ -19303,6 +19434,7 @@
         {
           "key": "button|arrow",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-arrow"
           ],
@@ -19372,6 +19504,7 @@
         {
           "key": "div|photo-caption",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-photo-caption"
           ],
@@ -19441,6 +19574,7 @@
         {
           "key": "div|role-tags",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-role-tags"
           ],
@@ -19510,6 +19644,7 @@
         {
           "key": "div|info-card",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-info-card"
           ],
@@ -19579,6 +19714,7 @@
         {
           "key": "div|tag-row",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-tag-row"
           ],
@@ -19648,6 +19784,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-tag"
           ],
@@ -19717,6 +19854,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-tag"
           ],
@@ -19786,6 +19924,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-tag"
           ],
@@ -19855,6 +19994,7 @@
         {
           "key": "div|tag",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-tag"
           ],
@@ -19924,6 +20064,7 @@
         {
           "key": "div|facts",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-facts"
           ],
@@ -19993,6 +20134,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-fact"
           ],
@@ -20062,6 +20204,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-fact"
           ],
@@ -20131,6 +20274,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-fact"
           ],
@@ -20200,6 +20344,7 @@
         {
           "key": "div|fact",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-fact"
           ],
@@ -20269,6 +20414,7 @@
         {
           "key": "div|identity-cloud",
           "tag": "div",
+          "id": "",
           "classes": [
             "sg-identity-cloud"
           ],
@@ -20338,6 +20484,7 @@
         {
           "key": "span|cloud-token.size-l",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-l"
@@ -20408,6 +20555,7 @@
         {
           "key": "span|cloud-token.size-l.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-l",
@@ -20479,6 +20627,7 @@
         {
           "key": "span|cloud-token.size-l.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-l",
@@ -20550,6 +20699,7 @@
         {
           "key": "span|cloud-token.size-m",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-m"
@@ -20620,6 +20770,7 @@
         {
           "key": "span|cloud-token.size-m.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-m",
@@ -20691,6 +20842,7 @@
         {
           "key": "span|cloud-token.size-m",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-m"
@@ -20761,6 +20913,7 @@
         {
           "key": "span|cloud-token.size-m.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-size-m",
@@ -20832,6 +20985,7 @@
         {
           "key": "span|cloud-token",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token"
           ],
@@ -20901,6 +21055,7 @@
         {
           "key": "span|cloud-token.tone-rose",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-tone-rose"
@@ -20971,6 +21126,7 @@
         {
           "key": "span|cloud-token.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-tone-warm"
@@ -21041,6 +21197,7 @@
         {
           "key": "span|cloud-token.tone-warm",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token",
             "sg-tone-warm"
@@ -21111,6 +21268,7 @@
         {
           "key": "span|cloud-token",
           "tag": "span",
+          "id": "",
           "classes": [
             "sg-cloud-token"
           ],
@@ -21180,6 +21338,7 @@
         {
           "key": "div|modal",
           "tag": "div",
+          "id": "sg-modal",
           "classes": [
             "sg-modal"
           ],
@@ -21249,6 +21408,7 @@
         {
           "key": "nav|nav",
           "tag": "nav",
+          "id": "",
           "classes": [
             "sg-nav"
           ],
@@ -21318,6 +21478,7 @@
         {
           "key": "button|active.nav-btn",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-nav-btn",
             "sg-active"
@@ -21388,6 +21549,7 @@
         {
           "key": "button|nav-btn",
           "tag": "button",
+          "id": "",
           "classes": [
             "sg-nav-btn"
           ],
@@ -21856,9 +22018,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/tmp/liu-haocun-0721-final/reference.png",
-      "generatedImagePath": "/tmp/liu-haocun-0721-final/generated.png",
-      "diffImagePath": "/tmp/liu-haocun-0721-final/diff.png"
+      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
     },
     "score": 0.9987,
     "passed": true
@@ -21915,9 +22077,19 @@
       "detail": "pixelDiff=0，门槛=0.02"
     },
     {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "正式场景=4，candidate=0，waiver=0"
+    },
+    {
       "id": "scenarios",
       "passed": true,
       "detail": "4/4 正式场景通过"
+    },
+    {
+      "id": "coverage",
+      "passed": true,
+      "detail": "verifiedCoverage=1.000，门槛=0.8，eligible=4，waived=0"
     }
   ],
   "passed": true

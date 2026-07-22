@@ -12,7 +12,7 @@ export const DEFAULT_THRESHOLDS: QualityThresholds = {
   structure: 0.7,
   text: 0.8,
   scenarioState: 0.85,
-  interactionCoverage: null,
+  interactionCoverage: 0.8,
   selectorCoverage: 1,
   style: 0.98,
   pixelDiff: 0.02,
@@ -63,16 +63,20 @@ export async function runQualityGate(options: {
   const validation = browser ? appendRuntimeSelectorCheck(staticValidation, browser.selectorCoverage ?? null) : staticValidation;
   let scenarios: QualityGateReport["scenarios"];
   let coverage: QualityGateReport["coverage"];
+  let scenarioDocument: ScenarioDocument | undefined;
+  let formalScenarioCount = 0;
   if (options.scenarioPath) {
-    const document = loadScenarios(JSON.parse(await readFile(resolve(options.scenarioPath), "utf8")));
+    scenarioDocument = loadScenarios(JSON.parse(await readFile(resolve(options.scenarioPath), "utf8")));
+    const formalScenarios = scenarioDocument.scenarios.filter((item) => !item.candidate);
+    formalScenarioCount = formalScenarios.length;
     scenarios = [];
     const verified = new Set<string>();
-    for (const scenario of document.scenarios.filter((item) => !item.candidate)) {
+    for (const scenario of formalScenarios) {
       const result = await evaluateScenario(options.htmlPath, options.libDir, options.scenarioPath, scenario, { threshold: thresholds.scenarioState });
       scenarios.push(result);
       if (result.passed) for (const fingerprint of scenario.covers ?? []) verified.add(fingerprint);
     }
-    coverage = computeCoverage(manifest.interactions, document, verified);
+    coverage = computeCoverage(manifest.interactions, scenarioDocument, verified);
   }
   const visualScore = browser?.score ?? 0;
   const finalOverall = browser ? Number(((roundtrip.score?.overall ?? 0) * 0.4 + visualScore * 0.6).toFixed(4)) : (roundtrip.score?.overall ?? 0);
@@ -89,9 +93,27 @@ export async function runQualityGate(options: {
     gates.push({ id: "computed-style", passed: Boolean(browser.styles && browser.styles.rate >= thresholds.style), detail: `computedStyle=${browser.styles?.rate ?? 0}，门槛=${thresholds.style}` });
     gates.push({ id: "pixel-diff", passed: Boolean(browser.pixels && browser.pixels.diffRate <= thresholds.pixelDiff), detail: `pixelDiff=${browser.pixels?.diffRate ?? 1}，门槛=${thresholds.pixelDiff}` });
   }
+  const interactionGateEnabled = thresholds.interactionCoverage !== null && manifest.interactions.length > 0;
+  if (interactionGateEnabled) {
+    gates.push({
+      id: "scenario-protocol",
+      passed: Boolean(scenarioDocument && formalScenarioCount > 0),
+      detail: scenarioDocument
+        ? `正式场景=${formalScenarioCount}，candidate=${scenarioDocument.scenarios.length - formalScenarioCount}，waiver=${scenarioDocument.coverageWaivers?.length ?? 0}`
+        : `识别到 ${manifest.interactions.length} 个交互，但未提供 scenarios.json`,
+    });
+  }
   if (scenarios) {
-    gates.push({ id: "scenarios", passed: scenarios.every((item) => item.passed), detail: `${scenarios.filter((item) => item.passed).length}/${scenarios.length} 正式场景通过` });
-    if (thresholds.interactionCoverage !== null && coverage) gates.push({ id: "coverage", passed: coverage.verifiedRate >= thresholds.interactionCoverage, detail: `verifiedCoverage=${coverage.verifiedRate.toFixed(3)}，门槛=${thresholds.interactionCoverage}` });
+    gates.push({ id: "scenarios", passed: scenarios.length > 0 && scenarios.every((item) => item.passed), detail: `${scenarios.filter((item) => item.passed).length}/${scenarios.length} 正式场景通过` });
+  }
+  if (interactionGateEnabled) {
+    gates.push({
+      id: "coverage",
+      passed: Boolean(coverage && coverage.verifiedRate >= (thresholds.interactionCoverage as number)),
+      detail: coverage
+        ? `verifiedCoverage=${coverage.verifiedRate.toFixed(3)}，门槛=${thresholds.interactionCoverage}，eligible=${coverage.eligibleInteractions}，waived=${coverage.waivedInteractions}`
+        : `未生成交互覆盖报告，门槛=${thresholds.interactionCoverage}`,
+    });
   }
   return { manifest, validation, roundtrip, scenarios, coverage, browser, scores: { dom: roundtrip.score?.overall ?? 0, visual: browser?.score ?? null, overall: finalOverall }, gates, passed: gates.every((gate) => gate.passed) };
 }

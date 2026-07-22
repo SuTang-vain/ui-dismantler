@@ -33,6 +33,9 @@
           },
           "textContains": "庆帝"
         }
+      ],
+      "covers": [
+        "click|event-listener|addEventListener(\"click\""
       ]
     },
     {
@@ -67,6 +70,9 @@
             }
           ]
         }
+      ],
+      "covers": [
+        "click|#charClose|semantic-control"
       ]
     },
     {
@@ -90,6 +96,10 @@
           "visible": true,
           "textContains": "庆余年 第一季"
         }
+      ],
+      "covers": [
+        "click|button.tab-btn.active|toggle",
+        "click|button.tab-btn|toggle"
       ]
     },
     {
@@ -120,7 +130,21 @@
           "visible": true,
           "textContains": "琅琊榜"
         }
+      ],
+      "covers": [
+        "click|button.works-tab.active|semantic-control",
+        "click|button.works-tab|semantic-control"
       ]
+    }
+  ],
+  "coverageWaivers": [
+    {
+      "fingerprint": "click|#worksPrev|semantic-control",
+      "reason": "基线视口下每个作品分类不超过单页容量，上一页控件保持隐藏，无法形成有效状态转移。"
+    },
+    {
+      "fingerprint": "click|#worksNext|semantic-control",
+      "reason": "基线视口下每个作品分类不超过单页容量，下一页控件保持隐藏，无法形成有效状态转移。"
     }
   ]
 }

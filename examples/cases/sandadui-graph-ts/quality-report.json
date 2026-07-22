@@ -18935,14 +18935,26 @@
   ],
   "coverage": {
     "totalInteractions": 9,
+    "eligibleInteractions": 6,
+    "waivedInteractions": 3,
     "declaredCovered": 6,
     "verifiedCovered": 6,
-    "declaredRate": 0.6666666666666666,
-    "verifiedRate": 0.6666666666666666,
-    "missing": [
-      "click|#storyScrollHint|semantic-control",
-      "click|#worksPrev|semantic-control",
-      "click|#worksNext|semantic-control"
+    "declaredRate": 1,
+    "verifiedRate": 1,
+    "missing": [],
+    "waivers": [
+      {
+        "fingerprint": "click|#storyScrollHint|semantic-control",
+        "reason": "基线视口下剧情导航未产生横向溢出，滚动提示保持隐藏，无法形成有效状态转移。"
+      },
+      {
+        "fingerprint": "click|#worksPrev|semantic-control",
+        "reason": "基线视口下每个作品分类不超过单页容量，上一页控件保持隐藏，无法形成有效状态转移。"
+      },
+      {
+        "fingerprint": "click|#worksNext|semantic-control",
+        "reason": "基线视口下每个作品分类不超过单页容量，下一页控件保持隐藏，无法形成有效状态转移。"
+      }
     ]
   },
   "browser": {
@@ -42588,9 +42600,19 @@
       "detail": "pixelDiff=0，门槛=0.02"
     },
     {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "正式场景=5，candidate=3，waiver=3"
+    },
+    {
       "id": "scenarios",
       "passed": true,
       "detail": "5/5 正式场景通过"
+    },
+    {
+      "id": "coverage",
+      "passed": true,
+      "detail": "verifiedCoverage=1.000，门槛=0.8，eligible=6，waived=3"
     }
   ],
   "passed": true

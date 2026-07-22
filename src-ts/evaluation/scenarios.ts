@@ -41,6 +41,16 @@ export function loadScenarios(document: unknown): ScenarioDocument {
   if (value.schemaVersion !== "1.0" || !Array.isArray(value.scenarios) || value.scenarios.length === 0) throw new TypeError("场景文件必须是 schemaVersion=1.0 且包含非空 scenarios 数组");
   const seen = new Set<string>();
   const actions = new Set(["click", "input", "key", "wait"]);
+  if (value.coverageWaivers !== undefined) {
+    if (!Array.isArray(value.coverageWaivers)) throw new TypeError("coverageWaivers 必须是数组");
+    const waiverFingerprints = new Set<string>();
+    for (const [index, waiver] of value.coverageWaivers.entries()) {
+      if (!waiver || typeof waiver.fingerprint !== "string" || !waiver.fingerprint.trim()) throw new TypeError(`coverageWaivers[${index}].fingerprint 必须是非空字符串`);
+      if (typeof waiver.reason !== "string" || !waiver.reason.trim()) throw new TypeError(`coverageWaivers[${index}].reason 必须是非空字符串`);
+      if (waiverFingerprints.has(waiver.fingerprint)) throw new TypeError(`coverageWaivers fingerprint 重复: ${waiver.fingerprint}`);
+      waiverFingerprints.add(waiver.fingerprint);
+    }
+  }
   for (const scenario of value.scenarios) {
     if (!scenario || typeof scenario.id !== "string" || !scenario.id.trim()) throw new TypeError("每个 scenario 必须有非空 id");
     if (seen.has(scenario.id)) throw new TypeError(`场景 id 重复: ${scenario.id}`);
@@ -70,8 +80,21 @@ export function loadScenarios(document: unknown): ScenarioDocument {
 
 export function computeCoverage(interactions: Interaction[], scenarios: ScenarioDocument, verifiedFingerprints = new Set<string>()) {
   const declared = new Set(interactions.map(interactionFingerprint));
+  const waiverReasons = new Map((scenarios.coverageWaivers ?? []).map((waiver) => [waiver.fingerprint, waiver.reason]));
+  const waived = [...declared].filter((item) => waiverReasons.has(item));
+  const eligible = [...declared].filter((item) => !waiverReasons.has(item));
   const scenarioFingerprints = new Set(scenarios.scenarios.filter((scenario) => !scenario.candidate).flatMap((scenario) => scenario.covers ?? []));
-  const declaredCovered = [...declared].filter((item) => scenarioFingerprints.has(item));
+  const declaredCovered = eligible.filter((item) => scenarioFingerprints.has(item));
   const verifiedCovered = declaredCovered.filter((item) => verifiedFingerprints.has(item));
-  return { totalInteractions: declared.size, declaredCovered: declaredCovered.length, verifiedCovered: verifiedCovered.length, declaredRate: declared.size ? declaredCovered.length / declared.size : 1, verifiedRate: declared.size ? verifiedCovered.length / declared.size : 1, missing: [...declared].filter((item) => !scenarioFingerprints.has(item)) };
+  return {
+    totalInteractions: declared.size,
+    eligibleInteractions: eligible.length,
+    waivedInteractions: waived.length,
+    declaredCovered: declaredCovered.length,
+    verifiedCovered: verifiedCovered.length,
+    declaredRate: eligible.length ? declaredCovered.length / eligible.length : 1,
+    verifiedRate: eligible.length ? verifiedCovered.length / eligible.length : 1,
+    missing: eligible.filter((item) => !scenarioFingerprints.has(item)),
+    waivers: waived.map((fingerprint) => ({ fingerprint, reason: waiverReasons.get(fingerprint) as string })),
+  };
 }

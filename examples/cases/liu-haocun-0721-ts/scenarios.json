@@ -22,6 +22,10 @@
           "visible": true,
           "textContains": "清透镜头感"
         }
+      ],
+      "covers": [
+        "click|button.nav-btn.active|semantic-control",
+        "click|button.nav-btn|semantic-control"
       ]
     },
     {
@@ -45,6 +49,9 @@
           "visible": true,
           "textContains": "宋威龙"
         }
+      ],
+      "covers": [
+        "click|event-listener|addEventListener(\"click\""
       ]
     },
     {
@@ -71,6 +78,9 @@
           },
           "visible": false
         }
+      ],
+      "covers": [
+        "keydown|event-listener|addEventListener(\"keydown\""
       ]
     },
     {
@@ -101,6 +111,9 @@
           "visible": true,
           "textContains": "活动红毯"
         }
+      ],
+      "covers": [
+        "click|event-listener|addEventListener(\"click\""
       ]
     }
   ]
