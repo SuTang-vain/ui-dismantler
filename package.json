@@ -12,6 +12,28 @@
   "scripts": {
     "test": "python3 scripts/tests/run.py",
     "verify": "python3 src/skill/scripts/validate_lib.py benchmark/lib && python3 scripts/roundtrip.py benchmark/original.html --lib benchmark/lib",
-    "verify:all": "python3 scripts/verify_all.py --lib-dir benchmark/lib"
+    "verify:all": "python3 scripts/verify_all.py --lib-dir benchmark/lib",
+    "build:ts": "tsc",
+    "typecheck:ts": "tsc --noEmit",
+    "test:ts": "npm run build:ts && node --test \"dist-ts/tests/*.test.js\"",
+    "test:all": "npm test && npm run test:ts",
+    "analyze:ts": "npm run build:ts && node dist-ts/cli.js analyze",
+    "validate:ts": "npm run build:ts && node dist-ts/cli.js validate",
+    "roundtrip:ts": "npm run build:ts && node dist-ts/cli.js roundtrip",
+    "quality:ts": "npm run build:ts && node dist-ts/cli.js quality",
+    "visual:ts": "npm run build:ts && node dist-ts/cli.js roundtrip",
+    "transpile:self-contained": "node scripts/transpile_self_contained_case.mjs"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^26.1.1",
+    "@types/pngjs": "^6.0.5",
+    "acorn": "^8.17.0",
+    "acorn-walk": "^8.3.5",
+    "css-tree": "^3.2.1",
+    "pixelmatch": "^7.2.0",
+    "playwright-core": "^1.61.1",
+    "pngjs": "^7.0.0",
+    "typescript": "^7.0.2"
   }
 }

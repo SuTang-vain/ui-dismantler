@@ -20,3 +20,5 @@ examples/**/*.zip
 
 # node 依赖（node_modules 不入库；package-lock.json 入库保证可复现性）
 node_modules/
+
+/dist-ts/

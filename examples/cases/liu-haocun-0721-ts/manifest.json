@@ -1,0 +1,527 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/original.html",
+    "title": "刘浩存光影星途互动图鉴",
+    "templateId": null,
+    "vertical": "entertainment",
+    "profile": "entertainment",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".nav-btn.active",
+          ".photo-card",
+          ".tag",
+          ".fact::before",
+          ".fact span",
+          ".mini-note"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#4268e8",
+        "original": "--primary-dark",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".tag",
+          ".fact span",
+          ".mini-note",
+          ".radar-node.active",
+          ".node.active",
+          ".category-btn"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "primary-soft",
+        "value": "#e8eeff",
+        "original": "--primary-soft",
+        "usage": [
+          ":root",
+          ".photo-card",
+          ".tag",
+          ".poster",
+          ".modal-poster"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg",
+        "value": "#f8f8f8",
+        "original": "--bg",
+        "usage": [
+          ":root",
+          "html,\n      body",
+          ".fact"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "card",
+        "value": "#ffffff",
+        "original": "--card",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text",
+        "value": "#1e1f24",
+        "original": "--text",
+        "usage": [
+          ":root",
+          "html,\n      body",
+          ".fact strong",
+          ".graph-legend",
+          ".radar-node",
+          ".node",
+          ".modal-work b"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "sub",
+        "value": "#848691",
+        "original": "--sub",
+        "usage": [
+          ":root",
+          ".artist-desc",
+          ".fact small",
+          ".work-role,\n      .work-partners",
+          ".modal-info p",
+          ".modal-work small"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "weak",
+        "value": "#b7b9c1",
+        "original": "--weak",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "line",
+        "value": "rgba(100, 135, 250, 0.16)",
+        "original": "--line",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".photo-card,\n      .info-card,\n      .logic-card,\n      .actor-card,\n      .work-card,\n      .category-btn,\n      .modal-card",
+          ".radar-stage",
+          ".graph-legend",
+          ".node-name",
+          ".node .name"
+        ],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow",
+        "value": "0 10px 26px rgba(100, 135, 250, 0.16)",
+        "original": "--shadow",
+        "usage": [
+          ":root",
+          ".photo-card,\n      .info-card,\n      .logic-card,\n      .actor-card,\n      .work-card,\n      .category-btn,\n      .modal-card",
+          ".radar-stage"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-213-226-0-72",
+        "value": "rgba(255, 213, 226, 0.72)",
+        "original": "rgba(255, 213, 226, 0.72)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f8faff",
+        "value": "#f8faff",
+        "original": "#f8faff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-14",
+        "value": "rgba(100, 135, 250, 0.14)",
+        "original": "rgba(100, 135, 250, 0.14)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-213-226-0-6",
+        "value": "rgba(255, 213, 226, 0.6)",
+        "original": "rgba(255, 213, 226, 0.6)",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "rgba-255-255-255-0-82",
+        "value": "rgba(255, 255, 255, 0.82)",
+        "original": "rgba(255, 255, 255, 0.82)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-28",
+        "value": "rgba(100, 135, 250, 0.28)",
+        "original": "rgba(100, 135, 250, 0.28)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-96",
+        "value": "rgba(255, 255, 255, 0.96)",
+        "original": "rgba(255, 255, 255, 0.96)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-84",
+        "value": "rgba(30, 31, 36, 0.84)",
+        "original": "rgba(30, 31, 36, 0.84)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-48",
+        "value": "rgba(30, 31, 36, 0.48)",
+        "original": "rgba(30, 31, 36, 0.48)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-2",
+        "value": "rgba(255, 255, 255, 0.2)",
+        "original": "rgba(255, 255, 255, 0.2)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-42",
+        "value": "rgba(30, 31, 36, 0.42)",
+        "original": "rgba(30, 31, 36, 0.42)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-04",
+        "value": "rgba(30, 31, 36, 0.04)",
+        "original": "rgba(30, 31, 36, 0.04)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-1",
+        "value": "rgba(100, 135, 250, 0.1)",
+        "original": "rgba(100, 135, 250, 0.1)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-18",
+        "value": "rgba(100, 135, 250, 0.18)",
+        "original": "rgba(100, 135, 250, 0.18)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-232-238-255-0-72",
+        "value": "rgba(232, 238, 255, 0.72)",
+        "original": "rgba(232, 238, 255, 0.72)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-84",
+        "value": "rgba(255, 255, 255, 0.84)",
+        "original": "rgba(255, 255, 255, 0.84)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "d94b4b",
+        "value": "#d94b4b",
+        "original": "#d94b4b",
+        "usage": [],
+        "roles": [
+          "background",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "4aa06e",
+        "value": "#4aa06e",
+        "original": "#4aa06e",
+        "usage": [],
+        "roles": [
+          "background",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-92",
+        "value": "rgba(255, 255, 255, 0.92)",
+        "original": "rgba(255, 255, 255, 0.92)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-3",
+        "value": "rgba(100, 135, 250, 0.3)",
+        "original": "rgba(100, 135, 250, 0.3)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 12% 12%,\n            rgba(100, 135, 250, 0.16),\n            transparent 26%\n          ),\n          radial-gradient(\n            circle at 88% 10%,\n            rgba(255, 213, 226, 0.72),\n            transparent 24%\n          ),\n          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 12% 8%,\n            rgba(100, 135, 250, 0.14),\n            transparent 30%\n          ),\n          radial-gradient(\n            circle at 88% 6%,\n            rgba(255, 213, 226, 0.6),\n            transparent 26%\n          ),\n          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          90deg,\n          rgba(30, 31, 36, 0.84),\n          rgba(30, 31, 36, 0.48)\n        )"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 50% 50%,\n            rgba(100, 135, 250, 0.18),\n            transparent 26%\n          ),\n          linear-gradient(\n            135deg,\n            rgba(255, 255, 255, 0.82),\n            rgba(232, 238, 255, 0.72)\n          )"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [],
+    "views": [
+      {
+        "id": "graph-1",
+        "type": "graph",
+        "structuralType": "collection",
+        "semanticType": "graph",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "svg/node"
+          }
+        ],
+        "selector": "main.stage",
+        "details": {
+          "text": "多次合作 电影合作 剧集合作",
+          "className": "stage"
+        }
+      }
+    ],
+    "modals": [
+      {
+        "id": "modal",
+        "selector": "#modal",
+        "role": null,
+        "closeSelector": null
+      }
+    ],
+    "landmarks": [
+      {
+        "tag": "main",
+        "role": null,
+        "selector": "main.stage"
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "nav.nav"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "galleries",
+        "kind": "array",
+        "fields": {
+          "src": "string",
+          "title": "string",
+          "work": "string",
+          "role": "string",
+          "traits": "array"
+        },
+        "count": 18
+      },
+      {
+        "name": "facts",
+        "kind": "array",
+        "fields": {},
+        "count": 9
+      },
+      {
+        "name": "tags",
+        "kind": "array",
+        "fields": {},
+        "count": 4
+      },
+      {
+        "name": "works",
+        "kind": "array",
+        "fields": {
+          "id": "string",
+          "category": "string",
+          "year": "number",
+          "title": "string",
+          "role": "string",
+          "status": "string",
+          "partners": "string",
+          "poster": "string",
+          "release": "string",
+          "stat": "string",
+          "desc": "string"
+        },
+        "count": 8
+      },
+      {
+        "name": "costars",
+        "kind": "array",
+        "fields": {
+          "name": "string",
+          "weight": "string",
+          "reason": "string",
+          "image": "string",
+          "workIds": "array"
+        },
+        "count": 7
+      },
+      {
+        "name": "slots",
+        "kind": "array",
+        "fields": {},
+        "count": 7
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "button.nav-btn.active",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.nav-btn.active|semantic-control"
+    },
+    {
+      "trigger": "button.nav-btn",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.nav-btn|semantic-control"
+    },
+    {
+      "trigger": "event-listener",
+      "event": "click",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "click|event-listener|addEventListener(\"click\""
+    },
+    {
+      "trigger": "event-listener",
+      "event": "keydown",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "keydown|event-listener|addEventListener(\"keydown\""
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(prefers-reduced-motion: reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 2,
+    "unlabeledButtons": 0,
+    "images": 0,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": []
+}

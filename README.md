@@ -142,3 +142,15 @@ agent 拆解工作流详见 [src/skill/SKILL.md](src/skill/SKILL.md)，规划详
 
 - Python 3.8+（beautifulsoup4）
 - Node.js（用于 `node --check` 和 roundtrip 的 jsdom 渲染）
+
+## TypeScript 试运行框架
+
+仓库现在提供独立的 TypeScript 实现，保留原有“Agent 理解与创作 + 确定性工具校验 + 往返质量裁判”的核心架构。详见 [`docs/TYPESCRIPT_MIGRATION.md`](docs/TYPESCRIPT_MIGRATION.md)。
+
+```bash
+npm run test:ts
+node dist-ts/cli.js quality <original.html> --lib <component-lib-dir> \
+  --visual-artifacts /tmp/ui-dismantler-visual
+```
+
+TypeScript `quality` 默认启用 Gold+：真实 Chrome 选择器命中、计算样式和截图像素差异都会成为独立失败门禁。

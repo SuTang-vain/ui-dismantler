@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "switch-identity",
+      "label": "切换到艺人身份视图",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='identity']",
+            "library": ".sg-nav-btn[data-view='identity']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#view-identity",
+            "library": "#sg-view-identity"
+          },
+          "visible": true,
+          "textContains": "清透镜头感"
+        }
+      ]
+    },
+    {
+      "id": "open-actor-modal",
+      "label": "打开宋威龙合作详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-actor='0']",
+            "library": ".sg-node[data-actor='0']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": true,
+          "textContains": "宋威龙"
+        }
+      ]
+    },
+    {
+      "id": "close-modal-with-escape",
+      "label": "ESC 关闭演员详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-actor='0']",
+            "library": ".sg-node[data-actor='0']"
+          }
+        },
+        {
+          "action": "key",
+          "key": "Escape"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "gallery-next",
+      "label": "身份画廊切换到下一张",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='identity']",
+            "library": ".sg-nav-btn[data-view='identity']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#photoCard .arrow[data-dir='1']",
+            "library": "#sg-photoCard .sg-arrow[data-dir='1']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#photoCard .photo-caption",
+            "library": "#sg-photoCard .sg-photo-caption"
+          },
+          "visible": true,
+          "textContains": "活动红毯"
+        }
+      ]
+    }
+  ]
+}

@@ -106,13 +106,71 @@ In the user-specified directory (or `/tmp/<lib-name>/`), create the complete com
     └── template.html          Blank reuse template (with sample data, must produce)
 ```
 
-#### 3.1 `src/<lib-name>.css` - Parametric Styles
+#### 3.0 Class Name Contract (CSS-JS single source of truth)
 
+Before writing CSS (3.1) and JS (3.2), first enumerate all `sg-*` class names the component library will use, as a shared contract both sides must follow. This prevents CSS/JS class name drift (the #1 quality regression source).
+
+- Write the list as a comment block at the top of `src/<lib-name>.js`:
+  ```js
+  /* Class name contract (CSS-JS shared):
+   * sg-frame, sg-tab-bar, sg-tab, sg-tab-more, sg-view-stack, sg-view,
+   * sg-member-grid, sg-member, sg-avatar, sg-detail-panel, ...
+   */
+  ```
+- **CSS (3.1)**: every `.sg-*` selector must come from this list
+- **JS (3.2)**: every `el(tag, cls)` call must use class names from this list
+- If you add/rename a class during revision, update the contract comment first, then sync both CSS and JS
+- `validate_lib.py` item 9 checks this: JS-referenced `sg-*` classes must have CSS definitions (no orphan classes that produce unstyled elements)
+
+#### 3.0.5 Component Slice Plan (manifest-driven CSS segmentation)
+
+Before writing the CSS file (3.1), generate a **component slice list** from the Step 2 manifest. This converts "write 1300+ lines in one shot" into "write 10-14 small slices (100-300 lines each) and concatenate" -- faster, less drift, parallelizable.
+
+**Decision rules** (read manifest fields -> determine which slices to produce):
+
+| Slice | Manifest signal | Description |
+|---|---|---|
+| `01-tokens` | `theme.tokens[]` + `theme.gradients[]` | `:root,.sg-frame { --sg-* }` variable block |
+| `02-frame` | `meta.canvas` | `.sg-frame` base + reset |
+| `03-tab-bar` | `structure.tabs[]` non-empty | `.sg-tab-bar/.sg-tab` (include `.sg-tab-more` if any tab has `more=true`) |
+| `04-view-stack` | `structure.views[]` non-empty | `.sg-view-stack/.sg-view` container + `.active` toggle |
+| `05-section-head` | any view with title/sub | `.sg-section-head` shared header atom |
+| `06-carousel-controls` | any view has `paginated`/`hasDots`/`dualArrowStrategy` | `.sg-arrow/.sg-dots/.sg-dot` shared controls |
+| `07-member-grid` | `views[].type == member-grid` | member grid + avatar + member-info |
+| `08-detail-panel` | `views[].type == detail-panel` or paired with member-grid | `.sg-detail-panel` + relation rows |
+| `09-timeline` | `views[].type == timeline` | scroll-snap track + t-item + is-expanded |
+| `10-works-carousel-3d` | `views[].type == carousel-3d` | perspective + 5-tier 3D positions |
+| `11-work-story-panel` | `views[].hasStoryPanel == true` | story overlay panel + keyframes |
+| `12-modal-base` | `structure.modals[]` non-empty | `.sg-modal-overlay/.sg-modal-card` base |
+| `13-member-detail-modal` | `modals[].trigger == member-click` | member detail modal layout |
+| `14-a11y` | optional | `prefers-reduced-motion` if animations exist |
+
+Write the slice list as a comment block in `src/<lib-name>.css` header:
+```css
+/* Component slice plan (from manifest):
+ * 01-tokens, 02-frame, 03-tab-bar, 04-view-stack, 05-section-head,
+ * 06-carousel-controls, 07-member-grid, 08-detail-panel, 09-timeline,
+ * 10-works-carousel-3d, 11-work-story-panel, 12-modal-base, 13-member-detail-modal
+ */
+```
+
+**Skip slices whose manifest signal is absent** (e.g., no `modals[]` -> skip 12/13; no `hasStoryPanel` -> skip 11). This ensures no dead CSS.
+
+#### 3.1 `src/<lib-name>.css` - Parametric Styles (slice-by-slice generation)
+
+Generate the CSS **slice by slice** per the 3.0.5 plan, not in one shot:
+
+1. Write each slice as a `/* ==== N. <name> ==== */` delimited block
+2. **Each slice is self-contained**: includes its own `@media (max-width:500px)` and `@media (max-width:320px)` sub-blocks for its selectors (no centralized responsive section)
+3. Concatenate slices in dependency order: `01-tokens` -> `02-frame` -> containers (`03-06`) -> view components (`07-11`) -> modals (`12-13`) -> `14-a11y`
+4. The final file is a single `src/<lib-name>.css` (still single-file, zero-dep compatible)
+
+**Slice constraints**:
 - All class names use `sg-` prefix, kebab-case (`.sg-frame` `.sg-tab` `.sg-member`)
-- Define all `--sg-*` variables in `:root` (or `.sg-frame` scope), with semantic comments
+- Define all `--sg-*` variables in `01-tokens` (`:root` or `.sg-frame` scope), with semantic comments
 - **Colors always go through variables**; no hardcoded `#hex` in rules (`:root` definitions and `rgba(0,0,0,0.x)` pure-black/white overlays are exceptions)
 - Colors inside gradients also reference variables: `linear-gradient(var(--sg-paper), var(--sg-soft))`
-- Three-tier responsive: PC default + `@media (max-width:500px)` + `@media (max-width:320px)`. Even if the original case only has PC, you must backfill all three
+- Three-tier responsive: PC default + `@media (max-width:500px)` + `@media (max-width:320px)` **inside each slice**. Even if the original case only has PC, you must backfill all three
 - Preserve the original case's layout essence (3D perspective tiers, scroll-snap, grid columns, etc.) -- do not simplify them away
 
 #### 3.2 `src/<lib-name>.js` - Rendering Engine
@@ -192,14 +250,20 @@ node --check src/<lib-name>.js
 
 # 4c. Roundtrip equivalence (quantifies "how faithful to the original HTML")
 python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --out <report.json>
+
+# 4d. TypeScript Gold+ 质量门（真实浏览器；默认必须执行）
+npm run quality:ts -- <original-html-path> --lib <component-lib-dir> \
+  --visual-artifacts /tmp/<case>-visual
 ```
 
 **Quality thresholds** (all must pass to count as complete):
-- `validate_lib.py`: all 8 items PASS
+- `validate_lib.py`: all 9 items PASS；TypeScript runtime 版本再检查第 10 项“选择器实际命中”
 - `node --check`: no syntax errors
 - `roundtrip.py`: defaults to rendered reference; when `reference.fallback=true`, fix the reference rendering or record the compatibility contract with `--reference-mode static`
 - Runtime main threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
 - When the page has Tab/Dialog/form interactions, add `--scenarios <scenarios.json>`; each scenario must have assertions proving the state was actually reached
+- Gold+ browser gate: selector coverage = 100%; key computed-style match ≥ 0.98; screenshot pixel diff ≤ 2%; no runtime errors
+- If Gold+ fails, do not accept DOM/text green as sufficient. Inspect `mismatchHints`, `styles.mismatches`, and `pixels.diffRate` before revising
 
 > Threshold basis: the benchmark library has roundtrip overall 0.99;
 > agent dismantling (huang/zhi) 0.97+ GOLD;
@@ -231,6 +295,11 @@ After each self-check round, use this table to locate the revision point. After 
 | validate: 6. theme customizable | Rules hardcode `#hex` or `rgb()` (non-:root, non pure-black/white overlay) | Replace with `var(--sg-xxx)`; colors inside gradients also go through variables |
 | validate: 7. zero deps | examples HTML references external JS/CSS (font CDN excluded) | Remove external references, use local src/ resources |
 | validate: 8. docs complete | Missing README.md or docs/设计规范.md, or README has no API docs | Complete docs; README includes mount/create API, design spec includes theme-color section |
+| validate: 9. class alignment | JS references sg-* classes not defined in CSS | Add the missing CSS rule, or fix the typo in JS el() call. If you renamed a class, update the contract comment in JS (3.0) and sync both CSS and JS |
+| validate: 10. selector runtime | CSS selector exists in source but does not match rendered DOM (`#sg-x` vs `.sg-x`, missing `sg-` modifier, wrong ancestor chain) | Fix the DOM/CSS contract, then rerun `npm run validate:ts -- <lib-dir>`; inspect `mismatchHints` for likely ID/class or prefix errors |
+| Gold+ computed-style | DOM/text pass but display/position/size/background/transform differs | Inspect `styles.mismatches`; fix selector application and init/scale ordering before changing thresholds |
+| Gold+ pixel diff | Screenshot diff > 2% while DOM/text pass | Open the three artifacts under `--visual-artifacts`; compare layout, backgrounds, overlays, SVG positions, and execution order; do not waive the gate without an explicit contract |
+| roundtrip class_coverage < 0.9 | JS renders DOM with classes that have no CSS rule (unstyled elements) | Check the slice plan (3.0.5): a component slice may be missing. Compare `class_coverage.missingClasses` against the slice list, then generate the missing slice per the mapping table in spec.md Section 10 |
 | node --check error | JS syntax error (missing semicolon / unbalanced parens / illegal char) | Locate and fix by line number; common: unclosed template literal, trailing comma in object |
 | roundtrip text score <0.8 | Check report `text.missing`, missing real content (member roles/work titles etc.); `text.extra` is got-side noise (data-driven text like timeline years, not penalized) | Add missing text into `examples/<case>.html` options data; extra needs no action |
 | roundtrip structure score <0.7 | Check `structure.node_match_rate` (with redundancy penalty); compare `node_recall`: high recall but low match_rate means `redundancy_penalty>0` (got nodes > 1.5× ref, redundant DOM); low `node_precision` also signals redundancy | Missing view layer (timeline/works not rendered) / nesting misaligned / modal not mounted -> add view; got redundant DOM (placeholder/debug containers) -> slim rendering, only output structures present in original HTML. The comparator already tolerates sg- prefix and class renames |
@@ -246,16 +315,17 @@ Locate revision points using the "Self-Check Decision Table" above. After fixing
 
 ## Key Constraints (see references/spec.md for details)
 
-8 strong constraints, validated by `validate_lib.py`:
+9 strong constraints, validated by `validate_lib.py`:
 
 1. **Naming prefix**: CSS classes `sg-`, variables `--sg-`, JS globals PascalCase, DOM ids `sg-`
-2. **Variable normalization**: Original variable names normalize to `--sg-*` per the table (primary/accent/ink/muted/subtle/line/paper/stage/soft...). Tailwind/Material Design 3 semantic colors are also covered (on-primary/on-secondary→on-accent/surface→paper/on-surface→ink/outline→line/primary-container→soft/...)
+2. **Variable normalization**: Original variable names normalize to `--sg-*` per the table (primary/accent/ink/muted/subtle/line/paper/stage/soft...). Tailwind/Material Design 3 semantic colors are also covered (on-primary/on-secondary->on-accent/surface->paper/on-surface->ink/outline->line/primary-container->soft/...)
 3. **Data separation**: Variable content goes through JSON; no hardcoded business copy/URLs in JS
 4. **Three-tier responsive**: PC + WISE (<=500px) + extreme (<=320px)
 5. **A11y**: tablist/tabpanel, dialog, aria-live, aria-label, ESC to close (as needed)
 6. **Theme customizable**: All colors go through variables; no hardcoded `#hex` (`:root` and pure-black/white overlays are exceptions)
 7. **Zero dependency**: No external JS/CSS (font CDN is the exception)
 8. **Docs complete**: README.md + docs/设计规范.md both present
+9. **Class alignment**: JS-referenced sg-* classes must be defined in CSS (no orphan classes that produce unstyled elements)
 
 ## Benchmark Reference
 
@@ -351,6 +421,6 @@ Multi-case aggregation, batch vertical generation, and domain assets are not par
 
 ## Reference Files
 
-- `references/spec.md` - detailed spec for the 8 strong constraints + variable normalization mapping table
+- `references/spec.md` - detailed spec for the 9 strong constraints + variable normalization mapping table
 - `references/patterns.md` - structure-recognition features (decision rules for Tab/carousel/Modal/cause-chain/nav-panel/graph etc., useful in Step 1 when understanding HTML)
 - `references/manifest_schema.md` - manifest.json field definitions (Step 2 tool output)

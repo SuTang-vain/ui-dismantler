@@ -1,6 +1,6 @@
 # 强约束规范（spec.md）
 
-所有由本 skill 生成的组件库必须遵循以下 8 项强约束。`validate_lib.py` 据此校验。
+所有由本 skill 生成的组件库必须遵循以下 9 项强约束。`validate_lib.py` 据此校验。
 
 ## 1. 命名前缀
 
@@ -84,6 +84,16 @@
 | `README.md` | 快速开始 + API + 数据契约 + 主题定制说明 |
 | `docs/设计规范.md` | 主题色令牌表 + Tab 结构 + 交互模式 + 逻辑设置 |
 
+## 9. 类名对齐
+
+JS 中 `el()` 调用和 `class=` 字面量引用的 `sg-*` 类名，必须在 `src/*.css` 中有对应的 `.sg-*` 规则定义。
+
+**禁止**：JS 生成 `<div class="sg-arrow">` 但 CSS 中无 `.sg-arrow` 规则（元素将无样式）
+
+**豁免**：
+- 动态拼接的 ID 前缀（`sg-tab-` + tabId、`sg-panel-` + viewId）不是类名，不在此约束范围
+- 语义基类（如 `sg-tl-prev`/`sg-tl-next` 用于组合选择器，CSS 定义带后缀的变体 `sg-tl-prev-pc`/`sg-tl-prev-mobile`）不报
+
 ## 校验脚本行为
 
 `validate_lib.py <组件库目录>` 逐项检查，输出：
@@ -91,15 +101,52 @@
 ```
 [PASS] 1. 命名前缀
 [PASS] 2. CSS 变量归一化
-[FAIL] 3. 数据分离 — examples/example.html 中发现硬编码 URL
+[FAIL] 3. 数据分离 - examples/example.html 中发现硬编码 URL
   ↳ src/glossary.js:142  img.src = 'https://...'
 [PASS] 4. 响应式三档
 ...
+[PASS] 9. 类名对齐
 ```
 
 退出码：全过 0，有失败 1。
 
-## 9. 输出形态（P3 输出泛化）
+## 10. 组件片映射表（按组件切分生成 CSS）
+
+CSS 按"组件边界"切分为独立片，每片 100-300 行，逐片生成后拼接为单文件。`view type -> 组件片`映射规则：
+
+| view type | 需要的组件片 | 共享依赖 |
+|---|---|---|
+| `member-grid` | `07-member-grid` + `08-detail-panel` | `06-carousel-controls`（如分页） |
+| `timeline` | `09-timeline` | `06-carousel-controls`（如双端箭头） |
+| `carousel-3d` | `10-works-carousel-3d` + `11-work-story-panel`（如有故事面板） | `06-carousel-controls` |
+| `quiz` | `quiz` 片 | - |
+| `comparison` | `comparison` 片 | - |
+| `splash` | `splash` 片 | - |
+| `cause-chain` | `cause-chain` 片 | - |
+| `nav-panel` | `nav-panel` 片 | - |
+| `graph` | `graph` 片 | - |
+| `detail-panel`（独立） | `08-detail-panel` | - |
+| `generic` | `generic` 兜底片 | - |
+
+**容器片**（所有案例必有）：`01-tokens` + `02-frame` + `03-tab-bar`（如有 tabs）+ `04-view-stack`（如有 views）+ `05-section-head`（如有标题）
+
+**Modal 片**：`structure.modals[]` 每个 modal -> 对应布局片（`fact-grid`/`relation-list`/`image-text`/`comparison`）
+
+**每片内部结构**：
+1. 片头注释 `/* ==== N. 片名 ==== */`
+2. PC 默认规则（选择器 + 属性）
+3. `@media (max-width:500px) { /* 本片选择器的 WISE 调整 */ }`
+4. `@media (max-width:320px) { /* 本片选择器的 extreme 调整 */ }`
+
+**拼接顺序**（依赖驱动）：
+```
+01-tokens -> 02-frame -> 03-tab-bar -> 04-view-stack -> 05-section-head
+-> 06-carousel-controls -> [07-11 view 组件片] -> [12-13 modal 片] -> 14-a11y
+```
+
+> **跳过缺失信号的片**：如 manifest 无 `modals[]`，则跳过 12/13；无 `hasStoryPanel` 则跳过 11。确保无死 CSS。
+
+## 11. 输出形态（P3 输出泛化）
 
 组件库支持三种输出形态，由 `adapt_output.py` 从 IIFE 源码生成：
 
@@ -141,3 +188,13 @@ python3 src/skill/scripts/adapt_output.py lib.js --all --name sg-lib --out-dir s
 一次生成 `.esm.js` + `.wc.js`。
 
 > **注意**：`adapt_output.py` 目前仅识别 `function Lib(root, options)` 命名约定。使用自定义构造函数名（如 `function GlossaryExplorer(options)`）的库需要先用此命名约定产出 IIFE，再转换。
+
+## 12. Gold+ 真实渲染质量门
+
+DOM 拓扑和文本等价不能证明视觉等价。TypeScript Gold+ 校验必须在真实 Chrome/Chromium 中同时运行原页面和组件库 example，并执行三层检查：
+
+1. **选择器实际命中**：逐个检查渲染 DOM 中的 `sg-*` 类是否有实际可用的 CSS 规则；不仅检查 CSS 文件里是否出现同名类。重点捕获 ID/class 不一致、修饰类前缀不一致、祖先选择器链断裂。
+2. **计算样式**：对关键元素比较 `display`、`position`、尺寸、位置、背景、颜色、flex/grid、overflow、z-index、transform 等属性。执行顺序错误导致的 `left/top/transform` 差异必须拉低质量分。
+3. **像素截图**：相同 viewport、相同 device scale factor 下截图并计算 pixel diff；默认阈值为 2%。
+
+Gold+ 默认门槛：选择器覆盖率 100%、关键计算样式匹配率 ≥ 0.98、像素差异 ≤ 2%、无运行时错误。若 Gold+ 失败，即使 DOM/text roundtrip 全绿也不得交付。
