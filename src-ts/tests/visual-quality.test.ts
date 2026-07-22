@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateLibrarySelectorCoverage } from "../evaluation/browser.js";
+import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -90,4 +90,31 @@ test("multi-viewport matrix catches a mobile-only visual regression", async () =
   assert.equal(result.matrix.passed, false);
   assert.equal(result.matrix.worstViewport, "mobile");
   assert.ok(result.matrix.worstPixelDiff > 0.02);
+});
+
+
+test("critical interaction matrix compares computed style after opening a panel", async () => {
+  const item = await fixture(
+    "interaction-viewport-matrix",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:320px;height:240px;background:#fff}.panel{display:none;height:100px;background:#e11d48}.app.open .panel{display:block;width:120px}@media(max-width:500px){.app.open .panel{width:80px}}</style></head><body><div class="app"><button id="open">Open</button><div class="panel">Panel</div></div><script>document.getElementById('open').onclick=()=>document.querySelector('.app').classList.add('open')</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:320px;height:240px;background:var(--sg-paper)}.sg-panel{display:none;height:100px;background:var(--sg-primary)}.sg-app.sg-open .sg-panel{display:block;width:120px}@media(max-width:500px){.sg-app.sg-open .sg-panel{width:180px}}@media(max-width:320px){.sg-app.sg-open .sg-panel{width:180px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-open">Open</button><div class="sg-panel">Panel</div></div>';document.getElementById('sg-open').onclick=function(){root.querySelector('.sg-app').classList.add('sg-open')}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "open-panel",
+    critical: true,
+    steps: [{ action: "click" as const, target: { reference: "#open", library: "#sg-open" } }],
+    assertions: [{ target: { reference: ".panel", library: ".sg-panel" }, visible: true }],
+  };
+  const result = await evaluateScenarioBrowserQualityMatrix(item.original, item.lib, scenario, {
+    viewports: [
+      { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+      { id: "mobile", label: "Mobile", width: 390, height: 844 },
+    ],
+  });
+  assert.equal(result.matrix.viewports.find((viewport) => viewport.id === "desktop")?.passed, true);
+  assert.equal(result.matrix.viewports.find((viewport) => viewport.id === "mobile")?.passed, false);
+  assert.equal(result.matrix.passed, false);
+  assert.equal(result.matrix.worstViewport, "mobile");
+  assert.ok(result.matrix.worstPixelDiff > 0.02 || result.matrix.worstComputedStyle < 0.98);
 });

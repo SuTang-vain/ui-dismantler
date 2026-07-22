@@ -165,6 +165,7 @@ export interface Scenario {
   id: string;
   label?: string;
   candidate?: boolean;
+  critical?: boolean;
   covers?: string[];
   notes?: string[];
   viewport?: { width: number; height: number };
@@ -305,6 +306,11 @@ export interface BrowserQualityMatrixReport {
   worstComputedStyle: number;
   worstPixelDiff: number;
   runtimeErrors: number;
+}
+
+export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrixReport {
+  scenarioId: string;
+  label?: string;
 }
 
 export interface BrowserQualityReport {

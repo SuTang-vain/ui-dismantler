@@ -52,7 +52,8 @@
       ],
       "covers": [
         "click|event-listener|addEventListener(\"click\""
-      ]
+      ],
+      "critical": true
     },
     {
       "id": "close-modal-with-escape",

@@ -12,6 +12,7 @@ import type {
   BrowserQualityMatrixReport,
   BrowserViewportReport,
   QualityViewport,
+  Scenario,
   SelectorCoverageReport,
   StyleComparisonReport,
 } from "../types.js";
@@ -110,12 +111,48 @@ async function waitForSettled(page: Page, rootSelector: string): Promise<void> {
   await page.waitForTimeout(100);
 }
 
-async function collectBrowserSnapshot(page: Page, rootSelector: string, url: string, withScreenshot = true): Promise<BrowserSnapshot> {
+function scenarioSelector(target: Scenario["steps"][number]["target"], role: "reference" | "library"): string | undefined {
+  if (!target) return undefined;
+  if (typeof target === "string") return target;
+  return target[role] ?? target.default;
+}
+
+async function executeBrowserScenario(page: Page, scenario: Scenario, role: "reference" | "library"): Promise<void> {
+  for (const step of scenario.steps) {
+    if (step.action === "wait") {
+      await page.waitForTimeout(step.ms ?? 0);
+      continue;
+    }
+    const selector = scenarioSelector(step.target, role);
+    const locator = selector ? page.locator(selector).first() : undefined;
+    if (step.action === "click") {
+      if (!locator) throw new Error(`${scenario.id}: click 缺少 target`);
+      await locator.click();
+    } else if (step.action === "input") {
+      if (!locator) throw new Error(`${scenario.id}: input 缺少 target`);
+      await locator.fill(step.value ?? "");
+      if (step.commit !== false) await locator.dispatchEvent("change");
+    } else if (step.action === "key") {
+      if (locator) await locator.focus();
+      const modifiers = [step.ctrlKey && "Control", step.altKey && "Alt", step.shiftKey && "Shift", step.metaKey && "Meta"].filter(Boolean);
+      await page.keyboard.press([...modifiers, step.key ?? "Enter"].join("+"));
+    }
+    await page.evaluate(async () => {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    });
+  }
+}
+
+async function collectBrowserSnapshot(page: Page, rootSelector: string, url: string, withScreenshot = true, scenario?: Scenario, role?: "reference" | "library"): Promise<BrowserSnapshot> {
   const runtimeErrors: string[] = [];
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
   page.on("console", (message) => { if (message.type() === "error") runtimeErrors.push(message.text()); });
   await page.goto(pathToFileURL(url).href, { waitUntil: "load", timeout: 15000 });
   await waitForSettled(page, rootSelector);
+  if (scenario && role) {
+    await executeBrowserScenario(page, scenario, role);
+    await page.waitForTimeout(100);
+  }
   const data = await page.evaluate(({ rootSelector: selector, properties }) => {
     const root = document.querySelector(selector);
     if (!root) throw new Error(`缺少根节点 ${selector}`);
@@ -307,7 +344,7 @@ async function comparePixels(reference: Buffer, generated: Buffer, threshold: nu
   return report;
 }
 
-async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}): Promise<BrowserQualityReport> {
+async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}, scenario?: Scenario): Promise<BrowserQualityReport> {
   const width = options.width ?? 1024, height = options.height ?? 768;
   const pixelThreshold = options.pixelThreshold ?? 0.02;
   const selectorThreshold = options.selectorCoverageThreshold ?? 1;
@@ -326,8 +363,8 @@ async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: strin
     const referencePage = await context.newPage(), generatedPage = await context.newPage();
     const example = await firstExample(libDir);
     const [reference, generated] = await Promise.all([
-      collectBrowserSnapshot(referencePage, "body", resolve(htmlPath)),
-      collectBrowserSnapshot(generatedPage, "#mount", example),
+      collectBrowserSnapshot(referencePage, "body", resolve(htmlPath), true, scenario, "reference"),
+      collectBrowserSnapshot(generatedPage, "#mount", example, true, scenario, "library"),
     ]);
     const styles = compareComputedStyles(reference.styles, generated.styles);
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir);
@@ -389,7 +426,7 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
   };
 }
 
-export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
+async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}, scenario?: Scenario): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
   const viewports = options.viewports?.length ? options.viewports : DEFAULT_QUALITY_VIEWPORTS;
   let browser: Browser | undefined;
   try {
@@ -404,7 +441,7 @@ export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: str
         width: viewport.width,
         height: viewport.height,
         artifactDir,
-      }));
+      }, scenario));
     }
     const entries = viewports.map((viewport, index) => summarizeViewport(viewport, reports[index]));
     const primary = reports[0] ?? { available: false, error: "没有可用质量视口", passed: false };
@@ -435,6 +472,15 @@ export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: str
     await browser?.close();
   }
 }
+
+export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
+  return evaluateBrowserQualityMatrixInternal(htmlPath, libDir, options);
+}
+
+export async function evaluateScenarioBrowserQualityMatrix(htmlPath: string, libDir: string, scenario: Scenario, options: BrowserQualityMatrixOptions = {}): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
+  return evaluateBrowserQualityMatrixInternal(htmlPath, libDir, options, scenario);
+}
+
 
 export async function evaluateLibrarySelectorCoverage(libDir: string, options: Pick<BrowserQualityOptions, "width" | "height" | "executablePath"> = {}): Promise<{ available: boolean; error?: string; coverage?: SelectorCoverageReport; runtimeErrors?: string[] }> {
   let browser: Browser | undefined;

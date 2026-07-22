@@ -36,7 +36,8 @@
       ],
       "covers": [
         "click|event-listener|addEventListener(\"click\""
-      ]
+      ],
+      "critical": true
     },
     {
       "id": "close-character-panel",

@@ -4,7 +4,8 @@
 [PASS] structure: structure=0.998，门槛=0.7
 [PASS] text: text=1，门槛=0.8
 [PASS] viewport-matrix: 4/4 视口通过，worst=desktop
-[PASS] visual-runtime: viewports=4，runtimeErrors=0
+[PASS] scenario-viewport-matrix: 1/1 关键交互状态矩阵通过
+[PASS] visual-runtime: initialViewports=4，runtimeErrors=0
 [PASS] selector-coverage: worstSelectorCoverage=1，门槛=1
 [PASS] computed-style: worstComputedStyle=0.9989，门槛=0.98
 [PASS] pixel-diff: worstPixelDiff=0，门槛=0.02

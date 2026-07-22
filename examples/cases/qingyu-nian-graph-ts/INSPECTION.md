@@ -44,3 +44,13 @@
 - Extreme mobile：`artifacts/tiny/`。
 
 最终质量门禁使用四个视口中的最差 selector coverage、computed style 和 pixel diff。
+
+## 关键交互状态截图
+
+人物详情/弹层打开场景的四视口截图位于：
+
+```text
+artifacts/scenarios/<scenario-id>/
+```
+
+这些截图是在执行 click 之后生成，不是初始页面截图。

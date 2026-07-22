@@ -55,6 +55,7 @@ export function loadScenarios(document: unknown): ScenarioDocument {
     if (!scenario || typeof scenario.id !== "string" || !scenario.id.trim()) throw new TypeError("每个 scenario 必须有非空 id");
     if (seen.has(scenario.id)) throw new TypeError(`场景 id 重复: ${scenario.id}`);
     seen.add(scenario.id);
+    if ("critical" in scenario && typeof scenario.critical !== "boolean") throw new TypeError(`场景 ${scenario.id} critical 必须是 boolean`);
     if (scenario.viewport) for (const key of ["width", "height"] as const) if (!Number.isInteger(scenario.viewport[key]) || scenario.viewport[key] <= 0) throw new TypeError(`场景 ${scenario.id} viewport.${key} 必须为正整数`);
     if (!Array.isArray(scenario.steps)) throw new TypeError(`场景 ${scenario.id} steps 必须是数组`);
     scenario.steps.forEach((step, index) => {

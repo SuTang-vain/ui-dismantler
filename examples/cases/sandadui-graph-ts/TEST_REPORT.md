@@ -49,6 +49,10 @@
 | 可验证交互覆盖 | 6/6（100%，另有 3 个基线不可达指纹获显式 waiver） |
 | runtime errors | 0 |
 | 多视口矩阵 | 4/4 PASS |
+| 关键交互状态矩阵 | 1/1 PASS |
+| 关键交互最差视口 | desktop |
+| 交互后 computed style | 0.9989 |
+| 交互后 visual score | 0.9994 |
 | 最差视口 | desktop |
 | Gold+ | PASS |
 
@@ -68,6 +72,16 @@
 - Extreme mobile：`320×568`。
 
 四个视口均执行 selector coverage、computed style、pixel diff 和 runtime error 检查；最终 visual score 采用最差视口结果，而不是平均值。桌面截图继续位于 `artifacts/`，其他视口位于 `artifacts/tablet/`、`artifacts/mobile/` 和 `artifacts/tiny/`。
+
+## 关键交互状态多视口验证
+
+场景 `open-chengbing-panel` 已标记为 `critical`，在 Desktop、Tablet portrait、Mobile、Extreme mobile 四个视口中分别执行原页面与组件库交互，然后比较交互后的 DOM、computed style 和 screenshot。
+
+- 关键状态矩阵：`1/1 PASS`；
+- 最差视口：`desktop`；
+- 交互后 computed style：`0.9989`；
+- 交互后 pixel diff：`0%`；
+- 交互截图：`artifacts/scenarios/open-chengbing-panel/`。
 
 ## 交互覆盖说明
 
@@ -90,5 +104,5 @@
 ## 回归测试
 
 - Python：321/321 PASS
-- TypeScript：11/11 PASS
+- TypeScript：12/12 PASS
 - TypeScript build/typecheck：PASS
