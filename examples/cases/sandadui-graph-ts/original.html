@@ -1,0 +1,3074 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>三大队：人物关系与剧情全解析</title>
+    <style>
+      :root {
+        --primary: #6487fa;
+        --primary-dark: #4a6ee0;
+        --primary-light: #8aa5ff;
+        --bg-white: #ffffff;
+        --bg-gray: #f8f8f8;
+        --text-main: #1e1f24;
+        --text-sec: #848691;
+        --text-tri: #b7b9c1;
+        --border: rgba(0, 0, 0, 0.06);
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.18);
+        --gold: #c8a35a;
+        --red: #d94b4b;
+        --blue: #3b7ad9;
+        --green: #4aa06e;
+        --pink: #e07aa8;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+        color: var(--text-main);
+        background: #eef1f8;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-family: inherit;
+        color: inherit;
+        touch-action: manipulation;
+      }
+      button:disabled {
+        cursor: not-allowed;
+      }
+      button:focus-visible {
+        outline: 3px solid rgba(100, 135, 250, 0.42);
+        outline-offset: 3px;
+      }
+      img {
+        display: block;
+        -webkit-user-drag: none;
+        user-drag: none;
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(
+          160deg,
+          #f5f8ff 0%,
+          #eaeff9 60%,
+          #dee6f4 100%
+        );
+        position: relative;
+        overflow: hidden;
+        container-type: size;
+        container-name: app;
+      }
+
+      /* ===== 等比缩放画布层（双基准 380×456 / 788×492） ===== */
+      html.is-scaled-canvas,
+      body.is-scaled-canvas {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #eef1f8;
+      }
+      #app.is-scaled {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: top left;
+      }
+
+      /* ===== 主内容区 ===== */
+      .main {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        padding: 12px 14px 4px;
+      }
+      .view {
+        position: absolute;
+        inset: 12px 14px 4px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      .view.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* ===== 底部 Tab（纯文字） ===== */
+      .tabs {
+        flex-shrink: 0;
+        display: flex;
+        gap: 8px;
+        padding: 8px 14px 14px;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 12px 4px;
+        border-radius: 14px;
+        background: #fff;
+        font-size: 15px;
+        line-height: 1.2;
+        color: var(--primary-dark);
+        font-weight: 800;
+        border: 2px solid rgba(100, 135, 250, 0.35);
+        box-shadow: 0 4px 12px rgba(100, 135, 250, 0.16);
+        transition: all 0.25s ease;
+      }
+      .tab-btn:hover {
+        border-color: var(--primary);
+        box-shadow: 0 7px 18px rgba(100, 135, 250, 0.26);
+        transform: translateY(-1px);
+      }
+      .tab-btn.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 6px 18px rgba(100, 135, 250, 0.44);
+      }
+      .tab-btn:active {
+        transform: scale(0.96);
+      }
+      .story-switch {
+        flex-shrink: 0;
+        position: relative;
+      }
+      .story-bar {
+        display: flex;
+        gap: 8px;
+        padding: 0 2px 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+      .story-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .story-btn {
+        flex: 0 0 auto;
+        min-width: 122px;
+        padding: 9px 14px;
+        border-radius: 12px;
+        background: #fff;
+        border: 2px solid rgba(100, 135, 250, 0.28);
+        color: var(--primary-dark);
+        font-size: 13px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(100, 135, 250, 0.14);
+        transition: all 0.22s ease;
+        scroll-snap-align: start;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .story-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: rgba(100, 135, 250, 0.12);
+        color: var(--primary-dark);
+        font-size: 11px;
+        font-weight: 900;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .story-btn:hover {
+        border-color: var(--primary);
+        box-shadow: 0 6px 16px rgba(100, 135, 250, 0.24);
+        transform: translateY(-1px);
+      }
+      .story-btn.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 6px 18px rgba(100, 135, 250, 0.38);
+      }
+      .story-btn.active .story-index {
+        background: rgba(255, 255, 255, 0.24);
+        color: #fff;
+      }
+      .story-btn:active {
+        transform: scale(0.97);
+      }
+      .story-desc {
+        width: 100%;
+        margin: 0 0 10px;
+        padding: 9px 13px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(100, 135, 250, 0.14);
+        color: var(--text-main);
+        font-size: 13px;
+        line-height: 1.55;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+      }
+      .story-scroll-hint {
+        display: none;
+      }
+      .story-scroll-hint.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      /* ============================================
+         视图 1：故事图谱
+         ============================================ */
+      .graph-wrap {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at 50% 44%,
+            rgba(100, 135, 250, 0.07),
+            transparent 62%
+          ),
+          var(--bg-white);
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        --avatar-size: 64px;
+        --avatar-big-size: 78px;
+      }
+      .graph-wrap.dense-graph {
+        --avatar-size: 56px;
+        --avatar-big-size: 66px;
+      }
+      /* 图例：左上角常驻，单行展示，半透明不遮挡 */
+      .graph-legend {
+        position: absolute;
+        top: 12px;
+        left: 14px;
+        z-index: 30;
+        display: flex;
+        gap: 14px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        font-size: 12px;
+        color: var(--text-sec);
+        background: rgba(255, 255, 255, 0.82);
+        padding: 8px 14px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        pointer-events: none;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .legend-item.family {
+        color: var(--red);
+      }
+      .legend-item.romance {
+        color: var(--pink);
+      }
+      .legend-item.master {
+        color: var(--gold);
+      }
+      .legend-item.friend {
+        color: var(--green);
+      }
+      .legend-item.enemy {
+        color: var(--text-main);
+      }
+      .lg-svg {
+        flex-shrink: 0;
+        display: block;
+      }
+      .lg-svg line {
+        stroke-width: 3.2;
+      }
+      .lg-svg.family line {
+        stroke: var(--red);
+      }
+      .lg-svg.romance line {
+        stroke: var(--pink);
+        stroke-dasharray: 1.5 5;
+        stroke-linecap: round;
+      }
+      .lg-svg.master line {
+        stroke: var(--gold);
+        stroke-dasharray: 7 5;
+      }
+      .lg-svg.friend line {
+        stroke: var(--green);
+        stroke-dasharray: 14 6;
+      }
+      .lg-svg.enemy line {
+        stroke: var(--text-main);
+        stroke-dasharray: 9 4 2 4;
+      }
+
+      /* 画布：图谱头像让位时整体压缩到左侧 */
+      .graph-canvas {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .graph-wrap.panel-open .graph-canvas {
+        right: 380px;
+      }
+      /* was @container app (max-width: 900px)（两基准宽度均 <900，恒生效），改为类驱动兼容不支持 @container 的 WebView */
+      #app .graph-wrap.panel-open .graph-canvas {
+        right: 320px;
+      }
+      svg.edges {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .edge {
+        stroke-width: 2;
+        fill: none;
+        transition: opacity 0.25s;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .edge.family {
+        stroke: var(--red);
+        opacity: 0.75;
+      }
+      .edge.romance {
+        stroke: var(--pink);
+        stroke-dasharray: 1.5 5;
+        stroke-linecap: round;
+        opacity: 0.9;
+      }
+      .edge.master {
+        stroke: var(--gold);
+        stroke-dasharray: 7 5;
+        opacity: 0.8;
+      }
+      .edge.enemy {
+        stroke: var(--text-main);
+        stroke-dasharray: 9 4 2 4;
+        opacity: 0.45;
+      }
+      .edge.friend {
+        stroke: var(--green);
+        stroke-dasharray: 14 6;
+        opacity: 0.7;
+      }
+      .edge.dim {
+        opacity: 0.08 !important;
+      }
+      .edge.hl {
+        opacity: 1 !important;
+        stroke-width: 3;
+      }
+      .edge-label {
+        font-size: 11px;
+        font-weight: 800;
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
+        opacity: 0.95;
+        transition: opacity 0.25s;
+      }
+      .edge-label.family {
+        fill: var(--red);
+      }
+      .edge-label.romance {
+        fill: var(--pink);
+      }
+      .edge-label.master {
+        fill: var(--gold);
+      }
+      .edge-label.friend {
+        fill: var(--green);
+      }
+      .edge-label.enemy {
+        fill: var(--text-main);
+      }
+      .edge-label-bg {
+        fill: rgba(255, 255, 255, 0.94);
+        stroke: rgba(100, 135, 250, 0.18);
+        stroke-width: 1;
+        transition: opacity 0.25s;
+      }
+      .edge-label.dim,
+      .edge-label-bg.dim {
+        opacity: 0.08 !important;
+      }
+      .edge-label.hl {
+        opacity: 1 !important;
+        font-size: 11.5px;
+      }
+      .edge-label-bg.hl {
+        opacity: 1 !important;
+        stroke: rgba(100, 135, 250, 0.35);
+      }
+      .edge-label.lbl-hide,
+      .edge-label-bg.lbl-hide {
+        opacity: 0 !important;
+      }
+      .graph-wrap.dense-graph .edge-label {
+        font-size: 10px;
+      }
+      .graph-wrap.dense-graph .edge-label.hl {
+        font-size: 10.5px;
+      }
+
+      .node {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        touch-action: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+        will-change: left, top;
+        transition:
+          left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+          top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .avatar.img-fallback,
+      .avt.img-fallback,
+      .cover.img-fallback {
+        background-image: linear-gradient(135deg, #eef1f8, #dfe7f4) !important;
+      }
+      .node.dragging-now {
+        transition: none;
+      }
+      .node.grabbing {
+        cursor: grabbing;
+        z-index: 20;
+      }
+      .node .float-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        will-change: transform;
+        animation-name: none;
+        animation-duration: 2.4s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+      }
+      .node.grabbing .float-inner {
+        animation-play-state: paused;
+      }
+      @keyframes breathePoint {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.028);
+        }
+      }
+      .node .avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 14px rgba(30, 31, 36, 0.18);
+        background-color: #eee;
+        position: relative;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        animation: avatarBreath 2.4s ease-out infinite;
+      }
+      .node .avatar .avatar-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        overflow: hidden;
+      }
+      .node .avatar .avatar-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .node .avatar::after {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: inherit;
+        border: 2px solid rgba(100, 135, 250, 0.3);
+        pointer-events: none;
+        animation: avatarPulseRing 2.4s ease-out infinite;
+      }
+      .node.big .avatar {
+        width: var(--avatar-big-size);
+        height: var(--avatar-big-size);
+        border-width: 4px;
+      }
+      .node:hover .avatar,
+      .node.grabbing .avatar {
+        animation: none;
+        transform: scale(1.06);
+        box-shadow:
+          0 0 0 3px rgba(100, 135, 250, 0.16),
+          0 6px 18px rgba(30, 31, 36, 0.24);
+      }
+      .node.active .avatar {
+        animation: none;
+        box-shadow:
+          0 0 0 4px rgba(100, 135, 250, 0.18),
+          0 6px 18px rgba(30, 31, 36, 0.24);
+      }
+      .node:hover .avatar::after,
+      .node.grabbing .avatar::after,
+      .node.active .avatar::after {
+        animation: none;
+        opacity: 0;
+      }
+      .node .name {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        white-space: nowrap;
+        line-height: 1.2;
+      }
+      .node.dim {
+        opacity: 0.32;
+      }
+      @keyframes avatarBreath {
+        0% {
+          transform: scale(1);
+          box-shadow:
+            0 4px 14px rgba(30, 31, 36, 0.18),
+            0 0 0 0 rgba(100, 135, 250, 0.42);
+        }
+        70% {
+          transform: scale(1.035);
+          box-shadow:
+            0 5px 16px rgba(30, 31, 36, 0.2),
+            0 0 0 12px rgba(100, 135, 250, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow:
+            0 4px 14px rgba(30, 31, 36, 0.18),
+            0 0 0 0 rgba(100, 135, 250, 0);
+        }
+      }
+      @keyframes avatarPulseRing {
+        0% {
+          transform: scale(0.94);
+          opacity: 0.7;
+        }
+        70%,
+        100% {
+          transform: scale(1.18);
+          opacity: 0;
+        }
+      }
+      .node.tap-hint .avatar {
+        animation: tapPulse 1.8s ease-out 3;
+      }
+      .node.tap-hint .avatar::after {
+        animation: avatarPulseRing 1.8s ease-out 3;
+      }
+      @keyframes tapPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow:
+            0 0 0 0 rgba(100, 135, 250, 0.22),
+            0 4px 12px rgba(0, 0, 0, 0.16);
+        }
+        45% {
+          transform: scale(1.08);
+          box-shadow:
+            0 0 0 12px rgba(100, 135, 250, 0),
+            0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      /* 角色详情：右侧固定面板，不遮挡头像；内容自适应无滚动条 */
+      .char-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 380px;
+        height: 100%;
+        background: #fff;
+        box-shadow: -8px 0 28px rgba(0, 0, 0, 0.12);
+        padding: 20px 22px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 25;
+        overflow: hidden;
+      }
+      .graph-wrap.panel-open .char-panel {
+        transform: translateX(0);
+      }
+      /* was @container app (max-width: 900px)（恒生效），改为类驱动 */
+      #app .char-panel {
+        width: 320px;
+      }
+      .char-panel .close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+        z-index: 3;
+        box-shadow: 0 5px 16px rgba(100, 135, 250, 0.42);
+        transition: all 0.2s;
+      }
+      .char-panel .close:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px) scale(1.04);
+      }
+      .char-panel .close:active {
+        transform: scale(0.92);
+      }
+      .char-panel .char-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-right: 40px;
+      }
+      .char-panel .avt {
+        width: 86px;
+        height: 86px;
+        border-radius: 18px;
+        flex: 0 0 auto;
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+        overflow: hidden;
+      }
+      .char-panel .avt img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .char-panel .char-head-info {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+      }
+      .char-panel .p-name {
+        font-size: 21px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .char-panel .p-actor {
+        margin-top: 3px;
+        font-size: 13px;
+        color: var(--text-sec);
+      }
+      .char-panel .p-section-title {
+        display: none;
+      }
+      .char-panel .char-rel-tag {
+        display: inline-block;
+        width: fit-content;
+        max-width: 100%;
+        margin-top: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        padding: 2px 10px;
+        border-radius: 20px;
+        line-height: 1.4;
+        white-space: nowrap;
+      }
+      .char-panel .p-desc {
+        flex: 0 0 auto;
+        min-height: 0;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        border: 0;
+        font-size: 14.5px;
+        color: var(--text-main);
+        line-height: 1.62;
+        white-space: normal;
+      }
+      /* ============================================
+         视图 3：作品推荐（合并系列作品 + 相似推荐）
+         ============================================ */
+      .works-wrap {
+        flex: 1;
+        background: var(--bg-white);
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        padding: 14px 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .works-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+        margin-bottom: 12px;
+      }
+      .works-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .works-tab {
+        padding: 9px 18px;
+        border-radius: 22px;
+        font-size: 14.5px;
+        font-weight: 800;
+        background: #fff;
+        color: var(--primary-dark);
+        border: 2px solid rgba(100, 135, 250, 0.5);
+        box-shadow: 0 3px 10px rgba(100, 135, 250, 0.14);
+        transition: all 0.2s;
+      }
+      .works-tab:hover {
+        background: rgba(100, 135, 250, 0.08);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(100, 135, 250, 0.24);
+      }
+      .works-tab.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 14px rgba(100, 135, 250, 0.45);
+      }
+      .works-pager {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .works-pageinfo {
+        font-size: 13px;
+        color: var(--text-sec);
+        min-width: 42px;
+        text-align: center;
+      }
+      .works-btn {
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.85);
+        box-shadow: 0 4px 14px rgba(100, 135, 250, 0.38);
+        transition: all 0.2s;
+      }
+      .works-btn:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(100, 135, 250, 0.46);
+      }
+      .works-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .works-btn:not(:disabled):active {
+        transform: scale(0.95);
+      }
+
+      .works-viewport {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        position: relative;
+      }
+      /* 一行4个，恒定单行，图片尽量铺满窗口 */
+      .works-grid {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 100%;
+        grid-auto-flow: column;
+        gap: 14px;
+      }
+      .work-card {
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--bg-gray);
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.25s;
+        position: relative;
+        min-height: 0;
+        cursor: pointer;
+        border: 1px solid rgba(100, 135, 250, 0.12);
+      }
+      .work-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+      }
+      .work-card .cover {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        background-color: var(--bg-gray);
+        position: relative;
+        overflow: hidden;
+      }
+      .work-card .cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .work-card .cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 55%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+      }
+      .work-card .tag {
+        position: absolute;
+        top: 9px;
+        left: 9px;
+        padding: 3px 10px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--text-main);
+      }
+      .work-card.upcoming .tag {
+        background: var(--gold);
+        color: #fff;
+      }
+      .work-card .info {
+        padding: 9px 11px 11px;
+        background: #fff;
+        flex-shrink: 0;
+      }
+      .work-card .info .n {
+        font-size: 14.5px;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .work-card .info .ep-badge {
+        font-size: 11px;
+        color: var(--primary);
+        font-weight: 600;
+        padding: 1px 6px;
+        border-radius: 5px;
+        background: rgba(100, 135, 250, 0.1);
+      }
+      .work-card .info .m {
+        font-size: 12px;
+        color: var(--text-main);
+        margin-top: 4px;
+        line-height: 1.4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .work-card .info .r {
+        font-size: 11.5px;
+        color: var(--primary);
+        margin-top: 4px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        word-break: break-word;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .works-scroll-hint {
+        display: none;
+      }
+      .work-card .info .n,
+      .work-card .info .m,
+      .story-btn,
+      .works-tab,
+      .tab-btn {
+        word-break: keep-all;
+      }
+
+      /* ===== 响应式 ===== */
+      /* was @container app (max-width: 900px)（恒生效），改为类驱动 */
+      #app .works-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      #app .graph-wrap {
+        --avatar-size: 58px;
+        --avatar-big-size: 70px;
+      }
+      #app .graph-wrap.dense-graph {
+        --avatar-size: 52px;
+        --avatar-big-size: 62px;
+      }
+      /* was @container app (max-width: 768px)；部分 WebView 不应用 @container，改用 @media 按真实视口判断（手机视口恒 <768） */
+      @media (max-width: 768px) {
+        .main {
+          padding: 10px 10px 4px;
+        }
+        .view {
+          inset: 10px 10px 4px;
+        }
+        .tabs {
+          padding: 6px 10px 10px;
+          gap: 6px;
+        }
+        .tab-btn {
+          font-size: 14px;
+          padding: 10px 4px;
+        }
+        .story-bar {
+          gap: 8px;
+          padding: 0 1px 7px;
+          scroll-snap-type: x mandatory;
+        }
+        .story-btn {
+          flex: 0 0 calc((100% - 16px) / 2.5);
+          min-width: 0;
+          padding: 5px 5px;
+          font-size: 11.5px;
+          line-height: 1.12;
+          white-space: nowrap;
+          border-radius: 10px;
+          gap: 4px;
+          border-width: 1.5px;
+        }
+        .story-index {
+          min-width: 16px;
+          height: 16px;
+          padding: 0 4px;
+          font-size: 10px;
+        }
+        .story-scroll-hint {
+          display: flex;
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          align-items: center;
+          justify-content: center;
+          background: rgba(100, 135, 250, 0.95);
+          color: #fff;
+          font-size: 23px;
+          font-weight: 900;
+          line-height: 1;
+          box-shadow: 0 4px 14px rgba(100, 135, 250, 0.42);
+          z-index: 4;
+          opacity: 1;
+          transition: opacity 0.35s ease;
+          animation: storyHintNudge 1.4s ease-in-out infinite;
+        }
+        @keyframes storyHintNudge {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(5px);
+          }
+        }
+        .story-desc {
+          margin-bottom: 6px;
+          padding: 6px 8px;
+          font-size: 11.5px;
+          line-height: 1.38;
+        }
+
+        .graph-legend {
+          left: 8px;
+          right: 8px;
+          top: 8px;
+          max-width: none;
+          justify-content: space-between;
+          gap: 3px;
+          padding: 6px 8px;
+          font-size: 10.5px;
+        }
+        .graph-legend .legend-item {
+          gap: 3px;
+        }
+        .lg-svg {
+          width: 20px;
+        }
+        .graph-wrap {
+          --avatar-size: 46px;
+          --avatar-big-size: 56px;
+        }
+        .graph-wrap.dense-graph {
+          --avatar-size: 40px;
+          --avatar-big-size: 48px;
+        }
+        .node .avatar {
+          border-width: 2px;
+        }
+        .node .name {
+          font-size: 11px;
+          padding: 1px 5px;
+        }
+        .graph-wrap.panel-open .graph-canvas {
+          right: 0;
+        }
+
+        .char-panel {
+          position: fixed;
+          left: 50%;
+          top: 50%;
+          right: auto;
+          bottom: auto;
+          width: min(92cqw, 420px);
+          max-width: 420px;
+          height: auto;
+          max-height: min(86cqh, 560px);
+          padding: 0;
+          gap: 0;
+          border-radius: 24px;
+          transform: translate(-50%, calc(-50% + 16px));
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          box-shadow: 0 24px 64px rgba(20, 22, 30, 0.28);
+          z-index: 101;
+          overflow: hidden;
+          transition:
+            opacity 0.28s,
+            transform 0.28s,
+            visibility 0.28s;
+        }
+        .graph-wrap.panel-open .char-panel {
+          transform: translate(-50%, -50%);
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+        .char-panel::-webkit-scrollbar {
+          display: none;
+        }
+        .graph-wrap.panel-open::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          background: rgba(20, 22, 30, 0.56);
+          backdrop-filter: blur(5px);
+          z-index: 100;
+        }
+        .graph-wrap.panel-open .graph-legend {
+          display: none;
+        }
+        .char-panel .close {
+          top: 18px;
+          right: 18px;
+          width: 44px;
+          height: 44px;
+          background: rgba(255, 255, 255, 0.78);
+          color: #7d808b;
+          font-size: 30px;
+          box-shadow: 0 8px 22px rgba(30, 31, 36, 0.1);
+        }
+        .char-panel .avt {
+          width: 74px;
+          height: 74px;
+          border-radius: 16px;
+          margin-top: 0;
+        }
+        .char-panel .p-name {
+          font-size: 23px;
+          line-height: 1.22;
+          margin-bottom: 6px;
+        }
+        .char-panel .p-actor {
+          font-size: 15px;
+          line-height: 1.45;
+          color: var(--primary);
+          font-weight: 700;
+        }
+        .char-panel .p-desc {
+          flex: 1 1 auto;
+          min-height: 0;
+          max-height: none;
+          padding: 24px 26px 30px;
+          font-size: clamp(14px, 3.8cqw, 17px);
+          line-height: 1.86;
+          letter-spacing: 0;
+          overflow: visible;
+          display: block;
+        }
+        .char-panel .char-head {
+          padding: 28px 72px 26px 26px;
+          gap: 18px;
+          background: linear-gradient(180deg, #f4f6ff 0%, #f8f9ff 100%);
+        }
+        .char-panel .char-head-info {
+          gap: 0;
+        }
+        .char-panel.fit-compact .avt {
+          width: 64px;
+          height: 64px;
+        }
+        .char-panel.fit-compact .char-head {
+          gap: 12px;
+          padding: 22px 64px 20px 22px;
+        }
+        .char-panel.fit-compact .p-desc {
+          padding: 18px 22px 22px;
+          font-size: 13px;
+          line-height: 1.62;
+        }
+        .char-panel.fit-tight .p-desc {
+          padding: 12px 16px 16px;
+        }
+        .char-panel.fit-tight .avt {
+          width: 46px;
+          height: 46px;
+          border-radius: 10px;
+        }
+        .char-panel.fit-tight .char-head {
+          gap: 7px;
+          padding: 14px 52px 12px 16px;
+        }
+        .char-panel.fit-tight .p-name {
+          font-size: 16px;
+        }
+        .char-panel.fit-tight .p-actor {
+          font-size: 10.5px;
+        }
+        .char-panel.fit-tight .char-rel-tag {
+          padding: 2px 8px;
+          font-size: 9.5px;
+        }
+        .char-panel.fit-tight .p-desc {
+          font-size: 11px;
+          line-height: 1.4;
+        }
+        .char-panel.fit-ultra .char-head {
+          gap: 4px;
+          padding: 10px 42px 8px 12px;
+          padding-right: 24px;
+        }
+        .char-panel.fit-ultra .p-desc {
+          padding: 8px 12px 12px;
+        }
+        .char-panel.fit-ultra .avt {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+        }
+        .char-panel.fit-ultra .p-name {
+          font-size: calc(13px * var(--char-fit-scale, 1));
+        }
+        .char-panel.fit-ultra .p-actor {
+          font-size: calc(9px * var(--char-fit-scale, 1));
+        }
+        .char-panel.fit-ultra .char-rel-tag {
+          padding: 1px 6px;
+          font-size: calc(8px * var(--char-fit-scale, 1));
+        }
+        .char-panel.fit-ultra .p-desc {
+          font-size: calc(8.8px * var(--char-fit-scale, 1));
+          line-height: 1.12;
+        }
+
+        .works-wrap {
+          padding: 8px 10px 10px;
+        }
+        .works-head {
+          gap: 6px;
+          margin-bottom: 6px;
+        }
+        .works-tabs {
+          flex-wrap: nowrap;
+          gap: 6px;
+          width: 100%;
+        }
+        .works-tab {
+          font-size: 12px;
+          padding: 0;
+          height: 26px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+          text-align: center;
+        }
+        .works-pager {
+          display: none;
+        }
+        .works-viewport {
+          overflow: hidden;
+          flex: 1;
+          min-height: 0;
+        }
+        .works-grid {
+          display: flex;
+          align-items: stretch;
+          height: 100%;
+          grid-template-columns: none;
+          grid-auto-flow: row;
+          grid-auto-rows: auto;
+          overflow-x: auto;
+          overflow-y: hidden;
+          gap: 12px;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .works-grid::-webkit-scrollbar {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+        .work-card {
+          flex: 0 0 48%;
+          height: 100%;
+          min-height: 0;
+          scroll-snap-align: start;
+        }
+        .work-card .cover {
+          flex: 1 1 auto;
+          width: 100%;
+          min-height: 0;
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .work-card .info {
+          flex-shrink: 0;
+          padding: 5px 8px 7px;
+        }
+        .work-card .info .n {
+          font-size: 13px;
+        }
+        .work-card .info .m {
+          font-size: 11px;
+          margin-top: 2px;
+        }
+        .work-card .info .r {
+          font-size: 11px;
+          margin-top: 2px;
+          white-space: normal;
+          overflow: visible;
+          text-overflow: unset;
+          display: block;
+          line-height: 1.4;
+          word-break: break-word;
+        }
+
+        .works-scroll-hint {
+          display: flex;
+          position: absolute;
+          top: 50%;
+          right: 4px;
+          transform: translateY(-50%);
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          align-items: center;
+          justify-content: center;
+          background: rgba(100, 135, 250, 0.92);
+          box-shadow: 0 3px 12px rgba(100, 135, 250, 0.5);
+          z-index: 5;
+          pointer-events: auto;
+          cursor: pointer;
+          opacity: 1;
+          transition: opacity 0.4s ease;
+          animation: hintNudge 1.4s ease-in-out infinite;
+        }
+        .works-scroll-hint.hide {
+          opacity: 0;
+          pointer-events: none;
+        }
+        @keyframes hintNudge {
+          0%,
+          100% {
+            transform: translateY(-50%) translateX(0);
+          }
+          50% {
+            transform: translateY(-50%) translateX(6px);
+          }
+        }
+      }
+      /* was @container app (max-width: 400px)，改用 @media 兼容不支持 @container 的 WebView */
+      @media (max-width: 480px) {
+        .graph-legend {
+          font-size: 9.5px;
+          gap: 2px;
+          padding: 5px 6px;
+        }
+        .graph-legend .legend-item {
+          gap: 2px;
+        }
+        .lg-svg {
+          width: 16px;
+        }
+        .graph-wrap {
+          --avatar-size: 40px;
+          --avatar-big-size: 50px;
+        }
+        .graph-wrap.dense-graph {
+          --avatar-size: 36px;
+          --avatar-big-size: 44px;
+        }
+        .node .avatar {
+          border-width: 2px;
+        }
+        .node .name {
+          font-size: 10px;
+          padding: 1px 4px;
+          border-radius: 5px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+        svg.edges {
+          opacity: 0.6;
+        }
+        .edge {
+          stroke-width: 1.4;
+        }
+        .edge.hl {
+          stroke-width: 2.2;
+        }
+        .edge-label {
+          font-size: 9.5px;
+          stroke-width: 4px;
+        }
+        .edge-label.hl {
+          font-size: 10px;
+        }
+      }
+      /* was @container app (max-width: 400px) and (max-height: 420px)，改用 @media */
+      @media (max-width: 480px) and (max-height: 420px) {
+        .story-desc {
+          font-size: 10.5px;
+          line-height: 1.3;
+        }
+        .graph-wrap {
+          --avatar-size: 38px;
+          --avatar-big-size: 48px;
+        }
+        .graph-wrap.dense-graph {
+          --avatar-size: 34px;
+          --avatar-big-size: 42px;
+        }
+        .node .name {
+          font-size: 9.5px;
+        }
+        .char-panel {
+          width: min(92cqw, 320px);
+          max-width: 320px;
+          max-height: 82cqh;
+        }
+        .char-panel .close {
+          width: 30px;
+          height: 30px;
+          font-size: 20px;
+        }
+        .char-panel .char-head {
+          gap: 7px;
+          padding: 12px 42px 10px 14px;
+        }
+        .char-panel .avt {
+          width: 48px;
+          height: 48px;
+          border-radius: 10px;
+        }
+        .char-panel .p-name {
+          font-size: 16px;
+        }
+        .char-panel .p-actor {
+          font-size: 10.5px;
+        }
+        .char-panel .char-head-info {
+          gap: 0;
+        }
+        .char-panel .char-rel-tag {
+          padding: 2px 8px;
+          font-size: 9.5px;
+        }
+        .char-panel .p-desc {
+          padding: 10px 14px 14px;
+          font-size: 10.5px;
+          line-height: 1.38;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="main">
+        <!-- 视图 1：故事图谱 -->
+        <div class="view active" data-view="graph">
+          <div class="story-switch">
+            <div class="story-bar" id="storyBar"></div>
+            <button
+              class="story-scroll-hint"
+              id="storyScrollHint"
+              type="button"
+              aria-label="向右滑动查看更多故事"
+            >
+              ›
+            </button>
+            <div class="story-desc" id="storyDesc"></div>
+          </div>
+          <div class="graph-wrap" id="graphWrap">
+            <div class="graph-legend">
+              <div class="legend-item family">
+                <svg class="lg-svg family" width="26" height="8">
+                  <line x1="1" y1="4" x2="25" y2="4" /></svg
+                >战友
+              </div>
+              <div class="legend-item romance">
+                <svg class="lg-svg romance" width="26" height="8">
+                  <line x1="1" y1="4" x2="25" y2="4" /></svg
+                >家人
+              </div>
+              <div class="legend-item master">
+                <svg class="lg-svg master" width="26" height="8">
+                  <line x1="1" y1="4" x2="25" y2="4" /></svg
+                >师徒
+              </div>
+              <div class="legend-item friend">
+                <svg class="lg-svg friend" width="26" height="8">
+                  <line x1="1" y1="4" x2="25" y2="4" /></svg
+                >同行
+              </div>
+              <div class="legend-item enemy">
+                <svg class="lg-svg enemy" width="26" height="8">
+                  <line x1="1" y1="4" x2="25" y2="4" /></svg
+                >对立
+              </div>
+            </div>
+            <div class="graph-canvas" id="graphCanvas">
+              <svg class="edges" id="graphEdges"></svg>
+            </div>
+            <!-- 角色详情：右侧面板 -->
+            <div class="char-panel" id="charPanel">
+              <button class="close" id="charClose" title="关闭">×</button>
+              <div class="char-head">
+                <div class="avt" id="cAvt"><img id="cAvtImg" alt="" /></div>
+                <div class="char-head-info">
+                  <div class="p-name" id="cName"></div>
+                  <div class="p-actor" id="cActor"></div>
+                  <span class="char-rel-tag" id="cRelTag"></span>
+                </div>
+              </div>
+              <div class="p-desc" id="cDesc"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 视图 2：作品推荐 -->
+        <div class="view" data-view="works">
+          <div class="works-wrap">
+            <div class="works-head">
+              <div class="works-tabs" id="worksTabs">
+                <button class="works-tab active" data-cat="theme">
+                  同题材
+                </button>
+                <button class="works-tab" data-cat="cast">同主演</button>
+                <button class="works-tab" data-cat="writer">同编剧</button>
+              </div>
+              <div class="works-pager">
+                <button class="works-btn" id="worksPrev">← 上一页</button>
+                <span class="works-pageinfo" id="worksPageInfo">1/1</span>
+                <button class="works-btn" id="worksNext">下一页 →</button>
+              </div>
+            </div>
+            <div class="works-viewport">
+              <div class="works-grid" id="worksGrid"></div>
+              <div
+                class="works-scroll-hint"
+                id="worksScrollHint"
+                aria-hidden="true"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 5l7 7-7 7"
+                    stroke="#fff"
+                    stroke-width="2.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="graph">故事图谱</button>
+        <button class="tab-btn" data-tab="works">作品推荐</button>
+      </div>
+    </div>
+
+    <script>
+      /* ========= 数据 ========= */
+      const IMG = "./images/";
+      function enc(src) {
+        return src.replace(/[^\x20-\x7E]/g, (c) => encodeURIComponent(c));
+      }
+      const chars = {
+        chengbing: {
+          name: "程兵",
+          actor: "张译 饰",
+          img: IMG + "角色_程兵.webp",
+          big: true,
+          desc: "三大队队长，坚持正义和荣誉的警察。因审讯意外导致嫌犯死亡而入狱，出狱后放弃一切，以普通人身份万里追凶十二年，只为兑现承诺，给受害者一个交代。",
+        },
+        caibin: {
+          name: "蔡彬",
+          actor: "曹炳琨 饰",
+          img: IMG + "角色_蔡彬.webp",
+          desc: "三大队成员，心思缜密。入狱期间妻离子散，出狱后开了一家文玩店，试图寻找内心平静，但在程兵的感召下重燃追凶的火苗，贡献了关键线索。",
+        },
+        mazhenkun: {
+          name: "马振坤",
+          actor: "王骁 饰",
+          img: IMG + "角色_马振坤.webp",
+          desc: "三大队队员，性格火爆。出狱后在妻子的支持下经营大排档，生活回归正轨。面对程兵的追凶请求，他在家庭和兄弟情义之间艰难抉择。",
+        },
+        liaojian: {
+          name: "廖健",
+          actor: "张子贤 饰",
+          img: IMG + "角色_廖健.webp",
+          desc: "三大队成员，擅长后勤辅助。出狱后带着儿子卖保险为生，生活拮据。尽管对追凶犹豫不决，但仍在关键时刻为程兵提供了力所能及的帮助。",
+        },
+        xuyizhou: {
+          name: "徐一舟",
+          actor: "魏晨 饰",
+          img: IMG + "角色_徐一舟.webp",
+          desc: "三大队最年轻的队员，充满热血。出狱后成为一名沉默寡言的驯狗师，内心虽饱受创伤，但对正义的渴望从未熄灭，是追凶路上程兵的坚定追随者。",
+        },
+        yangjiantao: {
+          name: "杨剑涛",
+          actor: "李晨 饰",
+          img: IMG + "角色_杨剑涛.webp",
+          desc: "二大队队长，后接替程兵成为三大队负责人。他行事谨慎，讲究规矩，与程兵的办案风格形成对比，但在关键时刻守住了警察的底线和对三大队的承诺。",
+        },
+        laozhang: {
+          name: "老张",
+          actor: "待定",
+          img: IMG + "角色_老张.webp",
+          desc: "三大队的老前辈，程兵的师父。在追捕王大勇兄弟的过程中病倒，他的去世成为压垮三大队情绪的最后一根稻草，间接导致了审讯悲剧的发生。",
+        },
+        wangdayong: {
+          name: "王大勇",
+          actor: "王雨甜 饰",
+          img: IMG + "角色_王大勇.webp",
+          desc: "入室抢劫强奸案的主犯之一，凶狠残暴。在审讯过程中意外死亡，他的死彻底改变了三大队的命运，也开启了长达十二年的追凶序幕。",
+        },
+        wangeryong: {
+          name: "王二勇",
+          actor: "张新成 饰",
+          img: IMG + "角色_王二勇.webp",
+          desc: "王大勇的弟弟，命案的另一名在逃嫌犯。狡猾多端，隐姓埋名四处逃窜。他是程兵内心无法磨灭的执念，也是三大队誓要缉拿归案的最后目标。",
+        },
+        maqi: {
+          name: "马妻",
+          actor: "高叶 饰",
+          img: IMG + "角色_马妻.webp",
+          desc: "马振坤的妻子。坚韧善良，在丈夫入狱后不离不弃，撑起整个家。她是三大队兄弟们回归正常生活的一个缩影，代表着家庭的温暖与牵绊。",
+        },
+        chengbingqizi: {
+          name: "程兵妻子",
+          actor: "待定",
+          img: IMG + "角色_程兵妻子.webp",
+          desc: "程兵的妻子。深爱着丈夫，但无法承受丈夫为追凶而带来的家庭破碎，最终选择离开。她是程兵为执念所付出的家庭代价的体现。",
+        },
+        shouhainvhai: {
+          name: "受害女孩",
+          actor: "待定",
+          img: IMG + "角色_受害女孩.webp",
+          desc: "17岁的花季少女，奥数比赛获奖者。在家中不幸遭遇王氏兄弟入室抢劫，被残忍杀害。她的死是整个故事的开端，也是三大队无法释怀的痛。",
+        },
+      };
+
+      const HERO = "chengbing";
+      const RELN = {
+        family: "战友",
+        romance: "家人",
+        master: "师徒",
+        friend: "同行",
+        enemy: "对立",
+      };
+      const REL_COLORS = {
+        family: "var(--red)",
+        romance: "var(--pink)",
+        master: "var(--gold)",
+        friend: "var(--green)",
+        enemy: "#55585f",
+      };
+      const ALL_EDGES = [
+        { a: "chengbing", b: "caibin", type: "family", label: "昔日战友" },
+        { a: "chengbing", b: "mazhenkun", type: "family", label: "昔日战友" },
+        { a: "chengbing", b: "liaojian", type: "family", label: "昔日战友" },
+        { a: "chengbing", b: "xuyizhou", type: "family", label: "昔日战友" },
+        { a: "chengbing", b: "laozhang", type: "master", label: "师徒" },
+        { a: "chengbing", b: "yangjiantao", type: "friend", label: "同行" },
+        { a: "chengbing", b: "wangdayong", type: "enemy", label: "宿敌" },
+        { a: "chengbing", b: "wangeryong", type: "enemy", label: "宿敌" },
+        { a: "chengbing", b: "chengbingqizi", type: "romance", label: "夫妻" },
+        { a: "mazhenkun", b: "maqi", type: "romance", label: "夫妻" },
+        { a: "wangdayong", b: "wangeryong", type: "romance", label: "兄弟" },
+        { a: "caibin", b: "mazhenkun", type: "family", label: "昔日战友" },
+        { a: "liaojian", b: "xuyizhou", type: "family", label: "昔日战友" },
+        { a: "chengbing", b: "shouhainvhai", type: "enemy", label: "誓为追凶" },
+      ];
+
+      const heroRel = {
+        caibin: { type: "family", text: "昔日战友" },
+        mazhenkun: { type: "family", text: "昔日战友" },
+        liaojian: { type: "family", text: "昔日战友" },
+        xuyizhou: { type: "family", text: "坚定追随者" },
+        laozhang: { type: "master", text: "师徒 · 引路人" },
+        yangjiantao: { type: "friend", text: "同行 · 接替者" },
+        wangdayong: { type: "enemy", text: "审讯意外 · 悲剧开端" },
+        wangeryong: { type: "enemy", text: "万里追凶 · 终极执念" },
+        maqi: { type: "family", text: "兄弟的妻子" },
+        chengbingqizi: { type: "romance", text: "夫妻 · 离别" },
+        shouhainvhai: { type: "enemy", text: "誓为追凶" },
+      };
+
+      const storyModules = [
+        {
+          key: "mingan",
+          name: "恶性命案",
+          desc: "雨夜发生恶性入室抢劫案，三大队临危受命。在追捕主犯王大勇、王二勇的过程中，队长程兵的师父老张病倒。嫌犯王大勇在审讯中意外死亡，三大队全员命运急转直下。",
+          chars: [
+            "chengbing",
+            "caibin",
+            "mazhenkun",
+            "liaojian",
+            "xuyizhou",
+            "laozhang",
+            "wangdayong",
+            "wangeryong",
+            "shouhainvhai",
+          ],
+          layout: {
+            chengbing: [0.5, 0.48],
+            caibin: [0.16, 0.18],
+            mazhenkun: [0.84, 0.84],
+            liaojian: [0.16, 0.84],
+            xuyizhou: [0.84, 0.18],
+            laozhang: [0.5, 0.92],
+            wangdayong: [0.9, 0.52],
+            wangeryong: [0.08, 0.5],
+            shouhainvhai: [0.5, 0.08],
+          },
+          edges: [
+            { a: "chengbing", b: "caibin", type: "family", label: "昔日战友" },
+            {
+              a: "chengbing",
+              b: "mazhenkun",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "liaojian",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "xuyizhou",
+              type: "family",
+              label: "昔日战友",
+            },
+            { a: "chengbing", b: "laozhang", type: "master", label: "师徒" },
+            { a: "chengbing", b: "wangdayong", type: "enemy", label: "宿敌" },
+            { a: "chengbing", b: "wangeryong", type: "enemy", label: "宿敌" },
+            {
+              a: "chengbing",
+              b: "shouhainvhai",
+              type: "enemy",
+              label: "誓为追凶",
+            },
+            {
+              a: "wangdayong",
+              b: "wangeryong",
+              type: "romance",
+              label: "兄弟",
+            },
+            { a: "caibin", b: "mazhenkun", type: "family", label: "昔日战友" },
+            { a: "liaojian", b: "xuyizhou", type: "family", label: "昔日战友" },
+          ],
+          roles: {
+            chengbing: {
+              rel: ["三大队队长", "追凶执念"],
+              desc: "带领队员追捕王氏兄弟，审讯意外入狱。",
+            },
+            caibin: {
+              rel: ["三大队成员", "心思缜密"],
+              desc: "在审讯现场，经历命运转折。",
+            },
+            mazhenkun: {
+              rel: ["三大队队员", "性格火爆"],
+              desc: "参与审讯，因意外改变人生。",
+            },
+            liaojian: {
+              rel: ["三大队成员", "后勤辅助"],
+              desc: "全程参与案件，命运随之改变。",
+            },
+            xuyizhou: {
+              rel: ["最年轻队员", "热血青年"],
+              desc: "追捕王氏兄弟，卷入命运漩涡。",
+            },
+            laozhang: {
+              rel: ["老前辈", "师父"],
+              desc: "程兵的师父，追捕中病倒。",
+            },
+            wangdayong: {
+              rel: ["主犯", "审讯死亡"],
+              desc: "在审讯中意外死亡，改变三大队命运。",
+            },
+            wangeryong: {
+              rel: ["在逃嫌犯", "命案元凶"],
+              desc: "王大勇的弟弟，案发后持续在逃。",
+            },
+            shouhainvhai: {
+              rel: ["17岁受害者", "案件源头"],
+              desc: "被王氏兄弟残忍杀害，故事由此开始。",
+            },
+          },
+        },
+        {
+          key: "xingtu",
+          name: "漫漫刑途",
+          desc: "三大队成员因刑讯逼供被判入狱。程兵被判八年，妻子提出离婚；蔡彬同样妻离子散；马振坤的妻子则选择坚守。曾经的英雄沦为阶下囚，在狱中承受着身心的双重煎熬。",
+          chars: [
+            "chengbing",
+            "caibin",
+            "mazhenkun",
+            "liaojian",
+            "xuyizhou",
+            "chengbingqizi",
+            "maqi",
+          ],
+          layout: {
+            chengbing: [0.5, 0.48],
+            caibin: [0.16, 0.18],
+            mazhenkun: [0.84, 0.84],
+            liaojian: [0.16, 0.84],
+            xuyizhou: [0.84, 0.18],
+            chengbingqizi: [0.32, 0.92],
+            maqi: [0.68, 0.92],
+          },
+          edges: [
+            { a: "chengbing", b: "caibin", type: "family", label: "昔日战友" },
+            {
+              a: "chengbing",
+              b: "mazhenkun",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "liaojian",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "xuyizhou",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "chengbingqizi",
+              type: "romance",
+              label: "夫妻",
+            },
+            { a: "mazhenkun", b: "maqi", type: "romance", label: "夫妻" },
+            { a: "caibin", b: "mazhenkun", type: "family", label: "昔日战友" },
+            { a: "liaojian", b: "xuyizhou", type: "family", label: "昔日战友" },
+          ],
+          roles: {
+            chengbing: {
+              rel: ["三大队队长", "阶下囚"],
+              desc: "被判八年，妻子提出离婚。",
+            },
+            caibin: {
+              rel: ["三大队成员", "妻离子散"],
+              desc: "入狱期间妻离子散，内心创伤深重。",
+            },
+            mazhenkun: {
+              rel: ["三大队队员", "妻子坚守"],
+              desc: "入狱后妻子不离不弃，出狱回归家庭。",
+            },
+            liaojian: {
+              rel: ["三大队成员", "单亲父亲"],
+              desc: "带着儿子卖保险为生，生活拮据。",
+            },
+            xuyizhou: {
+              rel: ["最年轻队员", "驯狗师"],
+              desc: "出狱后成为沉默寡言的驯狗师。",
+            },
+            chengbingqizi: {
+              rel: ["程兵妻子", "选择离开"],
+              desc: "无法承受丈夫入狱，最终选择离婚。",
+            },
+            maqi: {
+              rel: ["马振坤妻子", "坚守等待"],
+              desc: "在丈夫入狱后不离不弃，撑起整个家。",
+            },
+          },
+        },
+        {
+          key: "zhuizong",
+          name: "千里追凶",
+          desc: "程兵出狱后，受害者父亲的一跪让他决心追凶到底。他踏上孤独的旅程，昔日战友们被他的执着感召，相继加入。但现实的重压让大家陆续离开，最终只剩程兵一人。",
+          chars: [
+            "chengbing",
+            "caibin",
+            "mazhenkun",
+            "liaojian",
+            "xuyizhou",
+            "yangjiantao",
+            "wangeryong",
+          ],
+          layout: {
+            chengbing: [0.5, 0.48],
+            caibin: [0.16, 0.18],
+            mazhenkun: [0.84, 0.84],
+            liaojian: [0.16, 0.84],
+            xuyizhou: [0.84, 0.18],
+            yangjiantao: [0.32, 0.92],
+            wangeryong: [0.08, 0.5],
+          },
+          edges: [
+            { a: "chengbing", b: "caibin", type: "family", label: "昔日战友" },
+            {
+              a: "chengbing",
+              b: "mazhenkun",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "liaojian",
+              type: "family",
+              label: "昔日战友",
+            },
+            {
+              a: "chengbing",
+              b: "xuyizhou",
+              type: "family",
+              label: "昔日战友",
+            },
+            { a: "chengbing", b: "yangjiantao", type: "friend", label: "同行" },
+            { a: "chengbing", b: "wangeryong", type: "enemy", label: "宿敌" },
+            { a: "caibin", b: "mazhenkun", type: "family", label: "昔日战友" },
+            { a: "liaojian", b: "xuyizhou", type: "family", label: "昔日战友" },
+          ],
+          roles: {
+            chengbing: {
+              rel: ["追凶者", "不灭执念"],
+              desc: "被受害者父亲的一跪打动，决心追凶到底。",
+            },
+            caibin: {
+              rel: ["昔日战友", "内心挣扎"],
+              desc: "短暂加入，后因现实压力选择放弃。",
+            },
+            mazhenkun: {
+              rel: ["昔日战友", "家庭牵绊"],
+              desc: "在家庭与兄弟道义间艰难抉择后退出。",
+            },
+            liaojian: {
+              rel: ["昔日战友", "关键线索"],
+              desc: "虽退出追凶但提供了关键线索。",
+            },
+            xuyizhou: {
+              rel: ["昔日战友", "坚定追随"],
+              desc: "陪伴程兵走过追凶路上最艰难的阶段。",
+            },
+            yangjiantao: {
+              rel: ["同行", "暗中相助"],
+              desc: "作为在职警察，在力所能及处提供帮助。",
+            },
+            wangeryong: {
+              rel: ["在逃嫌犯", "终极目标"],
+              desc: "隐姓埋名逃窜，是程兵追凶的最终目标。",
+            },
+          },
+        },
+        {
+          key: "huixiang",
+          name: "终有回响",
+          desc: "十二年间，程兵做过各种底层工作，辗转大半个中国。凭着一个模糊的背影和惊人的毅力，他最终在一个边陲小城锁定了已经改名换姓的王二勇，并配合当地警方将其抓获。正义虽迟但到。",
+          chars: ["chengbing", "yangjiantao", "wangeryong"],
+          layout: {
+            chengbing: [0.5, 0.48],
+            yangjiantao: [0.16, 0.82],
+            wangeryong: [0.84, 0.18],
+          },
+          edges: [
+            { a: "chengbing", b: "yangjiantao", type: "friend", label: "同行" },
+            { a: "chengbing", b: "wangeryong", type: "enemy", label: "宿敌" },
+          ],
+          roles: {
+            chengbing: {
+              rel: ["孤身追凶", "正义实现"],
+              desc: "十二年独行，终将王二勇缉拿归案。",
+            },
+            yangjiantao: {
+              rel: ["同行", "见证者"],
+              desc: "协助程兵，见证三大队使命的最终完成。",
+            },
+            wangeryong: {
+              rel: ["在逃嫌犯", "最终落网"],
+              desc: "隐姓埋名十二年，最终被程兵发现并抓获。",
+            },
+          },
+        },
+      ];
+
+      const storyByKey = Object.fromEntries(
+        storyModules.map((s) => [s.key, s]),
+      );
+      let currentStoryKey = storyModules[0].key;
+      let activeStory = storyByKey[currentStoryKey];
+      let edges = activeStory.edges;
+
+      const works = {
+        theme: [
+          {
+            n: "解救吾先生",
+            m: "刘德华 / 刘烨 / 吴若甫",
+            r: "真实改编 · 警匪对峙",
+            cover: "推荐_解救吾先生.webp",
+            ep: "106分钟",
+          },
+          {
+            n: "烈日灼心",
+            m: "邓超 / 段奕宏 / 郭涛",
+            r: "人性拷问 · 警匪片",
+            cover: "推荐_烈日灼心.webp",
+            ep: "139分钟",
+          },
+          {
+            n: "白日焰火",
+            m: "廖凡 / 桂纶镁 / 王学兵",
+            r: "金熊奖 · 黑色电影",
+            cover: "推荐_白日焰火.webp",
+            ep: "106分钟",
+          },
+          {
+            n: "万里归途",
+            m: "张译 / 王俊凯 / 殷桃",
+            r: "真实撤侨 · 文官之战",
+            cover: "推荐_万里归途.webp",
+            ep: "137分钟",
+          },
+        ],
+        cast: [
+          {
+            n: "悬崖之上",
+            m: "张译 / 于和伟 / 秦海璐",
+            r: "张译谍战 · 冰雪绝境",
+            cover: "推荐_悬崖之上.webp",
+            ep: "120分钟",
+          },
+          {
+            n: "八佰",
+            m: "王千源 / 张译 / 姜武",
+            r: "群星参演 · 四行仓库",
+            cover: "推荐_八佰.webp",
+            ep: "147分钟",
+          },
+          {
+            n: "以家人之名",
+            m: "谭松韵 / 宋威龙 / 张新成",
+            r: "张新成治愈剧",
+            cover: "推荐_以家人之名.webp",
+            ep: "46集",
+          },
+          {
+            n: "我不是药神",
+            m: "徐峥 / 王传君 / 周一围",
+            r: "张子贤 · 现实力作",
+            cover: "推荐_我不是药神.webp",
+            ep: "117分钟",
+          },
+        ],
+        writer: [
+          {
+            n: "亲爱的",
+            m: "赵薇 / 黄渤 / 佟大为",
+            r: "编剧张冀 · 打拐题材",
+            cover: "推荐_亲爱的.webp",
+            ep: "130分钟",
+          },
+          {
+            n: "中国合伙人",
+            m: "黄晓明 / 邓超 / 佟大为",
+            r: "编剧张冀 · 创业史诗",
+            cover: "推荐_中国合伙人.webp",
+            ep: "112分钟",
+          },
+          {
+            n: "夺冠",
+            m: "巩俐 / 黄渤 / 吴刚",
+            r: "编剧张冀 · 女排传奇",
+            cover: "推荐_夺冠.webp",
+            ep: "135分钟",
+          },
+        ],
+      };
+      /* =========================================================
+         视图 1：关系图谱 —— 放射式布局 + 可拖动 + 摆动
+         ========================================================= */
+      const graphWrap = document.getElementById("graphWrap");
+      const graphCanvas = document.getElementById("graphCanvas");
+      const graphEdges = document.getElementById("graphEdges");
+      const charPanel = document.getElementById("charPanel");
+      const storyBar = document.getElementById("storyBar");
+      const storyDesc = document.getElementById("storyDesc");
+      const storyScrollHint = document.getElementById("storyScrollHint");
+
+      const nodeState = {};
+      let bounds = { w: 0, h: 0 };
+      let currentCharKey = null;
+
+      /* ===== 等比缩放画布：双基准 380×456（小） / 788×492（大） ===== */
+      const BASE_SMALL = { w: 380, h: 456 };
+      const BASE_LARGE = { w: 788, h: 492 };
+      let scaleFactor = 1;
+      let currentBaseKey = "large";
+      let currentBase = BASE_LARGE;
+      function isSmallCanvas() {
+        return currentBaseKey === "small";
+      }
+      function shouldUseSmallBase(w, h) {
+        const ratio = w / h;
+        const isPortraitLike = ratio < 1;
+        const isCompactCard = w < 415 || h < 456;
+        const isNarrowMobileCard = w <= 768 && isPortraitLike;
+        return isCompactCard || isNarrowMobileCard;
+      }
+      function applyScale() {
+        const app = document.getElementById("app");
+        if (!app) return;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const base = shouldUseSmallBase(w, h) ? BASE_SMALL : BASE_LARGE;
+        const scale = Math.min(w / base.w, h / base.h);
+        scaleFactor = scale;
+        currentBase = base;
+        currentBaseKey = base === BASE_SMALL ? "small" : "large";
+        const offsetX = (w - base.w * scale) / 2;
+        const offsetY = (h - base.h * scale) / 2;
+        document.documentElement.classList.add("is-scaled-canvas");
+        document.body.classList.add("is-scaled-canvas");
+        app.classList.add("is-scaled");
+        app.classList.toggle("is-small-canvas", currentBaseKey === "small");
+        app.classList.toggle("is-large-canvas", currentBaseKey === "large");
+        app.classList.toggle("is-tiny-canvas", w <= 330 || h <= 380);
+        app.style.width = base.w + "px";
+        app.style.height = base.h + "px";
+        app.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+      }
+      applyScale();
+      /* DOMContentLoaded 再兜底一次：覆盖首屏解析时视口尺寸尚未定稿的情况 */
+      document.addEventListener("DOMContentLoaded", applyScale);
+
+      function getStoryChar(k) {
+        const base = chars[k];
+        if (!base) return null;
+        const role = activeStory.roles[k] || {};
+        return {
+          ...base,
+          storyRel: role.rel || [],
+          storyDesc: role.desc || base.desc,
+        };
+      }
+
+      function getLayoutRel() {
+        return activeStory.layout || {};
+      }
+
+      function measure() {
+        const rect = graphWrap.getBoundingClientRect();
+        const S = scaleFactor || 1;
+        const logicalW = rect.width / S;
+        const logicalH = rect.height / S;
+        const panelW = graphWrap.classList.contains("panel-open")
+          ? isSmallCanvas()
+            ? 0
+            : 320
+          : 0;
+        bounds = { w: Math.max(logicalW - panelW, 120), h: logicalH };
+      }
+
+      function orderRing(keys, links) {
+        const names = keys.slice();
+        const n = names.length;
+        if (n <= 2) return names;
+        const rel = (links || []).filter(
+          (l) => names.includes(l.a) && names.includes(l.b),
+        );
+        if (!rel.length || n > 8) return names;
+        const between = (x, a, b) => {
+          let i = (a + 1) % n;
+          while (i !== b) {
+            if (i === x) return true;
+            i = (i + 1) % n;
+          }
+          return false;
+        };
+        const cost = (order) => {
+          const pos = {};
+          order.forEach((name, i) => (pos[name] = i));
+          let score = 0;
+          rel.forEach((l) => {
+            const i = pos[l.a];
+            const j = pos[l.b];
+            const d = Math.min(Math.abs(i - j), n - Math.abs(i - j));
+            score += Math.max(0, d - 1) * 2;
+          });
+          for (let x = 0; x < rel.length; x++) {
+            for (let y = x + 1; y < rel.length; y++) {
+              const a = pos[rel[x].a],
+                b = pos[rel[x].b],
+                c = pos[rel[y].a],
+                d = pos[rel[y].b];
+              if (a === c || a === d || b === c || b === d) continue;
+              if (between(c, a, b) !== between(d, a, b)) score += 3;
+            }
+          }
+          return score;
+        };
+        let best = names.slice(),
+          bestCost = Infinity;
+        const first = names[0];
+        const rest = names.slice(1);
+        const permute = (arr, k) => {
+          if (k === arr.length) {
+            const order = [first, ...arr];
+            const c = cost(order);
+            if (c < bestCost) {
+              bestCost = c;
+              best = order.slice();
+            }
+            return;
+          }
+          for (let i = k; i < arr.length; i++) {
+            [arr[k], arr[i]] = [arr[i], arr[k]];
+            permute(arr, k + 1);
+            [arr[k], arr[i]] = [arr[i], arr[k]];
+          }
+        };
+        if (n <= 8) permute(rest, 0);
+        return best;
+      }
+
+      function graphAvatarMetrics(denseGraph) {
+        const wI = currentBase.w;
+        const hI = currentBase.h;
+        if (wI <= 400 && hI <= 420) {
+          return {
+            av: denseGraph ? 34 : 38,
+            avBig: denseGraph ? 42 : 48,
+            nameF: 9.5,
+          };
+        }
+        if (wI <= 400) {
+          return {
+            av: denseGraph ? 36 : 40,
+            avBig: denseGraph ? 44 : 50,
+            nameF: 10,
+          };
+        }
+        if (wI <= 768) {
+          return {
+            av: denseGraph ? 40 : 46,
+            avBig: denseGraph ? 48 : 56,
+            nameF: 11,
+          };
+        }
+        if (wI <= 900) {
+          return {
+            av: denseGraph ? 52 : 58,
+            avBig: denseGraph ? 62 : 70,
+            nameF: 12,
+          };
+        }
+        return {
+          av: denseGraph ? 56 : 64,
+          avBig: denseGraph ? 66 : 78,
+          nameF: 12,
+        };
+      }
+
+      function computeLayout() {
+        measure();
+        const isMobile = isSmallCanvas();
+        const denseGraph =
+          activeStory.chars.length >= 7 || bounds.w < 560 || bounds.h < 380;
+        graphWrap.classList.toggle("dense-graph", denseGraph);
+        const { av, avBig, nameF } = graphAvatarMetrics(denseGraph);
+        const w = Math.max(bounds.w, isMobile ? 200 : 320);
+        const h = Math.max(bounds.h, isMobile ? 200 : 320);
+        const topSafe = isMobile ? 48 : 42;
+        const botSafe = isMobile ? 22 : 32;
+        const usableH = Math.max(h - topSafe - botSafe, 120);
+        const cx = w * 0.5;
+        const cy = topSafe + usableH * 0.5;
+        const layout = {};
+        const core = activeStory.chars.includes(HERO)
+          ? HERO
+          : activeStory.chars[0];
+        layout[core] = [cx, cy];
+        const others = activeStory.chars.filter((k) => k !== core);
+        const ringLinks = activeStory.edges.filter(
+          (e) => e.a !== core && e.b !== core,
+        );
+        const ordered = orderRing(others, ringLinks);
+        const n = ordered.length;
+        const rx = Math.max(w * 0.5 - (isMobile ? 38 : 66), 90);
+        const ry = Math.max(usableH * 0.5 - (isMobile ? 10 : 14), 70);
+        const start =
+          -Math.PI / 2 + (n % 2 === 0 ? Math.PI / Math.max(n, 1) : 0);
+        ordered.forEach((k, i) => {
+          const a = start + (i / Math.max(n, 1)) * Math.PI * 2;
+          layout[k] = [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry];
+        });
+
+        const ext = {};
+        Object.keys(layout).forEach((k) => {
+          const c = getStoryChar(k);
+          const aw = c.big ? avBig : av;
+          const nameW = c.name.length * nameF * 0.95 + 14;
+          const chipH = isMobile ? 0 : nameF + 4;
+          ext[k] = [Math.max(aw, nameW) / 2, (aw + nameF + chipH + 14) / 2];
+        });
+        const keys = Object.keys(layout);
+        let legendClearY = 0;
+        const legendEl = document.querySelector(".graph-legend");
+        if (legendEl && getComputedStyle(legendEl).display !== "none") {
+          const lr = legendEl.getBoundingClientRect();
+          const cr = graphCanvas.getBoundingClientRect();
+          const S = scaleFactor || 1;
+          legendClearY = Math.max(0, (lr.bottom - cr.top) / S) + 8;
+        }
+        const clamp = (k) => {
+          layout[k][0] = Math.max(
+            ext[k][0] + 4,
+            Math.min(w - ext[k][0] - 4, layout[k][0]),
+          );
+          const yMin = Math.max(ext[k][1] + 4, legendClearY + ext[k][1]);
+          layout[k][1] = Math.max(
+            yMin,
+            Math.min(h - ext[k][1] - botSafe, layout[k][1]),
+          );
+        };
+        const marginX = isMobile ? 12 : 18;
+        const marginY = isMobile ? 20 : 26;
+        for (let it = 0; it < 120; it++) {
+          let moved = false;
+          for (let i = 0; i < keys.length; i++) {
+            for (let j = i + 1; j < keys.length; j++) {
+              const a = keys[i],
+                b = keys[j];
+              const dx = layout[b][0] - layout[a][0];
+              const dy = layout[b][1] - layout[a][1];
+              const ox = ext[a][0] + ext[b][0] + marginX - Math.abs(dx);
+              const oy = ext[a][1] + ext[b][1] + marginY - Math.abs(dy);
+              if (ox > 0 && oy > 0) {
+                moved = true;
+                if (ox <= oy) {
+                  const s = dx === 0 ? (i % 2 ? 1 : -1) : Math.sign(dx);
+                  layout[a][0] -= (ox / 2) * s;
+                  layout[b][0] += (ox / 2) * s;
+                } else {
+                  const s = dy === 0 ? (i % 2 ? 1 : -1) : Math.sign(dy);
+                  layout[a][1] -= (oy / 2) * s;
+                  layout[b][1] += (oy / 2) * s;
+                }
+                clamp(a);
+                clamp(b);
+              }
+            }
+          }
+          if (!moved) break;
+        }
+        keys.forEach(clamp);
+        return layout;
+      }
+
+      function buildGraph() {
+        graphCanvas.querySelectorAll(".node").forEach((n) => n.remove());
+        Object.keys(nodeState).forEach((k) => delete nodeState[k]);
+        graphEdges.innerHTML = "";
+        const layout = computeLayout();
+
+        activeStory.chars.forEach((k) => {
+          const c = getStoryChar(k);
+          const pos = layout[k];
+          if (!pos) return;
+          const [x, y] = pos;
+          const el = document.createElement("div");
+          el.className = "node" + (c.big ? " big" : "");
+          el.dataset.key = k;
+          el.innerHTML = `
+            <div class="float-inner">
+              <div class="avatar">
+                <span class="avatar-img"><img src="${enc(c.img)}" alt="${c.name}"></span>
+              </div>
+              <div class="name">${c.name}</div>
+            </div>`;
+          const inner = el.querySelector(".float-inner");
+          const dur = 6 + Math.random() * 4;
+          inner.style.animationDuration = dur + "s";
+          inner.style.animationDelay = -Math.random() * dur + "s";
+          el.style.left = x + "px";
+          el.style.top = y + "px";
+          graphCanvas.appendChild(el);
+          nodeState[k] = { x, y, el, inner };
+          attachDrag(el, k);
+          el.addEventListener("click", () => {
+            if (!el.dataset.dragged) showChar(k);
+            delete el.dataset.dragged;
+          });
+        });
+
+        edges.forEach((e, idx) => {
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+          );
+          path.setAttribute("class", "edge " + e.type);
+          path.dataset.a = e.a;
+          path.dataset.b = e.b;
+          path.dataset.idx = String(idx);
+          graphEdges.appendChild(path);
+        });
+        edges.forEach((e, idx) => {
+          const bg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "rect",
+          );
+          bg.setAttribute("class", "edge-label-bg");
+          bg.setAttribute("rx", "5");
+          bg.dataset.a = e.a;
+          bg.dataset.b = e.b;
+          bg.dataset.idx = String(idx);
+          graphEdges.appendChild(bg);
+
+          const label = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          label.setAttribute("class", "edge-label " + e.type);
+          label.textContent = e.label;
+          label.dataset.a = e.a;
+          label.dataset.b = e.b;
+          label.dataset.idx = String(idx);
+          graphEdges.appendChild(label);
+        });
+        updateEdgesFromDOM();
+      }
+
+      function relayout() {
+        const layout = computeLayout();
+        Object.entries(layout).forEach(([k, [x, y]]) => {
+          const s = nodeState[k];
+          if (!s) return;
+          s.x = x;
+          s.y = y;
+          s.el.style.left = x + "px";
+          s.el.style.top = y + "px";
+        });
+        requestAnimationFrame(updateEdgesFromDOM);
+      }
+
+      function updateEdgesFromDOM() {
+        const cr = graphCanvas.getBoundingClientRect();
+        const S = scaleFactor || 1;
+        const edgeEls = Array.from(graphEdges.querySelectorAll(".edge"));
+        const labelEls = Array.from(graphEdges.querySelectorAll(".edge-label"));
+        const nodeRects = [];
+        const avatarCircles = [];
+        Object.entries(nodeState).forEach(([key, s]) => {
+          const r = s.el.getBoundingClientRect();
+          const pad = isSmallCanvas() ? 5 : 8;
+          nodeRects.push({
+            key,
+            left: (r.left - cr.left) / S - pad,
+            right: (r.right - cr.left) / S + pad,
+            top: (r.top - cr.top) / S - pad,
+            bottom: (r.bottom - cr.top) / S + pad,
+          });
+          const ar = s.el.querySelector(".avatar").getBoundingClientRect();
+          avatarCircles.push({
+            key,
+            x: (ar.left + ar.width / 2 - cr.left) / S,
+            y: (ar.top + ar.height / 2 - cr.top) / S,
+            r: ar.width / (2 * S) + (s.el.classList.contains("big") ? 12 : 5),
+          });
+        });
+        const pointInRect = (x, y, r) =>
+          x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+        const rectsOverlap = (a, b) =>
+          a.left < b.right &&
+          a.right > b.left &&
+          a.top < b.bottom &&
+          a.bottom > b.top;
+        const rectCircleOverlap = (rect, c) => {
+          const x = Math.max(rect.left, Math.min(c.x, rect.right));
+          const y = Math.max(rect.top, Math.min(c.y, rect.bottom));
+          return Math.hypot(x - c.x, y - c.y) < c.r;
+        };
+        const linePoint = (d, t) => ({
+          x: d.x1 + (d.x2 - d.x1) * t,
+          y: d.y1 + (d.y2 - d.y1) * t,
+        });
+        const clampLabelRect = (rect) => {
+          const crW = cr.width / S;
+          const crH = cr.height / S;
+          const dx =
+            rect.left < 4
+              ? 4 - rect.left
+              : rect.right > crW - 4
+                ? crW - 4 - rect.right
+                : 0;
+          const dy =
+            rect.top < 4
+              ? 4 - rect.top
+              : rect.bottom > crH - 4
+                ? crH - 4 - rect.bottom
+                : 0;
+          rect.left += dx;
+          rect.right += dx;
+          rect.top += dy;
+          rect.bottom += dy;
+          rect.x += dx;
+          rect.y += dy;
+          return rect;
+        };
+
+        const routeSlots = [];
+        const routeSamples = [];
+        const edgeData = edgeEls
+          .map((path) => {
+            const A = nodeState[path.dataset.a];
+            const B = nodeState[path.dataset.b];
+            if (!A || !B) return null;
+            const target = (nodeEl) =>
+              nodeEl.querySelector(".avatar") || nodeEl;
+            const ar = target(A.el).getBoundingClientRect();
+            const br = target(B.el).getBoundingClientRect();
+            const ax = (ar.left + ar.width / 2 - cr.left) / S;
+            const ay = (ar.top + ar.height / 2 - cr.top) / S;
+            const bx = (br.left + br.width / 2 - cr.left) / S;
+            const by = (br.top + br.height / 2 - cr.top) / S;
+            const dx = bx - ax;
+            const dy = by - ay;
+            const dist = Math.hypot(dx, dy) || 1;
+            const ux = dx / dist;
+            const uy = dy / dist;
+            const nx = -uy;
+            const ny = ux;
+            const idx = Number(path.dataset.idx || 0);
+            const terminalShift = ((idx % 5) - 2) * (isSmallCanvas() ? 1.2 : 2);
+            const x1 = ax + ux * (ar.width / (2 * S) + 5) + nx * terminalShift;
+            const y1 = ay + uy * (ar.height / (2 * S) + 5) + ny * terminalShift;
+            const x2 = bx - ux * (br.width / (2 * S) + 5) + nx * terminalShift;
+            const y2 = by - uy * (br.height / (2 * S) + 5) + ny * terminalShift;
+            const data = {
+              x1,
+              y1,
+              x2,
+              y2,
+              cx: (x1 + x2) / 2,
+              cy: (y1 + y2) / 2,
+              nx,
+              ny,
+              idx,
+            };
+            routeSlots.push({ x: data.cx, y: data.cy });
+            routeSamples.push(
+              Array.from({ length: 13 }, (_, i) =>
+                linePoint(data, (i + 4) / 20),
+              ),
+            );
+            path.setAttribute("d", `M ${x1} ${y1} L ${x2} ${y2}`);
+            return { path, ...data };
+          })
+          .filter(Boolean);
+
+        const labelRects = [];
+        labelEls.forEach((label) => {
+          const idx = Number(label.dataset.idx || 0);
+          const d = edgeData.find((e) => e.idx === idx);
+          if (!d) return;
+          const text = label.textContent || "";
+          const font = currentBase.w <= 400 ? 9.5 : isSmallCanvas() ? 10.5 : 12;
+          const w = Math.min(
+            Math.max(text.length * font * 0.78 + 16, 34),
+            isSmallCanvas() ? 72 : 92,
+          );
+          const h = font * 1.7 + 8;
+          const p = linePoint(d, 0.5);
+          const best = {
+            x: p.x,
+            y: p.y,
+            left: p.x - w / 2,
+            right: p.x + w / 2,
+            top: p.y - h / 2,
+            bottom: p.y + h / 2,
+            score: 0,
+          };
+          const canvasW = cr.width / S;
+          const canvasH = cr.height / S;
+          let blocked =
+            best.left < 4 ||
+            best.right > canvasW - 4 ||
+            best.top < 4 ||
+            best.bottom > canvasH - 4;
+          nodeRects.forEach((r) => {
+            if (rectsOverlap(best, r)) blocked = true;
+          });
+          avatarCircles.forEach((c) => {
+            if (rectCircleOverlap(best, c)) blocked = true;
+          });
+          labelRects.forEach((r) => {
+            if (rectsOverlap(best, r)) blocked = true;
+          });
+          if (blocked) best.score = 1000;
+          const bg = graphEdges.querySelector(
+            `.edge-label-bg[data-idx="${idx}"]`,
+          );
+          if (!best || best.score >= 1000) {
+            label.classList.add("lbl-hide");
+            if (bg) bg.classList.add("lbl-hide");
+            return;
+          }
+          label.classList.remove("lbl-hide");
+          if (bg) bg.classList.remove("lbl-hide");
+          labelRects.push(best);
+          label.setAttribute("x", best.x);
+          label.setAttribute("y", best.y);
+          if (bg) {
+            bg.setAttribute("x", best.left);
+            bg.setAttribute("y", best.top);
+            bg.setAttribute("width", best.right - best.left);
+            bg.setAttribute("height", best.bottom - best.top);
+          }
+        });
+      }
+
+      function attachDrag(el, key) {
+        let startX = 0,
+          startY = 0,
+          origX = 0,
+          origY = 0,
+          moved = false;
+        const state = () => nodeState[key];
+        function onDown(clientX, clientY) {
+          moved = false;
+          startX = clientX;
+          startY = clientY;
+          origX = state().x;
+          origY = state().y;
+          el.classList.add("grabbing", "dragging-now");
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onUp);
+          document.addEventListener("touchmove", onTouchMove, {
+            passive: false,
+          });
+          document.addEventListener("touchend", onUp);
+        }
+        function onMove(clientX, clientY) {
+          const S = scaleFactor || 1;
+          const dx = (clientX - startX) / S,
+            dy = (clientY - startY) / S;
+          if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+          let nx = Math.max(40, Math.min(bounds.w - 40, origX + dx));
+          let ny = Math.max(40, Math.min(bounds.h - 40, origY + dy));
+          state().x = nx;
+          state().y = ny;
+          el.style.left = nx + "px";
+          el.style.top = ny + "px";
+          updateEdgesFromDOM();
+        }
+        function onUp() {
+          el.classList.remove("grabbing", "dragging-now");
+          if (moved) el.dataset.dragged = "1";
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onUp);
+          document.removeEventListener("touchmove", onTouchMove);
+          document.removeEventListener("touchend", onUp);
+        }
+        const onMouseMove = (e) => onMove(e.clientX, e.clientY);
+        const onTouchMove = (e) => {
+          e.preventDefault();
+          const t = e.touches[0];
+          onMove(t.clientX, t.clientY);
+        };
+        el.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          onDown(e.clientX, e.clientY);
+        });
+        el.addEventListener(
+          "touchstart",
+          (e) => {
+            const t = e.touches[0];
+            onDown(t.clientX, t.clientY);
+          },
+          { passive: true },
+        );
+      }
+
+      let reqId = null;
+      function edgeSyncLoop() {
+        updateEdgesFromDOM();
+        reqId = requestAnimationFrame(edgeSyncLoop);
+      }
+      function startPhysics() {
+        document
+          .querySelectorAll(".float-inner")
+          .forEach((n) => (n.style.animationPlayState = "running"));
+        if (!reqId) reqId = requestAnimationFrame(edgeSyncLoop);
+      }
+      function stopPhysics() {
+        document
+          .querySelectorAll(".float-inner")
+          .forEach((n) => (n.style.animationPlayState = "paused"));
+        if (reqId) {
+          cancelAnimationFrame(reqId);
+          reqId = null;
+        }
+      }
+
+      function highlightRelated(k) {
+        const related = new Set([k]);
+        edges.forEach((e) => {
+          if (e.a === k) related.add(e.b);
+          if (e.b === k) related.add(e.a);
+        });
+        Object.entries(nodeState).forEach(([key, s]) => {
+          s.el.classList.toggle("active", key === k);
+          s.el.classList.toggle("dim", !related.has(key));
+        });
+        Array.from(graphEdges.children).forEach((el) => {
+          const on = el.dataset.a === k || el.dataset.b === k;
+          el.classList.toggle("hl", on);
+          el.classList.toggle("dim", !on);
+        });
+      }
+      function clearHighlight() {
+        Object.values(nodeState).forEach((s) =>
+          s.el.classList.remove("active", "dim"),
+        );
+        Array.from(graphEdges.children).forEach((line) =>
+          line.classList.remove("hl", "dim"),
+        );
+      }
+
+      function getCharDescText(c) {
+        const fullText =
+          c.desc && c.desc !== c.storyDesc
+            ? `${c.storyDesc} ${c.desc}`
+            : c.storyDesc;
+        return fullText.replace(/\s+/g, " ").trim();
+      }
+      function fitCharPanel() {
+        if (!isSmallCanvas() || !graphWrap.classList.contains("panel-open"))
+          return;
+        const fitClasses = ["fit-compact", "fit-tight", "fit-ultra"];
+        charPanel.classList.remove(...fitClasses);
+        charPanel.style.removeProperty("--char-fit-scale");
+        for (const cls of fitClasses) {
+          if (charPanel.scrollHeight <= charPanel.clientHeight) return;
+          charPanel.classList.add(cls);
+        }
+        let scale = 1;
+        for (
+          let i = 0;
+          i < 8 && charPanel.scrollHeight > charPanel.clientHeight;
+          i++
+        ) {
+          scale = Math.max(
+            0.62,
+            scale * (charPanel.clientHeight / charPanel.scrollHeight),
+          );
+          charPanel.style.setProperty("--char-fit-scale", String(scale));
+        }
+      }
+      function showChar(k) {
+        const c = getStoryChar(k);
+        if (!c) return;
+        currentCharKey = k;
+        document.getElementById("cAvtImg").src = enc(c.img);
+        document.getElementById("cName").textContent = c.name;
+        document.getElementById("cActor").textContent = c.actor;
+        document.getElementById("cDesc").textContent = getCharDescText(c);
+        const tagEl = document.getElementById("cRelTag");
+        const coreKey = activeStory.chars.includes(HERO)
+          ? HERO
+          : activeStory.chars[0];
+        const coreName = chars[coreKey]?.name || "主角";
+        if (k === coreKey) {
+          tagEl.textContent = "核心人物 · 本人";
+          tagEl.style.background =
+            "linear-gradient(135deg, var(--primary), #7b96f7)";
+        } else {
+          const edgeToCore = edges.find(
+            (e) =>
+              (e.a === k && e.b === coreKey) || (e.b === k && e.a === coreKey),
+          );
+          if (edgeToCore) {
+            tagEl.textContent =
+              "与" +
+              coreName +
+              "：" +
+              (edgeToCore.label || RELN[edgeToCore.type]);
+            tagEl.style.background = REL_COLORS[edgeToCore.type];
+          } else if (c.storyRel.length) {
+            tagEl.textContent = c.storyRel[0];
+            tagEl.style.background =
+              "linear-gradient(135deg, var(--primary), #7b96f7)";
+          } else {
+            tagEl.textContent = "本模块人物";
+            tagEl.style.background =
+              "linear-gradient(135deg, var(--primary), #7b96f7)";
+          }
+        }
+
+        graphWrap.classList.add("panel-open");
+        highlightRelated(k);
+        requestAnimationFrame(fitCharPanel);
+        setTimeout(() => {
+          relayout();
+          fitCharPanel();
+        }, 60);
+      }
+      function closeChar() {
+        currentCharKey = null;
+        charPanel.classList.remove("fit-compact", "fit-tight", "fit-ultra");
+        charPanel.style.removeProperty("--char-fit-scale");
+        graphWrap.classList.remove("panel-open");
+        clearHighlight();
+        setTimeout(() => {
+          relayout();
+        }, 60);
+      }
+      document.getElementById("charClose").addEventListener("click", closeChar);
+
+      function getStoryDescText(story) {
+        return story.desc || "";
+      }
+      function renderStoryButtons() {
+        storyDesc.textContent = getStoryDescText(activeStory);
+        storyBar.innerHTML = storyModules
+          .map(
+            (s, idx) =>
+              `<button class="story-btn ${s.key === currentStoryKey ? "active" : ""}" data-story="${s.key}"><span class="story-index">${idx + 1}</span><span>${s.name}</span></button>`,
+          )
+          .join("");
+        storyBar.querySelectorAll(".story-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const next = btn.dataset.story;
+            if (!next || next === currentStoryKey) return;
+            currentStoryKey = next;
+            activeStory = storyByKey[currentStoryKey];
+            edges = activeStory.edges;
+            currentCharKey = null;
+            charPanel.classList.remove("fit-compact", "fit-tight", "fit-ultra");
+            charPanel.style.removeProperty("--char-fit-scale");
+            graphWrap.classList.remove("panel-open");
+            clearHighlight();
+            renderStoryButtons();
+            buildGraph();
+          });
+        });
+        requestAnimationFrame(() => {
+          updateStoryHint();
+        });
+      }
+      function updateStoryHint() {
+        if (!storyScrollHint) return;
+        const canScrollRight =
+          storyBar.scrollLeft + storyBar.clientWidth < storyBar.scrollWidth - 4;
+        storyScrollHint.classList.toggle("hide", !canScrollRight);
+      }
+      storyBar.addEventListener("scroll", updateStoryHint, { passive: true });
+      if (storyScrollHint) {
+        storyScrollHint.addEventListener("click", () => {
+          storyBar.scrollBy({
+            left: storyBar.clientWidth * 0.7,
+            behavior: "smooth",
+          });
+        });
+      }
+
+      /* =========================================================
+         视图 3：作品推荐 —— 4 tab + 每页4个 + 翻页
+         ========================================================= */
+      const worksGrid = document.getElementById("worksGrid");
+      const worksPageInfo = document.getElementById("worksPageInfo");
+      const worksPrev = document.getElementById("worksPrev");
+      const worksNext = document.getElementById("worksNext");
+      const worksScrollHint = document.getElementById("worksScrollHint");
+      let worksCat = "theme";
+      let worksPage = 0;
+      const WORKS_PER_PAGE = 4;
+
+      function renderWorks() {
+        const list = works[worksCat] || [];
+        const pageCount = Math.max(1, Math.ceil(list.length / WORKS_PER_PAGE));
+        worksPage = Math.min(worksPage, pageCount - 1);
+        worksGrid.dataset.cat = worksCat;
+        const items = list.slice(
+          worksPage * WORKS_PER_PAGE,
+          worksPage * WORKS_PER_PAGE + WORKS_PER_PAGE,
+        );
+        worksGrid.innerHTML = items
+          .map((w) => {
+            const coverSrc = IMG + w.cover;
+            return `
+            <div class="work-card ${w.up ? "upcoming" : ""}">
+              <div class="cover">
+                <img src="${enc(coverSrc)}" alt="${w.n}">
+                ${w.ep ? `<div class="tag">${w.ep}</div>` : ""}
+              </div>
+              <div class="info">
+                <div class="n">${w.n}</div>
+                <div class="m">${w.m
+                  .split("/")
+                  .slice(0, 2)
+                  .map((s) => s.trim())
+                  .join(" / ")}</div>
+                <div class="r">▸ ${w.r}</div>
+              </div>
+            </div>`;
+          })
+          .join("");
+        worksPageInfo.textContent = `${worksPage + 1}/${pageCount}`;
+        const showPager = pageCount > 1;
+        worksPrev.classList.toggle("hidden", !showPager);
+        worksNext.classList.toggle("hidden", !showPager);
+        worksPageInfo.classList.toggle("hidden", !showPager);
+        worksPrev.disabled = worksPage === 0;
+        worksNext.disabled = worksPage === pageCount - 1;
+        worksGrid.scrollLeft = 0;
+        requestAnimationFrame(updateWorksHint);
+      }
+      worksPrev.addEventListener("click", () => {
+        worksPage--;
+        renderWorks();
+      });
+      worksNext.addEventListener("click", () => {
+        worksPage++;
+        renderWorks();
+      });
+      function updateWorksHint() {
+        if (!worksScrollHint) return;
+        const canScrollRight =
+          worksGrid.scrollLeft + worksGrid.clientWidth <
+          worksGrid.scrollWidth - 4;
+        worksScrollHint.classList.toggle("hide", !canScrollRight);
+      }
+      worksGrid.addEventListener("scroll", updateWorksHint, { passive: true });
+      if (worksScrollHint) {
+        worksScrollHint.addEventListener("click", () => {
+          worksGrid.scrollBy({
+            left: worksGrid.clientWidth / 2,
+            behavior: "smooth",
+          });
+        });
+      }
+
+      try {
+        renderStoryButtons();
+      } catch (e) {
+        console.error("renderStoryButtons:", e);
+      }
+      document.querySelectorAll(".works-tab").forEach((t) => {
+        t.addEventListener("click", () => {
+          document
+            .querySelectorAll(".works-tab")
+            .forEach((x) => x.classList.remove("active"));
+          t.classList.add("active");
+          worksCat = t.dataset.cat;
+          worksPage = 0;
+          renderWorks();
+        });
+      });
+
+      /* =========================================================
+         Tab 切换
+         ========================================================= */
+      try {
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = btn.dataset.tab;
+            document
+              .querySelectorAll(".tab-btn")
+              .forEach((b) => b.classList.toggle("active", b === btn));
+            document
+              .querySelectorAll(".view")
+              .forEach((v) =>
+                v.classList.toggle("active", v.dataset.view === target),
+              );
+            if (target === "graph") {
+              measure();
+              relayout();
+              startPhysics();
+            } else {
+              stopPhysics();
+            }
+          });
+        });
+      } catch (e) {
+        console.error("tab init:", e);
+      }
+
+      /* resize 防抖：缩放同步执行，内部重排 debounce */
+      let rzT;
+      window.addEventListener("resize", () => {
+        applyScale();
+        clearTimeout(rzT);
+        rzT = setTimeout(() => {
+          try {
+            buildGraph();
+          } catch (e) {
+            console.error("resize buildGraph:", e);
+          }
+          if (graphWrap.classList.contains("panel-open")) {
+            relayout();
+            const c = currentCharKey ? getStoryChar(currentCharKey) : null;
+            if (c)
+              document.getElementById("cDesc").textContent = getCharDescText(c);
+            fitCharPanel();
+          }
+          renderWorks();
+        }, 150);
+      });
+
+      /* 初始化 */
+      window.addEventListener("load", () => {
+        try {
+          applyScale(); // 用布局完成后的最终视口尺寸重算基准，修复 PC 刷新后卡在窄版
+          buildGraph();
+          renderWorks();
+          updateStoryHint();
+          startPhysics();
+          const preload = new Set();
+          Object.values(chars).forEach((c) => preload.add(c.img));
+          Object.values(works)
+            .flat()
+            .forEach((w) => {
+              if (w.cover) preload.add(IMG + w.cover);
+            });
+          preload.forEach((src) => {
+            const im = new Image();
+            im.src = enc(src);
+          });
+          const heroNode = nodeState[HERO] && nodeState[HERO].el;
+          if (heroNode) {
+            heroNode.classList.add("tap-hint");
+            setTimeout(() => heroNode.classList.remove("tap-hint"), 5600);
+          }
+        } catch (e) {
+          console.error("init:", e);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -62,7 +62,7 @@ export function loadScenarios(document: unknown): ScenarioDocument {
       if ("visible" in assertion && typeof assertion.visible !== "boolean") throw new TypeError(`场景 ${scenario.id} assertions[${index}].visible 必须是 boolean`);
       if ("focused" in assertion && typeof assertion.focused !== "boolean") throw new TypeError(`场景 ${scenario.id} assertions[${index}].focused 必须是 boolean`);
       for (const key of ["text", "textContains", "value"] as const) if (key in assertion && typeof assertion[key] !== "string") throw new TypeError(`场景 ${scenario.id} assertions[${index}].${key} 必须是字符串`);
-      for (const key of ["classIncludes", "classExcludes"] as const) if (key in assertion && (!Array.isArray(assertion[key]) || !assertion[key]?.every((item) => typeof item === "string" && item))) throw new TypeError(`场景 ${scenario.id} assertions[${index}].${key} 必须是字符串数组`);
+      for (const key of ["classIncludes", "classExcludes"] as const) if (key in assertion && (!Array.isArray(assertion[key]) || !assertion[key]?.every((item) => typeof item === "string" || isTarget(item, true)))) throw new TypeError(`场景 ${scenario.id} assertions[${index}].${key} 必须是字符串或按 role 分支的 selector 数组`);
     });
   }
   return value as ScenarioDocument;

@@ -1,0 +1,12 @@
+[PASS] validation: 10/10 校验通过
+[PASS] render: 原页面和组件库均成功渲染
+[PASS] overall: finalOverall=0.9992（dom=0.999，visual=0.9994），门槛=0.85
+[PASS] structure: structure=0.998，门槛=0.7
+[PASS] text: text=1，门槛=0.8
+[PASS] visual-runtime: Chrome 渲染完成，runtimeErrors=0
+[PASS] selector-coverage: selectorCoverage=1，门槛=1
+[PASS] computed-style: computedStyle=0.9989，门槛=0.98
+[PASS] pixel-diff: pixelDiff=0，门槛=0.02
+[PASS] scenarios: 5/5 正式场景通过
+
+质量门禁: PASS

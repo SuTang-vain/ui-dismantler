@@ -233,8 +233,49 @@ const SKIP_TAGS = new Set(['script', 'style', 'link', 'meta', 'title', 'head']);
 const MAX_NODES = 5000;
 const MAX_DEPTH = 40;
 
+/**
+ * 从 document.styleSheets 收集所有 CSS 选择器中出现的 class 名（用于 class_coverage 计算）。
+ * 遍历所有 sheet 的 cssRules，提取 selectorText 中的 .class 名。
+ * 跨域 sheet 会抛 SecurityError，用 try/catch 跳过。
+ */
+function collectCssClassSelectors(document) {
+  const cssClasses = new Set();
+  try {
+    const sheets = document.styleSheets;
+    for (let i = 0; i < sheets.length; i++) {
+      try {
+        const rules = sheets[i].cssRules || sheets[i].rules;
+        if (!rules) continue;
+        for (let j = 0; j < rules.length; j++) {
+          const r = rules[j];
+          // @media 等容器规则嵌套 cssRules，递归取
+          if (r.cssRules && r.cssRules.length) {
+            for (let k = 0; k < r.cssRules.length; k++) {
+              const inner = r.cssRules[k];
+              if (inner.selectorText) {
+                for (const m of inner.selectorText.matchAll(/\.([A-Za-z][\w-]*)/g)) {
+                  cssClasses.add(m[1]);
+                }
+              }
+            }
+          } else if (r.selectorText) {
+            for (const m of r.selectorText.matchAll(/\.([A-Za-z][\w-]*)/g)) {
+              cssClasses.add(m[1]);
+            }
+          }
+        }
+      } catch (e) { /* 跨域 sheet 跳过 */ }
+    }
+  } catch (e) { /* styleSheets 不可访问 */ }
+  return cssClasses;
+}
+
 function serialize(root) {
   let nodeCount = 0;
+  const cssClasses = collectCssClassSelectors(root.ownerDocument);
+  let totalClassUses = 0;
+  let coveredClassUses = 0;
+  const missingClasses = new Set();
 
   function visit(node, depth = 0) {
     if (nodeCount >= MAX_NODES || depth > MAX_DEPTH) return null;
@@ -249,6 +290,15 @@ function serialize(root) {
     if (SKIP_TAGS.has(tag)) return null;
     nodeCount += 1;
     const classes = (node.getAttribute('class') || '').split(/\s+/).filter(Boolean);
+    // 累加 class_coverage 统计
+    for (const cls of classes) {
+      totalClassUses += 1;
+      if (cssClasses.has(cls)) {
+        coveredClassUses += 1;
+      } else {
+        missingClasses.add(cls);
+      }
+    }
     const children = [];
     for (const child of node.childNodes) {
       const result = visit(child, depth + 1);
@@ -263,7 +313,18 @@ function serialize(root) {
     return result;
   }
 
-  return { tree: visit(root), nodeCount };
+  const tree = visit(root);
+  const rate = totalClassUses > 0 ? coveredClassUses / totalClassUses : 1.0;
+  return {
+    tree,
+    nodeCount,
+    classCoverage: {
+      rate: Math.round(rate * 1000) / 1000,
+      totalClassUses,
+      coveredClassUses,
+      missingClasses: [...missingClasses].sort(),
+    },
+  };
 }
 
 function collectTexts(root) {
@@ -369,10 +430,12 @@ function evaluateAssertion(window, assertion, role, index) {
       const actual = window.document.activeElement === element;
       check('focused', assertion.focused, actual, actual === assertion.focused);
     }
-    for (const className of assertion.classIncludes || []) {
+    for (const rawClassName of assertion.classIncludes || []) {
+      const className = selectorForRole(rawClassName, role) || rawClassName;
       check('classIncludes', className, [...element.classList], element.classList.contains(className));
     }
-    for (const className of assertion.classExcludes || []) {
+    for (const rawClassName of assertion.classExcludes || []) {
+      const className = selectorForRole(rawClassName, role) || rawClassName;
       check('classExcludes', className, [...element.classList], !element.classList.contains(className));
     }
     for (const [name, expected] of Object.entries(assertion.attributes || {})) {
@@ -537,6 +600,7 @@ try {
     childCount: root.children.length,
     dom: serialized.tree,
     serializedNodes: serialized.nodeCount,
+    classCoverage: serialized.classCoverage,
     texts,
     textCount: texts.length,
     runtimeErrors: [...(window.__roundtripErrors || []), ...jsdomErrors].slice(0, 5),

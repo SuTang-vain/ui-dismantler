@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0",
+  "scenarios": [
+    {
+      "id": "open-character-panel",
+      "label": "打开庆帝人物详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='qingdi']",
+            "library": ".sg-node[data-key='qingdi']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#graphWrap",
+            "library": "#sg-graphWrap"
+          },
+          "classIncludes": [
+            {
+              "reference": "panel-open",
+              "library": "sg-panel-open"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#charPanel",
+            "library": "#sg-charPanel"
+          },
+          "textContains": "庆帝"
+        }
+      ]
+    },
+    {
+      "id": "close-character-panel",
+      "label": "关闭人物详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='qingdi']",
+            "library": ".sg-node[data-key='qingdi']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#charClose",
+            "library": "#sg-charClose"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#graphWrap",
+            "library": "#sg-graphWrap"
+          },
+          "classExcludes": [
+            {
+              "reference": "panel-open",
+              "library": "sg-panel-open"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "switch-to-works",
+      "label": "切换到作品推荐",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-btn[data-tab='works']",
+            "library": ".sg-tab-btn[data-tab='works']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#worksGrid",
+            "library": "#sg-worksGrid"
+          },
+          "visible": true,
+          "textContains": "庆余年 第一季"
+        }
+      ]
+    },
+    {
+      "id": "switch-work-category",
+      "label": "切换作品推荐分类",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-btn[data-tab='works']",
+            "library": ".sg-tab-btn[data-tab='works']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".works-tab[data-cat='theme']",
+            "library": ".sg-works-tab[data-cat='theme']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#worksGrid",
+            "library": "#sg-worksGrid"
+          },
+          "visible": true,
+          "textContains": "琅琊榜"
+        }
+      ]
+    }
+  ]
+}

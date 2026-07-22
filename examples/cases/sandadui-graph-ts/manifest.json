@@ -1,0 +1,718 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/original.html",
+    "title": "三大队：人物关系与剧情全解析",
+    "templateId": null,
+    "vertical": "generic",
+    "profile": "generic",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".tab-btn",
+          ".tab-btn:hover",
+          ".tab-btn.active",
+          ".story-btn",
+          ".story-index",
+          ".story-btn:hover",
+          ".story-btn.active"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#4a6ee0",
+        "original": "--primary-dark",
+        "usage": [
+          ":root",
+          ".tab-btn",
+          ".story-btn",
+          ".story-index",
+          ".char-panel .close:hover",
+          ".works-tab"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-light",
+        "value": "#8aa5ff",
+        "original": "--primary-light",
+        "usage": [
+          ":root",
+          ".tab-btn.active",
+          ".story-btn.active",
+          ".works-tab.active",
+          ".works-btn"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-white",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          ":root",
+          "/* ============================================\n         视图 1：故事图谱\n         ============================================ */\n      .graph-wrap",
+          "/* ============================================\n         视图 3：作品推荐（合并系列作品 + 相似推荐）\n         ============================================ */\n      .works-wrap"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-gray",
+        "value": "#f8f8f8",
+        "original": "--bg-gray",
+        "usage": [
+          ":root",
+          ".work-card",
+          ".work-card .cover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "text-main",
+        "value": "#1e1f24",
+        "original": "--text-main",
+        "usage": [
+          ":root",
+          "html,\n      body",
+          ".story-desc",
+          ".legend-item.enemy",
+          ".lg-svg.enemy line",
+          ".edge.enemy",
+          ".edge-label.enemy",
+          ".char-panel .p-desc"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "text-sec",
+        "value": "#848691",
+        "original": "--text-sec",
+        "usage": [
+          ":root",
+          "/* 图例：左上角常驻，单行展示，半透明不遮挡 */\n      .graph-legend",
+          ".char-panel .p-actor",
+          ".works-pageinfo"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "text-tri",
+        "value": "#b7b9c1",
+        "original": "--text-tri",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "border",
+        "value": "rgba(0, 0, 0, 0.06)",
+        "original": "--border",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 2px 8px rgba(0, 0, 0, 0.08)",
+        "original": "--shadow-sm",
+        "usage": [
+          ":root",
+          "/* ============================================\n         视图 1：故事图谱\n         ============================================ */\n      .graph-wrap",
+          "/* ============================================\n         视图 3：作品推荐（合并系列作品 + 相似推荐）\n         ============================================ */\n      .works-wrap",
+          ".work-card"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 4px 16px rgba(0, 0, 0, 0.1)",
+        "original": "--shadow-md",
+        "usage": [
+          ":root",
+          ".work-card:hover"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 16px 48px rgba(0, 0, 0, 0.18)",
+        "original": "--shadow-lg",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gold",
+        "value": "#c8a35a",
+        "original": "--gold",
+        "usage": [
+          ":root",
+          ".legend-item.master",
+          ".lg-svg.master line",
+          ".edge.master",
+          ".edge-label.master",
+          ".work-card.upcoming .tag"
+        ],
+        "roles": [
+          "background",
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "red",
+        "value": "#d94b4b",
+        "original": "--red",
+        "usage": [
+          ":root",
+          ".legend-item.family",
+          ".lg-svg.family line",
+          ".edge.family",
+          ".edge-label.family"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "blue",
+        "value": "#3b7ad9",
+        "original": "--blue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "green",
+        "value": "#4aa06e",
+        "original": "--green",
+        "usage": [
+          ":root",
+          ".legend-item.friend",
+          ".lg-svg.friend line",
+          ".edge.friend",
+          ".edge-label.friend"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "pink",
+        "value": "#e07aa8",
+        "original": "--pink",
+        "usage": [
+          ":root",
+          ".legend-item.romance",
+          ".lg-svg.romance line",
+          ".edge.romance",
+          ".edge-label.romance"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-08",
+        "value": "rgba(0, 0, 0, 0.08)",
+        "original": "rgba(0, 0, 0, 0.08)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-1",
+        "value": "rgba(0, 0, 0, 0.1)",
+        "original": "rgba(0, 0, 0, 0.1)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-18",
+        "value": "rgba(0, 0, 0, 0.18)",
+        "original": "rgba(0, 0, 0, 0.18)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "eef1f8",
+        "value": "#eef1f8",
+        "original": "#eef1f8",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-42",
+        "value": "rgba(100, 135, 250, 0.42)",
+        "original": "rgba(100, 135, 250, 0.42)",
+        "usage": [],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "f5f8ff",
+        "value": "#f5f8ff",
+        "original": "#f5f8ff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "eaeff9",
+        "value": "#eaeff9",
+        "original": "#eaeff9",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "dee6f4",
+        "value": "#dee6f4",
+        "original": "#dee6f4",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-35",
+        "value": "rgba(100, 135, 250, 0.35)",
+        "original": "rgba(100, 135, 250, 0.35)",
+        "usage": [],
+        "roles": [
+          "border",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-16",
+        "value": "rgba(100, 135, 250, 0.16)",
+        "original": "rgba(100, 135, 250, 0.16)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-26",
+        "value": "rgba(100, 135, 250, 0.26)",
+        "original": "rgba(100, 135, 250, 0.26)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-44",
+        "value": "rgba(100, 135, 250, 0.44)",
+        "original": "rgba(100, 135, 250, 0.44)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-28",
+        "value": "rgba(100, 135, 250, 0.28)",
+        "original": "rgba(100, 135, 250, 0.28)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-14",
+        "value": "rgba(100, 135, 250, 0.14)",
+        "original": "rgba(100, 135, 250, 0.14)",
+        "usage": [],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-12",
+        "value": "rgba(100, 135, 250, 0.12)",
+        "original": "rgba(100, 135, 250, 0.12)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-24",
+        "value": "rgba(100, 135, 250, 0.24)",
+        "original": "rgba(100, 135, 250, 0.24)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-38",
+        "value": "rgba(100, 135, 250, 0.38)",
+        "original": "rgba(100, 135, 250, 0.38)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-24",
+        "value": "rgba(255, 255, 255, 0.24)",
+        "original": "rgba(255, 255, 255, 0.24)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-72",
+        "value": "rgba(255, 255, 255, 0.72)",
+        "original": "rgba(255, 255, 255, 0.72)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          160deg,\n          #f5f8ff 0%,\n          #eaeff9 60%,\n          #dee6f4 100%\n        )"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          135deg,\n          var(--primary),\n          var(--primary-light)\n        )"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 50% 44%,\n            rgba(100, 135, 250, 0.07),\n            transparent 62%\n          ),\n          var(--bg-white)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg, #eef1f8, #dfe7f4)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          180deg,\n          transparent 55%,\n          rgba(0, 0, 0, 0.5) 100%\n        )"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg, #f4f6ff 0%, #f8f9ff 100%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "worksTabs",
+        "label": "同题材 同主演 同编剧",
+        "selector": "#worksTabs",
+        "target": null
+      },
+      {
+        "id": "tab-2",
+        "label": "同题材",
+        "selector": "button.works-tab.active",
+        "target": null
+      },
+      {
+        "id": "tab-3",
+        "label": "同主演",
+        "selector": "button.works-tab",
+        "target": null
+      },
+      {
+        "id": "tab-4",
+        "label": "同编剧",
+        "selector": "button.works-tab",
+        "target": null
+      },
+      {
+        "id": "tab-5",
+        "label": "故事图谱 作品推荐",
+        "selector": "div.tabs",
+        "target": null
+      },
+      {
+        "id": "tab-6",
+        "label": "故事图谱",
+        "selector": "button.tab-btn.active",
+        "target": null
+      },
+      {
+        "id": "tab-7",
+        "label": "作品推荐",
+        "selector": "button.tab-btn",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "graph-1",
+        "type": "graph",
+        "structuralType": "collection",
+        "semanticType": "graph",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "svg/node"
+          }
+        ],
+        "selector": "div.main",
+        "details": {
+          "text": "› 战友 家人 师徒 同行 对立 × 同题材 同主演 同编剧 ← 上一页 1/1 下一页 →",
+          "className": "main"
+        }
+      }
+    ],
+    "modals": [],
+    "landmarks": []
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "ALL_EDGES",
+        "kind": "array",
+        "fields": {
+          "a": "string",
+          "b": "string",
+          "type": "string",
+          "label": "string"
+        },
+        "count": 14
+      },
+      {
+        "name": "storyModules",
+        "kind": "array",
+        "fields": {
+          "key": "string",
+          "name": "string",
+          "desc": "string",
+          "chars": "array",
+          "layout": "object",
+          "chengbing": "array",
+          "caibin": "array",
+          "mazhenkun": "array",
+          "liaojian": "array",
+          "xuyizhou": "array",
+          "laozhang": "array",
+          "wangdayong": "array",
+          "wangeryong": "array",
+          "shouhainvhai": "array",
+          "a": "string",
+          "b": "string",
+          "type": "string",
+          "label": "string"
+        },
+        "count": 103
+      },
+      {
+        "name": "order",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      },
+      {
+        "name": "nodeRects",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "avatarCircles",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "routeSlots",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "routeSamples",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "labelRects",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "fitClasses",
+        "kind": "array",
+        "fields": {},
+        "count": 3
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "button.tab-btn.active",
+      "event": "click",
+      "action": "toggle",
+      "source": "html-attribute",
+      "fingerprint": "click|button.tab-btn.active|toggle"
+    },
+    {
+      "trigger": "button.tab-btn",
+      "event": "click",
+      "action": "toggle",
+      "source": "html-attribute",
+      "fingerprint": "click|button.tab-btn|toggle"
+    },
+    {
+      "trigger": "#storyScrollHint",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#storyScrollHint|semantic-control"
+    },
+    {
+      "trigger": "#charClose",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#charClose|semantic-control"
+    },
+    {
+      "trigger": "button.works-tab.active",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.works-tab.active|semantic-control"
+    },
+    {
+      "trigger": "button.works-tab",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|button.works-tab|semantic-control"
+    },
+    {
+      "trigger": "#worksPrev",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#worksPrev|semantic-control"
+    },
+    {
+      "trigger": "#worksNext",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#worksNext|semantic-control"
+    },
+    {
+      "trigger": "event-listener",
+      "event": "click",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "click|event-listener|addEventListener(\"click\""
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width: 768px)",
+      "minWidth": null,
+      "maxWidth": 768
+    },
+    {
+      "query": "(max-width: 480px)",
+      "minWidth": null,
+      "maxWidth": 480
+    },
+    {
+      "query": "(max-width: 480px) and (max-height: 420px)",
+      "minWidth": null,
+      "maxWidth": 480
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 9,
+    "unlabeledButtons": 0,
+    "images": 1,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": []
+}

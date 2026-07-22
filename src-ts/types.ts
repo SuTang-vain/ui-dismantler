@@ -156,8 +156,8 @@ export interface ScenarioAssertion {
   textContains?: string;
   value?: string;
   focused?: boolean;
-  classIncludes?: string[];
-  classExcludes?: string[];
+  classIncludes?: Array<string | ScenarioTarget>;
+  classExcludes?: Array<string | ScenarioTarget>;
   attributes?: Record<string, string | null>;
 }
 
@@ -235,6 +235,7 @@ export interface SelectorCoverageReport {
 export interface ComputedStyleSnapshot {
   key: string;
   tag: string;
+  id: string;
   classes: string[];
   selector: string;
   rect: { x: number; y: number; width: number; height: number };

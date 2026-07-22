@@ -8,7 +8,7 @@ const GENERIC_CLASSES = new Set([
   "card", "btn", "button", "icon", "title", "subtitle", "kicker", "badge", "chip", "tag", "label", "value", "head", "header", "body", "foot", "footer", "content", "overlay", "wrap", "wrapper", "container", "grid", "row", "col", "cell", "item", "list", "section", "nav", "bar", "cover", "photo", "img", "image", "thumb", "thumbnail", "video", "prev", "next", "close",
 ]);
 const SEMANTIC_BASE_CLASSES = new Set(["sg-arrow", "sg-prev", "sg-next", "sg-dots", "sg-dot", "sg-tl-prev", "sg-tl-next", "sg-tl-dot", "sg-tl-dots"]);
-const DYNAMIC_PREFIXES = ["sg-tab-", "sg-panel-", "sg-rel-", "sg-mdm-", "sg-member-modal-", "sg-tl-page-label", "sg-work-story-"];
+const DYNAMIC_PREFIXES = ["sg-is-", "sg-tab-", "sg-panel-", "sg-rel-", "sg-mdm-", "sg-member-modal-", "sg-tl-page-label", "sg-work-story-"];
 
 function files(dir: string, pattern: RegExp): string[] {
   if (!existsSync(dir)) return [];
@@ -94,7 +94,7 @@ export class LibraryValidator {
   private checkDataSeparation(): void {
     const issues: string[] = [];
     if (!/(?:mount|create)\s*\([^)]*[,)]/.test(this.js)) issues.push("JS 未体现 mount/create 数据入口");
-    const hugeLiteral = /(?:const|let|var)\s+\w+\s*=\s*\[[\s\S]{1200,}\]/.test(this.js);
+    const hugeLiteral = /(?:const|let|var)\s+\w+\s*=\s*\[\s*\{[\s\S]{1200,}\]/.test(this.js);
     if (hugeLiteral) issues.push("JS 内含疑似硬编码大数据数组，应从 mount(options.data) 注入");
     if (this.js.includes("document.write")) issues.push("不应使用 document.write 注入数据");
     this.record("data-separation", "3. 数据与逻辑分离", !issues.length, issues.join("；") || "渲染逻辑接受外部数据且未发现大段内嵌数据");

@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/original.html",
+  "candidatePolicy": "formal scenarios verify state changes; hidden overflow/pager controls remain candidates",
+  "scenarios": [
+    {
+      "id": "open-chengbing-panel",
+      "label": "打开程兵人物详情",
+      "covers": ["click|event-listener|addEventListener(\"click\""],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='chengbing']",
+            "library": ".sg-node[data-key='chengbing']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": { "reference": "#graphWrap", "library": "#sg-graphWrap" },
+          "classIncludes": [{ "reference": "panel-open", "library": "sg-panel-open" }]
+        },
+        {
+          "target": { "reference": "#charPanel", "library": "#sg-charPanel" },
+          "visible": true,
+          "textContains": "程兵"
+        }
+      ]
+    },
+    {
+      "id": "close-character-panel",
+      "label": "关闭人物详情",
+      "covers": ["click|#charClose|semantic-control"],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='chengbing']",
+            "library": ".sg-node[data-key='chengbing']"
+          }
+        },
+        {
+          "action": "click",
+          "target": { "reference": "#charClose", "library": "#sg-charClose" }
+        }
+      ],
+      "assertions": [
+        {
+          "target": { "reference": "#graphWrap", "library": "#sg-graphWrap" },
+          "classExcludes": [{ "reference": "panel-open", "library": "sg-panel-open" }]
+        }
+      ]
+    },
+    {
+      "id": "switch-story-stage",
+      "label": "切换到漫漫刑途剧情阶段",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".story-btn[data-story='xingtu']",
+            "library": ".sg-story-btn[data-story='xingtu']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": { "reference": "#storyDesc", "library": "#sg-storyDesc" },
+          "textContains": "三大队成员因刑讯逼供被判入狱"
+        },
+        {
+          "target": {
+            "reference": ".story-btn[data-story='xingtu']",
+            "library": ".sg-story-btn[data-story='xingtu']"
+          },
+          "classIncludes": [{ "reference": "active", "library": "sg-active" }]
+        }
+      ]
+    },
+    {
+      "id": "switch-to-works",
+      "label": "切换到作品推荐",
+      "covers": [
+        "click|button.tab-btn.active|toggle",
+        "click|button.tab-btn|toggle"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-btn[data-tab='works']",
+            "library": ".sg-tab-btn[data-tab='works']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": { "reference": "#worksGrid", "library": "#sg-worksGrid" },
+          "visible": true,
+          "textContains": "解救吾先生"
+        }
+      ]
+    },
+    {
+      "id": "switch-work-category",
+      "label": "切换作品推荐到同主演",
+      "covers": [
+        "click|button.works-tab.active|semantic-control",
+        "click|button.works-tab|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".tab-btn[data-tab='works']",
+            "library": ".sg-tab-btn[data-tab='works']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".works-tab[data-cat='cast']",
+            "library": ".sg-works-tab[data-cat='cast']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": { "reference": "#worksGrid", "library": "#sg-worksGrid" },
+          "visible": true,
+          "textContains": "悬崖之上"
+        },
+        {
+          "target": {
+            "reference": ".works-tab[data-cat='cast']",
+            "library": ".sg-works-tab[data-cat='cast']"
+          },
+          "classIncludes": [{ "reference": "active", "library": "sg-active" }]
+        }
+      ]
+    },
+    {
+      "id": "candidate-story-scroll-hint",
+      "label": "Candidate: 剧情阶段横向滚动提示",
+      "candidate": true,
+      "covers": ["click|#storyScrollHint|semantic-control"],
+      "steps": [{ "action": "click", "target": { "reference": "#storyScrollHint", "library": "#sg-storyScrollHint" } }],
+      "assertions": [{ "target": { "reference": "#storyScrollHint", "library": "#sg-storyScrollHint" }, "visible": true }]
+    },
+    {
+      "id": "candidate-works-prev",
+      "label": "Candidate: 推荐作品上一页",
+      "candidate": true,
+      "covers": ["click|#worksPrev|semantic-control"],
+      "steps": [{ "action": "click", "target": { "reference": "#worksPrev", "library": "#sg-worksPrev" } }],
+      "assertions": [{ "target": { "reference": "#worksPrev", "library": "#sg-worksPrev" }, "visible": false }]
+    },
+    {
+      "id": "candidate-works-next",
+      "label": "Candidate: 推荐作品下一页",
+      "candidate": true,
+      "covers": ["click|#worksNext|semantic-control"],
+      "steps": [{ "action": "click", "target": { "reference": "#worksNext", "library": "#sg-worksNext" } }],
+      "assertions": [{ "target": { "reference": "#worksNext", "library": "#sg-worksNext" }, "visible": false }]
+    }
+  ]
+}

@@ -183,6 +183,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       return {
         key: `${element.tagName.toLowerCase()}|${semantic || element.id || index}`,
         tag: element.tagName.toLowerCase(),
+        id: element.id,
         classes,
         selector: stableSelector(element),
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
@@ -237,7 +238,9 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
     let bestIndex = -1, bestScore = 0;
     generated.forEach((candidate, index) => {
       if (used.has(index)) return;
-      const score = classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.35 : 0);
+      const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
+      const identityScore = expected.id && candidate.id && normalizeIdentity(expected.id) === normalizeIdentity(candidate.id) ? 1.5 : 0;
+      const score = identityScore + classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.35 : 0);
       if (score > bestScore) { bestScore = score; bestIndex = index; }
     });
     if (bestIndex < 0 || bestScore < 0.35) continue;
