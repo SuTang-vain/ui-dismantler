@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qinshihuang-0716-ts/original.html",
+  "candidatePolicy": "formal scenarios verify modal, keyboard dismissal, and event selection; horizontal scroll arrows are waived because the jsdom/browser protocol does not expose scrollLeft as a stable assertion",
+  "scenarios": [
+    {
+      "id": "open-yingzheng-modal",
+      "label": "打开嬴政人物详情",
+      "critical": true,
+      "covers": [
+        "click|event-listener|addEventListener(\"click\""
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='嬴政']",
+            "library": ".sg-node[data-key='嬴政']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modalOverlay",
+            "library": "#sg-modalOverlay"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#modalName",
+            "library": "#sg-modalName"
+          },
+          "textContains": "嬴政"
+        }
+      ]
+    },
+    {
+      "id": "close-person-modal",
+      "label": "点击关闭人物详情",
+      "covers": [
+        "click|#modalClose|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='嬴政']",
+            "library": ".sg-node[data-key='嬴政']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#modalClose",
+            "library": "#sg-modalClose"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modalOverlay",
+            "library": "#sg-modalOverlay"
+          },
+          "classExcludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "escape-close-modal",
+      "label": "Escape 关闭人物详情",
+      "covers": [
+        "keydown|event-listener|addEventListener(\"keydown\""
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-key='嬴政']",
+            "library": ".sg-node[data-key='嬴政']"
+          }
+        },
+        {
+          "action": "key",
+          "key": "Escape",
+          "code": "Escape"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modalOverlay",
+            "library": "#sg-modalOverlay"
+          },
+          "classExcludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "switch-event-button",
+      "label": "选择一统天下事件",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".event-btn[data-i='1']",
+            "library": ".sg-event-btn[data-i='1']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#eventIntro",
+            "library": "#sg-eventIntro"
+          },
+          "textContains": "一统天下"
+        },
+        {
+          "target": {
+            "reference": ".event-btn[data-i='1']",
+            "library": ".sg-event-btn[data-i='1']"
+          },
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "coverageWaivers": [
+    {
+      "fingerprint": "click|#barPrev|semantic-control",
+      "reason": "Previous arrow only scrolls the horizontal event strip; current scenario protocol lacks a stable scrollLeft assertion."
+    },
+    {
+      "fingerprint": "click|#barNext|semantic-control",
+      "reason": "Next arrow only scrolls the horizontal event strip; current scenario protocol lacks a stable scrollLeft assertion."
+    }
+  ]
+}

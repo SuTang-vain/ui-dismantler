@@ -1,0 +1,799 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qinshihuang-0716-ts/original.html",
+    "title": "秦始皇 · 七大事件与人物关系",
+    "templateId": null,
+    "vertical": "graph",
+    "profile": "graph",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#4e6ef2",
+        "original": "--primary",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-period",
+          ".intro-index b",
+          "/* 悬停/拖拽/选中：停掉呼吸，改为静态高亮环 */\n      .node:hover .avatar,\n      .node.grabbing .avatar",
+          ".node.active .avatar",
+          "/* 图谱操作提示：一眼看出头像可点击（首次交互后淡出） */\n      .graph-hint",
+          ".graph-hint .gh-dot",
+          ".modal-person-role"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "primary-hover",
+        "value": "#4662d9",
+        "original": "--primary-hover",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "primary-light",
+        "value": "rgba(78, 110, 242, 0.1)",
+        "original": "--primary-light",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-period",
+          ".event-btn:hover:not(.active)"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "primary-tint",
+        "value": "rgba(78, 110, 242, 0.16)",
+        "original": "--primary-tint",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "/* 悬停/拖拽/选中：停掉呼吸，改为静态高亮环 */\n      .node:hover .avatar,\n      .node.grabbing .avatar",
+          ".node.active .avatar"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "bg-white",
+        "value": "#ffffff",
+        "original": "--bg-white",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "#app-container",
+          "/* ========== 中部：人物关系图谱 ========== */\n      .graph-wrap",
+          ".modal-content",
+          ".bar-arrow",
+          ".event-btn"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg-dent",
+        "value": "#f5f6fa",
+        "original": "--bg-dent",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "/* ========== 顶部：事件简介 ========== */\n      .event-intro",
+          "/* ========== 底部：事件切换按钮 ========== */\n      .event-bar",
+          "/* ========== 全端等比缩放画布 ==========\n         双基准思路：\n         - 小基准（shouldUseSmallBase 命中）：380×456，宽高比 380:456 ≈ 1:1.2\n         - 大基准：788×492，宽高比 788:492 ≈ 1.6:1\n         - 通过 transform: translate + scale 一次性把画布缩放到窗口\n         - 布局切换用 @media（真实视口）+ JS 挡位类，不依赖 @container（部分 WebView 不生效）\n           container-type: size 仅保留给 cqw/cqh 使用 */\n      html.is-scaled-canvas,\n      body.is-scaled-canvas"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "text-main",
+        "value": "#1e1f24",
+        "original": "--text-main",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "html,\n      body",
+          ".intro-name",
+          ".edge-label.hl",
+          ".node .name",
+          ".modal-person-name",
+          ".modal-close:hover",
+          ".modal-section-text"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "text-minor",
+        "value": "#848691",
+        "original": "--text-minor",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-summary",
+          "/* 图例 */\n      .graph-legend",
+          ".edge-label",
+          ".node .role-chip",
+          ".modal-close",
+          ".modal-section-title",
+          ".event-btn .eb-year"
+        ],
+        "roles": [
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "text-tiny",
+        "value": "#b7b9c1",
+        "original": "--text-tiny",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-index"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "border-light",
+        "value": "rgba(30, 31, 36, 0.08)",
+        "original": "--border-light",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "/* ========== 顶部：事件简介 ========== */\n      .event-intro",
+          ".intro-icon",
+          "/* 图例 */\n      .graph-legend",
+          ".edge-label-bg",
+          "/* ========== 底部：事件切换按钮 ========== */\n      .event-bar",
+          ".bar-arrow"
+        ],
+        "roles": [
+          "border",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 2px 8px rgba(30, 31, 36, 0.06)",
+        "original": "--shadow-sm",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-icon",
+          "/* 图例 */\n      .graph-legend",
+          "/* 图谱操作提示：一眼看出头像可点击（首次交互后淡出） */\n      .graph-hint",
+          ".modal-avatar",
+          ".modal-close",
+          ".bar-arrow",
+          ".event-btn"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 6px 20px rgba(30, 31, 36, 0.12)",
+        "original": "--shadow-md",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 12px 36px rgba(30, 31, 36, 0.16)",
+        "original": "--shadow-lg",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".modal-content"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "radius-xs",
+        "value": "6px",
+        "original": "--radius-xs",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-period",
+          ".node .name"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-sm",
+        "value": "9px",
+        "original": "--radius-sm",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "radius-md",
+        "value": "12px",
+        "original": "--radius-md",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".intro-icon",
+          "/* 图例 */\n      .graph-legend",
+          ".event-btn"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-lg",
+        "value": "15px",
+        "original": "--radius-lg",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          "#app-container",
+          ".modal-content"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rel-family",
+        "value": "#d94b4b",
+        "original": "--rel-family",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".lg-svg.family line",
+          ".edge.family"
+        ],
+        "roles": [
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rel-ruler",
+        "value": "#c8a35a",
+        "original": "--rel-ruler",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".lg-svg.ruler line",
+          ".edge.ruler"
+        ],
+        "roles": [
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rel-ally",
+        "value": "#3fae74",
+        "original": "--rel-ally",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".lg-svg.ally line",
+          ".edge.ally"
+        ],
+        "roles": [
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rel-enemy",
+        "value": "#55585f",
+        "original": "--rel-enemy",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".lg-svg.enemy line",
+          ".edge.enemy"
+        ],
+        "roles": [
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rel-plot",
+        "value": "#e8720c",
+        "original": "--rel-plot",
+        "usage": [
+          "/* ===== Cosmic design tokens（对齐 cosmic-lab 组件库） ===== */\n      :root",
+          ".modal-section:nth-child(2) .modal-section-title::before"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-06",
+        "value": "rgba(30, 31, 36, 0.06)",
+        "original": "rgba(30, 31, 36, 0.06)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-12",
+        "value": "rgba(30, 31, 36, 0.12)",
+        "original": "rgba(30, 31, 36, 0.12)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-16",
+        "value": "rgba(30, 31, 36, 0.16)",
+        "original": "rgba(30, 31, 36, 0.16)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-05",
+        "value": "rgba(78, 110, 242, 0.05)",
+        "original": "rgba(78, 110, 242, 0.05)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-85",
+        "value": "rgba(255, 255, 255, 0.85)",
+        "original": "rgba(255, 255, 255, 0.85)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-35",
+        "value": "rgba(78, 110, 242, 0.35)",
+        "original": "rgba(78, 110, 242, 0.35)",
+        "usage": [],
+        "roles": [
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "eee",
+        "value": "#eee",
+        "original": "#eee",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-18",
+        "value": "rgba(30, 31, 36, 0.18)",
+        "original": "rgba(30, 31, 36, 0.18)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-45",
+        "value": "rgba(78, 110, 242, 0.45)",
+        "original": "rgba(78, 110, 242, 0.45)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0",
+        "value": "rgba(78, 110, 242, 0)",
+        "original": "rgba(78, 110, 242, 0)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-92",
+        "value": "rgba(255, 255, 255, 0.92)",
+        "original": "rgba(255, 255, 255, 0.92)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-25",
+        "value": "rgba(30, 31, 36, 0.25)",
+        "original": "rgba(30, 31, 36, 0.25)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-28",
+        "value": "rgba(78, 110, 242, 0.28)",
+        "original": "rgba(78, 110, 242, 0.28)",
+        "usage": [],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-5",
+        "value": "rgba(78, 110, 242, 0.5)",
+        "original": "rgba(78, 110, 242, 0.5)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-20-22-30-0-5",
+        "value": "rgba(20, 22, 30, 0.5)",
+        "original": "rgba(20, 22, 30, 0.5)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-02",
+        "value": "rgba(78, 110, 242, 0.02)",
+        "original": "rgba(78, 110, 242, 0.02)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-7",
+        "value": "rgba(255, 255, 255, 0.7)",
+        "original": "rgba(255, 255, 255, 0.7)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-82",
+        "value": "rgba(255, 255, 255, 0.82)",
+        "original": "rgba(255, 255, 255, 0.82)",
+        "usage": [],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-78-110-242-0-94",
+        "value": "rgba(78, 110, 242, 0.94)",
+        "original": "rgba(78, 110, 242, 0.94)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg, #ffffff 0%, var(--bg-dent) 100%)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 50% 42%,\n            rgba(78, 110, 242, 0.05),\n            transparent 60%\n          ),\n          var(--bg-white)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          135deg,\n          rgba(78, 110, 242, 0.1),\n          rgba(78, 110, 242, 0.02)\n        )"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(0deg, #ffffff 0%, var(--bg-dent) 100%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [],
+    "views": [
+      {
+        "id": "graph-1",
+        "type": "graph",
+        "structuralType": "collection",
+        "semanticType": "graph",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "svg/node"
+          }
+        ],
+        "selector": "#graphWrap",
+        "details": {
+          "text": "宗亲 君臣 同僚 对立 点击头像查看人物详情，可拖动",
+          "className": "graph-wrap"
+        }
+      }
+    ],
+    "modals": [
+      {
+        "id": "modalOverlay",
+        "selector": "#modalOverlay",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-2",
+        "selector": "div.modal-content",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalClose",
+        "selector": "#modalClose",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-4",
+        "selector": "div.modal-head",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalAvatar",
+        "selector": "#modalAvatar",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-6",
+        "selector": "div.modal-head-info",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalName",
+        "selector": "#modalName",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalRole",
+        "selector": "#modalRole",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalRelTag",
+        "selector": "#modalRelTag",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-10",
+        "selector": "div.modal-body",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-11",
+        "selector": "div.modal-section",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-12",
+        "selector": "div.modal-section-title",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalDeed",
+        "selector": "#modalDeed",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-14",
+        "selector": "div.modal-section",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-15",
+        "selector": "div.modal-section-title",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modalImpact",
+        "selector": "#modalImpact",
+        "role": null,
+        "closeSelector": null
+      }
+    ],
+    "landmarks": []
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "events",
+        "kind": "array",
+        "fields": {
+          "name": "string",
+          "year": "string",
+          "period": "string",
+          "image": "string",
+          "summary": "string",
+          "summaryShort": "string",
+          "people": "array",
+          "role": "string",
+          "avatar": "string",
+          "big": "boolean",
+          "deed": "string",
+          "impact": "string",
+          "rel": "string",
+          "a": "string",
+          "b": "string",
+          "type": "string",
+          "label": "string"
+        },
+        "count": 37
+      },
+      {
+        "name": "edgeEls",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "order",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      },
+      {
+        "name": "avCircles",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "nameRects",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "placed",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "ts",
+        "kind": "array",
+        "fields": {},
+        "count": 7
+      },
+      {
+        "name": "mags",
+        "kind": "array",
+        "fields": {},
+        "count": 7
+      },
+      {
+        "name": "offs",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "#barPrev",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#barPrev|semantic-control"
+    },
+    {
+      "trigger": "#barNext",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#barNext|semantic-control"
+    },
+    {
+      "trigger": "#modalClose",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "fingerprint": "click|#modalClose|semantic-control"
+    },
+    {
+      "trigger": "event-listener",
+      "event": "click",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "click|event-listener|addEventListener(\"click\""
+    },
+    {
+      "trigger": "event-listener",
+      "event": "keydown",
+      "action": "listener",
+      "source": "event-listener",
+      "fingerprint": "keydown|event-listener|addEventListener(\"keydown\""
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(min-width: 769px)",
+      "minWidth": 769,
+      "maxWidth": null
+    },
+    {
+      "query": "(max-width: 768px)",
+      "minWidth": null,
+      "maxWidth": 768
+    },
+    {
+      "query": "(max-width: 768px)",
+      "minWidth": null,
+      "maxWidth": 768
+    },
+    {
+      "query": "(max-width: 480px)",
+      "minWidth": null,
+      "maxWidth": 480
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 3,
+    "unlabeledButtons": 0,
+    "images": 1,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": []
+}

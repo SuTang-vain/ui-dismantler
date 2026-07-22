@@ -1,0 +1,23 @@
+校验目标: /Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qinshihuang-0716-ts/lib
+[PASS] 1. 命名前缀
+      所有类名/id/全局对象均带 sg- 前缀
+[PASS] 2. CSS 变量归一化
+      核心主题变量齐全且已归一化
+[PASS] 3. 数据与逻辑分离
+      渲染逻辑接受外部数据且未发现大段内嵌数据
+[PASS] 4. 响应式三档
+      含 8 个 @media 断点（max-width: 320, 480, 768）
+[PASS] 5. A11y
+      发现基础语言、图片、控件与复合交互可访问性标记
+[PASS] 6. 主题可定制
+      所有颜色经变量，无硬编码 #hex（:root 与 var fallback 除外）
+[PASS] 7. 零依赖
+      组件库运行时无需第三方依赖
+[PASS] 8. 文档完备
+      README.md + docs/设计规范.md 齐全
+[PASS] 9. 类名对齐
+      JS 引用的 sg-* 类名均在 CSS 中定义
+[PASS] 10. 选择器实际命中
+      所有需匹配的 sg-* DOM 类均有实际规则（100.0%）；运行时状态标记豁免：.sg-is-large-canvas
+
+结果: 10 通过 / 0 失败 / 共 10 项
