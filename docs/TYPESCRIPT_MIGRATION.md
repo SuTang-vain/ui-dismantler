@@ -160,3 +160,15 @@ AST 分析器还会把可观察副作用标准化为 `stateTransitions`，记录
 - Qinshihuang dispatch changed from one `RelationshipCanvas` planned at 99 lines but implemented at 468 lines to a five-file graph geometry cluster: 470 planned lines versus 405 actual lines, with every file at or below 122 lines and no increase to the 150-line budget.
 - The refactored dispatch retained Gold+: validation 10/10, four viewports, critical interaction matrix 1/1, computed style 0.9898, pixel diff 0.007919, selector coverage 1.0, and zero runtime errors.
 - Seven-case planning regression remains fully dispatch-ready: 7/7 ready, 131/131 interactions owned, zero over-budget components, and zero planning errors.
+- Geometry signals are now grouped by owning function into role-specific call clusters, including source intervals, statement/loop counts, helper calls, and graph/canvas selector anchors. Qinshihuang estimates are now `GraphLayout=112`, `EdgeRenderer=72`, `EdgeLabelPlacement=97`, and `GraphAnimationLoop=40`.
+- Multi-graph pages scope geometry responsibilities to the graph region referenced by script identifiers/selectors; a complex `#graphA` no longer causes identical implementation components to be emitted for an unrelated `#graphB`.
+
+### 2026-07-23 star-group / BLACKPINK regression
+
+- `data-tab` entry controls that point to tab element IDs now follow the tab's `aria-controls` to the real panel instead of treating the tab button as a content panel.
+- Member grids, repeated member controls, member carousel controls, works explorers, work cards, work carousel controls, story panels, timeline scroll surfaces, and body-level dialogs receive explicit application boundaries.
+- The self-contained transpiler now rewrites IDREF attributes (`data-tab`, `data-target`, `aria-controls`, `aria-labelledby`, `for`, fragment `href`) and non-computed string object keys alongside IDs.
+- ID-bearing `application/json` scripts are preserved in the template, and closing script tags are escaped inside the generated JavaScript template so both browser and jsdom renderers remain compatible.
+- BLACKPINK planning improved from 12 components, 2 over-budget components, and 9 unowned interactions to 16 components, 49/49 interactions owned, zero over-budget components, and `ready=true`.
+- BLACKPINK Gold+ result: final overall 0.9996, DOM/text 1.0, four initial viewports, four critical scenario matrices, computed style 0.9997, pixel diff 0.001312, 6/6 formal scenarios, verified coverage 1.0, and zero runtime errors.
+- Eight-case planning regression remains ready across all cases with zero over-budget components and zero planning errors.

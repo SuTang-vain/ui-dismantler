@@ -1,0 +1,4553 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
+    "title": "BLACKPINK · 动态百科成员探索卡",
+    "templateId": null,
+    "vertical": "blackpink",
+    "profile": "blackpink",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "ink",
+        "value": "#1E1F24",
+        "original": "--ink",
+        "usage": [
+          ":root",
+          "body",
+          ".tab-bar .tab[aria-selected=\"true\"]",
+          ".tab-bar .tab.tab-more[aria-selected=\"true\"]",
+          ".avatar",
+          ".relation-row .rel-value",
+          ".ws-story-cta:hover",
+          ".ws-story-content h3"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "muted",
+        "value": "#848691",
+        "original": "--muted",
+        "usage": [
+          ":root",
+          ".tab-bar .tab",
+          ".tab-bar .tab[aria-selected=\"true\"] small",
+          ".tab-bar .tab.tab-more",
+          ".section-head span",
+          ".detail-panel .subtitle",
+          ".relation-row .rel-label",
+          "/* 仅隐藏 t-info 内的简短描述（避免误伤 .t-story 内的 .t-story-text） */\n.t-item .t-info p"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "subtle",
+        "value": "#B7B9C1",
+        "original": "--subtle",
+        "usage": [
+          ":root",
+          ".tab-bar .tab small",
+          ".tab-bar .tab.tab-more[aria-selected=\"false\"]::after",
+          ".member:hover",
+          "/* 引导提示（展开时可见） */\n.t-hint"
+        ],
+        "roles": [
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "line",
+        "value": "#ECEDF1",
+        "original": "--line",
+        "usage": [
+          ":root",
+          "/* Identity header */\n.identity",
+          "/* Top tab bar */\n.tab-bar",
+          ".carousel-dots .dot",
+          ".member",
+          "/* Relation detail panel */\n.detail-panel",
+          ".relation-row",
+          ".source-note"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "paper",
+        "value": "#FFFFFF",
+        "original": "--paper",
+        "usage": [
+          ":root",
+          "/* Fixed canvas — PC 788x492 / WISE 380x456, no internal scrolling */\n.pc-card-frame",
+          "/* Top tab bar */\n.tab-bar",
+          ".t-story-close",
+          "/* ---- 展开态（PC：横向布局） ---- */\n.t-item.is-expanded",
+          "/* ---- 作品页「创作故事」引导按钮 + 故事面板 ---- */\n.ws-story-cta",
+          "/* 故事面板：覆盖整个作品视图 */\n.work-story-panel",
+          ".modal-card"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "stage",
+        "value": "#F8F8F8",
+        "original": "--stage",
+        "usage": [
+          ":root",
+          "body"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "primary",
+        "value": "#6487FA",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".status-chip",
+          ".status-chip::before",
+          ".tab-bar .tab[aria-selected=\"true\"]",
+          "/* 轮播箭头 */\n.carousel-arrow",
+          ".carousel-arrow:hover",
+          ".carousel-dots .dot.is-active",
+          ".member[aria-pressed=\"true\"]"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "accent",
+        "value": "#E94F76",
+        "original": "--accent",
+        "usage": [
+          ":root",
+          ".tab-bar .tab.tab-more[aria-selected=\"true\"]",
+          ".work-item .work-year",
+          ".ws-story-cta::before",
+          ".ws-story-close:hover",
+          ".ws-story-content .ws-year"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "accent-2",
+        "value": "#111111",
+        "original": "--accent-2",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "soft",
+        "value": "#F2F4FB",
+        "original": "--soft",
+        "usage": [
+          ":root",
+          ".status-chip",
+          ".member[aria-pressed=\"true\"]",
+          ".ws-story-cta:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "soft-pink",
+        "value": "#FFF0F4",
+        "original": "--soft-pink",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "rgba-30-31-36-0-06",
+        "value": "rgba(30, 31, 36, 0.06)",
+        "original": "rgba(30, 31, 36, 0.06)",
+        "usage": [],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-23-24-28-0-10",
+        "value": "rgba(23, 24, 28, 0.10)",
+        "original": "rgba(23, 24, 28, 0.10)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "fff",
+        "value": "#fff",
+        "original": "#fff",
+        "usage": [],
+        "roles": [
+          "background",
+          "shadow",
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-25",
+        "value": "rgba(100, 135, 250, 0.25)",
+        "original": "rgba(100, 135, 250, 0.25)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "fafafb",
+        "value": "#FAFAFB",
+        "original": "#FAFAFB",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-75",
+        "value": "rgba(0,0,0,0.75)",
+        "original": "rgba(0,0,0,0.75)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-5",
+        "value": "rgba(0,0,0,0.5)",
+        "original": "rgba(0,0,0,0.5)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-85",
+        "value": "rgba(255,255,255,0.85)",
+        "original": "rgba(255,255,255,0.85)",
+        "usage": [],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-2",
+        "value": "rgba(255,255,255,0.2)",
+        "original": "rgba(255,255,255,0.2)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "2a2b33",
+        "value": "#2A2B33",
+        "original": "#2A2B33",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-55",
+        "value": "rgba(30,31,36,0.55)",
+        "original": "rgba(30,31,36,0.55)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "fbfbfd",
+        "value": "#FBFBFD",
+        "original": "#FBFBFD",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f5f7fc",
+        "value": "#F5F7FC",
+        "original": "#F5F7FC",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-7",
+        "value": "rgba(255,255,255,0.7)",
+        "original": "rgba(255,255,255,0.7)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "90929a",
+        "value": "#90929a",
+        "original": "#90929a",
+        "usage": [],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-06",
+        "value": "rgba(0,0,0,0.06)",
+        "original": "rgba(0,0,0,0.06)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-18",
+        "value": "rgba(0, 0, 0, 0.18)",
+        "original": "rgba(0, 0, 0, 0.18)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-82",
+        "value": "rgba(0, 0, 0, 0.82)",
+        "original": "rgba(0, 0, 0, 0.82)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-82",
+        "value": "rgba(255, 255, 255, 0.82)",
+        "original": "rgba(255, 255, 255, 0.82)",
+        "usage": [],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "rgba-0-0-0-0-1",
+        "value": "rgba(0, 0, 0, 0.1)",
+        "original": "rgba(0, 0, 0, 0.1)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(to top, rgba(0,0,0,0.75), transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg, #2A2B33 0%, #1E1F24 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg, #FBFBFD 0%, #F5F7FC 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(transparent, rgba(0, 0, 0, 0.82))"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(to top, rgba(0,0,0,0.7), transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(30,31,36,0.10) 50%, rgba(255,255,255,0.06) 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(100,135,250,0.08) 50%, rgba(255,255,255,0.12) 100%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "tab-1",
+        "label": "成员详情 4 经历 6 团体作品 6 其它",
+        "selector": "nav.tab-bar",
+        "target": null
+      },
+      {
+        "id": "tab-members",
+        "label": "成员详情 4",
+        "selector": "#tab-members",
+        "target": "panel-members"
+      },
+      {
+        "id": "tab-timeline",
+        "label": "经历 6",
+        "selector": "#tab-timeline",
+        "target": "panel-timeline"
+      },
+      {
+        "id": "tab-works",
+        "label": "团体作品 6",
+        "selector": "#tab-works",
+        "target": "panel-works"
+      },
+      {
+        "id": "tab-more",
+        "label": "其它",
+        "selector": "#tab-more",
+        "target": "modal-overlay-region"
+      },
+      {
+        "id": "tab-6",
+        "label": "01 成员详情 ↓",
+        "selector": "div.entry-grids > button:nth-child(1)",
+        "target": null
+      },
+      {
+        "id": "tab-7",
+        "label": "02 经历 ↓",
+        "selector": "div.entry-grids > button:nth-child(2)",
+        "target": null
+      },
+      {
+        "id": "tab-8",
+        "label": "03 团体作品 ↓",
+        "selector": "div.entry-grids > button:nth-child(3)",
+        "target": null
+      },
+      {
+        "id": "tab-9",
+        "label": "04 其它 ↗",
+        "selector": "div.entry-grids > button:nth-child(4)",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "application-shell",
+        "type": "app-shell",
+        "structuralType": "application",
+        "semanticType": "application-shell",
+        "confidence": 0.96,
+        "evidence": [
+          {
+            "signal": "application-navigation",
+            "value": 3
+          }
+        ],
+        "selector": "main.pc-card-frame",
+        "details": {
+          "text": "成员详情 4 经历 6 团体作品 6 其它 01 成员详情 ↓ 02 经历 ↓ 03 团体作品 ↓ 04 其它 ↗ Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · L",
+          "className": "pc-card-frame",
+          "interactionSelectors": [
+            "#tab-members",
+            "#tab-timeline",
+            "#tab-works",
+            "#tab-more",
+            "div.entry-grids > button:nth-child(1)",
+            "div.entry-grids > button:nth-child(2)",
+            "div.entry-grids > button:nth-child(3)",
+            "div.entry-grids > button:nth-child(4)"
+          ]
+        }
+      },
+      {
+        "id": "panel-panel-members",
+        "type": "content-panel",
+        "structuralType": "content-region",
+        "semanticType": "panel-members-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "panel-members-panel"
+          }
+        ],
+        "selector": "#panel-members",
+        "details": {
+          "text": "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团 ‹ › 成员 ↔ 团体 关系 Jisoo · 金智秀 队内定位：主唱 ·",
+          "className": "view members-view active",
+          "parentSelector": "main.pc-card-frame",
+          "interactionSelectors": [
+            "div.member-grid > button:nth-child(1)",
+            "div.member-grid > button:nth-child(2)",
+            "div.member-grid > button:nth-child(3)",
+            "div.member-grid > button:nth-child(4)",
+            "button.carousel-prev",
+            "button.carousel-next"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "panel-members-member-grid",
+            "type": "member-grid",
+            "structuralType": "content-region",
+            "semanticType": "member-grid",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "member-grid"
+              }
+            ],
+            "selector": "div.member-grid",
+            "details": {
+              "text": "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团",
+              "className": "member-grid",
+              "parentSelector": "#panel-members",
+              "interactionSelectors": [
+                "div.member-grid > button:nth-child(1)",
+                "div.member-grid > button:nth-child(2)",
+                "div.member-grid > button:nth-child(3)",
+                "div.member-grid > button:nth-child(4)",
+                ".member",
+                "[data-member]"
+              ]
+            },
+            "componentCandidates": [
+              {
+                "id": "panel-members-member-control",
+                "type": "member-control",
+                "structuralType": "repeated-control",
+                "semanticType": "member-control",
+                "confidence": 0.92,
+                "evidence": [
+                  {
+                    "signal": "member-card-controls",
+                    "value": 4
+                  }
+                ],
+                "selector": ".member",
+                "details": {
+                  "text": "",
+                  "className": "member",
+                  "parentSelector": "div.member-grid",
+                  "repeatedCount": 4,
+                  "repeatedSelectors": [
+                    "div.member-grid > button:nth-child(1)",
+                    "div.member-grid > button:nth-child(2)",
+                    "div.member-grid > button:nth-child(3)",
+                    "div.member-grid > button:nth-child(4)"
+                  ],
+                  "interactionSelectors": [
+                    ".member",
+                    "div.member-grid > button:nth-child(1)",
+                    "div.member-grid > button:nth-child(2)",
+                    "div.member-grid > button:nth-child(3)",
+                    "div.member-grid > button:nth-child(4)"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "panel-members-member-carousel-controls",
+            "type": "carousel-controls",
+            "structuralType": "content-region",
+            "semanticType": "member-carousel-controls",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "member-carousel-controls"
+              }
+            ],
+            "selector": "div.member-stage",
+            "details": {
+              "text": "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团 ‹ ›",
+              "className": "member-stage",
+              "parentSelector": "#panel-members",
+              "interactionSelectors": [
+                "div.member-grid > button:nth-child(1)",
+                "div.member-grid > button:nth-child(2)",
+                "div.member-grid > button:nth-child(3)",
+                "div.member-grid > button:nth-child(4)",
+                "button.carousel-prev",
+                "button.carousel-next",
+                ".carousel-prev",
+                ".carousel-next",
+                ".carousel-dots",
+                ".dot"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-panel-timeline",
+        "type": "content-panel",
+        "structuralType": "content-region",
+        "semanticType": "panel-timeline-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "panel-timeline-panel"
+          }
+        ],
+        "selector": "#panel-timeline",
+        "details": {
+          "text": "组合阶段 第 1 / 2 页 · 关键节点 ‹ › 2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至",
+          "className": "view timeline-view",
+          "parentSelector": "main.pc-card-frame",
+          "interactionSelectors": [
+            "button.tl-prev-pc",
+            "button.tl-next-pc",
+            "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+            "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+            "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+            "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+            "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+            "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
+            "button.tl-prev-mobile",
+            "button.tl-next-mobile"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "panel-timeline-panel-item",
+            "type": "repeated-item",
+            "structuralType": "collection-item",
+            "semanticType": "panel-timeline-panel-item",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "signal": "repeated-structure",
+                "value": 6
+              }
+            ],
+            "selector": "#tl-track > article:nth-child(1)",
+            "details": {
+              "text": "2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至六年的练习生训练,从多名练习生中脱颖而出。双主打《W",
+              "className": "t-item",
+              "parentSelector": "#panel-timeline",
+              "repeatedCount": 6,
+              "repeatedSelectors": [
+                "#tl-track > article:nth-child(1)",
+                "#tl-track > article:nth-child(2)",
+                "#tl-track > article:nth-child(3)",
+                "#tl-track > article:nth-child(4)",
+                "#tl-track > article:nth-child(5)",
+                "#tl-track > article:nth-child(6)"
+              ],
+              "interactionSelectors": [
+                "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)"
+              ]
+            }
+          },
+          {
+            "id": "panel-timeline-timeline-scroll-surface",
+            "type": "scroll-surface",
+            "structuralType": "content-region",
+            "semanticType": "timeline-scroll-surface",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "timeline-scroll-surface"
+              }
+            ],
+            "selector": "#tl-track",
+            "details": {
+              "text": "2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至六年的练习生训练,从多名练习生中脱颖而出。双主打《W",
+              "className": "timeline-track",
+              "parentSelector": "#panel-timeline",
+              "interactionSelectors": [
+                "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
+                "#tl-track"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-panel-works",
+        "type": "works-panel",
+        "structuralType": "content-region",
+        "semanticType": "works-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "works-panel"
+          }
+        ],
+        "selector": "#panel-works",
+        "details": {
+          "text": "团体作品概览 仅收录团体作品 · 个人作品另列 ‹ › 展开创作故事 × [ {\"img\":\"https://bkimg.cdn.bcebos.com/pic/faf2b2119313b07e60a8d1be04d7912397dd8c6b?x-bce-process=image/format,f_auto/water",
+          "className": "view works-view",
+          "parentSelector": "main.pc-card-frame",
+          "interactionSelectors": [
+            "button.ws-prev",
+            "button.ws-next",
+            "#ws-story-cta",
+            "#ws-story-close",
+            ".category-btn",
+            ".works-tab",
+            "[data-select-poster]",
+            "[data-select-work]",
+            "[data-next-work]"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "panel-works-works-explorer",
+            "type": "works-explorer",
+            "structuralType": "content-region",
+            "semanticType": "works-explorer",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "works-explorer"
+              }
+            ],
+            "selector": "#works-carousel",
+            "details": {
+              "text": "",
+              "className": "works-carousel",
+              "parentSelector": "#panel-works",
+              "interactionSelectors": [
+                "#worksGrid",
+                "#worksScrollHint",
+                ".works-tab",
+                "[data-cat]",
+                "#works-carousel"
+              ]
+            },
+            "componentCandidates": [
+              {
+                "id": "panel-works-work-card-control",
+                "type": "work-card-control",
+                "structuralType": "repeated-control",
+                "semanticType": "work-card-control",
+                "confidence": 0.9,
+                "evidence": [
+                  {
+                    "signal": "runtime-work-card",
+                    "value": ".work-item"
+                  }
+                ],
+                "selector": ".work-item",
+                "details": {
+                  "text": "",
+                  "className": "work-item",
+                  "parentSelector": "#works-carousel",
+                  "interactionSelectors": [
+                    ".work-item"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "panel-works-work-carousel-controls",
+            "type": "carousel-controls",
+            "structuralType": "content-region",
+            "semanticType": "work-carousel-controls",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "work-carousel-controls"
+              }
+            ],
+            "selector": "div.ws-scroll-wrap",
+            "details": {
+              "text": "‹ ›",
+              "className": "ws-scroll-wrap",
+              "parentSelector": "#panel-works",
+              "interactionSelectors": [
+                "button.ws-prev",
+                "button.ws-next",
+                ".ws-prev",
+                ".ws-next",
+                ".ws-dot",
+                "#ws-dots"
+              ]
+            }
+          },
+          {
+            "id": "panel-works-work-story-panel",
+            "type": "work-story-panel",
+            "structuralType": "content-region",
+            "semanticType": "work-story-panel",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "work-story-panel"
+              }
+            ],
+            "selector": "#work-story-panel",
+            "details": {
+              "text": "×",
+              "className": "work-story-panel",
+              "parentSelector": "#panel-works",
+              "interactionSelectors": [
+                "#ws-story-close",
+                "#ws-story-cta",
+                "#work-story-panel"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "dialog-member-modal",
+        "type": "dialog",
+        "structuralType": "content-region",
+        "semanticType": "member-modal-dialog",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "member-modal-dialog"
+          }
+        ],
+        "selector": "#member-modal",
+        "details": {
+          "text": "× 成员详情 点击卡片查看详情",
+          "className": "modal-overlay",
+          "parentSelector": "main.pc-card-frame",
+          "interactionSelectors": [
+            "#member-modal-close",
+            ".modal-close",
+            "[class*=modal-close]",
+            "#member-modal-title",
+            "#member-modal-body"
+          ]
+        }
+      },
+      {
+        "id": "dialog-modal",
+        "type": "dialog",
+        "structuralType": "content-region",
+        "semanticType": "modal-dialog",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "modal-dialog"
+          }
+        ],
+        "selector": "#modal",
+        "details": {
+          "text": "× 资料与说明 本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。 词条类型韩国女子演唱组合 · 四人编制 经纪机构YG Entertainment(韩国) 出道日期2016 年 8 月 8 日 当前成员Jisoo、Jennie、Rosé、Lisa — 均为出道成员 历任成员暂无退出成员;若以官方公告为",
+          "className": "modal-overlay",
+          "parentSelector": "main.pc-card-frame",
+          "interactionSelectors": [
+            "#modal-close",
+            ".modal-close",
+            "[class*=modal-close]",
+            "#modal-title"
+          ]
+        }
+      },
+      {
+        "id": "member-grid-2",
+        "type": "member-grid",
+        "structuralType": "collection",
+        "semanticType": "member-grid",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "member-grid"
+          }
+        ],
+        "selector": "div.member-grid",
+        "details": {
+          "text": "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团",
+          "className": "member-grid",
+          "interactionSelectors": [
+            "div.member-grid > button:nth-child(1)",
+            "div.member-grid > button:nth-child(2)",
+            "div.member-grid > button:nth-child(3)",
+            "div.member-grid > button:nth-child(4)"
+          ],
+          "parentSelector": "#panel-members"
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "detail-panel-3",
+        "type": "detail-panel",
+        "structuralType": "content-region",
+        "semanticType": "detail-panel",
+        "confidence": 0.86,
+        "evidence": [
+          {
+            "signal": "detail-panel"
+          }
+        ],
+        "selector": "aside.detail-panel",
+        "details": {
+          "text": "成员 ↔ 团体 关系 Jisoo · 金智秀 队内定位：主唱 · 视觉 所属团体BLACKPINK 队内角色主唱 · 视觉 加入阶段出道成员 · 2016 团体代表《Square Up》《THE ALBUM》 当前状态在团 资料为可核实的公开事实;未列出的个人作品或履历留待补充。",
+          "className": "detail-panel",
+          "interactionSelectors": [],
+          "parentSelector": "#panel-members"
+        },
+        "componentCandidates": []
+      }
+    ],
+    "modals": [
+      {
+        "id": "member-modal",
+        "selector": "#member-modal",
+        "role": "dialog",
+        "closeSelector": null
+      },
+      {
+        "id": "modal-2",
+        "selector": "div.member-detail-modal",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "member-modal-close",
+        "selector": "#member-modal-close",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-4",
+        "selector": "div.member-detail-modal > div:nth-child(2)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "member-modal-body",
+        "selector": "#member-modal-body",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-6",
+        "selector": "div.member-detail-modal > div:nth-child(4)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-7",
+        "selector": "div.member-detail-modal > div:nth-child(4) > span:nth-child(1)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal",
+        "selector": "#modal",
+        "role": "dialog",
+        "closeSelector": null
+      },
+      {
+        "id": "modal-9",
+        "selector": "#modal > div:nth-child(1)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-close",
+        "selector": "#modal-close",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-11",
+        "selector": "#modal > div:nth-child(1) > div:nth-child(2)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-12",
+        "selector": "p.modal-sub",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-13",
+        "selector": "#modal > div:nth-child(1) > div:nth-child(4)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-14",
+        "selector": "#modal > div:nth-child(1) > div:nth-child(5)",
+        "role": null,
+        "closeSelector": null
+      },
+      {
+        "id": "modal-15",
+        "selector": "#modal > div:nth-child(1) > div:nth-child(5) > span:nth-child(1)",
+        "role": null,
+        "closeSelector": null
+      }
+    ],
+    "landmarks": [
+      {
+        "tag": "main",
+        "role": "region",
+        "selector": "main.pc-card-frame"
+      },
+      {
+        "tag": "nav",
+        "role": "tablist",
+        "selector": "nav.tab-bar"
+      },
+      {
+        "tag": "button",
+        "role": "tab",
+        "selector": "#tab-members"
+      },
+      {
+        "tag": "button",
+        "role": "tab",
+        "selector": "#tab-timeline"
+      },
+      {
+        "tag": "button",
+        "role": "tab",
+        "selector": "#tab-works"
+      },
+      {
+        "tag": "button",
+        "role": "tab",
+        "selector": "#tab-more"
+      },
+      {
+        "tag": "div",
+        "role": "list",
+        "selector": "div.entry-grids"
+      },
+      {
+        "tag": "section",
+        "role": "tabpanel",
+        "selector": "#panel-members"
+      },
+      {
+        "tag": "div",
+        "role": "list",
+        "selector": "div.member-grid"
+      },
+      {
+        "tag": "button",
+        "role": "listitem",
+        "selector": "div.member-grid > button:nth-child(1)"
+      },
+      {
+        "tag": "button",
+        "role": "listitem",
+        "selector": "div.member-grid > button:nth-child(2)"
+      },
+      {
+        "tag": "button",
+        "role": "listitem",
+        "selector": "div.member-grid > button:nth-child(3)"
+      },
+      {
+        "tag": "button",
+        "role": "listitem",
+        "selector": "div.member-grid > button:nth-child(4)"
+      },
+      {
+        "tag": "aside",
+        "role": null,
+        "selector": "aside.detail-panel"
+      },
+      {
+        "tag": "section",
+        "role": "tabpanel",
+        "selector": "#panel-timeline"
+      },
+      {
+        "tag": "section",
+        "role": "tabpanel",
+        "selector": "#panel-works"
+      },
+      {
+        "tag": "div",
+        "role": "dialog",
+        "selector": "#member-modal"
+      },
+      {
+        "tag": "div",
+        "role": "dialog",
+        "selector": "#modal"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "memberList",
+        "kind": "array",
+        "fields": {
+          "key": "string",
+          "name": "string",
+          "role": "string",
+          "shortName": "string",
+          "color": "string",
+          "img": "string",
+          "photoSource": "string",
+          "relations": "array"
+        },
+        "count": 25
+      },
+      {
+        "name": "worksData",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "wsCards",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "#tab-members",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tab-members|panel-members",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#tl-page-label",
+        ".ws-dot",
+        "#modal",
+        "#tab-more",
+        "#entry-cover"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+        "p.hidden = !active",
+        "p.classList.toggle('active', active)",
+        "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'",
+        "d.classList.toggle('is-active', i === pageNum - 1)",
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "#tab-timeline",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tab-timeline|panel-timeline",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#tl-page-label",
+        ".ws-dot",
+        "#modal",
+        "#tab-more",
+        "#entry-cover"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+        "p.hidden = !active",
+        "p.classList.toggle('active', active)",
+        "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'",
+        "d.classList.toggle('is-active', i === pageNum - 1)",
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "#tab-works",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tab-works|panel-works",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#tl-page-label",
+        ".ws-dot",
+        "#modal",
+        "#tab-more",
+        "#entry-cover"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+        "p.hidden = !active",
+        "p.classList.toggle('active', active)",
+        "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'",
+        "d.classList.toggle('is-active', i === pageNum - 1)",
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "#tab-more",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tab-more|modal-overlay-region",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#tl-page-label",
+        ".ws-dot",
+        "#modal",
+        "#tab-more",
+        "#entry-cover"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')",
+        "p.hidden = !active",
+        "p.classList.toggle('active', active)",
+        "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'",
+        "d.classList.toggle('is-active', i === pageNum - 1)",
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'",
+        "t.setAttribute('aria-selected', 'false')",
+        "p.hidden = true",
+        "p.classList.remove('active')",
+        "entryCover.style.display = ''",
+        "entryCover.setAttribute('aria-hidden', 'false')",
+        "entryCover.classList.remove('is-hidden')",
+        "modal.hidden = false",
+        "modal.classList.add('open')",
+        "tabMore.setAttribute('aria-selected', 'true')",
+        "tabMore.setAttribute('aria-expanded', 'true')"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        },
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        }
+      ],
+      "dataDependencies": [
+        "panels",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "div.entry-grids > button:nth-child(1)",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.entry-grids > button:nth-child(1)|toggle",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#entry-cover",
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', 'false')",
+        "p.hidden = true",
+        "p.classList.remove('active')",
+        "entryCover.style.display = ''",
+        "entryCover.setAttribute('aria-hidden', 'false')",
+        "entryCover.classList.remove('is-hidden')",
+        "modal.hidden = false",
+        "modal.classList.add('open')",
+        "tabMore.setAttribute('aria-selected', 'true')",
+        "tabMore.setAttribute('aria-expanded', 'true')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels"
+      ]
+    },
+    {
+      "trigger": "div.entry-grids > button:nth-child(2)",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.entry-grids > button:nth-child(2)|toggle",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#entry-cover",
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', 'false')",
+        "p.hidden = true",
+        "p.classList.remove('active')",
+        "entryCover.style.display = ''",
+        "entryCover.setAttribute('aria-hidden', 'false')",
+        "entryCover.classList.remove('is-hidden')",
+        "modal.hidden = false",
+        "modal.classList.add('open')",
+        "tabMore.setAttribute('aria-selected', 'true')",
+        "tabMore.setAttribute('aria-expanded', 'true')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels"
+      ]
+    },
+    {
+      "trigger": "div.entry-grids > button:nth-child(3)",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.entry-grids > button:nth-child(3)|toggle",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#entry-cover",
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', 'false')",
+        "p.hidden = true",
+        "p.classList.remove('active')",
+        "entryCover.style.display = ''",
+        "entryCover.setAttribute('aria-hidden', 'false')",
+        "entryCover.classList.remove('is-hidden')",
+        "modal.hidden = false",
+        "modal.classList.add('open')",
+        "tabMore.setAttribute('aria-selected', 'true')",
+        "tabMore.setAttribute('aria-expanded', 'true')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels"
+      ]
+    },
+    {
+      "trigger": "div.entry-grids > button:nth-child(4)",
+      "event": "click",
+      "action": "t.setAttribute('aria-selected', 'false')",
+      "target": ".tab-bar .tab",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.entry-grids > button:nth-child(4)|toggle",
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#entry-cover",
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "t.setAttribute('aria-selected', 'false')",
+        "p.hidden = true",
+        "p.classList.remove('active')",
+        "entryCover.style.display = ''",
+        "entryCover.setAttribute('aria-hidden', 'false')",
+        "entryCover.classList.remove('is-hidden')",
+        "modal.hidden = false",
+        "modal.classList.add('open')",
+        "tabMore.setAttribute('aria-selected', 'true')",
+        "tabMore.setAttribute('aria-expanded', 'true')",
+        "entryCover.classList.add('is-hidden')",
+        "entryCover.setAttribute('aria-hidden', 'true')",
+        "entryCover.style.display = 'none'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        }
+      ],
+      "dataDependencies": [
+        "panels"
+      ]
+    },
+    {
+      "trigger": "div.member-grid > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control"
+    },
+    {
+      "trigger": "div.member-grid > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.member-grid > button:nth-child(2)|semantic-control"
+    },
+    {
+      "trigger": "div.member-grid > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.member-grid > button:nth-child(3)|semantic-control"
+    },
+    {
+      "trigger": "div.member-grid > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.member-grid > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "button.carousel-prev",
+      "event": "click",
+      "action": "memberGrid.innerHTML = ''",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.carousel-prev|semantic-control",
+      "target": ".member-grid",
+      "mutationTargets": [
+        ".member-grid",
+        ".member",
+        ".avatar",
+        ".avatar-fallback",
+        ".photo-source",
+        ".member-info",
+        ".member-name",
+        ".member-role",
+        ".member-state",
+        ".carousel-prev",
+        ".carousel-next",
+        ".carousel-dots",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "memberGrid.innerHTML = ''",
+        "btn.className = 'member'",
+        "btn.setAttribute('role', 'listitem')",
+        "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')",
+        "fig.className = 'avatar'",
+        "fig.setAttribute('aria-hidden', 'true')",
+        "img.src = m.img",
+        "img.classList.add('is-loaded')",
+        "img.classList.add('is-error')",
+        "fig.appendChild(img)",
+        "fallback.className = 'avatar-fallback'",
+        "fallback.textContent = m.shortName",
+        "fig.appendChild(fallback)",
+        "source.className = 'photo-source'",
+        "source.textContent = m.photoSource",
+        "fig.appendChild(source)",
+        "info.className = 'member-info'",
+        "nameSpan.className = 'member-name'",
+        "nameSpan.textContent = m.name",
+        "info.appendChild(nameSpan)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member-grid",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberGrid.innerHTML = ''"
+        },
+        {
+          "target": ".member",
+          "kind": "class",
+          "operation": "set",
+          "name": "member",
+          "value": "member",
+          "confidence": 0.9,
+          "source": "btn.className = 'member'"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "role",
+          "value": "listitem",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('role', 'listitem')"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar",
+          "value": "avatar",
+          "confidence": 0.9,
+          "source": "fig.className = 'avatar'"
+        },
+        {
+          "target": ".avatar",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "fig.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(img)"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar-fallback",
+          "value": "avatar-fallback",
+          "confidence": 0.9,
+          "source": "fallback.className = 'avatar-fallback'"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "fallback.textContent = m.shortName"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(fallback)"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "class",
+          "operation": "set",
+          "name": "photo-source",
+          "value": "photo-source",
+          "confidence": 0.9,
+          "source": "source.className = 'photo-source'"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "source.textContent = m.photoSource"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(source)"
+        },
+        {
+          "target": ".member-info",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-info",
+          "value": "member-info",
+          "confidence": 0.9,
+          "source": "info.className = 'member-info'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-name",
+          "value": "member-name",
+          "confidence": 0.9,
+          "source": "nameSpan.className = 'member-name'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "nameSpan.textContent = m.name"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(nameSpan)"
+        },
+        {
+          "target": ".member-role",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-role",
+          "value": "member-role",
+          "confidence": 0.9,
+          "source": "roleSpan.className = 'member-role'"
+        },
+        {
+          "target": ".member-role",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "roleSpan.textContent = m.role.replace('队内定位:', '')"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(roleSpan)"
+        }
+      ],
+      "dataDependencies": [
+        "memberList"
+      ]
+    },
+    {
+      "trigger": "button.carousel-next",
+      "event": "click",
+      "action": "memberGrid.innerHTML = ''",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.carousel-next|semantic-control",
+      "target": ".member-grid",
+      "mutationTargets": [
+        ".member-grid",
+        ".member",
+        ".avatar",
+        ".avatar-fallback",
+        ".photo-source",
+        ".member-info",
+        ".member-name",
+        ".member-role",
+        ".member-state",
+        ".carousel-prev",
+        ".carousel-next",
+        ".carousel-dots",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "memberGrid.innerHTML = ''",
+        "btn.className = 'member'",
+        "btn.setAttribute('role', 'listitem')",
+        "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')",
+        "fig.className = 'avatar'",
+        "fig.setAttribute('aria-hidden', 'true')",
+        "img.src = m.img",
+        "img.classList.add('is-loaded')",
+        "img.classList.add('is-error')",
+        "fig.appendChild(img)",
+        "fallback.className = 'avatar-fallback'",
+        "fallback.textContent = m.shortName",
+        "fig.appendChild(fallback)",
+        "source.className = 'photo-source'",
+        "source.textContent = m.photoSource",
+        "fig.appendChild(source)",
+        "info.className = 'member-info'",
+        "nameSpan.className = 'member-name'",
+        "nameSpan.textContent = m.name",
+        "info.appendChild(nameSpan)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member-grid",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberGrid.innerHTML = ''"
+        },
+        {
+          "target": ".member",
+          "kind": "class",
+          "operation": "set",
+          "name": "member",
+          "value": "member",
+          "confidence": 0.9,
+          "source": "btn.className = 'member'"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "role",
+          "value": "listitem",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('role', 'listitem')"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar",
+          "value": "avatar",
+          "confidence": 0.9,
+          "source": "fig.className = 'avatar'"
+        },
+        {
+          "target": ".avatar",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "fig.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(img)"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar-fallback",
+          "value": "avatar-fallback",
+          "confidence": 0.9,
+          "source": "fallback.className = 'avatar-fallback'"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "fallback.textContent = m.shortName"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(fallback)"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "class",
+          "operation": "set",
+          "name": "photo-source",
+          "value": "photo-source",
+          "confidence": 0.9,
+          "source": "source.className = 'photo-source'"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "source.textContent = m.photoSource"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(source)"
+        },
+        {
+          "target": ".member-info",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-info",
+          "value": "member-info",
+          "confidence": 0.9,
+          "source": "info.className = 'member-info'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-name",
+          "value": "member-name",
+          "confidence": 0.9,
+          "source": "nameSpan.className = 'member-name'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "nameSpan.textContent = m.name"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(nameSpan)"
+        },
+        {
+          "target": ".member-role",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-role",
+          "value": "member-role",
+          "confidence": 0.9,
+          "source": "roleSpan.className = 'member-role'"
+        },
+        {
+          "target": ".member-role",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "roleSpan.textContent = m.role.replace('队内定位:', '')"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(roleSpan)"
+        }
+      ],
+      "dataDependencies": [
+        "memberList"
+      ]
+    },
+    {
+      "trigger": "button.tl-prev-pc",
+      "event": "click",
+      "action": "AST event handler for click",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.tl-prev-pc|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": []
+    },
+    {
+      "trigger": "button.tl-next-pc",
+      "event": "click",
+      "action": "AST event handler for click",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.tl-next-pc|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": []
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "button.tl-prev-mobile",
+      "event": "click",
+      "action": "AST event handler for click",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.tl-prev-mobile|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": []
+    },
+    {
+      "trigger": "button.tl-next-mobile",
+      "event": "click",
+      "action": "AST event handler for click",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.tl-next-mobile|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": []
+    },
+    {
+      "trigger": "button.ws-prev",
+      "event": "click",
+      "action": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.ws-prev|semantic-control",
+      "target": ".work-item",
+      "mutationTargets": [
+        ".work-item",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+        "card.classList.add('is-center')",
+        "card.classList.add('is-prev-side')",
+        "card.classList.add('is-next-side')",
+        "card.classList.add('is-prev-far')",
+        "card.classList.add('is-next-far')",
+        "d.classList.toggle('is-active', i === currentWorkIndex)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        }
+      ],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "button.ws-next",
+      "event": "click",
+      "action": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|button.ws-next|semantic-control",
+      "target": ".work-item",
+      "mutationTargets": [
+        ".work-item",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+        "card.classList.add('is-center')",
+        "card.classList.add('is-prev-side')",
+        "card.classList.add('is-next-side')",
+        "card.classList.add('is-prev-far')",
+        "card.classList.add('is-next-far')",
+        "d.classList.toggle('is-active', i === currentWorkIndex)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        }
+      ],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "#ws-story-cta",
+      "event": "click",
+      "action": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#ws-story-cta|semantic-control",
+      "target": "#ws-story-body",
+      "mutationTargets": [
+        "#ws-story-body",
+        "#work-story-panel"
+      ],
+      "stateMutations": [
+        "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '",
+        "workStoryPanel.classList.add('open')",
+        "workStoryPanel.hidden = false"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#ws-story-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.add('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = false"
+        }
+      ],
+      "dataDependencies": [
+        "worksData"
+      ]
+    },
+    {
+      "trigger": "#ws-story-close",
+      "event": "click",
+      "action": "workStoryPanel.classList.remove('open')",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#ws-story-close|semantic-control",
+      "target": "#work-story-panel",
+      "mutationTargets": [
+        "#work-story-panel"
+      ],
+      "stateMutations": [
+        "workStoryPanel.classList.remove('open')",
+        "workStoryPanel.hidden = true"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.remove('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = true"
+        }
+      ],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ]
+    },
+    {
+      "trigger": "#member-modal-close",
+      "event": "click",
+      "action": "memberModal.classList.remove('open')",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#member-modal-close|semantic-control",
+      "target": "#member-modal",
+      "mutationTargets": [
+        "#member-modal"
+      ],
+      "stateMutations": [
+        "memberModal.classList.remove('open')",
+        "memberModal.hidden = true"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#member-modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "memberModal.classList.remove('open')"
+        },
+        {
+          "target": "#member-modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "memberModal.hidden = true"
+        }
+      ],
+      "dataDependencies": []
+    },
+    {
+      "trigger": "#modal-close",
+      "event": "click",
+      "action": "modal.classList.remove('open')",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#modal-close|semantic-control",
+      "target": "#modal",
+      "mutationTargets": [
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        }
+      ],
+      "dataDependencies": []
+    },
+    {
+      "trigger": ".member",
+      "event": "click",
+      "action": "el.setAttribute('aria-pressed', el.dataset.member === key ? 'true' : 'false')",
+      "target": "#rel-name",
+      "mutationTargets": [
+        ".member",
+        "#rel-name",
+        "#rel-sub",
+        "#rel-list",
+        ".m-row",
+        "#rel-kicker",
+        "#member-modal-title",
+        "#member-modal-body",
+        ".mdm-header",
+        ".mdm-avatar",
+        ".mdm-head-text",
+        "#member-modal"
+      ],
+      "stateMutations": [
+        "el.setAttribute('aria-pressed', el.dataset.member === key ? 'true' : 'false')",
+        "relName.textContent = d.name",
+        "relSub.textContent = d.role",
+        "relList.innerHTML = ''",
+        "div.className = 'relation-row'",
+        "div.innerHTML = '<span class=\"rel-label\">' + row[0] + '</span><span class=\"rel-value\">' + row[1] + '",
+        "relList.appendChild(div)",
+        "relKick.textContent = '成员 ↔ 团体 关系 · ' + d.name.split(' ')[0]",
+        "memberModalTitle.textContent = data.name",
+        "memberModalBody.innerHTML = ''",
+        "header.className = 'mdm-header'",
+        "avatar.className = 'mdm-avatar ' + (data.color || '')",
+        "avatar.innerHTML = '<img src=\"' + data.img + '\" alt=\"' + data.name + '\" />'",
+        "avatar.textContent = data.shortName || data.name.charAt(0)",
+        "headText.className = 'mdm-head-text'",
+        "(data.role || '').replace('队内定位:', '')",
+        "headText.innerHTML = '<b>' + data.name + '</b><span>' + (data.role || '').replace('队内定位:', '') + '</",
+        "header.appendChild(avatar)",
+        "header.appendChild(headText)",
+        "memberModalBody.appendChild(header)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "el.setAttribute('aria-pressed', el.dataset.member === key ? 'true' : 'false')"
+        },
+        {
+          "target": "#rel-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relName.textContent = d.name"
+        },
+        {
+          "target": "#rel-sub",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relSub.textContent = d.role"
+        },
+        {
+          "target": "#rel-list",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "relList.innerHTML = ''"
+        },
+        {
+          "target": ".m-row",
+          "kind": "class",
+          "operation": "set",
+          "name": "relation-row",
+          "value": "relation-row",
+          "confidence": 0.9,
+          "source": "div.className = 'relation-row'"
+        },
+        {
+          "target": ".m-row",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "div.innerHTML = '<span class=\"rel-label\">' + row[0] + '</span><span class=\"rel-value\">' + row[1] + '"
+        },
+        {
+          "target": "#rel-list",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "relList.appendChild(div)"
+        },
+        {
+          "target": "#rel-kicker",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relKick.textContent = '成员 ↔ 团体 关系 · ' + d.name.split(' ')[0]"
+        },
+        {
+          "target": "#member-modal-title",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "memberModalTitle.textContent = data.name"
+        },
+        {
+          "target": "#member-modal-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberModalBody.innerHTML = ''"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "class",
+          "operation": "set",
+          "name": "mdm-header",
+          "value": "mdm-header",
+          "confidence": 0.9,
+          "source": "header.className = 'mdm-header'"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "avatar.className = 'mdm-avatar ' + (data.color || '')"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "avatar.innerHTML = '<img src=\"' + data.img + '\" alt=\"' + data.name + '\" />'"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "avatar.textContent = data.shortName || data.name.charAt(0)"
+        },
+        {
+          "target": ".mdm-head-text",
+          "kind": "class",
+          "operation": "set",
+          "name": "mdm-head-text",
+          "value": "mdm-head-text",
+          "confidence": 0.9,
+          "source": "headText.className = 'mdm-head-text'"
+        },
+        {
+          "target": ".mdm-head-text",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "headText.innerHTML = '<b>' + data.name + '</b><span>' + (data.role || '').replace('队内定位:', '') + '</"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "header.appendChild(avatar)"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "header.appendChild(headText)"
+        },
+        {
+          "target": "#member-modal-body",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "memberModalBody.appendChild(header)"
+        },
+        {
+          "target": ".m-row",
+          "kind": "class",
+          "operation": "set",
+          "name": "m-row",
+          "value": "m-row",
+          "confidence": 0.9,
+          "source": "div.className = 'm-row'"
+        }
+      ],
+      "dataDependencies": [
+        "memberData"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.72,
+      "fingerprint": "click|.member|script-assignment"
+    },
+    {
+      "trigger": ".ws-dot",
+      "event": "click",
+      "action": "memberGrid.innerHTML = ''",
+      "target": ".member-grid",
+      "mutationTargets": [
+        ".member-grid",
+        ".member",
+        ".avatar",
+        ".avatar-fallback",
+        ".photo-source",
+        ".member-info",
+        ".member-name",
+        ".member-role",
+        ".member-state",
+        ".carousel-prev",
+        ".carousel-next",
+        ".carousel-dots",
+        ".ws-dot",
+        ".work-item"
+      ],
+      "stateMutations": [
+        "memberGrid.innerHTML = ''",
+        "btn.className = 'member'",
+        "btn.setAttribute('role', 'listitem')",
+        "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')",
+        "fig.className = 'avatar'",
+        "fig.setAttribute('aria-hidden', 'true')",
+        "img.src = m.img",
+        "img.classList.add('is-loaded')",
+        "img.classList.add('is-error')",
+        "fig.appendChild(img)",
+        "fallback.className = 'avatar-fallback'",
+        "fallback.textContent = m.shortName",
+        "fig.appendChild(fallback)",
+        "source.className = 'photo-source'",
+        "source.textContent = m.photoSource",
+        "fig.appendChild(source)",
+        "info.className = 'member-info'",
+        "nameSpan.className = 'member-name'",
+        "nameSpan.textContent = m.name",
+        "info.appendChild(nameSpan)",
+        "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+        "card.classList.add('is-center')",
+        "card.classList.add('is-prev-side')",
+        "card.classList.add('is-next-side')",
+        "card.classList.add('is-prev-far')",
+        "card.classList.add('is-next-far')",
+        "d.classList.toggle('is-active', i === currentWorkIndex)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member-grid",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberGrid.innerHTML = ''"
+        },
+        {
+          "target": ".member",
+          "kind": "class",
+          "operation": "set",
+          "name": "member",
+          "value": "member",
+          "confidence": 0.9,
+          "source": "btn.className = 'member'"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "role",
+          "value": "listitem",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('role', 'listitem')"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar",
+          "value": "avatar",
+          "confidence": 0.9,
+          "source": "fig.className = 'avatar'"
+        },
+        {
+          "target": ".avatar",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "fig.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(img)"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar-fallback",
+          "value": "avatar-fallback",
+          "confidence": 0.9,
+          "source": "fallback.className = 'avatar-fallback'"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "fallback.textContent = m.shortName"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(fallback)"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "class",
+          "operation": "set",
+          "name": "photo-source",
+          "value": "photo-source",
+          "confidence": 0.9,
+          "source": "source.className = 'photo-source'"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "source.textContent = m.photoSource"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(source)"
+        },
+        {
+          "target": ".member-info",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-info",
+          "value": "member-info",
+          "confidence": 0.9,
+          "source": "info.className = 'member-info'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-name",
+          "value": "member-name",
+          "confidence": 0.9,
+          "source": "nameSpan.className = 'member-name'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "nameSpan.textContent = m.name"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(nameSpan)"
+        },
+        {
+          "target": ".member-role",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-role",
+          "value": "member-role",
+          "confidence": 0.9,
+          "source": "roleSpan.className = 'member-role'"
+        },
+        {
+          "target": ".member-role",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "roleSpan.textContent = m.role.replace('队内定位:', '')"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(roleSpan)"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        }
+      ],
+      "dataDependencies": [
+        "memberList",
+        "wsCards"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.72,
+      "fingerprint": "click|.ws-dot|script-assignment"
+    },
+    {
+      "trigger": "div.member-stage",
+      "event": "click",
+      "action": "AST event handler for click",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.member-stage|script-assignment"
+    },
+    {
+      "trigger": "div.member-stage",
+      "event": "touchstart",
+      "action": "AST event handler for touchstart",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "touchstart|div.member-stage|script-assignment"
+    },
+    {
+      "trigger": "div.carousel-dots",
+      "event": "click",
+      "action": "AST event handler for click",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.carousel-dots|script-assignment"
+    },
+    {
+      "trigger": "div.member-grid",
+      "event": "click",
+      "action": "AST event handler for click",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.member-grid|script-assignment"
+    },
+    {
+      "trigger": "#member-modal",
+      "event": "click",
+      "action": "memberModal.classList.remove('open')",
+      "mutationTargets": [
+        "#member-modal"
+      ],
+      "stateMutations": [
+        "memberModal.classList.remove('open')",
+        "memberModal.hidden = true"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#member-modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "memberModal.classList.remove('open')"
+        },
+        {
+          "target": "#member-modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "memberModal.hidden = true"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#member-modal|script-assignment"
+    },
+    {
+      "trigger": "#tl-track",
+      "event": "scroll",
+      "action": "tlPrevPc.classList.toggle('is-hidden', hidden)",
+      "target": ".tl-prev-pc",
+      "mutationTargets": [
+        ".tl-prev-pc",
+        ".tl-prev-mobile",
+        ".tl-next-pc",
+        ".tl-next-mobile",
+        "#tl-page-label",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "tlPrevPc.classList.toggle('is-hidden', hidden)",
+        "tlPrevMobile.classList.toggle('is-hidden', hidden)",
+        "tlNextPc.classList.toggle('is-hidden', hidden)",
+        "tlNextMobile.classList.toggle('is-hidden', hidden)",
+        "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'",
+        "d.classList.toggle('is-active', i === pageNum - 1)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tl-prev-pc",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlPrevPc.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-prev-mobile",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlPrevMobile.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-next-pc",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlNextPc.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-next-mobile",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlNextMobile.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "scroll|#tl-track|script-assignment"
+    },
+    {
+      "trigger": "#modal",
+      "event": "click",
+      "action": "modal.classList.remove('open')",
+      "target": "#tab-more",
+      "mutationTargets": [
+        "#modal",
+        "#tab-more"
+      ],
+      "stateMutations": [
+        "modal.classList.remove('open')",
+        "modal.hidden = true",
+        "tabMore.setAttribute('aria-selected', 'false')",
+        "tabMore.setAttribute('aria-expanded', 'false')"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#modal|script-assignment"
+    },
+    {
+      "trigger": ".work-item",
+      "event": "click",
+      "action": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '",
+      "target": "#ws-story-body",
+      "mutationTargets": [
+        "#ws-story-body",
+        "#work-story-panel",
+        ".work-item",
+        ".ws-dot"
+      ],
+      "stateMutations": [
+        "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '",
+        "workStoryPanel.classList.add('open')",
+        "workStoryPanel.hidden = false",
+        "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')",
+        "card.classList.add('is-center')",
+        "card.classList.add('is-prev-side')",
+        "card.classList.add('is-next-side')",
+        "card.classList.add('is-prev-far')",
+        "card.classList.add('is-next-far')",
+        "d.classList.toggle('is-active', i === currentWorkIndex)"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#ws-story-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.add('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = false"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        }
+      ],
+      "dataDependencies": [
+        "worksData",
+        "wsCards"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.72,
+      "fingerprint": "click|.work-item|script-assignment"
+    },
+    {
+      "trigger": "#works-carousel",
+      "event": "mouseenter",
+      "action": "AST event handler for mouseenter",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "mouseenter|#works-carousel|script-assignment"
+    },
+    {
+      "trigger": "#works-carousel",
+      "event": "mouseleave",
+      "action": "AST event handler for mouseleave",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "mouseleave|#works-carousel|script-assignment"
+    },
+    {
+      "trigger": "#work-story-panel",
+      "event": "click",
+      "action": "workStoryPanel.classList.remove('open')",
+      "mutationTargets": [
+        "#work-story-panel"
+      ],
+      "stateMutations": [
+        "workStoryPanel.classList.remove('open')",
+        "workStoryPanel.hidden = true"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.remove('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = true"
+        }
+      ],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#work-story-panel|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(1)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(2)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(2)|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(3)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(3)|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(4)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(4)|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(5)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(5)|script-assignment"
+    },
+    {
+      "trigger": "#tl-track > article:nth-child(6)",
+      "event": "click",
+      "action": "item.classList.remove('is-expanded')",
+      "target": ".t-item",
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateMutations": [
+        "item.classList.remove('is-expanded')",
+        "item.classList.add('is-expanded')",
+        "tlTrack.style.scrollSnapType = 'none'",
+        "tlTrack.style.scrollSnapType = 'x proximity'"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#tl-track > article:nth-child(6)|script-assignment"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width: 500px)",
+      "minWidth": null,
+      "maxWidth": 500
+    },
+    {
+      "query": "(max-width: 320px), (max-height: 380px)",
+      "minWidth": null,
+      "maxWidth": 320
+    },
+    {
+      "query": "(max-width: 500px)",
+      "minWidth": null,
+      "maxWidth": 500
+    },
+    {
+      "query": "(max-width: 320px), (max-height: 380px)",
+      "minWidth": null,
+      "maxWidth": 320
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 30,
+    "unlabeledButtons": 0,
+    "images": 11,
+    "imagesWithoutAlt": 0,
+    "tabs": 4,
+    "tabpanels": 3,
+    "dialogs": 2
+  },
+  "warnings": [
+    "已跳过 1 个非可执行 script（JSON-LD/归档元数据等）",
+    "包含远程资源，运行态 roundtrip 可能无法完全复现"
+  ]
+}

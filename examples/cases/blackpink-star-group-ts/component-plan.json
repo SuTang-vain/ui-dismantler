@@ -1,0 +1,2572 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
+  "generatedAt": "2026-07-23T09:34:57.709Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "application-shell",
+      "componentName": "ApplicationShell",
+      "targetFile": "src/components/ApplicationShell.ts",
+      "sourceSelector": "main.pc-card-frame",
+      "sourceSelectors": [
+        "main.pc-card-frame"
+      ],
+      "responsibility": "复现 app-shell 视图：成员详情 4 经历 6 团体作品 6 其它 01 成员详情 ↓ 02 经历 ↓ 03 团体作品 ↓ 04 其它 ↗ Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jenni",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#tab-members|panel-members",
+        "click|#tab-timeline|panel-timeline",
+        "click|#tab-works|panel-works",
+        "click|#tab-more|modal-overlay-region",
+        "click|div.entry-grids > button:nth-child(1)|toggle",
+        "click|div.entry-grids > button:nth-child(2)|toggle",
+        "click|div.entry-grids > button:nth-child(3)|toggle",
+        "click|div.entry-grids > button:nth-child(4)|toggle"
+      ],
+      "mutationTargets": [
+        ".tab-bar .tab",
+        "#tl-page-label",
+        ".ws-dot",
+        "#modal",
+        "#tab-more",
+        "#entry-cover"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', t === tab ? 'true' : 'false')"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.add('is-hidden')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = 'none'"
+        },
+        {
+          "target": ".tab-bar .tab",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "t.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "",
+          "confidence": 0.92,
+          "source": "entryCover.style.display = ''"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "entryCover.setAttribute('aria-hidden', 'false')"
+        },
+        {
+          "target": "#entry-cover",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "entryCover.classList.remove('is-hidden')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "modal.hidden = false"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.add('open')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'true')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'true')"
+        }
+      ],
+      "dataDependencies": [
+        "panels",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ],
+      "dataContracts": [
+        "wsCards"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "成员详情 4 经历 6 团体作品 6 其它 01 成员详情 ↓ 02 经历 ↓ 03 团体作品 ↓ 04 其它 ↗ Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · L"
+        ],
+        "states": [
+          "click: #tab-members → .tab-bar .tab attribute.set(aria-selected)",
+          "click: #tab-members → #tl-page-label content.set(textContent)",
+          "click: #tab-members → .ws-dot class.toggle(is-active=is-active)",
+          "click: #tab-members → #modal class.remove(open=open)",
+          "click: #tab-members → #modal property.set(hidden=true)",
+          "click: #tab-members → #tab-more attribute.set(aria-selected=false)",
+          "click: #tab-members → #tab-more attribute.set(aria-expanded=false)",
+          "click: #tab-members → #entry-cover class.add(is-hidden=is-hidden)",
+          "click: #tab-members → #entry-cover attribute.set(aria-hidden=true)",
+          "click: #tab-members → #entry-cover style.set(display=none)",
+          "click: #tab-timeline → .tab-bar .tab attribute.set(aria-selected)",
+          "click: #tab-timeline → #tl-page-label content.set(textContent)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 129,
+        "score": 0.86,
+        "reasons": [
+          "8 个关联交互（2 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-panel-members",
+      "componentName": "PanelMembersPanel",
+      "targetFile": "src/components/PanelMembersPanel.ts",
+      "sourceSelector": "#panel-members",
+      "sourceSelectors": [
+        "#panel-members"
+      ],
+      "responsibility": "复现 content-panel 视图：Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa ·",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团 ‹ › 成员 ↔ 团体 关系 Jisoo · 金智秀 队内定位：主唱 ·"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 87,
+        "score": 0.58,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-members-member-grid",
+      "componentName": "MemberGrid",
+      "targetFile": "src/components/MemberGrid.ts",
+      "sourceSelector": "div.member-grid",
+      "sourceSelectors": [
+        "div.member-grid"
+      ],
+      "responsibility": "复现 member-grid 视图：Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa ·",
+      "parentId": "panel-panel-members",
+      "dependencies": [
+        "panel-panel-members"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.member-grid|script-assignment"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团"
+        ],
+        "states": [
+          "click: div.member-grid"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 103,
+        "score": 0.69,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-members-member-control",
+      "componentName": "MemberControl",
+      "targetFile": "src/components/MemberControl.ts",
+      "sourceSelector": ".member",
+      "sourceSelectors": [
+        "div.member-grid > button:nth-child(1)",
+        "div.member-grid > button:nth-child(2)",
+        "div.member-grid > button:nth-child(3)",
+        "div.member-grid > button:nth-child(4)"
+      ],
+      "responsibility": "复现 member-control 视图的结构、样式与状态",
+      "parentId": "panel-members-member-grid",
+      "dependencies": [
+        "panel-members-member-grid"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.member-grid > button:nth-child(1)|semantic-control",
+        "click|div.member-grid > button:nth-child(2)|semantic-control",
+        "click|div.member-grid > button:nth-child(3)|semantic-control",
+        "click|div.member-grid > button:nth-child(4)|semantic-control",
+        "click|.member|script-assignment"
+      ],
+      "mutationTargets": [
+        ".member",
+        "#rel-name",
+        "#rel-sub",
+        "#rel-list",
+        ".m-row",
+        "#rel-kicker",
+        "#member-modal-title",
+        "#member-modal-body",
+        ".mdm-header",
+        ".mdm-avatar",
+        ".mdm-head-text",
+        "#member-modal"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "el.setAttribute('aria-pressed', el.dataset.member === key ? 'true' : 'false')"
+        },
+        {
+          "target": "#rel-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relName.textContent = d.name"
+        },
+        {
+          "target": "#rel-sub",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relSub.textContent = d.role"
+        },
+        {
+          "target": "#rel-list",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "relList.innerHTML = ''"
+        },
+        {
+          "target": ".m-row",
+          "kind": "class",
+          "operation": "set",
+          "name": "relation-row",
+          "value": "relation-row",
+          "confidence": 0.9,
+          "source": "div.className = 'relation-row'"
+        },
+        {
+          "target": ".m-row",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "div.innerHTML = '<span class=\"rel-label\">' + row[0] + '</span><span class=\"rel-value\">' + row[1] + '"
+        },
+        {
+          "target": "#rel-list",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "relList.appendChild(div)"
+        },
+        {
+          "target": "#rel-kicker",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "relKick.textContent = '成员 ↔ 团体 关系 · ' + d.name.split(' ')[0]"
+        },
+        {
+          "target": "#member-modal-title",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "memberModalTitle.textContent = data.name"
+        },
+        {
+          "target": "#member-modal-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberModalBody.innerHTML = ''"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "class",
+          "operation": "set",
+          "name": "mdm-header",
+          "value": "mdm-header",
+          "confidence": 0.9,
+          "source": "header.className = 'mdm-header'"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "avatar.className = 'mdm-avatar ' + (data.color || '')"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "avatar.innerHTML = '<img src=\"' + data.img + '\" alt=\"' + data.name + '\" />'"
+        },
+        {
+          "target": ".mdm-avatar",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "avatar.textContent = data.shortName || data.name.charAt(0)"
+        },
+        {
+          "target": ".mdm-head-text",
+          "kind": "class",
+          "operation": "set",
+          "name": "mdm-head-text",
+          "value": "mdm-head-text",
+          "confidence": 0.9,
+          "source": "headText.className = 'mdm-head-text'"
+        },
+        {
+          "target": ".mdm-head-text",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "headText.innerHTML = '<b>' + data.name + '</b><span>' + (data.role || '').replace('队内定位:', '') + '</"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "header.appendChild(avatar)"
+        },
+        {
+          "target": ".mdm-header",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "header.appendChild(headText)"
+        },
+        {
+          "target": "#member-modal-body",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "memberModalBody.appendChild(header)"
+        },
+        {
+          "target": ".m-row",
+          "kind": "class",
+          "operation": "set",
+          "name": "m-row",
+          "value": "m-row",
+          "confidence": 0.9,
+          "source": "div.className = 'm-row'"
+        }
+      ],
+      "dataDependencies": [
+        "memberData"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: div.member-grid > button:nth-child(1)",
+          "click: div.member-grid > button:nth-child(2)",
+          "click: div.member-grid > button:nth-child(3)",
+          "click: div.member-grid > button:nth-child(4)",
+          "click: .member → .member attribute.set(aria-pressed)",
+          "click: .member → #rel-name content.set(textContent)",
+          "click: .member → #rel-sub content.set(textContent)",
+          "click: .member → #rel-list content.set(innerHTML=)",
+          "click: .member → .m-row class.set(relation-row=relation-row)",
+          "click: .member → .m-row content.set(innerHTML)",
+          "click: .member → #rel-list structure.append",
+          "click: .member → #rel-kicker content.set(textContent)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 125,
+        "score": 0.83,
+        "reasons": [
+          "5 个关联交互（2 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-members-member-carousel-controls",
+      "componentName": "MemberCarouselControls",
+      "targetFile": "src/components/MemberCarouselControls.ts",
+      "sourceSelector": "div.member-stage",
+      "sourceSelectors": [
+        "div.member-stage"
+      ],
+      "responsibility": "复现 carousel-controls 视图：Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa ·",
+      "parentId": "panel-panel-members",
+      "dependencies": [
+        "panel-panel-members"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|button.carousel-prev|semantic-control",
+        "click|button.carousel-next|semantic-control",
+        "click|div.member-stage|script-assignment",
+        "touchstart|div.member-stage|script-assignment",
+        "click|div.carousel-dots|script-assignment"
+      ],
+      "mutationTargets": [
+        ".member-grid",
+        ".member",
+        ".avatar",
+        ".avatar-fallback",
+        ".photo-source",
+        ".member-info",
+        ".member-name",
+        ".member-role",
+        ".member-state",
+        ".carousel-prev",
+        ".carousel-next",
+        ".carousel-dots",
+        ".ws-dot"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".member-grid",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberGrid.innerHTML = ''"
+        },
+        {
+          "target": ".member",
+          "kind": "class",
+          "operation": "set",
+          "name": "member",
+          "value": "member",
+          "confidence": 0.9,
+          "source": "btn.className = 'member'"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "role",
+          "value": "listitem",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('role', 'listitem')"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar",
+          "value": "avatar",
+          "confidence": 0.9,
+          "source": "fig.className = 'avatar'"
+        },
+        {
+          "target": ".avatar",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "fig.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(img)"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar-fallback",
+          "value": "avatar-fallback",
+          "confidence": 0.9,
+          "source": "fallback.className = 'avatar-fallback'"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "fallback.textContent = m.shortName"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(fallback)"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "class",
+          "operation": "set",
+          "name": "photo-source",
+          "value": "photo-source",
+          "confidence": 0.9,
+          "source": "source.className = 'photo-source'"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "source.textContent = m.photoSource"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(source)"
+        },
+        {
+          "target": ".member-info",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-info",
+          "value": "member-info",
+          "confidence": 0.9,
+          "source": "info.className = 'member-info'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-name",
+          "value": "member-name",
+          "confidence": 0.9,
+          "source": "nameSpan.className = 'member-name'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "nameSpan.textContent = m.name"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(nameSpan)"
+        },
+        {
+          "target": ".member-role",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-role",
+          "value": "member-role",
+          "confidence": 0.9,
+          "source": "roleSpan.className = 'member-role'"
+        },
+        {
+          "target": ".member-role",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "roleSpan.textContent = m.role.replace('队内定位:', '')"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(roleSpan)"
+        }
+      ],
+      "dataDependencies": [
+        "memberList"
+      ],
+      "dataContracts": [
+        "memberList"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "Jisoo 百度百科 Jisoo · 金智秀 主唱 · 视觉 在团 Je Jennie · 金珍妮 主唱 · 说唱 · 视觉 在团 Rö Rosé · 朴彩英 主唱 · 领舞 在团 Li Lisa · Lalisa 主舞 · 说唱 · 副唱 在团 ‹ ›"
+        ],
+        "states": [
+          "click: button.carousel-prev → .member-grid content.set(innerHTML=)",
+          "click: button.carousel-prev → .member class.set(member=member)",
+          "click: button.carousel-prev → .member attribute.set(role=listitem)",
+          "click: button.carousel-prev → .member attribute.set(aria-pressed)",
+          "click: button.carousel-prev → .avatar class.set(avatar=avatar)",
+          "click: button.carousel-prev → .avatar attribute.set(aria-hidden=true)",
+          "click: button.carousel-prev → .avatar structure.append",
+          "click: button.carousel-prev → .avatar-fallback class.set(avatar-fallback=avatar-fallback)",
+          "click: button.carousel-prev → .avatar-fallback content.set(textContent)",
+          "click: button.carousel-prev → .photo-source class.set(photo-source=photo-source)",
+          "click: button.carousel-prev → .photo-source content.set(textContent)",
+          "click: button.carousel-prev → .member-info class.set(member-info=member-info)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 147,
+        "score": 0.98,
+        "reasons": [
+          "5 个关联交互（3 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-panel-timeline",
+      "componentName": "PanelTimelinePanel",
+      "targetFile": "src/components/PanelTimelinePanel.ts",
+      "sourceSelector": "#panel-timeline",
+      "sourceSelectors": [
+        "#panel-timeline"
+      ],
+      "responsibility": "复现 content-panel 视图：组合阶段 第 1 / 2 页 · 关键节点 ‹ › 2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|button.tl-prev-pc|semantic-control",
+        "click|button.tl-next-pc|semantic-control",
+        "click|button.tl-prev-mobile|semantic-control",
+        "click|button.tl-next-mobile|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "组合阶段 第 1 / 2 页 · 关键节点 ‹ › 2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至"
+        ],
+        "states": [
+          "click: button.tl-prev-pc",
+          "click: button.tl-next-pc",
+          "click: button.tl-prev-mobile",
+          "click: button.tl-next-mobile"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "4 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-timeline-panel-item",
+      "componentName": "PanelTimelinePanelItem",
+      "targetFile": "src/components/PanelTimelinePanelItem.ts",
+      "sourceSelector": "#tl-track > article:nth-child(1)",
+      "sourceSelectors": [
+        "#tl-track > article:nth-child(1)",
+        "#tl-track > article:nth-child(2)",
+        "#tl-track > article:nth-child(3)",
+        "#tl-track > article:nth-child(4)",
+        "#tl-track > article:nth-child(5)",
+        "#tl-track > article:nth-child(6)"
+      ],
+      "responsibility": "复现 repeated-item 视图：2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》",
+      "parentId": "panel-panel-timeline",
+      "dependencies": [
+        "panel-panel-timeline"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(1)|script-assignment",
+        "click|#tl-track > article:nth-child(2)|script-assignment",
+        "click|#tl-track > article:nth-child(3)|script-assignment",
+        "click|#tl-track > article:nth-child(4)|script-assignment",
+        "click|#tl-track > article:nth-child(5)|script-assignment",
+        "click|#tl-track > article:nth-child(6)|script-assignment"
+      ],
+      "mutationTargets": [
+        ".t-item",
+        "#tl-track"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.remove('is-expanded')"
+        },
+        {
+          "target": ".t-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-expanded",
+          "value": "is-expanded",
+          "confidence": 0.96,
+          "source": "item.classList.add('is-expanded')"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'none'"
+        },
+        {
+          "target": "#tl-track",
+          "kind": "style",
+          "operation": "set",
+          "name": "scrollSnapType",
+          "value": "x proximity",
+          "confidence": 0.92,
+          "source": "tlTrack.style.scrollSnapType = 'x proximity'"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至六年的练习生训练,从多名练习生中脱颖而出。双主打《W"
+        ],
+        "states": [
+          "click: #tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
+          "click: #tl-track > article:nth-child(1) → .t-item class.remove(is-expanded=is-expanded)",
+          "click: #tl-track > article:nth-child(1) → .t-item class.add(is-expanded=is-expanded)",
+          "click: #tl-track > article:nth-child(1) → #tl-track style.set(scrollSnapType=none)",
+          "click: #tl-track > article:nth-child(1) → #tl-track style.set(scrollSnapType=x proximity)",
+          "click: #tl-track > article:nth-child(2) → .t-item class.remove(is-expanded=is-expanded)",
+          "click: #tl-track > article:nth-child(2) → .t-item class.add(is-expanded=is-expanded)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 123,
+        "score": 0.82,
+        "reasons": [
+          "12 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-timeline-timeline-scroll-surface",
+      "componentName": "TimelineScrollSurface",
+      "targetFile": "src/components/TimelineScrollSurface.ts",
+      "sourceSelector": "#tl-track",
+      "sourceSelectors": [
+        "#tl-track"
+      ],
+      "responsibility": "复现 scroll-surface 视图：2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》",
+      "parentId": "panel-panel-timeline",
+      "dependencies": [
+        "panel-panel-timeline"
+      ],
+      "interactionModel": "scroll-driven",
+      "interactionFingerprints": [
+        "scroll|#tl-track|script-assignment"
+      ],
+      "mutationTargets": [
+        ".tl-prev-pc",
+        ".tl-prev-mobile",
+        ".tl-next-pc",
+        ".tl-next-mobile",
+        "#tl-page-label",
+        ".ws-dot"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".tl-prev-pc",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlPrevPc.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-prev-mobile",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlPrevMobile.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-next-pc",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlNextPc.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": ".tl-next-mobile",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-hidden",
+          "value": "is-hidden",
+          "confidence": 0.96,
+          "source": "tlNextMobile.classList.toggle('is-hidden', hidden)"
+        },
+        {
+          "target": "#tl-page-label",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tlLabel.textContent = '第 ' + pageNum + ' / ' + totalPages + ' 页 · 关键节点'"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === pageNum - 1)"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "2016.08 出道 ·《Square One》 以《WHISTLE》与《BOOMBAYAH》双主打正式出道,确立四人编制主唱/主舞双轴。 了解背景 › 2016.08出道 ·《Square One》 经历背景 YG 娱乐时隔七年推出的全新女团。出道前四人经历长达四至六年的练习生训练,从多名练习生中脱颖而出。双主打《W"
+        ],
+        "states": [
+          "scroll: #tl-track → .tl-prev-pc class.toggle(is-hidden=is-hidden)",
+          "scroll: #tl-track → .tl-prev-mobile class.toggle(is-hidden=is-hidden)",
+          "scroll: #tl-track → .tl-next-pc class.toggle(is-hidden=is-hidden)",
+          "scroll: #tl-track → .tl-next-mobile class.toggle(is-hidden=is-hidden)",
+          "scroll: #tl-track → #tl-page-label content.set(textContent)",
+          "scroll: #tl-track → .ws-dot class.toggle(is-active=is-active)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-panel-works",
+      "componentName": "WorksPanel",
+      "targetFile": "src/components/WorksPanel.ts",
+      "sourceSelector": "#panel-works",
+      "sourceSelectors": [
+        "#panel-works"
+      ],
+      "responsibility": "复现 works-panel 视图：团体作品概览 仅收录团体作品 · 个人作品另列 ‹ › 展开创作故事 × [ {\"img\":\"https://bkimg.cdn.bcebos.com/pic/faf2b2119313b07e60a8",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "团体作品概览 仅收录团体作品 · 个人作品另列 ‹ › 展开创作故事 × [ {\"img\":\"https://bkimg.cdn.bcebos.com/pic/faf2b2119313b07e60a8d1be04d7912397dd8c6b?x-bce-process=image/format,f_auto/water"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 87,
+        "score": 0.58,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-works-works-explorer",
+      "componentName": "WorksExplorer",
+      "targetFile": "src/components/WorksExplorer.ts",
+      "sourceSelector": "#works-carousel",
+      "sourceSelectors": [
+        "#works-carousel"
+      ],
+      "responsibility": "复现 works-explorer 视图的结构、样式与状态",
+      "parentId": "panel-panel-works",
+      "dependencies": [
+        "panel-panel-works"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "mouseenter|#works-carousel|script-assignment",
+        "mouseleave|#works-carousel|script-assignment"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ],
+      "dataContracts": [
+        "wsCards"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "mouseenter: #works-carousel",
+          "mouseleave: #works-carousel"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 124,
+        "score": 0.83,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-works-work-card-control",
+      "componentName": "WorkCardControl",
+      "targetFile": "src/components/WorkCardControl.ts",
+      "sourceSelector": ".work-item",
+      "sourceSelectors": [
+        ".work-item"
+      ],
+      "responsibility": "复现 work-card-control 视图的结构、样式与状态",
+      "parentId": "panel-works-works-explorer",
+      "dependencies": [
+        "panel-works-works-explorer"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|.work-item|script-assignment"
+      ],
+      "mutationTargets": [
+        "#ws-story-body",
+        "#work-story-panel",
+        ".work-item",
+        ".ws-dot"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#ws-story-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.add('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = false"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        }
+      ],
+      "dataDependencies": [
+        "worksData",
+        "wsCards"
+      ],
+      "dataContracts": [
+        "worksData",
+        "wsCards"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: .work-item → #ws-story-body content.set(innerHTML)",
+          "click: .work-item → #work-story-panel class.add(open=open)",
+          "click: .work-item → #work-story-panel property.set(hidden=false)",
+          "click: .work-item → .work-item class.remove(is-center=is-center)",
+          "click: .work-item → .work-item class.add(is-center=is-center)",
+          "click: .work-item → .work-item class.add(is-prev-side=is-prev-side)",
+          "click: .work-item → .work-item class.add(is-next-side=is-next-side)",
+          "click: .work-item → .work-item class.add(is-prev-far=is-prev-far)",
+          "click: .work-item → .work-item class.add(is-next-far=is-next-far)",
+          "click: .work-item → .ws-dot class.toggle(is-active=is-active)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "2 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-works-work-carousel-controls",
+      "componentName": "WorkCarouselControls",
+      "targetFile": "src/components/WorkCarouselControls.ts",
+      "sourceSelector": "div.ws-scroll-wrap",
+      "sourceSelectors": [
+        "div.ws-scroll-wrap"
+      ],
+      "responsibility": "复现 carousel-controls 视图：‹ ›",
+      "parentId": "panel-panel-works",
+      "dependencies": [
+        "panel-panel-works"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|button.ws-prev|semantic-control",
+        "click|button.ws-next|semantic-control",
+        "click|.ws-dot|script-assignment"
+      ],
+      "mutationTargets": [
+        ".work-item",
+        ".ws-dot",
+        ".member-grid",
+        ".member",
+        ".avatar",
+        ".avatar-fallback",
+        ".photo-source",
+        ".member-info",
+        ".member-name",
+        ".member-role",
+        ".member-state",
+        ".carousel-prev",
+        ".carousel-next",
+        ".carousel-dots"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "remove",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.remove('is-center', 'is-prev-side', 'is-next-side', 'is-prev-far', 'is-next-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-center",
+          "value": "is-center",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-center')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-side",
+          "value": "is-prev-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-side",
+          "value": "is-next-side",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-side')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-prev-far",
+          "value": "is-prev-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-prev-far')"
+        },
+        {
+          "target": ".work-item",
+          "kind": "class",
+          "operation": "add",
+          "name": "is-next-far",
+          "value": "is-next-far",
+          "confidence": 0.96,
+          "source": "card.classList.add('is-next-far')"
+        },
+        {
+          "target": ".ws-dot",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-active",
+          "value": "is-active",
+          "confidence": 0.96,
+          "source": "d.classList.toggle('is-active', i === currentWorkIndex)"
+        },
+        {
+          "target": ".member-grid",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "memberGrid.innerHTML = ''"
+        },
+        {
+          "target": ".member",
+          "kind": "class",
+          "operation": "set",
+          "name": "member",
+          "value": "member",
+          "confidence": 0.9,
+          "source": "btn.className = 'member'"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "role",
+          "value": "listitem",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('role', 'listitem')"
+        },
+        {
+          "target": ".member",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-pressed",
+          "confidence": 0.94,
+          "source": "btn.setAttribute('aria-pressed', m.key === selectedMemberKey ? 'true' : 'false')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar",
+          "value": "avatar",
+          "confidence": 0.9,
+          "source": "fig.className = 'avatar'"
+        },
+        {
+          "target": ".avatar",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "fig.setAttribute('aria-hidden', 'true')"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(img)"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "class",
+          "operation": "set",
+          "name": "avatar-fallback",
+          "value": "avatar-fallback",
+          "confidence": 0.9,
+          "source": "fallback.className = 'avatar-fallback'"
+        },
+        {
+          "target": ".avatar-fallback",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "fallback.textContent = m.shortName"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(fallback)"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "class",
+          "operation": "set",
+          "name": "photo-source",
+          "value": "photo-source",
+          "confidence": 0.9,
+          "source": "source.className = 'photo-source'"
+        },
+        {
+          "target": ".photo-source",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "source.textContent = m.photoSource"
+        },
+        {
+          "target": ".avatar",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "fig.appendChild(source)"
+        },
+        {
+          "target": ".member-info",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-info",
+          "value": "member-info",
+          "confidence": 0.9,
+          "source": "info.className = 'member-info'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-name",
+          "value": "member-name",
+          "confidence": 0.9,
+          "source": "nameSpan.className = 'member-name'"
+        },
+        {
+          "target": ".member-name",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "nameSpan.textContent = m.name"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(nameSpan)"
+        },
+        {
+          "target": ".member-role",
+          "kind": "class",
+          "operation": "set",
+          "name": "member-role",
+          "value": "member-role",
+          "confidence": 0.9,
+          "source": "roleSpan.className = 'member-role'"
+        },
+        {
+          "target": ".member-role",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "roleSpan.textContent = m.role.replace('队内定位:', '')"
+        },
+        {
+          "target": ".member-info",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "info.appendChild(roleSpan)"
+        }
+      ],
+      "dataDependencies": [
+        "wsCards",
+        "WORKS_AUTO_INTERVAL",
+        "memberList"
+      ],
+      "dataContracts": [
+        "memberList",
+        "wsCards"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "‹ ›"
+        ],
+        "states": [
+          "click: button.ws-prev → .work-item class.remove(is-center=is-center)",
+          "click: button.ws-prev → .work-item class.add(is-center=is-center)",
+          "click: button.ws-prev → .work-item class.add(is-prev-side=is-prev-side)",
+          "click: button.ws-prev → .work-item class.add(is-next-side=is-next-side)",
+          "click: button.ws-prev → .work-item class.add(is-prev-far=is-prev-far)",
+          "click: button.ws-prev → .work-item class.add(is-next-far=is-next-far)",
+          "click: button.ws-prev → .ws-dot class.toggle(is-active=is-active)",
+          "click: button.ws-next → .work-item class.remove(is-center=is-center)",
+          "click: button.ws-next → .work-item class.add(is-center=is-center)",
+          "click: button.ws-next → .work-item class.add(is-prev-side=is-prev-side)",
+          "click: button.ws-next → .work-item class.add(is-next-side=is-next-side)",
+          "click: button.ws-next → .work-item class.add(is-prev-far=is-prev-far)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 132,
+        "score": 0.88,
+        "reasons": [
+          "3 个关联交互（2 类实现行为）",
+          "2 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-works-work-story-panel",
+      "componentName": "WorkStoryPanel",
+      "targetFile": "src/components/WorkStoryPanel.ts",
+      "sourceSelector": "#work-story-panel",
+      "sourceSelectors": [
+        "#work-story-panel"
+      ],
+      "responsibility": "复现 work-story-panel 视图：×",
+      "parentId": "panel-panel-works",
+      "dependencies": [
+        "panel-panel-works"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#ws-story-cta|semantic-control",
+        "click|#ws-story-close|semantic-control",
+        "click|#work-story-panel|script-assignment"
+      ],
+      "mutationTargets": [
+        "#ws-story-body",
+        "#work-story-panel"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#ws-story-body",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "wsStoryBody.innerHTML = '<img class=\"ws-story-cover\" src=\"' + d.img + '\" alt=\"' + d.alt + '\" />' + '"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "add",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.add('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": false,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = false"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "workStoryPanel.classList.remove('open')"
+        },
+        {
+          "target": "#work-story-panel",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "workStoryPanel.hidden = true"
+        }
+      ],
+      "dataDependencies": [
+        "worksData",
+        "wsCards",
+        "WORKS_AUTO_INTERVAL"
+      ],
+      "dataContracts": [
+        "worksData",
+        "wsCards"
+      ],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "×"
+        ],
+        "states": [
+          "click: #ws-story-cta → #ws-story-body content.set(innerHTML)",
+          "click: #ws-story-cta → #work-story-panel class.add(open=open)",
+          "click: #ws-story-cta → #work-story-panel property.set(hidden=false)",
+          "click: #ws-story-close → #work-story-panel class.remove(open=open)",
+          "click: #ws-story-close → #work-story-panel property.set(hidden=true)",
+          "click: #work-story-panel → #work-story-panel class.remove(open=open)",
+          "click: #work-story-panel → #work-story-panel property.set(hidden=true)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 150,
+        "score": 1,
+        "reasons": [
+          "3 个关联交互（3 类实现行为）",
+          "2 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "dialog-member-modal",
+      "componentName": "MemberModalDialog",
+      "targetFile": "src/components/MemberModalDialog.ts",
+      "sourceSelector": "#member-modal",
+      "sourceSelectors": [
+        "#member-modal"
+      ],
+      "responsibility": "复现 dialog 视图：× 成员详情 点击卡片查看详情",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#member-modal-close|semantic-control",
+        "click|#member-modal|script-assignment"
+      ],
+      "mutationTargets": [
+        "#member-modal"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#member-modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "memberModal.classList.remove('open')"
+        },
+        {
+          "target": "#member-modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "memberModal.hidden = true"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "× 成员详情 点击卡片查看详情"
+        ],
+        "states": [
+          "click: #member-modal-close → #member-modal class.remove(open=open)",
+          "click: #member-modal-close → #member-modal property.set(hidden=true)",
+          "click: #member-modal → #member-modal class.remove(open=open)",
+          "click: #member-modal → #member-modal property.set(hidden=true)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 117,
+        "score": 0.78,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "dialog-modal",
+      "componentName": "ModalDialog",
+      "targetFile": "src/components/ModalDialog.ts",
+      "sourceSelector": "#modal",
+      "sourceSelectors": [
+        "#modal"
+      ],
+      "responsibility": "复现 dialog 视图：× 资料与说明 本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。 词条类型韩国女子演唱组合 · 四人编制 经纪机构YG Entertainment(韩国) 出道日期2016 年 8 ",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#modal-close|semantic-control",
+        "click|#modal|script-assignment"
+      ],
+      "mutationTargets": [
+        "#modal",
+        "#tab-more"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "modal.classList.remove('open')"
+        },
+        {
+          "target": "#modal",
+          "kind": "property",
+          "operation": "set",
+          "name": "hidden",
+          "value": true,
+          "confidence": 0.9,
+          "source": "modal.hidden = true"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-selected",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-selected', 'false')"
+        },
+        {
+          "target": "#tab-more",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "tabMore.setAttribute('aria-expanded', 'false')"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "× 资料与说明 本卡片仅使用可核实的公开事实,具体年代、关系以官方与权威来源为准。 词条类型韩国女子演唱组合 · 四人编制 经纪机构YG Entertainment(韩国) 出道日期2016 年 8 月 8 日 当前成员Jisoo、Jennie、Rosé、Lisa — 均为出道成员 历任成员暂无退出成员;若以官方公告为"
+        ],
+        "states": [
+          "click: #modal-close → #modal class.remove(open=open)",
+          "click: #modal-close → #modal property.set(hidden=true)",
+          "click: #modal-close → #tab-more attribute.set(aria-selected=false)",
+          "click: #modal-close → #tab-more attribute.set(aria-expanded=false)",
+          "click: #modal → #modal class.remove(open=open)",
+          "click: #modal → #modal property.set(hidden=true)",
+          "click: #modal → #tab-more attribute.set(aria-selected=false)",
+          "click: #modal → #tab-more attribute.set(aria-expanded=false)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "2 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "detail-panel-3",
+      "componentName": "DetailPanel",
+      "targetFile": "src/components/DetailPanel.ts",
+      "sourceSelector": "aside.detail-panel",
+      "sourceSelectors": [
+        "aside.detail-panel"
+      ],
+      "responsibility": "复现 detail-panel 视图：成员 ↔ 团体 关系 Jisoo · 金智秀 队内定位：主唱 · 视觉 所属团体BLACKPINK 队内角色主唱 · 视觉 加入阶段出道成员 · 2016 团体代表《Square Up》《THE AL",
+      "parentId": "panel-panel-members",
+      "dependencies": [
+        "panel-panel-members"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--ink",
+        "--muted",
+        "--subtle",
+        "--line",
+        "--paper",
+        "--stage",
+        "--primary",
+        "--accent",
+        "--accent-2",
+        "--soft",
+        "--soft-pink",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(23, 24, 28, 0.10)",
+        "#fff",
+        "rgba(100, 135, 250, 0.25)",
+        "#FAFAFB",
+        "rgba(0,0,0,0.75)",
+        "rgba(0,0,0,0.5)",
+        "rgba(255,255,255,0.85)",
+        "rgba(255,255,255,0.2)",
+        "#2A2B33",
+        "rgba(30,31,36,0.55)",
+        "#FBFBFD",
+        "#F5F7FC"
+      ],
+      "responsiveQueries": [
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)",
+        "(max-width: 500px)",
+        "(max-width: 320px), (max-height: 380px)"
+      ],
+      "acceptance": {
+        "text": [
+          "成员 ↔ 团体 关系 Jisoo · 金智秀 队内定位：主唱 · 视觉 所属团体BLACKPINK 队内角色主唱 · 视觉 加入阶段出道成员 · 2016 团体代表《Square Up》《THE ALBUM》 当前状态在团 资料为可核实的公开事实;未列出的个人作品或履历留待补充。"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 86,
+        "score": 0.57,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "application-shell",
+      "detail": "预计复杂度已达预算的 86%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-members-member-control",
+      "detail": "预计复杂度已达预算的 83%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "panel-members-member-control",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-members-member-carousel-controls",
+      "detail": "预计复杂度已达预算的 98%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-timeline-panel-item",
+      "detail": "预计复杂度已达预算的 82%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-works-works-explorer",
+      "detail": "预计复杂度已达预算的 83%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "panel-works-works-explorer",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "panel-works-work-card-control",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-works-work-carousel-controls",
+      "detail": "预计复杂度已达预算的 88%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-works-work-story-panel",
+      "detail": "预计复杂度已达预算的 100%"
+    }
+  ],
+  "summary": {
+    "components": 16,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 10,
+    "interactions": 49,
+    "ownedInteractions": 49,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

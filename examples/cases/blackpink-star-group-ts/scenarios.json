@@ -1,0 +1,467 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
+  "candidatePolicy": "Formal scenarios cover entry navigation, member selection, timeline expansion, works navigation/story, and the information modal. Repeated controls, scroll-only handlers, autoplay pause hooks, hover-only hooks, and viewport-specific alternative dismissals are explicitly waived.",
+  "scenarios": [
+    {
+      "id": "enter-members-and-select-jennie",
+      "label": "从成员入口进入并选择 Jennie",
+      "critical": true,
+      "covers": [
+        "click|#tab-members|panel-members",
+        "click|div.entry-grids > button:nth-child(1)|toggle",
+        "click|div.member-grid > button:nth-child(2)|semantic-control",
+        "click|.member|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".entry-cell[data-tab='tab-members']",
+            "library": ".sg-entry-cell[data-tab='sg-tab-members']"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 550
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".member[data-member='jennie']",
+            "library": ".sg-member[data-member='jennie']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#entry-cover",
+            "library": "#sg-entry-cover"
+          },
+          "classIncludes": [
+            {
+              "reference": "is-hidden",
+              "library": "sg-is-hidden"
+            }
+          ],
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        },
+        {
+          "target": {
+            "reference": "#rel-name",
+            "library": "#sg-rel-name"
+          },
+          "textContains": "Jennie"
+        },
+        {
+          "target": {
+            "reference": ".member[data-member='jennie']",
+            "library": ".sg-member[data-member='jennie']"
+          },
+          "attributes": {
+            "aria-pressed": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "enter-works-and-next",
+      "label": "进入作品页并切换下一作品",
+      "critical": true,
+      "covers": [
+        "click|#tab-works|panel-works",
+        "click|div.entry-grids > button:nth-child(3)|toggle",
+        "click|button.ws-next|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".entry-cell[data-tab='tab-works']",
+            "library": ".sg-entry-cell[data-tab='sg-tab-works']"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 550
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".ws-next",
+            "library": ".sg-ws-next"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#panel-works",
+            "library": "#sg-panel-works"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": ".work-item.is-center b",
+            "library": ".sg-work-item.sg-is-center b"
+          },
+          "textContains": "SQUARE UP"
+        }
+      ]
+    },
+    {
+      "id": "open-work-story",
+      "label": "展开当前作品创作故事",
+      "critical": true,
+      "covers": [
+        "click|#ws-story-cta|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".entry-cell[data-tab='tab-works']",
+            "library": ".sg-entry-cell[data-tab='sg-tab-works']"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 550
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#ws-story-cta",
+            "library": "#sg-ws-story-cta"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#work-story-panel",
+            "library": "#sg-work-story-panel"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "open",
+              "library": "sg-open"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#ws-story-body",
+            "library": "#sg-ws-story-body"
+          },
+          "textContains": "Square One"
+        }
+      ]
+    },
+    {
+      "id": "close-work-story",
+      "label": "关闭作品创作故事",
+      "covers": [
+        "click|#ws-story-close|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".entry-cell[data-tab='tab-works']",
+            "library": ".sg-entry-cell[data-tab='sg-tab-works']"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 550
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#ws-story-cta",
+            "library": "#sg-ws-story-cta"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#ws-story-close",
+            "library": "#sg-ws-story-close"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#work-story-panel",
+            "library": "#sg-work-story-panel"
+          },
+          "visible": false,
+          "classExcludes": [
+            {
+              "reference": "open",
+              "library": "sg-open"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-more-modal-from-entry",
+      "label": "从其它入口打开资料弹窗",
+      "critical": true,
+      "covers": [
+        "click|div.entry-grids > button:nth-child(4)|toggle"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".entry-cell[data-tab='tab-more']",
+            "library": ".sg-entry-cell[data-tab='sg-tab-more']"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 550
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "open",
+              "library": "sg-open"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#tab-more",
+            "library": "#sg-tab-more"
+          },
+          "attributes": {
+            "aria-expanded": "true",
+            "aria-selected": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "open-and-close-more-modal",
+      "label": "顶部其它标签打开并关闭资料弹窗",
+      "covers": [
+        "click|#tab-more|modal-overlay-region",
+        "click|#modal-close|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "#tab-more",
+            "library": "#sg-tab-more"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#modal-close",
+            "library": "#sg-modal-close"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": false,
+          "classExcludes": [
+            {
+              "reference": "open",
+              "library": "sg-open"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": "#tab-more",
+            "library": "#sg-tab-more"
+          },
+          "attributes": {
+            "aria-expanded": "false",
+            "aria-selected": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "coverageWaivers": [
+    {
+      "fingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control",
+      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
+    },
+    {
+      "fingerprint": "click|div.member-grid > button:nth-child(3)|semantic-control",
+      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
+    },
+    {
+      "fingerprint": "click|div.member-grid > button:nth-child(4)|semantic-control",
+      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
+    },
+    {
+      "fingerprint": "click|button.carousel-prev|semantic-control",
+      "reason": "Member carousel has one page for the supplied four-member dataset, so the previous control is intentionally hidden."
+    },
+    {
+      "fingerprint": "click|button.carousel-next|semantic-control",
+      "reason": "Member carousel has one page for the supplied four-member dataset, so the next control is intentionally hidden."
+    },
+    {
+      "fingerprint": "click|button.tl-prev-pc|semantic-control",
+      "reason": "Scroll-only timeline transport; stable scrollLeft assertions are not part of the formal scenario protocol."
+    },
+    {
+      "fingerprint": "click|button.tl-next-pc|semantic-control",
+      "reason": "Scroll-only timeline transport; stable scrollLeft assertions are not part of the formal scenario protocol."
+    },
+    {
+      "fingerprint": "click|button.tl-prev-mobile|semantic-control",
+      "reason": "Responsive duplicate of the timeline scroll transport."
+    },
+    {
+      "fingerprint": "click|button.tl-next-mobile|semantic-control",
+      "reason": "Responsive duplicate of the timeline scroll transport."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Nested close button shares the first timeline item's verified expand/collapse state machine."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Repeated timeline close control."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Repeated timeline close control."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Repeated timeline close control."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Repeated timeline close control."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "reason": "Repeated timeline close control."
+    },
+    {
+      "fingerprint": "click|button.ws-prev|semantic-control",
+      "reason": "Previous work uses the same carousel state transition verified by the next-work scenario."
+    },
+    {
+      "fingerprint": "click|#member-modal-close|semantic-control",
+      "reason": "Member modal is a small-screen-only alternative presentation; shared member selection is verified across the viewport matrix."
+    },
+    {
+      "fingerprint": "click|.ws-dot|script-assignment",
+      "reason": "Dot navigation is an alternative input for the verified work carousel transition."
+    },
+    {
+      "fingerprint": "click|div.member-stage|script-assignment",
+      "reason": "Autoplay pause hook has no stable visible state assertion."
+    },
+    {
+      "fingerprint": "touchstart|div.member-stage|script-assignment",
+      "reason": "Touch autoplay pause hook is not converted into a fake click and has no stable visible assertion."
+    },
+    {
+      "fingerprint": "click|div.carousel-dots|script-assignment",
+      "reason": "Autoplay pause hook has no stable visible state assertion."
+    },
+    {
+      "fingerprint": "click|div.member-grid|script-assignment",
+      "reason": "Autoplay pause hook is exercised indirectly by member selection but has no independent visual assertion."
+    },
+    {
+      "fingerprint": "click|#member-modal|script-assignment",
+      "reason": "Backdrop dismissal is a viewport-specific alternative to the member modal close button."
+    },
+    {
+      "fingerprint": "scroll|#tl-track|script-assignment",
+      "reason": "Scroll position and arrow visibility depend on layout timing; scrollLeft is not a stable protocol assertion."
+    },
+    {
+      "fingerprint": "click|#modal|script-assignment",
+      "reason": "Backdrop dismissal is an alternative to the formally verified modal close button."
+    },
+    {
+      "fingerprint": "click|.work-item|script-assignment",
+      "reason": "Work-card selection is an alternative input for the verified next-work carousel transition."
+    },
+    {
+      "fingerprint": "mouseenter|#works-carousel|script-assignment",
+      "reason": "Hover only pauses autoplay and has no stable visible state assertion."
+    },
+    {
+      "fingerprint": "mouseleave|#works-carousel|script-assignment",
+      "reason": "Hover only resumes autoplay and has no stable visible state assertion."
+    },
+    {
+      "fingerprint": "click|#work-story-panel|script-assignment",
+      "reason": "Backdrop dismissal is an alternative to the formally verified story close button."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(2)|script-assignment",
+      "reason": "Repeated timeline item; the first item formally verifies the shared expansion logic."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(3)|script-assignment",
+      "reason": "Repeated timeline item; the first item formally verifies the shared expansion logic."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(4)|script-assignment",
+      "reason": "Repeated timeline item; the first item formally verifies the shared expansion logic."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(5)|script-assignment",
+      "reason": "Repeated timeline item; the first item formally verifies the shared expansion logic."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(6)|script-assignment",
+      "reason": "Repeated timeline item; the first item formally verifies the shared expansion logic."
+    },
+    {
+      "fingerprint": "click|#tab-timeline|panel-timeline",
+      "reason": "Timeline activation calls scrollTo in the source; the jsdom scenario runtime does not implement scrollTo, so it is browser-smoke-tested instead of counted as a formal state scenario."
+    },
+    {
+      "fingerprint": "click|div.entry-grids > button:nth-child(2)|toggle",
+      "reason": "Timeline entry delegates to the same timeline activation path, which requires browser scroll APIs unavailable in jsdom."
+    },
+    {
+      "fingerprint": "click|#tl-track > article:nth-child(1)|script-assignment",
+      "reason": "Timeline expansion depends on the timeline activation path and is browser-smoke-tested separately."
+    }
+  ]
+}

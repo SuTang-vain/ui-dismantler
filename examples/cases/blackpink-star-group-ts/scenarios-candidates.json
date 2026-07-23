@@ -1,0 +1,1686 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
+  "candidatePolicy": "candidate scenarios are excluded from coverage until reviewed",
+  "scenarios": [
+    {
+      "id": "candidate-click-1",
+      "label": "Candidate: click (#tab-members)",
+      "candidate": true,
+      "covers": [
+        "click|#tab-members|panel-members"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tab-members"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classIncludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-2",
+      "label": "Candidate: click (#tab-timeline)",
+      "candidate": true,
+      "covers": [
+        "click|#tab-timeline|panel-timeline"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tab-timeline"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classIncludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-3",
+      "label": "Candidate: click (#tab-works)",
+      "candidate": true,
+      "covers": [
+        "click|#tab-works|panel-works"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tab-works"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classIncludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-4",
+      "label": "Candidate: click (#tab-more)",
+      "candidate": true,
+      "covers": [
+        "click|#tab-more|modal-overlay-region"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tab-more"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classIncludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-5",
+      "label": "Candidate: click (div.entry-grids > button:nth-child(1))",
+      "candidate": true,
+      "covers": [
+        "click|div.entry-grids > button:nth-child(1)|toggle"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.entry-grids > button:nth-child(1)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".tab-bar .tab",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "visible": true
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classExcludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": true
+        },
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-6",
+      "label": "Candidate: click (div.entry-grids > button:nth-child(2))",
+      "candidate": true,
+      "covers": [
+        "click|div.entry-grids > button:nth-child(2)|toggle"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.entry-grids > button:nth-child(2)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".tab-bar .tab",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "visible": true
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classExcludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": true
+        },
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-7",
+      "label": "Candidate: click (div.entry-grids > button:nth-child(3))",
+      "candidate": true,
+      "covers": [
+        "click|div.entry-grids > button:nth-child(3)|toggle"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.entry-grids > button:nth-child(3)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".tab-bar .tab",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "visible": true
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classExcludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": true
+        },
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-8",
+      "label": "Candidate: click (div.entry-grids > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|div.entry-grids > button:nth-child(4)|toggle"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.entry-grids > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".tab-bar .tab",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "visible": true
+        },
+        {
+          "target": "#entry-cover",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": "#entry-cover",
+          "classExcludes": [
+            "is-hidden"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": true
+        },
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-9",
+      "label": "Candidate: click (div.member-grid > button:nth-child(1))",
+      "candidate": true,
+      "covers": [
+        "click|div.member-grid > button:nth-child(1)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-grid > button:nth-child(1)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-grid > button:nth-child(1)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-10",
+      "label": "Candidate: click (div.member-grid > button:nth-child(2))",
+      "candidate": true,
+      "covers": [
+        "click|div.member-grid > button:nth-child(2)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-grid > button:nth-child(2)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-grid > button:nth-child(2)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-11",
+      "label": "Candidate: click (div.member-grid > button:nth-child(3))",
+      "candidate": true,
+      "covers": [
+        "click|div.member-grid > button:nth-child(3)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-grid > button:nth-child(3)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-grid > button:nth-child(3)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-12",
+      "label": "Candidate: click (div.member-grid > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|div.member-grid > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-grid > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-grid > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-13",
+      "label": "Candidate: click (button.carousel-prev)",
+      "candidate": true,
+      "covers": [
+        "click|button.carousel-prev|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.carousel-prev"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".member",
+          "attributes": {
+            "role": "listitem"
+          }
+        },
+        {
+          "target": ".avatar",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-14",
+      "label": "Candidate: click (button.carousel-next)",
+      "candidate": true,
+      "covers": [
+        "click|button.carousel-next|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.carousel-next"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".member",
+          "attributes": {
+            "role": "listitem"
+          }
+        },
+        {
+          "target": ".avatar",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-15",
+      "label": "Candidate: click (button.tl-prev-pc)",
+      "candidate": true,
+      "covers": [
+        "click|button.tl-prev-pc|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.tl-prev-pc"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "button.tl-prev-pc",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-16",
+      "label": "Candidate: click (button.tl-next-pc)",
+      "candidate": true,
+      "covers": [
+        "click|button.tl-next-pc|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.tl-next-pc"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "button.tl-next-pc",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-17",
+      "label": "Candidate: click (#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-18",
+      "label": "Candidate: click (#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-19",
+      "label": "Candidate: click (#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-20",
+      "label": "Candidate: click (#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-21",
+      "label": "Candidate: click (#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-22",
+      "label": "Candidate: click (#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-23",
+      "label": "Candidate: click (button.tl-prev-mobile)",
+      "candidate": true,
+      "covers": [
+        "click|button.tl-prev-mobile|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.tl-prev-mobile"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "button.tl-prev-mobile",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-24",
+      "label": "Candidate: click (button.tl-next-mobile)",
+      "candidate": true,
+      "covers": [
+        "click|button.tl-next-mobile|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.tl-next-mobile"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "button.tl-next-mobile",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-25",
+      "label": "Candidate: click (button.ws-prev)",
+      "candidate": true,
+      "covers": [
+        "click|button.ws-prev|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.ws-prev"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".work-item",
+          "classExcludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-far"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-far"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-26",
+      "label": "Candidate: click (button.ws-next)",
+      "candidate": true,
+      "covers": [
+        "click|button.ws-next|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "button.ws-next"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".work-item",
+          "classExcludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-far"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-far"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-27",
+      "label": "Candidate: click (#ws-story-cta)",
+      "candidate": true,
+      "covers": [
+        "click|#ws-story-cta|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#ws-story-cta"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#work-story-panel",
+          "classIncludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#work-story-panel",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-28",
+      "label": "Candidate: click (#ws-story-close)",
+      "candidate": true,
+      "covers": [
+        "click|#ws-story-close|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#ws-story-close"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#work-story-panel",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#work-story-panel",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-29",
+      "label": "Candidate: click (#member-modal-close)",
+      "candidate": true,
+      "covers": [
+        "click|#member-modal-close|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#member-modal-close"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#member-modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#member-modal",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-30",
+      "label": "Candidate: click (#modal-close)",
+      "candidate": true,
+      "covers": [
+        "click|#modal-close|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#modal-close"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-31",
+      "label": "Candidate: click (.member)",
+      "candidate": true,
+      "covers": [
+        "click|.member|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".member"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".member",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-32",
+      "label": "Candidate: click (.ws-dot)",
+      "candidate": true,
+      "covers": [
+        "click|.ws-dot|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".ws-dot"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".member",
+          "attributes": {
+            "role": "listitem"
+          }
+        },
+        {
+          "target": ".avatar",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        },
+        {
+          "target": ".work-item",
+          "classExcludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-side"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-33",
+      "label": "Candidate: click (div.member-stage)",
+      "candidate": true,
+      "covers": [
+        "click|div.member-stage|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-stage"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-stage",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-touchstart-34",
+      "label": "Candidate: unsupported-pointer (div.member-stage)",
+      "candidate": true,
+      "covers": [
+        "touchstart|div.member-stage|script-assignment"
+      ],
+      "notes": [
+        "pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"
+      ],
+      "steps": [],
+      "assertions": [
+        {
+          "target": "div.member-stage",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-35",
+      "label": "Candidate: click (div.carousel-dots)",
+      "candidate": true,
+      "covers": [
+        "click|div.carousel-dots|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.carousel-dots"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.carousel-dots",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-36",
+      "label": "Candidate: click (div.member-grid)",
+      "candidate": true,
+      "covers": [
+        "click|div.member-grid|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "div.member-grid"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "div.member-grid",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-37",
+      "label": "Candidate: click (#member-modal)",
+      "candidate": true,
+      "covers": [
+        "click|#member-modal|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#member-modal"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#member-modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#member-modal",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "candidate-scroll-38",
+      "label": "Candidate: click (#tl-track)",
+      "candidate": true,
+      "covers": [
+        "scroll|#tl-track|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#tl-track",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-39",
+      "label": "Candidate: click (#modal)",
+      "candidate": true,
+      "covers": [
+        "click|#modal|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#modal"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#modal",
+          "visible": false
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-selected": "false"
+          }
+        },
+        {
+          "target": "#tab-more",
+          "attributes": {
+            "aria-expanded": "false"
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-40",
+      "label": "Candidate: click (.work-item)",
+      "candidate": true,
+      "covers": [
+        "click|.work-item|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".work-item"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#work-story-panel",
+          "classIncludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#work-story-panel",
+          "visible": true
+        },
+        {
+          "target": ".work-item",
+          "classExcludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-center"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-prev-side"
+          ]
+        },
+        {
+          "target": ".work-item",
+          "classIncludes": [
+            "is-next-side"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-mouseenter-41",
+      "label": "Candidate: click (#works-carousel)",
+      "candidate": true,
+      "covers": [
+        "mouseenter|#works-carousel|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#works-carousel"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#works-carousel",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-mouseleave-42",
+      "label": "Candidate: click (#works-carousel)",
+      "candidate": true,
+      "covers": [
+        "mouseleave|#works-carousel|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#works-carousel"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#works-carousel",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-43",
+      "label": "Candidate: click (#work-story-panel)",
+      "candidate": true,
+      "covers": [
+        "click|#work-story-panel|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#work-story-panel"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#work-story-panel",
+          "classExcludes": [
+            "open"
+          ]
+        },
+        {
+          "target": "#work-story-panel",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-44",
+      "label": "Candidate: click (#tl-track > article:nth-child(1))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(1)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(1)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-45",
+      "label": "Candidate: click (#tl-track > article:nth-child(2))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(2)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(2)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-46",
+      "label": "Candidate: click (#tl-track > article:nth-child(3))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(3)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(3)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-47",
+      "label": "Candidate: click (#tl-track > article:nth-child(4))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(4)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(4)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-48",
+      "label": "Candidate: click (#tl-track > article:nth-child(5))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(5)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(5)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-49",
+      "label": "Candidate: click (#tl-track > article:nth-child(6))",
+      "candidate": true,
+      "covers": [
+        "click|#tl-track > article:nth-child(6)|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#tl-track > article:nth-child(6)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".t-item",
+          "classExcludes": [
+            "is-expanded"
+          ]
+        },
+        {
+          "target": ".t-item",
+          "classIncludes": [
+            "is-expanded"
+          ]
+        }
+      ]
+    }
+  ]
+}
