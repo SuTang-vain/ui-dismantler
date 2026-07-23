@@ -39,17 +39,29 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: div.text > span:nth-child(1)
-- click: div.text > span:nth-child(2)
+- click: div.text > span:nth-child(1) → #pt content.set(textContent)
+- click: div.text > span:nth-child(1) → #pd content.set(textContent)
+- click: div.text > span:nth-child(1) → #pop class.add(on=on)
+- click: div.text > span:nth-child(2) → #pt content.set(textContent)
+- click: div.text > span:nth-child(2) → #pd content.set(textContent)
+- click: div.text > span:nth-child(2) → #pop class.add(on=on)
 
 ## Per-State Content
 - Covers: `click|div.text > span:nth-child(1)|script-assignment`
 - Covers: `click|div.text > span:nth-child(2)|script-assignment`
 
+## Mutation Targets
+- Mutates: `#pt`
+- Mutates: `#pd`
+- Mutates: `#pop`
+
+## State Transitions
+- #pt: content.set `textContent`
+- #pd: content.set `textContent`
+- #pop: class.add `on` → `on`
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+- Data dependency: `NOTE`
 
 ## Text Content (verbatim)
 - 出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊子血，白为白月光；娶白玫瑰，白成饭粘子，红为朱砂痣。 未得之人纯白难忘，所得之人刻骨铭心。
@@ -66,6 +78,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 122
+- Estimated lines: 106
 - Budget: 150
 - Status: READY

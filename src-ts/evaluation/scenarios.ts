@@ -1,4 +1,4 @@
-import type { Interaction, Manifest, Scenario, ScenarioDocument } from "../types.js";
+import type { Interaction, Manifest, Scenario, ScenarioAssertion, ScenarioDocument, UIStateTransition } from "../types.js";
 
 export function interactionFingerprint(interaction: Interaction): string {
   return interaction.fingerprint || `${interaction.event}|${interaction.trigger}|${interaction.target ?? interaction.action}`;
@@ -6,19 +6,50 @@ export function interactionFingerprint(interaction: Interaction): string {
 
 function targetFor(interaction: Interaction): string { return interaction.trigger || "body"; }
 
+function assertionForTransition(transition: UIStateTransition): ScenarioAssertion | null {
+  if (!transition.target || transition.target.startsWith("@") || transition.confidence < 0.85) return null;
+  if (transition.kind === "class") {
+    if (transition.operation === "add" && transition.name) return { target: transition.target, classIncludes: [transition.name] };
+    if (transition.operation === "remove" && transition.name) return { target: transition.target, classExcludes: [transition.name] };
+    if (transition.operation === "replace" && typeof transition.value === "string") return { target: transition.target, classIncludes: [transition.value], ...(transition.name ? { classExcludes: [transition.name] } : {}) };
+  }
+  if (transition.kind === "attribute" && transition.name) {
+    if (transition.operation === "remove") return { target: transition.target, attributes: { [transition.name]: null } };
+    if (transition.operation === "set" && transition.value !== undefined) return { target: transition.target, attributes: { [transition.name]: String(transition.value ?? "") } };
+  }
+  if (transition.kind === "property") {
+    if (transition.name === "hidden" && typeof transition.value === "boolean") return { target: transition.target, visible: !transition.value };
+    if (transition.name === "value" && typeof transition.value === "string") return { target: transition.target, value: transition.value };
+    if (transition.name === "open" && typeof transition.value === "boolean") return { target: transition.target, attributes: { open: transition.value ? "" : null } };
+  }
+  if (transition.kind === "focus" && transition.operation === "focus") return { target: transition.target, focused: true };
+  if (transition.kind === "style" && transition.name === "display" && typeof transition.value === "string") return { target: transition.target, visible: transition.value !== "none" };
+  return null;
+}
+
 function candidateFor(interaction: Interaction, index: number): Scenario {
-  const action = interaction.event === "input" || interaction.event === "change" ? "input" : interaction.event === "keydown" ? "key" : "click";
+  const pointerGesture = interaction.event.startsWith("pointer") || interaction.event.startsWith("touch");
+  const action = pointerGesture ? "unsupported-pointer" : interaction.event === "input" || interaction.event === "change" ? "input" : ["keydown", "keyup"].includes(interaction.event) ? "key" : "click";
   const step = action === "input"
     ? { action: "input" as const, target: targetFor(interaction), value: "test" }
     : action === "key"
       ? { action: "key" as const, target: targetFor(interaction), key: "Enter" }
-      : { action: "click" as const, target: targetFor(interaction) };
+      : action === "click"
+        ? { action: "click" as const, target: targetFor(interaction) }
+        : null;
+  const derived = (interaction.stateTransitions ?? []).map(assertionForTransition).filter((item): item is ScenarioAssertion => Boolean(item));
+  const assertions = derived.length ? derived.slice(0, 6) : [{ target: targetFor(interaction), visible: true }];
+  const notes = derived.length
+    ? ["已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤", "确认后移除 candidate 标记再纳入覆盖率门禁"]
+    : ["人工确认 selector 是否命中预期控件", "补充证明状态真实发生的 assertions", "确认后移除 candidate 标记再纳入覆盖率门禁"];
   return {
     id: `candidate-${interaction.event}-${index + 1}`.replace(/[^a-z0-9-]/gi, "-").toLowerCase(),
     label: `Candidate: ${action} (${interaction.trigger})`, candidate: true,
     covers: [interactionFingerprint(interaction)],
-    notes: ["人工确认 selector 是否命中预期控件", "补充证明状态真实发生的 assertions", "确认后移除 candidate 标记再纳入覆盖率门禁"],
-    steps: [step], assertions: [{ target: targetFor(interaction), visible: true }],
+    notes: pointerGesture
+      ? ["pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"]
+      : notes,
+    steps: step ? [step] : [], assertions,
   };
 }
 

@@ -4,7 +4,7 @@
 - **Target file:** `src/components/HomePanel.ts`
 - **Source selector:** `#home`
 - **Source instances:** 1
-- **Interaction model:** click-driven
+- **Interaction model:** static
 - **Responsibility:** 复现 content-panel 视图：白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯
 - **Parent:** `application-shell`
 - **Dependencies:** `application-shell`
@@ -39,15 +39,19 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #nav > span:nth-child(1) → home
+- 初始渲染与源页面一致
 
 ## Per-State Content
-- Covers: `click|#nav > span:nth-child(1)|home`
+N/A (static component)
+
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
 
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典
@@ -64,6 +68,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 125
+- Estimated lines: 83
 - Budget: 150
 - Status: READY

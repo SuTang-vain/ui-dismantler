@@ -25,11 +25,28 @@ export interface AnalyzedView {
   componentCandidates?: AnalyzedView[];
 }
 
+export interface UIStateTransition {
+  target: string;
+  kind: "class" | "attribute" | "property" | "style" | "content" | "focus" | "structure";
+  operation: "add" | "remove" | "replace" | "toggle" | "set" | "clear" | "append" | "remove-node" | "focus" | "blur" | "open" | "close";
+  name?: string;
+  value?: string | number | boolean | null;
+  previousValue?: string | number | boolean | null;
+  confidence: number;
+  source: string;
+}
+
 export interface Interaction {
   trigger: string;
   event: string;
   action: string;
   target?: string;
+  mutationTargets?: string[];
+  stateMutations?: string[];
+  stateTransitions?: UIStateTransition[];
+  dataDependencies?: string[];
+  analysis?: "attribute" | "semantic" | "regex" | "ast";
+  confidence?: number;
   source: "html-attribute" | "event-listener" | "script-assignment" | "semantic-control";
   fingerprint: string;
 }

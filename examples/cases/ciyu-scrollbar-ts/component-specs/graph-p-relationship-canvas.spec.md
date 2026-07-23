@@ -39,17 +39,35 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #nav > span:nth-child(3) → graph-p
-- click: .gnd:not(.center)
+- click: .gnd:not(.center) → #detail content.set(innerHTML)
+- click: .gnd:not(.center) → .gnd class.remove(on=on)
+- click: .gnd:not(.center) → .gnd:not(.center) class.add(on=on)
+- click: .gnd:not(.center) → #pt content.set(innerHTML)
+- click: .gnd:not(.center) → #pd content.set(innerHTML)
+- click: .gnd:not(.center) → #pop class.add(on=on)
 
 ## Per-State Content
-- Covers: `click|#nav > span:nth-child(3)|graph-p`
 - Covers: `click|.gnd:not(.center)|script-assignment`
 
+## Mutation Targets
+- Mutates: `#detail`
+- Mutates: `.gnd`
+- Mutates: `.gnd:not(.center)`
+- Mutates: `#pt`
+- Mutates: `#pd`
+- Mutates: `#pop`
+
+## State Transitions
+- #detail: content.set `innerHTML`
+- .gnd: class.remove `on` → `on`
+- .gnd:not(.center): class.add `on` → `on`
+- #pt: content.set `innerHTML`
+- #pd: content.set `innerHTML`
+- #pop: class.add `on` → `on`
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+- Data dependency: `COLORS`
+- Data dependency: `NODE_IMG`
 
 ## Text Content (verbatim)
 None
@@ -66,6 +84,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 136
+- Estimated lines: 110
 - Budget: 150
 - Status: READY

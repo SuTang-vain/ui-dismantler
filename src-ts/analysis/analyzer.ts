@@ -2,6 +2,7 @@ import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
+import { extractScriptInteractions } from "./script-interactions.js";
 import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
@@ -131,7 +132,7 @@ function escapeSelector(value: string): string { return value.replace(/[^a-zA-Z0
 function stableSelector(element: Element): string {
   if (element.id) return `#${escapeSelector(element.id)}`;
   const tag = element.tagName.toLowerCase();
-  const classes = [...element.classList].filter((item) => item.length > 1);
+  const classes = [...element.classList].filter((item) => item.length > 1 && !/^(?:active|current|selected|open|closed|disabled|hidden|focus|hover)$/i.test(item));
   const preferred = [...classes].sort((a, b) => Number(/^elementor-element-[a-f0-9]+$/i.test(b)) - Number(/^elementor-element-[a-f0-9]+$/i.test(a)));
   for (const item of preferred) {
     const candidate = `${tag}.${escapeSelector(item)}`;
@@ -168,45 +169,184 @@ function regionView(element: Element, id: string, type: string, semanticType: st
 }
 
 function applicationViews(document: Document): AnalyzedView[] {
-  const navControls = [...document.querySelectorAll<HTMLElement>("[data-p]")];
-  const targets = navControls.map((control) => control.dataset.p ?? "").filter(Boolean);
-  const panels = [...new Set(targets)].map((id) => document.getElementById(id)).filter((element): element is HTMLElement => Boolean(element));
-  if (panels.length < 2) return [];
-  const shell = navControls[0]?.closest("nav, [role=tablist]")?.parentElement ?? navControls[0]?.parentElement?.parentElement ?? panels[0].parentElement?.parentElement ?? document.body;
+  const applicationScript = [...document.scripts].map((script) => script.textContent ?? "").join("\n");
+  const graphNodeGestures = /(?:pointerdown|mousedown|touchstart)/.test(applicationScript) && /(?:\.node|data-node|className\s*=\s*["'][^"']*node)/.test(applicationScript);
+  const navControls = [...document.querySelectorAll<HTMLElement>("[data-p], button[data-view], a[data-view], [role=tab][data-view], button[data-tab], a[data-tab], [role=tab][data-tab], button[aria-controls], a[aria-controls], [role=tab][aria-controls]")];
+  const panelKey = (panel: HTMLElement): string => panel.dataset.view || panel.dataset.viewPanel || panel.id.replace(/^view-/, "");
+  const controlKey = (control: HTMLElement): string => (control.dataset.p || control.dataset.view || control.dataset.tab || control.getAttribute("aria-controls") || "").replace(/^#|^view-/, "");
+  const panelForControl = (control: HTMLElement): HTMLElement | null => {
+    const key = controlKey(control);
+    if (!key) return null;
+    return [...document.querySelectorAll<HTMLElement>(".view[data-view], .view[id], .panel[id], [data-view-panel], [role=tabpanel]")].find((panel) => panelKey(panel) === key)
+      ?? document.getElementById(key)
+      ?? document.getElementById(`view-${key}`);
+  };
+  const controlledPanels = navControls.map(panelForControl).filter((panel): panel is HTMLElement => Boolean(panel));
+  const structuralPanels = [...document.querySelectorAll<HTMLElement>(".view[data-view], .stage > .view[id], main > .view[id], .stage > .panel[id], main > .panel[id], [data-view-panel], [role=tabpanel]")];
+  let panels = [...new Set(controlledPanels.length >= 2 ? controlledPanels : structuralPanels.length >= 2 ? structuralPanels : [])];
+  const graph = document.querySelector<HTMLElement>("#graphWrap, #graphCanvas, [id*=Graph], [id*=graph], .graph-wrap, .graph-canvas, .radar-stage");
+  const compoundControls = [...document.querySelectorAll<HTMLElement>("#eventBtns, .event-btns, .event-bar, [data-event], [data-i]")];
+  const compoundDialog = document.querySelector<HTMLElement>('.pop[id], .modal[id], dialog[id], [role="dialog"][id], [class*="modal"][id]');
+  const compoundApplication = panels.length < 2 && Boolean(graph && (compoundControls.length || compoundDialog));
+  if (panels.length < 2 && !compoundApplication) return [];
+
+  const navigation = navControls[0]?.closest<HTMLElement>("nav, [role=tablist], .tabs, [class*=tabs]");
+  const panelParent = panels.length && panels.every((panel) => panel.parentElement === panels[0].parentElement) ? panels[0].parentElement : null;
+  const explicitShell = document.querySelector<HTMLElement>("#app-container, #app, [data-app-shell]");
+  const shell = explicitShell && (!panelParent || explicitShell.contains(panelParent))
+    ? explicitShell
+    : navigation?.parentElement && (!panelParent || navigation.parentElement.contains(panelParent))
+      ? navigation.parentElement
+      : panelParent ?? graph?.parentElement ?? document.body;
   const shellSelector = stableSelector(shell);
   const views: AnalyzedView[] = [{
-    id: "application-shell", type: "app-shell", structuralType: "application", semanticType: "application-shell", confidence: 0.96,
-    evidence: [{ signal: "data-p-navigation", value: panels.length }], selector: shellSelector,
+    id: "application-shell", type: "app-shell", structuralType: "application", semanticType: "application-shell", confidence: compoundApplication ? 0.9 : 0.96,
+    evidence: [{ signal: compoundApplication ? "compound-graph-application" : controlledPanels.length >= 2 ? "application-navigation" : "view-panel-structure", value: compoundApplication ? 1 : panels.length }], selector: shellSelector,
     details: { text: textOf(shell).slice(0, 160), className: `${shell.className ?? ""}`, interactionSelectors: navControls.map(stableSelector) },
   }];
+
+  const classifyPanel = (panel: HTMLElement, rawId: string, label: string): { type: string; semanticType: string; dynamicSelectors: string[] } => {
+    const normalized = `${rawId} ${panel.className} ${panel.dataset.view ?? ""} ${label}`.toLowerCase();
+    const type = /quiz|测一测|测试/.test(normalized) ? "quiz-panel"
+      : /graph|relation|costar|关联|图谱|关系/.test(normalized) ? "relationship-panel"
+        : /story|典故|出处/.test(normalized) ? "story-panel"
+          : /work|作品|recommend/.test(normalized) ? "works-panel"
+            : /identity|gallery|profile|cast|相册|身份|档案|演员/.test(normalized) ? "identity-panel" : "content-panel";
+    return {
+      type, semanticType: type === "content-panel" ? `${slug(rawId)}-panel` : type,
+      dynamicSelectors: type === "relationship-panel" ? [".radar-center", ".node", ".edge", "[data-node-id]", "[data-char-id]"]
+        : type === "works-panel" ? [".category-btn", ".works-tab", "[data-select-poster]", "[data-select-work]", "[data-next-work]"]
+          : type === "identity-panel" ? ["#photoCard", ".arrow", "[data-cast-idx]"]
+            : type === "quiz-panel" ? ["#opts .opt"] : [],
+    };
+  };
+
   for (const panel of panels) {
-    const rawId = panel.id || `panel-${views.length}`;
-    const label = navControls.find((control) => control.dataset.p === rawId)?.textContent?.trim() ?? rawId;
-    const normalized = `${rawId} ${panel.className} ${label}`.toLowerCase();
-    const type = /quiz|测一测|测试/.test(normalized) ? "quiz-panel" : /graph|relation|关联|图谱/.test(normalized) ? "relationship-panel" : /story|典故|出处/.test(normalized) ? "story-panel" : "content-panel";
-    const semanticType = type === "content-panel" ? `${slug(rawId)}-panel` : type;
-    const dynamicSelectors = type === "relationship-panel" ? [".f", ".gnd:not(.center)"] : type === "quiz-panel" ? ["#opts .opt"] : [];
+    const rawId = panel.id || panel.dataset.view || panel.dataset.viewPanel || `panel-${views.length}`;
+    const label = navControls.find((control) => panelForControl(control) === panel)?.textContent?.trim() ?? rawId;
+    const { type, semanticType, dynamicSelectors } = classifyPanel(panel, rawId, label);
     const panelView = regionView(panel, `panel-${slug(rawId)}`, type, semanticType, shellSelector, dynamicSelectors);
     const candidates = componentCandidates(panel, semanticType);
+    if (type === "works-panel") {
+      const worksGrid = panel.querySelector<HTMLElement>("#worksGrid, .works-grid, .works-viewport, [data-works-grid]");
+      if (worksGrid && worksGrid !== panel) candidates.push(regionView(worksGrid, `${slug(rawId)}-works-explorer`, "works-explorer", "works-explorer", stableSelector(panel), ["#worksGrid", "#worksScrollHint", ".works-tab", "[data-cat]"]));
+    }
+    if (type === "identity-panel") {
+      const castExplorer = panel.querySelector<HTMLElement>(".cast-grid, #castGrid, [data-cast-grid]");
+      if (castExplorer && castExplorer !== panel) {
+        const castView = regionView(castExplorer, `${slug(rawId)}-cast-explorer`, "cast-explorer", "cast-explorer", stableSelector(panel), [".cast-grid"]);
+        const castCandidates: AnalyzedView[] = [];
+        if (panel.querySelector(".cast-card") || applicationScript.includes("cast-card")) castCandidates.push({
+          id: `${slug(rawId)}-cast-card-control`, type: "cast-card-control", structuralType: "repeated-control", semanticType: "cast-card-control", confidence: 0.88,
+          evidence: [{ signal: "runtime-cast-card", value: ".cast-card" }], selector: ".cast-card",
+          details: { text: "", className: "cast-card", parentSelector: stableSelector(castExplorer), interactionSelectors: [".cast-card"] },
+        });
+        if (panel.querySelector(".story-btn") || applicationScript.includes("story-btn")) {
+          const storyControl: AnalyzedView = {
+            id: `${slug(rawId)}-story-control`, type: "story-control", structuralType: "repeated-control", semanticType: "story-control", confidence: 0.88,
+            evidence: [{ signal: "runtime-story-control", value: ".story-btn" }], selector: ".story-btn",
+            details: { text: "", className: "story-btn", parentSelector: stableSelector(castExplorer), interactionSelectors: [".story-btn", ".story-btn.active"] },
+          };
+          storyControl.componentCandidates = [{
+            id: `${slug(rawId)}-story-scroll-surface`, type: "scroll-surface", structuralType: "interactive-control", semanticType: "story-scroll-surface", confidence: 0.84,
+            evidence: [{ signal: "scroll-control", value: ".story-btn" }], selector: ".story-btn:is(*)",
+            details: { text: "", className: "story-btn", parentSelector: ".story-btn", interactionSelectors: [".story-btn", ".story-btn.active"] },
+          }, {
+            id: `${slug(rawId)}-story-gesture-surface`, type: "gesture-surface", structuralType: "interactive-control", semanticType: "story-gesture-surface", confidence: 0.82,
+            evidence: [{ signal: "pointer-gesture-control", value: ".story-btn" }], selector: ".story-btn:where(*)",
+            details: { text: "", className: "story-btn", parentSelector: ".story-btn", interactionSelectors: [".story-btn", ".story-btn.active"] },
+          }];
+          castCandidates.push(storyControl);
+        }
+        castView.componentCandidates = castCandidates;
+        candidates.push(castView);
+      }
+    }
+    if (type === "identity-panel" && /identity|gallery/i.test(`${rawId} ${panel.dataset.view ?? ""}`)) {
+      const gallery = panel.querySelector<HTMLElement>("#photoCard, .photo-card, [data-gallery]");
+      if (gallery && gallery !== panel) candidates.push(regionView(gallery, `${slug(rawId)}-identity-gallery`, "identity-gallery", "identity-gallery", stableSelector(panel), ["#photoCard", ".arrow"]));
+      else if (document.querySelector("script")?.textContent?.includes("photoCard")) {
+        const galleryShell: AnalyzedView = {
+          id: `${slug(rawId)}-identity-gallery`, type: "identity-gallery", structuralType: "dynamic-region", semanticType: "identity-gallery", confidence: 0.84,
+          evidence: [{ signal: "runtime-gallery-control", value: "#photoCard" }], selector: "#photoCard",
+          details: { text: "", className: "photo-card", parentSelector: stableSelector(panel), interactionSelectors: [".arrow"] },
+        };
+        galleryShell.componentCandidates = [{
+          id: `${slug(rawId)}-identity-swipe-surface`, type: "gesture-surface", structuralType: "interactive-control", semanticType: "identity-swipe-surface", confidence: 0.82,
+          evidence: [{ signal: "pointer-gesture-control", value: "#photoCard" }], selector: "#photoCard:where(*)",
+          details: { text: "", className: "photo-card", parentSelector: "#photoCard", interactionSelectors: ["#photoCard"] },
+        }];
+        candidates.push(galleryShell);
+      }
+    }
     const regions: Array<[string, string, string, string[]]> = type === "relationship-panel"
-      ? [["#filters", "graph-filters", "graph-filters", [".f"]], ["#graph", "relationship-canvas", "relationship-canvas", [".gnd:not(.center)"]], ["#detail", "relationship-detail", "relationship-detail", []]]
+      ? [["#filters", "graph-filters", "graph-filters", [".f"]], ["#detail, .char-panel", "relationship-detail", "relationship-detail", []]]
       : type === "quiz-panel"
         ? [["#qzbody", "quiz-question", "quiz-question", ["#opts .opt"]], ["#qzresult", "quiz-result", "quiz-result", []]]
         : type === "story-panel"
           ? [[".story-l", "story-origins", "story-origins", []], [".story-r", "story-source", "story-source", []]]
-          : [[".home-l", "definition-hero", "definition-hero", []], [".home-r", "definition-details", "definition-details", []]];
+          : type === "content-panel"
+            ? [[".home-l", "definition-hero", "definition-hero", []], [".home-r", "definition-details", "definition-details", []]]
+            : [];
     for (const [selector, childType, childSemantic, interactions] of regions) {
       const child = panel.querySelector(selector);
       if (child) candidates.push(regionView(child, `${slug(rawId)}-${childType}`, childType, childSemantic, stableSelector(panel), interactions));
     }
+    const panelGraph = panel.querySelector<HTMLElement>("#graphWrap, #graphCanvas, [id*=Graph], [id*=graph], .graph-wrap, .graph-canvas, .radar-stage");
+    if (panelGraph && panelGraph !== panel) {
+      const graphRoot = panelGraph.matches("#graphCanvas, .graph-canvas") && panelGraph.parentElement ? panelGraph.parentElement : panelGraph;
+      const graphView = regionView(graphRoot, `${slug(rawId)}-relationship-canvas`, "relationship-canvas", "relationship-canvas", stableSelector(panel), [".radar-center", ".node", ".edge", "[data-node-id]", "[data-char-id]"]);
+      const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg");
+      if (canvas && canvas !== graphRoot && graphNodeGestures) {
+        const surface = regionView(canvas, `${slug(rawId)}-graph-surface`, "graph-surface", "graph-surface", stableSelector(graphRoot), [".edge", "[data-node-id]", "[data-char-id]"]);
+        const nodeControl: AnalyzedView = {
+          id: `${slug(rawId)}-graph-node-control`, type: "graph-node-control", structuralType: "repeated-control", semanticType: "graph-node-control", confidence: 0.9,
+          evidence: [{ signal: "runtime-graph-node", value: ".node" }], selector: ".node",
+          details: { text: "", className: "node", parentSelector: stableSelector(canvas), interactionSelectors: [".node", "[data-node-id]", "[data-char-id]"] },
+        };
+        nodeControl.componentCandidates = [{
+          id: `${slug(rawId)}-graph-node-gesture`, type: "gesture-surface", structuralType: "interactive-control", semanticType: "graph-node-gesture", confidence: 0.84,
+          evidence: [{ signal: "node-gesture-control", value: ".node" }], selector: ".node:where(*)",
+          details: { text: "", className: "node", parentSelector: ".node", interactionSelectors: [".node"] },
+        }];
+        surface.componentCandidates = [nodeControl];
+        graphView.componentCandidates = [surface];
+      }
+      candidates.push(graphView);
+    }
     panelView.componentCandidates = candidates.filter((candidate, index, items) => items.findIndex((item) => item.selector === candidate.selector) === index);
     views.push(panelView);
   }
-  const dialogScope = shell === document.body ? document.body : shell;
-  const dialogs = [...dialogScope.querySelectorAll<HTMLElement>('.pop[id], .modal[id], [role="dialog"][id]')];
+
+  if (compoundApplication && graph) {
+    const graphRoot = graph.matches(".graph-canvas, #graphCanvas") && graph.parentElement ? graph.parentElement : graph;
+    const graphView = regionView(graphRoot, "relationship-canvas", "relationship-canvas", "relationship-canvas", shellSelector, [".edge", "[data-node-id]", "[data-char-id]"]);
+    const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg") ?? (graphRoot.matches("#graphCanvas, .graph-canvas, svg") ? graphRoot : null);
+    if (canvas && graphNodeGestures) {
+      const nodeControl: AnalyzedView = {
+        id: "graph-node-control", type: "graph-node-control", structuralType: "repeated-control", semanticType: "graph-node-control", confidence: 0.9,
+        evidence: [{ signal: "runtime-graph-node", value: ".node" }], selector: ".node",
+        details: { text: "", className: "node", parentSelector: stableSelector(graphRoot), interactionSelectors: [".node"] },
+      };
+      nodeControl.componentCandidates = [{
+        id: "graph-node-gesture", type: "gesture-surface", structuralType: "interactive-control", semanticType: "graph-node-gesture", confidence: 0.84,
+        evidence: [{ signal: "node-gesture-control", value: ".node" }], selector: ".node:where(*)",
+        details: { text: "", className: "node", parentSelector: ".node", interactionSelectors: [".node"] },
+      }];
+      graphView.componentCandidates = [nodeControl];
+    }
+    const detail = shell.querySelector<HTMLElement>("#charPanel, .char-panel, #detail, [class*=detail-panel]");
+    if (detail && detail !== graphRoot) graphView.componentCandidates = [regionView(detail, "relationship-detail", "relationship-detail", "relationship-detail", stableSelector(graphRoot))];
+    views.push(graphView);
+    const eventRegion = shell.querySelector<HTMLElement>("#eventBtns, .event-btns, .event-bar") ?? compoundControls[0]?.parentElement;
+    if (eventRegion) views.push(regionView(eventRegion, "event-controls", "event-controls", "event-controls", shellSelector, [".event-btn", "[data-event]", "[data-i]"]));
+  }
+
+  const dialogs = [...shell.querySelectorAll<HTMLElement>('.pop[id], .modal[id], dialog[id], [role="dialog"][id], [class*="modal"][id]')]
+    .filter((dialog, index, items) => items.findIndex((other) => other === dialog || other.contains(dialog)) === index);
   for (const [index, dialog] of dialogs.entries()) {
-    const dialogView = regionView(dialog, `dialog-${slug(dialog.id || `${index + 1}`)}`, "dialog", `${slug(dialog.id || "detail")}-dialog`, shellSelector);
-    dialogView.details.interactionSelectors = [...new Set([...(dialogView.details.interactionSelectors as string[]), ...[...dialog.querySelectorAll("[id]")].map(stableSelector)])];
+    const dialogView = regionView(dialog, `dialog-${slug(dialog.id || `${index + 1}`)}`, "dialog", `${slug(dialog.id || "detail")}-dialog`, shellSelector, [".modal-close", "[class*=modal-close]"]);
+    dialogView.details.interactionSelectors = [...new Set([...(dialogView.details.interactionSelectors as string[]), ...[...dialog.querySelectorAll("[id]")].map(stableSelector), ".modal-close", "[class*=modal-close]"])];
     views.push(dialogView);
   }
   return views;
@@ -556,38 +696,58 @@ export class HtmlAnalyzer {
 
   private analyzeInteractions(document: Document, scripts: string[]): Interaction[] {
     const items: Interaction[] = [];
+    const mergeEvidence = (existing: Interaction, incoming: Interaction) => {
+      existing.mutationTargets = [...new Set([...(existing.mutationTargets ?? []), ...(incoming.mutationTargets ?? [])])];
+      existing.stateMutations = [...new Set([...(existing.stateMutations ?? []), ...(incoming.stateMutations ?? [])])];
+      existing.stateTransitions = [...(existing.stateTransitions ?? []), ...(incoming.stateTransitions ?? [])].filter((item, index, items) => items.findIndex((candidate) => JSON.stringify(candidate) === JSON.stringify(item)) === index);
+      existing.dataDependencies = [...new Set([...(existing.dataDependencies ?? []), ...(incoming.dataDependencies ?? [])])];
+      if (incoming.target && !existing.target) existing.target = incoming.target;
+      if (incoming.analysis === "ast") existing.analysis = "ast";
+      existing.confidence = Math.max(existing.confidence ?? 0, incoming.confidence ?? 0);
+    };
+    const append = (interaction: Interaction) => {
+      const existing = items.find((item) => item.event === interaction.event && item.trigger === interaction.trigger);
+      if (existing) {
+        if (interaction.analysis === "ast" && existing.analysis !== "ast") {
+          const fingerprint = existing.fingerprint;
+          Object.assign(existing, interaction, { fingerprint });
+        } else mergeEvidence(existing, interaction);
+      } else items.push(interaction);
+    };
     for (const element of [...document.querySelectorAll("[onclick], [onchange], [oninput], [onkeydown], [data-action], [data-target], [data-tab], [data-p], [aria-controls]")]) {
       const trigger = stableSelector(element);
       const event = element.hasAttribute("onclick") ? "click" : element.hasAttribute("onchange") ? "change" : element.hasAttribute("oninput") ? "input" : element.hasAttribute("onkeydown") ? "keydown" : "click";
       const action = element.getAttribute("data-action") || element.getAttribute(`on${event}`) || "toggle";
       const target = element.getAttribute("data-target") || element.getAttribute("aria-controls") || element.getAttribute("data-p") || undefined;
-      items.push({ trigger, event, action: action.slice(0, 120), target, source: "html-attribute", fingerprint: `${event}|${trigger}|${target ?? action}` });
+      append({ trigger, event, action: action.slice(0, 120), target, source: "html-attribute", analysis: "attribute", confidence: 0.98, fingerprint: `${event}|${trigger}|${target ?? action}` });
     }
     for (const element of [...document.querySelectorAll("button, a, input, select, summary")]) {
       if (items.some((item) => item.trigger === stableSelector(element))) continue;
       const event = element.tagName.toLowerCase() === "input" || element.tagName.toLowerCase() === "select" ? "input" : "click";
-      items.push({ trigger: stableSelector(element), event, action: "semantic-control", source: "semantic-control", fingerprint: `${event}|${stableSelector(element)}|semantic-control` });
+      append({ trigger: stableSelector(element), event, action: "semantic-control", source: "semantic-control", analysis: "semantic", confidence: 0.6, fingerprint: `${event}|${stableSelector(element)}|semantic-control` });
     }
     const scriptText = scripts.join("\n");
-    const appendScriptInteraction = (trigger: string, event: string, action: string) => {
-      const fingerprint = `${event}|${trigger}|script-assignment`;
-      if (!items.some((item) => item.event === event && item.trigger === trigger)) items.push({ trigger, event, action, source: "script-assignment", fingerprint });
-    };
+    const ast = extractScriptInteractions(scriptText, document, stableSelector);
+    for (const interaction of ast.interactions) append(interaction);
+
+    // Preserve bounded regex fallbacks for malformed or budget-truncated legacy scripts.
+    const appendRegexInteraction = (trigger: string, event: string, action: string) => append({ trigger, event, action, source: "script-assignment", analysis: "regex", confidence: 0.55, fingerprint: `${event}|${trigger}|script-assignment` });
     for (const match of scriptText.matchAll(/(?:[\w$.]+)\.querySelectorAll\(\s*(["'])([^"']+)\1\s*\)\.forEach\(\s*function\(\s*([A-Za-z_$][\w$]*)\s*\)\s*\{[\s\S]{0,800}?\b\3\.on(click|change|input|keydown)\s*=/g)) {
       const selector = match[2]; const event = match[4];
       let elements: Element[] = [];
       try { elements = [...document.querySelectorAll(selector)]; } catch { /* Preserve the raw selector as dynamic evidence. */ }
-      if (elements.length) for (const element of elements) appendScriptInteraction(stableSelector(element), event, `script assigns on${event} via ${selector}`);
-      else appendScriptInteraction(selector, event, `script assigns on${event} to dynamic ${selector}`);
+      if (elements.length) for (const element of elements) appendRegexInteraction(stableSelector(element), event, `regex fallback assigns on${event} via ${selector}`);
+      else appendRegexInteraction(selector, event, `regex fallback assigns on${event} to dynamic ${selector}`);
     }
     for (const match of scriptText.matchAll(/document\.getElementById\(\s*(["'])([^"']+)\1\s*\)\.on(click|change|input|keydown)\s*=/g)) {
       const element = document.getElementById(match[2]);
-      appendScriptInteraction(element ? stableSelector(element) : `#${escapeSelector(match[2])}`, match[3], `script assigns on${match[3]} by id`);
+      appendRegexInteraction(element ? stableSelector(element) : `#${escapeSelector(match[2])}`, match[3], `regex fallback assigns on${match[3]} by id`);
     }
-    if (/\.className\s*=\s*["']gnd/.test(scriptText) && /\bel\.onclick\s*=/.test(scriptText)) appendScriptInteraction(".gnd:not(.center)", "click", "dynamic graph node handler");
-    for (const match of scriptText.matchAll(/addEventListener\(\s*["'](click|change|input|keydown)["']/g)) {
-      const fingerprint = `${match[1]}|event-listener|${match[0]}`;
-      if (!items.some((item) => item.fingerprint === fingerprint)) items.push({ trigger: "event-listener", event: match[1], action: "listener", source: "event-listener", fingerprint });
+    if (/\.className\s*=\s*["']gnd/.test(scriptText) && /\bel\.onclick\s*=/.test(scriptText)) appendRegexInteraction(".gnd:not(.center)", "click", "dynamic graph node handler");
+    if (!ast.parsed) {
+      for (const match of scriptText.matchAll(/addEventListener\(\s*["'](click|change|input|keydown|resize|scroll)["']/g)) {
+        append({ trigger: "event-listener", event: match[1], action: "unresolved listener from malformed script", source: "event-listener", analysis: "regex", confidence: 0.25, fingerprint: `${match[1]}|event-listener|${match.index ?? 0}` });
+      }
     }
     return items;
   }

@@ -39,15 +39,21 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #pclose
+- click: #pclose → #pop class.remove(on=on)
+- click: #pop → #pop class.remove(on=on)
 
 ## Per-State Content
 - Covers: `click|#pclose|script-assignment`
+- Covers: `click|#pop|script-assignment`
+
+## Mutation Targets
+- Mutates: `#pop`
+
+## State Transitions
+- #pop: class.remove `on` → `on`
 
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 知道了
@@ -64,6 +70,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 118
+- Estimated lines: 112
 - Budget: 150
 - Status: READY

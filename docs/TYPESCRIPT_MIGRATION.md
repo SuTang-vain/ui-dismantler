@@ -9,6 +9,7 @@
 ## 目录
 
 - `src-ts/analysis/analyzer.ts`：HTML、CSS、数据契约、视图范式、交互、A11y 的确定性分析。
+- `src-ts/analysis/script-interactions.ts`：基于 Acorn AST 提取事件绑定、DOM mutation 目标和局部数据依赖；正则仅作为截断或畸形脚本的降级路径。
 - `src-ts/core/css.ts`：CSS 变量、规则、媒体查询、渐变和颜色语义工具。
 - `src-ts/validation/library.ts`：组件库 9 项质量校验。
 - `src-ts/evaluation/roundtrip.ts`：复用现有 Node/jsdom 渲染协议，输出与 Python roundtrip 等价的结构/文本分数。
@@ -110,3 +111,44 @@ node dist-ts/cli.js plan <original.html> \
 - preflight issues。超预算、缺状态验收、缺视口矩阵或交互无证据时，命令以非零状态退出，阻止进入产出阶段。
 
 这层解决的是“拆什么、每块做到什么程度、什么时候允许开始写”的流程质量；现有 Gold+ 继续负责“最终实现是否高保真”的结果质量。两者不可互相替代。
+
+
+## AST 交互与局部依赖分析
+
+组件规划不再只把脚本压缩成 `trigger + event`。分析器会解析 JavaScript AST，并在可静态追踪时输出：
+
+- `mutationTargets`：handler 实际修改的 DOM selector；
+- `stateMutations`：class、style、文本、属性等状态变化证据；
+- `dataDependencies`：handler 使用的局部业务数据集合；
+- `analysis` / `confidence`：证据来自 AST、属性、语义控件还是正则降级。
+
+规划器按“trigger 边界优先，mutation/target 辅助”的评分分配交互，避免弹窗 mutation 抢走触发器所属组件；复杂度模型只计入组件实际使用的数据契约，不再把全部全局契约重复计入每个组件。生成的组件 spec 会列出 mutation target 与数据依赖，便于实现和场景设计审计。
+
+### 结构化 UI 状态转换
+
+AST 分析器还会把可观察副作用标准化为 `stateTransitions`，记录 target、kind、operation、name、静态值、置信度和源码证据。当前覆盖 classList、属性、DOM property、inline style、文本/HTML、focus/dialog 和结构增删。分析支持：
+
+- 最多两层命名 helper 调用传播，防止无界调用图把整套应用副作用错误归给单个 handler；
+- 对象方法 handler、`.bind(...)` 和返回 DOM selector 的简单 helper；
+- `document.addEventListener(...)` 配合 `event.target.closest(...)` 的事件委托；
+- helper 实参到形参的 selector 绑定传播。
+
+候选场景生成器会把高置信、确定性的转换自动变成 assertion，例如 `classList.add/remove/replace`、`set/removeAttribute`、`hidden`、`display`、`value`、focus 和 dialog open/close。`toggle`、动态文本和动态样式值不会被伪装成确定断言。所有自动场景仍保留 `candidate: true`，必须人工补齐前置步骤、确认初始状态并移除 candidate 后，才能计入 verified coverage；算法优化不会降低 Gold+ 的人工审核和视觉门禁。
+
+### 2026-07-23 application-planning refinements
+
+- Delegated listeners now prefer direct `event.target.closest(...)` controls over the receiver container; exclusion guards such as `if (event.target.closest(".node")) return` are not treated as triggers.
+- Callback-local selector bindings take precedence over same-named outer bindings, and AST evidence replaces broad semantic-control placeholders instead of merging stale evidence.
+- Bounded helper propagation prunes non-trivial conditional branches for delegated call sites, reducing unrelated modal/graph mutations on navigation controls.
+- Pointer/touch registrations produce unsupported review candidates with no fake click step.
+- `data-view` and `.stage > .view[id]` applications yield shell, panel, graph, dialog, runtime gallery, and gesture-surface component boundaries. Nested candidates are planned recursively; gesture ownership prefers the deepest boundary while retaining the 150-line budget.
+
+### 2026-07-23 cross-case application planning regression
+
+- Application detection now maps `data-tab` controls to `.view[data-view]` panels and continues to support generic `[data-p]` controls with `.panel[id]` targets.
+- Single-view compound graph applications are decomposed into application shell, relationship canvas, event controls, node controls/gestures, and dialog boundaries.
+- Works grids, cast explorers, cast cards, story controls, scroll surfaces, and gesture surfaces are emitted as localized runtime boundaries when corresponding DOM or script evidence exists.
+- Nested graph node boundaries are emitted only when pointer/touch/mousedown evidence exists, preventing static/click-only graph over-decomposition.
+- Ownership prefers the deepest boundary only when both candidates have strong trigger affinity; event-type bonuses route scroll and gesture lifecycles to their respective surfaces.
+- Gesture and scroll lifecycle registrations count as one implementation behavior for complexity estimation. The 150-line component budget remains unchanged.
+- Seven-case planning regression result: all 7 ready, 131/131 interactions owned, zero over-budget components, zero fake pointer clicks.

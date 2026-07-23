@@ -1,0 +1,4074 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>刘浩存光影星途互动图鉴</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root {
+        --primary: #6487fa;
+        --primary-dark: #4268e8;
+        --primary-soft: #e8eeff;
+        --bg: #f8f8f8;
+        --card: #ffffff;
+        --text: #1e1f24;
+        --sub: #848691;
+        --weak: #b7b9c1;
+        --line: rgba(100, 135, 250, 0.16);
+        --shadow: 0 10px 26px rgba(100, 135, 250, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        color: var(--text);
+        background: var(--bg);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+          Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
+      }
+
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      button {
+        border: 0;
+        padding: 0;
+        color: inherit;
+        background: transparent;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      #app-container {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 14px;
+        background:
+          radial-gradient(
+            circle at 12% 12%,
+            rgba(100, 135, 250, 0.16),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 88% 10%,
+            rgba(255, 213, 226, 0.72),
+            transparent 24%
+          ),
+          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%);
+        touch-action: pan-x pan-y;
+        container-type: size;
+        container-name: app;
+      }
+
+      html.is-scaled-canvas,
+      body.is-scaled-canvas {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        /* 卡片按 1:1.2 定高后，高屏下方留白与卡片同色，避免出现突兀的灰块 */
+        background:
+          radial-gradient(
+            circle at 12% 8%,
+            rgba(100, 135, 250, 0.14),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 88% 6%,
+            rgba(255, 213, 226, 0.6),
+            transparent 26%
+          ),
+          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%);
+      }
+
+      /* 运行容器包裹层：宽度撑满宿主容器，高度按选定基准比例自适应。
+         这样在百度 App 百科卡片这类内容流嵌入场景里也有稳定高度，
+         不再依赖 window.innerHeight 或宿主给定高度。 */
+      #app-frame {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+
+      #app-container.is-scaled {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: top left;
+      }
+
+      .stage {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .view {
+        position: absolute;
+        inset: 0;
+        display: none;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .view.active {
+        display: grid;
+      }
+
+      .nav {
+        flex-shrink: 0;
+        height: 58px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding-top: 12px;
+        overflow: hidden;
+      }
+
+      .nav-btn {
+        height: 46px;
+        border-radius: 18px;
+        color: var(--primary-dark);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: inset 0 0 0 1px var(--line);
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 850;
+        transition:
+          transform 0.18s ease,
+          background 0.18s ease,
+          color 0.18s ease;
+      }
+
+      .nav-btn.active {
+        color: #ffffff;
+        background: var(--primary);
+        box-shadow: 0 10px 22px rgba(100, 135, 250, 0.28);
+      }
+
+      .nav-btn:active {
+        transform: scale(0.97);
+      }
+
+      .identity-view {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .photo-card,
+      .info-card,
+      .logic-card,
+      .actor-card,
+      .work-card,
+      .category-btn,
+      .modal-card {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+      }
+
+      .photo-card {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        border-radius: 24px;
+        background: var(--primary-soft);
+      }
+
+      .photo-card img {
+        object-fit: cover;
+      }
+
+      .photo-caption {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        min-height: 38px;
+        padding: 9px 12px;
+        border-radius: 16px;
+        color: #ffffff;
+        background: linear-gradient(
+          90deg,
+          rgba(30, 31, 36, 0.84),
+          rgba(30, 31, 36, 0.48)
+        );
+        display: grid;
+        gap: 5px;
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.2;
+        font-weight: 760;
+      }
+
+      .photo-caption strong {
+        font-size: 17px;
+        line-height: 1.08;
+        font-weight: 950;
+      }
+
+      .photo-caption span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        opacity: 0.92;
+      }
+
+      .role-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .role-tags i {
+        padding: 3px 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 11px;
+        line-height: 1;
+        font-style: normal;
+        font-weight: 820;
+      }
+
+
+      .gallery-arrows {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        top: 50%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .arrow {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: rgba(30, 31, 36, 0.42);
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 900;
+        pointer-events: auto;
+      }
+
+      .info-card {
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        border-radius: 24px;
+        padding: 18px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 14px;
+      }
+
+
+      .identity-cloud {
+        display: none;
+      }
+
+      .name-block {
+        display: grid;
+        gap: 8px;
+      }
+
+      .artist-name {
+        font-size: 34px;
+        line-height: 1.12;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+      }
+
+      .artist-desc {
+        color: var(--sub);
+        font-size: 16px;
+        line-height: 1.18;
+        font-weight: 760;
+      }
+
+      .tag-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .tag {
+        min-height: 34px;
+        border-radius: 16px;
+        padding: 0 10px;
+        color: var(--primary-dark);
+        background: var(--primary-soft);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.1;
+        font-weight: 880;
+      }
+
+
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .fact {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        border-radius: 16px;
+        padding: 12px 14px 12px 18px;
+        background: var(--bg);
+        box-shadow: inset 0 0 0 1px rgba(30, 31, 36, 0.04);
+        display: grid;
+        align-content: center;
+        gap: 5px;
+      }
+
+      .fact::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 12px;
+        bottom: 12px;
+        width: 3px;
+        border-radius: 3px;
+        background: var(--primary);
+      }
+
+      .fact span {
+        color: var(--primary-dark);
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 820;
+        letter-spacing: 0.06em;
+      }
+
+      .fact strong {
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.2;
+        font-weight: 920;
+      }
+
+      .fact small {
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1.3;
+        font-weight: 640;
+        padding-top: 1px;
+      }
+
+
+      .mini-note {
+        min-height: 40px;
+        border-radius: 15px;
+        padding: 10px 12px;
+        color: var(--primary-dark);
+        background: rgba(100, 135, 250, 0.1);
+        font-size: 15px;
+        line-height: 1.2;
+        font-weight: 850;
+      }
+
+      .costar-view {
+        grid-template-rows: minmax(0, 1fr);
+        gap: 0;
+      }
+
+      .radar-stage {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        border-radius: 22px;
+        background:
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(100, 135, 250, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.82),
+            rgba(232, 238, 255, 0.72)
+          );
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        touch-action: pan-x pan-y;
+      }
+
+      .graph-legend {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        z-index: 8;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: inset 0 0 0 1px var(--line);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 820;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+
+      .legend-line {
+        width: 22px;
+        height: 4px;
+        border-radius: 999px;
+        display: block;
+      }
+
+      .legend-line.multi {
+        background: var(--primary);
+      }
+
+      .legend-line.film {
+        background: #d94b4b;
+      }
+
+      .legend-line.series {
+        background: #4aa06e;
+      }
+
+      .graph-canvas {
+        position: absolute;
+        inset: 0;
+        transition: right 0.36s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .graph-wrap.panel-open .graph-canvas {
+        right: 340px;
+      }
+
+      .edges {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .edge {
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        opacity: 0.44;
+        transition:
+          opacity 0.2s ease,
+          stroke-width 0.2s ease;
+      }
+
+      .edge.multi {
+        stroke: var(--primary);
+      }
+
+      .edge.film {
+        stroke: #d94b4b;
+      }
+
+      .edge.series {
+        stroke: #4aa06e;
+      }
+
+      .edge.hl {
+        stroke-width: 3;
+        opacity: 1;
+      }
+
+      .edge.dim {
+        opacity: 0.14;
+      }
+
+
+      .radar-stage::before,
+      .radar-stage::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        border: 1px solid rgba(100, 135, 250, 0.16);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+
+      .radar-stage::before {
+        width: min(64%, 360px);
+        aspect-ratio: 1;
+      }
+
+      .radar-stage::after {
+        width: min(88%, 500px);
+        aspect-ratio: 1;
+      }
+
+      .radar-center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 3;
+        width: 108px;
+        height: 108px;
+        border-radius: 32px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 3px solid rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 32px rgba(100, 135, 250, 0.3);
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+        transform: translate(-50%, -50%);
+      }
+
+
+      .radar-center::after {
+        content: "刘浩存";
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 5px 7px;
+        border-radius: 999px;
+        color: #ffffff;
+        background: rgba(30, 31, 36, 0.62);
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .radar-center img {
+        object-fit: cover;
+      }
+
+      .radar-center-ring {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 2;
+        width: 148px;
+        height: 148px;
+        border-radius: 50%;
+        border: 1px solid rgba(100, 135, 250, 0.36);
+        transform: translate(-50%, -50%);
+        animation: centerBreath 2.8s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes centerBreath {
+        0%,
+        100% {
+          opacity: 0.28;
+          transform: translate(-50%, -50%) scale(0.94);
+        }
+        50% {
+          opacity: 0.78;
+          transform: translate(-50%, -50%) scale(1.06);
+        }
+      }
+
+      .radar-node {
+        position: absolute;
+        z-index: 4;
+        width: 86px;
+        min-width: 0;
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        color: var(--text);
+        transform: translate(-50%, -50%) scale(0.94);
+        opacity: 0.88;
+        transition:
+          transform 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      .radar-node:active {
+        transform: translate(-50%, -50%) scale(0.88);
+      }
+
+      .radar-node.active {
+        color: var(--primary-dark);
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
+
+      .radar-node.pos-0 {
+        left: 50%;
+        top: 15%;
+      }
+      .radar-node.pos-1 {
+        left: 18%;
+        top: 29%;
+      }
+      .radar-node.pos-2 {
+        left: 82%;
+        top: 29%;
+      }
+      .radar-node.pos-3 {
+        left: 20%;
+        top: 72%;
+      }
+      .radar-node.pos-4 {
+        left: 80%;
+        top: 72%;
+      }
+      .radar-node.pos-5 {
+        left: 50%;
+        top: 88%;
+      }
+
+      .node-avatar {
+        position: relative;
+        width: 58px;
+        height: 58px;
+        border-radius: 20px;
+        overflow: visible;
+        display: block;
+      }
+
+      .node-avatar::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        z-index: 0;
+        border-radius: 26px;
+        border: 1px solid rgba(100, 135, 250, 0.36);
+        background: rgba(100, 135, 250, 0.08);
+        animation: nodeBreath 2.6s ease-in-out infinite;
+      }
+
+      .node-avatar img {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.94);
+        box-shadow: 0 12px 22px rgba(100, 135, 250, 0.22);
+      }
+
+      .radar-node.active .node-avatar::before {
+        border-color: rgba(100, 135, 250, 0.58);
+        background: rgba(100, 135, 250, 0.14);
+        animation-duration: 1.85s;
+      }
+
+      .radar-node.active .node-avatar img {
+        box-shadow: 0 16px 30px rgba(100, 135, 250, 0.38);
+      }
+
+      @keyframes nodeBreath {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: scale(0.9);
+        }
+        50% {
+          opacity: 0.9;
+          transform: scale(1.08);
+        }
+      }
+
+      .node-name {
+        max-width: 100%;
+        padding: 5px 7px;
+        border-radius: 999px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.78);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 850;
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+
+      .node {
+        position: absolute;
+        z-index: 4;
+        width: 86px;
+        min-width: 0;
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        color: var(--text);
+        transform: translate(-50%, -50%) scale(0.94);
+        opacity: 0.9;
+        cursor: pointer;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          transform 0.2s ease,
+          opacity 0.2s ease;
+        touch-action: none;
+      }
+
+      .node:focus,
+      .node:focus-visible,
+      .radar-center:focus,
+      .radar-center:focus-visible {
+        outline: none;
+      }
+
+
+      .node.dragging-now {
+        transition: none;
+      }
+
+      .node.grabbing {
+        z-index: 20;
+        cursor: grabbing;
+      }
+
+      .node.active {
+        color: var(--primary-dark);
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
+
+      .node.dim {
+        opacity: 0.35;
+      }
+
+      .node .float-inner {
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        animation: floatMotion 5.8s ease-in-out infinite alternate;
+      }
+
+      @keyframes floatMotion {
+        from {
+          transform: translateY(-4px);
+        }
+        to {
+          transform: translateY(4px);
+        }
+      }
+
+      .node .avatar {
+        position: relative;
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #ffffff;
+        border: 2px solid rgba(255, 255, 255, 0.96);
+        box-shadow: 0 12px 22px rgba(100, 135, 250, 0.22);
+      }
+
+      .node .avatar img {
+        object-fit: cover;
+      }
+
+      .node .name {
+        max-width: 100%;
+        padding: 5px 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.82);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 850;
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+
+
+      .works-view {
+        grid-template-rows: 40px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .category-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        overflow: hidden;
+      }
+
+      .category-btn {
+        border-radius: 18px;
+        color: var(--primary-dark);
+        font-size: 17px;
+        line-height: 1;
+        font-weight: 880;
+      }
+
+      .category-btn.active {
+        color: #ffffff;
+        background: var(--primary);
+      }
+
+      .works-shell {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .work-grid {
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .work-grid::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      .works-more-button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        z-index: 3;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #ffffff;
+        background: var(--primary);
+        border: 2px solid rgba(255, 255, 255, 0.92);
+        box-shadow: 0 12px 28px rgba(42, 91, 255, 0.34), 0 4px 10px rgba(30, 31, 36, 0.18);
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 900;
+        transform: translateY(-50%);
+      }
+
+      .works-more-button[hidden] {
+        display: none;
+      }
+
+      .work-card {
+        flex: 0 0 calc((100% - 36px) / 4);
+        min-width: 0;
+        min-height: 0;
+        border-radius: 20px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1.35fr) auto;
+        gap: 8px;
+        overflow: hidden;
+        text-align: center;
+        scroll-snap-align: start;
+        cursor: default;
+      }
+
+
+      .poster {
+        min-width: 0;
+        min-height: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--primary-soft);
+      }
+
+      .poster img {
+        object-fit: cover;
+      }
+
+      .work-info {
+        min-width: 0;
+        min-height: 0;
+        display: grid;
+        align-content: start;
+        justify-items: center;
+        gap: 5px;
+      }
+
+      .work-title {
+        font-size: 16px;
+        line-height: 1.15;
+        font-weight: 900;
+      }
+
+      .work-meta,
+      .work-role,
+      .work-partners,
+      .work-stat {
+        font-size: 12px;
+        line-height: 1.15;
+        font-weight: 760;
+      }
+
+      .work-meta {
+        color: var(--primary-dark);
+      }
+
+      .work-role,
+      .work-partners {
+        color: var(--sub);
+      }
+
+      .work-stat {
+        max-width: 100%;
+        padding: 4px 7px;
+        border-radius: 999px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #245c42;
+        background: #e8f7ef;
+      }
+
+
+      .status {
+        width: max-content;
+        justify-self: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        color: #b64b00;
+        background: #fff0dd;
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 820;
+      }
+
+      .modal {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        width: min(340px, 100%);
+        display: none;
+        align-items: stretch;
+        justify-content: flex-end;
+        padding: 12px 12px 12px 0;
+        overflow: hidden;
+        background: transparent;
+        pointer-events: none;
+      }
+
+      .modal.active {
+        display: flex;
+        pointer-events: auto;
+      }
+
+      .modal-card {
+        position: relative;
+        width: 100%;
+        max-height: 100%;
+        border-radius: 22px;
+        padding: 14px;
+        display: grid;
+        grid-template-rows: 119px minmax(0, 1fr);
+
+        gap: 12px;
+        overflow: auto;
+      }
+
+      .modal-poster {
+        min-width: 0;
+        height: 119px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: var(--primary-soft);
+      }
+
+
+      .modal-info {
+        min-width: 0;
+        min-height: 0;
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+
+
+      .modal-info strong {
+        font-size: 25px;
+        line-height: 1.08;
+        font-weight: 820;
+      }
+
+      .modal-info span {
+        color: var(--primary-dark);
+        font-size: 14px;
+        line-height: 1.2;
+        font-weight: 720;
+      }
+
+      .modal-info p {
+        margin: 0;
+        color: var(--sub);
+        font-size: 14px;
+        line-height: 1.42;
+        font-weight: 520;
+      }
+
+      .modal-works {
+        min-width: 0;
+        display: grid;
+        gap: 7px;
+      }
+
+      .modal-work {
+        min-width: 0;
+        border-radius: 13px;
+        padding: 8px 10px;
+        background: rgba(100, 135, 250, 0.08);
+        display: grid;
+        gap: 4px;
+      }
+
+      .modal-work b,
+      .modal-work small {
+        display: block;
+        min-width: 0;
+        overflow: visible;
+        text-overflow: unset;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+
+      .modal-work b {
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.15;
+        font-weight: 760;
+      }
+
+      .modal-work small {
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 520;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--primary);
+        border: 2px solid var(--primary);
+        box-shadow: 0 10px 24px rgba(100, 135, 250, 0.28);
+
+        font-size: 28px;
+        line-height: 1;
+        font-weight: 900;
+        z-index: 2;
+      }
+
+      .modal-close:hover,
+      .modal-close:focus-visible {
+        color: #ffffff;
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
+      #app-container.is-small-canvas {
+        padding: 8px 8px 3px;
+      }
+
+      #app-container.is-tiny-canvas {
+        padding: 6px 6px 2px;
+      }
+
+
+
+
+
+
+
+
+      /* 小基准使用竖向卡片布局；大基准使用 788x492 横向画布布局。
+         布局切换用 JS 挡位类 .is-small-canvas 驱动，不依赖 @container（部分 WebView 不生效）。 */
+      #app-container.is-small-canvas .stage {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      #app-container.is-small-canvas .view {
+        position: static;
+        inset: auto;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      #app-container.is-small-canvas .view:not(.active) {
+        display: none;
+      }
+
+      #app-container.is-small-canvas .nav {
+        position: static;
+        z-index: 15;
+        height: 40px;
+        gap: 7px;
+        margin-top: 8px;
+        padding-top: 0;
+        align-self: stretch;
+      }
+
+      #app-container.is-small-canvas .nav-btn {
+        min-height: 40px;
+        height: 40px;
+        border-radius: 14px;
+        font-size: 16px;
+      }
+
+
+
+      #app-container.is-small-canvas .identity-view {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: clamp(238px, 52cqh, 286px) minmax(0, 1fr);
+        align-content: stretch;
+        gap: 8px;
+      }
+
+
+      #app-container.is-small-canvas .photo-card,
+      #app-container.is-small-canvas .info-card,
+      #app-container.is-small-canvas .logic-card,
+      #app-container.is-small-canvas .actor-card,
+      #app-container.is-small-canvas .work-card,
+      #app-container.is-small-canvas .modal-card {
+        border-radius: 16px;
+      }
+
+      #app-container.is-small-canvas .photo-caption {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        min-height: 42px;
+        padding: 8px;
+        border-radius: 12px;
+        gap: 3px;
+      }
+
+      #app-container.is-small-canvas .photo-caption strong {
+        font-size: 17px;
+      }
+
+      #app-container.is-small-canvas .photo-caption span {
+        font-size: 12px;
+        line-height: 1.12;
+      }
+
+      #app-container.is-small-canvas .role-tags {
+        max-height: 35px;
+        overflow: hidden;
+        gap: 3px;
+      }
+
+      #app-container.is-small-canvas .role-tags i {
+        padding: 3px 5px;
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .photo-card {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        min-height: 0;
+        aspect-ratio: auto;
+      }
+
+      #app-container.is-small-canvas .gallery-arrows {
+        left: 8px;
+        right: 8px;
+      }
+
+      #app-container.is-small-canvas .arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 24px;
+      }
+
+      #app-container.is-small-canvas .info-card {
+        min-height: 0;
+        height: 100%;
+        padding: 12px;
+        gap: 0;
+        grid-template-rows: minmax(0, 1fr);
+        align-content: stretch;
+        align-self: stretch;
+        overflow: hidden;
+      }
+
+      #app-container.is-small-canvas .name-block,
+      #app-container.is-small-canvas .tag-row,
+      #app-container.is-small-canvas .facts {
+        display: none;
+      }
+
+      #app-container.is-small-canvas .identity-cloud {
+        min-height: 0;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: space-evenly;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 2px;
+        overflow: hidden;
+      }
+
+      #app-container.is-small-canvas .cloud-token {
+        min-width: 0;
+        flex: 0 0 auto;
+        border-radius: 14px;
+        padding: 3px 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #4f5870;
+        background: rgba(100, 135, 250, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(100, 135, 250, 0.08);
+        font-size: 11.5px;
+        line-height: 1.12;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      #app-container.is-small-canvas .cloud-token.size-l {
+        padding: 4px 9px;
+        color: var(--primary-dark);
+        background: rgba(100, 135, 250, 0.16);
+        font-size: 12.5px;
+        font-weight: 900;
+      }
+
+      #app-container.is-small-canvas .cloud-token.size-m {
+        padding: 3px 8px;
+        color: #2f6f79;
+        background: rgba(36, 176, 162, 0.12);
+        font-size: 11.5px;
+        font-weight: 850;
+      }
+
+      #app-container.is-small-canvas .cloud-token.tone-warm {
+        color: #9a5a13;
+        background: rgba(255, 184, 77, 0.16);
+      }
+
+      #app-container.is-small-canvas .cloud-token.tone-rose {
+        color: #9b4f68;
+        background: rgba(238, 106, 145, 0.12);
+      }
+
+      #app-container.is-small-canvas .mini-note {
+        min-height: 32px;
+        border-radius: 11px;
+        padding: 7px;
+        font-size: 10px;
+        line-height: 1.18;
+      }
+
+      #app-container.is-small-canvas .costar-view {
+        height: 100%;
+        min-height: 0;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 0;
+      }
+
+      #app-container.is-small-canvas .radar-stage {
+        height: 100%;
+        min-height: 0;
+        border-radius: 16px;
+      }
+
+      #app-container.is-small-canvas .radar-center {
+        width: clamp(70px, 22cqw, 86px);
+        height: clamp(70px, 22cqw, 86px);
+        border-radius: 24px;
+      }
+
+      #app-container.is-small-canvas .radar-center::after {
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+        padding: 4px 5px;
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .radar-center-ring {
+        width: 116px;
+        height: 116px;
+      }
+
+      #app-container.is-small-canvas .radar-node {
+        width: clamp(56px, 17cqw, 68px);
+        gap: 4px;
+      }
+
+      #app-container.is-small-canvas .radar-node.active {
+        transform: translate(-50%, -50%) scale(1.04);
+      }
+
+      #app-container.is-small-canvas .node-avatar {
+        width: clamp(40px, 13cqw, 48px);
+        height: clamp(40px, 13cqw, 48px);
+        border-radius: 16px;
+      }
+
+      #app-container.is-small-canvas .node-avatar::before {
+        inset: -6px;
+        border-radius: 23px;
+      }
+
+      #app-container.is-small-canvas .node-name {
+        padding: 4px 5px;
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .graph-wrap.panel-open .graph-canvas {
+        right: 0;
+      }
+
+      #app-container.is-small-canvas .modal {
+        top: 8px;
+        right: 8px;
+        bottom: 49px;
+        left: 8px;
+        width: auto;
+        padding: 0;
+        align-items: stretch;
+        justify-content: center;
+      }
+
+      #app-container.is-small-canvas .graph-legend {
+
+        left: 8px;
+        right: 8px;
+        top: 8px;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 7px;
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .legend-line {
+        width: 16px;
+      }
+
+      #app-container.is-small-canvas .node {
+        width: 64px;
+        gap: 4px;
+      }
+
+      #app-container.is-small-canvas .node .float-inner {
+        gap: 4px;
+      }
+
+      #app-container.is-small-canvas .node .avatar {
+        width: clamp(42px, 13cqw, 50px);
+        height: clamp(42px, 13cqw, 50px);
+      }
+
+      #app-container.is-small-canvas .node .name {
+        padding: 4px 5px;
+        font-size: 10px;
+      }
+
+
+      #app-container.is-small-canvas .radar-node.pos-0 {
+        left: 50%;
+        top: 17%;
+      }
+      #app-container.is-small-canvas .radar-node.pos-1 {
+        left: 22%;
+        top: 32%;
+      }
+      #app-container.is-small-canvas .radar-node.pos-2 {
+        left: 78%;
+        top: 32%;
+      }
+      #app-container.is-small-canvas .radar-node.pos-3 {
+        left: 23%;
+        top: 67%;
+      }
+      #app-container.is-small-canvas .radar-node.pos-4 {
+        left: 77%;
+        top: 67%;
+      }
+      #app-container.is-small-canvas .radar-node.pos-5 {
+        left: 50%;
+        top: 82%;
+      }
+
+      #app-container.is-small-canvas .works-view {
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      #app-container.is-small-canvas .category-row {
+        gap: 7px;
+        overflow: hidden;
+      }
+
+      #app-container.is-small-canvas .category-btn {
+        min-height: 26px;
+        height: 26px;
+        padding: 0;
+        border-radius: 14px;
+        font-size: 12px;
+      }
+
+      #app-container.is-small-canvas .works-shell {
+        height: 100%;
+        min-height: 0;
+        overflow: visible;
+      }
+
+      #app-container.is-small-canvas .works-more-button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        z-index: 3;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #ffffff;
+        background: var(--primary);
+        border: 2px solid rgba(255, 255, 255, 0.92);
+        box-shadow: 0 12px 28px rgba(42, 91, 255, 0.34), 0 4px 10px rgba(30, 31, 36, 0.18);
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 900;
+        transform: translateY(-50%);
+      }
+
+      #app-container.is-small-canvas .works-more-button[hidden] {
+        display: none;
+      }
+
+      #app-container.is-small-canvas .work-grid,
+      #app-container.is-small-canvas .work-grid.count-4,
+      #app-container.is-small-canvas .work-grid.count-6 {
+        display: flex;
+        align-items: stretch;
+        height: 100%;
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scroll-padding-right: 54px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 0;
+      }
+
+      #app-container.is-small-canvas .work-grid::after,
+      #app-container.is-small-canvas .work-grid.count-4::after,
+      #app-container.is-small-canvas .work-grid.count-6::after {
+        content: "";
+        flex: 0 0 54px;
+      }
+
+
+      #app-container.is-small-canvas .work-grid::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      #app-container.is-small-canvas .work-card {
+        flex: 0 0 calc((100% - 12px) / 2);
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        text-align: left;
+        scroll-snap-align: start;
+      }
+
+      #app-container.is-small-canvas .poster {
+        flex: 1 1 auto;
+        min-height: 0;
+        height: auto;
+        border-radius: 12px;
+        position: relative;
+      }
+
+      #app-container.is-small-canvas .work-info {
+        flex-shrink: 0;
+        padding: 6px 8px 8px;
+        align-content: start;
+        justify-items: stretch;
+        gap: 3px;
+        background: #fff;
+      }
+
+      #app-container.is-small-canvas .work-title {
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #app-container.is-small-canvas .work-meta,
+      #app-container.is-small-canvas .work-role,
+      #app-container.is-small-canvas .work-partners,
+      #app-container.is-small-canvas .work-stat {
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      #app-container.is-small-canvas .work-role,
+      #app-container.is-small-canvas .work-partners,
+      #app-container.is-small-canvas .work-stat {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #app-container.is-small-canvas .status {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        justify-self: start;
+        padding: 3px 8px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.92);
+        font-size: 11px;
+      }
+
+      #app-container.is-small-canvas .modal {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        padding: 18px;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: rgba(30, 31, 36, 0.12);
+      }
+
+      #app-container.is-small-canvas .modal-card {
+        width: min(344px, 100%);
+        max-height: calc(100cqh - 84px);
+        padding: 14px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        justify-items: center;
+        gap: 10px;
+        overflow: auto;
+      }
+
+
+      #app-container.is-small-canvas .modal-poster {
+        width: 50%;
+        max-width: 116px;
+        min-width: 96px;
+        height: 77px;
+        border-radius: 14px;
+      }
+
+      #app-container.is-small-canvas .modal-info {
+        width: 100%;
+        align-content: start;
+        justify-items: center;
+        gap: 8px;
+        text-align: center;
+      }
+
+
+      #app-container.is-small-canvas .modal-info strong {
+        font-size: 21px;
+      }
+
+      #app-container.is-small-canvas .modal-info span {
+        font-size: 13px;
+      }
+
+      #app-container.is-small-canvas .modal-info p {
+        font-size: 12px;
+        line-height: 1.32;
+      }
+
+      #app-container.is-small-canvas .modal-work b,
+      #app-container.is-small-canvas .modal-work small {
+        overflow: visible;
+        text-overflow: unset;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      #app-container.is-small-canvas .modal-work b {
+        line-height: 1.25;
+      }
+
+      #app-container.is-small-canvas .modal-work small {
+        line-height: 1.38;
+      }
+
+      #app-container.is-small-canvas .modal-close {
+        top: 7px;
+        right: 7px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 20px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .radar-center-ring,
+        .node-avatar::before {
+          animation: none !important;
+        }
+      }
+
+      #app-container.is-tiny-canvas .nav {
+        height: 38px;
+        gap: 5px;
+        margin-top: 6px;
+        padding-top: 0;
+      }
+
+      #app-container.is-tiny-canvas .nav-btn {
+        min-height: 38px;
+        height: 38px;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+
+
+
+      #app-container.is-tiny-canvas .identity-view {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: clamp(224px, 50cqh, 260px) minmax(0, 1fr);
+        align-content: stretch;
+        gap: 6px;
+      }
+
+
+      #app-container.is-tiny-canvas .photo-caption {
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+        min-height: 34px;
+        padding: 6px;
+        border-radius: 10px;
+      }
+
+      #app-container.is-tiny-canvas .photo-caption strong {
+        font-size: 13px;
+      }
+
+      #app-container.is-tiny-canvas .photo-caption span {
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .role-tags {
+        max-height: 24px;
+        gap: 2px;
+      }
+
+      #app-container.is-tiny-canvas .role-tags i {
+        padding: 2px 4px;
+        font-size: 9px;
+      }
+
+      #app-container.is-tiny-canvas .photo-card {
+        height: 100%;
+        min-height: 0;
+      }
+
+      #app-container.is-tiny-canvas .arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 19px;
+      }
+
+      #app-container.is-tiny-canvas .info-card {
+        padding: 8px;
+        gap: 0;
+        border-radius: 14px;
+        height: 100%;
+        min-height: 0;
+        align-self: stretch;
+        overflow: hidden;
+      }
+
+      #app-container.is-tiny-canvas .identity-cloud {
+        height: 100%;
+        align-content: center;
+        gap: 7px;
+        padding: 2px;
+      }
+
+      #app-container.is-tiny-canvas .cloud-token {
+        padding: 5px 9px;
+        font-size: 12px;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      #app-container.is-tiny-canvas .cloud-token.size-l {
+        min-height: 27px;
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+
+      #app-container.is-tiny-canvas .cloud-token.size-m {
+        min-height: 24px;
+        padding: 5px 9px;
+        font-size: 12px;
+      }
+
+      #app-container.is-tiny-canvas .mini-note {
+        min-height: 28px;
+        padding: 6px;
+        border-radius: 9px;
+        font-size: 11px;
+      }
+
+      #app-container.is-tiny-canvas .costar-view {
+        height: 100%;
+        min-height: 0;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 0;
+      }
+
+      #app-container.is-tiny-canvas .radar-stage {
+        height: 100%;
+        min-height: 0;
+      }
+
+      #app-container.is-tiny-canvas .radar-center {
+        width: 72px;
+        height: 72px;
+        border-radius: 22px;
+      }
+
+      #app-container.is-tiny-canvas .radar-center::after {
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        padding: 3px 4px;
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .radar-center-ring {
+        width: 98px;
+        height: 98px;
+      }
+
+      #app-container.is-tiny-canvas .radar-node {
+        width: 56px;
+        gap: 3px;
+      }
+
+      #app-container.is-tiny-canvas .node-avatar {
+        width: 39px;
+        height: 39px;
+        border-radius: 14px;
+      }
+
+      #app-container.is-tiny-canvas .node-avatar::before {
+        inset: -5px;
+        border-radius: 19px;
+      }
+
+      #app-container.is-tiny-canvas .node-name {
+        padding: 4px 5px;
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .radar-node.pos-0 {
+        left: 50%;
+        top: 16%;
+      }
+      #app-container.is-tiny-canvas .radar-node.pos-1 {
+        left: 23%;
+        top: 32%;
+      }
+      #app-container.is-tiny-canvas .radar-node.pos-2 {
+        left: 77%;
+        top: 32%;
+      }
+      #app-container.is-tiny-canvas .radar-node.pos-3 {
+        left: 24%;
+        top: 66%;
+      }
+      #app-container.is-tiny-canvas .radar-node.pos-4 {
+        left: 76%;
+        top: 66%;
+      }
+      #app-container.is-tiny-canvas .radar-node.pos-5 {
+        left: 50%;
+        top: 82%;
+      }
+
+      #app-container.is-tiny-canvas .works-view {
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      #app-container.is-tiny-canvas .category-row {
+        gap: 5px;
+      }
+
+      #app-container.is-tiny-canvas .category-btn {
+        min-height: 26px;
+        height: 26px;
+        font-size: 12px;
+        border-radius: 12px;
+      }
+
+      #app-container.is-tiny-canvas .works-more-button {
+        right: 8px;
+        width: 42px;
+        height: 42px;
+        font-size: 26px;
+      }
+
+      #app-container.is-tiny-canvas .work-grid,
+      #app-container.is-tiny-canvas .work-grid.count-4,
+      #app-container.is-tiny-canvas .work-grid.count-6 {
+        display: flex;
+        align-items: stretch;
+        height: 100%;
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-padding-right: 48px;
+        padding-right: 0;
+      }
+
+      #app-container.is-tiny-canvas .work-grid::after,
+      #app-container.is-tiny-canvas .work-grid.count-4::after,
+      #app-container.is-tiny-canvas .work-grid.count-6::after {
+        content: "";
+        flex: 0 0 48px;
+      }
+
+
+      #app-container.is-tiny-canvas .work-card {
+        flex: 0 0 calc((100% - 10px) / 2);
+        min-height: 0;
+        height: 100%;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border-radius: 13px;
+      }
+
+      #app-container.is-tiny-canvas .poster {
+        flex: 1 1 auto;
+        min-height: 0;
+        height: auto;
+        border-radius: 9px;
+      }
+
+      #app-container.is-tiny-canvas .work-info {
+        padding: 5px 7px 7px;
+        gap: 2px;
+      }
+
+      #app-container.is-tiny-canvas .work-title {
+        font-size: 13px;
+      }
+
+      #app-container.is-tiny-canvas .work-meta,
+      #app-container.is-tiny-canvas .work-role,
+      #app-container.is-tiny-canvas .work-partners,
+      #app-container.is-tiny-canvas .work-stat {
+        font-size: 10.5px;
+        line-height: 1.25;
+      }
+
+      #app-container.is-tiny-canvas .status {
+        padding: 2px 4px;
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .modal {
+        padding: 12px;
+      }
+
+      #app-container.is-tiny-canvas .modal-card {
+        width: min(328px, 100%);
+        max-height: calc(100cqh - 72px);
+        padding: 9px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 8px;
+        border-radius: 15px;
+      }
+
+
+      #app-container.is-tiny-canvas .modal-poster {
+        width: 50%;
+        max-width: 100px;
+        min-width: 84px;
+        height: 60px;
+        border-radius: 11px;
+      }
+
+      #app-container.is-tiny-canvas .modal-info {
+        gap: 5px;
+      }
+
+
+      #app-container.is-tiny-canvas .modal-info strong {
+        font-size: 17px;
+      }
+
+      #app-container.is-tiny-canvas .modal-info span {
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .modal-info p {
+        font-size: 11px;
+        line-height: 1.28;
+      }
+
+      #app-container.is-tiny-canvas .modal-close {
+        top: 6px;
+        right: 6px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 17px;
+      }
+      /* 作品探索：主作品承担理解，片单负责切换，进度负责连续探索。 */
+      .works-view {
+        grid-template-rows: 44px minmax(0, 1fr) 76px;
+        gap: 10px;
+      }
+
+      .works-toolbar {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .works-toolbar .category-row {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 6px;
+        padding: 0;
+        border: 1px solid rgba(100, 135, 250, 0.14);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 8px 20px rgba(100, 135, 250, 0.08);
+      }
+
+      .works-toolbar .category-btn {
+        min-width: 92px;
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        transition:
+          color 0.18s ease,
+          background 0.18s ease,
+          transform 0.18s ease;
+      }
+
+      .works-toolbar .category-btn:active {
+        transform: scale(0.96);
+      }
+
+      .works-progress {
+        min-width: 220px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px 10px;
+      }
+
+      .works-progress-copy {
+        min-width: 0;
+        overflow: hidden;
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 720;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .works-progress-count {
+        color: var(--primary-dark);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 900;
+      }
+
+      .works-progress-track {
+        grid-column: 1 / -1;
+        height: 5px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(100, 135, 250, 0.14);
+      }
+
+      .works-progress-track i {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #6487fa, #24b0a2);
+        transition: width 0.28s ease;
+      }
+
+      .work-feature {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid rgba(100, 135, 250, 0.13);
+        border-radius: 18px;
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 18px 38px rgba(66, 104, 232, 0.14);
+      }
+
+      .feature-poster {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        isolation: isolate;
+        padding: 10px 58px 8px;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(90deg, rgba(100, 135, 250, 0.08) 0 20%, transparent 20% 80%, rgba(255, 213, 226, 0.34) 80%),
+          #eef1f7;
+      }
+
+      .feature-watermark {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 0;
+        max-width: 90%;
+        overflow: hidden;
+        color: transparent;
+        font-size: 68px;
+        line-height: 1;
+        font-weight: 950;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+        -webkit-text-stroke: 1px rgba(100, 135, 250, 0.16);
+        pointer-events: none;
+      }
+
+      .feature-poster-gallery {
+        position: relative;
+        z-index: 1;
+        width: min(420px, 88%);
+        height: 100%;
+        max-height: 188px;
+      }
+
+      .feature-poster-card {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: auto;
+        height: 84%;
+        aspect-ratio: 2 / 3;
+        overflow: hidden;
+        padding: 3px;
+        border: 0;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(30, 31, 36, 0.18);
+        opacity: 0.76;
+        transform-origin: 50% 80%;
+        transition:
+          transform 0.28s ease,
+          opacity 0.28s ease,
+          box-shadow 0.28s ease,
+          filter 0.28s ease;
+      }
+
+      .feature-poster-card.is-left {
+        z-index: 1;
+        transform: translate(-145%, -48%) rotate(-5deg);
+      }
+
+      .feature-poster-card.is-right {
+        z-index: 1;
+        transform: translate(45%, -48%) rotate(5deg);
+      }
+
+      .feature-poster-card.is-active {
+        z-index: 3;
+        height: 100%;
+        padding: 4px;
+        border-radius: 14px;
+        opacity: 1;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 16px 32px rgba(30, 31, 36, 0.25);
+      }
+
+      .feature-poster-card:not(.is-active):hover,
+      .feature-poster-card:not(.is-active):focus-visible {
+        opacity: 1;
+        filter: saturate(1.08);
+      }
+
+      .feature-poster-card.is-left:hover,
+      .feature-poster-card.is-left:focus-visible {
+        transform: translate(-150%, -51%) rotate(-3deg);
+      }
+
+      .feature-poster-card.is-right:hover,
+      .feature-poster-card.is-right:focus-visible {
+        transform: translate(50%, -51%) rotate(3deg);
+      }
+
+      .feature-poster-card:focus-visible {
+        outline: 3px solid rgba(66, 104, 232, 0.68);
+        outline-offset: 3px;
+      }
+
+      .feature-poster-card img {
+        width: 100%;
+        height: 100%;
+        border-radius: 9px;
+        object-fit: cover;
+      }
+
+      .feature-status {
+        position: absolute;
+        right: 14px;
+        top: 10px;
+        z-index: 3;
+        padding: 5px 8px;
+        border-radius: 9px;
+        color: #1e1f24;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 6px 16px rgba(30, 31, 36, 0.16);
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 850;
+      }
+
+      .feature-info {
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        padding: 8px 58px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        text-align: center;
+        background: #ffffff;
+        border-top: 1px solid rgba(100, 135, 250, 0.1);
+      }
+
+      .feature-heading {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 9px;
+      }
+
+      .feature-kicker {
+        color: var(--primary-dark);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 850;
+      }
+
+      .feature-title {
+        max-width: 100%;
+        margin: 0;
+        overflow: hidden;
+        font-size: 22px;
+        line-height: 1.05;
+        font-weight: 950;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .feature-desc {
+        margin: 0;
+        overflow: hidden;
+        color: var(--sub);
+        max-width: 620px;
+        font-size: 11px;
+        line-height: 1.25;
+        font-weight: 580;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .feature-facts {
+        width: 100%;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid rgba(100, 135, 250, 0.13);
+        border-bottom: 1px solid rgba(100, 135, 250, 0.13);
+        background: rgba(100, 135, 250, 0.045);
+      }
+
+      .feature-fact {
+        min-width: 0;
+        padding: 6px 8px;
+        overflow: hidden;
+        border-right: 1px solid rgba(100, 135, 250, 0.13);
+        border-radius: 0;
+        color: #596071;
+        background: transparent;
+        display: grid;
+        gap: 3px;
+      }
+
+      .feature-fact:last-child {
+        border-right: 0;
+      }
+
+      .feature-fact small,
+      .feature-fact b {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .feature-fact small {
+        color: var(--sub);
+        font-size: 9px;
+        line-height: 1;
+        font-weight: 680;
+      }
+
+      .feature-fact b {
+        color: var(--text);
+        font-size: 11px;
+        line-height: 1.1;
+        font-weight: 850;
+      }
+
+      .feature-actions {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        z-index: 2;
+        transform: translateY(-50%);
+      }
+
+      .feature-next-button {
+        width: 44px;
+        min-height: 44px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        font-size: 24px;
+        line-height: 1;
+        font-weight: 880;
+        color: #ffffff;
+        background: var(--primary);
+        box-shadow: 0 10px 20px rgba(66, 104, 232, 0.28);
+        transition:
+          transform 0.18s ease,
+          background 0.18s ease;
+      }
+
+      .feature-next-button:active {
+        transform: scale(0.94);
+      }
+
+      .work-strip-shell {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        padding: 4px 0;
+      }
+
+      .work-strip-shell::before,
+      .work-strip-shell::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        height: 2px;
+        pointer-events: none;
+        background: repeating-linear-gradient(90deg, rgba(100, 135, 250, 0.25) 0 8px, transparent 8px 14px);
+      }
+
+      .work-strip-shell::before {
+        top: 0;
+      }
+
+      .work-strip-shell::after {
+        bottom: 0;
+      }
+
+      .work-strip {
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        gap: 8px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .work-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .work-thumb {
+        position: relative;
+        flex: 0 0 126px;
+        min-width: 0;
+        height: 68px;
+        overflow: hidden;
+        border: 1px solid rgba(100, 135, 250, 0.15);
+        border-radius: 13px;
+        padding: 5px;
+        display: grid;
+        grid-template-columns: 43px minmax(0, 1fr);
+        align-items: center;
+        gap: 7px;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 6px 16px rgba(66, 104, 232, 0.08);
+        scroll-snap-align: start;
+        transition:
+          transform 0.18s ease,
+          border-color 0.18s ease,
+          background 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+
+      .work-thumb.active {
+        border-color: var(--primary);
+        background: #ffffff;
+        box-shadow:
+          inset 0 3px 0 var(--primary),
+          0 10px 20px rgba(100, 135, 250, 0.22);
+      }
+
+      .work-thumb:hover,
+      .work-thumb:focus-visible {
+        border-color: rgba(100, 135, 250, 0.62);
+        background: #ffffff;
+        transform: translateY(-2px);
+      }
+
+      .work-thumb:focus-visible {
+        outline: 2px solid rgba(66, 104, 232, 0.62);
+        outline-offset: 1px;
+      }
+
+      .work-thumb:active {
+        transform: scale(0.97);
+      }
+
+      .work-thumb.is-hint {
+        animation: workHint 1.45s ease-in-out infinite;
+      }
+
+      @keyframes workHint {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(100, 135, 250, 0); }
+        50% { box-shadow: 0 0 0 4px rgba(100, 135, 250, 0.2); }
+      }
+
+      .work-thumb-poster {
+        width: 43px;
+        height: 56px;
+        overflow: hidden;
+        border-radius: 9px;
+        background: var(--primary-soft);
+      }
+
+      .work-thumb-poster img {
+        object-fit: cover;
+      }
+
+      .work-thumb-copy {
+        min-width: 0;
+        display: grid;
+        gap: 5px;
+      }
+
+      .work-thumb-title,
+      .work-thumb-year {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .work-thumb-title {
+        font-size: 12px;
+        line-height: 1.1;
+        font-weight: 900;
+      }
+
+      .work-thumb-year {
+        color: var(--sub);
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 700;
+      }
+
+      .work-thumb-state {
+        min-width: 0;
+        overflow: hidden;
+        color: #b64b00;
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 850;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .work-thumb.active .work-thumb-state {
+        color: var(--primary-dark);
+      }
+
+      .work-thumb.visited:not(.active) .work-thumb-state {
+        color: #287261;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .work-thumb.is-hint {
+          animation: none;
+        }
+      }
+
+      #app-container.is-small-canvas .works-view {
+        grid-template-rows: 44px minmax(0, 1fr) 70px;
+        gap: 8px;
+      }
+
+      #app-container.is-small-canvas .works-toolbar {
+        gap: 8px;
+      }
+
+      #app-container.is-small-canvas .works-toolbar .category-row {
+        flex: 0 0 auto;
+        gap: 3px;
+        padding: 0;
+        border-radius: 13px;
+      }
+
+      #app-container.is-small-canvas .works-toolbar .category-btn {
+        min-width: 64px;
+        min-height: 44px;
+        height: 44px;
+        padding: 0 9px;
+        border-radius: 10px;
+        font-size: 12px;
+      }
+
+      #app-container.is-small-canvas .works-progress {
+        min-width: 0;
+        flex: 1;
+        gap: 5px 6px;
+      }
+
+      #app-container.is-small-canvas .works-progress-copy,
+      #app-container.is-small-canvas .works-progress-count {
+        font-size: 11px;
+      }
+
+      #app-container.is-small-canvas .work-feature {
+        grid-template-rows: minmax(0, 1fr) auto;
+        border-radius: 16px;
+      }
+
+      #app-container.is-small-canvas .feature-poster {
+        padding: 8px 48px 6px;
+      }
+
+      #app-container.is-small-canvas .feature-poster-gallery {
+        width: min(350px, 94%);
+        max-height: 160px;
+      }
+
+      #app-container.is-small-canvas .feature-poster-card {
+        border-radius: 10px;
+      }
+
+      #app-container.is-small-canvas .feature-poster-card.is-active {
+        border-radius: 12px;
+      }
+
+      #app-container.is-small-canvas .feature-status {
+        right: 8px;
+        top: 7px;
+        padding: 4px 6px;
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .feature-info {
+        padding: 7px 50px 8px;
+        gap: 4px;
+      }
+
+      #app-container.is-small-canvas .feature-kicker {
+        font-size: 11px;
+      }
+
+      #app-container.is-small-canvas .feature-title {
+        font-size: 18px;
+      }
+
+      #app-container.is-small-canvas .feature-desc {
+        font-size: 11px;
+        line-height: 1.2;
+      }
+
+      #app-container.is-small-canvas .feature-facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
+      }
+
+      #app-container.is-small-canvas .feature-fact {
+        padding: 4px 6px;
+        gap: 2px;
+      }
+
+      #app-container.is-small-canvas .feature-fact small {
+        font-size: 10px;
+      }
+
+      #app-container.is-small-canvas .feature-fact:nth-child(2) {
+        border-right: 0;
+      }
+
+      #app-container.is-small-canvas .feature-fact:last-child {
+        grid-column: 1 / -1;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 8px;
+        border-top: 1px solid rgba(100, 135, 250, 0.13);
+        text-align: left;
+      }
+
+      #app-container.is-small-canvas .feature-fact b {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        font-size: 12px;
+        line-height: 1.25;
+      }
+
+      #app-container.is-small-canvas .feature-facts {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      #app-container.is-small-canvas .feature-fact,
+      #app-container.is-small-canvas .feature-fact:last-child {
+        grid-column: 1;
+        grid-template-columns: 60px minmax(0, 1fr);
+        align-items: center;
+        column-gap: 8px;
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 1px solid rgba(100, 135, 250, 0.13);
+        text-align: left;
+      }
+
+      #app-container.is-small-canvas .feature-fact:last-child {
+        border-bottom: 0;
+      }
+
+      #app-container.is-small-canvas .feature-next-button {
+        width: 44px;
+        min-height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 22px;
+      }
+
+      #app-container.is-small-canvas .work-strip {
+        gap: 7px;
+      }
+
+      #app-container.is-small-canvas .work-thumb {
+        flex-basis: 116px;
+        height: 62px;
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 6px;
+        border-radius: 12px;
+      }
+
+      #app-container.is-small-canvas .work-thumb-poster {
+        width: 40px;
+        height: 50px;
+      }
+
+      #app-container.is-small-canvas .work-thumb-state,
+      #app-container.is-tiny-canvas .work-thumb-state {
+        min-height: 12px;
+        line-height: 12px;
+      }
+
+      #app-container.is-tiny-canvas .works-view {
+        grid-template-rows: 44px minmax(0, 1fr) 62px;
+        gap: 6px;
+      }
+
+      #app-container.is-tiny-canvas .works-toolbar .category-btn {
+        min-width: 56px;
+        min-height: 44px;
+        height: 44px;
+        padding: 0 6px;
+        font-size: 12px;
+      }
+
+      #app-container.is-tiny-canvas .works-progress-copy {
+        display: none;
+      }
+
+      #app-container.is-tiny-canvas .works-progress-count {
+        grid-column: 1 / -1;
+      }
+
+      #app-container.is-tiny-canvas .work-feature {
+        grid-template-rows: minmax(0, 1fr) auto;
+      }
+
+      #app-container.is-tiny-canvas .feature-poster {
+        padding: 6px 42px 4px;
+      }
+
+      #app-container.is-tiny-canvas .feature-poster-gallery {
+        width: 100%;
+        max-height: 136px;
+      }
+
+      #app-container.is-tiny-canvas .feature-poster-card {
+        height: 78%;
+        padding: 2px;
+        border-radius: 9px;
+      }
+
+      #app-container.is-tiny-canvas .feature-poster-card.is-active {
+        height: 100%;
+        padding: 3px;
+        border-radius: 11px;
+      }
+
+      #app-container.is-tiny-canvas .feature-poster-card img {
+        border-radius: 7px;
+      }
+
+      #app-container.is-tiny-canvas .feature-info {
+        padding: 5px 44px 6px;
+        gap: 3px;
+      }
+
+      #app-container.is-tiny-canvas .feature-title {
+        font-size: 18px;
+      }
+
+      #app-container.is-tiny-canvas .feature-desc {
+        display: none;
+      }
+
+      #app-container.is-tiny-canvas .feature-next-button {
+        width: 44px;
+        min-height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 20px;
+      }
+
+      #app-container.is-tiny-canvas .feature-facts {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+      }
+
+      #app-container.is-tiny-canvas .feature-fact {
+        padding: 3px 5px;
+      }
+
+      #app-container.is-tiny-canvas .feature-fact small {
+        font-size: 10px;
+      }
+
+      #app-container.is-tiny-canvas .feature-fact b {
+        font-size: 11px;
+      }
+
+      #app-container.is-tiny-canvas .work-thumb {
+        flex-basis: 102px;
+        height: 54px;
+        grid-template-columns: 34px minmax(0, 1fr);
+      }
+
+      #app-container.is-tiny-canvas .work-thumb-poster {
+        width: 34px;
+        height: 42px;
+        border-radius: 7px;
+      }
+
+      #app-container.is-tiny-canvas .work-thumb-copy {
+        gap: 3px;
+      }
+
+      #app-container.is-tiny-canvas .work-thumb-title {
+        font-size: 12px;
+      }
+
+      #app-container.is-tiny-canvas .work-thumb-year,
+      #app-container.is-tiny-canvas .work-thumb-state {
+        font-size: 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="app-frame">
+    <div id="app-container" aria-label="刘浩存演员动态百科">
+      <main class="stage">
+        <section
+          class="view costar-view active"
+          id="view-costars"
+          aria-label="同框演员"
+        >
+          <div class="radar-stage graph-wrap" id="costarGraphWrap">
+            <div class="graph-legend" aria-hidden="true">
+              <div class="legend-item">
+                <i class="legend-line multi"></i>
+                <span>多次合作</span>
+              </div>
+              <div class="legend-item">
+                <i class="legend-line film"></i>
+                <span>电影合作</span>
+              </div>
+              <div class="legend-item">
+                <i class="legend-line series"></i>
+                <span>剧集合作</span>
+              </div>
+            </div>
+            <div class="graph-canvas" id="costarGraphCanvas">
+              <svg class="edges" id="costarGraphEdges" aria-hidden="true"></svg>
+            </div>
+          </div>
+        </section>
+        <section
+          class="view works-view"
+          id="view-works"
+          aria-label="参演作品"
+        ></section>
+        <section
+          class="view identity-view"
+          id="view-identity"
+          aria-label="艺人身份"
+        ></section>
+        <div class="modal" id="modal" aria-hidden="true"></div>
+      </main>
+
+      <nav class="nav" aria-label="底部导航">
+        <button class="nav-btn active" type="button" data-view="costars" aria-current="page">
+          同框演员
+        </button>
+        <button class="nav-btn" type="button" data-view="works">
+          参演作品
+        </button>
+        <button class="nav-btn" type="button" data-view="identity">
+          艺人身份
+        </button>
+      </nav>
+    </div>
+    </div>
+
+
+    <script>
+      (function () {
+        var BASE_SMALL = { w: 380, h: 456 };
+        var BASE_LARGE = { w: 788, h: 492 };
+        var scaleFactor = 1;
+        var currentBase = BASE_LARGE;
+        var currentBaseKey = "large";
+        var resizeTimer = null;
+
+        function isSmallCanvas() {
+          return currentBaseKey === "small";
+        }
+
+        // 基准选择只看运行容器尺寸/比例，不用 UA/screen/触控（Skill §4.2/§5.2）
+        function shouldUseSmallBase(w, h) {
+          var ratio = w / h;
+          var isPortraitLike = ratio < 1; // 竖向容器
+          var isCompactCard = w < 415 || h < 456; // 手机视口/紧凑卡片
+          var isNarrowMobileCard = w <= 768 && isPortraitLike; // 窄且竖 → 移动端
+          return isCompactCard || isNarrowMobileCard;
+        }
+
+        function applyScale() {
+          var frame = document.getElementById("app-frame");
+          var app = document.getElementById("app-container");
+          if (!frame || !app) return;
+          // 宽度取运行容器实际宽度（嵌入百度 App 卡片时即卡片宽度）
+          var w = Math.round(frame.getBoundingClientRect().width) || window.innerWidth;
+          var winH = window.innerHeight;
+          var base = shouldUseSmallBase(w, winH) ? BASE_SMALL : BASE_LARGE;
+          // 移动端严格保持基准宽高比（小画布 380:456 = 1:1.2）：
+          // 容器高度 = 宽度 × 基准比例，并以视口高度封顶，避免超出一屏
+          var ratioHeight = Math.round((w * base.h) / base.w);
+          var h = Math.min(ratioHeight, winH);
+          var scale = Math.min(w / base.w, h / base.h);
+          var offsetX = (w - base.w * scale) / 2;
+          var offsetY = (h - base.h * scale) / 2;
+          scaleFactor = scale;
+          currentBase = base;
+          currentBaseKey = base === BASE_SMALL ? "small" : "large";
+          document.documentElement.classList.add("is-scaled-canvas");
+          document.body.classList.add("is-scaled-canvas");
+          frame.style.height = h + "px";
+          app.classList.add("is-scaled");
+          app.classList.toggle("is-small-canvas", currentBaseKey === "small");
+          app.classList.toggle("is-large-canvas", currentBaseKey === "large");
+          app.classList.toggle("is-tiny-canvas", w <= 330 || h <= 380);
+          app.style.width = base.w + "px";
+          app.style.height = base.h + "px";
+          if ("zoom" in app.style) {
+            app.style.left = Math.round(offsetX) + "px";
+            app.style.top = Math.round(offsetY) + "px";
+            app.style.zoom = scale;
+            app.style.transform = "none";
+          } else {
+            app.style.left = "0px";
+            app.style.top = "0px";
+            app.style.zoom = "";
+            app.style.transform =
+              "translate(" + Math.round(offsetX) + "px, " + Math.round(offsetY) + "px) scale(" + scale + ")";
+          }
+        }
+
+
+        var galleries = [
+          {
+            src: "./image/头像.jpg",
+            title: "职业画像",
+            work: "电影剧集双线",
+            role: "新生代银幕面孔",
+            traits: ["清澈感", "成长型", "大银幕记忆"],
+          },
+          {
+            src: "./image/七根心简_剧照.jpg",
+            title: "《七根心简》",
+            work: "饰 木代",
+            role: "奇幻冒险线女主",
+            traits: ["行动力", "冒险感", "奇幻气质"],
+          },
+          {
+            src: "./image/脱轨_剧集镜头.jpeg",
+            title: "《脱轨》",
+            work: "饰 江晓媛",
+            role: "身份反差中的成长型角色",
+            traits: ["都市奇幻", "反差成长", "韧性"],
+          },
+          {
+            src: "./image/活动红毯.png",
+            title: "活动红毯",
+            work: "银幕新人到公众场域",
+            role: "作品之外的时尚表达",
+            traits: ["松弛", "清新", "镜头感"],
+          },
+          {
+            src: "./image/杂志写真.jpg",
+            title: "写真杂志",
+            work: "影像表现力",
+            role: "清冷与少女感之间切换",
+            traits: ["清透", "故事脸", "轻盈"],
+          },
+          {
+            src: "./image/生活日常.jpg",
+            title: "生活日常",
+            work: "角色之外的自然状态",
+            role: "保持低饱和、轻生活感的公众印象",
+            traits: ["自然", "亲和", "年轻态"],
+          },
+        ];
+
+        var facts = [
+          ["出道节点", "2020年《一秒钟》上映", "以大银幕作品进入观众视野"],
+          ["获奖记录", "第15届亚洲电影大奖最佳新演员", "凭《一秒钟》获得新人奖项认可"],
+          ["提名记录", "第34届金鸡奖最佳女主角提名", "凭《送你一朵小红花》入围"],
+          ["作品路径", "电影起步，剧集延展", "覆盖现实温情、青春爱情、都市奇幻等类型"],
+        ];
+
+        var tags = ["清透镜头感", "轻盈体态", "细腻眼神", "角色反差表达"];
+
+
+
+        var works = [
+          {
+            id: "qigen",
+            category: "剧集",
+            year: 2025,
+            title: "七根心简",
+            role: "木代",
+            status: "已播出",
+            partners: "宋威龙 敖瑞鹏",
+            poster: "./image/七根心简_海报.jpg",
+            posters: ["./image/七根心简_海报.jpg", "./image/qigen-2.webp", "./image/qigen-3.webp"],
+            release: "2025播出",
+            stat: "奇幻冒险 · 角色突破",
+            desc: "奇幻冒险剧集，强化动作感和群像冒险气质。",
+          },
+          {
+            id: "tuogui",
+            category: "剧集",
+            year: 2023,
+            title: "脱轨",
+            role: "江晓媛",
+            status: "已播出",
+            partners: "林一",
+            poster: "./image/脱轨_海报.jpg",
+            posters: ["./image/脱轨_海报.jpg", "./image/tuogui-2.webp", "./image/tuogui-3.webp"],
+            release: "2023播出",
+            stat: "都市奇幻 · 反差成长",
+            desc: "都市奇幻爱情剧，呈现身份落差与成长。",
+          },
+          {
+            id: "canlan",
+            category: "电影",
+            year: 2024,
+            title: "灿烂的她",
+            role: "徐嘉怡 / 李斯然",
+            status: "已上映",
+            partners: "惠英红",
+            poster: "./image/灿烂的她海报.jpeg",
+            posters: ["./image/灿烂的她海报.jpeg", "./image/canlan-2.webp", "./image/canlan-3.webp"],
+            release: "2024上映",
+            stat: "亲情题材 · 双女主陪伴",
+            desc: "亲情题材电影，围绕重逢与陪伴。",
+          },
+          {
+            id: "niannian",
+            category: "电影",
+            year: 2023,
+            title: "念念相忘",
+            role: "许念念",
+            status: "已上映",
+            partners: "宋威龙",
+            poster: "./image/念念相忘_海报.jpg",
+            posters: ["./image/念念相忘_海报.jpg", "./image/niannian-2.webp", "./image/niannian-3.webp"],
+            release: "2023上映",
+            stat: "青春爱情 · 校园记忆",
+            desc: "青春爱情电影，主打校园记忆。",
+          },
+          {
+            id: "longma",
+            category: "电影",
+            year: 2023,
+            title: "龙马精神",
+            role: "罗小宝",
+            status: "已上映",
+            partners: "成龙 郭麒麟",
+            poster: "./image/龙马精神海报.jpeg",
+            posters: ["./image/龙马精神海报.jpeg", "./image/longma-2.webp", "./image/longma-3.webp"],
+            release: "2023上映",
+            stat: "动作喜剧 · 亲情陪伴",
+            desc: "动作喜剧电影，兼具亲情与陪伴。",
+          },
+          {
+            id: "sihai",
+            category: "电影",
+            year: 2022,
+            title: "四海",
+            role: "周欢颂",
+            status: "已上映",
+            partners: "刘昊然 沈腾",
+            poster: "./image/四海_海报.jpg",
+            posters: ["./image/四海_海报.jpg", "./image/sihai-2.webp", "./image/sihai-3.webp"],
+            release: "2022上映",
+            stat: "青春公路 · 自由气质",
+            desc: "青春公路电影，人物气质清新自由。",
+          },
+          {
+            id: "honghua",
+            category: "电影",
+            year: 2020,
+            title: "送你一朵小红花",
+            role: "马小远",
+            status: "已上映",
+            partners: "易烊千玺",
+            poster: "./image/送你一朵小红花_海报.jpg",
+            posters: ["./image/送你一朵小红花_海报.jpg", "./image/honghua-2.webp", "./image/honghua-3.webp"],
+            release: "2020上映",
+            stat: "金鸡奖最佳女主角提名",
+            desc: "现实温情题材电影，角色明亮乐观。",
+          },
+          {
+            id: "yimiao",
+            category: "电影",
+            year: 2020,
+            title: "一秒钟",
+            role: "刘闺女",
+            status: "已上映",
+            partners: "张译 范伟",
+            poster: "./image/一秒钟_海报.jpeg",
+            posters: ["./image/一秒钟_海报.jpeg", "./image/yimiao-2.webp", "./image/yimiao-3.webp"],
+            release: "2020上映",
+            stat: "亚洲电影大奖最佳新演员",
+            desc: "银幕代表起点之一，人物记忆鲜明。",
+          },
+        ];
+
+
+        var costars = [
+          {
+            name: "宋威龙",
+            weight: "合作多次",
+            reason: "多次联袂",
+            image: "./image/宋威龙.jpeg",
+            workIds: ["qigen", "niannian"],
+          },
+          {
+            name: "易烊千玺",
+            weight: "高热电影",
+            reason: "代表性强",
+            image: "./image/易烊千玺.jpeg",
+            workIds: ["honghua"],
+          },
+          {
+            name: "惠英红",
+            weight: "亲情搭档",
+            reason: "近期电影",
+            image: "./image/惠英红.jpeg",
+            workIds: ["canlan"],
+          },
+          {
+            name: "成龙",
+            weight: "动作喜剧",
+            reason: "国民认知",
+            image: "./image/成龙.jpg",
+            workIds: ["longma"],
+          },
+          {
+            name: "刘昊然",
+            weight: "青春公路",
+            reason: "类型互补",
+            image: "./image/刘昊然.jpeg",
+            workIds: ["sihai"],
+          },
+          {
+            name: "张译",
+            weight: "张艺谋线",
+            reason: "早期合作",
+            image: "./image/张译.jpeg",
+            workIds: ["yimiao"],
+          },
+        ];
+
+        var viewIdentity = document.getElementById("view-identity");
+        var viewCostars = document.getElementById("view-costars");
+        var viewWorks = document.getElementById("view-works");
+        var modal = document.getElementById("modal");
+        var graphWrap = document.getElementById("costarGraphWrap");
+        var graphCanvas = document.getElementById("costarGraphCanvas");
+        var graphEdges = document.getElementById("costarGraphEdges");
+        var galleryIndex = 2;
+
+        var activeCostarIndex = -1;
+        var workCategory = "电影";
+        var activeWorkIds = { "电影": "canlan", "剧集": "qigen" };
+        var activePosterIndexes = {};
+        var visitedWorkIds = {};
+        var worksInteracted = false;
+        var timer = null;
+        var startX = 0;
+        var lastModalTrigger = null;
+        var reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        var graphBounds = { w: 0, h: 0 };
+        var graphNodeState = {};
+
+        function escapeHtml(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
+
+        function stopAuto() {
+          clearInterval(timer);
+          timer = null;
+        }
+
+        function shouldAutoPlay() {
+          return !reduceMotion && !isSmallCanvas();
+        }
+
+        function focusableModalItems() {
+          return Array.prototype.slice.call(
+            modal.querySelectorAll(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            ),
+          );
+        }
+
+        function trapModalFocus(event) {
+          if (!modal.classList.contains("active") || event.key !== "Tab") return;
+          var items = focusableModalItems();
+          if (!items.length) return;
+          var first = items[0];
+          var last = items[items.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
+
+        function workById(id) {
+          return (
+            works.filter(function (item) {
+              return item.id === id;
+            })[0] || works[0]
+          );
+        }
+
+        function visibleWorks() {
+          return works
+            .filter(function (item) {
+              return item.category === workCategory;
+            })
+            .sort(function (a, b) {
+              return b.year - a.year;
+            });
+        }
+
+        function actorWorks(actor) {
+          return (actor.workIds || [])
+            .map(function (id) {
+              return workById(id);
+            })
+            .filter(Boolean);
+        }
+
+        function actorRelationType(actor) {
+          var matched = actorWorks(actor);
+          if (matched.length > 1) return "multi";
+          return matched[0] && matched[0].category === "剧集" ? "series" : "film";
+        }
+
+        function actorRelationLabel(actor) {
+          var matched = actorWorks(actor);
+          if (matched.length > 1) return "多次合作 · " + matched.length + " 部作品";
+          if (matched[0]) return matched[0].category + "合作 · " + matched[0].release;
+          return "合作演员";
+        }
+
+        function actorWorkList(actor) {
+          return actorWorks(actor)
+            .map(function (work) {
+              return (
+                '<div class="modal-work">' +
+                "<b>" +
+                escapeHtml(work.title) +
+                " · " +
+                escapeHtml(work.year) +
+                "</b>" +
+                "<small>" +
+                escapeHtml(work.category) +
+                " / 饰 " +
+                escapeHtml(work.role) +
+                " / " +
+                escapeHtml(work.desc) +
+                "</small>" +
+                "</div>"
+              );
+            })
+            .join("");
+        }
+
+        function cloudTokens() {
+          return [
+            { text: "银幕新人", className: "size-l" },
+            { text: "张艺谋电影出道", className: "size-l tone-warm" },
+            { text: "七根心简", className: "size-l tone-rose" },
+            { text: "成长型女主", className: "size-m" },
+            { text: "电影剧集双线", className: "size-m tone-warm" },
+            { text: "现实温情", className: "size-m" },
+            { text: "奇幻冒险", className: "size-m tone-rose" },
+            { text: "青春叙事", className: "" },
+            { text: "角色层次", className: "tone-rose" },
+            { text: "类型跨度", className: "tone-warm" },
+            { text: "金鸡奖提名", className: "tone-warm" },
+            { text: "亚洲电影大奖最佳新演员", className: "" },
+
+          ];
+        }
+
+
+        function renderIdentity() {
+          var item = galleries[galleryIndex];
+          viewIdentity.innerHTML =
+            '<div class="photo-card" id="photoCard">' +
+            '<img src="' +
+            escapeHtml(item.src) +
+            '" alt="' +
+            escapeHtml(item.title) +
+            '">' +
+            '<div class="gallery-arrows">' +
+            '<button class="arrow" type="button" data-dir="-1" aria-label="上一张">‹</button>' +
+            '<button class="arrow" type="button" data-dir="1" aria-label="下一张">›</button>' +
+            "</div>" +
+            '<div class="photo-caption">' +
+            "<strong>" +
+            escapeHtml(item.title) +
+            " · " +
+            escapeHtml(item.work) +
+            "</strong>" +
+            "<span>" +
+            escapeHtml(item.role) +
+            "</span>" +
+            '<div class="role-tags">' +
+            item.traits
+              .map(function (trait) {
+                return "<i>" + escapeHtml(trait) + "</i>";
+              })
+              .join("") +
+            "</div>" +
+            "</div>" +
+
+            "</div>" +
+            '<div class="info-card">' +
+            '<div class="tag-row" aria-label="艺人标签">' +
+
+            tags
+              .map(function (tag) {
+                return '<div class="tag">' + escapeHtml(tag) + "</div>";
+              })
+              .join("") +
+            "</div>" +
+            '<div class="facts">' +
+            facts
+              .map(function (fact) {
+                return (
+                  '<div class="fact"><span>' +
+                  escapeHtml(fact[0]) +
+                  "</span><strong>" +
+                  escapeHtml(fact[1]) +
+                  "</strong><small>" +
+                  escapeHtml(fact[2]) +
+                  "</small></div>"
+                );
+              })
+              .join("") +
+            "</div>" +
+            '<div class="identity-cloud" aria-label="艺人信息词云">' +
+            cloudTokens()
+              .map(function (token) {
+                return (
+                  '<span class="cloud-token ' +
+                  token.className +
+                  '">' +
+                  escapeHtml(token.text) +
+                  "</span>"
+                );
+              })
+              .join("") +
+            "</div>" +
+            "</div>";
+        }
+
+        function changeGallery(step) {
+          galleryIndex =
+            (galleryIndex + step + galleries.length) % galleries.length;
+          renderIdentity();
+          bindGallery();
+        }
+
+        function bindGallery() {
+          var card = document.getElementById("photoCard");
+          if (!card) return;
+          card.querySelectorAll(".arrow").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              stopAuto();
+              changeGallery(Number(btn.getAttribute("data-dir")) || 1);
+            });
+          });
+          card.addEventListener("pointerdown", function (event) {
+            startX = event.clientX;
+          });
+          card.addEventListener("pointerup", function (event) {
+            var diff = event.clientX - startX;
+            if (Math.abs(diff) > 35) {
+              stopAuto();
+              changeGallery(diff > 0 ? -1 : 1);
+            }
+          });
+        }
+
+        function measureGraph() {
+          if (!graphWrap) return;
+          var panelW =
+            graphWrap.classList.contains("panel-open") &&
+            modal.classList.contains("active") &&
+            !isSmallCanvas()
+              ? Math.round(modal.offsetWidth || 0)
+              : 0;
+          graphBounds = {
+            w: Math.max((graphWrap.clientWidth || graphWrap.offsetWidth || 0) - panelW, 180),
+            h: Math.max(graphWrap.clientHeight || graphWrap.offsetHeight || 0, 180),
+          };
+        }
+
+        function computeGraphLayout() {
+          measureGraph();
+          var w = Math.max(graphBounds.w, 240);
+          var h = Math.max(graphBounds.h, 240);
+          var layout = { hero: [w / 2, h * 0.5] };
+          var slots = [
+            [0.5, 0.16],
+            [0.18, 0.3],
+            [0.82, 0.3],
+            [0.2, 0.72],
+            [0.8, 0.72],
+            [0.5, 0.88],
+          ];
+          costars.forEach(function (item, index) {
+            var slot = slots[index % slots.length];
+            layout[String(index)] = [slot[0] * w, slot[1] * h];
+          });
+          return layout;
+        }
+
+        function updateEdgesFromDOM() {
+          if (!graphEdges) return;
+          graphEdges.querySelectorAll(".edge").forEach(function (line) {
+            var a = graphNodeState[line.dataset.a];
+            var b = graphNodeState[line.dataset.b];
+            if (!a || !b) return;
+            var ax = a.x;
+            var ay = a.y;
+            var bx = b.x;
+            var by = b.y;
+            var dx = bx - ax;
+            var dy = by - ay;
+            var dist = Math.hypot(dx, dy) || 1;
+            var ux = dx / dist;
+            var uy = dy / dist;
+            var elA = a.el.classList.contains("radar-center") ? a.el : a.el.querySelector(".avatar") || a.el;
+            var elB = b.el.classList.contains("radar-center") ? b.el : b.el.querySelector(".avatar") || b.el;
+            var rA = Math.max((elA.offsetWidth || 0) / 2, line.dataset.a === "hero" ? 54 : 32) + 3;
+            var rB = Math.max((elB.offsetWidth || 0) / 2, line.dataset.b === "hero" ? 54 : 32) + 3;
+            line.setAttribute("x1", ax + ux * rA);
+            line.setAttribute("y1", ay + uy * rA);
+            line.setAttribute("x2", bx - ux * rB);
+            line.setAttribute("y2", by - uy * rB);
+          });
+        }
+
+        function highlightRelated(index) {
+          var related = new Set(["hero", String(index)]);
+          Object.entries(graphNodeState).forEach(function ([key, state]) {
+            if (!state || !state.el) return;
+            state.el.classList.toggle("active", key === String(index));
+            state.el.classList.toggle("dim", !related.has(key));
+          });
+          graphEdges.querySelectorAll(".edge").forEach(function (line) {
+            var on = line.dataset.b === String(index);
+            line.classList.toggle("hl", on);
+            line.classList.toggle("dim", !on);
+          });
+        }
+
+        function clearHighlight() {
+          Object.values(graphNodeState).forEach(function (state) {
+            if (state && state.el) state.el.classList.remove("active", "dim");
+          });
+          graphEdges.querySelectorAll(".edge").forEach(function (line) {
+            line.classList.remove("hl", "dim");
+          });
+        }
+
+        function attachDrag(el, key) {
+          var startX = 0;
+          var startY = 0;
+          var origX = 0;
+          var origY = 0;
+          var moved = false;
+          function state() {
+            return graphNodeState[key];
+          }
+          function onMove(event) {
+            var current = state();
+            if (!current) return;
+            var dx = event.clientX - startX;
+            var dy = event.clientY - startY;
+            if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+            var nx = Math.max(36, Math.min(graphBounds.w - 36, origX + dx));
+            var ny = Math.max(36, Math.min(graphBounds.h - 36, origY + dy));
+            current.x = nx;
+            current.y = ny;
+            current.el.style.left = nx + "px";
+            current.el.style.top = ny + "px";
+            updateEdgesFromDOM();
+          }
+          function onUp() {
+            el.classList.remove("grabbing", "dragging-now");
+            document.removeEventListener("pointermove", onMove);
+            document.removeEventListener("pointerup", onUp);
+            if (moved) el.dataset.dragged = "1";
+          }
+          el.addEventListener("pointerdown", function (event) {
+            if (event.button !== undefined && event.button !== 0) return;
+            event.preventDefault();
+            startX = event.clientX;
+            startY = event.clientY;
+            var current = state();
+            if (!current) return;
+            origX = current.x;
+            origY = current.y;
+            moved = false;
+            el.classList.add("grabbing", "dragging-now");
+            document.addEventListener("pointermove", onMove);
+            document.addEventListener("pointerup", onUp, { once: true });
+          });
+        }
+
+        function relayout() {
+          var layout = computeGraphLayout();
+          Object.entries(layout).forEach(function ([key, pos]) {
+            var state = graphNodeState[key];
+            if (!state) return;
+            state.x = pos[0];
+            state.y = pos[1];
+            state.el.style.left = pos[0] + "px";
+            state.el.style.top = pos[1] + "px";
+          });
+          updateEdgesFromDOM();
+        }
+
+        function renderCostars() {
+          if (!graphWrap || !graphCanvas || !graphEdges) return;
+          graphCanvas.querySelectorAll(".radar-center, .radar-center-ring, .node").forEach(function (node) {
+            node.remove();
+          });
+          graphEdges.innerHTML = "";
+          graphNodeState = {};
+          var layout = computeGraphLayout();
+          var heroHtml =
+            '<div class="radar-center-ring"></div>' +
+            '<button class="radar-center" type="button" aria-label="查看刘浩存艺人身份"><img src="./image/头像.jpg" alt="刘浩存头像"></button>';
+          graphCanvas.insertAdjacentHTML("afterbegin", heroHtml);
+          var hero = graphCanvas.querySelector(".radar-center");
+          if (hero) {
+            var heroPos = layout.hero;
+            hero.style.left = heroPos[0] + "px";
+            hero.style.top = heroPos[1] + "px";
+            hero.addEventListener("click", function () {
+              switchView("identity");
+            });
+            graphNodeState.hero = { x: heroPos[0], y: heroPos[1], el: hero };
+          }
+
+          costars.forEach(function (item, index) {
+            var pos = layout[String(index)];
+            if (!pos) return;
+            var btn = document.createElement("button");
+            btn.className = "node";
+            btn.type = "button";
+            btn.dataset.actor = String(index);
+            btn.setAttribute("aria-label", "查看" + item.name + "的合作详情");
+            btn.innerHTML =
+              '<div class="float-inner"><div class="avatar"><img src="' +
+              escapeHtml(item.image) +
+              '" alt="' +
+              escapeHtml(item.name) +
+              '头像"></div><div class="name">' +
+              escapeHtml(item.name) +
+              "</div></div>";
+            btn.style.left = pos[0] + "px";
+            btn.style.top = pos[1] + "px";
+            graphCanvas.appendChild(btn);
+            graphNodeState[String(index)] = { x: pos[0], y: pos[1], el: btn };
+            attachDrag(btn, String(index));
+            btn.addEventListener("click", function () {
+              if (!btn.dataset.dragged) {
+                lastModalTrigger = btn;
+                openActor(index);
+              }
+              delete btn.dataset.dragged;
+            });
+            var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("class", "edge " + actorRelationType(item));
+            line.dataset.a = "hero";
+            line.dataset.b = String(index);
+            graphEdges.appendChild(line);
+          });
+          updateEdgesFromDOM();
+          if (activeCostarIndex >= 0 && modal.classList.contains("active")) {
+            highlightRelated(activeCostarIndex);
+          } else {
+            clearHighlight();
+          }
+          window.setTimeout(updateEdgesFromDOM, 0);
+        }
+
+        function changeCostar(step) {
+          var current = activeCostarIndex < 0 ? 0 : activeCostarIndex;
+          activeCostarIndex = (current + step + costars.length) % costars.length;
+          openActor(activeCostarIndex);
+        }
+
+        function bindCostarRadar() {
+          if (!graphWrap) return;
+          graphWrap.addEventListener("pointerdown", function (event) {
+            startX = event.clientX;
+          });
+          graphWrap.addEventListener("pointerup", function (event) {
+            if (event.target.closest(".node")) return;
+            var diff = event.clientX - startX;
+            if (Math.abs(diff) > 35) changeCostar(diff > 0 ? -1 : 1);
+          });
+        }
+
+
+        function renderWorks() {
+          var categories = ["电影", "剧集"];
+          var list = visibleWorks();
+          var active = activeWork();
+          var visitedCount = Object.keys(visitedWorkIds).filter(function (id) {
+            return visitedWorkIds[id];
+          }).length;
+          var next = nextWorkInCategory(active.id);
+          var progress = Math.round((visitedCount / works.length) * 100);
+          var progressCopy = !worksInteracted
+            ? "选一部，看她的角色变化"
+            : visitedCount === works.length
+              ? "作品图鉴已全部探索"
+              : "下一站 · " + next.title;
+          viewWorks.innerHTML =
+            '<div class="works-toolbar">' +
+              '<div class="category-row" aria-label="作品类型">' +
+              categories
+                .map(function (cat) {
+                  var count = works.filter(function (work) {
+                    return work.category === cat;
+                  }).length;
+                  return (
+                    '<button class="category-btn' +
+                    (cat === workCategory ? " active" : "") +
+                    '" type="button" data-cat="' +
+                    escapeHtml(cat) +
+                    '" aria-pressed="' +
+                    (cat === workCategory ? "true" : "false") +
+                    '">' +
+                    escapeHtml(cat) +
+                    " " +
+                    count +
+                    "</button>"
+                  );
+                })
+                .join("") +
+              "</div>" +
+              '<div class="works-progress" role="progressbar" aria-label="作品探索进度" aria-valuemin="0" aria-valuemax="' +
+              works.length +
+              '" aria-valuenow="' +
+              visitedCount +
+              '">' +
+                '<span class="works-progress-copy">' + escapeHtml(progressCopy) + "</span>" +
+                '<b class="works-progress-count">已探索 ' + visitedCount + "/" + works.length + "</b>" +
+                '<span class="works-progress-track"><i style="width:' + progress + '%"></i></span>' +
+              "</div>" +
+            "</div>" +
+            workFeature(active, next) +
+            '<div class="work-strip-shell">' +
+              '<div class="work-strip" aria-label="' +
+              escapeHtml(workCategory) +
+              '片单">' +
+              list
+                .map(function (work, index) {
+                  return workThumb(work, index, active.id);
+                })
+                .join("") +
+              "</div>" +
+            "</div>";
+          window.setTimeout(function () {
+            var selected = viewWorks.querySelector('.work-thumb[aria-pressed="true"]');
+            if (selected) selected.scrollIntoView({ block: "nearest", inline: "nearest" });
+          }, 0);
+        }
+
+        function activeWork() {
+          var list = visibleWorks();
+          var id = activeWorkIds[workCategory];
+          var found = list.filter(function (work) {
+            return work.id === id;
+          })[0];
+          if (!found) {
+            found = list[0];
+            activeWorkIds[workCategory] = found.id;
+          }
+          return found;
+        }
+
+        function nextWorkInCategory(currentId) {
+          var list = visibleWorks();
+          var currentIndex = list.findIndex(function (work) {
+            return work.id === currentId;
+          });
+          if (currentIndex < 0) return list[0];
+          return list[(currentIndex + 1) % list.length];
+        }
+
+        function markWorkVisited(id) {
+          visitedWorkIds[id] = true;
+          worksInteracted = true;
+        }
+
+        function selectWork(id, markVisited, restoreFocus) {
+          var work = workById(id);
+          workCategory = work.category;
+          activeWorkIds[work.category] = work.id;
+          if (markVisited) markWorkVisited(work.id);
+          renderWorks();
+          if (restoreFocus) {
+            window.setTimeout(function () {
+              var button = viewWorks.querySelector('[data-select-work="' + work.id + '"]');
+              if (button) button.focus();
+            }, 0);
+          }
+        }
+
+        function goToNextWork(restoreFocus) {
+          var current = activeWork();
+          markWorkVisited(current.id);
+          var next = nextWorkInCategory(current.id);
+          selectWork(next.id, false, false);
+          if (restoreFocus) {
+            window.setTimeout(function () {
+              var button = viewWorks.querySelector("[data-next-work]");
+              if (button) button.focus();
+            }, 0);
+          }
+        }
+
+        function selectPoster(workId, index, restoreFocus) {
+          var work = workById(workId);
+          if (!work || !work.posters || !work.posters[index]) return;
+          activePosterIndexes[work.id] = index;
+          markWorkVisited(work.id);
+          renderWorks();
+          if (restoreFocus) {
+            window.setTimeout(function () {
+              var button = viewWorks.querySelector(
+                '[data-select-poster="' + index + '"]',
+              );
+              if (button) button.focus();
+            }, 0);
+          }
+        }
+
+        function workFeature(work, next) {
+          var posters = work.posters && work.posters.length ? work.posters : [work.poster];
+          var activePosterIndex = activePosterIndexes[work.id] || 0;
+          if (!posters[activePosterIndex]) activePosterIndex = 0;
+          var leftPosterIndex = (activePosterIndex + posters.length - 1) % posters.length;
+          var posterCards = posters
+            .map(function (poster, index) {
+              var positionClass = index === activePosterIndex
+                ? "is-active"
+                : index === leftPosterIndex
+                  ? "is-left"
+                  : "is-right";
+              return (
+                '<button class="feature-poster-card ' +
+                positionClass +
+                '" type="button" data-select-poster="' +
+                index +
+                '" aria-pressed="' +
+                (index === activePosterIndex ? "true" : "false") +
+                '" aria-label="切换至' +
+                escapeHtml(work.title) +
+                '第' +
+                (index + 1) +
+                '幅影像">' +
+                '<img src="' +
+                escapeHtml(poster) +
+                '" alt="' +
+                escapeHtml(work.title) +
+                '影像 ' +
+                (index + 1) +
+                '">' +
+                "</button>"
+              );
+            })
+            .join("");
+          return (
+            '<article class="work-feature" data-active-work="' +
+            escapeHtml(work.id) +
+            '">' +
+            '<div class="feature-poster">' +
+              '<span class="feature-watermark" aria-hidden="true">' +
+              escapeHtml(work.title) +
+              "</span>" +
+              '<div class="feature-poster-gallery">' +
+              posterCards +
+              "</div>" +
+              '<span class="feature-status">' +
+              escapeHtml(work.status) +
+              "</span>" +
+            "</div>" +
+            '<div class="feature-info" aria-live="polite">' +
+            '<div class="feature-heading">' +
+              '<span class="feature-kicker">' +
+              escapeHtml(work.release) +
+              " · " +
+              escapeHtml(work.category) +
+              "</span>" +
+              '<h2 class="feature-title">' +
+              escapeHtml(work.title) +
+              "</h2>" +
+            "</div>" +
+            '<p class="feature-desc">' + escapeHtml(work.desc) + "</p>" +
+            '<div class="feature-facts" aria-label="角色档案">' +
+              '<span class="feature-fact"><small>饰演角色</small><b>' + escapeHtml(work.role) + "</b></span>" +
+              '<span class="feature-fact"><small>合作演员</small><b>' + escapeHtml(work.partners) + "</b></span>" +
+              '<span class="feature-fact"><small>作品看点</small><b>' + escapeHtml(work.stat) + "</b></span>" +
+            "</div>" +
+            '<div class="feature-actions">' +
+              '<button class="feature-next-button" type="button" data-next-work aria-label="下一部：' +
+              escapeHtml(next.title) +
+              '" title="下一部：' +
+              escapeHtml(next.title) +
+              '">›</button>' +
+            "</div>" +
+            "</div>" +
+            "</article>"
+          );
+        }
+
+        function compactRole(role) {
+          return String(role || "").split(/[\/／]/)[0].trim();
+        }
+
+        function workThumb(work, index, activeId) {
+          var visited = Boolean(visitedWorkIds[work.id]);
+          var isActive = work.id === activeId;
+          var hint = !worksInteracted && !isActive && index === 1;
+          return (
+            '<button class="work-thumb' +
+            (isActive ? " active" : "") +
+            (visited ? " visited" : "") +
+            (hint ? " is-hint" : "") +
+            '" type="button" data-select-work="' +
+            escapeHtml(work.id) +
+            '" aria-pressed="' +
+            (isActive ? "true" : "false") +
+            '" aria-label="查看' +
+            escapeHtml(work.title) +
+            (visited ? "，已探索" : "，未探索") +
+            '">' +
+              '<span class="work-thumb-poster"><img src="' +
+              escapeHtml(work.poster) +
+              '" alt=""></span>' +
+              '<span class="work-thumb-copy">' +
+                '<span class="work-thumb-title">' + escapeHtml(work.title) + "</span>" +
+                '<span class="work-thumb-year">' + escapeHtml(work.release) + "</span>" +
+                '<span class="work-thumb-state">' +
+                (isActive
+                  ? "正在看"
+                  : visited
+                    ? "饰 " + escapeHtml(compactRole(work.role))
+                    : "看她演谁") +
+                "</span>" +
+              "</span>" +
+            "</button>"
+          );
+        }
+
+        function openActor(index) {
+          var actor = costars[index];
+          if (!actor) return;
+          activeCostarIndex = index;
+          openModal(
+            actor.image,
+            actor.name,
+            actor.weight + " · " + actor.reason,
+            actorRelationLabel(actor),
+            actorWorkList(actor),
+          );
+          if (graphWrap) graphWrap.classList.add("panel-open");
+          highlightRelated(index);
+          window.setTimeout(relayout, 60);
+        }
+
+        function openModal(poster, title, meta, desc, extraHtml) {
+          if (!lastModalTrigger) lastModalTrigger = document.activeElement;
+          modal.innerHTML =
+            '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">' +
+            '<button class="modal-close" type="button" aria-label="关闭">×</button>' +
+            '<div class="modal-poster"><img src="' +
+            escapeHtml(poster) +
+            '" alt="' +
+            escapeHtml(title) +
+            '图片"></div>' +
+            '<div class="modal-info">' +
+            '<strong id="modalTitle">' +
+            escapeHtml(title) +
+            "</strong>" +
+            "<span>" +
+            escapeHtml(meta) +
+            "</span>" +
+            "<p>" +
+            escapeHtml(desc) +
+            "</p>" +
+            (extraHtml
+              ? '<div class="modal-works">' + extraHtml + "</div>"
+              : "") +
+            "</div>" +
+            "</div>";
+          modal.classList.add("active");
+          modal.setAttribute("aria-hidden", "false");
+          modal
+            .querySelector(".modal-close")
+            .addEventListener("click", closeModal);
+          modal.querySelector(".modal-close").focus();
+        }
+
+        function closeModal() {
+          modal.classList.remove("active");
+          modal.setAttribute("aria-hidden", "true");
+          modal.innerHTML = "";
+          if (graphWrap) graphWrap.classList.remove("panel-open");
+          clearHighlight();
+          activeCostarIndex = -1;
+          window.setTimeout(relayout, 60);
+          if (lastModalTrigger && document.contains(lastModalTrigger)) {
+            lastModalTrigger.focus();
+          }
+          lastModalTrigger = null;
+        }
+
+
+        function switchView(name) {
+          document.querySelectorAll(".view").forEach(function (view) {
+            view.classList.remove("active");
+          });
+          document.getElementById("view-" + name).classList.add("active");
+          document.querySelectorAll(".nav-btn").forEach(function (btn) {
+            var active = btn.getAttribute("data-view") === name;
+            btn.classList.toggle("active", active);
+            btn.setAttribute("aria-current", active ? "page" : "false");
+          });
+          if (name !== "costars" && modal.classList.contains("active")) closeModal();
+          if (name === "costars") window.setTimeout(renderCostars, 0);
+          window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+        }
+
+        function bindEvents() {
+          document
+            .querySelector(".nav")
+            .addEventListener("click", function (event) {
+              var btn = event.target.closest(".nav-btn");
+              if (btn) switchView(btn.getAttribute("data-view"));
+            });
+
+          viewWorks.addEventListener("click", function (event) {
+            var cat = event.target.closest(".category-btn");
+            if (cat) {
+              workCategory = cat.getAttribute("data-cat");
+              renderWorks();
+              if (event.detail === 0) {
+                window.setTimeout(function () {
+                  var activeCategory = viewWorks.querySelector(
+                    '[data-cat="' + workCategory + '"]',
+                  );
+                  if (activeCategory) activeCategory.focus();
+                }, 0);
+              }
+              return;
+            }
+            var posterButton = event.target.closest("[data-select-poster]");
+            if (posterButton) {
+              var activeArticle = posterButton.closest("[data-active-work]");
+              if (activeArticle) {
+                selectPoster(
+                  activeArticle.getAttribute("data-active-work"),
+                  Number(posterButton.getAttribute("data-select-poster")) || 0,
+                  event.detail === 0,
+                );
+              }
+              return;
+            }
+            var workButton = event.target.closest("[data-select-work]");
+            if (workButton) {
+              selectWork(
+                workButton.getAttribute("data-select-work"),
+                true,
+                event.detail === 0,
+              );
+              return;
+            }
+            var nextButton = event.target.closest("[data-next-work]");
+            if (nextButton) {
+              goToNextWork(event.detail === 0);
+              return;
+            }
+          });
+
+          modal.addEventListener("click", function (event) {
+            if (event.target === modal) closeModal();
+          });
+          window.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && modal.classList.contains("active")) {
+              closeModal();
+              return;
+            }
+            trapModalFocus(event);
+          });
+        }
+
+        function startAuto() {
+          stopAuto();
+        }
+
+        function handleViewportChange() {
+          applyScale();
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function () {
+            if (document.getElementById("view-costars").classList.contains("active")) {
+              renderCostars();
+            }
+          }, 150);
+        }
+
+        function init() {
+          applyScale();
+          renderIdentity();
+          renderCostars();
+          renderWorks();
+          bindGallery();
+          bindEvents();
+          startAuto();
+          window.addEventListener("resize", handleViewportChange);
+          window.addEventListener("orientationchange", handleViewportChange);
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", handleViewportChange);
+          }
+        }
+
+
+        init();
+
+        // applyScale 三处触发，避免刷新卡在错误基准（Skill §4.3/§5.9）
+        document.addEventListener("DOMContentLoaded", applyScale);
+        window.addEventListener("load", applyScale);
+      })();
+    </script>
+  </body>
+</html>

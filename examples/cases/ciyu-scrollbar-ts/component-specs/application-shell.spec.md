@@ -4,7 +4,7 @@
 - **Target file:** `src/components/ApplicationShell.ts`
 - **Source selector:** `#app`
 - **Source instances:** 1
-- **Interaction model:** static
+- **Interaction model:** click-driven
 - **Responsibility:** 复现 app-shell 视图：基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息
 - **Parent:** root
 - **Dependencies:** None
@@ -39,15 +39,43 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- 初始渲染与源页面一致
+- click: #nav > span:nth-child(1) → .nav .n class.toggle(on=on)
+- click: #nav > span:nth-child(1) → .panel class.toggle(on=on)
+- click: #nav > span:nth-child(1) → .gnd structure.remove-node
+- click: #nav > span:nth-child(1) → #lines content.set(innerHTML=)
+- click: #nav > span:nth-child(1) → #lines structure.append
+- click: #nav > span:nth-child(2) → .nav .n class.toggle(on=on)
+- click: #nav > span:nth-child(2) → .panel class.toggle(on=on)
+- click: #nav > span:nth-child(2) → .gnd structure.remove-node
+- click: #nav > span:nth-child(2) → #lines content.set(innerHTML=)
+- click: #nav > span:nth-child(2) → #lines structure.append
+- click: #nav > span:nth-child(3) → .nav .n class.toggle(on=on)
+- click: #nav > span:nth-child(3) → .panel class.toggle(on=on)
 
 ## Per-State Content
-N/A (static component)
+- Covers: `click|#nav > span:nth-child(1)|home`
+- Covers: `click|#nav > span:nth-child(2)|story`
+- Covers: `click|#nav > span:nth-child(3)|graph-p`
+- Covers: `click|#nav > span:nth-child(4)|quiz`
+
+## Mutation Targets
+- Mutates: `.nav .n`
+- Mutates: `.panel`
+- Mutates: `.gnd`
+- Mutates: `#lines`
+
+## State Transitions
+- .nav .n: class.toggle `on` → `on`
+- .panel: class.toggle `on` → `on`
+- .gnd: structure.remove-node
+- #lines: content.set `innerHTML` → ``
+- #lines: structure.append
 
 ## Assets & Data
+- Data dependency: `CENTER`
+- Data dependency: `NODES`
+- Data dependency: `COLORS`
 - Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
 
 ## Text Content (verbatim)
 - 基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指
@@ -64,6 +92,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 106
+- Estimated lines: 108
 - Budget: 150
 - Status: READY

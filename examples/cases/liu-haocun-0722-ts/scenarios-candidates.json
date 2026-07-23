@@ -1,0 +1,492 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+  "candidatePolicy": "candidate scenarios are excluded from coverage until reviewed",
+  "scenarios": [
+    {
+      "id": "candidate-click-1",
+      "label": "Candidate: click (nav.nav > button:nth-child(1))",
+      "candidate": true,
+      "covers": [
+        "click|nav.nav > button:nth-child(1)|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "nav.nav > button:nth-child(1)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": ".modal-close",
+          "focused": true
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classIncludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".view",
+          "classExcludes": [
+            "active"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-2",
+      "label": "Candidate: click (nav.nav > button:nth-child(2))",
+      "candidate": true,
+      "covers": [
+        "click|nav.nav > button:nth-child(2)|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "nav.nav > button:nth-child(2)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": ".modal-close",
+          "focused": true
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classIncludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".view",
+          "classExcludes": [
+            "active"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-3",
+      "label": "Candidate: click (nav.nav > button:nth-child(3))",
+      "candidate": true,
+      "covers": [
+        "click|nav.nav > button:nth-child(3)|semantic-control"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "nav.nav > button:nth-child(3)"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classIncludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "false"
+          }
+        },
+        {
+          "target": ".modal-close",
+          "focused": true
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classIncludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".view",
+          "classExcludes": [
+            "active"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-4",
+      "label": "Candidate: click (.arrow)",
+      "candidate": true,
+      "covers": [
+        "click|.arrow|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".arrow"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".arrow",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-pointerdown-5",
+      "label": "Candidate: unsupported-pointer (#photoCard)",
+      "candidate": true,
+      "covers": [
+        "pointerdown|#photoCard|script-assignment"
+      ],
+      "notes": [
+        "pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"
+      ],
+      "steps": [],
+      "assertions": [
+        {
+          "target": "#photoCard",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-pointerup-6",
+      "label": "Candidate: unsupported-pointer (#photoCard)",
+      "candidate": true,
+      "covers": [
+        "pointerup|#photoCard|script-assignment"
+      ],
+      "notes": [
+        "pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"
+      ],
+      "steps": [],
+      "assertions": [
+        {
+          "target": "#photoCard",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-7",
+      "label": "Candidate: click (.radar-center)",
+      "candidate": true,
+      "covers": [
+        "click|.radar-center|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".radar-center"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".view",
+          "classExcludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classExcludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".node",
+          "focused": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-pointerdown-8",
+      "label": "Candidate: unsupported-pointer (#costarGraphWrap)",
+      "candidate": true,
+      "covers": [
+        "pointerdown|#costarGraphWrap|script-assignment"
+      ],
+      "notes": [
+        "pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"
+      ],
+      "steps": [],
+      "assertions": [
+        {
+          "target": "#costarGraphWrap",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-pointerup-9",
+      "label": "Candidate: unsupported-pointer (#costarGraphWrap)",
+      "candidate": true,
+      "covers": [
+        "pointerup|#costarGraphWrap|script-assignment"
+      ],
+      "notes": [
+        "pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"
+      ],
+      "steps": [],
+      "assertions": [
+        {
+          "target": "#costarGraphWrap",
+          "classIncludes": [
+            "panel-open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-10",
+      "label": "Candidate: click (.modal-close)",
+      "candidate": true,
+      "covers": [
+        "click|.modal-close|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".modal-close"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classExcludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".edge",
+          "classExcludes": [
+            "hl"
+          ]
+        },
+        {
+          "target": ".node",
+          "focused": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-11",
+      "label": "Candidate: click (.category-btn)",
+      "candidate": true,
+      "covers": [
+        "click|.category-btn|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": ".category-btn"
+        }
+      ],
+      "assertions": [
+        {
+          "target": ".category-btn",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-12",
+      "label": "Candidate: click ([data-select-poster])",
+      "candidate": true,
+      "covers": [
+        "click|[data-select-poster]|script-assignment"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-select-poster]"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "[data-select-poster]",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-13",
+      "label": "Candidate: click ([data-select-work])",
+      "candidate": true,
+      "covers": [
+        "click|[data-select-work]|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-select-work]"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "[data-next-work]",
+          "focused": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-14",
+      "label": "Candidate: click ([data-next-work])",
+      "candidate": true,
+      "covers": [
+        "click|[data-next-work]|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-next-work]"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "[data-next-work]",
+          "focused": true
+        }
+      ]
+    },
+    {
+      "id": "candidate-click-15",
+      "label": "Candidate: click (#modal)",
+      "candidate": true,
+      "covers": [
+        "click|#modal|script-assignment"
+      ],
+      "notes": [
+        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "#modal"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "#modal",
+          "classExcludes": [
+            "active"
+          ]
+        },
+        {
+          "target": "#modal",
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        },
+        {
+          "target": "#costarGraphWrap",
+          "classExcludes": [
+            "panel-open"
+          ]
+        },
+        {
+          "target": ".edge",
+          "classExcludes": [
+            "hl"
+          ]
+        },
+        {
+          "target": ".node",
+          "focused": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
-  "generatedAt": "2026-07-22T15:13:28.381Z",
+  "generatedAt": "2026-07-23T05:08:24.499Z",
   "lineBudget": 150,
   "components": [
     {
@@ -15,12 +15,69 @@
       "responsibility": "复现 app-shell 视图：基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息",
       "parentId": null,
       "dependencies": [],
-      "interactionModel": "static",
-      "interactionFingerprints": [],
-      "dataContracts": [
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#nav > span:nth-child(1)|home",
+        "click|#nav > span:nth-child(2)|story",
+        "click|#nav > span:nth-child(3)|graph-p",
+        "click|#nav > span:nth-child(4)|quiz"
+      ],
+      "mutationTargets": [
+        ".nav .n",
+        ".panel",
+        ".gnd",
+        "#lines"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".nav .n",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.toggle('on',x.dataset.p===p)"
+        },
+        {
+          "target": ".panel",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.toggle('on',x.id===p)"
+        },
+        {
+          "target": ".gnd",
+          "kind": "structure",
+          "operation": "remove-node",
+          "confidence": 0.9,
+          "source": "n.remove()"
+        },
+        {
+          "target": "#lines",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "linesSvg.innerHTML=''"
+        },
+        {
+          "target": "#lines",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "linesSvg.appendChild(ln)"
+        }
+      ],
+      "dataDependencies": [
+        "CENTER",
         "NODES",
-        "rels",
-        "QS"
+        "COLORS"
+      ],
+      "dataContracts": [
+        "NODES"
       ],
       "designTokens": [
         "--primary",
@@ -58,7 +115,18 @@
           "基本释义 典故出处 关联词 测一测 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指"
         ],
         "states": [
-          "初始渲染与源页面一致"
+          "click: #nav > span:nth-child(1) → .nav .n class.toggle(on=on)",
+          "click: #nav > span:nth-child(1) → .panel class.toggle(on=on)",
+          "click: #nav > span:nth-child(1) → .gnd structure.remove-node",
+          "click: #nav > span:nth-child(1) → #lines content.set(innerHTML=)",
+          "click: #nav > span:nth-child(1) → #lines structure.append",
+          "click: #nav > span:nth-child(2) → .nav .n class.toggle(on=on)",
+          "click: #nav > span:nth-child(2) → .panel class.toggle(on=on)",
+          "click: #nav > span:nth-child(2) → .gnd structure.remove-node",
+          "click: #nav > span:nth-child(2) → #lines content.set(innerHTML=)",
+          "click: #nav > span:nth-child(2) → #lines structure.append",
+          "click: #nav > span:nth-child(3) → .nav .n class.toggle(on=on)",
+          "click: #nav > span:nth-child(3) → .panel class.toggle(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -68,11 +136,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 106,
-        "score": 0.71,
+        "estimatedLines": 108,
+        "score": 0.72,
         "reasons": [
-          "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "4 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -92,15 +160,12 @@
       "dependencies": [
         "application-shell"
       ],
-      "interactionModel": "click-driven",
-      "interactionFingerprints": [
-        "click|#nav > span:nth-child(1)|home"
-      ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -137,7 +202,7 @@
           "白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典"
         ],
         "states": [
-          "click: #nav > span:nth-child(1) → home"
+          "初始渲染与源页面一致"
         ],
         "viewports": [
           "desktop",
@@ -147,11 +212,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 125,
-        "score": 0.83,
+        "estimatedLines": 83,
+        "score": 0.55,
         "reasons": [
-          "1 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -173,15 +238,25 @@
       ],
       "interactionModel": "click-driven",
       "interactionFingerprints": [
-        "click|#nav > span:nth-child(2)|story",
         "click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment",
         "click|#story > div:nth-child(1) > span:nth-child(2)|script-assignment"
       ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+      "mutationTargets": [
+        ".ms"
       ],
+      "stateTransitions": [
+        {
+          "target": ".ms",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.toggle('on',x===ms)"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -218,9 +293,8 @@
           "词条典故 出处原文 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。 出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊"
         ],
         "states": [
-          "click: #nav > span:nth-child(2) → story",
-          "click: #story > div:nth-child(1) > span:nth-child(1)",
-          "click: #story > div:nth-child(1) > span:nth-child(2)"
+          "click: #story > div:nth-child(1) > span:nth-child(1) → .ms class.toggle(on=on)",
+          "click: #story > div:nth-child(1) > span:nth-child(2) → .ms class.toggle(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -230,11 +304,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 143,
-        "score": 0.95,
+        "estimatedLines": 101,
+        "score": 0.67,
         "reasons": [
-          "3 个关联交互（2 类实现行为）",
-          "3 个数据契约",
+          "2 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -256,11 +330,10 @@
       ],
       "interactionModel": "static",
       "interactionFingerprints": [],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -307,11 +380,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 101,
-        "score": 0.67,
+        "estimatedLines": 77,
+        "score": 0.51,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -331,15 +404,12 @@
       "dependencies": [
         "application-shell"
       ],
-      "interactionModel": "click-driven",
-      "interactionFingerprints": [
-        "click|#nav > span:nth-child(4)|quiz"
-      ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -376,7 +446,7 @@
           "0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次"
         ],
         "states": [
-          "click: #nav > span:nth-child(4) → quiz"
+          "初始渲染与源页面一致"
         ],
         "viewports": [
           "desktop",
@@ -386,11 +456,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 120,
-        "score": 0.8,
+        "estimatedLines": 78,
+        "score": 0.52,
         "reasons": [
-          "1 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -412,13 +482,25 @@
       ],
       "interactionModel": "click-driven",
       "interactionFingerprints": [
-        "click|#pclose|script-assignment"
+        "click|#pclose|script-assignment",
+        "click|#pop|script-assignment"
       ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+      "mutationTargets": [
+        "#pop"
       ],
+      "stateTransitions": [
+        {
+          "target": "#pop",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "pop.classList.remove('on')"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -455,7 +537,8 @@
           "知道了"
         ],
         "states": [
-          "click: #pclose"
+          "click: #pclose → #pop class.remove(on=on)",
+          "click: #pop → #pop class.remove(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -465,11 +548,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 118,
-        "score": 0.79,
+        "estimatedLines": 112,
+        "score": 0.75,
         "reasons": [
-          "1 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "2 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -491,11 +574,10 @@
       ],
       "interactionModel": "static",
       "interactionFingerprints": [],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -542,11 +624,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 103,
-        "score": 0.69,
+        "estimatedLines": 79,
+        "score": 0.53,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -571,11 +653,22 @@
         "click|div.home-r > div:nth-child(1) > span:nth-child(1)|script-assignment",
         "click|div.home-r > div:nth-child(1) > span:nth-child(2)|script-assignment"
       ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+      "mutationTargets": [
+        ".ms"
       ],
+      "stateTransitions": [
+        {
+          "target": ".ms",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.toggle('on',x===ms)"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -612,8 +705,8 @@
           "核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典型例句 每个人心中都有专属的白月光和朱砂痣。 近义词念念不忘 · 意难平 · 旧情难忘 反义词释怀放下 · 过往云烟 · 心如止水"
         ],
         "states": [
-          "click: div.home-r > div:nth-child(1) > span:nth-child(1)",
-          "click: div.home-r > div:nth-child(1) > span:nth-child(2)"
+          "click: div.home-r > div:nth-child(1) > span:nth-child(1) → .ms class.toggle(on=on)",
+          "click: div.home-r > div:nth-child(1) > span:nth-child(2) → .ms class.toggle(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -623,11 +716,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 125,
-        "score": 0.83,
+        "estimatedLines": 101,
+        "score": 0.67,
         "reasons": [
           "2 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -651,11 +744,10 @@
       ],
       "interactionModel": "static",
       "interactionFingerprints": [],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -702,11 +794,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 103,
-        "score": 0.69,
+        "estimatedLines": 79,
+        "score": 0.53,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -728,11 +820,10 @@
       ],
       "interactionModel": "static",
       "interactionFingerprints": [],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -779,11 +870,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 105,
-        "score": 0.7,
+        "estimatedLines": 81,
+        "score": 0.54,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -808,11 +899,42 @@
         "click|div.text > span:nth-child(1)|script-assignment",
         "click|div.text > span:nth-child(2)|script-assignment"
       ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+      "mutationTargets": [
+        "#pt",
+        "#pd",
+        "#pop"
       ],
+      "stateTransitions": [
+        {
+          "target": "#pt",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('pt').textContent=n[0]"
+        },
+        {
+          "target": "#pd",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('pd').textContent=n[1]"
+        },
+        {
+          "target": "#pop",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('pop').classList.add('on')"
+        }
+      ],
+      "dataDependencies": [
+        "NOTE"
+      ],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -849,8 +971,12 @@
           "出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊子血，白为白月光；娶白玫瑰，白成饭粘子，红为朱砂痣。 未得之人纯白难忘，所得之人刻骨铭心。"
         ],
         "states": [
-          "click: div.text > span:nth-child(1)",
-          "click: div.text > span:nth-child(2)"
+          "click: div.text > span:nth-child(1) → #pt content.set(textContent)",
+          "click: div.text > span:nth-child(1) → #pd content.set(textContent)",
+          "click: div.text > span:nth-child(1) → #pop class.add(on=on)",
+          "click: div.text > span:nth-child(2) → #pt content.set(textContent)",
+          "click: div.text > span:nth-child(2) → #pd content.set(textContent)",
+          "click: div.text > span:nth-child(2) → #pop class.add(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -860,11 +986,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 122,
-        "score": 0.81,
+        "estimatedLines": 106,
+        "score": 0.71,
         "reasons": [
           "2 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "1 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -888,10 +1014,147 @@
       "interactionFingerprints": [
         "click|.f|script-assignment"
       ],
+      "mutationTargets": [
+        ".f",
+        ".gnd",
+        "#lines",
+        ".gnd:not(.center)",
+        "#pt",
+        "#pd",
+        "#pop",
+        "#graph"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".f",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.remove('on')"
+        },
+        {
+          "target": ".f",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "f.classList.add('on')"
+        },
+        {
+          "target": ".gnd",
+          "kind": "structure",
+          "operation": "remove-node",
+          "confidence": 0.9,
+          "source": "n.remove()"
+        },
+        {
+          "target": "#lines",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "linesSvg.innerHTML=''"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "el.className='gnd'+(center?' center':'')"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "style",
+          "operation": "set",
+          "name": "left",
+          "confidence": 0.65,
+          "source": "el.style.left=n.x+'%'"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "style",
+          "operation": "set",
+          "name": "top",
+          "confidence": 0.65,
+          "source": "el.style.top=n.y+'%'"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "el.innerHTML='<div class=\"dot\"'+dotStyle+'>'+n.w+'</div>'+(center?'':'<div class=\"rel\">'+n.rel+'</di"
+        },
+        {
+          "target": ".gnd",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.remove('on')"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "el.classList.add('on')"
+        },
+        {
+          "target": "#pt",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('pt').innerHTML='<span class=\"nd-tag\" style=\"background:'+c+'\">'+n.rel+'</sp"
+        },
+        {
+          "target": "#pd",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('pd').innerHTML='<div>'+n.desc+'</div>'+(n.img?ndImgBlock(n.w):'')"
+        },
+        {
+          "target": "#pop",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('pop').classList.add('on')"
+        },
+        {
+          "target": "#graph",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "graph.appendChild(el)"
+        },
+        {
+          "target": "#lines",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "linesSvg.appendChild(ln)"
+        }
+      ],
+      "dataDependencies": [
+        "CENTER",
+        "COLORS",
+        "NODES"
+      ],
       "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+        "NODES"
       ],
       "designTokens": [
         "--primary",
@@ -927,7 +1190,18 @@
       "acceptance": {
         "text": [],
         "states": [
-          "click: .f"
+          "click: .f → .f class.remove(on=on)",
+          "click: .f → .f class.add(on=on)",
+          "click: .f → .gnd structure.remove-node",
+          "click: .f → #lines content.set(innerHTML=)",
+          "click: .f → .gnd:not(.center) class.set",
+          "click: .f → .gnd:not(.center) style.set(left)",
+          "click: .f → .gnd:not(.center) style.set(top)",
+          "click: .f → .gnd:not(.center) content.set(innerHTML)",
+          "click: .f → .gnd class.remove(on=on)",
+          "click: .f → .gnd:not(.center) class.add(on=on)",
+          "click: .f → #pt content.set(innerHTML)",
+          "click: .f → #pd content.set(innerHTML)"
         ],
         "viewports": [
           "desktop",
@@ -937,11 +1211,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 119,
-        "score": 0.79,
+        "estimatedLines": 103,
+        "score": 0.69,
         "reasons": [
           "1 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "1 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -963,14 +1237,74 @@
       ],
       "interactionModel": "click-driven",
       "interactionFingerprints": [
-        "click|#nav > span:nth-child(3)|graph-p",
         "click|.gnd:not(.center)|script-assignment"
       ],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
+      "mutationTargets": [
+        "#detail",
+        ".gnd",
+        ".gnd:not(.center)",
+        "#pt",
+        "#pd",
+        "#pop"
       ],
+      "stateTransitions": [
+        {
+          "target": "#detail",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('detail').innerHTML='<div class=\"dw\">'+n.w+'</div><span class=\"dr\" style=\"ba"
+        },
+        {
+          "target": ".gnd",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "x.classList.remove('on')"
+        },
+        {
+          "target": ".gnd:not(.center)",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "el.classList.add('on')"
+        },
+        {
+          "target": "#pt",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('pt').innerHTML='<span class=\"nd-tag\" style=\"background:'+c+'\">'+n.rel+'</sp"
+        },
+        {
+          "target": "#pd",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('pd').innerHTML='<div>'+n.desc+'</div>'+(n.img?ndImgBlock(n.w):'')"
+        },
+        {
+          "target": "#pop",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('pop').classList.add('on')"
+        }
+      ],
+      "dataDependencies": [
+        "COLORS",
+        "NODE_IMG"
+      ],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -1005,8 +1339,12 @@
       "acceptance": {
         "text": [],
         "states": [
-          "click: #nav > span:nth-child(3) → graph-p",
-          "click: .gnd:not(.center)"
+          "click: .gnd:not(.center) → #detail content.set(innerHTML)",
+          "click: .gnd:not(.center) → .gnd class.remove(on=on)",
+          "click: .gnd:not(.center) → .gnd:not(.center) class.add(on=on)",
+          "click: .gnd:not(.center) → #pt content.set(innerHTML)",
+          "click: .gnd:not(.center) → #pd content.set(innerHTML)",
+          "click: .gnd:not(.center) → #pop class.add(on=on)"
         ],
         "viewports": [
           "desktop",
@@ -1016,11 +1354,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 136,
-        "score": 0.91,
+        "estimatedLines": 110,
+        "score": 0.73,
         "reasons": [
-          "2 个关联交互（2 类实现行为）",
-          "3 个数据契约",
+          "1 个关联交互（1 类实现行为）",
+          "2 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1042,11 +1380,10 @@
       ],
       "interactionModel": "static",
       "interactionFingerprints": [],
-      "dataContracts": [
-        "NODES",
-        "rels",
-        "QS"
-      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
       "designTokens": [
         "--primary",
         "--primary-d",
@@ -1091,11 +1428,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 101,
-        "score": 0.67,
+        "estimatedLines": 77,
+        "score": 0.51,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
-          "3 个数据契约",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1120,9 +1457,179 @@
         "click|#qznext|semantic-control",
         "click|#opts .opt|script-assignment"
       ],
+      "mutationTargets": [
+        "#qzbody",
+        "#qzresult",
+        "#qno",
+        "#qt",
+        "#qzfb",
+        "#qznext",
+        "#opts",
+        "#opts .opt",
+        "#score",
+        "#barf",
+        "#rscore",
+        "#rbadge"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#qzbody",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "flex",
+          "confidence": 0.92,
+          "source": "document.getElementById('qzbody').style.display='flex'"
+        },
+        {
+          "target": "#qzresult",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qzresult').classList.remove('on')"
+        },
+        {
+          "target": "#qno",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qno').textContent='第 '+(qi+1)+' 题 / 共 '+QS.length"
+        },
+        {
+          "target": "#qt",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qt').textContent=Q.t"
+        },
+        {
+          "target": "#qzfb",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "",
+          "confidence": 0.9,
+          "source": "document.getElementById('qzfb').textContent=''"
+        },
+        {
+          "target": "#qznext",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qznext').classList.remove('on')"
+        },
+        {
+          "target": "#qznext",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qznext').textContent=qi===QS.length-1?'查看结果 →':'下一题 →'"
+        },
+        {
+          "target": "#opts",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('opts').innerHTML=Q.o.map(function(o,k){return '<div class=\"opt\" data-k=\"'+k"
+        },
+        {
+          "target": "#opts .opt",
+          "kind": "class",
+          "operation": "add",
+          "name": "right",
+          "value": "right",
+          "confidence": 0.96,
+          "source": "x.classList.add('right')"
+        },
+        {
+          "target": "#opts .opt",
+          "kind": "class",
+          "operation": "add",
+          "name": "wrong",
+          "value": "wrong",
+          "confidence": 0.96,
+          "source": "op.classList.add('wrong')"
+        },
+        {
+          "target": "#qzfb",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qzfb').textContent=Q.fb"
+        },
+        {
+          "target": "#score",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('score').textContent=sc+' / '+QS.length"
+        },
+        {
+          "target": "#barf",
+          "kind": "style",
+          "operation": "set",
+          "name": "width",
+          "confidence": 0.65,
+          "source": "document.getElementById('barf').style.width=((qi+1)/QS.length)*100+'%'"
+        },
+        {
+          "target": "#qznext",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qznext').classList.add('on')"
+        },
+        {
+          "target": "#qzbody",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "none",
+          "confidence": 0.92,
+          "source": "document.getElementById('qzbody').style.display='none'"
+        },
+        {
+          "target": "#rscore",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('rscore').textContent=sc+' / '+QS.length"
+        },
+        {
+          "target": "#rbadge",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('rbadge').textContent=sc===5?'文学达人·深谙意象':sc>=3?'文学积累尚可':'多读现代文学'"
+        },
+        {
+          "target": "#qzresult",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qzresult').classList.add('on')"
+        }
+      ],
+      "dataDependencies": [
+        "QS"
+      ],
       "dataContracts": [
-        "NODES",
-        "rels",
         "QS"
       ],
       "designTokens": [
@@ -1161,8 +1668,18 @@
           "下一题 →"
         ],
         "states": [
-          "click: #qznext",
-          "click: #opts .opt"
+          "click: #qznext → #qzbody style.set(display=flex)",
+          "click: #qznext → #qzresult class.remove(on=on)",
+          "click: #qznext → #qno content.set(textContent)",
+          "click: #qznext → #qt content.set(textContent)",
+          "click: #qznext → #qzfb content.set(textContent=)",
+          "click: #qznext → #qznext class.remove(on=on)",
+          "click: #qznext → #qznext content.set(textContent)",
+          "click: #qznext → #opts content.set(innerHTML)",
+          "click: #qznext → #opts .opt class.add(right=right)",
+          "click: #qznext → #opts .opt class.add(wrong=wrong)",
+          "click: #qznext → #qzfb content.set(textContent)",
+          "click: #qznext → #score content.set(textContent)"
         ],
         "viewports": [
           "desktop",
@@ -1172,11 +1689,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 137,
-        "score": 0.91,
+        "estimatedLines": 121,
+        "score": 0.81,
         "reasons": [
           "2 个关联交互（2 类实现行为）",
-          "3 个数据契约",
+          "1 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1200,9 +1717,161 @@
       "interactionFingerprints": [
         "click|#again|semantic-control"
       ],
+      "mutationTargets": [
+        "#score",
+        "#barf",
+        "#qzbody",
+        "#qzresult",
+        "#qno",
+        "#qt",
+        "#qzfb",
+        "#qznext",
+        "#opts",
+        "#opts .opt"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#score",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "0 / 5",
+          "confidence": 0.9,
+          "source": "document.getElementById('score').textContent='0 / 5'"
+        },
+        {
+          "target": "#barf",
+          "kind": "style",
+          "operation": "set",
+          "name": "width",
+          "value": "0",
+          "confidence": 0.92,
+          "source": "document.getElementById('barf').style.width='0'"
+        },
+        {
+          "target": "#qzbody",
+          "kind": "style",
+          "operation": "set",
+          "name": "display",
+          "value": "flex",
+          "confidence": 0.92,
+          "source": "document.getElementById('qzbody').style.display='flex'"
+        },
+        {
+          "target": "#qzresult",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qzresult').classList.remove('on')"
+        },
+        {
+          "target": "#qno",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qno').textContent='第 '+(qi+1)+' 题 / 共 '+QS.length"
+        },
+        {
+          "target": "#qt",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qt').textContent=Q.t"
+        },
+        {
+          "target": "#qzfb",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "",
+          "confidence": 0.9,
+          "source": "document.getElementById('qzfb').textContent=''"
+        },
+        {
+          "target": "#qznext",
+          "kind": "class",
+          "operation": "remove",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qznext').classList.remove('on')"
+        },
+        {
+          "target": "#qznext",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qznext').textContent=qi===QS.length-1?'查看结果 →':'下一题 →'"
+        },
+        {
+          "target": "#opts",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById('opts').innerHTML=Q.o.map(function(o,k){return '<div class=\"opt\" data-k=\"'+k"
+        },
+        {
+          "target": "#opts .opt",
+          "kind": "class",
+          "operation": "add",
+          "name": "right",
+          "value": "right",
+          "confidence": 0.96,
+          "source": "x.classList.add('right')"
+        },
+        {
+          "target": "#opts .opt",
+          "kind": "class",
+          "operation": "add",
+          "name": "wrong",
+          "value": "wrong",
+          "confidence": 0.96,
+          "source": "op.classList.add('wrong')"
+        },
+        {
+          "target": "#qzfb",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('qzfb').textContent=Q.fb"
+        },
+        {
+          "target": "#score",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById('score').textContent=sc+' / '+QS.length"
+        },
+        {
+          "target": "#barf",
+          "kind": "style",
+          "operation": "set",
+          "name": "width",
+          "confidence": 0.65,
+          "source": "document.getElementById('barf').style.width=((qi+1)/QS.length)*100+'%'"
+        },
+        {
+          "target": "#qznext",
+          "kind": "class",
+          "operation": "add",
+          "name": "on",
+          "value": "on",
+          "confidence": 0.96,
+          "source": "document.getElementById('qznext').classList.add('on')"
+        }
+      ],
+      "dataDependencies": [
+        "QS"
+      ],
       "dataContracts": [
-        "NODES",
-        "rels",
         "QS"
       ],
       "designTokens": [
@@ -1241,7 +1910,18 @@
           "你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次"
         ],
         "states": [
-          "click: #again"
+          "click: #again → #score content.set(textContent=0 / 5)",
+          "click: #again → #barf style.set(width=0)",
+          "click: #again → #qzbody style.set(display=flex)",
+          "click: #again → #qzresult class.remove(on=on)",
+          "click: #again → #qno content.set(textContent)",
+          "click: #again → #qt content.set(textContent)",
+          "click: #again → #qzfb content.set(textContent=)",
+          "click: #again → #qznext class.remove(on=on)",
+          "click: #again → #qznext content.set(textContent)",
+          "click: #again → #opts content.set(innerHTML)",
+          "click: #again → #opts .opt class.add(right=right)",
+          "click: #again → #opts .opt class.add(wrong=wrong)"
         ],
         "viewports": [
           "desktop",
@@ -1251,11 +1931,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 120,
-        "score": 0.8,
+        "estimatedLines": 104,
+        "score": 0.69,
         "reasons": [
           "1 个关联交互（1 类实现行为）",
-          "3 个数据契约",
+          "1 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1266,45 +1946,9 @@
   "issues": [
     {
       "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "panel-home",
-      "detail": "预计复杂度已达预算的 83%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "panel-story",
-      "detail": "预计复杂度已达预算的 95%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "panel-quiz",
-      "detail": "预计复杂度已达预算的 80%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "home-definition-details",
-      "detail": "预计复杂度已达预算的 83%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "story-story-source",
-      "detail": "预计复杂度已达预算的 81%"
-    },
-    {
-      "severity": "warning",
       "code": "missing-text-baseline",
       "componentId": "graph-p-graph-filters",
       "detail": "未提取到逐字文本基线，需人工补充"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "graph-p-relationship-canvas",
-      "detail": "预计复杂度已达预算的 91%"
     },
     {
       "severity": "warning",
@@ -1322,22 +1966,16 @@
       "severity": "warning",
       "code": "complexity-warning",
       "componentId": "quiz-quiz-question",
-      "detail": "预计复杂度已达预算的 91%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "quiz-quiz-result",
-      "detail": "预计复杂度已达预算的 80%"
+      "detail": "预计复杂度已达预算的 81%"
     }
   ],
   "summary": {
     "components": 16,
     "overBudget": 0,
     "errors": 0,
-    "warnings": 11,
-    "interactions": 16,
-    "ownedInteractions": 16,
+    "warnings": 4,
+    "interactions": 17,
+    "ownedInteractions": 17,
     "unownedInteractions": 0,
     "ready": true
   }

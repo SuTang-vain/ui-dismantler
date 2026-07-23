@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+  "candidatePolicy": "Reviewed representative scenarios cover all directly executable click surfaces; pointer gesture registrations are waived because click scenarios exercise the same observable state transitions without synthetic pointer coordinates.",
+  "coverageWaivers": [
+    {
+      "fingerprint": "pointerdown|#photoCard|script-assignment",
+      "reason": "Gesture start only records pointer coordinates; it has no independently observable UI state. Gallery behavior is verified by gallery-next."
+    },
+    {
+      "fingerprint": "pointerup|#photoCard|script-assignment",
+      "reason": "Synthetic click does not carry a swipe delta; the same gallery transition is verified by gallery-next."
+    },
+    {
+      "fingerprint": "pointerdown|#costarGraphWrap|script-assignment",
+      "reason": "Gesture start only records pointer coordinates and has no independently observable UI state."
+    },
+    {
+      "fingerprint": "pointerup|#costarGraphWrap|script-assignment",
+      "reason": "Synthetic click has no swipe delta; graph navigation and actor modal states are verified through direct controls."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "switch-works",
+      "label": "切换到作品视图",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='works']",
+            "library": ".sg-nav-btn[data-view='works']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#view-works",
+            "library": "#sg-view-works"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ],
+          "textContains": "已探索 0/8"
+        },
+        {
+          "target": {
+            "reference": ".nav-btn[data-view='works']",
+            "library": ".sg-nav-btn[data-view='works']"
+          },
+          "attributes": {
+            "aria-current": "page"
+          }
+        }
+      ],
+      "covers": [
+        "click|nav.nav > button:nth-child(2)|semantic-control",
+        "click|nav.nav|script-assignment"
+      ]
+    },
+    {
+      "id": "switch-identity",
+      "label": "切换到艺人身份视图",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='identity']",
+            "library": ".sg-nav-btn[data-view='identity']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#view-identity",
+            "library": "#sg-view-identity"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ],
+          "textContains": "清透镜头感"
+        }
+      ],
+      "covers": [
+        "click|nav.nav > button:nth-child(3)|semantic-control"
+      ]
+    },
+    {
+      "id": "return-costars",
+      "label": "返回合作演员图谱",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='identity']",
+            "library": ".sg-nav-btn[data-view='identity']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='costars']",
+            "library": ".sg-nav-btn[data-view='costars']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#view-costars",
+            "library": "#sg-view-costars"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ]
+        }
+      ],
+      "covers": [
+        "click|button.active|semantic-control"
+      ]
+    },
+    {
+      "id": "open-actor-modal",
+      "label": "打开合作演员详情",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-actor='0']",
+            "library": ".sg-node[data-actor='0']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": true,
+          "classIncludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ],
+          "attributes": {
+            "aria-hidden": "false"
+          },
+          "textContains": "宋威龙"
+        },
+        {
+          "target": {
+            "reference": ".modal-close",
+            "library": ".sg-modal-close"
+          },
+          "focused": true
+        }
+      ],
+      "covers": [
+        "click|.radar-center|script-assignment"
+      ]
+    },
+    {
+      "id": "close-modal-button",
+      "label": "通过关闭按钮关闭演员详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-actor='0']",
+            "library": ".sg-node[data-actor='0']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".modal-close",
+            "library": ".sg-modal-close"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": false,
+          "classExcludes": [
+            {
+              "reference": "active",
+              "library": "sg-active"
+            }
+          ],
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ],
+      "covers": [
+        "click|.modal-close|script-assignment"
+      ]
+    },
+    {
+      "id": "close-modal-backdrop",
+      "label": "通过遮罩关闭演员详情",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".node[data-actor='0']",
+            "library": ".sg-node[data-actor='0']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#modal",
+            "library": "#sg-modal"
+          },
+          "visible": false,
+          "attributes": {
+            "aria-hidden": "true"
+          }
+        }
+      ],
+      "covers": [
+        "click|#modal|script-assignment"
+      ]
+    },
+    {
+      "id": "gallery-next",
+      "label": "身份画廊切换到下一张",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='identity']",
+            "library": ".sg-nav-btn[data-view='identity']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#photoCard .arrow[data-dir='1']",
+            "library": "#sg-photoCard .sg-arrow[data-dir='1']"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#photoCard .photo-caption",
+            "library": "#sg-photoCard .sg-photo-caption"
+          },
+          "visible": true,
+          "textContains": "活动红毯"
+        }
+      ],
+      "covers": []
+    },
+    {
+      "id": "works-next",
+      "label": "作品视图切换下一部作品",
+      "critical": true,
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".nav-btn[data-view='works']",
+            "library": ".sg-nav-btn[data-view='works']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "[data-next-work]",
+            "library": "[data-next-work]"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#view-works .feature-title",
+            "library": "#sg-view-works .sg-feature-title"
+          },
+          "visible": true,
+          "textContains": "念念相忘"
+        }
+      ],
+      "covers": [
+        "click|#view-works|script-assignment"
+      ]
+    }
+  ]
+}

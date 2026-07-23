@@ -149,7 +149,8 @@
       "covers": [
         "click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment",
         "click|div.text > span:nth-child(2)|script-assignment",
-        "click|#pclose|script-assignment"
+        "click|#pclose|script-assignment",
+        "click|#pop|script-assignment"
       ],
       "viewport": {
         "width": 390,
@@ -182,6 +183,20 @@
           "target": {
             "reference": "#pclose",
             "library": "#sg-pclose"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hl[data-k='zhushazhi']",
+            "library": ".sg-hl[data-k='zhushazhi']"
+          }
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#pop",
+            "library": "#sg-pop"
           }
         },
         {

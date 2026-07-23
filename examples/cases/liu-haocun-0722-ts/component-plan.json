@@ -1,0 +1,1122 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+  "generatedAt": "2026-07-23T06:41:45.328Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "application-shell",
+      "componentName": "ApplicationShell",
+      "targetFile": "src/components/ApplicationShell.ts",
+      "sourceSelector": "#app-container",
+      "sourceSelectors": [
+        "#app-container"
+      ],
+      "responsibility": "复现 app-shell 视图：多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|nav.nav > button:nth-child(1)|semantic-control",
+        "click|nav.nav > button:nth-child(2)|semantic-control",
+        "click|nav.nav > button:nth-child(3)|semantic-control"
+      ],
+      "mutationTargets": [
+        "#modal",
+        ".modal-close",
+        "#costarGraphWrap",
+        ".edge",
+        ".view",
+        "@dynamic-id",
+        ".nav-btn"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.add(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"false\")"
+        },
+        {
+          "target": ".modal-close",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "modal.querySelector(\".modal-close\").focus()"
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"hl\", on)"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "dim",
+          "value": "dim",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"dim\", !on)"
+        },
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars",
+        "graphNodeState"
+      ],
+      "dataContracts": [
+        "costars"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份"
+        ],
+        "states": [
+          "click: nav.nav > button:nth-child(1) → #modal content.set(innerHTML)",
+          "click: nav.nav > button:nth-child(1) → #modal class.add(active=active)",
+          "click: nav.nav > button:nth-child(1) → #modal attribute.set(aria-hidden=false)",
+          "click: nav.nav > button:nth-child(1) → .modal-close focus.focus",
+          "click: nav.nav > button:nth-child(1) → #costarGraphWrap class.add(panel-open=panel-open)",
+          "click: nav.nav > button:nth-child(1) → .edge class.toggle(hl=hl)",
+          "click: nav.nav > button:nth-child(1) → .edge class.toggle(dim=dim)",
+          "click: nav.nav > button:nth-child(1) → .view class.remove(active=active)",
+          "click: nav.nav > button:nth-child(1) → @dynamic-id class.add(active=active)",
+          "click: nav.nav > button:nth-child(1) → .nav-btn class.toggle(active=active)",
+          "click: nav.nav > button:nth-child(1) → .nav-btn attribute.set(aria-current)",
+          "click: nav.nav > button:nth-child(2) → #modal content.set(innerHTML)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 99,
+        "score": 0.66,
+        "reasons": [
+          "3 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-view-costars",
+      "componentName": "RelationshipPanel",
+      "targetFile": "src/components/RelationshipPanel.ts",
+      "sourceSelector": "#view-costars",
+      "sourceSelectors": [
+        "#view-costars"
+      ],
+      "responsibility": "复现 relationship-panel 视图：多次合作 电影合作 剧集合作",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "多次合作 电影合作 剧集合作"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 75,
+        "score": 0.5,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "view-costars-relationship-canvas",
+      "componentName": "RelationshipCanvas",
+      "targetFile": "src/components/RelationshipCanvas.ts",
+      "sourceSelector": "#costarGraphWrap",
+      "sourceSelectors": [
+        "#costarGraphWrap"
+      ],
+      "responsibility": "复现 relationship-canvas 视图：多次合作 电影合作 剧集合作",
+      "parentId": "panel-view-costars",
+      "dependencies": [
+        "panel-view-costars"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|.radar-center|script-assignment",
+        "pointerdown|#costarGraphWrap|script-assignment",
+        "pointerup|#costarGraphWrap|script-assignment"
+      ],
+      "mutationTargets": [
+        ".view",
+        "@dynamic-id",
+        ".nav-btn",
+        "#modal",
+        "#costarGraphWrap",
+        ".node"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.remove(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"true\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "modal.innerHTML = \"\""
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "remove",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.remove(\"panel-open\")"
+        },
+        {
+          "target": ".node",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "lastModalTrigger.focus()"
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars"
+      ],
+      "dataContracts": [
+        "costars"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "多次合作 电影合作 剧集合作"
+        ],
+        "states": [
+          "click: .radar-center → .view class.remove(active=active)",
+          "click: .radar-center → @dynamic-id class.add(active=active)",
+          "click: .radar-center → .nav-btn class.toggle(active=active)",
+          "click: .radar-center → .nav-btn attribute.set(aria-current)",
+          "click: .radar-center → #modal class.remove(active=active)",
+          "click: .radar-center → #modal attribute.set(aria-hidden=true)",
+          "click: .radar-center → #modal content.set(innerHTML=)",
+          "click: .radar-center → #costarGraphWrap class.remove(panel-open=panel-open)",
+          "click: .radar-center → .node focus.focus",
+          "pointerdown: #costarGraphWrap",
+          "pointerup: #costarGraphWrap → #costarGraphWrap class.add(panel-open=panel-open)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 137,
+        "score": 0.91,
+        "reasons": [
+          "3 个关联交互（3 类实现行为）",
+          "1 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-view-works",
+      "componentName": "WorksPanel",
+      "targetFile": "src/components/WorksPanel.ts",
+      "sourceSelector": "#view-works",
+      "sourceSelectors": [
+        "#view-works"
+      ],
+      "responsibility": "复现 works-panel 视图的结构、样式与状态",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|.category-btn|script-assignment",
+        "click|[data-select-poster]|script-assignment",
+        "click|[data-select-work]|script-assignment",
+        "click|[data-next-work]|script-assignment"
+      ],
+      "mutationTargets": [
+        "#view-works",
+        "[data-next-work]"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-works",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewWorks.innerHTML = '<div class=\"works-toolbar\">' + '<div class=\"category-row\" aria-label=\"作品类型\">'"
+        },
+        {
+          "target": "[data-next-work]",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "button.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "works",
+        "activeWorkIds",
+        "visitedWorkIds",
+        "activePosterIndexes"
+      ],
+      "dataContracts": [
+        "works"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: .category-btn → #view-works content.set(innerHTML)",
+          "click: [data-select-poster]",
+          "click: [data-select-work] → #view-works content.set(innerHTML)",
+          "click: [data-select-work] → [data-next-work] focus.focus",
+          "click: [data-next-work] → [data-next-work] focus.focus"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 136,
+        "score": 0.91,
+        "reasons": [
+          "4 个关联交互（3 类实现行为）",
+          "1 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "panel-view-identity",
+      "componentName": "IdentityPanel",
+      "targetFile": "src/components/IdentityPanel.ts",
+      "sourceSelector": "#view-identity",
+      "sourceSelectors": [
+        "#view-identity"
+      ],
+      "responsibility": "复现 identity-panel 视图的结构、样式与状态",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 74,
+        "score": 0.49,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "view-identity-identity-gallery",
+      "componentName": "IdentityGallery",
+      "targetFile": "src/components/IdentityGallery.ts",
+      "sourceSelector": "#photoCard",
+      "sourceSelectors": [
+        "#photoCard"
+      ],
+      "responsibility": "复现 identity-gallery 视图的结构、样式与状态",
+      "parentId": "panel-view-identity",
+      "dependencies": [
+        "panel-view-identity"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|.arrow|script-assignment"
+      ],
+      "mutationTargets": [
+        "#view-identity"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-identity",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+        }
+      ],
+      "dataDependencies": [
+        "galleries",
+        "tags",
+        "facts"
+      ],
+      "dataContracts": [
+        "galleries",
+        "facts",
+        "tags"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: .arrow → #view-identity content.set(innerHTML)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 116,
+        "score": 0.77,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "3 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "view-identity-identity-swipe-surface",
+      "componentName": "IdentitySwipeSurface",
+      "targetFile": "src/components/IdentitySwipeSurface.ts",
+      "sourceSelector": "#photoCard:where(*)",
+      "sourceSelectors": [
+        "#photoCard:where(*)"
+      ],
+      "responsibility": "复现 gesture-surface 视图的结构、样式与状态",
+      "parentId": "view-identity-identity-gallery",
+      "dependencies": [
+        "view-identity-identity-gallery"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [
+        "pointerdown|#photoCard|script-assignment",
+        "pointerup|#photoCard|script-assignment"
+      ],
+      "mutationTargets": [
+        "#view-identity"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-identity",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+        }
+      ],
+      "dataDependencies": [
+        "galleries",
+        "tags",
+        "facts"
+      ],
+      "dataContracts": [
+        "galleries",
+        "facts",
+        "tags"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 134,
+        "score": 0.89,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "3 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "dialog-modal",
+      "componentName": "ModalDialog",
+      "targetFile": "src/components/ModalDialog.ts",
+      "sourceSelector": "#modal",
+      "sourceSelectors": [
+        "#modal"
+      ],
+      "responsibility": "复现 dialog 视图的结构、样式与状态",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|.modal-close|script-assignment",
+        "click|#modal|script-assignment"
+      ],
+      "mutationTargets": [
+        "#modal",
+        "#costarGraphWrap",
+        ".edge",
+        ".node"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.remove(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"true\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "modal.innerHTML = \"\""
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "remove",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.remove(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "remove",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.remove(\"hl\", \"dim\")"
+        },
+        {
+          "target": ".node",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "lastModalTrigger.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "graphNodeState"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "click: .modal-close → #modal class.remove(active=active)",
+          "click: .modal-close → #modal attribute.set(aria-hidden=true)",
+          "click: .modal-close → #modal content.set(innerHTML=)",
+          "click: .modal-close → #costarGraphWrap class.remove(panel-open=panel-open)",
+          "click: .modal-close → .edge class.remove(hl=hl)",
+          "click: .modal-close → .node focus.focus",
+          "click: #modal → #modal class.remove(active=active)",
+          "click: #modal → #modal attribute.set(aria-hidden=true)",
+          "click: #modal → #modal content.set(innerHTML=)",
+          "click: #modal → #costarGraphWrap class.remove(panel-open=panel-open)",
+          "click: #modal → .edge class.remove(hl=hl)",
+          "click: #modal → .node focus.focus"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 100,
+        "score": 0.67,
+        "reasons": [
+          "2 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-header-1",
+      "componentName": "PageHeader",
+      "targetFile": "src/components/PageHeader.ts",
+      "sourceSelector": "#app-frame",
+      "sourceSelectors": [
+        "#app-frame"
+      ],
+      "responsibility": "复现 page-header 视图：多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-dark",
+        "--primary-soft",
+        "--bg",
+        "--card",
+        "--text",
+        "--sub",
+        "--weak",
+        "--line",
+        "--shadow",
+        "rgba(255, 213, 226, 0.72)",
+        "#f8faff",
+        "rgba(100, 135, 250, 0.14)",
+        "rgba(255, 213, 226, 0.6)",
+        "rgba(255, 255, 255, 0.82)",
+        "rgba(100, 135, 250, 0.28)",
+        "rgba(255, 255, 255, 0.96)",
+        "rgba(30, 31, 36, 0.84)",
+        "rgba(30, 31, 36, 0.48)",
+        "rgba(255, 255, 255, 0.2)",
+        "rgba(30, 31, 36, 0.42)",
+        "rgba(30, 31, 36, 0.04)",
+        "rgba(100, 135, 250, 0.1)",
+        "rgba(100, 135, 250, 0.18)"
+      ],
+      "responsiveQueries": [
+        "(prefers-reduced-motion: reduce)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 73,
+        "score": 0.49,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "2 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "view-costars-relationship-canvas",
+      "detail": "预计复杂度已达预算的 91%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "panel-view-works",
+      "detail": "预计复杂度已达预算的 91%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "panel-view-works",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "panel-view-identity",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "view-identity-identity-gallery",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "view-identity-identity-swipe-surface",
+      "detail": "预计复杂度已达预算的 89%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "view-identity-identity-swipe-surface",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "dialog-modal",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    }
+  ],
+  "summary": {
+    "components": 9,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 8,
+    "interactions": 15,
+    "ownedInteractions": 15,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

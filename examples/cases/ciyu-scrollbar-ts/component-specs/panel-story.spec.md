@@ -39,19 +39,21 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #nav > span:nth-child(2) → story
-- click: #story > div:nth-child(1) > span:nth-child(1)
-- click: #story > div:nth-child(1) > span:nth-child(2)
+- click: #story > div:nth-child(1) > span:nth-child(1) → .ms class.toggle(on=on)
+- click: #story > div:nth-child(1) > span:nth-child(2) → .ms class.toggle(on=on)
 
 ## Per-State Content
-- Covers: `click|#nav > span:nth-child(2)|story`
 - Covers: `click|#story > div:nth-child(1) > span:nth-child(1)|script-assignment`
 - Covers: `click|#story > div:nth-child(1) > span:nth-child(2)|script-assignment`
 
+## Mutation Targets
+- Mutates: `.ms`
+
+## State Transitions
+- .ms: class.toggle `on` → `on`
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 词条典故 出处原文 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。 出处原文（点高亮看注解） 民国·张爱玲《红玫瑰与白玫瑰》 娶红玫瑰，红成蚊
@@ -68,6 +70,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 143
+- Estimated lines: 101
 - Budget: 150
 - Status: READY

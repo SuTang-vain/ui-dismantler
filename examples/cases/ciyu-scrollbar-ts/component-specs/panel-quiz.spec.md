@@ -4,7 +4,7 @@
 - **Target file:** `src/components/QuizPanel.ts`
 - **Source selector:** `#quiz`
 - **Source instances:** 1
-- **Interaction model:** click-driven
+- **Interaction model:** static
 - **Responsibility:** 复现 quiz-panel 视图：0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次
 - **Parent:** `application-shell`
 - **Dependencies:** `application-shell`
@@ -39,15 +39,19 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #nav > span:nth-child(4) → quiz
+- 初始渲染与源页面一致
 
 ## Per-State Content
-- Covers: `click|#nav > span:nth-child(4)|quiz`
+N/A (static component)
+
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
 
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 0 / 5 下一题 → 你的得分 出自张爱玲小说，代指心底遗憾与刻骨旧情。 再来一次
@@ -64,6 +68,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 120
+- Estimated lines: 78
 - Budget: 150
 - Status: READY

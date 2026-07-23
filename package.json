@@ -7,7 +7,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "acorn": "8.17.0",
+    "acorn-walk": "8.3.5"
   },
   "scripts": {
     "test": "python3 scripts/tests/run.py",
@@ -28,8 +30,6 @@
     "@types/jsdom": "^28.0.3",
     "@types/node": "^26.1.1",
     "@types/pngjs": "^6.0.5",
-    "acorn": "^8.17.0",
-    "acorn-walk": "^8.3.5",
     "css-tree": "^3.2.1",
     "pixelmatch": "^7.2.0",
     "playwright-core": "^1.61.1",

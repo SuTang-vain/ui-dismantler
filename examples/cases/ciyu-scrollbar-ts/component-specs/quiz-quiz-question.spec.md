@@ -39,16 +39,59 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: #qznext
-- click: #opts .opt
+- click: #qznext → #qzbody style.set(display=flex)
+- click: #qznext → #qzresult class.remove(on=on)
+- click: #qznext → #qno content.set(textContent)
+- click: #qznext → #qt content.set(textContent)
+- click: #qznext → #qzfb content.set(textContent=)
+- click: #qznext → #qznext class.remove(on=on)
+- click: #qznext → #qznext content.set(textContent)
+- click: #qznext → #opts content.set(innerHTML)
+- click: #qznext → #opts .opt class.add(right=right)
+- click: #qznext → #opts .opt class.add(wrong=wrong)
+- click: #qznext → #qzfb content.set(textContent)
+- click: #qznext → #score content.set(textContent)
 
 ## Per-State Content
 - Covers: `click|#qznext|semantic-control`
 - Covers: `click|#opts .opt|script-assignment`
 
+## Mutation Targets
+- Mutates: `#qzbody`
+- Mutates: `#qzresult`
+- Mutates: `#qno`
+- Mutates: `#qt`
+- Mutates: `#qzfb`
+- Mutates: `#qznext`
+- Mutates: `#opts`
+- Mutates: `#opts .opt`
+- Mutates: `#score`
+- Mutates: `#barf`
+- Mutates: `#rscore`
+- Mutates: `#rbadge`
+
+## State Transitions
+- #qzbody: style.set `display` → `flex`
+- #qzresult: class.remove `on` → `on`
+- #qno: content.set `textContent`
+- #qt: content.set `textContent`
+- #qzfb: content.set `textContent` → ``
+- #qznext: class.remove `on` → `on`
+- #qznext: content.set `textContent`
+- #opts: content.set `innerHTML`
+- #opts .opt: class.add `right` → `right`
+- #opts .opt: class.add `wrong` → `wrong`
+- #qzfb: content.set `textContent`
+- #score: content.set `textContent`
+- #barf: style.set `width`
+- #qznext: class.add `on` → `on`
+- #qzbody: style.set `display` → `none`
+- #rscore: content.set `textContent`
+- #rbadge: content.set `textContent`
+- #qzresult: class.add `on` → `on`
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
+- Data dependency: `QS`
 - Data contract: `QS`
 
 ## Text Content (verbatim)
@@ -66,6 +109,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 137
+- Estimated lines: 121
 - Budget: 150
 - Status: READY

@@ -44,10 +44,14 @@
 ## Per-State Content
 N/A (static component)
 
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 词条典故渊源 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。 义双意象各有深意情愫对照阐释 白月光喻纯粹遗憾，朱砂痣喻刻骨深情。 传网络广泛传播走红成为流行热词 经网络传唱普及，成为大众常用情感表述。
@@ -64,6 +68,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 105
+- Estimated lines: 81
 - Budget: 150
 - Status: READY

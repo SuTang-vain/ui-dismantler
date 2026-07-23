@@ -44,10 +44,14 @@
 ## Per-State Content
 N/A (static component)
 
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 关联词语图谱 · 点击查看
@@ -64,6 +68,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 101
+- Estimated lines: 77
 - Budget: 150
 - Status: READY

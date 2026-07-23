@@ -44,10 +44,14 @@
 ## Per-State Content
 N/A (static component)
 
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 白月光和朱砂痣 bai yue guang he zhu sha zhi 中性 文学意象 网络热词 喻指人生遗憾旧人，难忘的两种情愫。
@@ -64,6 +68,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 103
+- Estimated lines: 79
 - Budget: 150
 - Status: READY

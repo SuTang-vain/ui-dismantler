@@ -184,6 +184,158 @@ test("interactive encyclopedia analyzer decomposes data-p panels and assigned ha
   assert.equal(report.summary.ready, true);
 });
 
+
+test("AST interaction analysis extracts mutation targets and local data dependencies", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-ast-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "interactive.html");
+  await writeFile(html, `<!doctype html><html><body><main id="app"><nav><button class="tab" data-p="details">Details</button></nav><section id="details"><button id="open">Open</button><dialog id="dialog"></dialog><div id="output"></div></section></main><script>const ITEMS=[{label:'one'}];const open=document.querySelector('#open');open.addEventListener('click',()=>{document.getElementById('dialog').classList.add('on');document.querySelector('#output').textContent=ITEMS[0].label});document.querySelectorAll('.tab').forEach(tab=>{tab.onclick=()=>document.getElementById(tab.dataset.p).classList.add('active')})</script></body></html>`);
+  const manifest = analyzeHtml(html);
+  const open = manifest.interactions.find((interaction) => interaction.trigger === "#open");
+  assert.equal(open?.analysis, "ast");
+  assert.deepEqual(open?.mutationTargets, ["#dialog", "#output"]);
+  assert.deepEqual(open?.dataDependencies, ["ITEMS"]);
+  assert.equal(open?.target, "#dialog");
+  const tab = manifest.interactions.find((interaction) => interaction.trigger === "button.tab");
+  assert.equal(tab?.analysis, "ast");
+  assert.deepEqual(tab?.mutationTargets, ["#details"]);
+});
+
+test("AST analysis resolves dynamically created interactive class selectors", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-dynamic-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "dynamic.html");
+  await writeFile(html, `<!doctype html><html><body><section id="graph"><div id="detail"></div></section><script>function addNode(item,center){const el=document.createElement('div');el.className='node'+(center?' center':'');if(!center)el.onclick=()=>{document.getElementById('detail').textContent=item.name;el.classList.add('on')};document.getElementById('graph').appendChild(el)};addNode({name:'A'},false)</script></body></html>`);
+  const interaction = analyzeHtml(html).interactions.find((item) => item.trigger === ".node:not(.center)");
+  assert.equal(interaction?.analysis, "ast");
+  assert.deepEqual(interaction?.mutationTargets, ["#detail", ".node:not(.center)"]);
+});
+
+test("AST analysis emits structured UI state transitions and state-backed scenario assertions", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-states-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "states.html");
+  await writeFile(html, `<!doctype html><html><body><button id="open">Open</button><dialog id="modal"></dialog><section id="panel"></section><script>const open=document.querySelector('#open');const modal=document.querySelector('#modal');const panel=document.querySelector('#panel');open.addEventListener('click',()=>{modal.showModal();panel.classList.add('active');panel.setAttribute('aria-expanded','true');panel.hidden=false})</script></body></html>`);
+  const manifest = analyzeHtml(html);
+  const interaction = manifest.interactions.find((item) => item.trigger === "#open");
+  assert.deepEqual(interaction?.stateTransitions?.map((item) => [item.target, item.kind, item.operation, item.name, item.value]), [
+    ["#modal", "property", "open", "open", true],
+    ["#panel", "class", "add", "active", "active"],
+    ["#panel", "attribute", "set", "aria-expanded", "true"],
+    ["#panel", "property", "set", "hidden", false],
+  ]);
+  const scenario = generateScenarios(manifest).scenarios.find((item) => item.covers?.includes(interaction?.fingerprint ?? ""));
+  assert.deepEqual(scenario?.assertions, [
+    { target: "#modal", attributes: { open: "" } },
+    { target: "#panel", classIncludes: ["active"] },
+    { target: "#panel", attributes: { "aria-expanded": "true" } },
+    { target: "#panel", visible: true },
+  ]);
+  assert.equal(scenario?.candidate, true);
+});
+
+test("AST analysis follows bounded helper chains and object-method handlers", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-calls-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "calls.html");
+  await writeFile(html, `<!doctype html><html><body><button id="go">Go</button><section id="panel"></section><script>const byId=id=>document.getElementById(id);function level2(){byId('panel').classList.add('ready')}function level1(){level2()}const actions={open(){level1()}};byId('go').addEventListener('click',actions.open)</script></body></html>`);
+  const interaction = analyzeHtml(html).interactions.find((item) => item.trigger === "#go");
+  assert.equal(interaction?.analysis, "ast");
+  assert.deepEqual(interaction?.mutationTargets, ["#panel"]);
+  assert.equal(interaction?.stateTransitions?.some((item) => item.target === "#panel" && item.kind === "class" && item.operation === "add" && item.name === "ready"), true);
+});
+
+test("AST analysis resolves delegated closest controls instead of assigning document ownership", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-delegated-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "delegated.html");
+  await writeFile(html, `<!doctype html><html><body><nav><button class="tab">One</button><button class="tab">Two</button></nav><section id="panel"></section><script>document.addEventListener('click',event=>{const tab=event.target.closest('.tab');if(!tab)return;document.querySelector('#panel').classList.toggle('active')})</script></body></html>`);
+  const interactions = analyzeHtml(html).interactions.filter((item) => item.analysis === "ast");
+  assert.equal(interactions.length, 2);
+  assert.equal(interactions.every((item) => item.trigger.includes("button:nth-child")), true);
+  assert.equal(interactions.every((item) => item.stateTransitions?.some((transition) => transition.target === "#panel" && transition.operation === "toggle")), true);
+});
+
+test("delegated receiver uses closest controls and prunes unrelated guarded helper calls", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-delegated-branches-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "delegated.html");
+  await writeFile(html, `<!doctype html><html><body><nav class="nav"><button class="nav-btn" data-view="one">One</button><button class="nav-btn" data-view="two">Two</button></nav><section id="view-one"></section><section id="view-two"></section><dialog id="modal"></dialog><script>const modal=document.querySelector('#modal');function closeModal(){modal.close()}function switchView(name){document.getElementById('view-'+name).classList.add('active');if(name==='modal')closeModal()}document.querySelector('.nav').addEventListener('click',event=>{const btn=event.target.closest('.nav-btn');if(btn)switchView(btn.getAttribute('data-view'))})</script></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "delegated-branches" });
+  const nav = manifest.interactions.filter((item) => item.trigger.startsWith("nav.nav > button"));
+  assert.equal(nav.length, 2);
+  assert.equal(manifest.interactions.some((item) => item.trigger === "nav.nav"), false);
+  assert.equal(nav.every((item) => item.mutationTargets?.includes("#modal") === false), true);
+});
+
+test("pointer registrations remain unsupported candidates instead of fake clicks", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-pointer-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "pointer.html");
+  await writeFile(html, `<!doctype html><html><body><div id="card"></div><script>const card=document.querySelector('#card');card.addEventListener('pointerup',event=>{if(Math.abs(event.clientX)>35)card.classList.add('moved')})</script></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "pointer" });
+  const scenario = generateScenarios(manifest).scenarios.find((item) => item.covers?.includes(manifest.interactions[0].fingerprint));
+  assert.equal(scenario?.steps.length, 0);
+  assert.match(scenario?.label ?? "", /unsupported-pointer/);
+  assert.match(scenario?.notes?.[0] ?? "", /禁止降级为 click/);
+});
+
+test("data-view applications decompose shell panels graph and modal boundaries", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-app-views-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "application.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app-container"><main class="stage"><section class="view" id="view-costars"><div class="graph-wrap" id="costarGraphWrap"><button class="node">Actor</button></div></section><section class="view" id="view-works"><button data-next-work>Next</button></section><section class="view" id="view-identity"><button id="photoCard">Photo</button></section><div class="modal" id="modal"><button class="modal-close">Close</button></div></main><nav class="nav"><button class="nav-btn" data-view="costars">Costars</button><button class="nav-btn" data-view="works">Works</button><button class="nav-btn" data-view="identity">Identity</button></nav></div></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "application-views" });
+  const ids = new Set(manifest.structure.views.map((view) => view.id));
+  for (const id of ["application-shell", "panel-view-costars", "panel-view-works", "panel-view-identity", "dialog-modal"]) assert.equal(ids.has(id), true, `missing ${id}`);
+  assert.equal(manifest.structure.views.some((view) => view.componentCandidates?.some((candidate) => candidate.type === "relationship-canvas")), true);
+});
+
+test("data-tab controls map to data-view application panels", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-data-tab-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "tabs.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app"><div class="tabs"><button class="tab-btn" data-tab="graph">Graph</button><button class="tab-btn" data-tab="works">Works</button></div><main><div class="view" data-view="graph"><div class="graph-wrap" id="graphWrap"><div class="graph-canvas" id="graphCanvas"></div></div></div><div class="view" data-view="works"><div class="works-viewport" id="worksGrid"></div></div></main></div></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "data-tab-views" });
+  const types = new Set(manifest.structure.views.map((view) => view.type));
+  for (const expected of ["app-shell", "relationship-panel", "works-panel"]) assert.equal(types.has(expected), true, `missing ${expected}`);
+  assert.equal(manifest.structure.views.some((view) => view.type === "page-header" && view.selector === "#app"), false);
+  assert.equal(manifest.structure.views.some((view) => view.componentCandidates?.some((candidate) => candidate.type === "relationship-canvas")), true);
+});
+
+test("single graph applications decompose graph event controls and modal", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-compound-graph-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "compound.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app-container"><div class="graph-wrap" id="graphWrap"><div class="graph-canvas" id="graphCanvas"><button class="node">Node</button></div></div><div class="event-bar"><div id="eventBtns"><button class="event-btn" data-i="0">Event</button></div></div><div class="modal-overlay" id="modalOverlay"><button class="modal-close">Close</button></div></div></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "compound-graph" });
+  const types = new Set(manifest.structure.views.map((view) => view.type));
+  for (const expected of ["app-shell", "relationship-canvas", "event-controls", "dialog"]) assert.equal(types.has(expected), true, `missing ${expected}`);
+  assert.equal(manifest.structure.views.some((view) => view.type === "page-header" && view.selector === "#app-container"), false);
+});
+
+test("gesture lifecycle registrations count as one implementation behavior", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-gesture-budget-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "gesture.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app"><div class="tabs"><button data-tab="cast">Cast</button><button data-tab="profile">Profile</button></div><div class="view" data-view="cast"><div class="cast-grid"><button class="story-btn active">Story</button></div></div><div class="view" data-view="profile"></div></div><script>const story=document.querySelector('.story-btn');story.addEventListener('mousedown',()=>{});story.addEventListener('touchstart',()=>{});story.addEventListener('pointerdown',()=>{});story.addEventListener('pointermove',()=>{});story.addEventListener('pointerup',()=>{});story.addEventListener('pointercancel',()=>{});</script></body></html>`);
+  const report = planComponents(analyzeHtml(html, { profile: "gesture-budget" }), { lineBudget: 150 });
+  const gesture = report.components.find((component) => component.componentName === "StoryGestureSurface");
+  assert.equal(gesture?.interactionFingerprints.length, 6);
+  assert.equal(gesture?.complexity.reasons.some((reason) => reason.includes("1 类实现行为")), true);
+  assert.equal(gesture?.complexity.overBudget, false);
+});
+
+test("malformed scripts retain bounded regex interaction fallback", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-malformed-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "malformed.html");
+  await writeFile(html, `<!doctype html><html><body><button id="broken">Broken</button><script>document.getElementById('broken').addEventListener('click',()=>{</script></body></html>`);
+  const interaction = analyzeHtml(html).interactions.find((item) => item.event === "click" && item.trigger === "event-listener");
+  assert.equal(interaction?.analysis, "regex");
+  assert.equal(interaction?.confidence, 0.25);
+});
+
 test("analyzer budgets oversized styles and skips non-executable archive scripts", async (context) => {
   const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-budget-"));
   context.after(() => rm(dir, { recursive: true, force: true }));

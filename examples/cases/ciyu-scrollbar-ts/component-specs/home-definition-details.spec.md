@@ -39,17 +39,21 @@
 - Token: `rgba(100,135,250,0.38)`
 
 ## States & Behaviors
-- click: div.home-r > div:nth-child(1) > span:nth-child(1)
-- click: div.home-r > div:nth-child(1) > span:nth-child(2)
+- click: div.home-r > div:nth-child(1) > span:nth-child(1) → .ms class.toggle(on=on)
+- click: div.home-r > div:nth-child(1) > span:nth-child(2) → .ms class.toggle(on=on)
 
 ## Per-State Content
 - Covers: `click|div.home-r > div:nth-child(1) > span:nth-child(1)|script-assignment`
 - Covers: `click|div.home-r > div:nth-child(1) > span:nth-child(2)|script-assignment`
 
+## Mutation Targets
+- Mutates: `.ms`
+
+## State Transitions
+- .ms: class.toggle `on` → `on`
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 核心信息 典型例句 核心信息 字面义月光皎洁，痣色赤红 引申义纯白遗憾，刻骨深情 出处摘要《红玫瑰与白玫瑰》 使用语境形容难忘的情感执念 详细释义指代心底纯粹遗憾与刻骨难忘的旧人。 典型例句 每个人心中都有专属的白月光和朱砂痣。 近义词念念不忘 · 意难平 · 旧情难忘 反义词释怀放下 · 过往云烟 · 心如止水
@@ -66,6 +70,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 125
+- Estimated lines: 101
 - Budget: 150
 - Status: READY

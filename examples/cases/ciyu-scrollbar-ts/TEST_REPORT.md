@@ -8,17 +8,17 @@
 
 当前工具已成功生成可运行的零依赖组件库，并通过完整 TypeScript Gold+ 质量门。初始状态四视口与三个关键交互状态均通过 computed-style 和像素对比；人工查验入口为 `lib/examples/ciyu.html`。
 
-继续优化后，规划 analyzer 已从错误的“整页 PageHeader”提升为层级化应用计划：识别应用 shell、四个主面板、关系图谱、筛选器、详情、典故区域、测验题目/结果及弹窗，并将脚本赋值式事件分配到最具体组件。
+继续优化后，规划 analyzer 已从错误的“整页 PageHeader”提升为层级化应用计划：识别应用 shell、四个主面板、关系图谱、筛选器、详情、典故区域、测验题目/结果及弹窗，并通过 AST 提取事件的 DOM mutation 与局部数据依赖，再按 trigger 边界优先分配到最具体组件。
 
 ## 性能与规划
 
 - analyzer：约 **0.83 秒**；
 - planner：约 **0.82 秒**；
 - transpiler：约 0.59 秒；
-- 规划结果：**16 个组件**、0 超预算、0 错误、11 个复杂度/文本基线警告；
+- 规划结果：**16 个组件**、0 超预算、0 错误、4 个复杂度/文本基线警告；
 - 父子层级：`ApplicationShell` 下包含四个 panel 与 `PopDialog`，各 panel 继续拆出语义子组件；
-- 交互发现：从 2 个提升到 **16 个**，包括 `data-p` 导航、移动子页签、典故高亮、图谱筛选/节点、测验选项和弹窗关闭；
-- 交互归属：16/16，未归属 0，规划状态 ready。
+- 交互发现：从 2 个提升到 **17 个**，包括 `data-p` 导航、移动子页签、典故高亮、图谱筛选/节点、测验选项和弹窗关闭；
+- 交互归属：17/17，未归属 0，规划状态 ready。
 
 ## Gold+ 结果
 
@@ -31,7 +31,7 @@
 | 初始状态视口矩阵 | 4/4 PASS |
 | 关键交互矩阵 | 3/3 PASS |
 | 正式交互场景 | 9/9 PASS |
-| analyzer 已识别交互覆盖率 | 100%（16/16 eligible） |
+| analyzer 已识别交互覆盖率 | 100%（17/17 eligible） |
 | 选择器实际命中 | 100% |
 | 最差 computed-style | 0.9989 |
 | 最差像素差异 | 0.0000% |
@@ -68,7 +68,7 @@
 - `original.html`、`images/`：输入副本；
 - `manifest.json`、`component-plan.json`、`component-specs/`：规划产物；
 - `lib/`：可人工查验的组件库；
-- `scenarios.json`：9 个正式功能场景，覆盖 analyzer 识别的全部 16 个交互；
+- `scenarios.json`：9 个正式功能场景，覆盖 analyzer 识别的全部 17 个交互；
 - `quality-report.json`、`quality.log`：完整 Gold+ 结果；
 - `artifacts/`：四视口初始状态和三个关键交互状态的 reference/generated/diff；
 - `reference-cover.png`、`reference-scrollbar.png`：输入目录附带的人工参考图。

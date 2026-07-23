@@ -48,10 +48,14 @@
 ## Per-State Content
 N/A (static component)
 
+## Mutation Targets
+N/A
+
+## State Transitions
+N/A
+
 ## Assets & Data
-- Data contract: `NODES`
-- Data contract: `rels`
-- Data contract: `QS`
+None
 
 ## Text Content (verbatim)
 - 源张氏小说独创意象文学概念诞生 张爱玲书中创设白月光、朱砂痣情感意象。
@@ -68,6 +72,6 @@ Source media queries:
 - `(max-width:330px)`
 
 ## Complexity Budget
-- Estimated lines: 103
+- Estimated lines: 79
 - Budget: 150
 - Status: READY

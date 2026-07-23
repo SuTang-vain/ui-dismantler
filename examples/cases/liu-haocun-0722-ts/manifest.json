@@ -1,0 +1,1655 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+    "title": "刘浩存光影星途互动图鉴",
+    "templateId": null,
+    "vertical": "liu-haocun-0722",
+    "profile": "liu-haocun-0722",
+    "caseName": "original",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "primary",
+        "value": "#6487fa",
+        "original": "--primary",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".nav-btn.active",
+          ".photo-card",
+          ".tag",
+          ".fact::before",
+          ".fact span",
+          ".mini-note"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "icon-fill",
+          "shadow"
+        ]
+      },
+      {
+        "name": "primary-dark",
+        "value": "#4268e8",
+        "original": "--primary-dark",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".tag",
+          ".fact span",
+          ".mini-note",
+          ".radar-node.active",
+          ".node.active",
+          ".category-btn"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "primary-soft",
+        "value": "#e8eeff",
+        "original": "--primary-soft",
+        "usage": [
+          ":root",
+          ".photo-card",
+          ".tag",
+          ".poster",
+          ".modal-poster",
+          ".work-thumb-poster"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "bg",
+        "value": "#f8f8f8",
+        "original": "--bg",
+        "usage": [
+          ":root",
+          "html,\n      body",
+          ".fact"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "card",
+        "value": "#ffffff",
+        "original": "--card",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text",
+        "value": "#1e1f24",
+        "original": "--text",
+        "usage": [
+          ":root",
+          "html,\n      body",
+          ".fact strong",
+          ".graph-legend",
+          ".radar-node",
+          ".node",
+          ".modal-work b",
+          ".feature-fact b"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "sub",
+        "value": "#848691",
+        "original": "--sub",
+        "usage": [
+          ":root",
+          ".artist-desc",
+          ".fact small",
+          ".work-role,\n      .work-partners",
+          ".modal-info p",
+          ".modal-work small",
+          ".works-progress-copy",
+          ".feature-desc"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "weak",
+        "value": "#b7b9c1",
+        "original": "--weak",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "line",
+        "value": "rgba(100, 135, 250, 0.16)",
+        "original": "--line",
+        "usage": [
+          ":root",
+          ".nav-btn",
+          ".photo-card,\n      .info-card,\n      .logic-card,\n      .actor-card,\n      .work-card,\n      .category-btn,\n      .modal-card",
+          ".radar-stage",
+          ".graph-legend",
+          ".node-name",
+          ".node .name"
+        ],
+        "roles": [
+          "border",
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow",
+        "value": "0 10px 26px rgba(100, 135, 250, 0.16)",
+        "original": "--shadow",
+        "usage": [
+          ":root",
+          ".photo-card,\n      .info-card,\n      .logic-card,\n      .actor-card,\n      .work-card,\n      .category-btn,\n      .modal-card",
+          ".radar-stage"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-213-226-0-72",
+        "value": "rgba(255, 213, 226, 0.72)",
+        "original": "rgba(255, 213, 226, 0.72)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "f8faff",
+        "value": "#f8faff",
+        "original": "#f8faff",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-14",
+        "value": "rgba(100, 135, 250, 0.14)",
+        "original": "rgba(100, 135, 250, 0.14)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-255-213-226-0-6",
+        "value": "rgba(255, 213, 226, 0.6)",
+        "original": "rgba(255, 213, 226, 0.6)",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "rgba-255-255-255-0-82",
+        "value": "rgba(255, 255, 255, 0.82)",
+        "original": "rgba(255, 255, 255, 0.82)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-28",
+        "value": "rgba(100, 135, 250, 0.28)",
+        "original": "rgba(100, 135, 250, 0.28)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-96",
+        "value": "rgba(255, 255, 255, 0.96)",
+        "original": "rgba(255, 255, 255, 0.96)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-84",
+        "value": "rgba(30, 31, 36, 0.84)",
+        "original": "rgba(30, 31, 36, 0.84)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-48",
+        "value": "rgba(30, 31, 36, 0.48)",
+        "original": "rgba(30, 31, 36, 0.48)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-2",
+        "value": "rgba(255, 255, 255, 0.2)",
+        "original": "rgba(255, 255, 255, 0.2)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-42",
+        "value": "rgba(30, 31, 36, 0.42)",
+        "original": "rgba(30, 31, 36, 0.42)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-30-31-36-0-04",
+        "value": "rgba(30, 31, 36, 0.04)",
+        "original": "rgba(30, 31, 36, 0.04)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-1",
+        "value": "rgba(100, 135, 250, 0.1)",
+        "original": "rgba(100, 135, 250, 0.1)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-18",
+        "value": "rgba(100, 135, 250, 0.18)",
+        "original": "rgba(100, 135, 250, 0.18)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-232-238-255-0-72",
+        "value": "rgba(232, 238, 255, 0.72)",
+        "original": "rgba(232, 238, 255, 0.72)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-84",
+        "value": "rgba(255, 255, 255, 0.84)",
+        "original": "rgba(255, 255, 255, 0.84)",
+        "usage": [],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "d94b4b",
+        "value": "#d94b4b",
+        "original": "#d94b4b",
+        "usage": [],
+        "roles": [
+          "background",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "4aa06e",
+        "value": "#4aa06e",
+        "original": "#4aa06e",
+        "usage": [],
+        "roles": [
+          "background",
+          "icon-fill"
+        ]
+      },
+      {
+        "name": "rgba-255-255-255-0-92",
+        "value": "rgba(255, 255, 255, 0.92)",
+        "original": "rgba(255, 255, 255, 0.92)",
+        "usage": [],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "rgba-100-135-250-0-3",
+        "value": "rgba(100, 135, 250, 0.3)",
+        "original": "rgba(100, 135, 250, 0.3)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      }
+    ],
+    "gradients": [
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 12% 12%,\n            rgba(100, 135, 250, 0.16),\n            transparent 26%\n          ),\n          radial-gradient(\n            circle at 88% 10%,\n            rgba(255, 213, 226, 0.72),\n            transparent 24%\n          ),\n          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 12% 8%,\n            rgba(100, 135, 250, 0.14),\n            transparent 30%\n          ),\n          radial-gradient(\n            circle at 88% 6%,\n            rgba(255, 213, 226, 0.6),\n            transparent 26%\n          ),\n          linear-gradient(135deg, #ffffff 0%, #f8faff 52%, #f8f8f8 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(\n          90deg,\n          rgba(30, 31, 36, 0.84),\n          rgba(30, 31, 36, 0.48)\n        )"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(\n            circle at 50% 50%,\n            rgba(100, 135, 250, 0.18),\n            transparent 26%\n          ),\n          linear-gradient(\n            135deg,\n            rgba(255, 255, 255, 0.82),\n            rgba(232, 238, 255, 0.72)\n          )"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg, #6487fa, #24b0a2)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg, rgba(100, 135, 250, 0.08) 0 20%, transparent 20% 80%, rgba(255, 213, 226, 0.34) 80%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg, rgba(100, 135, 250, 0.25) 0 8px, transparent 8px 14px)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [],
+    "views": [
+      {
+        "id": "application-shell",
+        "type": "app-shell",
+        "structuralType": "application",
+        "semanticType": "application-shell",
+        "confidence": 0.96,
+        "evidence": [
+          {
+            "signal": "application-navigation",
+            "value": 3
+          }
+        ],
+        "selector": "#app-container",
+        "details": {
+          "text": "多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份",
+          "className": "",
+          "interactionSelectors": [
+            "nav.nav > button:nth-child(1)",
+            "nav.nav > button:nth-child(2)",
+            "nav.nav > button:nth-child(3)"
+          ]
+        }
+      },
+      {
+        "id": "panel-view-costars",
+        "type": "relationship-panel",
+        "structuralType": "content-region",
+        "semanticType": "relationship-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "relationship-panel"
+          }
+        ],
+        "selector": "#view-costars",
+        "details": {
+          "text": "多次合作 电影合作 剧集合作",
+          "className": "view costar-view active",
+          "parentSelector": "#app-container",
+          "interactionSelectors": [
+            ".radar-center",
+            ".node",
+            ".edge"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "view-costars-relationship-canvas",
+            "type": "relationship-canvas",
+            "structuralType": "content-region",
+            "semanticType": "relationship-canvas",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "signal": "application-region",
+                "value": "relationship-canvas"
+              }
+            ],
+            "selector": "#costarGraphWrap",
+            "details": {
+              "text": "多次合作 电影合作 剧集合作",
+              "className": "radar-stage graph-wrap",
+              "parentSelector": "#view-costars",
+              "interactionSelectors": [
+                ".radar-center",
+                ".node",
+                ".edge"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "panel-view-works",
+        "type": "works-panel",
+        "structuralType": "content-region",
+        "semanticType": "works-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "works-panel"
+          }
+        ],
+        "selector": "#view-works",
+        "details": {
+          "text": "",
+          "className": "view works-view",
+          "parentSelector": "#app-container",
+          "interactionSelectors": [
+            ".category-btn",
+            "[data-select-poster]",
+            "[data-select-work]",
+            "[data-next-work]"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "panel-view-identity",
+        "type": "identity-panel",
+        "structuralType": "content-region",
+        "semanticType": "identity-panel",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "identity-panel"
+          }
+        ],
+        "selector": "#view-identity",
+        "details": {
+          "text": "",
+          "className": "view identity-view",
+          "parentSelector": "#app-container",
+          "interactionSelectors": [
+            "#photoCard",
+            ".arrow"
+          ]
+        },
+        "componentCandidates": [
+          {
+            "id": "view-identity-identity-gallery",
+            "type": "identity-gallery",
+            "structuralType": "dynamic-region",
+            "semanticType": "identity-gallery",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "signal": "runtime-gallery-control",
+                "value": "#photoCard"
+              }
+            ],
+            "selector": "#photoCard",
+            "details": {
+              "text": "",
+              "className": "photo-card",
+              "parentSelector": "#view-identity",
+              "interactionSelectors": [
+                ".arrow"
+              ]
+            },
+            "componentCandidates": [
+              {
+                "id": "view-identity-identity-swipe-surface",
+                "type": "gesture-surface",
+                "structuralType": "interactive-control",
+                "semanticType": "identity-swipe-surface",
+                "confidence": 0.82,
+                "evidence": [
+                  {
+                    "signal": "pointer-gesture-control",
+                    "value": "#photoCard"
+                  }
+                ],
+                "selector": "#photoCard:where(*)",
+                "details": {
+                  "text": "",
+                  "className": "photo-card",
+                  "parentSelector": "#photoCard",
+                  "interactionSelectors": [
+                    "#photoCard"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dialog-modal",
+        "type": "dialog",
+        "structuralType": "content-region",
+        "semanticType": "modal-dialog",
+        "confidence": 0.92,
+        "evidence": [
+          {
+            "signal": "application-region",
+            "value": "modal-dialog"
+          }
+        ],
+        "selector": "#modal",
+        "details": {
+          "text": "",
+          "className": "modal",
+          "parentSelector": "#app-container",
+          "interactionSelectors": [
+            ".modal-close"
+          ]
+        }
+      },
+      {
+        "id": "page-header-1",
+        "type": "page-header",
+        "structuralType": "content-region",
+        "semanticType": "page-header",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-header"
+          }
+        ],
+        "selector": "#app-frame",
+        "details": {
+          "text": "多次合作 电影合作 剧集合作 同框演员 参演作品 艺人身份",
+          "className": "",
+          "interactionSelectors": [
+            "nav.nav > button:nth-child(1)",
+            "nav.nav > button:nth-child(2)",
+            "nav.nav > button:nth-child(3)"
+          ]
+        },
+        "componentCandidates": []
+      }
+    ],
+    "modals": [
+      {
+        "id": "modal",
+        "selector": "#modal",
+        "role": null,
+        "closeSelector": null
+      }
+    ],
+    "landmarks": [
+      {
+        "tag": "main",
+        "role": null,
+        "selector": "main.stage"
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "nav.nav"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "galleries",
+        "kind": "array",
+        "fields": {
+          "src": "string",
+          "title": "string",
+          "work": "string",
+          "role": "string",
+          "traits": "array"
+        },
+        "count": 18
+      },
+      {
+        "name": "facts",
+        "kind": "array",
+        "fields": {},
+        "count": 9
+      },
+      {
+        "name": "tags",
+        "kind": "array",
+        "fields": {},
+        "count": 4
+      },
+      {
+        "name": "works",
+        "kind": "array",
+        "fields": {
+          "id": "string",
+          "category": "string",
+          "year": "number",
+          "title": "string",
+          "role": "string",
+          "status": "string",
+          "partners": "string",
+          "poster": "string",
+          "posters": "array",
+          "release": "string",
+          "stat": "string",
+          "desc": "string"
+        },
+        "count": 24
+      },
+      {
+        "name": "costars",
+        "kind": "array",
+        "fields": {
+          "name": "string",
+          "weight": "string",
+          "reason": "string",
+          "image": "string",
+          "workIds": "array"
+        },
+        "count": 7
+      },
+      {
+        "name": "slots",
+        "kind": "array",
+        "fields": {},
+        "count": 7
+      },
+      {
+        "name": "categories",
+        "kind": "array",
+        "fields": {},
+        "count": 2
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "nav.nav > button:nth-child(1)",
+      "event": "click",
+      "action": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav > button:nth-child(1)|semantic-control",
+      "target": "#modal",
+      "mutationTargets": [
+        "#modal",
+        ".modal-close",
+        "#costarGraphWrap",
+        ".edge",
+        ".view",
+        "@dynamic-id",
+        ".nav-btn"
+      ],
+      "stateMutations": [
+        "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+        "modal.classList.add(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"false\")",
+        "modal.querySelector(\".modal-close\").focus()",
+        "graphWrap.classList.add(\"panel-open\")",
+        "state.el.classList.toggle(\"active\", key === String(index))",
+        "state.el.classList.toggle(\"dim\", !related.has(key))",
+        "line.classList.toggle(\"hl\", on)",
+        "line.classList.toggle(\"dim\", !on)",
+        "view.classList.remove(\"active\")",
+        "document.getElementById(\"view-\" + name).classList.add(\"active\")",
+        "btn.classList.toggle(\"active\", active)",
+        "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.add(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"false\")"
+        },
+        {
+          "target": ".modal-close",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "modal.querySelector(\".modal-close\").focus()"
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"hl\", on)"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "dim",
+          "value": "dim",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"dim\", !on)"
+        },
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars",
+        "graphNodeState"
+      ]
+    },
+    {
+      "trigger": "nav.nav > button:nth-child(2)",
+      "event": "click",
+      "action": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav > button:nth-child(2)|semantic-control",
+      "target": "#modal",
+      "mutationTargets": [
+        "#modal",
+        ".modal-close",
+        "#costarGraphWrap",
+        ".edge",
+        ".view",
+        "@dynamic-id",
+        ".nav-btn"
+      ],
+      "stateMutations": [
+        "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+        "modal.classList.add(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"false\")",
+        "modal.querySelector(\".modal-close\").focus()",
+        "graphWrap.classList.add(\"panel-open\")",
+        "state.el.classList.toggle(\"active\", key === String(index))",
+        "state.el.classList.toggle(\"dim\", !related.has(key))",
+        "line.classList.toggle(\"hl\", on)",
+        "line.classList.toggle(\"dim\", !on)",
+        "view.classList.remove(\"active\")",
+        "document.getElementById(\"view-\" + name).classList.add(\"active\")",
+        "btn.classList.toggle(\"active\", active)",
+        "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.add(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"false\")"
+        },
+        {
+          "target": ".modal-close",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "modal.querySelector(\".modal-close\").focus()"
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"hl\", on)"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "dim",
+          "value": "dim",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"dim\", !on)"
+        },
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars",
+        "graphNodeState"
+      ]
+    },
+    {
+      "trigger": "nav.nav > button:nth-child(3)",
+      "event": "click",
+      "action": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav > button:nth-child(3)|semantic-control",
+      "target": "#modal",
+      "mutationTargets": [
+        "#modal",
+        ".modal-close",
+        "#costarGraphWrap",
+        ".edge",
+        ".view",
+        "@dynamic-id",
+        ".nav-btn"
+      ],
+      "stateMutations": [
+        "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit",
+        "modal.classList.add(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"false\")",
+        "modal.querySelector(\".modal-close\").focus()",
+        "graphWrap.classList.add(\"panel-open\")",
+        "state.el.classList.toggle(\"active\", key === String(index))",
+        "state.el.classList.toggle(\"dim\", !related.has(key))",
+        "line.classList.toggle(\"hl\", on)",
+        "line.classList.toggle(\"dim\", !on)",
+        "view.classList.remove(\"active\")",
+        "document.getElementById(\"view-\" + name).classList.add(\"active\")",
+        "btn.classList.toggle(\"active\", active)",
+        "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "modal.innerHTML = '<div class=\"modal-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modalTit"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.add(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "false",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"false\")"
+        },
+        {
+          "target": ".modal-close",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "modal.querySelector(\".modal-close\").focus()"
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"hl\", on)"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "dim",
+          "value": "dim",
+          "confidence": 0.96,
+          "source": "line.classList.toggle(\"dim\", !on)"
+        },
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars",
+        "graphNodeState"
+      ]
+    },
+    {
+      "trigger": ".arrow",
+      "event": "click",
+      "action": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item.",
+      "target": "#view-identity",
+      "mutationTargets": [
+        "#view-identity"
+      ],
+      "stateMutations": [
+        "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-identity",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+        }
+      ],
+      "dataDependencies": [
+        "galleries",
+        "tags",
+        "facts"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|.arrow|script-assignment"
+    },
+    {
+      "trigger": "#photoCard",
+      "event": "pointerdown",
+      "action": "AST event handler for pointerdown",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "pointerdown|#photoCard|script-assignment"
+    },
+    {
+      "trigger": "#photoCard",
+      "event": "pointerup",
+      "action": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item.",
+      "target": "#view-identity",
+      "mutationTargets": [
+        "#view-identity"
+      ],
+      "stateMutations": [
+        "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-identity",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewIdentity.innerHTML = '<div class=\"photo-card\" id=\"photoCard\">' + '<img src=\"' + escapeHtml(item."
+        }
+      ],
+      "dataDependencies": [
+        "galleries",
+        "tags",
+        "facts"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "pointerup|#photoCard|script-assignment"
+    },
+    {
+      "trigger": ".radar-center",
+      "event": "click",
+      "action": "view.classList.remove(\"active\")",
+      "target": ".view",
+      "mutationTargets": [
+        ".view",
+        "@dynamic-id",
+        ".nav-btn",
+        "#modal",
+        "#costarGraphWrap",
+        ".node"
+      ],
+      "stateMutations": [
+        "view.classList.remove(\"active\")",
+        "document.getElementById(\"view-\" + name).classList.add(\"active\")",
+        "btn.classList.toggle(\"active\", active)",
+        "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")",
+        "modal.classList.remove(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"true\")",
+        "modal.innerHTML = \"\"",
+        "graphWrap.classList.remove(\"panel-open\")",
+        "lastModalTrigger.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".view",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "view.classList.remove(\"active\")"
+        },
+        {
+          "target": "@dynamic-id",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "document.getElementById(\"view-\" + name).classList.add(\"active\")"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "btn.classList.toggle(\"active\", active)"
+        },
+        {
+          "target": ".nav-btn",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-current",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-current\", active ? \"page\" : \"false\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.remove(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"true\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "modal.innerHTML = \"\""
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "remove",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.remove(\"panel-open\")"
+        },
+        {
+          "target": ".node",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "lastModalTrigger.focus()"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|.radar-center|script-assignment"
+    },
+    {
+      "trigger": "#costarGraphWrap",
+      "event": "pointerdown",
+      "action": "AST event handler for pointerdown",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "pointerdown|#costarGraphWrap|script-assignment"
+    },
+    {
+      "trigger": "#costarGraphWrap",
+      "event": "pointerup",
+      "action": "graphWrap.classList.add(\"panel-open\")",
+      "mutationTargets": [
+        "#costarGraphWrap"
+      ],
+      "stateMutations": [
+        "graphWrap.classList.add(\"panel-open\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "add",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.add(\"panel-open\")"
+        }
+      ],
+      "dataDependencies": [
+        "costars"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "pointerup|#costarGraphWrap|script-assignment"
+    },
+    {
+      "trigger": ".modal-close",
+      "event": "click",
+      "action": "modal.classList.remove(\"active\")",
+      "target": "#modal",
+      "mutationTargets": [
+        "#modal",
+        "#costarGraphWrap",
+        ".edge",
+        ".node"
+      ],
+      "stateMutations": [
+        "modal.classList.remove(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"true\")",
+        "modal.innerHTML = \"\"",
+        "graphWrap.classList.remove(\"panel-open\")",
+        "state.el.classList.remove(\"active\", \"dim\")",
+        "line.classList.remove(\"hl\", \"dim\")",
+        "lastModalTrigger.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.remove(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"true\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "modal.innerHTML = \"\""
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "remove",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.remove(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "remove",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.remove(\"hl\", \"dim\")"
+        },
+        {
+          "target": ".node",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "lastModalTrigger.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "graphNodeState"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|.modal-close|script-assignment"
+    },
+    {
+      "trigger": ".category-btn",
+      "event": "click",
+      "action": "String(value) .replace(/&/g, \"&amp;\")",
+      "target": "#view-works",
+      "mutationTargets": [
+        "#view-works"
+      ],
+      "stateMutations": [
+        "String(value) .replace(/&/g, \"&amp;\")",
+        "String(value) .replace(/&/g, \"&amp;\") .replace(/</g, \"&lt;\")",
+        "String(value) .replace(/&/g, \"&amp;\") .replace(/</g, \"&lt;\") .replace(/>/g, \"&gt;\")",
+        "String(value) .replace(/&/g, \"&amp;\") .replace(/</g, \"&lt;\") .replace(/>/g, \"&gt;\") .replace(/\"/g, \"",
+        "viewWorks.innerHTML = '<div class=\"works-toolbar\">' + '<div class=\"category-row\" aria-label=\"作品类型\">'",
+        "activeCategory.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-works",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewWorks.innerHTML = '<div class=\"works-toolbar\">' + '<div class=\"category-row\" aria-label=\"作品类型\">'"
+        }
+      ],
+      "dataDependencies": [
+        "works",
+        "activeWorkIds",
+        "visitedWorkIds",
+        "activePosterIndexes"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|.category-btn|script-assignment"
+    },
+    {
+      "trigger": "[data-select-poster]",
+      "event": "click",
+      "action": "activeCategory.focus()",
+      "mutationTargets": [],
+      "stateMutations": [
+        "activeCategory.focus()"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|[data-select-poster]|script-assignment"
+    },
+    {
+      "trigger": "[data-select-work]",
+      "event": "click",
+      "action": "activeCategory.focus()",
+      "target": "#view-works",
+      "mutationTargets": [
+        "#view-works",
+        "[data-next-work]"
+      ],
+      "stateMutations": [
+        "activeCategory.focus()",
+        "viewWorks.innerHTML = '<div class=\"works-toolbar\">' + '<div class=\"category-row\" aria-label=\"作品类型\">'",
+        "button.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#view-works",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "viewWorks.innerHTML = '<div class=\"works-toolbar\">' + '<div class=\"category-row\" aria-label=\"作品类型\">'"
+        },
+        {
+          "target": "[data-next-work]",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "button.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "works",
+        "activeWorkIds",
+        "visitedWorkIds"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|[data-select-work]|script-assignment"
+    },
+    {
+      "trigger": "[data-next-work]",
+      "event": "click",
+      "action": "activeCategory.focus()",
+      "mutationTargets": [
+        "[data-next-work]"
+      ],
+      "stateMutations": [
+        "activeCategory.focus()",
+        "button.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": "[data-next-work]",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "button.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "activeWorkIds",
+        "visitedWorkIds"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|[data-next-work]|script-assignment"
+    },
+    {
+      "trigger": "#modal",
+      "event": "click",
+      "action": "modal.classList.remove(\"active\")",
+      "target": "#costarGraphWrap",
+      "mutationTargets": [
+        "#modal",
+        "#costarGraphWrap",
+        ".edge",
+        ".node"
+      ],
+      "stateMutations": [
+        "modal.classList.remove(\"active\")",
+        "modal.setAttribute(\"aria-hidden\", \"true\")",
+        "modal.innerHTML = \"\"",
+        "graphWrap.classList.remove(\"panel-open\")",
+        "state.el.classList.remove(\"active\", \"dim\")",
+        "line.classList.remove(\"hl\", \"dim\")",
+        "lastModalTrigger.focus()"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modal",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modal.classList.remove(\"active\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-hidden",
+          "value": "true",
+          "confidence": 0.94,
+          "source": "modal.setAttribute(\"aria-hidden\", \"true\")"
+        },
+        {
+          "target": "#modal",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "modal.innerHTML = \"\""
+        },
+        {
+          "target": "#costarGraphWrap",
+          "kind": "class",
+          "operation": "remove",
+          "name": "panel-open",
+          "value": "panel-open",
+          "confidence": 0.96,
+          "source": "graphWrap.classList.remove(\"panel-open\")"
+        },
+        {
+          "target": ".edge",
+          "kind": "class",
+          "operation": "remove",
+          "name": "hl",
+          "value": "hl",
+          "confidence": 0.96,
+          "source": "line.classList.remove(\"hl\", \"dim\")"
+        },
+        {
+          "target": ".node",
+          "kind": "focus",
+          "operation": "focus",
+          "value": true,
+          "confidence": 0.98,
+          "source": "lastModalTrigger.focus()"
+        }
+      ],
+      "dataDependencies": [
+        "graphNodeState"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#modal|script-assignment"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(prefers-reduced-motion: reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(prefers-reduced-motion: reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 3,
+    "unlabeledButtons": 0,
+    "images": 0,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": []
+}
