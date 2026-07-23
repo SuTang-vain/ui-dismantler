@@ -316,18 +316,6 @@
   ],
   "coverageWaivers": [
     {
-      "fingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control",
-      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
-    },
-    {
-      "fingerprint": "click|div.member-grid > button:nth-child(3)|semantic-control",
-      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
-    },
-    {
-      "fingerprint": "click|div.member-grid > button:nth-child(4)|semantic-control",
-      "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
-    },
-    {
       "fingerprint": "click|button.carousel-prev|semantic-control",
       "reason": "Member carousel has one page for the supplied four-member dataset, so the previous control is intentionally hidden."
     },
@@ -462,6 +450,54 @@
     {
       "fingerprint": "click|#tl-track > article:nth-child(1)|script-assignment",
       "reason": "Timeline expansion depends on the timeline activation path and is browser-smoke-tested separately."
+    }
+  ],
+  "equivalenceGroups": [
+    {
+      "id": "interaction-equivalence-1",
+      "signature": "{\"event\":\"click\",\"source\":\"semantic-control\",\"action\":\"semantic-control\",\"target\":\"\",\"triggerShape\":\"div.member-grid > button:nth-child(*)\",\"mutationTargets\":[],\"transitions\":[]}",
+      "event": "click",
+      "triggerShape": "div.member-grid > button:nth-child(*)",
+      "representativeFingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control",
+      "memberFingerprints": [
+        "click|div.member-grid > button:nth-child(1)|semantic-control",
+        "click|div.member-grid > button:nth-child(2)|semantic-control",
+        "click|div.member-grid > button:nth-child(3)|semantic-control",
+        "click|div.member-grid > button:nth-child(4)|semantic-control"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：div.member-grid > button:nth-child(*)"
+    },
+    {
+      "id": "interaction-equivalence-2",
+      "signature": "{\"event\":\"click\",\"source\":\"semantic-control\",\"action\":\"semantic-control\",\"target\":\"\",\"triggerShape\":\"#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)\",\"mutationTargets\":[],\"transitions\":[]}",
+      "event": "click",
+      "triggerShape": "#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)",
+      "representativeFingerprint": "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "memberFingerprints": [
+        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)"
+    },
+    {
+      "id": "interaction-equivalence-3",
+      "signature": "{\"event\":\"click\",\"source\":\"script-assignment\",\"action\":\"item.classList.remove('is-expanded')\",\"target\":\".t-item\",\"triggerShape\":\"#tl-track > article:nth-child(*)\",\"mutationTargets\":[\"#tl-track\",\".t-item\"],\"transitions\":[\"#tl-track|style|set|scrollSnapType|\\\"none\\\"\",\"#tl-track|style|set|scrollSnapType|\\\"x proximity\\\"\",\".t-item|class|add|is-expanded|\\\"is-expanded\\\"\",\".t-item|class|remove|is-expanded|\\\"is-expanded\\\"\"]}",
+      "event": "click",
+      "triggerShape": "#tl-track > article:nth-child(*)",
+      "representativeFingerprint": "click|#tl-track > article:nth-child(1)|script-assignment",
+      "memberFingerprints": [
+        "click|#tl-track > article:nth-child(1)|script-assignment",
+        "click|#tl-track > article:nth-child(2)|script-assignment",
+        "click|#tl-track > article:nth-child(3)|script-assignment",
+        "click|#tl-track > article:nth-child(4)|script-assignment",
+        "click|#tl-track > article:nth-child(5)|script-assignment",
+        "click|#tl-track > article:nth-child(6)|script-assignment"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：#tl-track > article:nth-child(*)"
     }
   ]
 }

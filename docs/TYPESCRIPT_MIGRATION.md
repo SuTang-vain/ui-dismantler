@@ -172,3 +172,12 @@ AST 分析器还会把可观察副作用标准化为 `stateTransitions`，记录
 - BLACKPINK planning improved from 12 components, 2 over-budget components, and 9 unowned interactions to 16 components, 49/49 interactions owned, zero over-budget components, and `ready=true`.
 - BLACKPINK Gold+ result: final overall 0.9996, DOM/text 1.0, four initial viewports, four critical scenario matrices, computed style 0.9997, pixel diff 0.001312, 6/6 formal scenarios, verified coverage 1.0, and zero runtime errors.
 - Eight-case planning regression remains ready across all cases with zero over-budget components and zero planning errors.
+
+### 2026-07-23 formal regression, telemetry, and interaction equivalence
+
+- Added an eight-case planning regression that requires `ready=true`, complete interaction ownership, zero planning errors, and zero components over the unchanged 150-line budget.
+- Added an opt-in BLACKPINK Gold+ browser regression covering four initial viewports plus four critical interaction viewport matrices.
+- Quality reports now include phase timing for analysis, validation, DOM roundtrip, initial visual matrices, formal scenario state checks, and critical scenario visual matrices, plus workload counts.
+- The self-contained transpiler accepts `--metrics-out <report.json>` and records read/parse, analysis, rewrite, write, and total timing without changing its existing positional interface.
+- Strict interaction equivalence groups only collapse repeated `nth-child` / `nth-of-type` instances when event protocol, source, action, target, mutation targets, and state transitions match; data-driven navigation remains independent, and pointer/touch events are never converted to clicks.
+- BLACKPINK candidate scenarios decreased from 49 to 36 across three strict groups. The reviewed member-control group reduced waivers from 37 to 34 while increasing eligible verified interactions from 12 to 15 and preserving verified coverage at 1.0.

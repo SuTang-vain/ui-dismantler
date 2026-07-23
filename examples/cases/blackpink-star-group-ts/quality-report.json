@@ -36065,10 +36065,10 @@
   ],
   "coverage": {
     "totalInteractions": 49,
-    "eligibleInteractions": 12,
-    "waivedInteractions": 37,
-    "declaredCovered": 12,
-    "verifiedCovered": 12,
+    "eligibleInteractions": 15,
+    "waivedInteractions": 34,
+    "declaredCovered": 15,
+    "verifiedCovered": 15,
     "declaredRate": 1,
     "verifiedRate": 1,
     "missing": [],
@@ -36080,18 +36080,6 @@
       {
         "fingerprint": "click|div.entry-grids > button:nth-child(2)|toggle",
         "reason": "Timeline entry delegates to the same timeline activation path, which requires browser scroll APIs unavailable in jsdom."
-      },
-      {
-        "fingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control",
-        "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
-      },
-      {
-        "fingerprint": "click|div.member-grid > button:nth-child(3)|semantic-control",
-        "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
-      },
-      {
-        "fingerprint": "click|div.member-grid > button:nth-child(4)|semantic-control",
-        "reason": "Repeated member control; Jennie selection formally verifies the shared member handler."
       },
       {
         "fingerprint": "click|button.carousel-prev|semantic-control",
@@ -69094,16 +69082,16 @@
           "pixels": {
             "width": 1024,
             "height": 768,
-            "differentPixels": 1032,
+            "differentPixels": 0,
             "totalPixels": 786432,
-            "diffRate": 0.001312,
+            "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
             "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/reference.png",
             "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/generated.png",
             "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/diff.png"
           },
-          "score": 0.9994,
+          "score": 0.9998,
           "passed": true
         },
         {
@@ -69300,11 +69288,11 @@
         }
       ],
       "passed": true,
-      "score": 0.9994,
+      "score": 0.9998,
       "worstViewport": "desktop",
       "worstSelectorCoverage": 1,
       "worstComputedStyle": 0.9997,
-      "worstPixelDiff": 0.001312,
+      "worstPixelDiff": 0,
       "runtimeErrors": 0
     },
     {
@@ -69579,8 +69567,8 @@
   ],
   "scores": {
     "dom": 1,
-    "visual": 0.9994,
-    "overall": 0.9996
+    "visual": 0.9998,
+    "overall": 0.9999
   },
   "gates": [
     {
@@ -69596,7 +69584,7 @@
     {
       "id": "overall",
       "passed": true,
-      "detail": "finalOverall=0.9996（dom=1，visual=0.9994），门槛=0.85"
+      "detail": "finalOverall=0.9999（dom=1，visual=0.9998），门槛=0.85"
     },
     {
       "id": "structure",
@@ -69636,12 +69624,12 @@
     {
       "id": "pixel-diff",
       "passed": true,
-      "detail": "worstPixelDiff=0.001312，门槛=0.02"
+      "detail": "worstPixelDiff=0，门槛=0.02"
     },
     {
       "id": "scenario-protocol",
       "passed": true,
-      "detail": "正式场景=6，candidate=0，waiver=37"
+      "detail": "正式场景=6，candidate=0，waiver=34"
     },
     {
       "id": "scenarios",
@@ -69651,8 +69639,27 @@
     {
       "id": "coverage",
       "passed": true,
-      "detail": "verifiedCoverage=1.000，门槛=0.8，eligible=12，waived=37"
+      "detail": "verifiedCoverage=1.000，门槛=0.8，eligible=15，waived=34"
     }
   ],
+  "telemetry": {
+    "timing": {
+      "analyzeMs": 7.619,
+      "validateMs": 18.169,
+      "roundtripMs": 1491.377,
+      "visualMatrixMs": 5006.056,
+      "scenarioStateMs": 9805.934,
+      "scenarioVisualMatrixMs": 30389.518,
+      "totalMs": 46720.339
+    },
+    "workload": {
+      "interactions": 49,
+      "formalScenarios": 6,
+      "criticalScenarios": 4,
+      "coverageWaivers": 34,
+      "viewports": 4,
+      "scenarioViewportRuns": 16
+    }
+  },
   "passed": true
 }

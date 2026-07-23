@@ -1,7 +1,55 @@
 {
   "schemaVersion": "1.0",
   "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
-  "candidatePolicy": "candidate scenarios are excluded from coverage until reviewed",
+  "candidatePolicy": "candidate scenarios are excluded from coverage until reviewed; strict repeated-instance equivalence groups require representative review",
+  "equivalenceGroups": [
+    {
+      "id": "interaction-equivalence-1",
+      "signature": "{\"event\":\"click\",\"source\":\"semantic-control\",\"action\":\"semantic-control\",\"target\":\"\",\"triggerShape\":\"div.member-grid > button:nth-child(*)\",\"mutationTargets\":[],\"transitions\":[]}",
+      "event": "click",
+      "triggerShape": "div.member-grid > button:nth-child(*)",
+      "representativeFingerprint": "click|div.member-grid > button:nth-child(1)|semantic-control",
+      "memberFingerprints": [
+        "click|div.member-grid > button:nth-child(1)|semantic-control",
+        "click|div.member-grid > button:nth-child(2)|semantic-control",
+        "click|div.member-grid > button:nth-child(3)|semantic-control",
+        "click|div.member-grid > button:nth-child(4)|semantic-control"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：div.member-grid > button:nth-child(*)"
+    },
+    {
+      "id": "interaction-equivalence-2",
+      "signature": "{\"event\":\"click\",\"source\":\"semantic-control\",\"action\":\"semantic-control\",\"target\":\"\",\"triggerShape\":\"#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)\",\"mutationTargets\":[],\"transitions\":[]}",
+      "event": "click",
+      "triggerShape": "#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)",
+      "representativeFingerprint": "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+      "memberFingerprints": [
+        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：#tl-track > article:nth-child(*) > div:nth-child(*) > button:nth-child(*)"
+    },
+    {
+      "id": "interaction-equivalence-3",
+      "signature": "{\"event\":\"click\",\"source\":\"script-assignment\",\"action\":\"item.classList.remove('is-expanded')\",\"target\":\".t-item\",\"triggerShape\":\"#tl-track > article:nth-child(*)\",\"mutationTargets\":[\"#tl-track\",\".t-item\"],\"transitions\":[\"#tl-track|style|set|scrollSnapType|\\\"none\\\"\",\"#tl-track|style|set|scrollSnapType|\\\"x proximity\\\"\",\".t-item|class|add|is-expanded|\\\"is-expanded\\\"\",\".t-item|class|remove|is-expanded|\\\"is-expanded\\\"\"]}",
+      "event": "click",
+      "triggerShape": "#tl-track > article:nth-child(*)",
+      "representativeFingerprint": "click|#tl-track > article:nth-child(1)|script-assignment",
+      "memberFingerprints": [
+        "click|#tl-track > article:nth-child(1)|script-assignment",
+        "click|#tl-track > article:nth-child(2)|script-assignment",
+        "click|#tl-track > article:nth-child(3)|script-assignment",
+        "click|#tl-track > article:nth-child(4)|script-assignment",
+        "click|#tl-track > article:nth-child(5)|script-assignment",
+        "click|#tl-track > article:nth-child(6)|script-assignment"
+      ],
+      "reason": "相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：#tl-track > article:nth-child(*)"
+    }
+  ],
   "scenarios": [
     {
       "id": "candidate-click-1",
@@ -431,10 +479,16 @@
       "id": "candidate-click-9",
       "label": "Candidate: click (div.member-grid > button:nth-child(1))",
       "candidate": true,
+      "equivalenceGroupId": "interaction-equivalence-1",
       "covers": [
-        "click|div.member-grid > button:nth-child(1)|semantic-control"
+        "click|div.member-grid > button:nth-child(1)|semantic-control",
+        "click|div.member-grid > button:nth-child(2)|semantic-control",
+        "click|div.member-grid > button:nth-child(3)|semantic-control",
+        "click|div.member-grid > button:nth-child(4)|semantic-control"
       ],
       "notes": [
+        "严格交互等价组：4 个重复实例共享事件、处理动作和可观察状态转换",
+        "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景",
         "人工确认 selector 是否命中预期控件",
         "补充证明状态真实发生的 assertions",
         "确认后移除 candidate 标记再纳入覆盖率门禁"
@@ -454,81 +508,6 @@
     },
     {
       "id": "candidate-click-10",
-      "label": "Candidate: click (div.member-grid > button:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|div.member-grid > button:nth-child(2)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.member-grid > button:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.member-grid > button:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-11",
-      "label": "Candidate: click (div.member-grid > button:nth-child(3))",
-      "candidate": true,
-      "covers": [
-        "click|div.member-grid > button:nth-child(3)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.member-grid > button:nth-child(3)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.member-grid > button:nth-child(3)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-12",
-      "label": "Candidate: click (div.member-grid > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|div.member-grid > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.member-grid > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.member-grid > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-13",
       "label": "Candidate: click (button.carousel-prev)",
       "candidate": true,
       "covers": [
@@ -560,7 +539,7 @@
       ]
     },
     {
-      "id": "candidate-click-14",
+      "id": "candidate-click-11",
       "label": "Candidate: click (button.carousel-next)",
       "candidate": true,
       "covers": [
@@ -592,7 +571,7 @@
       ]
     },
     {
-      "id": "candidate-click-15",
+      "id": "candidate-click-12",
       "label": "Candidate: click (button.tl-prev-pc)",
       "candidate": true,
       "covers": [
@@ -617,7 +596,7 @@
       ]
     },
     {
-      "id": "candidate-click-16",
+      "id": "candidate-click-13",
       "label": "Candidate: click (button.tl-next-pc)",
       "candidate": true,
       "covers": [
@@ -642,13 +621,21 @@
       ]
     },
     {
-      "id": "candidate-click-17",
+      "id": "candidate-click-14",
       "label": "Candidate: click (#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4))",
       "candidate": true,
+      "equivalenceGroupId": "interaction-equivalence-2",
       "covers": [
-        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control"
+        "click|#tl-track > article:nth-child(1) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control",
+        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
       ],
       "notes": [
+        "严格交互等价组：6 个重复实例共享事件、处理动作和可观察状态转换",
+        "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景",
         "人工确认 selector 是否命中预期控件",
         "补充证明状态真实发生的 assertions",
         "确认后移除 candidate 标记再纳入覆盖率门禁"
@@ -667,132 +654,7 @@
       ]
     },
     {
-      "id": "candidate-click-18",
-      "label": "Candidate: click (#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#tl-track > article:nth-child(2) > div:nth-child(3) > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-19",
-      "label": "Candidate: click (#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#tl-track > article:nth-child(3) > div:nth-child(3) > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-20",
-      "label": "Candidate: click (#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#tl-track > article:nth-child(4) > div:nth-child(3) > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-21",
-      "label": "Candidate: click (#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#tl-track > article:nth-child(5) > div:nth-child(3) > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-22",
-      "label": "Candidate: click (#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#tl-track > article:nth-child(6) > div:nth-child(3) > button:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-23",
+      "id": "candidate-click-15",
       "label": "Candidate: click (button.tl-prev-mobile)",
       "candidate": true,
       "covers": [
@@ -817,7 +679,7 @@
       ]
     },
     {
-      "id": "candidate-click-24",
+      "id": "candidate-click-16",
       "label": "Candidate: click (button.tl-next-mobile)",
       "candidate": true,
       "covers": [
@@ -842,7 +704,7 @@
       ]
     },
     {
-      "id": "candidate-click-25",
+      "id": "candidate-click-17",
       "label": "Candidate: click (button.ws-prev)",
       "candidate": true,
       "covers": [
@@ -898,7 +760,7 @@
       ]
     },
     {
-      "id": "candidate-click-26",
+      "id": "candidate-click-18",
       "label": "Candidate: click (button.ws-next)",
       "candidate": true,
       "covers": [
@@ -954,7 +816,7 @@
       ]
     },
     {
-      "id": "candidate-click-27",
+      "id": "candidate-click-19",
       "label": "Candidate: click (#ws-story-cta)",
       "candidate": true,
       "covers": [
@@ -984,7 +846,7 @@
       ]
     },
     {
-      "id": "candidate-click-28",
+      "id": "candidate-click-20",
       "label": "Candidate: click (#ws-story-close)",
       "candidate": true,
       "covers": [
@@ -1014,7 +876,7 @@
       ]
     },
     {
-      "id": "candidate-click-29",
+      "id": "candidate-click-21",
       "label": "Candidate: click (#member-modal-close)",
       "candidate": true,
       "covers": [
@@ -1044,7 +906,7 @@
       ]
     },
     {
-      "id": "candidate-click-30",
+      "id": "candidate-click-22",
       "label": "Candidate: click (#modal-close)",
       "candidate": true,
       "covers": [
@@ -1086,7 +948,7 @@
       ]
     },
     {
-      "id": "candidate-click-31",
+      "id": "candidate-click-23",
       "label": "Candidate: click (.member)",
       "candidate": true,
       "covers": [
@@ -1111,7 +973,7 @@
       ]
     },
     {
-      "id": "candidate-click-32",
+      "id": "candidate-click-24",
       "label": "Candidate: click (.ws-dot)",
       "candidate": true,
       "covers": [
@@ -1167,7 +1029,7 @@
       ]
     },
     {
-      "id": "candidate-click-33",
+      "id": "candidate-click-25",
       "label": "Candidate: click (div.member-stage)",
       "candidate": true,
       "covers": [
@@ -1192,7 +1054,7 @@
       ]
     },
     {
-      "id": "candidate-touchstart-34",
+      "id": "candidate-touchstart-26",
       "label": "Candidate: unsupported-pointer (div.member-stage)",
       "candidate": true,
       "covers": [
@@ -1210,7 +1072,7 @@
       ]
     },
     {
-      "id": "candidate-click-35",
+      "id": "candidate-click-27",
       "label": "Candidate: click (div.carousel-dots)",
       "candidate": true,
       "covers": [
@@ -1235,7 +1097,7 @@
       ]
     },
     {
-      "id": "candidate-click-36",
+      "id": "candidate-click-28",
       "label": "Candidate: click (div.member-grid)",
       "candidate": true,
       "covers": [
@@ -1260,7 +1122,7 @@
       ]
     },
     {
-      "id": "candidate-click-37",
+      "id": "candidate-click-29",
       "label": "Candidate: click (#member-modal)",
       "candidate": true,
       "covers": [
@@ -1290,7 +1152,7 @@
       ]
     },
     {
-      "id": "candidate-scroll-38",
+      "id": "candidate-scroll-30",
       "label": "Candidate: click (#tl-track)",
       "candidate": true,
       "covers": [
@@ -1315,7 +1177,7 @@
       ]
     },
     {
-      "id": "candidate-click-39",
+      "id": "candidate-click-31",
       "label": "Candidate: click (#modal)",
       "candidate": true,
       "covers": [
@@ -1357,7 +1219,7 @@
       ]
     },
     {
-      "id": "candidate-click-40",
+      "id": "candidate-click-32",
       "label": "Candidate: click (.work-item)",
       "candidate": true,
       "covers": [
@@ -1411,7 +1273,7 @@
       ]
     },
     {
-      "id": "candidate-mouseenter-41",
+      "id": "candidate-mouseenter-33",
       "label": "Candidate: click (#works-carousel)",
       "candidate": true,
       "covers": [
@@ -1436,7 +1298,7 @@
       ]
     },
     {
-      "id": "candidate-mouseleave-42",
+      "id": "candidate-mouseleave-34",
       "label": "Candidate: click (#works-carousel)",
       "candidate": true,
       "covers": [
@@ -1461,7 +1323,7 @@
       ]
     },
     {
-      "id": "candidate-click-43",
+      "id": "candidate-click-35",
       "label": "Candidate: click (#work-story-panel)",
       "candidate": true,
       "covers": [
@@ -1491,13 +1353,21 @@
       ]
     },
     {
-      "id": "candidate-click-44",
+      "id": "candidate-click-36",
       "label": "Candidate: click (#tl-track > article:nth-child(1))",
       "candidate": true,
+      "equivalenceGroupId": "interaction-equivalence-3",
       "covers": [
-        "click|#tl-track > article:nth-child(1)|script-assignment"
+        "click|#tl-track > article:nth-child(1)|script-assignment",
+        "click|#tl-track > article:nth-child(2)|script-assignment",
+        "click|#tl-track > article:nth-child(3)|script-assignment",
+        "click|#tl-track > article:nth-child(4)|script-assignment",
+        "click|#tl-track > article:nth-child(5)|script-assignment",
+        "click|#tl-track > article:nth-child(6)|script-assignment"
       ],
       "notes": [
+        "严格交互等价组：6 个重复实例共享事件、处理动作和可观察状态转换",
+        "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景",
         "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
         "确认后移除 candidate 标记再纳入覆盖率门禁"
       ],
@@ -1505,166 +1375,6 @@
         {
           "action": "click",
           "target": "#tl-track > article:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": ".t-item",
-          "classExcludes": [
-            "is-expanded"
-          ]
-        },
-        {
-          "target": ".t-item",
-          "classIncludes": [
-            "is-expanded"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-45",
-      "label": "Candidate: click (#tl-track > article:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(2)|script-assignment"
-      ],
-      "notes": [
-        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": ".t-item",
-          "classExcludes": [
-            "is-expanded"
-          ]
-        },
-        {
-          "target": ".t-item",
-          "classIncludes": [
-            "is-expanded"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-46",
-      "label": "Candidate: click (#tl-track > article:nth-child(3))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(3)|script-assignment"
-      ],
-      "notes": [
-        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(3)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": ".t-item",
-          "classExcludes": [
-            "is-expanded"
-          ]
-        },
-        {
-          "target": ".t-item",
-          "classIncludes": [
-            "is-expanded"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-47",
-      "label": "Candidate: click (#tl-track > article:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(4)|script-assignment"
-      ],
-      "notes": [
-        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": ".t-item",
-          "classExcludes": [
-            "is-expanded"
-          ]
-        },
-        {
-          "target": ".t-item",
-          "classIncludes": [
-            "is-expanded"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-48",
-      "label": "Candidate: click (#tl-track > article:nth-child(5))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(5)|script-assignment"
-      ],
-      "notes": [
-        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(5)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": ".t-item",
-          "classExcludes": [
-            "is-expanded"
-          ]
-        },
-        {
-          "target": ".t-item",
-          "classIncludes": [
-            "is-expanded"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-49",
-      "label": "Candidate: click (#tl-track > article:nth-child(6))",
-      "candidate": true,
-      "covers": [
-        "click|#tl-track > article:nth-child(6)|script-assignment"
-      ],
-      "notes": [
-        "已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#tl-track > article:nth-child(6)"
         }
       ],
       "assertions": [

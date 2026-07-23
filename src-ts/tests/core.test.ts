@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { analyzeHtml } from "../analysis/analyzer.js";
-import { computeCoverage, generateScenarios, loadScenarios } from "../evaluation/scenarios.js";
+import { computeCoverage, generateScenarios, groupEquivalentInteractions, loadScenarios } from "../evaluation/scenarios.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { validateLibrary } from "../validation/library.js";
 import { planComponents, validateComponentPlans } from "../planning/components.js";
@@ -42,6 +42,36 @@ test("candidate scenarios remain review-gated", () => {
   assert.ok(document.scenarios.length > 0);
   assert.equal(document.scenarios.every((scenario) => scenario.candidate === true), true);
   assert.doesNotThrow(() => loadScenarios(document));
+});
+
+test("strict interaction equivalence groups repeated instances without collapsing data-driven navigation or pointer protocols", () => {
+  const transition = { target: ".item", kind: "class" as const, operation: "add" as const, name: "active", value: "active", confidence: 0.96, source: "item.classList.add('active')" };
+  const repeated = [1, 2, 3].map((index): Interaction => ({
+    trigger: `.list > button:nth-child(${index})`, event: "click", action: "semantic-control", source: "semantic-control", fingerprint: `click|.list > button:nth-child(${index})|semantic-control`, mutationTargets: [".item"], stateTransitions: [transition],
+  }));
+  const dataDriven: Interaction = { trigger: ".nav > button:nth-child(1)", event: "click", action: "openPanel", source: "script-assignment", fingerprint: "click|.nav > button:nth-child(1)|openPanel", dataDependencies: ["panels"], mutationTargets: [".panel"], stateTransitions: [transition] };
+  const pointer: Interaction = { trigger: ".list > button:nth-child(4)", event: "pointerdown", action: "drag", source: "event-listener", fingerprint: "pointerdown|.list > button:nth-child(4)|drag", mutationTargets: [".item"], stateTransitions: [transition] };
+  const grouped = groupEquivalentInteractions([...repeated, dataDriven, pointer]);
+  const equivalence = grouped.find((item) => item.group);
+  assert.equal(equivalence?.members.length, 3);
+  assert.deepEqual(equivalence?.group?.memberFingerprints, repeated.map((item) => item.fingerprint));
+  assert.equal(grouped.find((item) => item.representative === dataDriven)?.group, undefined);
+  assert.equal(grouped.find((item) => item.representative === pointer)?.group, undefined);
+});
+
+test("reviewed equivalence groups expand verified coverage from one representative", () => {
+  const interactions: Interaction[] = [1, 2, 3].map((index) => ({ trigger: `.list > button:nth-child(${index})`, event: "click", action: "semantic-control", source: "semantic-control", fingerprint: `click|.list > button:nth-child(${index})|semantic-control` }));
+  const fingerprints = interactions.map((item) => item.fingerprint);
+  const document = loadScenarios({
+    schemaVersion: "1.0",
+    equivalenceGroups: [{ id: "interaction-equivalence-1", signature: "strict", event: "click", triggerShape: ".list > button:nth-child(*)", representativeFingerprint: fingerprints[0], memberFingerprints: fingerprints, reason: "Repeated controls share one reviewed state transition." }],
+    scenarios: [{ id: "representative", covers: [fingerprints[0]], steps: [{ action: "click", target: ".list > button:nth-child(1)" }], assertions: [{ target: ".detail", visible: true }] }],
+  });
+  const coverage = computeCoverage(interactions, document, new Set([fingerprints[0]]));
+  assert.equal(coverage.eligibleInteractions, 3);
+  assert.equal(coverage.declaredCovered, 3);
+  assert.equal(coverage.verifiedCovered, 3);
+  assert.equal(coverage.verifiedRate, 1);
 });
 
 test("roundtrip score is compatible with the existing benchmark score", async () => {
@@ -416,7 +446,13 @@ test("self-contained transpiler preserves application JSON and rewrites ID refer
   const html = join(dir, "idrefs.html");
   const out = join(dir, "lib");
   await writeFile(html, `<!doctype html><html><head><style>:root{--primary:#6487fa;--ink:#111;--muted:#777;--line:#ddd;--paper:#fff}.panel{display:block}</style></head><body><button id="tab-one" data-tab="tab-one" aria-controls="panel-one">One</button><section id="panel-one" class="panel" aria-labelledby="tab-one"></section><script type="application/json" id="works-data">[{"title":"One"}]</script><script>var memberList=[{name:'One'}];var panels={'tab-one':document.getElementById('panel-one')};document.querySelector('[data-tab]').onclick=function(){panels[this.dataset.tab].classList.add('active')};var data=JSON.parse(document.getElementById('works-data').textContent);</script></body></html>`);
-  await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "IdRefFixture", "idrefs"]);
+  const metricsPath = join(dir, "transpile-metrics.json");
+  const { stdout } = await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "IdRefFixture", "idrefs", "--metrics-out", metricsPath]);
+  const summary = JSON.parse(stdout);
+  const metrics = JSON.parse(await readFile(metricsPath, "utf8"));
+  assert.ok(summary.telemetry.timing.totalMs > 0);
+  assert.equal(metrics.telemetry.workload.ids >= 3, true);
+  assert.equal(metrics.telemetry.workload.executableScripts, 1);
   const js = await readFile(join(out, "src", "idrefs.js"), "utf8");
   assert.match(js, /data-tab="sg-tab-one"/);
   assert.match(js, /aria-controls="sg-panel-one"/);

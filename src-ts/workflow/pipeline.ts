@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { performance } from "node:perf_hooks";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { generateScenarios, computeCoverage, loadScenarios } from "../evaluation/scenarios.js";
 import { evaluateBrowserQualityMatrix, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
@@ -40,6 +41,25 @@ export interface QualityGateReport {
   scores: { dom: number; visual: number | null; overall: number };
   passed: boolean;
   gates: Array<{ id: string; passed: boolean; detail: string }>;
+  telemetry: {
+    timing: {
+      analyzeMs: number;
+      validateMs: number;
+      roundtripMs: number;
+      visualMatrixMs: number;
+      scenarioStateMs: number;
+      scenarioVisualMatrixMs: number;
+      totalMs: number;
+    };
+    workload: {
+      interactions: number;
+      formalScenarios: number;
+      criticalScenarios: number;
+      coverageWaivers: number;
+      viewports: number;
+      scenarioViewportRuns: number;
+    };
+  };
 }
 
 export async function runQualityGate(options: {
@@ -52,12 +72,22 @@ export async function runQualityGate(options: {
   viewports?: QualityViewport[];
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
+  const totalStartedAt = performance.now();
+  const timing = { analyzeMs: 0, validateMs: 0, roundtripMs: 0, visualMatrixMs: 0, scenarioStateMs: 0, scenarioVisualMatrixMs: 0, totalMs: 0 };
+  const elapsed = (startedAt: number): number => Number((performance.now() - startedAt).toFixed(3));
   const thresholds = { ...DEFAULT_THRESHOLDS, ...options.thresholds };
+  let phaseStartedAt = performance.now();
   const manifest = options.manifestPath
     ? JSON.parse(await readFile(resolve(options.manifestPath), "utf8")) as Manifest
     : analyzeHtml(options.htmlPath);
+  timing.analyzeMs = elapsed(phaseStartedAt);
+  phaseStartedAt = performance.now();
   const staticValidation = validateLibrary(options.libDir);
+  timing.validateMs = elapsed(phaseStartedAt);
+  phaseStartedAt = performance.now();
   const roundtrip = await evaluateRoundtrip(options.htmlPath, options.libDir);
+  timing.roundtripMs = elapsed(phaseStartedAt);
+  phaseStartedAt = performance.now();
   const browserEvaluation = options.visual === false ? undefined : await evaluateBrowserQualityMatrix(options.htmlPath, options.libDir, {
     artifactDir: options.visualArtifactsDir,
     pixelThreshold: thresholds.pixelDiff,
@@ -65,6 +95,7 @@ export async function runQualityGate(options: {
     styleThreshold: thresholds.style,
     viewports: options.viewports,
   });
+  timing.visualMatrixMs = options.visual === false ? 0 : elapsed(phaseStartedAt);
   const browser = browserEvaluation?.primary;
   const browserMatrix = browserEvaluation?.matrix;
   const validation = browserEvaluation ? appendRuntimeSelectorCheck(staticValidation, browserEvaluation.worstSelectorCoverage ?? null) : staticValidation;
@@ -72,6 +103,7 @@ export async function runQualityGate(options: {
   let coverage: QualityGateReport["coverage"];
   let scenarioDocument: ScenarioDocument | undefined;
   let formalScenarioCount = 0;
+  let criticalScenarioCount = 0;
   let scenarioVisualMatrices: BrowserScenarioQualityMatrixReport[] | undefined;
   if (options.scenarioPath) {
     scenarioDocument = loadScenarios(JSON.parse(await readFile(resolve(options.scenarioPath), "utf8")));
@@ -79,15 +111,19 @@ export async function runQualityGate(options: {
     formalScenarioCount = formalScenarios.length;
     scenarios = [];
     const verified = new Set<string>();
+    phaseStartedAt = performance.now();
     for (const scenario of formalScenarios) {
       const result = await evaluateScenario(options.htmlPath, options.libDir, options.scenarioPath, scenario, { threshold: thresholds.scenarioState });
       scenarios.push(result);
       if (result.passed) for (const fingerprint of scenario.covers ?? []) verified.add(fingerprint);
     }
+    timing.scenarioStateMs = elapsed(phaseStartedAt);
     coverage = computeCoverage(manifest.interactions, scenarioDocument, verified);
     const criticalScenarios = formalScenarios.filter((scenario) => scenario.critical);
+    criticalScenarioCount = criticalScenarios.length;
     if (options.visual !== false && criticalScenarios.length) {
       scenarioVisualMatrices = [];
+      phaseStartedAt = performance.now();
       for (const scenario of criticalScenarios) {
         const result = await evaluateScenarioBrowserQualityMatrix(options.htmlPath, options.libDir, scenario, {
           artifactDir: options.visualArtifactsDir ? resolve(options.visualArtifactsDir, "scenarios", scenario.id) : undefined,
@@ -98,6 +134,7 @@ export async function runQualityGate(options: {
         });
         scenarioVisualMatrices.push({ scenarioId: scenario.id, label: scenario.label, ...result.matrix });
       }
+      timing.scenarioVisualMatrixMs = elapsed(phaseStartedAt);
     }
   }
   const visualScores = [browserMatrix?.score ?? 0, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.score)];
@@ -145,7 +182,19 @@ export async function runQualityGate(options: {
         : `未生成交互覆盖报告，门槛=${thresholds.interactionCoverage}`,
     });
   }
-  return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, passed: gates.every((gate) => gate.passed) };
+  timing.totalMs = elapsed(totalStartedAt);
+  const telemetry: QualityGateReport["telemetry"] = {
+    timing,
+    workload: {
+      interactions: manifest.interactions.length,
+      formalScenarios: formalScenarioCount,
+      criticalScenarios: criticalScenarioCount,
+      coverageWaivers: scenarioDocument?.coverageWaivers?.length ?? 0,
+      viewports: browserMatrix?.viewports.length ?? 0,
+      scenarioViewportRuns: (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.viewports.length, 0),
+    },
+  };
+  return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, telemetry, passed: gates.every((gate) => gate.passed) };
 }
 
 export async function writeManifest(path: string, manifest: Manifest): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(manifest, null, 2)}\n`, "utf8"); }

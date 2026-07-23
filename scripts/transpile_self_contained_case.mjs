@@ -1,14 +1,25 @@
 #!/usr/bin/env node
 import { mkdirSync, readFileSync, writeFileSync, cpSync, existsSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
+import { performance } from 'node:perf_hooks';
 import { JSDOM } from 'jsdom';
 import * as csstree from 'css-tree';
 import { parse as parseJs } from 'acorn';
 import { simple as walkJs } from 'acorn-walk';
 
-const [sourceArg, outArg, globalName = 'DismantledLibrary', fileStem = 'dismantled'] = process.argv.slice(2);
+const startedAt = performance.now();
+const elapsed = (from) => Number((performance.now() - from).toFixed(3));
+const rawArgs = process.argv.slice(2);
+const metricsIndex = rawArgs.indexOf('--metrics-out');
+const metricsArg = metricsIndex >= 0 ? rawArgs[metricsIndex + 1] : undefined;
+if (metricsIndex >= 0 && !metricsArg) {
+  console.error('--metrics-out requires a JSON output path');
+  process.exit(2);
+}
+const positionalArgs = metricsIndex >= 0 ? rawArgs.filter((_value, index) => index !== metricsIndex && index !== metricsIndex + 1) : rawArgs;
+const [sourceArg, outArg, globalName = 'DismantledLibrary', fileStem = 'dismantled'] = positionalArgs;
 if (!sourceArg || !outArg) {
-  console.error('usage: node scripts/transpile_self_contained_case.mjs <source.html> <lib-dir> [GlobalName] [file-stem]');
+  console.error('usage: node scripts/transpile_self_contained_case.mjs <source.html> <lib-dir> [GlobalName] [file-stem] [--metrics-out <report.json>]');
   process.exit(2);
 }
 const sourcePath = resolve(sourceArg);
@@ -16,6 +27,8 @@ const outDir = resolve(outArg);
 const source = readFileSync(sourcePath, 'utf8');
 const dom = new JSDOM(source);
 const document = dom.window.document;
+const readParseMs = elapsed(startedAt);
+let phaseStartedAt = performance.now();
 const cssSource = [...document.querySelectorAll('style')].map((node) => node.textContent || '').join('\n');
 const executableScriptType = (type) => {
   const normalized = (type || '').trim().toLowerCase().split(';')[0];
@@ -48,6 +61,8 @@ for (const name of semanticEnumClasses) classNames.delete(name);
 const prefixed = (name) => name.startsWith('sg-') ? name : `sg-${name}`;
 const classMap = new Map([...classNames].map((name) => [name, prefixed(name)]));
 const idMap = new Map([...idNames].map((name) => [name, prefixed(name)]));
+const analyzeMs = elapsed(phaseStartedAt);
+phaseStartedAt = performance.now();
 
 for (const element of document.querySelectorAll('[class]')) element.setAttribute('class', [...element.classList].map((name) => classMap.get(name) || name).join(' '));
 for (const element of document.querySelectorAll('[id]')) element.id = idMap.get(element.id) || element.id;
@@ -216,6 +231,9 @@ const runtimeBodyClasses = [...scriptSource.matchAll(/document\.body\.classList\
 const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${').replace(/<\/script/gi, '<\\/script');
 const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n    ${runtimeBodyClasses.map((name) => `    root.classList.add('${name}');`).join('\n')}\n    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => `    ${line.replace(/\s+$/, '')}`).join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
 
+const rewriteMs = elapsed(phaseStartedAt);
+phaseStartedAt = performance.now();
+
 mkdirSync(resolve(outDir, 'src'), { recursive: true });
 mkdirSync(resolve(outDir, 'examples'), { recursive: true });
 mkdirSync(resolve(outDir, 'docs'), { recursive: true });
@@ -232,4 +250,23 @@ const readmePath = resolve(outDir, 'README.md');
 if (!existsSync(readmePath)) writeFileSync(readmePath, `# ${pageTitle}组件库\n\n从自包含 HTML 页面通过 TypeScript visual quality gates 工具链拆分出的零依赖组件库。\n\n## 快速开始\n\n\`\`\`html\n<link rel="stylesheet" href="src/${fileStem}.css">\n<div id="mount"></div>\n<script src="src/${fileStem}.js"></script>\n<script>${globalName}.mount(document.getElementById('mount'));</script>\n\`\`\`\n\n## API\n\n- \`${globalName}.mount(root, options)\`：挂载到指定容器；识别出的业务数据可通过 \`options\` 覆盖。\n- \`${globalName}.create(options)\`：创建并返回独立组件容器。\n\n## 主题定制\n\n可覆盖 \`--sg-primary\`、\`--sg-ink\`、\`--sg-muted\`、\`--sg-line\`、\`--sg-paper\` 等 CSS 变量。\n`);
 const specPath = resolve(outDir, 'docs', '设计规范.md');
 if (!existsSync(specPath)) writeFileSync(specPath, `# 设计规范\n\n## 主题色\n\n组件颜色统一通过 \`--sg-*\` CSS 变量管理。核心变量包括主色 \`--sg-primary\`、正文 \`--sg-ink\`、弱化文本 \`--sg-muted\`、分割线 \`--sg-line\` 与卡片背景 \`--sg-paper\`。\n\n## 命名与隔离\n\n组件类名、ID 与自定义属性均使用 \`sg-\` 前缀，避免与宿主页面冲突。\n\n## 响应式\n\n保留源页面断点，并补充窄屏和极端小屏保护规则。\n`);
-console.log(JSON.stringify({ sourcePath, outDir, classes: classMap.size, ids: idMap.size, cssBytes: css.length, jsBytes: libraryJs.length, executableScripts: executableScripts.length, skippedScripts, scriptParseWarning, assetsCopied: Boolean(assetSource) }, null, 2));
+const writeMs = elapsed(phaseStartedAt);
+const telemetry = {
+  timing: { readParseMs, analyzeMs, rewriteMs, writeMs, totalMs: elapsed(startedAt) },
+  workload: {
+    sourceBytes: source.length,
+    classes: classMap.size,
+    ids: idMap.size,
+    executableScripts: executableScripts.length,
+    skippedScripts,
+    cssBytes: css.length,
+    jsBytes: libraryJs.length,
+    assetsCopied: Boolean(assetSource),
+  },
+};
+if (metricsArg) {
+  const metricsPath = resolve(metricsArg);
+  mkdirSync(dirname(metricsPath), { recursive: true });
+  writeFileSync(metricsPath, `${JSON.stringify({ schemaVersion: '1.0', command: 'transpile-self-contained', sourcePath, outDir, telemetry }, null, 2)}\n`);
+}
+console.log(JSON.stringify({ sourcePath, outDir, classes: classMap.size, ids: idMap.size, cssBytes: css.length, jsBytes: libraryJs.length, executableScripts: executableScripts.length, skippedScripts, scriptParseWarning, assetsCopied: Boolean(assetSource), telemetry }, null, 2));

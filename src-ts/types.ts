@@ -184,6 +184,7 @@ export interface Scenario {
   label?: string;
   candidate?: boolean;
   critical?: boolean;
+  equivalenceGroupId?: string;
   covers?: string[];
   notes?: string[];
   viewport?: { width: number; height: number };
@@ -196,10 +197,21 @@ export interface ScenarioCoverageWaiver {
   reason: string;
 }
 
+export interface InteractionEquivalenceGroup {
+  id: string;
+  signature: string;
+  event: string;
+  triggerShape: string;
+  representativeFingerprint: string;
+  memberFingerprints: string[];
+  reason: string;
+}
+
 export interface ScenarioDocument {
   schemaVersion: "1.0";
   generatedFrom?: string;
   candidatePolicy?: string;
+  equivalenceGroups?: InteractionEquivalenceGroup[];
   coverageWaivers?: ScenarioCoverageWaiver[];
   scenarios: Scenario[];
 }

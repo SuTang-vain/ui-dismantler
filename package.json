@@ -24,7 +24,9 @@
     "roundtrip:ts": "npm run build:ts && node dist-ts/cli.js roundtrip",
     "quality:ts": "npm run build:ts && node dist-ts/cli.js quality",
     "visual:ts": "npm run build:ts && node dist-ts/cli.js roundtrip",
-    "transpile:self-contained": "node scripts/transpile_self_contained_case.mjs"
+    "transpile:self-contained": "node scripts/transpile_self_contained_case.mjs",
+    "test:planning-regression:ts": "npm run build:ts && node --test dist-ts/tests/case-regression.test.js --test-name-pattern=\"formal planning regression\"",
+    "test:gold:ts": "npm run build:ts && UI_DISMANTLER_GOLD_REGRESSION=1 node --test dist-ts/tests/case-regression.test.js"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",

@@ -1,4 +1,4 @@
-import type { Interaction, Manifest, Scenario, ScenarioAssertion, ScenarioDocument, UIStateTransition } from "../types.js";
+import type { Interaction, InteractionEquivalenceGroup, Manifest, Scenario, ScenarioAssertion, ScenarioDocument, UIStateTransition } from "../types.js";
 
 export function interactionFingerprint(interaction: Interaction): string {
   return interaction.fingerprint || `${interaction.event}|${interaction.trigger}|${interaction.target ?? interaction.action}`;
@@ -27,7 +27,60 @@ function assertionForTransition(transition: UIStateTransition): ScenarioAssertio
   return null;
 }
 
-function candidateFor(interaction: Interaction, index: number): Scenario {
+function repeatedTriggerShape(trigger: string): string | null {
+  const shape = trigger
+    .replace(/:nth-child\(\s*\d+\s*\)/gi, ":nth-child(*)")
+    .replace(/:nth-of-type\(\s*\d+\s*\)/gi, ":nth-of-type(*)");
+  return shape === trigger ? null : shape;
+}
+
+function transitionSignature(transition: UIStateTransition): string {
+  return [transition.target, transition.kind, transition.operation, transition.name ?? "", transition.value === undefined ? "" : JSON.stringify(transition.value)].join("|");
+}
+
+export function interactionEquivalenceSignature(interaction: Interaction): string | null {
+  const triggerShape = repeatedTriggerShape(interaction.trigger);
+  if (!triggerShape || (interaction.dataDependencies?.length ?? 0) > 0) return null;
+  const mutationTargets = [...(interaction.mutationTargets ?? [])].sort();
+  const transitions = [...(interaction.stateTransitions ?? [])].map(transitionSignature).sort();
+  return JSON.stringify({ event: interaction.event, source: interaction.source, action: interaction.action, target: interaction.target ?? "", triggerShape, mutationTargets, transitions });
+}
+
+export function groupEquivalentInteractions(interactions: Interaction[]): Array<{ representative: Interaction; members: Interaction[]; group?: InteractionEquivalenceGroup }> {
+  const buckets = new Map<string, Interaction[]>();
+  const ungrouped: Interaction[] = [];
+  for (const interaction of interactions) {
+    const signature = interactionEquivalenceSignature(interaction);
+    if (!signature) { ungrouped.push(interaction); continue; }
+    const bucket = buckets.get(signature) ?? [];
+    bucket.push(interaction);
+    buckets.set(signature, bucket);
+  }
+  const result: Array<{ representative: Interaction; members: Interaction[]; group?: InteractionEquivalenceGroup }> = ungrouped.map((interaction) => ({ representative: interaction, members: [interaction] }));
+  let groupIndex = 0;
+  for (const [signature, members] of buckets) {
+    if (members.length < 2) { result.push({ representative: members[0], members }); continue; }
+    groupIndex += 1;
+    const representative = members[0];
+    const triggerShape = repeatedTriggerShape(representative.trigger) as string;
+    result.push({
+      representative,
+      members,
+      group: {
+        id: `interaction-equivalence-${groupIndex}`,
+        signature,
+        event: representative.event,
+        triggerShape,
+        representativeFingerprint: interactionFingerprint(representative),
+        memberFingerprints: members.map(interactionFingerprint),
+        reason: `相同事件、处理动作、状态转换和 mutation targets，且仅重复实例位置不同：${triggerShape}`,
+      },
+    });
+  }
+  return result.sort((left, right) => interactions.indexOf(left.representative) - interactions.indexOf(right.representative));
+}
+
+function candidateFor(interaction: Interaction, index: number, group?: InteractionEquivalenceGroup): Scenario {
   const pointerGesture = interaction.event.startsWith("pointer") || interaction.event.startsWith("touch");
   const action = pointerGesture ? "unsupported-pointer" : interaction.event === "input" || interaction.event === "change" ? "input" : ["keydown", "keyup"].includes(interaction.event) ? "key" : "click";
   const step = action === "input"
@@ -45,17 +98,27 @@ function candidateFor(interaction: Interaction, index: number): Scenario {
   return {
     id: `candidate-${interaction.event}-${index + 1}`.replace(/[^a-z0-9-]/gi, "-").toLowerCase(),
     label: `Candidate: ${action} (${interaction.trigger})`, candidate: true,
-    covers: [interactionFingerprint(interaction)],
+    equivalenceGroupId: group?.id,
+    covers: group?.memberFingerprints ?? [interactionFingerprint(interaction)],
     notes: pointerGesture
       ? ["pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"]
-      : notes,
+      : group
+        ? [`严格交互等价组：${group.memberFingerprints.length} 个重复实例共享事件、处理动作和可观察状态转换`, "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景", ...notes]
+        : notes,
     steps: step ? [step] : [], assertions,
   };
 }
 
 export function generateScenarios(manifest: Manifest): ScenarioDocument {
   if (!Array.isArray(manifest.interactions)) throw new TypeError("manifest.interactions 必须是数组");
-  return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, candidatePolicy: "candidate scenarios are excluded from coverage until reviewed", scenarios: manifest.interactions.map(candidateFor) };
+  const grouped = groupEquivalentInteractions(manifest.interactions);
+  return {
+    schemaVersion: "1.0",
+    generatedFrom: manifest.meta.source,
+    candidatePolicy: "candidate scenarios are excluded from coverage until reviewed; strict repeated-instance equivalence groups require representative review",
+    equivalenceGroups: grouped.flatMap((item) => item.group ? [item.group] : []),
+    scenarios: grouped.map((item, index) => candidateFor(item.representative, index, item.group)),
+  };
 }
 
 function isTarget(value: unknown, required: boolean): boolean {
@@ -82,11 +145,23 @@ export function loadScenarios(document: unknown): ScenarioDocument {
       waiverFingerprints.add(waiver.fingerprint);
     }
   }
+  if (value.equivalenceGroups !== undefined) {
+    if (!Array.isArray(value.equivalenceGroups)) throw new TypeError("equivalenceGroups 必须是数组");
+    const groupIds = new Set<string>();
+    for (const [index, group] of value.equivalenceGroups.entries()) {
+      if (!group || typeof group.id !== "string" || !group.id.trim()) throw new TypeError(`equivalenceGroups[${index}].id 必须是非空字符串`);
+      if (groupIds.has(group.id)) throw new TypeError(`equivalenceGroups id 重复: ${group.id}`);
+      groupIds.add(group.id);
+      if (!Array.isArray(group.memberFingerprints) || group.memberFingerprints.length < 2 || !group.memberFingerprints.every((item) => typeof item === "string" && item.length > 0)) throw new TypeError(`equivalenceGroups[${index}].memberFingerprints 至少包含两个 fingerprint`);
+      if (!group.memberFingerprints.includes(group.representativeFingerprint)) throw new TypeError(`equivalenceGroups[${index}] representativeFingerprint 必须属于 memberFingerprints`);
+    }
+  }
   for (const scenario of value.scenarios) {
     if (!scenario || typeof scenario.id !== "string" || !scenario.id.trim()) throw new TypeError("每个 scenario 必须有非空 id");
     if (seen.has(scenario.id)) throw new TypeError(`场景 id 重复: ${scenario.id}`);
     seen.add(scenario.id);
     if ("critical" in scenario && typeof scenario.critical !== "boolean") throw new TypeError(`场景 ${scenario.id} critical 必须是 boolean`);
+    if (scenario.equivalenceGroupId !== undefined && (typeof scenario.equivalenceGroupId !== "string" || !scenario.equivalenceGroupId.trim())) throw new TypeError(`场景 ${scenario.id} equivalenceGroupId 必须是非空字符串`);
     if (scenario.viewport) for (const key of ["width", "height"] as const) if (!Number.isInteger(scenario.viewport[key]) || scenario.viewport[key] <= 0) throw new TypeError(`场景 ${scenario.id} viewport.${key} 必须为正整数`);
     if (!Array.isArray(scenario.steps)) throw new TypeError(`场景 ${scenario.id} steps 必须是数组`);
     scenario.steps.forEach((step, index) => {
@@ -115,9 +190,19 @@ export function computeCoverage(interactions: Interaction[], scenarios: Scenario
   const waiverReasons = new Map((scenarios.coverageWaivers ?? []).map((waiver) => [waiver.fingerprint, waiver.reason]));
   const waived = [...declared].filter((item) => waiverReasons.has(item));
   const eligible = [...declared].filter((item) => !waiverReasons.has(item));
-  const scenarioFingerprints = new Set(scenarios.scenarios.filter((scenario) => !scenario.candidate).flatMap((scenario) => scenario.covers ?? []));
+  const expandEquivalent = (input: Iterable<string>): Set<string> => {
+    const expanded = new Set(input);
+    for (const group of scenarios.equivalenceGroups ?? []) {
+      if (group.memberFingerprints.some((fingerprint) => expanded.has(fingerprint))) {
+        for (const fingerprint of group.memberFingerprints) if (declared.has(fingerprint)) expanded.add(fingerprint);
+      }
+    }
+    return expanded;
+  };
+  const scenarioFingerprints = expandEquivalent(scenarios.scenarios.filter((scenario) => !scenario.candidate).flatMap((scenario) => scenario.covers ?? []));
+  const verifiedEquivalentFingerprints = expandEquivalent(verifiedFingerprints);
   const declaredCovered = eligible.filter((item) => scenarioFingerprints.has(item));
-  const verifiedCovered = declaredCovered.filter((item) => verifiedFingerprints.has(item));
+  const verifiedCovered = declaredCovered.filter((item) => verifiedEquivalentFingerprints.has(item));
   return {
     totalInteractions: declared.size,
     eligibleInteractions: eligible.length,

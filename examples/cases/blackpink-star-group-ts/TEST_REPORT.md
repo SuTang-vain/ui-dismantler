@@ -10,11 +10,11 @@
 
 - validation：10/10
 - DOM / text roundtrip：1.000 / 1.000
-- final overall：0.9996
+- final overall：0.9999（初始基线 0.9996）
 - desktop/tablet/mobile/tiny：4/4
 - 关键交互多视口矩阵：4/4
 - computed style：最差 0.9997
-- pixel diff：最差 0.001312
+- pixel diff：最差 0.000000（初始基线 0.001312）
 - 正式交互场景：6/6
 - verified interaction coverage：1.000
 - selector coverage：1.000
@@ -82,18 +82,27 @@ ready: true
 5. 从“其它”入口打开资料弹窗；
 6. 从顶部“其它”标签打开并关闭资料弹窗。
 
-37 个 waiver 对应重复成员/时间线控件、scrollLeft 协议限制、单页成员轮播隐藏按钮、无独立视觉状态的 autoplay/hover/touch hooks，以及已被正式关闭按钮覆盖的 backdrop alternative。
+交互等价类优化后，候选场景由 49 个降为 36 个，并识别出 3 个严格重复实例组。已审核的成员控件等价组让 waiver 从 37 个降为 34 个；eligible interactions 从 12 增加到 15，verified coverage 仍为 1.000。剩余 waiver 对应时间线控件、scrollLeft 协议限制、单页成员轮播隐藏按钮、无独立视觉状态的 autoplay/hover/touch hooks，以及已被正式关闭按钮覆盖的 backdrop alternative。
 
 ## 远程资源风险
 
 源页面图片全部依赖远程 URL。质量比较中参考页和组件库使用同一资源地址，因此视觉门禁可以验证页面转译一致性；但离线或防盗链环境下，个别专辑图片可能显示为破图。当前结果不宣称资源已经完全本地化。
+
+## 回归与效率遥测
+
+新增两层正式回归：
+
+- `npm run test:planning-regression:ts`：8 个代表案例必须全部 `ready=true`、`overBudget=0`、`unownedInteractions=0`；
+- `npm run test:gold:ts`：执行 BLACKPINK 的 4 个初始视口、4 个关键交互矩阵和完整 Gold+ 门禁。
+
+本轮质量运行总耗时约 46.7 秒：manifest 读取/分析 7.6ms、validation 18.2ms、DOM roundtrip 1.49s、初始四视口视觉矩阵 5.01s、6 个正式场景状态验证 9.81s、4×4 关键交互视觉矩阵 30.39s。重复运行会受远程图片加载与栅格化时序影响，因此仍保留初始 0.9996 / 0.001312 作为保守基线。
 
 ## 产物
 
 - `lib/`：零依赖组件库；
 - `manifest.json`：结构、数据和 49 个交互的 AST 分析；
 - `component-plan.json`、`component-specs/`：16 组件规划；
-- `scenarios-candidates.json`：49 个算法候选场景；
+- `scenarios-candidates.json`：36 个算法候选场景和 3 个严格交互等价组；
 - `scenarios.json`：人工审核后的正式场景与 waiver；
 - `quality-report.json`、`quality.log`：完整 Gold+ 报告；
 - `artifacts/`：初始状态及关键交互的四视口 reference/generated/diff。
