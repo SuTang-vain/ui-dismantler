@@ -314,6 +314,21 @@ test("single graph applications decompose graph event controls and modal", async
   assert.equal(manifest.structure.views.some((view) => view.type === "page-header" && view.selector === "#app-container"), false);
 });
 
+test("aria-controlled tab applications ignore entry buttons as panels and split member and works controls", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-star-group-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "star-group.html");
+  await writeFile(html, `<!doctype html><html><body><main class="card"><nav class="tab-bar"><button id="tab-members" aria-controls="panel-members">Members</button><button id="tab-works" aria-controls="panel-works">Works</button></nav><div class="entry"><button data-tab="tab-members">Members</button><button data-tab="tab-works">Works</button></div><section class="view" id="panel-members" role="tabpanel"><div class="member-stage"><div class="member-grid"><button class="member" data-member="a">A</button><button class="member" data-member="b">B</button></div><button class="carousel-prev">Prev</button><button class="carousel-next">Next</button></div></section><section class="view works-view" id="panel-works" role="tabpanel"><div class="ws-scroll-wrap"><button class="ws-prev">Prev</button><div id="works-carousel" class="works-carousel"></div><button class="ws-next">Next</button></div><button id="ws-story-cta">Story</button><div id="work-story-panel"><button id="ws-story-close">Close</button></div></section></main><div id="member-modal" class="modal-overlay" role="dialog"><button id="member-modal-close">Close</button></div><script>document.querySelectorAll('.member').forEach(member=>member.addEventListener('click',()=>member.classList.add('selected')));document.querySelector('.ws-next').addEventListener('click',()=>{});document.querySelector('.ws-prev').addEventListener('click',()=>{});document.querySelector('#works-carousel').addEventListener('mouseenter',()=>{});document.querySelector('#works-carousel').addEventListener('mouseleave',()=>{});document.querySelector('#member-modal-close').addEventListener('click',()=>document.querySelector('#member-modal').classList.remove('open'));</script></body></html>`);
+  const manifest = analyzeHtml(html, { profile: "star-group" });
+  assert.equal(manifest.structure.views.some((view) => view.selector === "#tab-members" || view.selector === "#tab-works"), false);
+  const report = planComponents(manifest, { lineBudget: 150 });
+  const names = new Set(report.components.map((component) => component.componentName));
+  for (const name of ["MemberGrid", "MemberControl", "WorksExplorer", "WorkCardControl", "WorkCarouselControls", "MemberModalDialog"]) assert.equal(names.has(name), true, `missing ${name}`);
+  assert.equal(report.summary.unownedInteractions, 0);
+  assert.equal(report.summary.overBudget, 0);
+  assert.equal(report.summary.ready, true);
+});
+
 test("gesture lifecycle registrations count as one implementation behavior", async (context) => {
   const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-gesture-budget-"));
   context.after(() => rm(dir, { recursive: true, force: true }));
@@ -347,6 +362,20 @@ test("SVG geometry analysis emits layout renderer label and animation responsibi
   const geometryComponents = report.components.filter((component) => ["GraphLayout", "EdgeRenderer", "EdgeLabelPlacement", "GraphAnimationLoop"].includes(component.componentName));
   assert.equal(geometryComponents.every((component) => component.interactionFingerprints.length === 0), true);
   assert.equal(report.components.find((component) => component.componentName === "RelationshipCanvas")?.interactionFingerprints.some((item) => item.startsWith("pointerdown|#graphWrap")), true);
+  const animation = report.components.find((component) => component.componentName === "GraphAnimationLoop");
+  assert.equal(animation?.complexity.estimatedLines, 40);
+  assert.equal(animation?.complexity.reasons.some((reason) => reason.includes("animation-loop 调用簇")), true);
+});
+
+test("multi-graph pages scope geometry responsibilities to referenced regions", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-svg-regions-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "regions.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app"><nav><button data-tab="a">A</button><button data-tab="b">B</button></nav><main><section class="view" data-view="a"><div id="graphA" class="graph-wrap"><div id="graphACanvas" class="graph-canvas"><svg></svg></div></div></section><section class="view" data-view="b"><div id="graphB" class="graph-wrap"><div id="graphBCanvas" class="graph-canvas"><svg></svg></div></div></section></main></div><script>const graphA=document.querySelector('#graphA');const svgA=graphA.querySelector('svg');function layoutA(items,index){for(let a=0;a<items.length;a++)for(let b=0;b<items.length;b++)Math.hypot(a,b);Math.cos(index);Math.sin(index);return index<items.length?layoutA(items,index+1):items}const pathA=document.createElementNS('http://www.w3.org/2000/svg','path');const textA=document.createElementNS('http://www.w3.org/2000/svg','text');const bgA=document.createElementNS('http://www.w3.org/2000/svg','rect');pathA.setAttribute('d','M 0 0 L 1 1');textA.getComputedTextLength();svgA.append(pathA,textA,bgA);function syncA(){requestAnimationFrame(syncA)}requestAnimationFrame(syncA);</script></body></html>`);
+  const report = planComponents(analyzeHtml(html, { profile: "multi-graph-regions" }), { lineBudget: 150 });
+  assert.equal(report.components.filter((component) => component.componentName.startsWith("EdgeRenderer")).length, 1);
+  assert.equal(report.components.find((component) => component.componentName === "EdgeRenderer")?.sourceSelector.startsWith("#graphACanvas"), true);
+  assert.equal(report.components.some((component) => component.sourceSelector.startsWith("#graphBCanvas") && component.componentName.startsWith("EdgeRenderer")), false);
 });
 
 test("external graph scripts participate in geometry planning", async (context) => {
@@ -379,6 +408,23 @@ test("analyzer budgets oversized styles and skips non-executable archive scripts
   assert.match(manifest.warnings.join(" "), /CSS 分析预算生效/);
   assert.match(manifest.warnings.join(" "), /非可执行 script/);
   assert.equal(manifest.structure.views.some((view) => view.details.text === "Archive"), true);
+});
+
+test("self-contained transpiler preserves application JSON and rewrites ID references and object keys", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-idrefs-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "idrefs.html");
+  const out = join(dir, "lib");
+  await writeFile(html, `<!doctype html><html><head><style>:root{--primary:#6487fa;--ink:#111;--muted:#777;--line:#ddd;--paper:#fff}.panel{display:block}</style></head><body><button id="tab-one" data-tab="tab-one" aria-controls="panel-one">One</button><section id="panel-one" class="panel" aria-labelledby="tab-one"></section><script type="application/json" id="works-data">[{"title":"One"}]</script><script>var memberList=[{name:'One'}];var panels={'tab-one':document.getElementById('panel-one')};document.querySelector('[data-tab]').onclick=function(){panels[this.dataset.tab].classList.add('active')};var data=JSON.parse(document.getElementById('works-data').textContent);</script></body></html>`);
+  await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "IdRefFixture", "idrefs"]);
+  const js = await readFile(join(out, "src", "idrefs.js"), "utf8");
+  assert.match(js, /data-tab="sg-tab-one"/);
+  assert.match(js, /aria-controls="sg-panel-one"/);
+  assert.match(js, /aria-labelledby="sg-tab-one"/);
+  assert.match(js, /"sg-tab-one"\s*:\s*document\.getElementById\("sg-panel-one"\)/);
+  assert.match(js, /var memberList = \(options && options\.memberList\) \|\| \[/);
+  assert.match(js, /<\\\/script>/);
+  assert.match(js, /id="sg-works-data"/);
 });
 
 test("self-contained transpiler ignores JSON-LD and supports pages without asset directories", async (context) => {

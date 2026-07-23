@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/qinshihuang-0716-ts/original.html",
-  "generatedAt": "2026-07-23T08:33:02.329Z",
+  "generatedAt": "2026-07-23T08:54:38.557Z",
   "lineBudget": 150,
   "components": [
     {
@@ -235,17 +235,17 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 123,
-        "score": 0.82,
+        "estimatedLines": 112,
+        "score": 0.75,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
           "0 个局部数据依赖",
           "4 个响应式查询（复杂度计入前 8 个）",
-          "检测到递归排列/回溯布局搜索",
-          "检测到 3 层几何循环",
-          "检测到 2 次三角函数坐标计算",
-          "检测到 6 处碰撞/避障语义",
-          "检测到缩放视觉坐标与逻辑坐标换算",
+          "10 个函数组成 layout 调用簇（源区间约 177 行）",
+          "调用簇含 3 层嵌套循环",
+          "调用簇含 2 次三角函数计算",
+          "调用簇含 1 处碰撞/避障语义",
+          "调用簇处理缩放逻辑/视觉坐标换算",
           "graph-layout 为独立 SVG 几何职责"
         ],
         "budget": 150,
@@ -316,15 +316,14 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 77,
-        "score": 0.51,
+        "estimatedLines": 72,
+        "score": 0.48,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
           "0 个局部数据依赖",
           "4 个响应式查询（复杂度计入前 8 个）",
-          "检测到 2 次三角函数坐标计算",
-          "检测到 3 次 SVG 元素创建、1 次路径写入",
-          "检测到缩放视觉坐标与逻辑坐标换算",
+          "5 个函数组成 edge-rendering 调用簇（源区间约 159 行）",
+          "调用簇含 3 次 SVG 创建、1 次路径写入",
           "edge-renderer 为独立 SVG 几何职责"
         ],
         "budget": 150,
@@ -395,16 +394,16 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 99,
-        "score": 0.66,
+        "estimatedLines": 97,
+        "score": 0.65,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
           "0 个局部数据依赖",
           "4 个响应式查询（复杂度计入前 8 个）",
-          "检测到 2 次三角函数坐标计算",
-          "检测到 6 处碰撞/避障语义",
-          "检测到 1 次 SVG/Canvas 文本测量",
-          "检测到缩放视觉坐标与逻辑坐标换算",
+          "5 个函数组成 label-placement 调用簇（源区间约 148 行）",
+          "调用簇含 1 次文本测量",
+          "调用簇含 9 处碰撞/避障语义",
+          "调用簇处理缩放逻辑/视觉坐标换算",
           "edge-label-placement 为独立 SVG 几何职责"
         ],
         "budget": 150,
@@ -475,14 +474,13 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 57,
-        "score": 0.38,
+        "estimatedLines": 40,
+        "score": 0.27,
         "reasons": [
           "0 个关联交互（0 类实现行为）",
           "0 个局部数据依赖",
           "4 个响应式查询（复杂度计入前 8 个）",
-          "检测到 3 次 SVG 元素创建、1 次路径写入",
-          "检测到 3 个 requestAnimationFrame 调度点",
+          "2 个函数组成 animation-loop 调用簇（源区间约 10 行）",
           "graph-animation-loop 为独立 SVG 几何职责"
         ],
         "budget": 150,
@@ -1136,12 +1134,6 @@
   "issues": [
     {
       "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "graph-layout",
-      "detail": "预计复杂度已达预算的 82%"
-    },
-    {
-      "severity": "warning",
       "code": "missing-text-baseline",
       "componentId": "graph-layout",
       "detail": "未提取到逐字文本基线，需人工补充"
@@ -1199,7 +1191,7 @@
     "components": 10,
     "overBudget": 0,
     "errors": 0,
-    "warnings": 10,
+    "warnings": 9,
     "interactions": 12,
     "ownedInteractions": 12,
     "unownedInteractions": 0,

@@ -137,7 +137,7 @@ function geometryComplexity(view: AnalyzedView): { weight: number; reasons: stri
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const geometry = raw as Record<string, unknown>;
   const allReasons = Array.isArray(geometry.reasons) ? geometry.reasons.filter((item): item is string => typeof item === "string") : [];
-  const matchingReasons = (pattern: RegExp): string[] => allReasons.filter((reason) => pattern.test(reason));
+  const matchingReasons = (pattern: RegExp): string[] => allReasons.filter((reason) => reason.includes("调用簇（") || pattern.test(reason));
   const role = typeof view.details.geometryRole === "string" ? view.details.geometryRole : view.type;
   const loops = numericDetail(geometry.loopCount); const depth = numericDetail(geometry.maxLoopDepth);
   const recursion = numericDetail(geometry.recursiveFunctions); const svg = numericDetail(geometry.svgElementCreations);
@@ -157,7 +157,7 @@ function geometryComplexity(view: AnalyzedView): { weight: number; reasons: stri
     reasons: matchingReasons(/文本测量|碰撞|避障|坐标|缩放/),
   };
   if (role === "graph-animation-loop") return {
-    weight: 28 + Math.min(frames, 5) * 6 + paths * 3,
+    weight: 20 + Math.min(frames, 5) * 4 + paths * 2,
     reasons: matchingReasons(/requestAnimationFrame|路径写入/),
   };
   const responsibilities = Array.isArray(geometry.responsibilities) ? geometry.responsibilities.length : 0;
@@ -254,7 +254,7 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
   const nameCounts = new Map<string, number>();
   const components = views.map((view, index): ComponentPlan => {
     const interactions = manifest.interactions.filter((item) => interactionOwner.get(item.fingerprint) === index);
-    const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details", "identity-gallery", "gesture-surface", "works-explorer", "cast-explorer", "graph-surface", "graph-layout", "edge-renderer", "edge-label-placement", "graph-animation-loop", "event-controls", "graph-node-control", "cast-card-control", "story-control", "scroll-surface"];
+    const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details", "identity-gallery", "gesture-surface", "works-explorer", "cast-explorer", "graph-surface", "graph-layout", "edge-renderer", "edge-label-placement", "graph-animation-loop", "event-controls", "graph-node-control", "member-control", "carousel-controls", "work-story-panel", "work-card-control", "cast-card-control", "story-control", "scroll-surface"];
     const preferredName = semanticTypes.includes(view.type) ? view.semanticType : view.type;
     const baseName = pascal(preferredName);
     const occurrence = (nameCounts.get(baseName) ?? 0) + 1;

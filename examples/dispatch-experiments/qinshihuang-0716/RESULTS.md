@@ -33,10 +33,10 @@ The first six-component dispatch proved that the plan could preserve visual and 
 |---|---:|---:|---:|---|
 | ApplicationShell | 80 | 128 | 48 | PASS |
 | RelationshipCanvas | 114 | 97 | 17 | PASS |
-| GraphLayout | 123 | 122 | 1 | PASS |
-| EdgeRenderer | 77 | 77 | 0 | PASS |
-| EdgeLabelPlacement | 99 | 96 | 3 | PASS |
-| GraphAnimationLoop | 57 | 13 | 44 | PASS |
+| GraphLayout | 112 | 122 | 10 | PASS |
+| EdgeRenderer | 72 | 77 | 5 | PASS |
+| EdgeLabelPlacement | 97 | 96 | 1 | PASS |
+| GraphAnimationLoop | 40 | 13 | 27 | PASS |
 | GraphNodeControl | 150 | 93 | 57 | PASS |
 | GraphNodeGesture | 105 | 102 | 3 | PASS |
 | EventControls | 150 | 106 | 44 | PASS |
@@ -48,7 +48,7 @@ All ten component files are at or below 128 lines. Integration files remain with
 - `types.ts`: 67 lines
 - `constants.ts`: 10 lines
 
-For the corrected graph-geometry cluster, planned total size is 470 lines and actual total size is 405 lines. Per-file mean absolute error is 13 lines. The original monolithic prediction error was 369 lines (`99` planned versus `468` actual).
+For the corrected graph-geometry cluster, planned total size is 435 lines and actual total size is 405 lines. Per-file mean absolute error is 12 lines. The original monolithic prediction error was 369 lines (`99` planned versus `468` actual).
 
 ## Algorithm correction
 
@@ -72,6 +72,8 @@ When independent responsibility clusters are present, the graph plan can emit:
 
 Synthetic implementation-responsibility components cannot steal DOM event ownership. For example, the graph-wrap pointerdown interaction remains owned by `RelationshipCanvas`, while geometry components stay interaction-free.
 
+The second calibration pass groups geometry evidence by owning function and records function names, source-line intervals, statements, loops, calls, anchors, and role-specific metrics. Multi-graph pages now compare graph/canvas identifiers and selectors against these anchors, so geometry responsibilities are emitted only for the referenced region instead of being copied to every graph.
+
 ## Regression evidence
 
 - Python tests: 314/314 PASS
@@ -88,4 +90,4 @@ The roundtrip jsdom renderer does not execute inline ESM. The experiment therefo
 
 ## Remaining estimator limitation
 
-`GraphAnimationLoop` is intentionally overestimated because the planner reserves lifecycle and teardown budget even when the implementation is a compact wrapper. Existing control/event components also remain conservative. This no longer causes false budget failure, but calibration can be improved with function-cluster ownership rather than global script-level counts.
+`GraphAnimationLoop` remains intentionally overestimated at the 40-line planning floor because the planner reserves lifecycle and teardown budget even when the implementation is a compact wrapper. Existing control/event components also remain conservative. Function-cluster ownership has removed the previous global-script inflation; further calibration should use statement-level responsibility slicing inside mixed functions such as edge update plus label placement.

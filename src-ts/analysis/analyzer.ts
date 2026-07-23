@@ -3,7 +3,7 @@ import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
-import { analyzeGraphGeometry, type GraphGeometrySignals } from "./geometry-signals.js";
+import { analyzeGraphGeometry, geometrySignalsForRole, geometrySignalsMatchRegion, type GraphGeometryResponsibility, type GraphGeometrySignals } from "./geometry-signals.js";
 import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
@@ -176,11 +176,13 @@ function geometryRoleView(
   selector: string,
   parentSelector: string,
   geometry: GraphGeometrySignals,
+  role: GraphGeometryResponsibility,
 ): AnalyzedView {
+  const scoped = geometrySignalsForRole(geometry, role);
   return {
-    id, type, structuralType: "implementation-responsibility", semanticType, confidence: Math.max(0.86, geometry.score),
-    evidence: geometry.reasons.map((reason) => ({ signal: "svg-geometry", value: reason })), selector,
-    details: { text: "", className: "", parentSelector, interactionSelectors: [], geometryRole: semanticType, geometrySignals: geometry as any },
+    id, type, structuralType: "implementation-responsibility", semanticType, confidence: Math.max(0.86, scoped.score),
+    evidence: scoped.reasons.map((reason) => ({ signal: "svg-geometry", value: reason })), selector,
+    details: { text: "", className: "", parentSelector, interactionSelectors: [], geometryRole: semanticType, geometrySignals: scoped as any },
   };
 }
 
@@ -191,18 +193,18 @@ function graphGeometryCandidates(graphRoot: Element, canvas: Element | null, geo
   const canvasSelector = canvas ? stableSelector(canvas) : rootSelector;
   const candidates: AnalyzedView[] = [];
   if (geometry.responsibilities.includes("layout")) {
-    candidates.push(geometryRoleView(`${prefix}graph-layout`, "graph-layout", "graph-layout", `${rootSelector}:where(*)`, rootSelector, geometry));
+    candidates.push(geometryRoleView(`${prefix}graph-layout`, "graph-layout", "graph-layout", `${rootSelector}:where(*)`, rootSelector, geometry, "layout"));
   }
   let rendererSelector = rootSelector;
   if (geometry.responsibilities.includes("edge-rendering")) {
     rendererSelector = `${canvasSelector}:where(*)`;
-    candidates.push(geometryRoleView(`${prefix}edge-renderer`, "edge-renderer", "edge-renderer", rendererSelector, rootSelector, geometry));
+    candidates.push(geometryRoleView(`${prefix}edge-renderer`, "edge-renderer", "edge-renderer", rendererSelector, rootSelector, geometry, "edge-rendering"));
   }
   if (geometry.responsibilities.includes("label-placement")) {
-    candidates.push(geometryRoleView(`${prefix}edge-label-placement`, "edge-label-placement", "edge-label-placement", `${canvasSelector}:is(*)`, rendererSelector, geometry));
+    candidates.push(geometryRoleView(`${prefix}edge-label-placement`, "edge-label-placement", "edge-label-placement", `${canvasSelector}:is(*)`, rendererSelector, geometry, "label-placement"));
   }
   if (geometry.responsibilities.includes("animation-loop")) {
-    candidates.push(geometryRoleView(`${prefix}graph-animation-loop`, "graph-animation-loop", "graph-animation-loop", `${canvasSelector}:not(:root)`, rendererSelector, geometry));
+    candidates.push(geometryRoleView(`${prefix}graph-animation-loop`, "graph-animation-loop", "graph-animation-loop", `${canvasSelector}:not(:root)`, rendererSelector, geometry, "animation-loop"));
   }
   return candidates;
 }
@@ -210,15 +212,30 @@ function graphGeometryCandidates(graphRoot: Element, canvas: Element | null, geo
 function applicationViews(document: Document, applicationScript: string): AnalyzedView[] {
   const graphNodeGestures = /(?:pointerdown|mousedown|touchstart)/.test(applicationScript) && /(?:\.node|data-node|className\s*=\s*["'][^"']*node)/.test(applicationScript);
   const graphGeometry = analyzeGraphGeometry(applicationScript);
+  const graphRoots = [...document.querySelectorAll<HTMLElement>("#graphWrap, #graphCanvas, [id*=Graph], [id*=graph], .graph-wrap, .graph-canvas, .radar-stage")]
+    .map((element) => element.closest<HTMLElement>("#graphWrap, .graph-wrap, .radar-stage, [id$=GraphWrap], [id$=graphWrap]")
+      ?? (element.matches("#graphCanvas, .graph-canvas") && element.parentElement ? element.parentElement : element))
+    .filter((element, index, items) => items.indexOf(element) === index);
+  const scopedGeometry = (root: Element, canvas: Element | null): GraphGeometrySignals => geometrySignalsMatchRegion(graphGeometry, [root, canvas, canvas?.querySelector("svg") ?? null], graphRoots.length)
+    ? graphGeometry
+    : { ...graphGeometry, detected: false, responsibilities: [], clusters: [], reasons: [] };
   const navControls = [...document.querySelectorAll<HTMLElement>("[data-p], button[data-view], a[data-view], [role=tab][data-view], button[data-tab], a[data-tab], [role=tab][data-tab], button[aria-controls], a[aria-controls], [role=tab][aria-controls]")];
   const panelKey = (panel: HTMLElement): string => panel.dataset.view || panel.dataset.viewPanel || panel.id.replace(/^view-/, "");
   const controlKey = (control: HTMLElement): string => (control.dataset.p || control.dataset.view || control.dataset.tab || control.getAttribute("aria-controls") || "").replace(/^#|^view-/, "");
   const panelForControl = (control: HTMLElement): HTMLElement | null => {
     const key = controlKey(control);
     if (!key) return null;
-    return [...document.querySelectorAll<HTMLElement>(".view[data-view], .view[id], .panel[id], [data-view-panel], [role=tabpanel]")].find((panel) => panelKey(panel) === key)
-      ?? document.getElementById(key)
-      ?? document.getElementById(`view-${key}`);
+    const panelSelector = ".view[data-view], .view[id], .panel[id], [data-view-panel], [role=tabpanel]";
+    const panels = [...document.querySelectorAll<HTMLElement>(panelSelector)];
+    const direct = panels.find((panel) => panelKey(panel) === key) ?? document.getElementById(key) ?? document.getElementById(`view-${key}`);
+    if (direct?.matches(panelSelector)) return direct;
+    if (direct && direct !== control) {
+      const linkedKey = direct.getAttribute("aria-controls") || direct.dataset.view || direct.dataset.tab || "";
+      const linked = linkedKey ? document.getElementById(linkedKey.replace(/^#/, "")) : null;
+      if (linked?.matches(panelSelector)) return linked;
+    }
+    const tabKey = key.replace(/^tab-/, "");
+    return document.getElementById(`panel-${tabKey}`)?.matches(panelSelector) ? document.getElementById(`panel-${tabKey}`) : null;
   };
   const controlledPanels = navControls.map(panelForControl).filter((panel): panel is HTMLElement => Boolean(panel));
   const structuralPanels = [...document.querySelectorAll<HTMLElement>(".view[data-view], .stage > .view[id], main > .view[id], .stage > .panel[id], main > .panel[id], [data-view-panel], [role=tabpanel]")];
@@ -266,9 +283,36 @@ function applicationViews(document: Document, applicationScript: string): Analyz
     const { type, semanticType, dynamicSelectors } = classifyPanel(panel, rawId, label);
     const panelView = regionView(panel, `panel-${slug(rawId)}`, type, semanticType, shellSelector, dynamicSelectors);
     const candidates = componentCandidates(panel, semanticType);
+    const timelineTrack = panel.querySelector<HTMLElement>("#tl-track, .timeline-track, [data-timeline-track]");
+    if (timelineTrack) candidates.push(regionView(timelineTrack, `${slug(rawId)}-timeline-scroll-surface`, "scroll-surface", "timeline-scroll-surface", stableSelector(panel), ["#tl-track"]));
     if (type === "works-panel") {
-      const worksGrid = panel.querySelector<HTMLElement>("#worksGrid, .works-grid, .works-viewport, [data-works-grid]");
-      if (worksGrid && worksGrid !== panel) candidates.push(regionView(worksGrid, `${slug(rawId)}-works-explorer`, "works-explorer", "works-explorer", stableSelector(panel), ["#worksGrid", "#worksScrollHint", ".works-tab", "[data-cat]"]));
+      const worksGrid = panel.querySelector<HTMLElement>("#worksGrid, .works-grid, .works-viewport, #works-carousel, .works-carousel, [data-works-grid]");
+      if (worksGrid && worksGrid !== panel) {
+        const worksView = regionView(worksGrid, `${slug(rawId)}-works-explorer`, "works-explorer", "works-explorer", stableSelector(panel), ["#worksGrid", "#worksScrollHint", ".works-tab", "[data-cat]", "#works-carousel"]);
+        worksView.componentCandidates = [{
+          id: `${slug(rawId)}-work-card-control`, type: "work-card-control", structuralType: "repeated-control", semanticType: "work-card-control", confidence: 0.9,
+          evidence: [{ signal: "runtime-work-card", value: ".work-item" }], selector: ".work-item",
+          details: { text: "", className: "work-item", parentSelector: stableSelector(worksGrid), interactionSelectors: [".work-item"] },
+        }];
+        candidates.push(worksView);
+      }
+      const carouselControls = panel.querySelector<HTMLElement>(".ws-scroll-wrap, [data-works-carousel-controls]");
+      if (carouselControls) candidates.push(regionView(carouselControls, `${slug(rawId)}-work-carousel-controls`, "carousel-controls", "work-carousel-controls", stableSelector(panel), [".ws-prev", ".ws-next", ".ws-dot", "#ws-dots"]));
+      const storyPanel = panel.querySelector<HTMLElement>("#work-story-panel, .work-story-panel");
+      if (storyPanel && storyPanel !== panel) candidates.push(regionView(storyPanel, `${slug(rawId)}-work-story-panel`, "work-story-panel", "work-story-panel", stableSelector(panel), ["#ws-story-cta", "#ws-story-close", "#work-story-panel"]));
+    }
+    const memberGrid = panel.querySelector<HTMLElement>(".member-grid, [data-member-grid]");
+    if (memberGrid && memberGrid !== panel) {
+      const memberView = regionView(memberGrid, `${slug(rawId)}-member-grid`, "member-grid", "member-grid", stableSelector(panel), [".member", "[data-member]"]);
+      const memberControls = [...memberGrid.querySelectorAll<HTMLElement>(".member, [data-member]")];
+      if (memberControls.length >= 2) memberView.componentCandidates = [{
+        id: `${slug(rawId)}-member-control`, type: "member-control", structuralType: "repeated-control", semanticType: "member-control", confidence: 0.92,
+        evidence: [{ signal: "member-card-controls", value: memberControls.length }], selector: ".member",
+        details: { text: "", className: "member", parentSelector: stableSelector(memberGrid), repeatedCount: memberControls.length, repeatedSelectors: memberControls.map(stableSelector), interactionSelectors: [".member", ...memberControls.map(stableSelector)] },
+      }];
+      candidates.push(memberView);
+      const memberStage = memberGrid.closest<HTMLElement>(".member-stage");
+      if (memberStage) candidates.push(regionView(memberStage, `${slug(rawId)}-member-carousel-controls`, "carousel-controls", "member-carousel-controls", stableSelector(panel), [".carousel-prev", ".carousel-next", ".carousel-dots", ".dot"]));
     }
     if (type === "identity-panel") {
       const castExplorer = panel.querySelector<HTMLElement>(".cast-grid, #castGrid, [data-cast-grid]");
@@ -336,8 +380,9 @@ function applicationViews(document: Document, applicationScript: string): Analyz
       const graphRoot = panelGraph.matches("#graphCanvas, .graph-canvas") && panelGraph.parentElement ? panelGraph.parentElement : panelGraph;
       const graphView = regionView(graphRoot, `${slug(rawId)}-relationship-canvas`, "relationship-canvas", "relationship-canvas", stableSelector(panel), [".radar-center", ".node", ".edge", "[data-node-id]", "[data-char-id]"]);
       const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg");
-      graphView.details.geometrySignals = graphGeometry as any;
-      graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, graphGeometry, slug(rawId));
+      const geometry = scopedGeometry(graphRoot, canvas);
+      graphView.details.geometrySignals = geometry as any;
+      graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, geometry, slug(rawId));
       if (canvas && canvas !== graphRoot && graphNodeGestures) {
         const surface = regionView(canvas, `${slug(rawId)}-graph-surface`, "graph-surface", "graph-surface", stableSelector(graphRoot), [".edge", "[data-node-id]", "[data-char-id]"]);
         const nodeControl: AnalyzedView = {
@@ -363,8 +408,9 @@ function applicationViews(document: Document, applicationScript: string): Analyz
     const graphRoot = graph.matches(".graph-canvas, #graphCanvas") && graph.parentElement ? graph.parentElement : graph;
     const graphView = regionView(graphRoot, "relationship-canvas", "relationship-canvas", "relationship-canvas", shellSelector, [".edge", "[data-node-id]", "[data-char-id]"]);
     const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg") ?? (graphRoot.matches("#graphCanvas, .graph-canvas, svg") ? graphRoot : null);
-    graphView.details.geometrySignals = graphGeometry as any;
-    graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, graphGeometry);
+    const geometry = scopedGeometry(graphRoot, canvas);
+    graphView.details.geometrySignals = geometry as any;
+    graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, geometry);
     if (canvas && graphNodeGestures) {
       const nodeControl: AnalyzedView = {
         id: "graph-node-control", type: "graph-node-control", structuralType: "repeated-control", semanticType: "graph-node-control", confidence: 0.9,
@@ -385,7 +431,7 @@ function applicationViews(document: Document, applicationScript: string): Analyz
     if (eventRegion) views.push(regionView(eventRegion, "event-controls", "event-controls", "event-controls", shellSelector, [".event-btn", "[data-event]", "[data-i]"]));
   }
 
-  const dialogs = [...shell.querySelectorAll<HTMLElement>('.pop[id], .modal[id], dialog[id], [role="dialog"][id], [class*="modal"][id]')]
+  const dialogs = [...document.querySelectorAll<HTMLElement>('.pop[id], .modal[id], dialog[id], [role="dialog"][id], [class*="modal"][id]')]
     .filter((dialog, index, items) => items.findIndex((other) => other === dialog || other.contains(dialog)) === index);
   for (const [index, dialog] of dialogs.entries()) {
     const dialogView = regionView(dialog, `dialog-${slug(dialog.id || `${index + 1}`)}`, "dialog", `${slug(dialog.id || "detail")}-dialog`, shellSelector, [".modal-close", "[class*=modal-close]"]);

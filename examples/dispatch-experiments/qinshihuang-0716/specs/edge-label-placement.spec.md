@@ -69,6 +69,6 @@ Source media queries:
 - `(max-width: 480px)`
 
 ## Complexity Budget
-- Estimated lines: 99
+- Estimated lines: 97
 - Budget: 150
 - Status: READY
