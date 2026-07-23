@@ -3,6 +3,7 @@ import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
+import { analyzeGraphGeometry, type GraphGeometrySignals } from "./geometry-signals.js";
 import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
@@ -168,9 +169,47 @@ function regionView(element: Element, id: string, type: string, semanticType: st
   };
 }
 
-function applicationViews(document: Document): AnalyzedView[] {
-  const applicationScript = [...document.scripts].map((script) => script.textContent ?? "").join("\n");
+function geometryRoleView(
+  id: string,
+  type: string,
+  semanticType: string,
+  selector: string,
+  parentSelector: string,
+  geometry: GraphGeometrySignals,
+): AnalyzedView {
+  return {
+    id, type, structuralType: "implementation-responsibility", semanticType, confidence: Math.max(0.86, geometry.score),
+    evidence: geometry.reasons.map((reason) => ({ signal: "svg-geometry", value: reason })), selector,
+    details: { text: "", className: "", parentSelector, interactionSelectors: [], geometryRole: semanticType, geometrySignals: geometry as any },
+  };
+}
+
+function graphGeometryCandidates(graphRoot: Element, canvas: Element | null, geometry: GraphGeometrySignals, idPrefix = ""): AnalyzedView[] {
+  if (!geometry.detected) return [];
+  const prefix = idPrefix ? `${idPrefix}-` : "";
+  const rootSelector = stableSelector(graphRoot);
+  const canvasSelector = canvas ? stableSelector(canvas) : rootSelector;
+  const candidates: AnalyzedView[] = [];
+  if (geometry.responsibilities.includes("layout")) {
+    candidates.push(geometryRoleView(`${prefix}graph-layout`, "graph-layout", "graph-layout", `${rootSelector}:where(*)`, rootSelector, geometry));
+  }
+  let rendererSelector = rootSelector;
+  if (geometry.responsibilities.includes("edge-rendering")) {
+    rendererSelector = `${canvasSelector}:where(*)`;
+    candidates.push(geometryRoleView(`${prefix}edge-renderer`, "edge-renderer", "edge-renderer", rendererSelector, rootSelector, geometry));
+  }
+  if (geometry.responsibilities.includes("label-placement")) {
+    candidates.push(geometryRoleView(`${prefix}edge-label-placement`, "edge-label-placement", "edge-label-placement", `${canvasSelector}:is(*)`, rendererSelector, geometry));
+  }
+  if (geometry.responsibilities.includes("animation-loop")) {
+    candidates.push(geometryRoleView(`${prefix}graph-animation-loop`, "graph-animation-loop", "graph-animation-loop", `${canvasSelector}:not(:root)`, rendererSelector, geometry));
+  }
+  return candidates;
+}
+
+function applicationViews(document: Document, applicationScript: string): AnalyzedView[] {
   const graphNodeGestures = /(?:pointerdown|mousedown|touchstart)/.test(applicationScript) && /(?:\.node|data-node|className\s*=\s*["'][^"']*node)/.test(applicationScript);
+  const graphGeometry = analyzeGraphGeometry(applicationScript);
   const navControls = [...document.querySelectorAll<HTMLElement>("[data-p], button[data-view], a[data-view], [role=tab][data-view], button[data-tab], a[data-tab], [role=tab][data-tab], button[aria-controls], a[aria-controls], [role=tab][aria-controls]")];
   const panelKey = (panel: HTMLElement): string => panel.dataset.view || panel.dataset.viewPanel || panel.id.replace(/^view-/, "");
   const controlKey = (control: HTMLElement): string => (control.dataset.p || control.dataset.view || control.dataset.tab || control.getAttribute("aria-controls") || "").replace(/^#|^view-/, "");
@@ -297,6 +336,8 @@ function applicationViews(document: Document): AnalyzedView[] {
       const graphRoot = panelGraph.matches("#graphCanvas, .graph-canvas") && panelGraph.parentElement ? panelGraph.parentElement : panelGraph;
       const graphView = regionView(graphRoot, `${slug(rawId)}-relationship-canvas`, "relationship-canvas", "relationship-canvas", stableSelector(panel), [".radar-center", ".node", ".edge", "[data-node-id]", "[data-char-id]"]);
       const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg");
+      graphView.details.geometrySignals = graphGeometry as any;
+      graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, graphGeometry, slug(rawId));
       if (canvas && canvas !== graphRoot && graphNodeGestures) {
         const surface = regionView(canvas, `${slug(rawId)}-graph-surface`, "graph-surface", "graph-surface", stableSelector(graphRoot), [".edge", "[data-node-id]", "[data-char-id]"]);
         const nodeControl: AnalyzedView = {
@@ -310,7 +351,7 @@ function applicationViews(document: Document): AnalyzedView[] {
           details: { text: "", className: "node", parentSelector: ".node", interactionSelectors: [".node"] },
         }];
         surface.componentCandidates = [nodeControl];
-        graphView.componentCandidates = [surface];
+        graphView.componentCandidates = [...(graphView.componentCandidates ?? []), surface];
       }
       candidates.push(graphView);
     }
@@ -322,6 +363,8 @@ function applicationViews(document: Document): AnalyzedView[] {
     const graphRoot = graph.matches(".graph-canvas, #graphCanvas") && graph.parentElement ? graph.parentElement : graph;
     const graphView = regionView(graphRoot, "relationship-canvas", "relationship-canvas", "relationship-canvas", shellSelector, [".edge", "[data-node-id]", "[data-char-id]"]);
     const canvas = graphRoot.querySelector<HTMLElement>("#graphCanvas, .graph-canvas, svg") ?? (graphRoot.matches("#graphCanvas, .graph-canvas, svg") ? graphRoot : null);
+    graphView.details.geometrySignals = graphGeometry as any;
+    graphView.componentCandidates = graphGeometryCandidates(graphRoot, canvas, graphGeometry);
     if (canvas && graphNodeGestures) {
       const nodeControl: AnalyzedView = {
         id: "graph-node-control", type: "graph-node-control", structuralType: "repeated-control", semanticType: "graph-node-control", confidence: 0.9,
@@ -333,10 +376,10 @@ function applicationViews(document: Document): AnalyzedView[] {
         evidence: [{ signal: "node-gesture-control", value: ".node" }], selector: ".node:where(*)",
         details: { text: "", className: "node", parentSelector: ".node", interactionSelectors: [".node"] },
       }];
-      graphView.componentCandidates = [nodeControl];
+      graphView.componentCandidates = [...(graphView.componentCandidates ?? []), nodeControl];
     }
     const detail = shell.querySelector<HTMLElement>("#charPanel, .char-panel, #detail, [class*=detail-panel]");
-    if (detail && detail !== graphRoot) graphView.componentCandidates = [regionView(detail, "relationship-detail", "relationship-detail", "relationship-detail", stableSelector(graphRoot))];
+    if (detail && detail !== graphRoot) graphView.componentCandidates = [...(graphView.componentCandidates ?? []), regionView(detail, "relationship-detail", "relationship-detail", "relationship-detail", stableSelector(graphRoot))];
     views.push(graphView);
     const eventRegion = shell.querySelector<HTMLElement>("#eventBtns, .event-btns, .event-bar") ?? compoundControls[0]?.parentElement;
     if (eventRegion) views.push(regionView(eventRegion, "event-controls", "event-controls", "event-controls", shellSelector, [".event-btn", "[data-event]", "[data-i]"]));
@@ -606,7 +649,7 @@ export class HtmlAnalyzer {
     const scripts = scriptSource.text ? [scriptSource.text] : [];
     const warnings: string[] = [...compacted.warnings, ...cssSource.warnings, ...scriptSource.warnings];
     const profile = this.options.profile ?? this.options.vertical ?? PROFILE_FALLBACK;
-    const views = this.analyzeViews(document);
+    const views = this.analyzeViews(document, scriptSource.text);
     const contracts = extractContracts(scripts);
     const interactions = this.analyzeInteractions(document, scripts);
     const a11y = this.analyzeA11y(document);
@@ -667,7 +710,7 @@ export class HtmlAnalyzer {
     }));
   }
 
-  private analyzeViews(document: Document): AnalyzedView[] {
+  private analyzeViews(document: Document, scriptText: string): AnalyzedView[] {
     const candidates = [...document.body.querySelectorAll("section, main, article, [class], [role=tabpanel], [data-view]")];
     const specialized: AnalyzedView[] = [];
     for (const element of candidates) {
@@ -679,7 +722,7 @@ export class HtmlAnalyzer {
     const sections = candidates.filter(isSectionCandidate).filter((element, index, items) => !items.some((other, otherIndex) => otherIndex < index && other.contains(element) && sectionHeading(other).toLowerCase() === sectionHeading(element).toLowerCase()));
     const filteredSections = sections.filter((section) => !sections.some((other) => other !== section && section.contains(other) && sectionHeading(section).toLowerCase() === sectionHeading(other).toLowerCase()));
     const sectionViews = filteredSections.slice(0, 40).map(sectionView);
-    const appViews = applicationViews(document);
+    const appViews = applicationViews(document, scriptText);
     const shellViews = [
       ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
       ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),

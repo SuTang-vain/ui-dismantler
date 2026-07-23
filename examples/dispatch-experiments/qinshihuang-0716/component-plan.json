@@ -1,0 +1,1208 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/qinshihuang-0716-ts/original.html",
+  "generatedAt": "2026-07-23T08:33:02.329Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "application-shell",
+      "componentName": "ApplicationShell",
+      "targetFile": "src/components/ApplicationShell.ts",
+      "sourceSelector": "#app-container",
+      "sourceSelectors": [
+        "#app-container"
+      ],
+      "responsibility": "复现 app-shell 视图：宗亲 君臣 同僚 对立 点击头像查看人物详情，可拖动 ‹ › › ✕ 在本事件中的作为 影响",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [
+          "宗亲 君臣 同僚 对立 点击头像查看人物详情，可拖动 ‹ › › ✕ 在本事件中的作为 影响"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 80,
+        "score": 0.53,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "relationship-canvas",
+      "componentName": "RelationshipCanvas",
+      "targetFile": "src/components/RelationshipCanvas.ts",
+      "sourceSelector": "#graphWrap",
+      "sourceSelectors": [
+        "#graphWrap"
+      ],
+      "responsibility": "编排关系图节点、布局、边渲染、标签与同步生命周期，不内联各几何算法",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "time-driven",
+      "interactionFingerprints": [
+        "pointerdown|#graphWrap|script-assignment"
+      ],
+      "mutationTargets": [
+        "#graphHint"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#graphHint",
+          "kind": "class",
+          "operation": "add",
+          "name": "hide",
+          "value": "hide",
+          "confidence": 0.96,
+          "source": "graphHint?.classList.add(\"hide\")"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [
+          "宗亲 君臣 同僚 对立 点击头像查看人物详情，可拖动"
+        ],
+        "states": [
+          "pointerdown: #graphWrap → #graphHint class.add(hide=hide)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "1 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）",
+          "几何职责已拆分为 4 个独立组件"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-layout",
+      "componentName": "GraphLayout",
+      "targetFile": "src/components/GraphLayout.ts",
+      "sourceSelector": "#graphWrap:where(*)",
+      "sourceSelectors": [
+        "#graphWrap:where(*)"
+      ],
+      "responsibility": "计算缩放坐标空间、环形排列、排列搜索与节点碰撞消解",
+      "parentId": "relationship-canvas",
+      "dependencies": [
+        "relationship-canvas"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 123,
+        "score": 0.82,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）",
+          "检测到递归排列/回溯布局搜索",
+          "检测到 3 层几何循环",
+          "检测到 2 次三角函数坐标计算",
+          "检测到 6 处碰撞/避障语义",
+          "检测到缩放视觉坐标与逻辑坐标换算",
+          "graph-layout 为独立 SVG 几何职责"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "edge-renderer",
+      "componentName": "EdgeRenderer",
+      "targetFile": "src/components/EdgeRenderer.ts",
+      "sourceSelector": "svg.family:where(*)",
+      "sourceSelectors": [
+        "svg.family:where(*)"
+      ],
+      "responsibility": "创建 SVG 边与标签元素，并根据节点端点更新路径几何",
+      "parentId": "relationship-canvas",
+      "dependencies": [
+        "relationship-canvas"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 77,
+        "score": 0.51,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）",
+          "检测到 2 次三角函数坐标计算",
+          "检测到 3 次 SVG 元素创建、1 次路径写入",
+          "检测到缩放视觉坐标与逻辑坐标换算",
+          "edge-renderer 为独立 SVG 几何职责"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "edge-label-placement",
+      "componentName": "EdgeLabelPlacement",
+      "targetFile": "src/components/EdgeLabelPlacement.ts",
+      "sourceSelector": "svg.family:is(*)",
+      "sourceSelectors": [
+        "svg.family:is(*)"
+      ],
+      "responsibility": "测量关系标签并执行节点、文本与已放置标签之间的避障搜索",
+      "parentId": "edge-renderer",
+      "dependencies": [
+        "edge-renderer"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 99,
+        "score": 0.66,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）",
+          "检测到 2 次三角函数坐标计算",
+          "检测到 6 处碰撞/避障语义",
+          "检测到 1 次 SVG/Canvas 文本测量",
+          "检测到缩放视觉坐标与逻辑坐标换算",
+          "edge-label-placement 为独立 SVG 几何职责"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-animation-loop",
+      "componentName": "GraphAnimationLoop",
+      "targetFile": "src/components/GraphAnimationLoop.ts",
+      "sourceSelector": "svg.family:not(:root)",
+      "sourceSelectors": [
+        "svg.family:not(:root)"
+      ],
+      "responsibility": "管理 requestAnimationFrame 同步循环及其启动、停止和销毁",
+      "parentId": "edge-renderer",
+      "dependencies": [
+        "edge-renderer"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 57,
+        "score": 0.38,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）",
+          "检测到 3 次 SVG 元素创建、1 次路径写入",
+          "检测到 3 个 requestAnimationFrame 调度点",
+          "graph-animation-loop 为独立 SVG 几何职责"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-node-control",
+      "componentName": "GraphNodeControl",
+      "targetFile": "src/components/GraphNodeControl.ts",
+      "sourceSelector": ".node",
+      "sourceSelectors": [
+        ".node"
+      ],
+      "responsibility": "复现 graph-node-control 视图的结构、样式与状态",
+      "parentId": "relationship-canvas",
+      "dependencies": [
+        "relationship-canvas"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "mouseenter|.node|script-assignment",
+        "mouseleave|.node|script-assignment",
+        "click|.node|script-assignment"
+      ],
+      "mutationTargets": [
+        "#modalAvatar",
+        "#modalName",
+        "#modalRole",
+        "#modalRelTag",
+        "#modalDeed",
+        "#modalImpact",
+        "#modalOverlay"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modalAvatar",
+          "kind": "property",
+          "operation": "set",
+          "name": "src",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"modalAvatar\").src = p.avatar"
+        },
+        {
+          "target": "#modalName",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"modalName\").textContent = p.name"
+        },
+        {
+          "target": "#modalRole",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"modalRole\").textContent = p.role"
+        },
+        {
+          "target": "#modalRelTag",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "核心人物 · 本人",
+          "confidence": 0.9,
+          "source": "tag.textContent = \"核心人物 · 本人\""
+        },
+        {
+          "target": "#modalRelTag",
+          "kind": "style",
+          "operation": "set",
+          "name": "background",
+          "value": "linear-gradient(135deg, var(--primary), #7b96f7)",
+          "confidence": 0.92,
+          "source": "tag.style.background = \"linear-gradient(135deg, var(--primary), #7b96f7)\""
+        },
+        {
+          "target": "#modalRelTag",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "tag.textContent = \"与\" + coreName + \"：\" + REL[p.rel].name"
+        },
+        {
+          "target": "#modalRelTag",
+          "kind": "style",
+          "operation": "set",
+          "name": "background",
+          "confidence": 0.65,
+          "source": "tag.style.background = REL[p.rel].color"
+        },
+        {
+          "target": "#modalDeed",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"modalDeed\").textContent = p.deed"
+        },
+        {
+          "target": "#modalImpact",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"modalImpact\").textContent = p.impact"
+        },
+        {
+          "target": "#modalOverlay",
+          "kind": "class",
+          "operation": "add",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modalOverlay.classList.add(\"active\")"
+        }
+      ],
+      "dataDependencies": [
+        "edgeEls",
+        "nodeState",
+        "events",
+        "REL"
+      ],
+      "dataContracts": [
+        "events",
+        "edgeEls"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "mouseenter: .node",
+          "mouseleave: .node",
+          "click: .node → #modalAvatar property.set(src)",
+          "click: .node → #modalName content.set(textContent)",
+          "click: .node → #modalRole content.set(textContent)",
+          "click: .node → #modalRelTag content.set(textContent=核心人物 · 本人)",
+          "click: .node → #modalRelTag style.set(background=linear-gradient(135deg, var(--primary), #7b96f7))",
+          "click: .node → #modalRelTag content.set(textContent)",
+          "click: .node → #modalRelTag style.set(background)",
+          "click: .node → #modalDeed content.set(textContent)",
+          "click: .node → #modalImpact content.set(textContent)",
+          "click: .node → #modalOverlay class.add(active=active)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 150,
+        "score": 1,
+        "reasons": [
+          "3 个关联交互（3 类实现行为）",
+          "2 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "graph-node-gesture",
+      "componentName": "GraphNodeGesture",
+      "targetFile": "src/components/GraphNodeGesture.ts",
+      "sourceSelector": ".node:where(*)",
+      "sourceSelectors": [
+        ".node:where(*)"
+      ],
+      "responsibility": "复现 gesture-surface 视图的结构、样式与状态",
+      "parentId": "graph-node-control",
+      "dependencies": [
+        "graph-node-control"
+      ],
+      "interactionModel": "static",
+      "interactionFingerprints": [
+        "mousedown|.node|script-assignment",
+        "touchstart|.node|script-assignment"
+      ],
+      "mutationTargets": [
+        ".node"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".node",
+          "kind": "class",
+          "operation": "add",
+          "name": "grabbing",
+          "value": "grabbing",
+          "confidence": 0.96,
+          "source": "el.classList.add(\"grabbing\", \"dragging-now\")"
+        }
+      ],
+      "dataDependencies": [
+        "nodeState"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 105,
+        "score": 0.7,
+        "reasons": [
+          "2 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "event-controls",
+      "componentName": "EventControls",
+      "targetFile": "src/components/EventControls.ts",
+      "sourceSelector": "div.event-bar",
+      "sourceSelectors": [
+        "div.event-bar"
+      ],
+      "responsibility": "复现 event-controls 视图：‹ › ›",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#barPrev|semantic-control",
+        "click|#barNext|semantic-control",
+        "click|.event-btn|script-assignment",
+        "scroll|#eventBtns|script-assignment"
+      ],
+      "mutationTargets": [
+        "#modalOverlay",
+        "#eventIntro",
+        "#eventBtns",
+        ".node",
+        "#graphEdges",
+        ".float-inner",
+        "#graphCanvas",
+        "#barPrev",
+        "#barNext",
+        "#swipeHint"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modalOverlay",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modalOverlay.classList.remove(\"active\")"
+        },
+        {
+          "target": "#eventIntro",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "document.getElementById(\"eventIntro\").innerHTML = ` <img class=\"intro-icon\" src=\"${e.image}\" alt=\"${"
+        },
+        {
+          "target": "#eventBtns",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "eventBtns.innerHTML = events .map( (e, i) => ` <button class=\"event-btn ${i === currentIndex ? \"acti"
+        },
+        {
+          "target": ".node",
+          "kind": "structure",
+          "operation": "remove-node",
+          "confidence": 0.9,
+          "source": "n.remove()"
+        },
+        {
+          "target": "#graphEdges",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "graphEdges.innerHTML = \"\""
+        },
+        {
+          "target": ".node",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "el.className = \"node\" + (p.big ? \" big\" : \"\")"
+        },
+        {
+          "target": ".node",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "el.innerHTML = ` <div class=\"float-inner\"> <div class=\"avatar\" style=\"background-image:url('${p.avat"
+        },
+        {
+          "target": ".float-inner",
+          "kind": "style",
+          "operation": "set",
+          "name": "animationDuration",
+          "confidence": 0.65,
+          "source": "inner.style.animationDuration = dur + \"s\""
+        },
+        {
+          "target": ".float-inner",
+          "kind": "style",
+          "operation": "set",
+          "name": "animationDelay",
+          "confidence": 0.65,
+          "source": "inner.style.animationDelay = -Math.random() * dur + \"s\""
+        },
+        {
+          "target": ".node",
+          "kind": "style",
+          "operation": "set",
+          "name": "left",
+          "confidence": 0.65,
+          "source": "el.style.left = x + \"px\""
+        },
+        {
+          "target": ".node",
+          "kind": "style",
+          "operation": "set",
+          "name": "top",
+          "confidence": 0.65,
+          "source": "el.style.top = y + \"px\""
+        },
+        {
+          "target": "#graphCanvas",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "graphCanvas.appendChild(el)"
+        },
+        {
+          "target": "#graphEdges",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "graphEdges.appendChild(path)"
+        },
+        {
+          "target": "#graphEdges",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "graphEdges.appendChild(bg)"
+        },
+        {
+          "target": "#graphEdges",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "graphEdges.appendChild(text)"
+        },
+        {
+          "target": ".float-inner",
+          "kind": "style",
+          "operation": "set",
+          "name": "animationPlayState",
+          "value": "running",
+          "confidence": 0.92,
+          "source": "n.style.animationPlayState = \"running\""
+        },
+        {
+          "target": "#barPrev",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "confidence": 0.64,
+          "source": "barPrev.disabled = !scrollable || eventBtns.scrollLeft <= 1"
+        },
+        {
+          "target": "#barNext",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "confidence": 0.64,
+          "source": "barNext.disabled = !scrollable || eventBtns.scrollLeft >= maxScroll - 1"
+        },
+        {
+          "target": "#swipeHint",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "hide",
+          "value": "hide",
+          "confidence": 0.96,
+          "source": "swipeHint.classList.toggle(\"hide\", !canRight)"
+        }
+      ],
+      "dataDependencies": [
+        "events",
+        "nodeState",
+        "edgeEls",
+        "SVGNS"
+      ],
+      "dataContracts": [
+        "events",
+        "edgeEls"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [
+          "‹ › ›"
+        ],
+        "states": [
+          "click: #barPrev",
+          "click: #barNext",
+          "click: .event-btn → #modalOverlay class.remove(active=active)",
+          "click: .event-btn → #eventIntro content.set(innerHTML)",
+          "click: .event-btn → #eventBtns content.set(innerHTML)",
+          "click: .event-btn → .node structure.remove-node",
+          "click: .event-btn → #graphEdges content.set(innerHTML=)",
+          "click: .event-btn → .node class.set",
+          "click: .event-btn → .node content.set(innerHTML)",
+          "click: .event-btn → .float-inner style.set(animationDuration)",
+          "click: .event-btn → .float-inner style.set(animationDelay)",
+          "click: .event-btn → .node style.set(left)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 150,
+        "score": 1,
+        "reasons": [
+          "4 个关联交互（3 类实现行为）",
+          "2 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "dialog-modaloverlay",
+      "componentName": "ModaloverlayDialog",
+      "targetFile": "src/components/ModaloverlayDialog.ts",
+      "sourceSelector": "#modalOverlay",
+      "sourceSelectors": [
+        "#modalOverlay"
+      ],
+      "responsibility": "复现 dialog 视图：✕ 在本事件中的作为 影响",
+      "parentId": "application-shell",
+      "dependencies": [
+        "application-shell"
+      ],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#modalClose|semantic-control",
+        "click|#modalOverlay|script-assignment"
+      ],
+      "mutationTargets": [
+        "#modalOverlay"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#modalOverlay",
+          "kind": "class",
+          "operation": "remove",
+          "name": "active",
+          "value": "active",
+          "confidence": 0.96,
+          "source": "modalOverlay.classList.remove(\"active\")"
+        }
+      ],
+      "dataDependencies": [
+        "nodeState",
+        "edgeEls"
+      ],
+      "dataContracts": [
+        "edgeEls"
+      ],
+      "designTokens": [
+        "--primary",
+        "--primary-hover",
+        "--primary-light",
+        "--primary-tint",
+        "--bg-white",
+        "--bg-dent",
+        "--text-main",
+        "--text-minor",
+        "--text-tiny",
+        "--border-light",
+        "--shadow-sm",
+        "--shadow-md",
+        "--shadow-lg",
+        "--radius-xs",
+        "--radius-sm",
+        "--radius-md",
+        "--radius-lg",
+        "--rel-family",
+        "--rel-ruler",
+        "--rel-ally",
+        "--rel-enemy",
+        "--rel-plot",
+        "rgba(30, 31, 36, 0.06)",
+        "rgba(30, 31, 36, 0.12)"
+      ],
+      "responsiveQueries": [
+        "(min-width: 769px)",
+        "(max-width: 768px)",
+        "(max-width: 768px)",
+        "(max-width: 480px)"
+      ],
+      "acceptance": {
+        "text": [
+          "✕ 在本事件中的作为 影响"
+        ],
+        "states": [
+          "click: #modalClose → #modalOverlay class.remove(active=active)",
+          "click: #modalOverlay → #modalOverlay class.remove(active=active)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 125,
+        "score": 0.83,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "1 个局部数据依赖",
+          "4 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "graph-layout",
+      "detail": "预计复杂度已达预算的 82%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-layout",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "edge-renderer",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "edge-label-placement",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-animation-loop",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "graph-node-control",
+      "detail": "预计复杂度已达预算的 100%"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-node-control",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "missing-text-baseline",
+      "componentId": "graph-node-gesture",
+      "detail": "未提取到逐字文本基线，需人工补充"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "event-controls",
+      "detail": "预计复杂度已达预算的 100%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "dialog-modaloverlay",
+      "detail": "预计复杂度已达预算的 83%"
+    }
+  ],
+  "summary": {
+    "components": 10,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 10,
+    "interactions": 12,
+    "ownedInteractions": 12,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

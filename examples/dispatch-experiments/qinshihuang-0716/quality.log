@@ -1,0 +1,19 @@
+[PASS] validation: 10/10 校验通过
+[PASS] render: 原页面和组件库均成功渲染
+[PASS] overall: finalOverall=0.9943（dom=0.998，visual=0.9919），门槛=0.85
+[PASS] structure: structure=0.996，门槛=0.7
+[PASS] text: text=1，门槛=0.8
+[PASS] viewport-matrix: 4/4 视口通过，worst=tiny
+[PASS] scenario-viewport-matrix: 1/1 关键交互状态矩阵通过
+[PASS] visual-runtime: initialViewports=4，runtimeErrors=0
+[PASS] selector-coverage: worstSelectorCoverage=1，门槛=1
+[PASS] computed-style: worstComputedStyle=0.9898，门槛=0.98
+[PASS] pixel-diff: worstPixelDiff=0.007919，门槛=0.02
+[PASS] scenario-protocol: 正式场景=4，candidate=0，waiver=2
+[PASS] scenarios: 4/4 正式场景通过
+[PASS] coverage: verifiedCoverage=1.000，门槛=0.8，eligible=3，waived=2
+
+质量门禁: PASS
+real 13.79
+user 17.69
+sys 3.65

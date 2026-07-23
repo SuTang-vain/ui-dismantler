@@ -152,3 +152,11 @@ AST 分析器还会把可观察副作用标准化为 `stateTransitions`，记录
 - Ownership prefers the deepest boundary only when both candidates have strong trigger affinity; event-type bonuses route scroll and gesture lifecycles to their respective surfaces.
 - Gesture and scroll lifecycle registrations count as one implementation behavior for complexity estimation. The 150-line component budget remains unchanged.
 - Seven-case planning regression result: all 7 ready, 131/131 interactions owned, zero over-budget components, zero fake pointer clicks.
+
+### 2026-07-23 SVG geometry planning correction
+
+- Executable inline and local external scripts are inspected for recursive layout search, nested geometry loops, trigonometry/distance math, collision and clearance semantics, SVG element/path construction, text measurement, scaled coordinate conversion, and animation-frame synchronization.
+- Complex relationship graphs can now emit `GraphLayout`, `EdgeRenderer`, `EdgeLabelPlacement`, and `GraphAnimationLoop` as independent implementation responsibilities. These synthetic responsibilities do not own DOM events; trigger ownership remains with the nearest real interactive boundary.
+- Qinshihuang dispatch changed from one `RelationshipCanvas` planned at 99 lines but implemented at 468 lines to a five-file graph geometry cluster: 470 planned lines versus 405 actual lines, with every file at or below 122 lines and no increase to the 150-line budget.
+- The refactored dispatch retained Gold+: validation 10/10, four viewports, critical interaction matrix 1/1, computed style 0.9898, pixel diff 0.007919, selector coverage 1.0, and zero runtime errors.
+- Seven-case planning regression remains fully dispatch-ready: 7/7 ready, 131/131 interactions owned, zero over-budget components, and zero planning errors.

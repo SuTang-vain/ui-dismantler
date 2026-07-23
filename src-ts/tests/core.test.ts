@@ -326,6 +326,40 @@ test("gesture lifecycle registrations count as one implementation behavior", asy
   assert.equal(gesture?.complexity.overBudget, false);
 });
 
+test("SVG geometry analysis emits layout renderer label and animation responsibilities", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-svg-geometry-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "geometry.html");
+  await writeFile(html, `<!doctype html><html><body><div id="app-container"><div id="graphWrap" class="graph-wrap"><div id="graphCanvas" class="graph-canvas"><svg class="family"></svg><button class="node">Node</button></div></div><div id="eventBtns"><button class="event-btn" data-i="0">Event</button></div><div id="modalOverlay" class="modal"><button class="modal-close">Close</button></div></div><script>
+  const wrap=document.querySelector('#graphWrap');const svg=document.querySelector('svg');const node=document.querySelector('.node');
+  wrap.addEventListener('pointerdown',()=>{});node.addEventListener('mousedown',()=>{});
+  function permute(items,index){if(index===items.length)return items;for(let cursor=index;cursor<items.length;cursor++){for(let other=cursor+1;other<items.length;other++){Math.hypot(cursor,other)}}return permute(items,index+1)}
+  const x=Math.cos(1)*100;const y=Math.sin(1)*100;wrap.getBoundingClientRect();
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+  path.setAttribute('d',\`M 0 0 L \${x} \${y}\`);text.getComputedTextLength();const overlapClearance=Math.max(x,y);svg.append(path,bg,text);
+  function sync(){path.setAttribute('data-clearance',String(overlapClearance));requestAnimationFrame(sync)}requestAnimationFrame(sync);
+  </script></body></html>`);
+  const report = planComponents(analyzeHtml(html, { profile: "svg-geometry" }), { lineBudget: 150 });
+  const names = new Set(report.components.map((component) => component.componentName));
+  for (const name of ["GraphLayout", "EdgeRenderer", "EdgeLabelPlacement", "GraphAnimationLoop"]) assert.equal(names.has(name), true, `missing ${name}`);
+  assert.equal(report.summary.ready, true);
+  assert.equal(report.components.every((component) => !component.complexity.overBudget), true);
+  const geometryComponents = report.components.filter((component) => ["GraphLayout", "EdgeRenderer", "EdgeLabelPlacement", "GraphAnimationLoop"].includes(component.componentName));
+  assert.equal(geometryComponents.every((component) => component.interactionFingerprints.length === 0), true);
+  assert.equal(report.components.find((component) => component.componentName === "RelationshipCanvas")?.interactionFingerprints.some((item) => item.startsWith("pointerdown|#graphWrap")), true);
+});
+
+test("external graph scripts participate in geometry planning", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-svg-external-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "geometry.html");
+  await writeFile(join(dir, "graph.js"), `const svg=document.querySelector('svg');function arrange(items,index){for(let a=0;a<items.length;a++)for(let b=0;b<items.length;b++)Math.hypot(a,b);return index<items.length?arrange(items,index+1):items}Math.cos(1);Math.sin(1);const path=document.createElementNS('http://www.w3.org/2000/svg','path');const text=document.createElementNS('http://www.w3.org/2000/svg','text');const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');path.setAttribute('d','M 0 0 L 1 1');text.getComputedTextLength();function sync(){requestAnimationFrame(sync)}requestAnimationFrame(sync);`);
+  await writeFile(html, `<!doctype html><html><body><div id="app"><div id="graphWrap" class="graph-wrap"><div id="graphCanvas" class="graph-canvas"><svg></svg></div></div><div id="eventBtns"><button data-i="0">Event</button></div><dialog id="modal"></dialog></div><script src="graph.js"></script></body></html>`);
+  const report = planComponents(analyzeHtml(html, { profile: "external-svg-geometry" }), { lineBudget: 150 });
+  assert.equal(report.components.some((component) => component.componentName === "EdgeRenderer"), true);
+  assert.equal(report.components.some((component) => component.componentName === "GraphAnimationLoop"), true);
+});
+
 test("malformed scripts retain bounded regex interaction fallback", async (context) => {
   const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-malformed-"));
   context.after(() => rm(dir, { recursive: true, force: true }));

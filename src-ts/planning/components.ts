@@ -77,7 +77,7 @@ function selectorMatchScore(selector: string | null, viewSelector: string, local
 }
 
 function interactionAffinity(interaction: Interaction, view: AnalyzedView): number {
-  if (interaction.trigger === "event-listener") return -1;
+  if (interaction.trigger === "event-listener" || view.structuralType === "implementation-responsibility") return -1;
   const triggers = Array.isArray(view.details.interactionSelectors) ? view.details.interactionSelectors.filter((item): item is string => typeof item === "string") : [];
   const repeated = Array.isArray(view.details.repeatedSelectors) ? view.details.repeatedSelectors.filter((item): item is string => typeof item === "string") : [];
   const selectors = new Set([view.selector, ...triggers, ...repeated]);
@@ -118,8 +118,51 @@ function inferInteractionModel(interactions: Interaction[], view: AnalyzedView):
 }
 
 function responsibility(view: AnalyzedView): string {
+  const explicit: Record<string, string> = {
+    "relationship-canvas": "编排关系图节点、布局、边渲染、标签与同步生命周期，不内联各几何算法",
+    "graph-layout": "计算缩放坐标空间、环形排列、排列搜索与节点碰撞消解",
+    "edge-renderer": "创建 SVG 边与标签元素，并根据节点端点更新路径几何",
+    "edge-label-placement": "测量关系标签并执行节点、文本与已放置标签之间的避障搜索",
+    "graph-animation-loop": "管理 requestAnimationFrame 同步循环及其启动、停止和销毁",
+  };
+  if (explicit[view.type]) return explicit[view.type];
   const label = typeof view.details.text === "string" ? view.details.text.trim() : "";
   return label ? `复现 ${view.type} 视图：${label.slice(0, 100)}` : `复现 ${view.type} 视图的结构、样式与状态`;
+}
+
+function numericDetail(value: unknown): number { return typeof value === "number" && Number.isFinite(value) ? value : 0; }
+
+function geometryComplexity(view: AnalyzedView): { weight: number; reasons: string[] } | null {
+  const raw = view.details.geometrySignals;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const geometry = raw as Record<string, unknown>;
+  const allReasons = Array.isArray(geometry.reasons) ? geometry.reasons.filter((item): item is string => typeof item === "string") : [];
+  const matchingReasons = (pattern: RegExp): string[] => allReasons.filter((reason) => pattern.test(reason));
+  const role = typeof view.details.geometryRole === "string" ? view.details.geometryRole : view.type;
+  const loops = numericDetail(geometry.loopCount); const depth = numericDetail(geometry.maxLoopDepth);
+  const recursion = numericDetail(geometry.recursiveFunctions); const svg = numericDetail(geometry.svgElementCreations);
+  const paths = numericDetail(geometry.pathWrites); const text = numericDetail(geometry.textMeasurements);
+  const coordinates = numericDetail(geometry.coordinateReads); const frames = numericDetail(geometry.animationFrames);
+  const trig = numericDetail(geometry.trigonometryCalls); const collisions = numericDetail(geometry.collisionEvidence);
+  if (role === "graph-layout") return {
+    weight: 70 + Math.min(loops, 12) + depth * 5 + recursion * 8 + Math.min(trig, 8) * 2 + Math.min(collisions, 8),
+    reasons: matchingReasons(/排列|回溯|循环|三角|碰撞|避障|坐标|缩放/),
+  };
+  if (role === "edge-renderer") return {
+    weight: 45 + Math.min(svg, 8) * 3 + paths * 8 + Math.min(coordinates, 8),
+    reasons: matchingReasons(/SVG 元素|路径写入|坐标|缩放/),
+  };
+  if (role === "edge-label-placement") return {
+    weight: 50 + text * 10 + depth * 4 + Math.min(collisions, 10) * 2 + Math.min(coordinates, 8),
+    reasons: matchingReasons(/文本测量|碰撞|避障|坐标|缩放/),
+  };
+  if (role === "graph-animation-loop") return {
+    weight: 28 + Math.min(frames, 5) * 6 + paths * 3,
+    reasons: matchingReasons(/requestAnimationFrame|路径写入/),
+  };
+  const responsibilities = Array.isArray(geometry.responsibilities) ? geometry.responsibilities.length : 0;
+  if (view.type === "relationship-canvas" && responsibilities) return { weight: 68 + responsibilities * 5, reasons: [`几何职责已拆分为 ${responsibilities} 个独立组件`] };
+  return null;
 }
 
 function acceptanceStates(model: InteractionModel, interactions: Interaction[]): string[] {
@@ -133,7 +176,7 @@ function acceptanceStates(model: InteractionModel, interactions: Interaction[]):
 }
 
 function estimatedComplexity(view: AnalyzedView, interactions: Interaction[], manifest: Manifest, localDataCount = 0): ComponentPlan["complexity"] {
-  const localDetails = Object.fromEntries(Object.entries(view.details).filter(([key]) => !["interactionSelectors", "repeatedSelectors"].includes(key)));
+  const localDetails = Object.fromEntries(Object.entries(view.details).filter(([key]) => !["interactionSelectors", "repeatedSelectors", "geometrySignals"].includes(key)));
   const detailsLength = JSON.stringify(localDetails).length;
   const interactionKinds = new Set(interactions.map((item) => {
     const gestureEvent = item.event.startsWith("pointer") || item.event.startsWith("touch") || ["mousedown", "mouseup", "mousemove"].includes(item.event);
@@ -141,14 +184,17 @@ function estimatedComplexity(view: AnalyzedView, interactions: Interaction[], ma
     if (view.type === "scroll-surface" && ["scroll", "scrollend"].includes(item.event)) return `scroll-lifecycle|${item.trigger}`;
     return `${item.event}|${item.action}|${Boolean(item.target)}`;
   })).size;
-  const interactionWeight = interactionKinds * 18;
+  const geometry = geometryComplexity(view);
+  const implementationResponsibility = view.structuralType === "implementation-responsibility";
+  const interactionWeight = interactionKinds * (implementationResponsibility ? 8 : 18);
   const dataWeight = Math.min(localDataCount, 8) * 8;
-  const tokenWeight = Math.min(manifest.theme.tokens.length, 20);
-  const responsiveWeight = Math.min(manifest.responsive.length, 8) * 3;
-  const viewWeight = ["graph", "carousel-3d", "cause-chain"].includes(view.type) ? 80 : 45;
+  const tokenWeight = geometry ? 0 : Math.min(manifest.theme.tokens.length, 20);
+  const responsiveWeight = Math.min(manifest.responsive.length, 8) * (geometry ? 1 : 3);
+  const viewWeight = geometry?.weight ?? (["graph", "carousel-3d", "cause-chain"].includes(view.type) ? 80 : 45);
   const estimatedLines = Math.max(40, Math.round(viewWeight + detailsLength / 24 + interactionWeight + dataWeight + tokenWeight + responsiveWeight));
-  const reasons = [`${interactions.length} 个关联交互（${interactionKinds} 类实现行为）`, `${localDataCount} 个局部数据依赖`, `${manifest.responsive.length} 个响应式查询（复杂度计入前 8 个）`];
+  const reasons = [`${interactions.length} 个关联交互（${interactionKinds} 类实现行为）`, `${localDataCount} 个局部数据依赖`, `${manifest.responsive.length} 个响应式查询（复杂度计入前 8 个）`, ...(geometry?.reasons ?? [])];
   if (["graph", "carousel-3d", "cause-chain"].includes(view.type)) reasons.push(`${view.type} 属于高复杂度视图`);
+  if (geometry && ["graph-layout", "edge-renderer", "edge-label-placement", "graph-animation-loop"].includes(view.type)) reasons.push(`${view.type} 为独立 SVG 几何职责`);
   return { estimatedLines, score: Number((estimatedLines / DEFAULT_LINE_BUDGET).toFixed(2)), reasons, budget: DEFAULT_LINE_BUDGET, overBudget: false };
 }
 
@@ -208,7 +254,7 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
   const nameCounts = new Map<string, number>();
   const components = views.map((view, index): ComponentPlan => {
     const interactions = manifest.interactions.filter((item) => interactionOwner.get(item.fingerprint) === index);
-    const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details", "identity-gallery", "gesture-surface", "works-explorer", "cast-explorer", "graph-surface", "event-controls", "graph-node-control", "cast-card-control", "story-control", "scroll-surface"];
+    const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details", "identity-gallery", "gesture-surface", "works-explorer", "cast-explorer", "graph-surface", "graph-layout", "edge-renderer", "edge-label-placement", "graph-animation-loop", "event-controls", "graph-node-control", "cast-card-control", "story-control", "scroll-surface"];
     const preferredName = semanticTypes.includes(view.type) ? view.semanticType : view.type;
     const baseName = pascal(preferredName);
     const occurrence = (nameCounts.get(baseName) ?? 0) + 1;
