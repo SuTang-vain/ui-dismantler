@@ -51,6 +51,19 @@ const idMap = new Map([...idNames].map((name) => [name, prefixed(name)]));
 
 for (const element of document.querySelectorAll('[class]')) element.setAttribute('class', [...element.classList].map((name) => classMap.get(name) || name).join(' '));
 for (const element of document.querySelectorAll('[id]')) element.id = idMap.get(element.id) || element.id;
+for (const element of document.querySelectorAll('[data-tab], [data-target], [aria-controls], [aria-labelledby], [for], [href^="#"]')) {
+  for (const attribute of ['data-tab', 'data-target', 'aria-controls', 'aria-labelledby', 'for', 'href']) {
+    const raw = element.getAttribute(attribute);
+    if (!raw) continue;
+    const rewritten = raw.split(/\s+/).map((value) => {
+      const hash = value.startsWith('#');
+      const key = hash ? value.slice(1) : value;
+      const mapped = idMap.get(key);
+      return mapped ? `${hash ? '#' : ''}${mapped}` : value;
+    }).join(' ');
+    element.setAttribute(attribute, rewritten);
+  }
+}
 for (const element of document.querySelectorAll('[data-p]')) {
   const value = element.getAttribute('data-p');
   if (value && idMap.has(value)) element.setAttribute('data-p', idMap.get(value));
@@ -89,7 +102,10 @@ for (const dialog of document.querySelectorAll('.pop[id], .modal[id], [role="dia
   dialog.setAttribute('aria-modal', 'true');
   if (!dialog.hasAttribute('aria-label') && !dialog.hasAttribute('aria-labelledby')) dialog.setAttribute('aria-label', document.title || '详情');
 }
-for (const script of [...document.scripts]) script.remove();
+for (const script of [...document.scripts]) {
+  const type = (script.getAttribute('type') || '').trim().toLowerCase().split(';')[0];
+  if (executableScriptType(type) || type !== 'application/json' || !script.id) script.remove();
+}
 for (const style of [...document.querySelectorAll('style')]) style.remove();
 const template = [...document.body.children].map((element) => element.outerHTML).join('\n');
 
@@ -153,6 +169,11 @@ if (scriptSource.trim()) {
 }
 const edits = [];
 if (jsAst) walkJs(jsAst, {
+  Property(node) {
+    if (node.computed || node.key?.type !== 'Literal' || typeof node.key.value !== 'string') return;
+    const next = transformString(node.key.value);
+    if (next !== node.key.value) edits.push({ start: node.key.start, end: node.key.end, text: JSON.stringify(next) });
+  },
   Literal(node) {
     if (typeof node.value !== 'string') return;
     const next = transformString(node.value);
@@ -182,6 +203,7 @@ const dataBindings = new Map([
   ['NODE_IMG', 'nodeImages'],
   ['NOTE', 'notes'],
   ['QS', 'questions'],
+  ['memberList', 'memberList'],
 ]);
 for (const [name, optionName] of dataBindings) {
   const declaration = new RegExp(`\\b(?:var|let|const)\\s+${name}\\s*=\\s*([\\[{])`);
@@ -191,7 +213,7 @@ for (const [name, optionName] of dataBindings) {
 transformedScript = transformedScript.replace(/var slots = \[([\s\S]*?)\n\s*\];/, 'var slots = Array.of($1\n              );');
 
 const runtimeBodyClasses = [...scriptSource.matchAll(/document\.body\.classList\.add\(\s*['\"]([^'\"]+)['\"]/g)].map((match) => classMap.get(match[1]) || prefixed(match[1]));
-const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${').replace(/<\/script/gi, '<\\/script');
 const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n    ${runtimeBodyClasses.map((name) => `    root.classList.add('${name}');`).join('\n')}\n    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => `    ${line.replace(/\s+$/, '')}`).join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
 
 mkdirSync(resolve(outDir, 'src'), { recursive: true });
