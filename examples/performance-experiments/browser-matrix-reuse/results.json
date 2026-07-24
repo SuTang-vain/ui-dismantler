@@ -192,5 +192,107 @@
       "stabilityTimeouts": 0,
       "runtimeErrors": 0
     }
-  ]
+  ],
+  "resourceReadinessExperiment": {
+    "measuredAt": "2026-07-24",
+    "coverage": [
+      "dynamic-stylesheet",
+      "css-background-image",
+      "css-mask-image",
+      "document-fonts",
+      "visible-img"
+    ],
+    "blackpink": {
+      "passed": true,
+      "totalMs": 31872.664,
+      "scenarioVisualMatrixMs": 17354.071,
+      "browserTotalMs": 21558.35,
+      "worstComputedStyle": 0.9997,
+      "worstPixelDiff": 0.001312,
+      "resourceDrainTimeouts": 0,
+      "stabilityTimeouts": 0
+    },
+    "optimizedGold": {
+      "passed": "2/2",
+      "blackpinkMs": 32603.939,
+      "totalCommandMs": 36042.564
+    },
+    "deterministicTests": {
+      "dynamicStylesheetAndBackground": true,
+      "delayedWebFont": true
+    },
+    "crossCaseRegression": [
+      {
+        "case": "qinshihuang-0716-ts",
+        "passed": true,
+        "overall": 0.9945,
+        "totalMs": 11483.595,
+        "resourceDrainTimeouts": 0
+      },
+      {
+        "case": "ciyu-scrollbar-ts",
+        "passed": true,
+        "overall": 0.9996,
+        "totalMs": 24508.262,
+        "resourceDrainTimeouts": 0
+      },
+      {
+        "case": "sun-wukong-0722-ts",
+        "passed": true,
+        "overall": 0.9928,
+        "totalMs": 18266.144,
+        "resourceDrainTimeouts": 0
+      },
+      {
+        "case": "sandadui-graph-ts",
+        "passed": true,
+        "overall": 0.9992,
+        "totalMs": 14601.554,
+        "resourceDrainTimeouts": 0
+      }
+    ],
+    "cacheBoundary": "stylesheet remains uncached; run-local cache remains GET image/font without Cookie or Authorization",
+    "stabilityTimeoutHardGate": {
+      "deterministicRegression": true,
+      "pixelsPassed": true,
+      "viewportPassed": false,
+      "matrixPassed": false,
+      "behavior": "continue computed-style/screenshot/pixel evidence, but fail viewport when adaptive stability does not settle"
+    },
+    "finalRegression": {
+      "typescript": {
+        "tests": 50,
+        "passed": 49,
+        "failed": 0,
+        "skipped": 1
+      },
+      "optimizedGold": {
+        "passed": "2/2",
+        "blackpinkMs": 32984.013,
+        "totalCommandMs": 36466.518
+      },
+      "crossCase": [
+        {
+          "case": "qinshihuang-0716-ts",
+          "passed": true,
+          "stabilityFailures": 0
+        },
+        {
+          "case": "ciyu-scrollbar-ts",
+          "passed": true,
+          "stabilityFailures": 0
+        },
+        {
+          "case": "sun-wukong-0722-ts",
+          "passed": true,
+          "stabilityFailures": 0
+        },
+        {
+          "case": "sandadui-graph-ts",
+          "passed": true,
+          "stabilityFailures": 0
+        }
+      ]
+    }
+  }
 }

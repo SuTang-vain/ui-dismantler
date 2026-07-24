@@ -224,3 +224,35 @@ TypeScript 视觉评估器新增可回退的两种模式：
 ```
 
 2026-07-24 的 BLACKPINK 三轮同版本 A/B 中，`fixed + run-local cache` 平均为 `39.11s`，安全版 `adaptive + run-local cache` 平均为 `32.16s`：总质量流程降低 `17.8%`，关键场景视觉矩阵降低 `28.1%`，浏览器阶段降低 `25.1%`。三轮均保持 10/10 validation、四视口和四个关键场景矩阵全通过、runtime errors 为 0、worst computed-style `0.9997`、worst pixel diff 不高于 `0.001314`，且所有稳定性超时计数为 0。
+
+### 动态视觉资源完成条件
+
+`adaptive` 稳定探针进一步覆盖运行时新增的视觉资源：
+
+- 动态 `<link rel="stylesheet">` 必须产生可用的 `CSSStyleSheet`；
+- 可见元素及其 `::before` / `::after` 的远程 `background-image`、`mask-image` URL 必须出现在已完成的 Resource Timing 记录中；
+- `document.fonts.status` 必须回到 `loaded`；
+- 普通可见 `<img>` 仍要求 `complete`，且有效图片需要 `naturalWidth > 0`。
+
+对应 telemetry 包含：
+
+```text
+resourceAwareWaits
+resourceDrainTimeouts
+stylesheetAwareWaits
+backgroundImageAwareWaits
+fontAwareWaits
+```
+
+这些检查只影响 `adaptive` 路径，不扩张 run-local 缓存边界。stylesheet 仍不跨 reference/generated 缓存，避免忽略 Referer、Origin、语言或服务端动态 CSS 差异；run-local 缓存继续只处理无 Cookie、无 Authorization 的 GET image/font。
+
+### 稳定性超时作为正式失败条件
+
+adaptive 等待超时后仍会继续生成 computed-style、截图和 pixel diff，便于诊断；但 viewport 不再允许因为 reference/generated 同时缺失资源而像素全绿。`BrowserQualityReport`、`BrowserViewportReport` 和 matrix 新增 `stabilityFailures`，以下任一超时都会使对应 viewport `passed=false`：
+
+- DOM/layout/assertion stability timeout；
+- network idle timeout；
+- short timer drain timeout；
+- stylesheet/font/image/background resource drain timeout。
+
+因此稳定性超时不会中断证据产出，但也不能绕过 Gold+ viewport matrix。

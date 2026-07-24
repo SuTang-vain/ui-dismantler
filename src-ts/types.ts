@@ -320,6 +320,7 @@ export interface BrowserViewportReport extends QualityViewport {
   available: boolean;
   error?: string;
   runtimeErrors: number;
+  stabilityFailures: number;
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
   styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
   pixels?: PixelDiffReport;
@@ -336,6 +337,7 @@ export interface BrowserQualityMatrixReport {
   worstComputedStyle: number;
   worstPixelDiff: number;
   runtimeErrors: number;
+  stabilityFailures: number;
 }
 
 export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrixReport {
@@ -349,12 +351,14 @@ export interface BrowserQualityReport {
   reference?: {
     ok: boolean;
     runtimeErrors: string[];
+    stabilityFailures: string[];
     selectorCoverage: SelectorCoverageReport;
     styles: ComputedStyleSnapshot[];
   };
   generated?: {
     ok: boolean;
     runtimeErrors: string[];
+    stabilityFailures: string[];
     selectorCoverage: SelectorCoverageReport;
     styles: ComputedStyleSnapshot[];
   };

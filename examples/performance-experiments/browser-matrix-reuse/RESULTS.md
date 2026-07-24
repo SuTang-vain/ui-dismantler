@@ -167,3 +167,63 @@ verified coverage: 1.000
 | 词语滚动交互 | 是 | 0.9996 | 0.9989 | 0 | 0 | 0 |
 | 孙悟空动画图鉴 | 是 | 0.9928 | 0.9887 | 0.014119 | 0 | 0 |
 | 三大队关系图谱 | 是 | 0.9992 | 0.9989 | 0 | 0 | 0 |
+
+## 2026-07-24：动态视觉资源稳定门
+
+在安全版 adaptive 稳定判定上继续增加：
+
+- 动态外部 stylesheet load；
+- CSS `background-image` / `mask-image` Resource Timing 完成记录；
+- `document.fonts.status`；
+- 可见图片 decode 前的完成状态。
+
+新增两个确定性 HTTP 集成测试：
+
+1. stylesheet 延迟 60ms，随后触发背景图延迟 75ms；
+2. stylesheet 延迟 40ms，随后加载真实 TTF 字体并等待 `document.fonts.load()`。
+
+测试均确认：reference/generated 使用隔离页面；stylesheet 分别请求；image/font 仍通过 run-local 缓存只访问源站一次；资源与稳定超时均为 0。
+
+BLACKPINK 单轮探针：
+
+```text
+total: 31.87s
+scenario matrices: 17.35s
+browser total: 21.56s
+worst computed style: 0.9997
+worst pixel diff: 0.001312
+resource drain timeouts: 0
+stability timeouts: 0
+```
+
+正式 optimized Gold+：
+
+```text
+2/2 PASS
+BLACKPINK Gold+: 32.60s
+full command: 36.04s
+```
+
+异构案例全部保持原质量分，且 resource/stability timeout 均为 0：
+
+| 案例 | PASS | overall | 总耗时 | resource timeout |
+|---|---:|---:|---:|---:|
+| 秦始皇 SVG 图谱 | 是 | 0.9945 | 11.48s | 0 |
+| 词语滚动交互 | 是 | 0.9996 | 24.51s | 0 |
+| 孙悟空动画图鉴 | 是 | 0.9928 | 18.27s | 0 |
+| 三大队关系图谱 | 是 | 0.9992 | 14.60s | 0 |
+
+### 稳定超时假绿回归
+
+新增反例：reference/generated 同时加载一个超过 adaptive 500ms 上限的 stylesheet。两侧截图仍完全一致，pixel gate 本可为 PASS，但资源和网络尚未稳定。
+
+新逻辑结果：
+
+```text
+pixel passed: true
+stabilityFailures: > 0
+viewport passed: false
+matrix passed: false
+```
+
+这使“资源同时缺失导致像素一致”的情况不再被判为高保真完成。正式 BLACKPINK 与四个异构案例回归的 `stabilityFailures`、`stabilityTimeouts`、`resourceDrainTimeouts` 均为 0。

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { createServer } from "node:http";
-import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
@@ -282,4 +283,169 @@ test("adaptive stability preserves temporal waits when the following target was 
   assert.equal(result.telemetry.workload.adaptiveExplicitWaits, 0);
   assert.ok(result.telemetry.timing.fixedWaitMs >= 200);
   assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+});
+
+test("adaptive stability drains dynamic stylesheets and CSS background images", async () => {
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=", "base64");
+  let stylesheetRequests = 0;
+  let backgroundRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/dynamic-theme.css") {
+      stylesheetRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "text/css", "cache-control": "no-store" });
+        response.end(`.app.asset-ready,.sg-app.sg-asset-ready{background-image:url('/background.png');background-size:24px 24px;background-repeat:repeat}`);
+      }, 60);
+      return;
+    }
+    if (request.url === "/background.png") {
+      backgroundRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "image/png", "cache-control": "no-store" });
+        response.end(png);
+      }, 75);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const stylesheetUrl = `http://127.0.0.1:${address.port}/dynamic-theme.css`;
+    const item = await fixture(
+      "adaptive-external-stylesheet",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:180px;background-color:#fff}.status{width:100px;height:40px;background:#e11d48;color:#fff}</style></head><body><div class="app"><button id="theme">Theme</button><div class="status">Ready</div></div><script>document.getElementById('theme').onclick=()=>{const link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';link.onload=()=>document.querySelector('.app').classList.add('asset-ready');document.head.appendChild(link)}</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:240px;height:180px;background-color:var(--sg-paper)}.sg-status{width:100px;height:40px;background:var(--sg-primary);color:#fff}@media(max-width:500px){.sg-status{width:100px}}@media(max-width:320px){.sg-status{width:100px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-theme">Theme</button><div class="sg-status">Ready</div></div>';root.querySelector('#sg-theme').onclick=function(){var link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';link.onload=function(){root.querySelector('.sg-app').classList.add('sg-asset-ready')};document.head.appendChild(link)}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "load-external-theme",
+      critical: true,
+      steps: [{ action: "click" as const, target: { reference: "#theme", library: "#sg-theme" } }],
+      assertions: [{ target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "asset-ready", library: "sg-asset-ready" }] }],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      resourceCache: "run-local",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    assert.equal(result.scenarios[0].evaluation.matrix.passed, true);
+    assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+    assert.equal(result.telemetry.workload.resourceDrainTimeouts, 0);
+    assert.ok(result.telemetry.workload.resourceAwareWaits >= 2);
+    assert.ok(result.telemetry.workload.stylesheetAwareWaits >= 2);
+    assert.ok(result.telemetry.workload.backgroundImageAwareWaits >= 1);
+    assert.equal(stylesheetRequests, 2);
+    assert.equal(backgroundRequests, 1);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("adaptive stability observes delayed web-font loading", async (context) => {
+  const fontPath = [
+    "/System/Library/Fonts/Symbol.ttf",
+    "/System/Library/Fonts/SFNSMono.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+  ].find(existsSync);
+  if (!fontPath) { context.skip("no system font fixture available"); return; }
+  const font = await readFile(fontPath);
+  let stylesheetRequests = 0;
+  let fontRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/font-theme.css") {
+      stylesheetRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "text/css", "cache-control": "no-store" });
+        response.end(`@font-face{font-family:'DelayedGate';src:url('/delayed-font.ttf') format('truetype');font-display:block}.app.font-ready,.sg-app.sg-font-ready,.app.font-loaded,.sg-app.sg-font-loaded{font-family:'DelayedGate',sans-serif}`);
+      }, 40);
+      return;
+    }
+    if (request.url === "/delayed-font.ttf") {
+      fontRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "font/ttf", "cache-control": "no-store", "access-control-allow-origin": "*" });
+        response.end(font);
+      }, 80);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const stylesheetUrl = `http://127.0.0.1:${address.port}/font-theme.css`;
+    const item = await fixture(
+      "adaptive-web-font",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:180px;background:#fff}.label{font-size:24px}</style></head><body><div class="app"><button id="font">Font</button><div class="label">Font Gate</div></div><script>document.getElementById('font').onclick=()=>{const link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';link.onload=()=>{const app=document.querySelector('.app');app.classList.add('font-ready');document.fonts.load("24px DelayedGate").then(()=>app.classList.add('font-loaded'))};document.head.appendChild(link)}</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:240px;height:180px;background:var(--sg-paper)}.sg-label{font-size:24px}@media(max-width:500px){.sg-label{font-size:24px}}@media(max-width:320px){.sg-label{font-size:24px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-font">Font</button><div class="sg-label">Font Gate</div></div>';root.querySelector('#sg-font').onclick=function(){var link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';link.onload=function(){var app=root.querySelector('.sg-app');app.classList.add('sg-font-ready');document.fonts.load("24px DelayedGate").then(function(){app.classList.add('sg-font-loaded')})};document.head.appendChild(link)}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "load-web-font",
+      critical: true,
+      steps: [{ action: "click" as const, target: { reference: "#font", library: "#sg-font" } }],
+      assertions: [{ target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "font-loaded", library: "sg-font-loaded" }] }],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      resourceCache: "run-local",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify({ matrix: result.scenarios[0].evaluation.matrix, telemetry: result.telemetry }, null, 2));
+    assert.equal(result.telemetry.workload.resourceDrainTimeouts, 0);
+    assert.ok(result.telemetry.workload.stylesheetAwareWaits >= 2);
+    assert.ok(result.telemetry.workload.fontAwareWaits >= 1);
+    assert.equal(stylesheetRequests, 2);
+    assert.equal(fontRequests, 1);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("adaptive stability timeouts fail the viewport even when pixels would otherwise match", async () => {
+  const server = createServer((request, response) => {
+    if (request.url === "/too-slow.css") {
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "text/css", "cache-control": "no-store" });
+        response.end(`.app.slow-ready,.sg-app.sg-slow-ready{background:#fff}`);
+      }, 700);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const stylesheetUrl = `http://127.0.0.1:${address.port}/too-slow.css`;
+    const item = await fixture(
+      "adaptive-timeout-gate",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:180px;height:120px;background:#fff}</style></head><body><div class="app"><button id="slow">Slow</button></div><script>document.getElementById('slow').onclick=()=>{const app=document.querySelector('.app');app.classList.add('slow-ready');const link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';document.head.appendChild(link)}</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper)}.sg-app.sg-slow-ready{background:var(--sg-paper)}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-slow">Slow</button></div>';root.querySelector('#sg-slow').onclick=function(){var app=root.querySelector('.sg-app');app.classList.add('sg-slow-ready');var link=document.createElement('link');link.rel='stylesheet';link.href='${stylesheetUrl}';document.head.appendChild(link)}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "slow-stylesheet",
+      critical: true,
+      steps: [{ action: "click" as const, target: { reference: "#slow", library: "#sg-slow" } }],
+      assertions: [{ target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "slow-ready", library: "sg-slow-ready" }] }],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    const viewport = result.scenarios[0].evaluation.matrix.viewports[0];
+    assert.equal(viewport.pixels?.passed, true, "the fixture intentionally keeps rendered pixels equivalent");
+    assert.ok(viewport.stabilityFailures > 0);
+    assert.equal(viewport.passed, false);
+    assert.equal(result.scenarios[0].evaluation.matrix.passed, false);
+    assert.ok(result.telemetry.workload.stabilityTimeouts > 0);
+    assert.ok(result.telemetry.workload.resourceDrainTimeouts > 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
 });

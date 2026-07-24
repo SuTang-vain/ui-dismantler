@@ -36,6 +36,7 @@ const STYLE_PROPERTIES = [
 interface BrowserSnapshot {
   ok: boolean;
   runtimeErrors: string[];
+  stabilityFailures: string[];
   selectorCoverage: SelectorCoverageReport;
   styles: ComputedStyleSnapshot[];
   screenshot: Buffer;
@@ -190,6 +191,11 @@ export interface BrowserExecutionTelemetry {
     networkIdleTimeouts: number;
     timerAwareWaits: number;
     timerDrainTimeouts: number;
+    resourceAwareWaits: number;
+    resourceDrainTimeouts: number;
+    stylesheetAwareWaits: number;
+    backgroundImageAwareWaits: number;
+    fontAwareWaits: number;
     explicitWaits: number;
     adaptiveExplicitWaits: number;
     screenshots: number;
@@ -214,7 +220,7 @@ function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurr
     resourceCache,
     stabilityMode,
     timing: { launchMs: 0, contextCreateMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, scenarioExecutionMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
-    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
+    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
   };
 }
 
@@ -278,6 +284,7 @@ interface PageStabilityResult {
   domTimedOut: boolean;
   networkTimedOut: boolean;
   timerTimedOut: boolean;
+  resourceTimedOut: boolean;
 }
 
 function trackNetworkActivity(page: Page): NetworkActivityTracker {
@@ -329,10 +336,10 @@ async function waitForDomLayoutAndAssertions(
   rootSelector: string,
   assertions: ResolvedScenarioAssertion[],
   timeoutMs = 500,
-): Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; waitedForTimers: boolean }> {
+): Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; resourcesSettled: boolean; waitedForTimers: boolean; waitedForResources: boolean; waitedForStylesheets: boolean; waitedForBackgroundImages: boolean; waitedForFonts: boolean }> {
   return page.evaluate(async ({ selector, expected, timeout }) => {
     const root = document.querySelector(selector);
-    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, waitedForTimers: false };
+    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false };
     const visible = (element: Element): boolean => {
       let current: Element | null = element;
       while (current) {
@@ -372,10 +379,50 @@ async function waitForDomLayoutAndAssertions(
       const timerState = globalThis as typeof globalThis & { __uiDismantlerPendingTimers?: () => number[] };
       return timerState.__uiDismantlerPendingTimers?.() ?? [];
     };
-    const visualResourcesSettled = (): boolean => [...root.querySelectorAll("img")].every((image) => {
-      if (!visible(image)) return true;
-      return image.complete && (image.naturalWidth > 0 || !image.currentSrc);
-    });
+    const visualResourceState = (): { settled: boolean; stylesheets: boolean; backgroundImages: boolean; fonts: boolean } => {
+      const imagesSettled = [...root.querySelectorAll("img")].every((image) => {
+        if (!visible(image)) return true;
+        return image.complete && (image.naturalWidth > 0 || !image.currentSrc);
+      });
+      const stylesheetsSettled = [...document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"]')].every((link) => {
+        if (link.disabled) return true;
+        if (link.media && !matchMedia(link.media).matches) return true;
+        return Boolean(link.sheet);
+      });
+      const completedResources = new Set(performance.getEntriesByType("resource").map((entry) => {
+        try { return new URL(entry.name, location.href).href; } catch { return entry.name; }
+      }));
+      const backgroundUrls = new Set<string>();
+      const collectUrls = (value: string): void => {
+        for (const match of value.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
+          try {
+            const url = new URL(match[1], location.href);
+            if (["http:", "https:"].includes(url.protocol)) backgroundUrls.add(url.href);
+          } catch { /* invalid CSS URL */ }
+        }
+      };
+      for (const element of [root, ...root.querySelectorAll("*")].slice(0, 500)) {
+        if (!visible(element)) continue;
+        const computed = getComputedStyle(element);
+        collectUrls(computed.backgroundImage);
+        collectUrls(computed.maskImage);
+        for (const pseudo of ["::before", "::after"] as const) {
+          const pseudoStyle = getComputedStyle(element, pseudo);
+          if (pseudoStyle.content !== "none") {
+            collectUrls(pseudoStyle.backgroundImage);
+            collectUrls(pseudoStyle.maskImage);
+          }
+        }
+      }
+      const backgroundImagesSettled = [...backgroundUrls].every((url) => completedResources.has(url));
+      const fontsSettled = !document.fonts || document.fonts.status === "loaded";
+      return {
+        settled: imagesSettled && stylesheetsSettled && backgroundImagesSettled && fontsSettled,
+        stylesheets: stylesheetsSettled,
+        backgroundImages: backgroundImagesSettled,
+        fonts: fontsSettled,
+      };
+    };
     const signature = (): string => {
       const nodes = [root, ...root.querySelectorAll("*")].slice(0, 500);
       return nodes.map((node) => {
@@ -387,11 +434,15 @@ async function waitForDomLayoutAndAssertions(
         return `${semantic}:${rounded}:${html.scrollWidth ?? 0},${html.scrollHeight ?? 0},${html.scrollLeft ?? 0},${html.scrollTop ?? 0}`;
       }).join("|");
     };
-    return new Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; waitedForTimers: boolean }>((resolveWait) => {
+    return new Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; resourcesSettled: boolean; waitedForTimers: boolean; waitedForResources: boolean; waitedForStylesheets: boolean; waitedForBackgroundImages: boolean; waitedForFonts: boolean }>((resolveWait) => {
       const startedAt = performance.now();
       let previous = "";
       let stableFrames = 0;
       let waitedForTimers = false;
+      let waitedForResources = false;
+      let waitedForStylesheets = false;
+      let waitedForBackgroundImages = false;
+      let waitedForFonts = false;
       const sample = (): void => {
         const current = signature();
         stableFrames = current === previous ? stableFrames + 1 : 1;
@@ -401,12 +452,16 @@ async function waitForDomLayoutAndAssertions(
         const pendingTimers = pendingTimerDeadlines().filter((deadline) => deadline - now <= timeout);
         const timersSettled = pendingTimers.length === 0;
         if (!timersSettled) waitedForTimers = true;
-        const resourcesSettled = visualResourcesSettled();
-        if (stableFrames >= 2 && assertionState && timersSettled && resourcesSettled) {
-          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, waitedForTimers }); return;
+        const resources = visualResourceState();
+        if (!resources.settled) waitedForResources = true;
+        if (!resources.stylesheets) waitedForStylesheets = true;
+        if (!resources.backgroundImages) waitedForBackgroundImages = true;
+        if (!resources.fonts) waitedForFonts = true;
+        if (stableFrames >= 2 && assertionState && timersSettled && resources.settled) {
+          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts }); return;
         }
         if (now - startedAt >= timeout) {
-          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, waitedForTimers }); return;
+          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts }); return;
         }
         requestAnimationFrame(sample);
       };
@@ -439,12 +494,18 @@ async function waitForAdaptiveStability(
   const domTimedOut = !dom.stable;
   const networkTimedOut = !networkIdle;
   const timerTimedOut = !dom.timersSettled;
+  const resourceTimedOut = !dom.resourcesSettled;
   if (telemetry && dom.waitedForTimers) telemetry.workload.timerAwareWaits += 1;
+  if (telemetry && dom.waitedForResources) telemetry.workload.resourceAwareWaits += 1;
+  if (telemetry && dom.waitedForStylesheets) telemetry.workload.stylesheetAwareWaits += 1;
+  if (telemetry && dom.waitedForBackgroundImages) telemetry.workload.backgroundImageAwareWaits += 1;
+  if (telemetry && dom.waitedForFonts) telemetry.workload.fontAwareWaits += 1;
   if (telemetry && (domTimedOut || networkTimedOut)) telemetry.workload.stabilityTimeouts += 1;
   if (telemetry && assertions.length && !dom.assertionsSatisfied) telemetry.workload.assertionStabilityTimeouts += 1;
   if (telemetry && networkTimedOut) telemetry.workload.networkIdleTimeouts += 1;
   if (telemetry && timerTimedOut) telemetry.workload.timerDrainTimeouts += 1;
-  return { stable: dom.stable && networkIdle, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut };
+  if (telemetry && resourceTimedOut) telemetry.workload.resourceDrainTimeouts += 1;
+  return { stable: dom.stable && networkIdle, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut, resourceTimedOut };
 }
 
 async function waitForSettled(
@@ -453,7 +514,7 @@ async function waitForSettled(
   mode: "fixed" | "adaptive",
   network: NetworkActivityTracker,
   telemetry?: BrowserExecutionTelemetry,
-): Promise<void> {
+): Promise<PageStabilityResult | null> {
   await page.waitForSelector(rootSelector, { state: "attached", timeout: 5000 });
   await page.waitForFunction((selector) => {
     const root = document.querySelector(selector);
@@ -467,8 +528,7 @@ async function waitForSettled(
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.evaluate(async () => { await document.fonts?.ready; });
   if (mode === "adaptive") {
-    await waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
-    return;
+    return waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
   }
   await page.evaluate(async () => {
     await new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done())));
@@ -476,6 +536,7 @@ async function waitForSettled(
   const startedAt = performance.now();
   await page.waitForTimeout(100);
   if (telemetry) telemetry.timing.fixedWaitMs += elapsed(startedAt);
+  return null;
 }
 
 function scenarioSelector(target: Scenario["steps"][number]["target"], role: "reference" | "library"): string | undefined {
@@ -514,7 +575,8 @@ async function executeBrowserScenario(
   mode: "fixed" | "adaptive",
   network: NetworkActivityTracker,
   telemetry?: BrowserExecutionTelemetry,
-): Promise<void> {
+): Promise<Array<{ phase: string; result: PageStabilityResult }>> {
+  const outcomes: Array<{ phase: string; result: PageStabilityResult }> = [];
   const adaptiveIntermediateWaits = new Map<number, ResolvedScenarioAssertion[]>();
   for (let index = 0; index < scenario.steps.length; index += 1) {
     const step = scenario.steps[index];
@@ -524,14 +586,17 @@ async function executeBrowserScenario(
       const readinessAssertions = adaptiveIntermediateWaits.get(index);
       if (mode === "adaptive" && ((isFinalStep && scenario.assertions.length) || readinessAssertions?.length)) {
         if (telemetry) telemetry.workload.adaptiveExplicitWaits += 1;
-        await waitForAdaptiveStability(
-          page,
-          rootSelector,
-          network,
-          readinessAssertions ?? resolvedAssertions(scenario, role),
-          telemetry,
-          Math.max(100, step.ms ?? 0),
-        );
+        outcomes.push({
+          phase: `step-${index}-wait`,
+          result: await waitForAdaptiveStability(
+            page,
+            rootSelector,
+            network,
+            readinessAssertions ?? resolvedAssertions(scenario, role),
+            telemetry,
+            Math.max(100, step.ms ?? 0),
+          ),
+        });
       } else {
         const startedAt = performance.now();
         await page.waitForTimeout(step.ms ?? 0);
@@ -563,7 +628,7 @@ async function executeBrowserScenario(
     if (mode === "adaptive") {
       if (scenario.steps[index + 1]?.action !== "wait") {
         const finalAssertions = index === scenario.steps.length - 1 ? resolvedAssertions(scenario, role) : [];
-        await waitForAdaptiveStability(page, rootSelector, network, finalAssertions, telemetry);
+        outcomes.push({ phase: `step-${index}-${step.action}`, result: await waitForAdaptiveStability(page, rootSelector, network, finalAssertions, telemetry) });
       }
     } else {
       await page.evaluate(async () => {
@@ -572,23 +637,37 @@ async function executeBrowserScenario(
     }
   }
   if (mode === "adaptive" && scenario.steps.length === 0) {
-    await waitForAdaptiveStability(page, rootSelector, network, resolvedAssertions(scenario, role), telemetry);
+    outcomes.push({ phase: "scenario-assertions", result: await waitForAdaptiveStability(page, rootSelector, network, resolvedAssertions(scenario, role), telemetry) });
   }
+  return outcomes;
 }
 
 async function collectBrowserSnapshot(page: Page, rootSelector: string, url: string, withScreenshot = true, scenario?: Scenario, role?: "reference" | "library", telemetry?: BrowserExecutionTelemetry, runtimeTracker?: RuntimeErrorTracker, stabilityMode: "fixed" | "adaptive" = "fixed"): Promise<BrowserSnapshot> {
   const tracker = runtimeTracker ?? trackRuntimeErrors(page);
   const network = trackNetworkActivity(page);
+  const stabilityFailures: string[] = [];
+  const recordStability = (phase: string, result: PageStabilityResult | null): void => {
+    if (!result || result.stable) return;
+    const causes = [
+      result.domTimedOut && "dom/layout/assertion",
+      result.networkTimedOut && "network",
+      result.timerTimedOut && "timer",
+      result.resourceTimedOut && "resource",
+    ].filter(Boolean).join(",");
+    stabilityFailures.push(`${phase}: ${causes || "unknown"} stability timeout`);
+  };
   tracker.reset();
   let startedAt = performance.now();
   await page.goto(pathToFileURL(url).href, { waitUntil: "load", timeout: 15000 });
   if (telemetry) { telemetry.timing.navigationMs += elapsed(startedAt); telemetry.workload.navigations += 1; }
   startedAt = performance.now();
-  await waitForSettled(page, rootSelector, stabilityMode, network, telemetry);
+  const initialStability = await waitForSettled(page, rootSelector, stabilityMode, network, telemetry);
+  recordStability("initial", initialStability);
   if (telemetry) telemetry.timing.settleMs += elapsed(startedAt);
   if (scenario && role) {
     startedAt = performance.now();
-    await executeBrowserScenario(page, scenario, role, rootSelector, stabilityMode, network, telemetry);
+    const scenarioStability = await executeBrowserScenario(page, scenario, role, rootSelector, stabilityMode, network, telemetry);
+    for (const outcome of scenarioStability) recordStability(outcome.phase, outcome.result);
     if (stabilityMode === "fixed") {
       const fixedStartedAt = performance.now();
       await page.waitForTimeout(100);
@@ -706,7 +785,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
   if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
-  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -817,11 +896,11 @@ async function evaluateBrowserQualityOnPages(
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
     const selectorCoverage = generated.selectorCoverage;
     const score = Number((styles.rate * 0.55 + (1 - pixels.diffRate) * 0.35 + selectorCoverage.coverageRate * 0.1).toFixed(4));
-    const passed = selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0;
+    const passed = selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0 && generated.stabilityFailures.length === 0 && reference.stabilityFailures.length === 0;
     return {
       available: true,
-      reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
-      generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
+      reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
+      generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
       selectorCoverage, styles, pixels, score, passed,
     };
   } catch (error) {
@@ -862,11 +941,13 @@ export async function evaluateBrowserQuality(htmlPath: string, libDir: string, o
 
 function summarizeViewport(viewport: QualityViewport, report: BrowserQualityReport): BrowserViewportReport {
   const runtimeErrors = (report.reference?.runtimeErrors.length ?? 0) + (report.generated?.runtimeErrors.length ?? 0);
+  const stabilityFailures = (report.reference?.stabilityFailures.length ?? 0) + (report.generated?.stabilityFailures.length ?? 0);
   return {
     ...viewport,
     available: report.available,
     error: report.error,
     runtimeErrors,
+    stabilityFailures,
     selectorCoverage: report.selectorCoverage && {
       passed: report.selectorCoverage.passed,
       coverageRate: report.selectorCoverage.coverageRate,
@@ -912,6 +993,7 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
   const worstStyle = entries.length ? Math.min(...entries.map((entry) => entry.styles?.rate ?? 0)) : 0;
   const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
   const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
+  const stabilityFailures = entries.reduce((sum, entry) => sum + entry.stabilityFailures, 0);
   const matrix: BrowserQualityMatrixReport = {
     viewports: entries,
     passed: entries.length > 0 && entries.every((entry) => entry.passed),
@@ -921,6 +1003,7 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
     worstComputedStyle: worstStyle,
     worstPixelDiff: worstPixel,
     runtimeErrors,
+    stabilityFailures,
   };
   return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
 }
@@ -947,7 +1030,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
     const primary: BrowserQualityReport = { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
     return {
       primary,
-      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0 },
+      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0 },
     };
   } finally {
     if (ownsBrowser) await browser?.close();
