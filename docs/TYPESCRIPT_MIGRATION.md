@@ -181,3 +181,46 @@ AST 分析器还会把可观察副作用标准化为 `stateTransitions`，记录
 - The self-contained transpiler accepts `--metrics-out <report.json>` and records read/parse, analysis, rewrite, write, and total timing without changing its existing positional interface.
 - Strict interaction equivalence groups only collapse repeated `nth-child` / `nth-of-type` instances when event protocol, source, action, target, mutation targets, and state transitions match; data-driven navigation remains independent, and pointer/touch events are never converted to clicks.
 - BLACKPINK candidate scenarios decreased from 49 to 36 across three strict groups. The reviewed member-control group reduced waivers from 37 to 34 while increasing eligible verified interactions from 12 to 15 and preserving verified coverage at 1.0.
+
+### 2026-07-23 browser matrix reuse experiment
+
+- Added `legacy` and `shared-browser` quality schedulers plus per-phase browser telemetry and controlled viewport concurrency.
+- Three-run BLACKPINK testing showed that sharing Chromium alone was not faster overall: 43.48s versus the 43.02s legacy baseline.
+- Long-lived viewport contexts occasionally reached 30.81s but later produced 17-25 second close delays and one run longer than two minutes; that path was removed from the final CLI.
+- A run-local GET image/font response cache preserved isolated Context/Page state while reducing BLACKPINK from 43.02s to 38.85s on average (9.7%) and critical visual matrices from 28.26s to 24.36s (13.8%).
+- Across three cached runs, 296 remote requests produced 285 cache hits and 11 misses for 1,712,512 cached bytes; all Gold+ metrics remained green.
+- Qinshihuang, Ciyu, Sun Wukong, and Sandadui cache-enabled regressions also passed with their existing quality scores and zero runtime errors.
+
+## 自适应确定性稳定判定
+
+多视口视觉矩阵原先在页面加载后、每个交互步骤后和场景结束后使用固定 `100ms` 与双 `requestAnimationFrame`。这类等待无法证明状态已完成，也会在四视口、多关键场景下线性放大成本。
+
+TypeScript 视觉评估器新增可回退的两种模式：
+
+```bash
+--browser-stability fixed
+--browser-stability adaptive
+```
+
+`adaptive` 不降低任何 Gold+ 阈值，只在以下条件同时满足时采集 computed-style 和截图：
+
+1. 根节点及最多 500 个后代的语义状态与布局矩形连续两帧稳定；
+2. 本轮 HTTP(S) 请求结束并保持短暂 idle；
+3. 可见图片已经完成加载；
+4. 场景最终 assertions 已满足；
+5. 页面内 1 秒以内的短时 `setTimeout` 已清空。
+
+短时 timer 追踪通过 context init script 在页面脚本执行前安装，只追踪 `setTimeout`，不追踪持续性的 `setInterval`，避免被自动轮播和动画永久阻塞。超时不会伪造成功：报告会增加 `stabilityTimeouts`、`assertionStabilityTimeouts`、`networkIdleTimeouts` 和 `timerDrainTimeouts`，随后仍按真实状态执行质量门禁。
+
+中间 `wait` 仅在可证明安全时自适应缩短：后续交互目标在前一步操作之前必须不可交互，操作后再等待它变为可交互、页面稳定且短 timer 清空。如果后续目标原本已经可交互，工具保留原始固定等待，避免破坏轮播、延时状态机等时间语义。
+
+推荐实验配置：
+
+```bash
+--browser-mode shared-browser \
+--browser-concurrency 1 \
+--browser-resource-cache run-local \
+--browser-stability adaptive
+```
+
+2026-07-24 的 BLACKPINK 三轮同版本 A/B 中，`fixed + run-local cache` 平均为 `39.11s`，安全版 `adaptive + run-local cache` 平均为 `32.16s`：总质量流程降低 `17.8%`，关键场景视觉矩阵降低 `28.1%`，浏览器阶段降低 `25.1%`。三轮均保持 10/10 validation、四视口和四个关键场景矩阵全通过、runtime errors 为 0、worst computed-style `0.9997`、worst pixel diff 不高于 `0.001314`，且所有稳定性超时计数为 0。

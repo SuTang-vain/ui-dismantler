@@ -1,10 +1,11 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
+import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
-import { chromium, type Browser, type Page } from "playwright-core";
+import { chromium, type Browser, type BrowserContext, type Page, type Request, type Route } from "playwright-core";
 import type {
   BrowserQualityReport,
   ComputedStyleSnapshot,
@@ -13,6 +14,7 @@ import type {
   BrowserViewportReport,
   QualityViewport,
   Scenario,
+  ScenarioAssertion,
   SelectorCoverageReport,
   StyleComparisonReport,
 } from "../types.js";
@@ -39,6 +41,101 @@ interface BrowserSnapshot {
   screenshot: Buffer;
 }
 
+interface RuntimeErrorTracker {
+  errors: string[];
+  reset(): void;
+}
+
+function trackRuntimeErrors(page: Page): RuntimeErrorTracker {
+  const tracker: RuntimeErrorTracker = { errors: [], reset() { this.errors.length = 0; } };
+  page.on("pageerror", (error) => tracker.errors.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error") tracker.errors.push(message.text()); });
+  return tracker;
+}
+
+async function initializeQualityContext(context: BrowserContext): Promise<void> {
+  await context.addInitScript(() => {
+    try { localStorage.clear(); sessionStorage.clear(); } catch { /* unavailable for this origin */ }
+    let state = 0x6d2b79f5;
+    Math.random = () => {
+      state = Math.imul(state ^ state >>> 15, state | 1);
+      state ^= state + Math.imul(state ^ state >>> 7, state | 61);
+      return ((state ^ state >>> 14) >>> 0) / 4294967296;
+    };
+    const nativeSetTimeout = globalThis.setTimeout.bind(globalThis);
+    const nativeClearTimeout = globalThis.clearTimeout.bind(globalThis);
+    const pendingTimers = new Map<number, number>();
+    const timerState = globalThis as typeof globalThis & { __uiDismantlerPendingTimers?: () => number[] };
+    timerState.__uiDismantlerPendingTimers = () => [...pendingTimers.values()];
+    globalThis.setTimeout = ((handler: TimerHandler, timeout = 0, ...args: unknown[]) => {
+      if (typeof handler !== "function") return nativeSetTimeout(handler, timeout, ...args);
+      let timerId = 0;
+      timerId = nativeSetTimeout((...callbackArgs: unknown[]) => {
+        pendingTimers.delete(timerId);
+        handler(...callbackArgs);
+      }, timeout, ...args) as unknown as number;
+      if (timeout > 0 && timeout <= 1000) pendingTimers.set(timerId, performance.now() + timeout);
+      return timerId;
+    }) as typeof globalThis.setTimeout;
+    globalThis.clearTimeout = ((timerId?: number) => {
+      if (typeof timerId === "number") pendingTimers.delete(timerId);
+      return nativeClearTimeout(timerId);
+    }) as typeof globalThis.clearTimeout;
+  });
+}
+
+interface CachedResource {
+  status: number;
+  headers: Record<string, string>;
+  body: Buffer;
+}
+
+type RunResourceCache = Map<string, Promise<CachedResource>>;
+
+function cacheableRequest(route: Route): boolean {
+  const request = route.request();
+  const headers = request.headers();
+  return request.method() === "GET"
+    && /^https?:\/\//i.test(request.url())
+    && ["image", "font"].includes(request.resourceType())
+    && !headers.authorization
+    && !headers.cookie;
+}
+
+async function installRunResourceCache(context: BrowserContext, cache: RunResourceCache, telemetry: BrowserExecutionTelemetry): Promise<void> {
+  await context.route("**/*", async (route) => {
+    const request = route.request();
+    if (/^https?:\/\//i.test(request.url())) telemetry.workload.remoteRequests += 1;
+    if (!cacheableRequest(route)) { await route.continue(); return; }
+    const key = `${request.method()}|${request.resourceType()}|${request.headers().accept ?? ""}|${request.url()}`;
+    let cached = cache.get(key);
+    if (cached) telemetry.workload.resourceCacheHits += 1;
+    else {
+      telemetry.workload.resourceCacheMisses += 1;
+      cached = (async () => {
+        const response = await route.fetch({ timeout: 15000 });
+        if (response.status() < 200 || response.status() >= 300) throw new Error(`uncacheable response status ${response.status()}`);
+        const body = await response.body();
+        const headers = { ...response.headers() };
+        delete headers["content-encoding"];
+        delete headers["content-length"];
+        delete headers["transfer-encoding"];
+        delete headers["set-cookie"];
+        telemetry.workload.resourceCacheBytes += body.length;
+        return { status: response.status(), headers, body };
+      })();
+      cache.set(key, cached);
+      cached.catch(() => cache.delete(key));
+    }
+    try {
+      const response = await cached;
+      await route.fulfill({ status: response.status, headers: response.headers, body: response.body });
+    } catch {
+      await route.continue();
+    }
+  });
+}
+
 export interface BrowserQualityOptions {
   width?: number;
   height?: number;
@@ -47,11 +144,81 @@ export interface BrowserQualityOptions {
   styleThreshold?: number;
   artifactDir?: string;
   executablePath?: string;
+  stabilityMode?: "fixed" | "adaptive";
 }
 
 export interface BrowserQualityMatrixOptions extends Omit<BrowserQualityOptions, "width" | "height"> {
   viewports?: QualityViewport[];
+  concurrency?: number;
+  resourceCache?: "off" | "run-local";
 }
+
+export interface BrowserExecutionTelemetry {
+  mode: "legacy" | "shared-browser";
+  concurrency: number;
+  resourceCache: "off" | "run-local";
+  stabilityMode: "fixed" | "adaptive";
+  timing: {
+    launchMs: number;
+    contextCreateMs: number;
+    pageCreateMs: number;
+    navigationMs: number;
+    settleMs: number;
+    domStabilityMs: number;
+    networkIdleMs: number;
+    fixedWaitMs: number;
+    scenarioExecutionMs: number;
+    snapshotEvaluationMs: number;
+    screenshotMs: number;
+    pixelDiffMs: number;
+    artifactWriteMs: number;
+    closeMs: number;
+    totalMs: number;
+  };
+  workload: {
+    browserLaunches: number;
+    contextsCreated: number;
+    pagesCreated: number;
+    navigations: number;
+    viewportRuns: number;
+    scenarioMatrices: number;
+    scenarioSteps: number;
+    stabilityChecks: number;
+    stabilityTimeouts: number;
+    assertionStabilityChecks: number;
+    assertionStabilityTimeouts: number;
+    networkIdleTimeouts: number;
+    timerAwareWaits: number;
+    timerDrainTimeouts: number;
+    explicitWaits: number;
+    adaptiveExplicitWaits: number;
+    screenshots: number;
+    remoteRequests: number;
+    resourceCacheHits: number;
+    resourceCacheMisses: number;
+    resourceCacheBytes: number;
+  };
+}
+
+export interface BrowserQualitySuiteReport {
+  initial: Awaited<ReturnType<typeof evaluateBrowserQualityMatrixInternal>>;
+  scenarios: Array<{ scenarioId: string; label?: string; evaluation: Awaited<ReturnType<typeof evaluateBrowserQualityMatrixInternal>> }>;
+  phaseTiming: { initialMatrixMs: number; scenarioMatricesMs: number };
+  telemetry: BrowserExecutionTelemetry;
+}
+
+function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurrency: number, resourceCache: BrowserExecutionTelemetry["resourceCache"] = "off", stabilityMode: BrowserExecutionTelemetry["stabilityMode"] = "fixed"): BrowserExecutionTelemetry {
+  return {
+    mode,
+    concurrency,
+    resourceCache,
+    stabilityMode,
+    timing: { launchMs: 0, contextCreateMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, scenarioExecutionMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
+    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
+  };
+}
+
+const elapsed = (startedAt: number): number => Number((performance.now() - startedAt).toFixed(3));
 
 export const DEFAULT_QUALITY_VIEWPORTS: QualityViewport[] = [
   { id: "desktop", label: "Desktop", width: 1024, height: 768 },
@@ -92,7 +259,201 @@ async function firstExample(libDir: string): Promise<string> {
   return resolve(dir, names[0]);
 }
 
-async function waitForSettled(page: Page, rootSelector: string): Promise<void> {
+interface NetworkActivityTracker {
+  pending: Set<Request>;
+  lastActivityAt: number;
+  observed: number;
+}
+
+interface ResolvedScenarioAssertion extends Omit<ScenarioAssertion, "target" | "classIncludes" | "classExcludes"> {
+  target: string;
+  actionable?: boolean;
+  classIncludes?: string[];
+  classExcludes?: string[];
+}
+
+interface PageStabilityResult {
+  stable: boolean;
+  assertionsSatisfied: boolean;
+  domTimedOut: boolean;
+  networkTimedOut: boolean;
+  timerTimedOut: boolean;
+}
+
+function trackNetworkActivity(page: Page): NetworkActivityTracker {
+  const tracker: NetworkActivityTracker = { pending: new Set(), lastActivityAt: 0, observed: 0 };
+  const relevant = (request: Request): boolean => /^https?:\/\//i.test(request.url());
+  page.on("request", (request) => {
+    if (!relevant(request)) return;
+    tracker.pending.add(request);
+    tracker.lastActivityAt = performance.now();
+    tracker.observed += 1;
+  });
+  const complete = (request: Request): void => {
+    if (!tracker.pending.delete(request)) return;
+    tracker.lastActivityAt = performance.now();
+  };
+  page.on("requestfinished", complete);
+  page.on("requestfailed", complete);
+  return tracker;
+}
+
+function resolvedAssertions(scenario: Scenario | undefined, role: "reference" | "library" | undefined): ResolvedScenarioAssertion[] {
+  if (!scenario || !role) return [];
+  return scenario.assertions.flatMap((assertion) => {
+    const target = scenarioSelector(assertion.target, role);
+    if (!target) return [];
+    const resolveClass = (value: string | NonNullable<ScenarioAssertion["classIncludes"]>[number]): string | undefined =>
+      typeof value === "string" ? value : scenarioSelector(value, role);
+    return [{
+      ...assertion,
+      target,
+      classIncludes: assertion.classIncludes?.map(resolveClass).filter((value): value is string => Boolean(value)),
+      classExcludes: assertion.classExcludes?.map(resolveClass).filter((value): value is string => Boolean(value)),
+    }];
+  });
+}
+
+async function waitForNetworkIdle(tracker: NetworkActivityTracker, timeoutMs = 1000, quietMs = 32): Promise<boolean> {
+  const startedAt = performance.now();
+  while (performance.now() - startedAt < timeoutMs) {
+    const idleFor = performance.now() - Math.max(startedAt, tracker.lastActivityAt);
+    if (tracker.pending.size === 0 && idleFor >= quietMs) return true;
+    await new Promise<void>((resolveWait) => setTimeout(resolveWait, 8));
+  }
+  return tracker.pending.size === 0;
+}
+
+async function waitForDomLayoutAndAssertions(
+  page: Page,
+  rootSelector: string,
+  assertions: ResolvedScenarioAssertion[],
+  timeoutMs = 500,
+): Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; waitedForTimers: boolean }> {
+  return page.evaluate(async ({ selector, expected, timeout }) => {
+    const root = document.querySelector(selector);
+    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, waitedForTimers: false };
+    const visible = (element: Element): boolean => {
+      let current: Element | null = element;
+      while (current) {
+        if ((current as HTMLElement).hidden || current.getAttribute("aria-hidden") === "true") return false;
+        const computed = getComputedStyle(current);
+        if (computed.display === "none" || computed.visibility === "hidden") return false;
+        current = current.parentElement;
+      }
+      return true;
+    };
+    const text = (element: Element): string => (((element as HTMLElement).innerText || element.textContent || "").trim());
+    const assertionsSatisfied = (): boolean => expected.every((assertion) => {
+      let element: Element | null;
+      try { element = document.querySelector(assertion.target); } catch { return false; }
+      if (!element) return false;
+      if (assertion.visible !== undefined && visible(element) !== assertion.visible) return false;
+      if (assertion.actionable) {
+        const html = element as HTMLElement;
+        const rect = element.getBoundingClientRect();
+        const disabled = "disabled" in html && Boolean((html as HTMLButtonElement).disabled);
+        if (!visible(element) || disabled || element.getAttribute("aria-disabled") === "true" || rect.width <= 0 || rect.height <= 0) return false;
+        const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+        const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
+        const hit = document.elementFromPoint(x, y);
+        if (hit && hit !== element && !element.contains(hit)) return false;
+      }
+      if (assertion.text !== undefined && text(element) !== assertion.text) return false;
+      if (assertion.textContains !== undefined && !text(element).includes(assertion.textContains)) return false;
+      if (assertion.value !== undefined && (!("value" in element) || String((element as HTMLInputElement).value) !== assertion.value)) return false;
+      if (assertion.focused !== undefined && (document.activeElement === element) !== assertion.focused) return false;
+      if (assertion.classIncludes?.some((name) => !element.classList.contains(name))) return false;
+      if (assertion.classExcludes?.some((name) => element.classList.contains(name))) return false;
+      if (assertion.attributes && Object.entries(assertion.attributes).some(([name, value]) => element.getAttribute(name) !== value)) return false;
+      return true;
+    });
+    const pendingTimerDeadlines = (): number[] => {
+      const timerState = globalThis as typeof globalThis & { __uiDismantlerPendingTimers?: () => number[] };
+      return timerState.__uiDismantlerPendingTimers?.() ?? [];
+    };
+    const visualResourcesSettled = (): boolean => [...root.querySelectorAll("img")].every((image) => {
+      if (!visible(image)) return true;
+      return image.complete && (image.naturalWidth > 0 || !image.currentSrc);
+    });
+    const signature = (): string => {
+      const nodes = [root, ...root.querySelectorAll("*")].slice(0, 500);
+      return nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        const html = node as HTMLElement;
+        const rounded = [rect.x, rect.y, rect.width, rect.height].map((value) => Math.round(value * 4) / 4).join(",");
+        const ownText = [...node.childNodes].filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent ?? "").join("");
+        const semantic = [node.tagName, node.id, node.getAttribute("class") ?? "", node.getAttribute("style") ?? "", node.getAttribute("hidden") ?? "", node.getAttribute("aria-hidden") ?? "", node.getAttribute("aria-selected") ?? "", node.getAttribute("aria-pressed") ?? "", node.getAttribute("aria-expanded") ?? "", ownText].join("~");
+        return `${semantic}:${rounded}:${html.scrollWidth ?? 0},${html.scrollHeight ?? 0},${html.scrollLeft ?? 0},${html.scrollTop ?? 0}`;
+      }).join("|");
+    };
+    return new Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; waitedForTimers: boolean }>((resolveWait) => {
+      const startedAt = performance.now();
+      let previous = "";
+      let stableFrames = 0;
+      let waitedForTimers = false;
+      const sample = (): void => {
+        const current = signature();
+        stableFrames = current === previous ? stableFrames + 1 : 1;
+        previous = current;
+        const assertionState = assertionsSatisfied();
+        const now = performance.now();
+        const pendingTimers = pendingTimerDeadlines().filter((deadline) => deadline - now <= timeout);
+        const timersSettled = pendingTimers.length === 0;
+        if (!timersSettled) waitedForTimers = true;
+        const resourcesSettled = visualResourcesSettled();
+        if (stableFrames >= 2 && assertionState && timersSettled && resourcesSettled) {
+          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, waitedForTimers }); return;
+        }
+        if (now - startedAt >= timeout) {
+          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, waitedForTimers }); return;
+        }
+        requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+    });
+  }, { selector: rootSelector, expected: assertions, timeout: timeoutMs });
+}
+
+async function waitForAdaptiveStability(
+  page: Page,
+  rootSelector: string,
+  network: NetworkActivityTracker,
+  assertions: ResolvedScenarioAssertion[] = [],
+  telemetry?: BrowserExecutionTelemetry,
+  timeoutMs = 500,
+): Promise<PageStabilityResult> {
+  telemetry && (telemetry.workload.stabilityChecks += 1);
+  if (telemetry && assertions.length) telemetry.workload.assertionStabilityChecks += 1;
+  const domStartedAt = performance.now();
+  const domPromise = waitForDomLayoutAndAssertions(page, rootSelector, assertions, timeoutMs).then((result) => {
+    if (telemetry) telemetry.timing.domStabilityMs += elapsed(domStartedAt);
+    return result;
+  });
+  const networkStartedAt = performance.now();
+  const networkPromise = waitForNetworkIdle(network, timeoutMs).then((idle) => {
+    if (telemetry) telemetry.timing.networkIdleMs += elapsed(networkStartedAt);
+    return idle;
+  });
+  const [dom, networkIdle] = await Promise.all([domPromise, networkPromise]);
+  const domTimedOut = !dom.stable;
+  const networkTimedOut = !networkIdle;
+  const timerTimedOut = !dom.timersSettled;
+  if (telemetry && dom.waitedForTimers) telemetry.workload.timerAwareWaits += 1;
+  if (telemetry && (domTimedOut || networkTimedOut)) telemetry.workload.stabilityTimeouts += 1;
+  if (telemetry && assertions.length && !dom.assertionsSatisfied) telemetry.workload.assertionStabilityTimeouts += 1;
+  if (telemetry && networkTimedOut) telemetry.workload.networkIdleTimeouts += 1;
+  if (telemetry && timerTimedOut) telemetry.workload.timerDrainTimeouts += 1;
+  return { stable: dom.stable && networkIdle, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut };
+}
+
+async function waitForSettled(
+  page: Page,
+  rootSelector: string,
+  mode: "fixed" | "adaptive",
+  network: NetworkActivityTracker,
+  telemetry?: BrowserExecutionTelemetry,
+): Promise<void> {
   await page.waitForSelector(rootSelector, { state: "attached", timeout: 5000 });
   await page.waitForFunction((selector) => {
     const root = document.querySelector(selector);
@@ -104,11 +465,17 @@ async function waitForSettled(page: Page, rootSelector: string): Promise<void> {
     ::-webkit-scrollbar { display: none !important; }
   ` });
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.evaluate(async () => { await document.fonts?.ready; });
+  if (mode === "adaptive") {
+    await waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
+    return;
+  }
   await page.evaluate(async () => {
-    await document.fonts?.ready;
     await new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done())));
   });
+  const startedAt = performance.now();
   await page.waitForTimeout(100);
+  if (telemetry) telemetry.timing.fixedWaitMs += elapsed(startedAt);
 }
 
 function scenarioSelector(target: Scenario["steps"][number]["target"], role: "reference" | "library"): string | undefined {
@@ -117,11 +484,67 @@ function scenarioSelector(target: Scenario["steps"][number]["target"], role: "re
   return target[role] ?? target.default;
 }
 
-async function executeBrowserScenario(page: Page, scenario: Scenario, role: "reference" | "library"): Promise<void> {
-  for (const step of scenario.steps) {
+async function targetIsActionable(page: Page, selector: string): Promise<boolean> {
+  return page.evaluate((target) => {
+    let element: Element | null;
+    try { element = document.querySelector(target); } catch { return false; }
+    if (!element) return false;
+    let current: Element | null = element;
+    while (current) {
+      const computed = getComputedStyle(current);
+      if ((current as HTMLElement).hidden || current.getAttribute("aria-hidden") === "true" || computed.display === "none" || computed.visibility === "hidden") return false;
+      current = current.parentElement;
+    }
+    const html = element as HTMLElement;
+    if (("disabled" in html && Boolean((html as HTMLButtonElement).disabled)) || element.getAttribute("aria-disabled") === "true") return false;
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return false;
+    const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+    const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
+    const hit = document.elementFromPoint(x, y);
+    return !hit || hit === element || element.contains(hit);
+  }, selector);
+}
+
+async function executeBrowserScenario(
+  page: Page,
+  scenario: Scenario,
+  role: "reference" | "library",
+  rootSelector: string,
+  mode: "fixed" | "adaptive",
+  network: NetworkActivityTracker,
+  telemetry?: BrowserExecutionTelemetry,
+): Promise<void> {
+  const adaptiveIntermediateWaits = new Map<number, ResolvedScenarioAssertion[]>();
+  for (let index = 0; index < scenario.steps.length; index += 1) {
+    const step = scenario.steps[index];
     if (step.action === "wait") {
-      await page.waitForTimeout(step.ms ?? 0);
+      if (telemetry) telemetry.workload.explicitWaits += 1;
+      const isFinalStep = index === scenario.steps.length - 1;
+      const readinessAssertions = adaptiveIntermediateWaits.get(index);
+      if (mode === "adaptive" && ((isFinalStep && scenario.assertions.length) || readinessAssertions?.length)) {
+        if (telemetry) telemetry.workload.adaptiveExplicitWaits += 1;
+        await waitForAdaptiveStability(
+          page,
+          rootSelector,
+          network,
+          readinessAssertions ?? resolvedAssertions(scenario, role),
+          telemetry,
+          Math.max(100, step.ms ?? 0),
+        );
+      } else {
+        const startedAt = performance.now();
+        await page.waitForTimeout(step.ms ?? 0);
+        if (telemetry) telemetry.timing.fixedWaitMs += elapsed(startedAt);
+      }
       continue;
+    }
+    if (mode === "adaptive" && scenario.steps[index + 1]?.action === "wait") {
+      const followingStep = scenario.steps[index + 2];
+      const followingTarget = scenarioSelector(followingStep?.target, role);
+      if (followingStep && followingStep.action !== "wait" && followingTarget && !(await targetIsActionable(page, followingTarget))) {
+        adaptiveIntermediateWaits.set(index + 1, [{ target: followingTarget, visible: true, actionable: true }]);
+      }
     }
     const selector = scenarioSelector(step.target, role);
     const locator = selector ? page.locator(selector).first() : undefined;
@@ -137,22 +560,43 @@ async function executeBrowserScenario(page: Page, scenario: Scenario, role: "ref
       const modifiers = [step.ctrlKey && "Control", step.altKey && "Alt", step.shiftKey && "Shift", step.metaKey && "Meta"].filter(Boolean);
       await page.keyboard.press([...modifiers, step.key ?? "Enter"].join("+"));
     }
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-    });
+    if (mode === "adaptive") {
+      if (scenario.steps[index + 1]?.action !== "wait") {
+        const finalAssertions = index === scenario.steps.length - 1 ? resolvedAssertions(scenario, role) : [];
+        await waitForAdaptiveStability(page, rootSelector, network, finalAssertions, telemetry);
+      }
+    } else {
+      await page.evaluate(async () => {
+        await new Promise<void>((resolveWait) => requestAnimationFrame(() => requestAnimationFrame(() => resolveWait())));
+      });
+    }
+  }
+  if (mode === "adaptive" && scenario.steps.length === 0) {
+    await waitForAdaptiveStability(page, rootSelector, network, resolvedAssertions(scenario, role), telemetry);
   }
 }
 
-async function collectBrowserSnapshot(page: Page, rootSelector: string, url: string, withScreenshot = true, scenario?: Scenario, role?: "reference" | "library"): Promise<BrowserSnapshot> {
-  const runtimeErrors: string[] = [];
-  page.on("pageerror", (error) => runtimeErrors.push(error.message));
-  page.on("console", (message) => { if (message.type() === "error") runtimeErrors.push(message.text()); });
+async function collectBrowserSnapshot(page: Page, rootSelector: string, url: string, withScreenshot = true, scenario?: Scenario, role?: "reference" | "library", telemetry?: BrowserExecutionTelemetry, runtimeTracker?: RuntimeErrorTracker, stabilityMode: "fixed" | "adaptive" = "fixed"): Promise<BrowserSnapshot> {
+  const tracker = runtimeTracker ?? trackRuntimeErrors(page);
+  const network = trackNetworkActivity(page);
+  tracker.reset();
+  let startedAt = performance.now();
   await page.goto(pathToFileURL(url).href, { waitUntil: "load", timeout: 15000 });
-  await waitForSettled(page, rootSelector);
+  if (telemetry) { telemetry.timing.navigationMs += elapsed(startedAt); telemetry.workload.navigations += 1; }
+  startedAt = performance.now();
+  await waitForSettled(page, rootSelector, stabilityMode, network, telemetry);
+  if (telemetry) telemetry.timing.settleMs += elapsed(startedAt);
   if (scenario && role) {
-    await executeBrowserScenario(page, scenario, role);
-    await page.waitForTimeout(100);
+    startedAt = performance.now();
+    await executeBrowserScenario(page, scenario, role, rootSelector, stabilityMode, network, telemetry);
+    if (stabilityMode === "fixed") {
+      const fixedStartedAt = performance.now();
+      await page.waitForTimeout(100);
+      if (telemetry) telemetry.timing.fixedWaitMs += elapsed(fixedStartedAt);
+    }
+    if (telemetry) { telemetry.timing.scenarioExecutionMs += elapsed(startedAt); telemetry.workload.scenarioSteps += scenario.steps.length; }
   }
+  startedAt = performance.now();
   const data = await page.evaluate(({ rootSelector: selector, properties }) => {
     const root = document.querySelector(selector);
     if (!root) throw new Error(`缺少根节点 ${selector}`);
@@ -258,8 +702,11 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     });
     return { selectorCoverage, styles };
   }, { rootSelector, properties: [...STYLE_PROPERTIES] });
+  if (telemetry) telemetry.timing.snapshotEvaluationMs += elapsed(startedAt);
+  startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
-  return { ok: true, runtimeErrors: runtimeErrors.slice(0, 20), selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
+  if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -327,47 +774,47 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
   return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, mismatches };
 }
 
-async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string): Promise<PixelDiffReport> {
+async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string, telemetry?: BrowserExecutionTelemetry): Promise<PixelDiffReport> {
+  const startedAt = performance.now();
   const a = PNG.sync.read(reference), b = PNG.sync.read(generated);
   const width = Math.min(a.width, b.width), height = Math.min(a.height, b.height);
   const diff = new PNG({ width, height });
   const differentPixels = pixelmatch(a.data, b.data, diff.data, width, height, { threshold: 0.1, includeAA: false });
   const totalPixels = width * height;
   const report: PixelDiffReport = { width, height, differentPixels, totalPixels, diffRate: Number((differentPixels / totalPixels).toFixed(6)), passed: differentPixels / totalPixels <= threshold, threshold };
+  if (telemetry) telemetry.timing.pixelDiffMs += elapsed(startedAt);
   if (artifactDir) {
+    const artifactStartedAt = performance.now();
     const dir = resolve(artifactDir); await mkdir(dir, { recursive: true });
     report.referenceImagePath = resolve(dir, "reference.png");
     report.generatedImagePath = resolve(dir, "generated.png");
     report.diffImagePath = resolve(dir, "diff.png");
     await Promise.all([writeFile(report.referenceImagePath, reference), writeFile(report.generatedImagePath, generated), writeFile(report.diffImagePath, PNG.sync.write(diff))]);
+    if (telemetry) telemetry.timing.artifactWriteMs += elapsed(artifactStartedAt);
   }
   return report;
 }
 
-async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}, scenario?: Scenario): Promise<BrowserQualityReport> {
-  const width = options.width ?? 1024, height = options.height ?? 768;
+async function evaluateBrowserQualityOnPages(
+  referencePage: Page,
+  generatedPage: Page,
+  htmlPath: string,
+  examplePath: string,
+  options: BrowserQualityOptions,
+  scenario?: Scenario,
+  telemetry?: BrowserExecutionTelemetry,
+  trackers?: { reference: RuntimeErrorTracker; generated: RuntimeErrorTracker },
+): Promise<BrowserQualityReport> {
   const pixelThreshold = options.pixelThreshold ?? 0.02;
   const selectorThreshold = options.selectorCoverageThreshold ?? 1;
   const styleThreshold = options.styleThreshold ?? 0.98;
-  let context;
   try {
-    context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
-    await context.addInitScript(() => {
-      let state = 0x6d2b79f5;
-      Math.random = () => {
-        state = Math.imul(state ^ state >>> 15, state | 1);
-        state ^= state + Math.imul(state ^ state >>> 7, state | 61);
-        return ((state ^ state >>> 14) >>> 0) / 4294967296;
-      };
-    });
-    const referencePage = await context.newPage(), generatedPage = await context.newPage();
-    const example = await firstExample(libDir);
     const [reference, generated] = await Promise.all([
-      collectBrowserSnapshot(referencePage, "body", resolve(htmlPath), true, scenario, "reference"),
-      collectBrowserSnapshot(generatedPage, "#mount", example, true, scenario, "library"),
+      collectBrowserSnapshot(referencePage, "body", resolve(htmlPath), true, scenario, "reference", telemetry, trackers?.reference, options.stabilityMode),
+      collectBrowserSnapshot(generatedPage, "#mount", examplePath, true, scenario, "library", telemetry, trackers?.generated, options.stabilityMode),
     ]);
     const styles = compareComputedStyles(reference.styles, generated.styles);
-    const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir);
+    const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
     const selectorCoverage = generated.selectorCoverage;
     const score = Number((styles.rate * 0.55 + (1 - pixels.diffRate) * 0.35 + selectorCoverage.coverageRate * 0.1).toFixed(4));
     const passed = selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0;
@@ -379,6 +826,23 @@ async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: strin
     };
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
+  }
+}
+
+async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}, scenario?: Scenario, telemetry?: BrowserExecutionTelemetry, resourceCache?: RunResourceCache): Promise<BrowserQualityReport> {
+  const width = options.width ?? 1024, height = options.height ?? 768;
+  let context;
+  try {
+    let startedAt = performance.now();
+    context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
+    if (telemetry) { telemetry.timing.contextCreateMs += elapsed(startedAt); telemetry.workload.contextsCreated += 1; telemetry.workload.viewportRuns += 1; }
+    await initializeQualityContext(context);
+    if (telemetry && resourceCache) await installRunResourceCache(context, resourceCache, telemetry);
+    startedAt = performance.now();
+    const referencePage = await context.newPage(), generatedPage = await context.newPage();
+    if (telemetry) { telemetry.timing.pageCreateMs += elapsed(startedAt); telemetry.workload.pagesCreated += 2; }
+    const example = await firstExample(libDir);
+    return await evaluateBrowserQualityOnPages(referencePage, generatedPage, htmlPath, example, options, scenario, telemetry);
   } finally {
     await context?.close();
   }
@@ -426,42 +890,59 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
   };
 }
 
-async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}, scenario?: Scenario): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
+async function mapWithConcurrency<T, R>(items: T[], concurrency: number, worker: (item: T, index: number) => Promise<R>): Promise<R[]> {
+  const limit = Math.max(1, Math.min(items.length || 1, Math.floor(concurrency) || 1));
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+  await Promise.all(Array.from({ length: limit }, async () => {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      results[index] = await worker(items[index], index);
+    }
+  }));
+  return results;
+}
+
+function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityReport[]): { primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport } {
+  const entries = viewports.map((viewport, index) => summarizeViewport(viewport, reports[index]));
+  const primary = reports[0] ?? { available: false, error: "没有可用质量视口", passed: false };
+  const score = entries.length ? Number(Math.min(...entries.map((entry) => entry.score ?? 0)).toFixed(4)) : 0;
+  const worstEntry = entries.reduce((worst, entry) => (entry.score ?? 0) < (worst.score ?? 0) ? entry : worst, entries[0]);
+  const worstSelectorEntry = entries.reduce((worst, entry) => (entry.selectorCoverage?.coverageRate ?? 0) < (worst.selectorCoverage?.coverageRate ?? 0) ? entry : worst, entries[0]);
+  const worstStyle = entries.length ? Math.min(...entries.map((entry) => entry.styles?.rate ?? 0)) : 0;
+  const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
+  const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
+  const matrix: BrowserQualityMatrixReport = {
+    viewports: entries,
+    passed: entries.length > 0 && entries.every((entry) => entry.passed),
+    score,
+    worstViewport: worstEntry?.id ?? "unknown",
+    worstSelectorCoverage: worstSelectorEntry?.selectorCoverage?.coverageRate ?? 0,
+    worstComputedStyle: worstStyle,
+    worstPixelDiff: worstPixel,
+    runtimeErrors,
+  };
+  return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
+}
+
+async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}, scenario?: Scenario, sharedBrowser?: Browser, telemetry?: BrowserExecutionTelemetry, resourceCache?: RunResourceCache): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
   const viewports = options.viewports?.length ? options.viewports : DEFAULT_QUALITY_VIEWPORTS;
-  let browser: Browser | undefined;
+  let browser: Browser | undefined = sharedBrowser;
+  const ownsBrowser = !sharedBrowser;
   try {
-    browser = await launchBrowser(options.executablePath);
-    const reports: BrowserQualityReport[] = [];
-    for (const [index, viewport] of viewports.entries()) {
+    if (!browser) browser = await launchBrowser(options.executablePath);
+    const reports = await mapWithConcurrency(viewports, options.concurrency ?? 1, async (viewport, index) => {
       const artifactDir = options.artifactDir
         ? index === 0 ? options.artifactDir : resolve(options.artifactDir, viewport.id)
         : undefined;
-      reports.push(await evaluateBrowserQualityInBrowser(browser, htmlPath, libDir, {
+      return evaluateBrowserQualityInBrowser(browser as Browser, htmlPath, libDir, {
         ...options,
         width: viewport.width,
         height: viewport.height,
         artifactDir,
-      }, scenario));
-    }
-    const entries = viewports.map((viewport, index) => summarizeViewport(viewport, reports[index]));
-    const primary = reports[0] ?? { available: false, error: "没有可用质量视口", passed: false };
-    const score = entries.length ? Number(Math.min(...entries.map((entry) => entry.score ?? 0)).toFixed(4)) : 0;
-    const worstEntry = entries.reduce((worst, entry) => (entry.score ?? 0) < (worst.score ?? 0) ? entry : worst, entries[0]);
-    const worstSelectorEntry = entries.reduce((worst, entry) => (entry.selectorCoverage?.coverageRate ?? 0) < (worst.selectorCoverage?.coverageRate ?? 0) ? entry : worst, entries[0]);
-    const worstStyle = entries.length ? Math.min(...entries.map((entry) => entry.styles?.rate ?? 0)) : 0;
-    const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
-    const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
-    const matrix: BrowserQualityMatrixReport = {
-      viewports: entries,
-      passed: entries.length > 0 && entries.every((entry) => entry.passed),
-      score,
-      worstViewport: worstEntry?.id ?? "unknown",
-      worstSelectorCoverage: worstSelectorEntry?.selectorCoverage?.coverageRate ?? 0,
-      worstComputedStyle: worstStyle,
-      worstPixelDiff: worstPixel,
-      runtimeErrors,
-    };
-    return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
+      }, scenario, telemetry, resourceCache);
+    });
+    return summarizeMatrix(viewports, reports);
   } catch (error) {
     const primary: BrowserQualityReport = { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
     return {
@@ -469,7 +950,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
       matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0 },
     };
   } finally {
-    await browser?.close();
+    if (ownsBrowser) await browser?.close();
   }
 }
 
@@ -480,6 +961,38 @@ export async function evaluateBrowserQualityMatrix(htmlPath: string, libDir: str
 export async function evaluateScenarioBrowserQualityMatrix(htmlPath: string, libDir: string, scenario: Scenario, options: BrowserQualityMatrixOptions = {}): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
   return evaluateBrowserQualityMatrixInternal(htmlPath, libDir, options, scenario);
 }
+
+export async function evaluateBrowserQualitySuite(htmlPath: string, libDir: string, scenarios: Scenario[], options: BrowserQualityMatrixOptions = {}): Promise<BrowserQualitySuiteReport> {
+  const concurrency = Math.max(1, Math.floor(options.concurrency ?? 1));
+  const telemetry = createBrowserTelemetry("shared-browser", concurrency, options.resourceCache ?? "off", options.stabilityMode ?? "fixed");
+  const totalStartedAt = performance.now();
+  let browser: Browser | undefined;
+  const resourceCache: RunResourceCache | undefined = options.resourceCache === "run-local" ? new Map() : undefined;
+  try {
+    let startedAt = performance.now();
+    browser = await launchBrowser(options.executablePath);
+    telemetry.timing.launchMs = elapsed(startedAt);
+    telemetry.workload.browserLaunches = 1;
+    startedAt = performance.now();
+    const initial = await evaluateBrowserQualityMatrixInternal(htmlPath, libDir, options, undefined, browser, telemetry, resourceCache);
+    const initialMatrixMs = elapsed(startedAt);
+    const scenarioEvaluations: BrowserQualitySuiteReport["scenarios"] = [];
+    startedAt = performance.now();
+    for (const scenario of scenarios) {
+      telemetry.workload.scenarioMatrices += 1;
+      const artifactDir = options.artifactDir ? resolve(options.artifactDir, "scenarios", scenario.id) : undefined;
+      const evaluation = await evaluateBrowserQualityMatrixInternal(htmlPath, libDir, { ...options, artifactDir }, scenario, browser, telemetry, resourceCache);
+      scenarioEvaluations.push({ scenarioId: scenario.id, label: scenario.label, evaluation });
+    }
+    return { initial, scenarios: scenarioEvaluations, phaseTiming: { initialMatrixMs, scenarioMatricesMs: elapsed(startedAt) }, telemetry };
+  } finally {
+    const closeStartedAt = performance.now();
+    await browser?.close();
+    telemetry.timing.closeMs = elapsed(closeStartedAt);
+    telemetry.timing.totalMs = elapsed(totalStartedAt);
+  }
+}
+
 
 
 export async function evaluateLibrarySelectorCoverage(libDir: string, options: Pick<BrowserQualityOptions, "width" | "height" | "executablePath"> = {}): Promise<{ available: boolean; error?: string; coverage?: SelectorCoverageReport; runtimeErrors?: string[] }> {

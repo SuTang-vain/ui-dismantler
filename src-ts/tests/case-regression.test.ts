@@ -34,12 +34,20 @@ const runGoldRegression = process.env.UI_DISMANTLER_GOLD_REGRESSION === "1";
 
 test("BLACKPINK Gold+ regression preserves initial and critical interaction matrices", { skip: !runGoldRegression, timeout: 600_000 }, async () => {
   const caseDir = `${root}examples/cases/blackpink-star-group-ts`;
+  const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
+  const browserConcurrency = Number(process.env.UI_DISMANTLER_BROWSER_CONCURRENCY ?? "1");
+  const browserResourceCache = (process.env.UI_DISMANTLER_BROWSER_RESOURCE_CACHE ?? "off") as "off" | "run-local";
+  const browserStability = (process.env.UI_DISMANTLER_BROWSER_STABILITY ?? "fixed") as "fixed" | "adaptive";
   const report = await runQualityGate({
     htmlPath: `${caseDir}/original.html`,
     libDir: `${caseDir}/lib`,
     manifestPath: `${caseDir}/manifest.json`,
     scenarioPath: `${caseDir}/scenarios.json`,
     visualArtifactsDir: `${caseDir}/artifacts-regression`,
+    browserMode,
+    browserConcurrency,
+    browserResourceCache,
+    browserStability,
   });
 
   assert.equal(report.passed, true);
@@ -65,4 +73,6 @@ test("BLACKPINK Gold+ regression preserves initial and critical interaction matr
   assert.equal(report.telemetry.workload.scenarioViewportRuns, 16);
   assert.ok(report.telemetry.timing.scenarioVisualMatrixMs > 0);
   assert.ok(report.telemetry.timing.totalMs > 0);
+  if (browserMode !== "legacy") assert.equal(report.telemetry.browser?.mode, browserMode);
+  if (browserResourceCache === "run-local") assert.ok((report.telemetry.browser?.workload.resourceCacheHits ?? 0) > 0);
 });

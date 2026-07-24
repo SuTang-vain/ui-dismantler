@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
+import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -117,4 +118,168 @@ test("critical interaction matrix compares computed style after opening a panel"
   assert.equal(result.matrix.passed, false);
   assert.equal(result.matrix.worstViewport, "mobile");
   assert.ok(result.matrix.worstPixelDiff > 0.02 || result.matrix.worstComputedStyle < 0.98);
+});
+
+test("shared browser suite launches once and preserves isolated viewport results", async () => {
+  const item = await fixture(
+    "shared-browser-suite",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:320px;height:240px;background:#fff}.panel{display:none;width:120px;height:100px;background:#e11d48}.app.open .panel{display:block}@media(max-width:500px){.panel{width:80px}}</style></head><body><div class="app"><button id="open">Open</button><div class="panel">Panel</div></div><script>document.getElementById('open').onclick=()=>document.querySelector('.app').classList.add('open')</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:320px;height:240px;background:var(--sg-paper)}.sg-panel{display:none;width:120px;height:100px;background:var(--sg-primary)}.sg-app.sg-open .sg-panel{display:block}@media(max-width:500px){.sg-panel{width:80px}}@media(max-width:320px){.sg-panel{width:80px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-open">Open</button><div class="sg-panel">Panel</div></div>';root.querySelector('#sg-open').onclick=function(){root.querySelector('.sg-app').classList.add('sg-open')}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "open-panel-shared",
+    critical: true,
+    steps: [{ action: "click" as const, target: { reference: "#open", library: "#sg-open" } }],
+    assertions: [{ target: { reference: ".panel", library: ".sg-panel" }, visible: true }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    concurrency: 2,
+    viewports: [
+      { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+      { id: "mobile", label: "Mobile", width: 390, height: 844 },
+    ],
+  });
+  assert.equal(result.initial.matrix.passed, true);
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true);
+  assert.equal(result.telemetry.workload.browserLaunches, 1);
+  assert.equal(result.telemetry.workload.contextsCreated, 4);
+  assert.equal(result.telemetry.workload.pagesCreated, 8);
+  assert.equal(result.telemetry.workload.navigations, 8);
+  assert.equal(result.telemetry.workload.viewportRuns, 4);
+  assert.equal(result.telemetry.workload.scenarioMatrices, 1);
+  assert.equal(result.telemetry.concurrency, 2);
+  assert.ok(result.telemetry.timing.launchMs > 0);
+  assert.ok(result.telemetry.timing.navigationMs > 0);
+  assert.ok(result.telemetry.timing.totalMs > 0);
+
+});
+
+test("run-local resource cache reuses identical remote image bytes across isolated contexts", async () => {
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=", "base64");
+  let imageRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/pixel.png") {
+      imageRequests += 1;
+      response.writeHead(200, { "content-type": "image/png", "cache-control": "no-store" });
+      response.end(png);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const imageUrl = `http://127.0.0.1:${address.port}/pixel.png`;
+    const item = await fixture(
+      "run-local-cache",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:120px;height:120px;background:#fff}.asset{width:80px;height:80px}</style></head><body><div class="app"><img class="asset" src="${imageUrl}" alt="pixel"></div></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:120px;height:120px;background:var(--sg-paper)}.sg-asset{width:80px;height:80px}@media(max-width:500px){.sg-asset{width:80px}}@media(max-width:320px){.sg-asset{width:80px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><img class="sg-asset" src="${imageUrl}" alt="pixel"></div>'}global.Fixture={mount:mount};})(window);`,
+    );
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [], {
+      concurrency: 1,
+      resourceCache: "run-local",
+      viewports: [
+        { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+        { id: "mobile", label: "Mobile", width: 390, height: 844 },
+      ],
+    });
+    assert.equal(result.initial.matrix.passed, true);
+    assert.equal(result.telemetry.workload.resourceCacheMisses, 1);
+    assert.ok(result.telemetry.workload.resourceCacheHits >= 1);
+    assert.equal(imageRequests, 1);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("adaptive stability waits for DOM, layout, network, and final assertions without fixed sleeps", async () => {
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=", "base64");
+  let imageRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/delayed.png") {
+      imageRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "image/png", "cache-control": "no-store" });
+        response.end(png);
+      }, 75);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const imageUrl = `http://127.0.0.1:${address.port}/delayed.png`;
+    const item = await fixture(
+      "adaptive-stability",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:180px;background:#fff}.panel{display:none;width:80px;height:80px;background:#e11d48}.app.ready .panel{display:block}.app.done .panel{background:#111827}</style></head><body><div class="app"><button id="load">Load</button><div class="panel"><button id="continue">Continue</button></div></div><script>document.getElementById('load').onclick=()=>{const image=new Image();image.onload=()=>document.querySelector('.app').classList.add('ready');image.src='${imageUrl}'};document.getElementById('continue').onclick=()=>document.querySelector('.app').classList.add('done')</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:240px;height:180px;background:var(--sg-paper)}.sg-panel{display:none;width:80px;height:80px;background:var(--sg-primary)}.sg-app.sg-ready .sg-panel{display:block}.sg-app.sg-done .sg-panel{background:var(--sg-ink)}@media(max-width:500px){.sg-panel{width:80px}}@media(max-width:320px){.sg-panel{width:80px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-load">Load</button><div class="sg-panel"><button id="sg-continue">Continue</button></div></div>';root.querySelector('#sg-load').onclick=function(){var image=new Image();image.onload=function(){root.querySelector('.sg-app').classList.add('sg-ready')};image.src='${imageUrl}'};root.querySelector('#sg-continue').onclick=function(){root.querySelector('.sg-app').classList.add('sg-done')}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "load-delayed-asset",
+      critical: true,
+      steps: [
+        { action: "click" as const, target: { reference: "#load", library: "#sg-load" } },
+        { action: "wait" as const, ms: 400 },
+        { action: "click" as const, target: { reference: "#continue", library: "#sg-continue" } },
+      ],
+      assertions: [
+        { target: { reference: ".panel", library: ".sg-panel" }, visible: true },
+        { target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "done", library: "sg-done" }] },
+      ],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      resourceCache: "run-local",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    assert.equal(result.initial.matrix.passed, true);
+    assert.equal(result.scenarios[0].evaluation.matrix.passed, true);
+    assert.equal(result.telemetry.stabilityMode, "adaptive");
+    assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+    assert.equal(result.telemetry.workload.assertionStabilityTimeouts, 0);
+    assert.equal(result.telemetry.workload.networkIdleTimeouts, 0);
+    assert.equal(result.telemetry.workload.explicitWaits, 2);
+    assert.equal(result.telemetry.workload.adaptiveExplicitWaits, 2);
+    assert.equal(result.telemetry.timing.fixedWaitMs, 0);
+    assert.ok(result.telemetry.timing.domStabilityMs > 0);
+    assert.ok(result.telemetry.timing.networkIdleMs > 0);
+    assert.ok(result.telemetry.workload.resourceCacheHits >= 1);
+    assert.equal(imageRequests, 1);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("adaptive stability preserves temporal waits when the following target was already actionable", async () => {
+  const item = await fixture(
+    "adaptive-wait-safety",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:220px;height:140px;background:#fff}.status{width:120px;height:40px;background:#e11d48;color:#fff}</style></head><body><div class="app"><button id="prepare">Prepare</button><button id="apply">Apply</button><div class="status">idle</div></div><script>let ready=false;document.getElementById('prepare').onclick=()=>setTimeout(()=>{ready=true},80);document.getElementById('apply').onclick=()=>{document.querySelector('.status').textContent=ready?'ready':'early'}</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:220px;height:140px;background:var(--sg-paper)}.sg-status{width:120px;height:40px;background:var(--sg-primary);color:#fff}@media(max-width:500px){.sg-status{width:120px}}@media(max-width:320px){.sg-status{width:120px}}`,
+    `(function(global){function mount(root){var ready=false;root.innerHTML='<div class="sg-app"><button id="sg-prepare">Prepare</button><button id="sg-apply">Apply</button><div class="sg-status">idle</div></div>';root.querySelector('#sg-prepare').onclick=function(){setTimeout(function(){ready=true},80)};root.querySelector('#sg-apply').onclick=function(){root.querySelector('.sg-status').textContent=ready?'ready':'early'}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "preserve-temporal-wait",
+    critical: true,
+    steps: [
+      { action: "click" as const, target: { reference: "#prepare", library: "#sg-prepare" } },
+      { action: "wait" as const, ms: 120 },
+      { action: "click" as const, target: { reference: "#apply", library: "#sg-apply" } },
+    ],
+    assertions: [{ target: { reference: ".status", library: ".sg-status" }, text: "ready" }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+  });
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true);
+  assert.equal(result.telemetry.workload.explicitWaits, 2);
+  assert.equal(result.telemetry.workload.adaptiveExplicitWaits, 0);
+  assert.ok(result.telemetry.timing.fixedWaitMs >= 200);
+  assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
 });

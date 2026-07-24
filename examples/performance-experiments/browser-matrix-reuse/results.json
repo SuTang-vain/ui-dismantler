@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "1.0",
+  "measuredAt": "2026-07-24",
+  "branch": "codex/browser-matrix-reuse-experiment",
+  "case": "blackpink-star-group-ts",
+  "qualityInvariant": {
+    "validation": "10/10",
+    "dom": 1,
+    "selectorCoverage": 1,
+    "computedStyleMinimum": 0.9997,
+    "pixelDiffMaximum": 0,
+    "runtimeErrors": 0,
+    "viewports": "4/4",
+    "criticalScenarioMatrices": "4/4",
+    "verifiedCoverage": 1
+  },
+  "experiments": [
+    {
+      "id": "legacy-c1",
+      "browserMode": "legacy",
+      "concurrency": 1,
+      "resourceCache": "off",
+      "runsMs": [
+        43137.74,
+        43468.49,
+        42461.686
+      ],
+      "averageMs": 43022.639,
+      "scenarioVisualAverageMs": 28262.65,
+      "decision": "baseline"
+    },
+    {
+      "id": "shared-browser-c1",
+      "browserMode": "shared-browser",
+      "concurrency": 1,
+      "resourceCache": "off",
+      "runsMs": [
+        44829.098,
+        43746.178,
+        41853.59
+      ],
+      "averageMs": 43476.289,
+      "scenarioVisualAverageMs": 27747.91,
+      "changeVsLegacy": 0.010545,
+      "decision": "not faster overall; retain only as cache host"
+    },
+    {
+      "id": "shared-browser-run-local-cache",
+      "browserMode": "shared-browser",
+      "concurrency": 1,
+      "resourceCache": "run-local",
+      "runsMs": [
+        38923.216,
+        38902.967,
+        38724.832
+      ],
+      "averageMs": 38850.338,
+      "scenarioVisualAverageMs": 24356.012,
+      "improvementVsLegacy": 0.096979,
+      "scenarioVisualImprovementVsLegacy": 0.138225,
+      "remoteRequests": 296,
+      "cacheHits": 285,
+      "cacheMisses": 11,
+      "cacheBytes": 1712512,
+      "decision": "recommended opt-in profile"
+    },
+    {
+      "id": "reuse-context-concurrency-2",
+      "browserMode": "experimental-rejected",
+      "concurrency": 2,
+      "bestObservedMs": 30814.551,
+      "failure": "subsequent runs showed 17-25 second close delays and one run exceeded two minutes without producing a report",
+      "decision": "removed from final CLI"
+    }
+  ],
+  "crossCaseRegression": [
+    {
+      "case": "qinshihuang-0716-ts",
+      "passed": true,
+      "overall": 0.9945,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "ciyu-scrollbar-ts",
+      "passed": true,
+      "overall": 0.9996,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "sun-wukong-0722-ts",
+      "passed": true,
+      "overall": 0.9928,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "sandadui-graph-ts",
+      "passed": true,
+      "overall": 0.9992,
+      "runtimeErrors": 0
+    }
+  ],
+  "stabilityExperiment": {
+    "fixedRunLocalCache": {
+      "runsMs": [
+        38881.464,
+        38996.694,
+        39446.186
+      ],
+      "averageMs": 39108.115,
+      "scenarioVisualAverageMs": 24480.09,
+      "browserAverageMs": 28699.065
+    },
+    "adaptiveSafe": {
+      "runsMs": [
+        31721.421,
+        32322.818,
+        32442.564
+      ],
+      "averageMs": 32162.268,
+      "scenarioVisualAverageMs": 17592.832,
+      "browserAverageMs": 21500.624,
+      "improvementVsFixed": 0.177606,
+      "scenarioVisualImprovementVsFixed": 0.281341,
+      "browserImprovementVsFixed": 0.250825,
+      "telemetry": {
+        "stabilityChecks": 96,
+        "stabilityTimeouts": 0,
+        "assertionTimeouts": 0,
+        "networkIdleTimeouts": 0,
+        "timerAwareWaits": 24,
+        "timerDrainTimeouts": 0,
+        "explicitWaits": 32,
+        "adaptiveExplicitWaits": 32,
+        "fixedWaitMs": 0
+      },
+      "quality": {
+        "validation": "10/10",
+        "viewports": "4/4",
+        "criticalScenarioMatrices": "4/4",
+        "runtimeErrors": 0,
+        "selectorCoverage": 1,
+        "worstComputedStyle": 0.9997,
+        "worstPixelDiff": 0.001314,
+        "verifiedCoverage": 1
+      }
+    },
+    "rejectedReadinessOnly": {
+      "runsMs": [
+        27725.928,
+        26073.549,
+        26167.933
+      ],
+      "failure": "one open-work-story/tiny run captured the entry-cover cleanup timer at different moments",
+      "observedWorstComputedStyle": 0.9859,
+      "decision": "rejected; add short setTimeout tracking and visible-image readiness"
+    }
+  },
+  "adaptiveCrossCaseRegression": [
+    {
+      "case": "qinshihuang-0716-ts",
+      "passed": true,
+      "overall": 0.9945,
+      "worstComputedStyle": 0.9898,
+      "worstPixelDiff": 0.007154,
+      "stabilityTimeouts": 0,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "ciyu-scrollbar-ts",
+      "passed": true,
+      "overall": 0.9996,
+      "worstComputedStyle": 0.9989,
+      "worstPixelDiff": 0,
+      "stabilityTimeouts": 0,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "sun-wukong-0722-ts",
+      "passed": true,
+      "overall": 0.9928,
+      "worstComputedStyle": 0.9887,
+      "worstPixelDiff": 0.014119,
+      "stabilityTimeouts": 0,
+      "runtimeErrors": 0
+    },
+    {
+      "case": "sandadui-graph-ts",
+      "passed": true,
+      "overall": 0.9992,
+      "worstComputedStyle": 0.9989,
+      "worstPixelDiff": 0,
+      "stabilityTimeouts": 0,
+      "runtimeErrors": 0
+    }
+  ]
+}

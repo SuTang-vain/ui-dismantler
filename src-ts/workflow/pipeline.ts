@@ -3,10 +3,11 @@ import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { generateScenarios, computeCoverage, loadScenarios } from "../evaluation/scenarios.js";
-import { evaluateBrowserQualityMatrix, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
+import { evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip, evaluateScenario } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
-import type { BrowserQualityMatrixReport, BrowserScenarioQualityMatrixReport, Manifest, QualityThresholds, QualityViewport, ScenarioDocument } from "../types.js";
+import type { BrowserExecutionTelemetry } from "../evaluation/browser.js";
+import type { BrowserQualityMatrixReport, BrowserScenarioQualityMatrixReport, Manifest, QualityThresholds, QualityViewport, Scenario, ScenarioDocument } from "../types.js";
 
 export const DEFAULT_THRESHOLDS: QualityThresholds = {
   overall: 0.85,
@@ -59,6 +60,7 @@ export interface QualityGateReport {
       viewports: number;
       scenarioViewportRuns: number;
     };
+    browser?: BrowserExecutionTelemetry;
   };
 }
 
@@ -70,6 +72,10 @@ export async function runQualityGate(options: {
   visual?: boolean;
   visualArtifactsDir?: string;
   viewports?: QualityViewport[];
+  browserMode?: "legacy" | "shared-browser";
+  browserConcurrency?: number;
+  browserResourceCache?: "off" | "run-local";
+  browserStability?: "fixed" | "adaptive";
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
   const totalStartedAt = performance.now();
@@ -87,28 +93,62 @@ export async function runQualityGate(options: {
   phaseStartedAt = performance.now();
   const roundtrip = await evaluateRoundtrip(options.htmlPath, options.libDir);
   timing.roundtripMs = elapsed(phaseStartedAt);
-  phaseStartedAt = performance.now();
-  const browserEvaluation = options.visual === false ? undefined : await evaluateBrowserQualityMatrix(options.htmlPath, options.libDir, {
-    artifactDir: options.visualArtifactsDir,
-    pixelThreshold: thresholds.pixelDiff,
-    selectorCoverageThreshold: thresholds.selectorCoverage,
-    styleThreshold: thresholds.style,
-    viewports: options.viewports,
-  });
-  timing.visualMatrixMs = options.visual === false ? 0 : elapsed(phaseStartedAt);
-  const browser = browserEvaluation?.primary;
-  const browserMatrix = browserEvaluation?.matrix;
-  const validation = browserEvaluation ? appendRuntimeSelectorCheck(staticValidation, browserEvaluation.worstSelectorCoverage ?? null) : staticValidation;
   let scenarios: QualityGateReport["scenarios"];
   let coverage: QualityGateReport["coverage"];
   let scenarioDocument: ScenarioDocument | undefined;
+  let formalScenarios: Scenario[] = [];
+  let criticalScenarios: Scenario[] = [];
   let formalScenarioCount = 0;
   let criticalScenarioCount = 0;
   let scenarioVisualMatrices: BrowserScenarioQualityMatrixReport[] | undefined;
   if (options.scenarioPath) {
     scenarioDocument = loadScenarios(JSON.parse(await readFile(resolve(options.scenarioPath), "utf8")));
-    const formalScenarios = scenarioDocument.scenarios.filter((item) => !item.candidate);
+    formalScenarios = scenarioDocument.scenarios.filter((item) => !item.candidate);
+    criticalScenarios = formalScenarios.filter((scenario) => scenario.critical);
     formalScenarioCount = formalScenarios.length;
+    criticalScenarioCount = criticalScenarios.length;
+  }
+
+  const browserMode = options.browserMode ?? "legacy";
+  const browserConcurrency = Math.max(1, Math.floor(options.browserConcurrency ?? 1));
+  let browserEvaluation: Awaited<ReturnType<typeof evaluateBrowserQualityMatrix>> | undefined;
+  let browserTelemetry: BrowserExecutionTelemetry | undefined;
+  if (options.visual !== false) {
+    if (browserMode === "shared-browser") {
+      const suite = await evaluateBrowserQualitySuite(options.htmlPath, options.libDir, criticalScenarios, {
+        artifactDir: options.visualArtifactsDir,
+        pixelThreshold: thresholds.pixelDiff,
+        selectorCoverageThreshold: thresholds.selectorCoverage,
+        styleThreshold: thresholds.style,
+        viewports: options.viewports,
+        concurrency: browserConcurrency,
+        resourceCache: options.browserResourceCache ?? "off",
+        stabilityMode: options.browserStability ?? "fixed",
+      });
+      browserEvaluation = suite.initial;
+      browserTelemetry = suite.telemetry;
+      timing.visualMatrixMs = suite.phaseTiming.initialMatrixMs;
+      timing.scenarioVisualMatrixMs = suite.phaseTiming.scenarioMatricesMs;
+      scenarioVisualMatrices = suite.scenarios.map((item) => ({ scenarioId: item.scenarioId, label: item.label, ...item.evaluation.matrix }));
+    } else {
+      phaseStartedAt = performance.now();
+      browserEvaluation = await evaluateBrowserQualityMatrix(options.htmlPath, options.libDir, {
+        artifactDir: options.visualArtifactsDir,
+        pixelThreshold: thresholds.pixelDiff,
+        selectorCoverageThreshold: thresholds.selectorCoverage,
+        styleThreshold: thresholds.style,
+        viewports: options.viewports,
+        concurrency: browserConcurrency,
+        stabilityMode: options.browserStability ?? "fixed",
+      });
+      timing.visualMatrixMs = elapsed(phaseStartedAt);
+    }
+  }
+  const browser = browserEvaluation?.primary;
+  const browserMatrix = browserEvaluation?.matrix;
+  const validation = browserEvaluation ? appendRuntimeSelectorCheck(staticValidation, browserEvaluation.worstSelectorCoverage ?? null) : staticValidation;
+
+  if (options.scenarioPath && scenarioDocument) {
     scenarios = [];
     const verified = new Set<string>();
     phaseStartedAt = performance.now();
@@ -119,9 +159,7 @@ export async function runQualityGate(options: {
     }
     timing.scenarioStateMs = elapsed(phaseStartedAt);
     coverage = computeCoverage(manifest.interactions, scenarioDocument, verified);
-    const criticalScenarios = formalScenarios.filter((scenario) => scenario.critical);
-    criticalScenarioCount = criticalScenarios.length;
-    if (options.visual !== false && criticalScenarios.length) {
+    if (options.visual !== false && browserMode === "legacy" && criticalScenarios.length) {
       scenarioVisualMatrices = [];
       phaseStartedAt = performance.now();
       for (const scenario of criticalScenarios) {
@@ -131,6 +169,8 @@ export async function runQualityGate(options: {
           selectorCoverageThreshold: thresholds.selectorCoverage,
           styleThreshold: thresholds.style,
           viewports: options.viewports,
+          concurrency: browserConcurrency,
+          stabilityMode: options.browserStability ?? "fixed",
         });
         scenarioVisualMatrices.push({ scenarioId: scenario.id, label: scenario.label, ...result.matrix });
       }
@@ -193,6 +233,7 @@ export async function runQualityGate(options: {
       viewports: browserMatrix?.viewports.length ?? 0,
       scenarioViewportRuns: (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.viewports.length, 0),
     },
+    browser: browserTelemetry,
   };
   return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, telemetry, passed: gates.every((gate) => gate.passed) };
 }
