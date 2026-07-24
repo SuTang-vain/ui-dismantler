@@ -256,3 +256,41 @@ adaptive 等待超时后仍会继续生成 computed-style、截图和 pixel diff
 - stylesheet/font/image/background resource drain timeout。
 
 因此稳定性超时不会中断证据产出，但也不能绕过 Gold+ viewport matrix。
+
+## Resource Failure Graph
+
+视觉资源失败不再只输出 timeout 计数。浏览器端将 DOM/CSS/SVG 资源引用与 Playwright 请求生命周期关联，报告字段包括：
+
+```text
+url
+type
+owner
+pseudo
+phase
+role
+state
+status
+failure
+elapsedMs
+required
+external
+```
+
+当前覆盖：
+
+- 可见 viewport 内的 `img` / `srcset` 实际 `currentSrc`；
+- active stylesheet 与 CSS `@import` 请求失败；
+- `background-image`、`mask-image` 及 `::before` / `::after`；
+- SVG `image[href]`、`use[href]`；
+- `video[poster]`；
+- `@font-face` 请求和 `document.fonts` 状态。
+
+required 资源只包含与当前 viewport 相交的可见资源、active stylesheet 和实际被请求的 font。首屏之外的 lazy image 不再阻塞当前截图；data/blob 资源不进入 external availability。
+
+质量报告拆分为：
+
+- `translationFidelity`：selector、computed-style、pixel 和应用 runtime；
+- `resource-readiness`：当前截图必需资源是否完整；
+- `external-availability`：必需 HTTP(S) 资源是否可用。
+
+因此远程 404 可以表现为 translation fidelity 通过、external availability 失败；本地资源问题则由 resource-readiness 阻断。所有失败仍保留截图和 diff 证据。

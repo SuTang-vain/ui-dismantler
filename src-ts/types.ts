@@ -309,6 +309,37 @@ export interface PixelDiffReport {
   generatedImagePath?: string;
 }
 
+export type VisualResourceType = "image" | "stylesheet" | "background-image" | "mask-image" | "font";
+
+export interface VisualResourceFailure {
+  url: string;
+  type: VisualResourceType;
+  owner: string;
+  pseudo?: "::before" | "::after";
+  phase?: string;
+  role?: "reference" | "library";
+  state: "pending" | "timeout" | "http-error" | "request-failed" | "decode-error" | "font-loading";
+  status?: number;
+  failure?: string;
+  elapsedMs?: number;
+  required: boolean;
+  external: boolean;
+}
+
+export interface TranslationFidelityReport {
+  passed: boolean;
+  score: number;
+  selectorCoverage: number;
+  computedStyle: number;
+  pixelDiff: number;
+}
+
+export interface ExternalAvailabilityReport {
+  passed: boolean;
+  requiredFailures: number;
+  externalFailures: number;
+}
+
 export interface QualityViewport {
   id: string;
   label: string;
@@ -321,6 +352,9 @@ export interface BrowserViewportReport extends QualityViewport {
   error?: string;
   runtimeErrors: number;
   stabilityFailures: number;
+  resourceFailures: VisualResourceFailure[];
+  translationFidelity?: TranslationFidelityReport;
+  externalAvailability?: ExternalAvailabilityReport;
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
   styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
   pixels?: PixelDiffReport;
@@ -338,6 +372,8 @@ export interface BrowserQualityMatrixReport {
   worstPixelDiff: number;
   runtimeErrors: number;
   stabilityFailures: number;
+  resourceFailures: number;
+  externalAvailabilityFailures: number;
 }
 
 export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrixReport {
@@ -352,6 +388,7 @@ export interface BrowserQualityReport {
     ok: boolean;
     runtimeErrors: string[];
     stabilityFailures: string[];
+    resourceFailures: VisualResourceFailure[];
     selectorCoverage: SelectorCoverageReport;
     styles: ComputedStyleSnapshot[];
   };
@@ -359,11 +396,14 @@ export interface BrowserQualityReport {
     ok: boolean;
     runtimeErrors: string[];
     stabilityFailures: string[];
+    resourceFailures: VisualResourceFailure[];
     selectorCoverage: SelectorCoverageReport;
     styles: ComputedStyleSnapshot[];
   };
   selectorCoverage?: SelectorCoverageReport;
   styles?: StyleComparisonReport;
+  translationFidelity?: TranslationFidelityReport;
+  externalAvailability?: ExternalAvailabilityReport;
   pixels?: PixelDiffReport;
   score?: number;
   passed?: boolean;

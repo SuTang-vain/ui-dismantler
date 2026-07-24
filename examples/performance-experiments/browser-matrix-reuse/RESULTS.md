@@ -227,3 +227,60 @@ matrix passed: false
 ```
 
 这使“资源同时缺失导致像素一致”的情况不再被判为高保真完成。正式 BLACKPINK 与四个异构案例回归的 `stabilityFailures`、`stabilityTimeouts`、`resourceDrainTimeouts` 均为 0。
+
+## 2026-07-24：Resource Failure Graph
+
+新增结构化资源失败定位：
+
+```json
+{
+  "url": "https://example.test/missing.png",
+  "type": "background-image",
+  "owner": ".hero",
+  "pseudo": "::before",
+  "role": "library",
+  "state": "http-error",
+  "status": 404,
+  "elapsedMs": 18.4,
+  "required": true,
+  "external": true
+}
+```
+
+确定性回归覆盖：
+
+- 慢 stylesheet：pending/timeout、owner、phase、elapsed；
+- HTTP 404 伪元素背景：status、pseudo、reference/library；
+- socket reset 图片：request failure reason；
+- CSS `@import` 404；
+- SVG `image[href]` 404；
+- 非 2xx route.fetch 不再 fallback continue 导致同一页面重复请求。
+
+### Diegovz 17 MB 真实资源密集回归
+
+初次运行把首屏之外的 lazy/data URI 图片误判为 required，产生 24 个本地资源 timeout。修正 required 判定为“CSS 可见且与当前 viewport 相交”，并将 data/blob 排除 external availability 后：
+
+```text
+browser total: 3.22s
+dom stability aggregate: 0.35s
+stability timeout: 0
+resource timeout: 0
+resource failures: 0
+resource-readiness: PASS
+external-availability: PASS
+```
+
+临时静态封装的 selector/computed-style/pixel 仍不满足 Gold+，因此整体正确 FAIL；失败归因保持在 translation fidelity，而不是资源可用性。
+
+### BLACKPINK 三轮性能
+
+```text
+33.02s / 33.10s / 33.19s
+average: 33.10s
+scenario matrix average: 18.02s
+browser average: 22.37s
+resource failures: 0
+stability failures: 0
+```
+
+相对 Resource Failure Graph 之前的安全 adaptive 平均 `32.16s`，增加约 `2.9%`，低于预设 5% 回退上限。

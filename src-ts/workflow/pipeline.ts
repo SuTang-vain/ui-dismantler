@@ -190,12 +190,17 @@ export async function runQualityGate(options: {
   if (browserMatrix) {
     const passedViewports = browserMatrix.viewports.filter((viewport) => viewport.passed).length;
     const scenarioRuntimeErrors = (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.runtimeErrors, 0);
+    const stabilityFailures = browserMatrix.stabilityFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.stabilityFailures, 0);
+    const resourceFailures = browserMatrix.resourceFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.resourceFailures, 0);
+    const externalAvailabilityFailures = browserMatrix.externalAvailabilityFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.externalAvailabilityFailures, 0);
     const worstSelectorCoverage = Math.min(browserMatrix.worstSelectorCoverage, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstSelectorCoverage));
     const worstComputedStyle = Math.min(browserMatrix.worstComputedStyle, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstComputedStyle));
     const worstPixelDiff = Math.max(browserMatrix.worstPixelDiff, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstPixelDiff));
     gates.push({ id: "viewport-matrix", passed: browserMatrix.passed, detail: `${passedViewports}/${browserMatrix.viewports.length} 视口通过，worst=${browserMatrix.worstViewport}` });
     if (scenarioVisualMatrices?.length) gates.push({ id: "scenario-viewport-matrix", passed: scenarioVisualMatrices.every((matrix) => matrix.passed), detail: `${scenarioVisualMatrices.filter((matrix) => matrix.passed).length}/${scenarioVisualMatrices.length} 关键交互状态矩阵通过` });
-    gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0 && scenarioRuntimeErrors === 0, detail: `initialViewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors + scenarioRuntimeErrors}` });
+    gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0 && scenarioRuntimeErrors === 0 && stabilityFailures === 0, detail: `initialViewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors + scenarioRuntimeErrors}，stabilityFailures=${stabilityFailures}` });
+    gates.push({ id: "resource-readiness", passed: resourceFailures === 0, detail: `requiredResourceFailures=${resourceFailures}` });
+    gates.push({ id: "external-availability", passed: externalAvailabilityFailures === 0, detail: `requiredExternalFailures=${externalAvailabilityFailures}` });
     gates.push({ id: "selector-coverage", passed: worstSelectorCoverage >= thresholds.selectorCoverage, detail: `worstSelectorCoverage=${worstSelectorCoverage}，门槛=${thresholds.selectorCoverage}` });
     gates.push({ id: "computed-style", passed: worstComputedStyle >= thresholds.style, detail: `worstComputedStyle=${worstComputedStyle}，门槛=${thresholds.style}` });
     gates.push({ id: "pixel-diff", passed: worstPixelDiff <= thresholds.pixelDiff, detail: `worstPixelDiff=${worstPixelDiff}，门槛=${thresholds.pixelDiff}` });

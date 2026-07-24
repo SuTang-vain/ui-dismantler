@@ -17,6 +17,8 @@ import type {
   ScenarioAssertion,
   SelectorCoverageReport,
   StyleComparisonReport,
+  VisualResourceFailure,
+  VisualResourceType,
 } from "../types.js";
 
 const STYLE_PROPERTIES = [
@@ -37,6 +39,7 @@ interface BrowserSnapshot {
   ok: boolean;
   runtimeErrors: string[];
   stabilityFailures: string[];
+  resourceFailures: VisualResourceFailure[];
   selectorCoverage: SelectorCoverageReport;
   styles: ComputedStyleSnapshot[];
   screenshot: Buffer;
@@ -50,7 +53,12 @@ interface RuntimeErrorTracker {
 function trackRuntimeErrors(page: Page): RuntimeErrorTracker {
   const tracker: RuntimeErrorTracker = { errors: [], reset() { this.errors.length = 0; } };
   page.on("pageerror", (error) => tracker.errors.push(error.message));
-  page.on("console", (message) => { if (message.type() === "error") tracker.errors.push(message.text()); });
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const text = message.text();
+    if (/^Failed to load resource:/i.test(text)) return;
+    tracker.errors.push(text);
+  });
   return tracker;
 }
 
@@ -89,6 +97,7 @@ interface CachedResource {
   status: number;
   headers: Record<string, string>;
   body: Buffer;
+  cacheable: boolean;
 }
 
 type RunResourceCache = Map<string, Promise<CachedResource>>;
@@ -115,21 +124,22 @@ async function installRunResourceCache(context: BrowserContext, cache: RunResour
       telemetry.workload.resourceCacheMisses += 1;
       cached = (async () => {
         const response = await route.fetch({ timeout: 15000 });
-        if (response.status() < 200 || response.status() >= 300) throw new Error(`uncacheable response status ${response.status()}`);
+        const cacheable = response.status() >= 200 && response.status() < 300;
         const body = await response.body();
         const headers = { ...response.headers() };
         delete headers["content-encoding"];
         delete headers["content-length"];
         delete headers["transfer-encoding"];
         delete headers["set-cookie"];
-        telemetry.workload.resourceCacheBytes += body.length;
-        return { status: response.status(), headers, body };
+        if (cacheable) telemetry.workload.resourceCacheBytes += body.length;
+        return { status: response.status(), headers, body, cacheable };
       })();
       cache.set(key, cached);
       cached.catch(() => cache.delete(key));
     }
     try {
       const response = await cached;
+      if (!response.cacheable) cache.delete(key);
       await route.fulfill({ status: response.status, headers: response.headers, body: response.body });
     } catch {
       await route.continue();
@@ -265,8 +275,19 @@ async function firstExample(libDir: string): Promise<string> {
   return resolve(dir, names[0]);
 }
 
+interface NetworkResourceRecord {
+  url: string;
+  type: string;
+  state: "pending" | "completed" | "http-error" | "request-failed";
+  status?: number;
+  failure?: string;
+  startedAt: number;
+  endedAt?: number;
+}
+
 interface NetworkActivityTracker {
   pending: Set<Request>;
+  records: Map<Request, NetworkResourceRecord>;
   lastActivityAt: number;
   observed: number;
 }
@@ -285,23 +306,69 @@ interface PageStabilityResult {
   networkTimedOut: boolean;
   timerTimedOut: boolean;
   resourceTimedOut: boolean;
+  resourceFailed: boolean;
+  resourceFailures: VisualResourceFailure[];
+}
+
+interface VisualResourceReference {
+  url: string;
+  type: VisualResourceType;
+  owner: string;
+  pseudo?: "::before" | "::after";
+  state: "loaded" | "pending" | "decode-error" | "font-loading";
+}
+
+interface DomStabilityProbeResult {
+  stable: boolean;
+  assertionsSatisfied: boolean;
+  timersSettled: boolean;
+  resourcesSettled: boolean;
+  waitedForTimers: boolean;
+  waitedForResources: boolean;
+  waitedForStylesheets: boolean;
+  waitedForBackgroundImages: boolean;
+  waitedForFonts: boolean;
+  resourceReferences: VisualResourceReference[];
 }
 
 function trackNetworkActivity(page: Page): NetworkActivityTracker {
-  const tracker: NetworkActivityTracker = { pending: new Set(), lastActivityAt: 0, observed: 0 };
+  const tracker: NetworkActivityTracker = { pending: new Set(), records: new Map(), lastActivityAt: 0, observed: 0 };
   const relevant = (request: Request): boolean => /^https?:\/\//i.test(request.url());
   page.on("request", (request) => {
     if (!relevant(request)) return;
+    const now = performance.now();
     tracker.pending.add(request);
-    tracker.lastActivityAt = performance.now();
+    tracker.records.set(request, { url: request.url(), type: request.resourceType(), state: "pending", startedAt: now });
+    tracker.lastActivityAt = now;
     tracker.observed += 1;
   });
-  const complete = (request: Request): void => {
-    if (!tracker.pending.delete(request)) return;
-    tracker.lastActivityAt = performance.now();
-  };
-  page.on("requestfinished", complete);
-  page.on("requestfailed", complete);
+  page.on("response", (response) => {
+    const record = tracker.records.get(response.request());
+    if (!record) return;
+    record.status = response.status();
+    if (response.status() >= 400) record.state = "http-error";
+  });
+  page.on("requestfinished", (request) => {
+    const now = performance.now();
+    tracker.pending.delete(request);
+    const record = tracker.records.get(request);
+    if (record) {
+      if (record.state !== "http-error") record.state = "completed";
+      record.endedAt = now;
+    }
+    tracker.lastActivityAt = now;
+  });
+  page.on("requestfailed", (request) => {
+    const now = performance.now();
+    tracker.pending.delete(request);
+    const record = tracker.records.get(request);
+    if (record) {
+      record.state = "request-failed";
+      record.failure = request.failure()?.errorText;
+      record.endedAt = now;
+    }
+    tracker.lastActivityAt = now;
+  });
   return tracker;
 }
 
@@ -336,10 +403,10 @@ async function waitForDomLayoutAndAssertions(
   rootSelector: string,
   assertions: ResolvedScenarioAssertion[],
   timeoutMs = 500,
-): Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; resourcesSettled: boolean; waitedForTimers: boolean; waitedForResources: boolean; waitedForStylesheets: boolean; waitedForBackgroundImages: boolean; waitedForFonts: boolean }> {
+): Promise<DomStabilityProbeResult> {
   return page.evaluate(async ({ selector, expected, timeout }) => {
     const root = document.querySelector(selector);
-    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false };
+    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false, resourceReferences: [] };
     const visible = (element: Element): boolean => {
       let current: Element | null = element;
       while (current) {
@@ -349,6 +416,11 @@ async function waitForDomLayoutAndAssertions(
         current = current.parentElement;
       }
       return true;
+    };
+    const resourceVisible = (element: Element): boolean => {
+      if (!visible(element)) return false;
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
     };
     const text = (element: Element): string => (((element as HTMLElement).innerText || element.textContent || "").trim());
     const assertionsSatisfied = (): boolean => expected.every((assertion) => {
@@ -379,48 +451,79 @@ async function waitForDomLayoutAndAssertions(
       const timerState = globalThis as typeof globalThis & { __uiDismantlerPendingTimers?: () => number[] };
       return timerState.__uiDismantlerPendingTimers?.() ?? [];
     };
-    const visualResourceState = (): { settled: boolean; stylesheets: boolean; backgroundImages: boolean; fonts: boolean } => {
-      const imagesSettled = [...root.querySelectorAll("img")].every((image) => {
-        if (!visible(image)) return true;
-        return image.complete && (image.naturalWidth > 0 || !image.currentSrc);
-      });
-      const stylesheetsSettled = [...document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"]')].every((link) => {
-        if (link.disabled) return true;
-        if (link.media && !matchMedia(link.media).matches) return true;
-        return Boolean(link.sheet);
-      });
+    const resourceOwner = (element: Element): string => {
+      if (element.id) return `#${CSS.escape(element.id)}`;
+      const classes = [...element.classList].slice(0, 2).map((name) => `.${CSS.escape(name)}`).join("");
+      if (classes) return `${element.tagName.toLowerCase()}${classes}`;
+      const parent = element.parentElement;
+      if (!parent) return element.tagName.toLowerCase();
+      return `${resourceOwner(parent)} > ${element.tagName.toLowerCase()}:nth-child(${[...parent.children].indexOf(element) + 1})`;
+    };
+    const visualResourceState = (): { settled: boolean; stylesheets: boolean; backgroundImages: boolean; fonts: boolean; references: VisualResourceReference[] } => {
+      const references: VisualResourceReference[] = [];
+      for (const image of [...root.querySelectorAll("img")]) {
+        if (!resourceVisible(image)) continue;
+        const url = image.currentSrc || image.src;
+        if (!url) continue;
+        references.push({
+          url,
+          type: "image",
+          owner: resourceOwner(image),
+          state: !image.complete ? "pending" : image.naturalWidth > 0 || /^(?:data|blob):/i.test(url) ? "loaded" : "decode-error",
+        });
+      }
+      for (const link of [...document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"]')]) {
+        if (link.disabled || (link.media && !matchMedia(link.media).matches) || !link.href) continue;
+        references.push({ url: link.href, type: "stylesheet", owner: resourceOwner(link), state: link.sheet ? "loaded" : "pending" });
+      }
       const completedResources = new Set(performance.getEntriesByType("resource").map((entry) => {
         try { return new URL(entry.name, location.href).href; } catch { return entry.name; }
       }));
-      const backgroundUrls = new Set<string>();
-      const collectUrls = (value: string): void => {
+      const addSelectedResource = (element: Element, rawUrl: string | null, type: VisualResourceType): void => {
+        if (!rawUrl || !resourceVisible(element)) return;
+        try {
+          const url = new URL(rawUrl, location.href);
+          if (!["http:", "https:"].includes(url.protocol)) return;
+          references.push({ url: url.href, type, owner: resourceOwner(element), state: completedResources.has(url.href) ? "loaded" : "pending" });
+        } catch { /* invalid resource URL */ }
+      };
+      for (const element of [...root.querySelectorAll("svg image, svg use")]) {
+        addSelectedResource(element, element.getAttribute("href") || element.getAttribute("xlink:href"), "image");
+      }
+      for (const video of [...root.querySelectorAll<HTMLVideoElement>("video[poster]")]) addSelectedResource(video, video.poster, "image");
+      const collectUrls = (value: string, type: "background-image" | "mask-image", element: Element, pseudo?: "::before" | "::after"): void => {
         for (const match of value.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
           try {
             const url = new URL(match[1], location.href);
-            if (["http:", "https:"].includes(url.protocol)) backgroundUrls.add(url.href);
+            if (!["http:", "https:"].includes(url.protocol)) continue;
+            references.push({ url: url.href, type, owner: resourceOwner(element), pseudo, state: completedResources.has(url.href) ? "loaded" : "pending" });
           } catch { /* invalid CSS URL */ }
         }
       };
       for (const element of [root, ...root.querySelectorAll("*")].slice(0, 500)) {
-        if (!visible(element)) continue;
+        if (!resourceVisible(element)) continue;
         const computed = getComputedStyle(element);
-        collectUrls(computed.backgroundImage);
-        collectUrls(computed.maskImage);
+        collectUrls(computed.backgroundImage, "background-image", element);
+        collectUrls(computed.maskImage, "mask-image", element);
         for (const pseudo of ["::before", "::after"] as const) {
           const pseudoStyle = getComputedStyle(element, pseudo);
           if (pseudoStyle.content !== "none") {
-            collectUrls(pseudoStyle.backgroundImage);
-            collectUrls(pseudoStyle.maskImage);
+            collectUrls(pseudoStyle.backgroundImage, "background-image", element, pseudo);
+            collectUrls(pseudoStyle.maskImage, "mask-image", element, pseudo);
           }
         }
       }
-      const backgroundImagesSettled = [...backgroundUrls].every((url) => completedResources.has(url));
-      const fontsSettled = !document.fonts || document.fonts.status === "loaded";
+      if (document.fonts && document.fonts.status !== "loaded") references.push({ url: "document.fonts", type: "font", owner: "document.fonts", state: "font-loading" });
+      const deduped = [...new Map(references.map((reference) => [`${reference.type}|${reference.url}|${reference.owner}|${reference.pseudo ?? ""}`, reference])).values()];
+      const stylesheetsSettled = deduped.filter((item) => item.type === "stylesheet").every((item) => item.state === "loaded");
+      const backgroundImagesSettled = deduped.filter((item) => item.type === "background-image" || item.type === "mask-image").every((item) => item.state === "loaded");
+      const fontsSettled = deduped.filter((item) => item.type === "font").every((item) => item.state === "loaded");
       return {
-        settled: imagesSettled && stylesheetsSettled && backgroundImagesSettled && fontsSettled,
+        settled: deduped.every((item) => item.state === "loaded"),
         stylesheets: stylesheetsSettled,
         backgroundImages: backgroundImagesSettled,
         fonts: fontsSettled,
+        references: deduped,
       };
     };
     const signature = (): string => {
@@ -434,7 +537,7 @@ async function waitForDomLayoutAndAssertions(
         return `${semantic}:${rounded}:${html.scrollWidth ?? 0},${html.scrollHeight ?? 0},${html.scrollLeft ?? 0},${html.scrollTop ?? 0}`;
       }).join("|");
     };
-    return new Promise<{ stable: boolean; assertionsSatisfied: boolean; timersSettled: boolean; resourcesSettled: boolean; waitedForTimers: boolean; waitedForResources: boolean; waitedForStylesheets: boolean; waitedForBackgroundImages: boolean; waitedForFonts: boolean }>((resolveWait) => {
+    return new Promise<DomStabilityProbeResult>((resolveWait) => {
       const startedAt = performance.now();
       let previous = "";
       let stableFrames = 0;
@@ -458,16 +561,67 @@ async function waitForDomLayoutAndAssertions(
         if (!resources.backgroundImages) waitedForBackgroundImages = true;
         if (!resources.fonts) waitedForFonts = true;
         if (stableFrames >= 2 && assertionState && timersSettled && resources.settled) {
-          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts }); return;
+          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references }); return;
         }
         if (now - startedAt >= timeout) {
-          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts }); return;
+          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references }); return;
         }
         requestAnimationFrame(sample);
       };
       requestAnimationFrame(sample);
     });
   }, { selector: rootSelector, expected: assertions, timeout: timeoutMs });
+}
+
+function resourceFailuresForProbe(references: VisualResourceReference[], network: NetworkActivityTracker): VisualResourceFailure[] {
+  const now = performance.now();
+  const networkByUrl = new Map<string, NetworkResourceRecord>();
+  for (const record of network.records.values()) networkByUrl.set(record.url, record);
+  const failures: VisualResourceFailure[] = [];
+  for (const reference of references) {
+    const record = networkByUrl.get(reference.url);
+    const networkFailed = record?.state === "http-error" || record?.state === "request-failed";
+    if (reference.state === "loaded" && !networkFailed) continue;
+    const state: VisualResourceFailure["state"] = record?.state === "http-error"
+      ? "http-error"
+      : record?.state === "request-failed"
+        ? "request-failed"
+        : reference.state === "decode-error"
+          ? "decode-error"
+          : reference.state === "font-loading"
+            ? "font-loading"
+            : record?.state === "pending"
+              ? "pending"
+              : "timeout";
+    failures.push({
+      url: reference.url,
+      type: reference.type,
+      owner: reference.owner,
+      pseudo: reference.pseudo,
+      state,
+      status: record?.status,
+      failure: record?.failure,
+      elapsedMs: record ? Number(((record.endedAt ?? now) - record.startedAt).toFixed(3)) : undefined,
+      required: true,
+      external: /^https?:\/\//i.test(reference.url),
+    });
+  }
+  for (const record of network.records.values()) {
+    if (!["font", "stylesheet"].includes(record.type) || !["http-error", "request-failed"].includes(record.state)) continue;
+    if (failures.some((failure) => failure.url === record.url)) continue;
+    failures.push({
+      url: record.url,
+      type: record.type === "font" ? "font" : "stylesheet",
+      owner: record.type === "font" ? "@font-face" : "@import",
+      state: record.state as "http-error" | "request-failed",
+      status: record.status,
+      failure: record.failure,
+      elapsedMs: Number(((record.endedAt ?? now) - record.startedAt).toFixed(3)),
+      required: true,
+      external: true,
+    });
+  }
+  return failures;
 }
 
 async function waitForAdaptiveStability(
@@ -495,6 +649,8 @@ async function waitForAdaptiveStability(
   const networkTimedOut = !networkIdle;
   const timerTimedOut = !dom.timersSettled;
   const resourceTimedOut = !dom.resourcesSettled;
+  const resourceFailures = resourceFailuresForProbe(dom.resourceReferences, network);
+  const resourceFailed = resourceFailures.some((failure) => failure.required);
   if (telemetry && dom.waitedForTimers) telemetry.workload.timerAwareWaits += 1;
   if (telemetry && dom.waitedForResources) telemetry.workload.resourceAwareWaits += 1;
   if (telemetry && dom.waitedForStylesheets) telemetry.workload.stylesheetAwareWaits += 1;
@@ -505,7 +661,7 @@ async function waitForAdaptiveStability(
   if (telemetry && networkTimedOut) telemetry.workload.networkIdleTimeouts += 1;
   if (telemetry && timerTimedOut) telemetry.workload.timerDrainTimeouts += 1;
   if (telemetry && resourceTimedOut) telemetry.workload.resourceDrainTimeouts += 1;
-  return { stable: dom.stable && networkIdle, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut, resourceTimedOut };
+  return { stable: dom.stable && networkIdle && !resourceFailed, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut, resourceTimedOut, resourceFailed, resourceFailures };
 }
 
 async function waitForSettled(
@@ -646,15 +802,18 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
   const tracker = runtimeTracker ?? trackRuntimeErrors(page);
   const network = trackNetworkActivity(page);
   const stabilityFailures: string[] = [];
+  const resourceFailures: VisualResourceFailure[] = [];
   const recordStability = (phase: string, result: PageStabilityResult | null): void => {
+    if (result?.resourceFailures.length) resourceFailures.push(...result.resourceFailures.map((failure) => ({ ...failure, phase })));
     if (!result || result.stable) return;
     const causes = [
       result.domTimedOut && "dom/layout/assertion",
       result.networkTimedOut && "network",
       result.timerTimedOut && "timer",
-      result.resourceTimedOut && "resource",
+      result.resourceTimedOut && "resource-timeout",
+      result.resourceFailed && "resource-failure",
     ].filter(Boolean).join(",");
-    stabilityFailures.push(`${phase}: ${causes || "unknown"} stability timeout`);
+    stabilityFailures.push(`${phase}: ${causes || "unknown"}${result.resourceFailed && !result.resourceTimedOut ? "" : " stability timeout"}`);
   };
   tracker.reset();
   let startedAt = performance.now();
@@ -785,7 +944,8 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
   if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
-  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
+  const uniqueResourceFailures = [...new Map(resourceFailures.map((failure) => [`${failure.phase}|${failure.type}|${failure.url}|${failure.owner}|${failure.pseudo ?? ""}`, failure])).values()];
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -896,12 +1056,28 @@ async function evaluateBrowserQualityOnPages(
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
     const selectorCoverage = generated.selectorCoverage;
     const score = Number((styles.rate * 0.55 + (1 - pixels.diffRate) * 0.35 + selectorCoverage.coverageRate * 0.1).toFixed(4));
-    const passed = selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0 && generated.stabilityFailures.length === 0 && reference.stabilityFailures.length === 0;
+    const translationFidelity = {
+      passed: selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0,
+      score,
+      selectorCoverage: selectorCoverage.coverageRate,
+      computedStyle: styles.rate,
+      pixelDiff: pixels.diffRate,
+    };
+    const allResourceFailures = [...reference.resourceFailures, ...generated.resourceFailures];
+    const requiredExternalFailures = allResourceFailures.filter((failure) => failure.required && failure.external);
+    const externalAvailability = {
+      passed: requiredExternalFailures.length === 0,
+      requiredFailures: requiredExternalFailures.length,
+      externalFailures: allResourceFailures.filter((failure) => failure.external).length,
+    };
+    const resourceReadinessPassed = allResourceFailures.filter((failure) => failure.required).length === 0;
+    const stabilityPassed = generated.stabilityFailures.length === 0 && reference.stabilityFailures.length === 0;
+    const passed = translationFidelity.passed && externalAvailability.passed && resourceReadinessPassed && stabilityPassed;
     return {
       available: true,
-      reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
-      generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
-      selectorCoverage, styles, pixels, score, passed,
+      reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, resourceFailures: reference.resourceFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
+      generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, resourceFailures: generated.resourceFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
+      selectorCoverage, styles, pixels, translationFidelity, externalAvailability, score, passed,
     };
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
@@ -942,12 +1118,19 @@ export async function evaluateBrowserQuality(htmlPath: string, libDir: string, o
 function summarizeViewport(viewport: QualityViewport, report: BrowserQualityReport): BrowserViewportReport {
   const runtimeErrors = (report.reference?.runtimeErrors.length ?? 0) + (report.generated?.runtimeErrors.length ?? 0);
   const stabilityFailures = (report.reference?.stabilityFailures.length ?? 0) + (report.generated?.stabilityFailures.length ?? 0);
+  const resourceFailures = [
+    ...(report.reference?.resourceFailures ?? []).map((failure) => ({ ...failure, role: "reference" as const })),
+    ...(report.generated?.resourceFailures ?? []).map((failure) => ({ ...failure, role: "library" as const })),
+  ];
   return {
     ...viewport,
     available: report.available,
     error: report.error,
     runtimeErrors,
     stabilityFailures,
+    resourceFailures,
+    translationFidelity: report.translationFidelity,
+    externalAvailability: report.externalAvailability,
     selectorCoverage: report.selectorCoverage && {
       passed: report.selectorCoverage.passed,
       coverageRate: report.selectorCoverage.coverageRate,
@@ -994,6 +1177,8 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
   const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
   const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
   const stabilityFailures = entries.reduce((sum, entry) => sum + entry.stabilityFailures, 0);
+  const resourceFailures = entries.reduce((sum, entry) => sum + entry.resourceFailures.length, 0);
+  const externalAvailabilityFailures = entries.reduce((sum, entry) => sum + (entry.externalAvailability?.requiredFailures ?? 0), 0);
   const matrix: BrowserQualityMatrixReport = {
     viewports: entries,
     passed: entries.length > 0 && entries.every((entry) => entry.passed),
@@ -1004,6 +1189,8 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
     worstPixelDiff: worstPixel,
     runtimeErrors,
     stabilityFailures,
+    resourceFailures,
+    externalAvailabilityFailures,
   };
   return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
 }
@@ -1030,7 +1217,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
     const primary: BrowserQualityReport = { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
     return {
       primary,
-      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0 },
+      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0, resourceFailures: 0, externalAvailabilityFailures: 0 },
     };
   } finally {
     if (ownsBrowser) await browser?.close();

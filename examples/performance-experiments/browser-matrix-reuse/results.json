@@ -294,5 +294,82 @@
         }
       ]
     }
+  },
+  "resourceFailureGraphExperiment": {
+    "measuredAt": "2026-07-24",
+    "fields": [
+      "url",
+      "type",
+      "owner",
+      "pseudo",
+      "phase",
+      "role",
+      "state",
+      "status",
+      "failure",
+      "elapsedMs",
+      "required",
+      "external"
+    ],
+    "coverage": [
+      "img-currentSrc",
+      "stylesheet",
+      "css-import",
+      "background-image",
+      "mask-image",
+      "pseudo-elements",
+      "svg-image",
+      "svg-use",
+      "video-poster",
+      "font-face"
+    ],
+    "deterministicTests": {
+      "slowStylesheet": true,
+      "http404PseudoBackground": true,
+      "requestFailedImage": true,
+      "cssImport": true,
+      "svgImage": true
+    },
+    "qualityDimensions": [
+      "translationFidelity",
+      "resource-readiness",
+      "external-availability"
+    ],
+    "diegovz17Mb": {
+      "sourceBytes": 17830264,
+      "transpileMs": 3311.398,
+      "browserTotalMs": 3218.688,
+      "domStabilityMs": 346.663,
+      "stabilityTimeouts": 0,
+      "resourceTimeouts": 0,
+      "resourceFailures": 0,
+      "resourceReadiness": true,
+      "externalAvailability": true,
+      "translationFidelity": false
+    },
+    "blackpinkPerformance": {
+      "runsMs": [
+        33015.974,
+        33103.991,
+        33189.316
+      ],
+      "averageMs": 33103.094,
+      "scenarioVisualAverageMs": 18016.778,
+      "browserAverageMs": 22369.269,
+      "changeVsAdaptiveSafe": 0.029252,
+      "resourceFailures": 0,
+      "stabilityFailures": 0
+    },
+    "finalRegression": {
+      "typescript": {
+        "tests": 53,
+        "passed": 52,
+        "failed": 0,
+        "skipped": 1
+      },
+      "optimizedGold": "2/2 PASS",
+      "blackpinkGoldMs": 34816.442,
+      "crossCaseResourceFailures": 0
+    }
   }
 }

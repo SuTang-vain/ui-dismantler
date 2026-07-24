@@ -441,10 +441,158 @@ test("adaptive stability timeouts fail the viewport even when pixels would other
     const viewport = result.scenarios[0].evaluation.matrix.viewports[0];
     assert.equal(viewport.pixels?.passed, true, "the fixture intentionally keeps rendered pixels equivalent");
     assert.ok(viewport.stabilityFailures > 0);
+    assert.ok(viewport.resourceFailures.length >= 2);
+    assert.ok(viewport.resourceFailures.every((failure) => failure.url === stylesheetUrl));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.type === "stylesheet"));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.owner.includes("link")));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.required && failure.external));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.state === "pending" || failure.state === "timeout"));
+    assert.ok(viewport.resourceFailures.every((failure) => (failure.elapsedMs ?? 0) >= 450));
+    assert.deepEqual(new Set(viewport.resourceFailures.map((failure) => failure.role)), new Set(["reference", "library"]));
     assert.equal(viewport.passed, false);
     assert.equal(result.scenarios[0].evaluation.matrix.passed, false);
     assert.ok(result.telemetry.workload.stabilityTimeouts > 0);
     assert.ok(result.telemetry.workload.resourceDrainTimeouts > 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("resource failure graph reports HTTP status and pseudo-element owner", async () => {
+  let requests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/missing-background.png") {
+      requests += 1;
+      response.writeHead(404, { "content-type": "image/png", "cache-control": "no-store" });
+      response.end("missing");
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const imageUrl = `http://127.0.0.1:${address.port}/missing-background.png`;
+    const item = await fixture(
+      "resource-failure-graph",
+      `<!doctype html><html><head><style>body{margin:0}.app{position:relative;width:180px;height:120px;background:#fff}.app::before{content:'';position:absolute;inset:0;background-image:url('${imageUrl}')}</style></head><body><div class="app"></div></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{position:relative;width:180px;height:120px;background:var(--sg-paper)}.sg-app::before{content:'';position:absolute;inset:0;background-image:url('${imageUrl}')}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"></div>'}global.Fixture={mount:mount};})(window);`,
+    );
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [], {
+      stabilityMode: "adaptive",
+      resourceCache: "run-local",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    const viewport = result.initial.matrix.viewports[0];
+    assert.equal(viewport.pixels?.passed, true);
+    assert.equal(viewport.passed, false);
+    assert.equal(viewport.translationFidelity?.passed, true);
+    assert.equal(viewport.externalAvailability?.passed, false);
+    assert.equal(viewport.externalAvailability?.requiredFailures, 2);
+    assert.equal(viewport.resourceFailures.length, 2);
+    assert.ok(viewport.resourceFailures.every((failure) => failure.url === imageUrl));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.type === "background-image"));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.pseudo === "::before"));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.owner.includes("app")));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.state === "http-error"));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.status === 404));
+    assert.ok(viewport.resourceFailures.every((failure) => failure.required && failure.external));
+    assert.ok(requests >= 1 && requests <= 2, "each page may fetch once; a failed route must never be fetched twice by route.fetch + continue");
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("resource failure graph records request failure reasons for visible images", async () => {
+  const server = createServer((request, response) => {
+    if (request.url === "/reset-image.png") {
+      request.socket.destroy();
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const imageUrl = `http://127.0.0.1:${address.port}/reset-image.png`;
+    const item = await fixture(
+      "resource-request-failure",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:180px;height:120px;background:#fff}.asset{width:40px;height:40px}</style></head><body><div class="app"><img class="asset" src="${imageUrl}" alt="broken"></div></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper)}.sg-asset{width:40px;height:40px}@media(max-width:500px){.sg-asset{width:40px}}@media(max-width:320px){.sg-asset{width:40px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><img class="sg-asset" src="${imageUrl}" alt="broken"></div>'}global.Fixture={mount:mount};})(window);`,
+    );
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [], {
+      stabilityMode: "adaptive",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    const failures = result.initial.matrix.viewports[0].resourceFailures;
+    assert.ok(failures.length >= 2);
+    assert.ok(failures.every((failure) => failure.url === imageUrl));
+    assert.ok(failures.every((failure) => failure.type === "image"));
+    assert.ok(failures.every((failure) => failure.owner.includes("asset")));
+    assert.ok(failures.every((failure) => failure.state === "request-failed"));
+    assert.ok(failures.every((failure) => Boolean(failure.failure)));
+    assert.equal(result.initial.matrix.viewports[0].translationFidelity?.passed, true);
+    assert.equal(result.initial.matrix.viewports[0].externalAvailability?.passed, false);
+    assert.equal(result.initial.matrix.passed, false);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("resource failure graph covers CSS imports and SVG image references", async () => {
+  let importRequests = 0;
+  let svgRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/root.css") {
+      response.writeHead(200, { "content-type": "text/css", "cache-control": "no-store" });
+      response.end(`@import url('/missing-import.css');body{--resource-probe:1}`);
+      return;
+    }
+    if (request.url === "/missing-import.css") {
+      importRequests += 1;
+      response.writeHead(404, { "content-type": "text/css", "cache-control": "no-store" });
+      response.end("missing");
+      return;
+    }
+    if (request.url === "/missing-svg.png") {
+      svgRequests += 1;
+      response.writeHead(404, { "content-type": "image/png", "cache-control": "no-store" });
+      response.end("missing");
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const rootCss = `http://127.0.0.1:${address.port}/root.css`;
+    const svgImage = `http://127.0.0.1:${address.port}/missing-svg.png`;
+    const item = await fixture(
+      "resource-import-svg",
+      `<!doctype html><html><head><link rel="stylesheet" href="${rootCss}"><style>body{margin:0}.app{width:180px;height:120px;background:#fff}.svg-asset{width:40px;height:40px}</style></head><body><div class="app"><svg width="40" height="40"><image class="svg-asset" href="${svgImage}" width="40" height="40"></image></svg></div></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper)}.sg-svg-asset{width:40px;height:40px}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+      `(function(global){function mount(root){var link=document.createElement('link');link.rel='stylesheet';link.href='${rootCss}';document.head.appendChild(link);root.innerHTML='<div class="sg-app"><svg width="40" height="40"><image class="sg-svg-asset" href="${svgImage}" width="40" height="40"></image></svg></div>'}global.Fixture={mount:mount};})(window);`,
+    );
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [], {
+      stabilityMode: "adaptive",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    const viewport = result.initial.matrix.viewports[0];
+    const importFailures = viewport.resourceFailures.filter((failure) => failure.owner === "@import");
+    const svgFailures = viewport.resourceFailures.filter((failure) => failure.type === "image" && failure.owner.includes("svg-asset"));
+    assert.equal(viewport.translationFidelity?.passed, true);
+    assert.equal(viewport.externalAvailability?.passed, false);
+    assert.equal(importFailures.length, 2);
+    assert.ok(importFailures.every((failure) => failure.type === "stylesheet" && failure.status === 404));
+    assert.equal(svgFailures.length, 2);
+    assert.ok(svgFailures.every((failure) => failure.status === 404 && failure.state === "http-error"));
+    assert.equal(importRequests, 2);
+    assert.equal(svgRequests, 2);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
