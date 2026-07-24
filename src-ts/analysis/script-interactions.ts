@@ -7,10 +7,22 @@ interface SelectorBinding {
   kind: "single" | "collection" | "dynamic";
 }
 
+interface BindingRecord {
+  name: string;
+  init?: any;
+  binding?: SelectorBinding;
+  scope: AnyNode;
+  start: number;
+  ancestors: AnyNode[];
+}
+
 interface ExtractionContext {
   document: Document;
   stableSelector: (element: Element) => string;
+  ast: AnyNode;
   bindings: Map<string, SelectorBinding>;
+  bindingRecords: Map<string, BindingRecord[]>;
+  parameterBindingCache: Map<any, Map<string, SelectorBinding | null>>;
   dataNames: Set<string>;
   functions: Map<string, any>;
 }
@@ -22,8 +34,8 @@ export interface ScriptInteractionExtraction {
 }
 
 const EVENT_PROPERTIES = new Set(["onclick", "onchange", "oninput", "onkeydown", "onkeyup", "onsubmit", "onmouseenter", "onmouseleave", "onfocus", "onblur"]);
-const MUTATION_METHODS = new Set(["add", "remove", "replace", "toggle", "setAttribute", "removeAttribute", "toggleAttribute", "append", "appendChild", "prepend", "replaceChildren", "remove", "focus", "blur", "showModal", "close"]);
-const MUTATION_PROPERTIES = new Set(["className", "hidden", "innerHTML", "innerText", "textContent", "value", "checked", "disabled", "open", "src", "href"]);
+const MUTATION_METHODS = new Set(["add", "remove", "replace", "toggle", "setAttribute", "removeAttribute", "toggleAttribute", "append", "appendChild", "prepend", "replaceChildren", "remove", "focus", "blur", "showModal", "close", "scrollBy", "scrollTo"]);
+const MUTATION_PROPERTIES = new Set(["className", "hidden", "innerHTML", "innerText", "textContent", "value", "checked", "disabled", "open", "src", "href", "scrollLeft", "scrollTop"]);
 const MAX_CALL_DEPTH = 2;
 const IGNORED_DATA_NAMES = new Set(["document", "window", "console", "Math", "JSON", "Array", "Object", "String", "Number", "Boolean", "Date", "Set", "Map", "Promise", "Element", "HTMLElement"]);
 
@@ -34,8 +46,9 @@ function propertyName(node: any): string | null {
   return null;
 }
 
-function staticString(node: any): string | null {
+function staticString(node: any, substitutions = new Map<string, any>()): string | null {
   if (!node) return null;
+  if (node.type === "Identifier" && substitutions.has(node.name)) return staticString(substitutions.get(node.name), substitutions);
   if (node.type === "Literal" && typeof node.value === "string") return node.value;
   if (node.type === "TemplateLiteral" && node.expressions?.length === 0) return node.quasis?.[0]?.value?.cooked ?? "";
   return null;
@@ -65,20 +78,97 @@ function resolveFunction(node: any, context: ExtractionContext): any | null {
   return path ? context.functions.get(path) ?? null : null;
 }
 
-function queryBinding(node: any, context: ExtractionContext, ancestors: AnyNode[] = []): SelectorBinding | null {
+function enclosingScopes(ancestors: AnyNode[]): AnyNode[] {
+  return ancestors.filter((node: any) => node.type === "Program" || ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"].includes(node.type));
+}
+
+function lexicalBinding(name: string, useNode: any, ancestors: AnyNode[], context: ExtractionContext, seen: Set<string>): SelectorBinding | null {
+  if (seen.has(name)) return null;
+  const scopes = enclosingScopes(ancestors);
+  const records = (context.bindingRecords.get(name) ?? [])
+    .filter((record) => scopes.includes(record.scope) && record.start <= (useNode?.start ?? Number.MAX_SAFE_INTEGER))
+    .sort((left, right) => {
+      const scopeDifference = scopes.indexOf(right.scope) - scopes.indexOf(left.scope);
+      return scopeDifference || right.start - left.start;
+    });
+  const record = records[0];
+  if (!record) return null;
+  if (record.binding) return record.binding;
+  return queryBinding(record.init, context, record.ancestors, new Set([...seen, name]));
+}
+
+function functionParameterBinding(name: string, ancestors: AnyNode[], context: ExtractionContext): SelectorBinding | null {
+  const fn: any = [...ancestors].reverse().find((node: any) => ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"].includes(node.type) && node.params?.some((parameter: any) => parameter.type === "Identifier" && parameter.name === name));
+  if (!fn) return null;
+  const parameterIndex = fn.params.findIndex((parameter: any) => parameter.type === "Identifier" && parameter.name === name);
+  const inline = callbackParameterBinding(name, ancestors, context);
+  if (inline) return inline;
+  if (fn.type !== "FunctionDeclaration" || !fn.id?.name) return null;
+  const cached = context.parameterBindingCache.get(fn)?.get(name);
+  if (cached !== undefined) return cached;
+  const candidates: SelectorBinding[] = [];
+  fullAncestor(context.ast, (node: any, _state, callAncestors) => {
+    if (node.type !== "CallExpression") return;
+    if (node.callee?.type === "Identifier" && node.callee.name === fn.id.name) {
+      const binding = queryBinding(node.arguments?.[parameterIndex], context, callAncestors);
+      if (binding) candidates.push(binding);
+      return;
+    }
+    if (parameterIndex === 0 && node.callee?.type === "MemberExpression" && ["forEach", "map", "filter", "find", "some", "every"].includes(propertyName(node.callee) ?? "") && node.arguments?.[0]?.type === "Identifier" && node.arguments[0].name === fn.id.name) {
+      const binding = queryBinding(node.callee.object, context, callAncestors);
+      if (binding) candidates.push(binding);
+    }
+  });
+  const unique = [...new Map(candidates.map((candidate) => [`${candidate.kind}|${candidate.selector}`, candidate])).values()];
+  const first = unique[0];
+  const result = !first
+    ? null
+    : unique.length === 1
+      ? first
+      : unique.every((candidate) => candidate.kind !== "dynamic")
+        ? { selector: unique.map((candidate) => candidate.selector).join(", "), kind: "collection" as const }
+        : null;
+  const cache = context.parameterBindingCache.get(fn) ?? new Map<string, SelectorBinding | null>();
+  cache.set(name, result);
+  context.parameterBindingCache.set(fn, cache);
+  return result;
+}
+
+function returnedQueryBinding(returned: any, helper: any, invocation: any, context: ExtractionContext, ancestors: AnyNode[], seen: Set<string>): SelectorBinding | null {
+  if (!returned) return null;
+  const substitutions = new Map<string, any>();
+  for (const [index, parameter] of (helper?.params ?? []).entries()) if (parameter.type === "Identifier") substitutions.set(parameter.name, invocation.arguments?.[index]);
+  const unwrap = (node: any): SelectorBinding | null => {
+    if (!node) return null;
+    if (node.type === "CallExpression" && node.callee?.type === "MemberExpression" && propertyName(node.callee) === "from") return unwrap(node.arguments?.[0]);
+    if (node.type === "CallExpression" && node.callee?.type === "MemberExpression") {
+      const method = propertyName(node.callee);
+      if (method === "querySelector" || method === "querySelectorAll") {
+        const selector = staticString(node.arguments?.[0], substitutions);
+        return selector ? { selector, kind: method === "querySelectorAll" ? "collection" : "single" } : null;
+      }
+      if (method === "getElementById") {
+        const id = staticString(node.arguments?.[0], substitutions);
+        return id ? { selector: `#${id}`, kind: "single" } : null;
+      }
+    }
+    return queryBinding(node, context, ancestors, seen);
+  };
+  return unwrap(returned);
+}
+
+function queryBinding(node: any, context: ExtractionContext, ancestors: AnyNode[] = [], seen = new Set<string>()): SelectorBinding | null {
   if (!node) return null;
-  if (node.type === "ChainExpression") return queryBinding(node.expression, context, ancestors);
-  if (node.type === "Identifier") return callbackParameterBinding(node.name, ancestors, context) ?? context.bindings.get(node.name) ?? null;
+  if (node.type === "ChainExpression") return queryBinding(node.expression, context, ancestors, seen);
+  if (node.type === "Identifier") return context.bindings.get(node.name) ?? functionParameterBinding(node.name, ancestors, context) ?? lexicalBinding(node.name, node, ancestors, context, seen);
+  if (node.type === "MemberExpression" && ["target", "currentTarget"].includes(propertyName(node) ?? "")) return queryBinding(node.object, context, ancestors, seen);
   if (node.type === "CallExpression") {
+    if (node.callee?.type === "MemberExpression" && propertyName(node.callee) === "from") return queryBinding(node.arguments?.[0], context, ancestors, seen);
     const helper = resolveFunction(node.callee, context);
     const returned = returnedExpression(helper);
     if (returned) {
-      if (returned.type === "CallExpression" && returned.callee?.type === "MemberExpression" && propertyName(returned.callee) === "getElementById" && returned.arguments?.[0]?.type === "Identifier") {
-        const parameterIndex = helper?.params?.findIndex((parameter: any) => parameter.type === "Identifier" && parameter.name === returned.arguments[0].name) ?? -1;
-        const id = parameterIndex >= 0 ? staticString(node.arguments?.[parameterIndex]) : null;
-        if (id) return { selector: `#${id}`, kind: "single" };
-      }
-      return queryBinding(returned, context, ancestors);
+      const binding = returnedQueryBinding(returned, helper, node, context, ancestors, seen);
+      if (binding) return binding;
     }
   }
   if (node.type !== "CallExpression" || node.callee?.type !== "MemberExpression") return null;
@@ -118,6 +208,7 @@ function selectorElements(binding: SelectorBinding, context: ExtractionContext):
   try {
     const elements = [...context.document.querySelectorAll(binding.selector)];
     if (elements.length) return elements.map((element) => ({ selector: context.stableSelector(element), element }));
+    if (binding.kind === "collection") return [];
   } catch { /* Keep raw dynamic selector evidence. */ }
   return [{ selector: binding.selector }];
 }
@@ -159,6 +250,7 @@ function transitionForCall(node: any, binding: SelectorBinding, script: string):
   }
   if (method === "showModal" || method === "close") return { target: binding.selector, kind: "property", operation: method === "showModal" ? "open" : "close", name: "open", value: method === "showModal", confidence: 0.98, source };
   if (method === "focus" || method === "blur") return { target: binding.selector, kind: "focus", operation: method, value: method === "focus", confidence: 0.98, source };
+  if (method === "scrollBy" || method === "scrollTo") return { target: binding.selector, kind: "property", operation: "set", name: "scroll-position", confidence: 0.82, source };
   if (["append", "appendChild", "prepend", "replaceChildren"].includes(method ?? "")) return { target: binding.selector, kind: "structure", operation: "append", confidence: 0.72, source };
   if (method === "remove") return { target: binding.selector, kind: "structure", operation: "remove-node", confidence: 0.9, source };
   return null;
@@ -282,12 +374,19 @@ function dynamicClassBinding(node: any, ancestors: AnyNode[]): SelectorBinding |
   return { selector: `.${base}${guardedAway && hasCenterVariant ? ":not(.center)" : ""}`, kind: "dynamic" };
 }
 
+function bindingScope(ancestors: AnyNode[]): AnyNode {
+  return [...ancestors].reverse().find((node: any) => node.type === "Program" || ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"].includes(node.type)) ?? ancestors[0];
+}
+
+function addBindingRecord(context: ExtractionContext, record: BindingRecord): void {
+  context.bindingRecords.set(record.name, [...(context.bindingRecords.get(record.name) ?? []), record]);
+}
+
 function collectBindings(ast: AnyNode, context: ExtractionContext): void {
   fullAncestor(ast, (node: any, _state, ancestors) => {
     if (node.type === "FunctionDeclaration" && node.id?.name) context.functions.set(node.id.name, node);
     if (node.type === "VariableDeclarator" && node.id?.type === "Identifier") {
-      const binding = queryBinding(node.init, context, ancestors);
-      if (binding) context.bindings.set(node.id.name, binding);
+      addBindingRecord(context, { name: node.id.name, init: node.init, scope: bindingScope(ancestors.slice(0, -1)), start: node.start ?? 0, ancestors: [...ancestors] });
       if (node.init?.type === "ArrayExpression" || node.init?.type === "ObjectExpression") context.dataNames.add(node.id.name);
       if (node.init?.type === "FunctionExpression" || node.init?.type === "ArrowFunctionExpression") context.functions.set(node.id.name, node.init);
       if (node.init?.type === "ObjectExpression") {
@@ -298,15 +397,12 @@ function collectBindings(ast: AnyNode, context: ExtractionContext): void {
       }
     }
     if (node.type === "AssignmentExpression") {
-      if (node.left?.type === "Identifier") {
-        const binding = queryBinding(node.right, context, ancestors);
-        if (binding) context.bindings.set(node.left.name, binding);
-      }
+      if (node.left?.type === "Identifier") addBindingRecord(context, { name: node.left.name, init: node.right, scope: bindingScope(ancestors.slice(0, -1)), start: node.start ?? 0, ancestors: [...ancestors] });
       const path = memberPath(node.left);
       if (path && ["FunctionExpression", "ArrowFunctionExpression"].includes(node.right?.type)) context.functions.set(path, node.right);
     }
     const dynamic = dynamicClassBinding(node, ancestors);
-    if (dynamic && node.left.object.type === "Identifier") context.bindings.set(node.left.object.name, dynamic);
+    if (dynamic && node.left.object.type === "Identifier") addBindingRecord(context, { name: node.left.object.name, binding: dynamic, scope: bindingScope(ancestors.slice(0, -1)), start: node.start ?? 0, ancestors: [...ancestors] });
   });
 }
 
@@ -352,6 +448,10 @@ function eventHandler(node: any): { event: string; receiver: any; handler: any }
     const event = staticString(node.arguments?.[0]);
     if (event) return { event, receiver: node.callee.object, handler: node.arguments?.[1] };
   }
+  if (node.type === "CallExpression" && node.callee?.type === "Identifier" && node.callee.name === "addEventListener") {
+    const event = staticString(node.arguments?.[0]);
+    if (event) return { event, receiver: { type: "Identifier", name: "window", start: node.callee.start, end: node.callee.end }, handler: node.arguments?.[1] };
+  }
   return null;
 }
 
@@ -386,7 +486,7 @@ export function extractScriptInteractions(script: string, document: Document, st
     try { ast = parse(script, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as AnyNode; }
     catch (moduleError) { return { interactions: [], parsed: false, parseError: `${scriptError instanceof Error ? scriptError.message : scriptError}; ${moduleError instanceof Error ? moduleError.message : moduleError}` }; }
   }
-  const context: ExtractionContext = { document, stableSelector, bindings: new Map(), dataNames: new Set(), functions: new Map() };
+  const context: ExtractionContext = { document, stableSelector, ast, bindings: new Map(), bindingRecords: new Map(), parameterBindingCache: new Map(), dataNames: new Set(), functions: new Map() };
   collectBindings(ast, context);
   const interactions: Interaction[] = [];
   fullAncestor(ast, (node: any, _state, ancestors) => {
@@ -395,12 +495,18 @@ export function extractScriptInteractions(script: string, document: Document, st
     const resolvedHandler = resolveFunction(registration.handler, context) ?? registration.handler;
     const delegated = delegatedTriggerBindings(resolvedHandler);
     const registrationBinding = queryBinding(registration.receiver, context, ancestors);
-    const triggers: DelegatedTrigger[] = delegated.length ? delegated : registrationBinding ? [{ binding: registrationBinding }] : [];
+    const globalBindings: DelegatedTrigger[] = registration.receiver?.type === "Identifier" && registration.receiver.name === "window"
+      ? registration.event === "scroll-call"
+        ? [{ binding: { selector: "[data-scroll-call]", kind: "collection" } }]
+        : [{ binding: { selector: "html", kind: "single" } }]
+      : [];
+    const triggers: DelegatedTrigger[] = delegated.length ? delegated : registrationBinding ? [{ binding: registrationBinding }] : globalBindings;
     if (!triggers.length) return;
     for (const delegatedTrigger of triggers) {
       const triggerBinding = delegatedTrigger.binding;
       const handlerContext: ExtractionContext = { ...context, bindings: new Map(context.bindings), functions: new Map(context.functions) };
       if (resolvedHandler?.params?.[0]?.type === "Identifier") handlerContext.bindings.set(resolvedHandler.params[0].name, { selector: "@trigger", kind: "single" });
+      if (registration.receiver?.type === "Identifier" && !["window", "document"].includes(registration.receiver.name)) handlerContext.bindings.set(registration.receiver.name, { selector: "@trigger", kind: "single" });
       if (delegatedTrigger.variable) handlerContext.bindings.set(delegatedTrigger.variable, { selector: "@trigger", kind: "single" });
       const handlerAncestors = [...ancestors, resolvedHandler].filter(Boolean) as AnyNode[];
       const evidence = collectHandlerEvidence(resolvedHandler, script, handlerAncestors, handlerContext, new Set(), 0, delegatedTrigger.variable);
@@ -419,6 +525,7 @@ export function extractScriptInteractions(script: string, document: Document, st
           dataDependencies: evidence.dataDependencies,
           source: "script-assignment",
           analysis: "ast",
+          lifecycle: ["resize", "orientationchange", "scroll", "scrollend", "scroll-call", "load", "error", "DOMContentLoaded"].includes(registration.event),
           confidence: triggerBinding.kind === "dynamic" ? 0.72 : 0.94,
           fingerprint: `${registration.event}|${selector}|script-assignment`,
         });

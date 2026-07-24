@@ -46,6 +46,7 @@ export interface Interaction {
   stateTransitions?: UIStateTransition[];
   dataDependencies?: string[];
   analysis?: "attribute" | "semantic" | "regex" | "ast";
+  lifecycle?: boolean;
   confidence?: number;
   source: "html-attribute" | "event-listener" | "script-assignment" | "semantic-control";
   fingerprint: string;
@@ -188,6 +189,7 @@ export interface Scenario {
   covers?: string[];
   notes?: string[];
   viewport?: { width: number; height: number };
+  screenshotAnchor?: ScenarioTarget;
   steps: ScenarioStep[];
   assertions: ScenarioAssertion[];
 }
@@ -254,6 +256,13 @@ export interface SelectorCoverageIssue {
   selector: string;
   count: number;
   examples: string[];
+  reason?: string;
+  evidence?: {
+    sourceClass: string;
+    sourceClassUses: number;
+    sourceSelectorAbsent: boolean;
+    generatedSelectorAbsent: boolean;
+  };
 }
 
 export interface SelectorCoverageReport {

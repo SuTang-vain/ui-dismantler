@@ -1,0 +1,1446 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
+  "generatedAt": "2026-07-24T09:07:03.998Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "page-header-1",
+      "componentName": "PageHeader",
+      "targetFile": "src/components/PageHeader.ts",
+      "sourceSelector": "#nav",
+      "sourceSelectors": [
+        "#nav"
+      ],
+      "responsibility": "复现 page-header 视图：BabeL·O Features How it works Live demo Architecture Paths FAQ Get started",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#nav > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.nav-links > a:nth-child(1)|semantic-control",
+        "click|nav.nav-links > a:nth-child(2)|semantic-control",
+        "click|nav.nav-links > a:nth-child(3)|semantic-control",
+        "click|nav.nav-links > a:nth-child(4)|semantic-control",
+        "click|nav.nav-links > a:nth-child(5)|semantic-control",
+        "click|nav.nav-links > a:nth-child(6)|semantic-control",
+        "click|#themeToggle|semantic-control",
+        "click|div.nav-right > a:nth-child(2)|semantic-control",
+        "scroll|html|script-assignment"
+      ],
+      "mutationTargets": [
+        "#nav"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#nav",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-scrolled",
+          "value": "is-scrolled",
+          "confidence": 0.96,
+          "source": "nav.classList.toggle(\"is-scrolled\", scrolled)"
+        }
+      ],
+      "dataDependencies": [
+        "a"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "BabeL·O Features How it works Live demo Architecture Paths FAQ Get started"
+        ],
+        "states": [
+          "click: #nav > div:nth-child(1) > a:nth-child(1)",
+          "click: nav.nav-links > a:nth-child(1)",
+          "click: nav.nav-links > a:nth-child(2)",
+          "click: nav.nav-links > a:nth-child(3)",
+          "click: nav.nav-links > a:nth-child(4)",
+          "click: nav.nav-links > a:nth-child(5)",
+          "click: nav.nav-links > a:nth-child(6)",
+          "click: #themeToggle",
+          "click: div.nav-right > a:nth-child(2)",
+          "scroll: html → #nav class.toggle(is-scrolled=is-scrolled)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 122,
+        "score": 0.81,
+        "reasons": [
+          "10 个关联交互（2 类实现行为）",
+          "1 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-footer-1",
+      "componentName": "PageFooter",
+      "targetFile": "src/components/PageFooter.ts",
+      "sourceSelector": "footer.footer",
+      "sourceSelectors": [
+        "footer.footer"
+      ],
+      "responsibility": "复现 page-footer 视图：BabeL·O Your terminal workspace for durable coding sessions, native TUI workflows, and tool-aware ag",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|div.footer-grid > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "BabeL·O Your terminal workspace for durable coding sessions, native TUI workflows, and tool-aware agents. Product Features How it works Live demo Architecture R"
+        ],
+        "states": [
+          "click: div.footer-grid > div:nth-child(1) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+          "click: div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 108,
+        "score": 0.72,
+        "reasons": [
+          "13 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-1-an-ai-coding-agent-that-stays-alive-in-your-terminal",
+      "componentName": "HeroProfile",
+      "targetFile": "src/components/HeroProfile.ts",
+      "sourceSelector": "section.hero",
+      "sourceSelectors": [
+        "section.hero"
+      ],
+      "responsibility": "复现 hero-profile 视图：An AI coding agent that stays alive in your terminal",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#installChip > button:nth-child(4)|semantic-control",
+        "click|div.hero-cta > a:nth-child(2)|semantic-control",
+        "click|#installChip|script-assignment"
+      ],
+      "mutationTargets": [
+        "#installChip"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#installChip",
+          "kind": "class",
+          "operation": "add",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.add(\"copied\")"
+        },
+        {
+          "target": "#installChip",
+          "kind": "class",
+          "operation": "remove",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.remove(\"copied\")"
+        }
+      ],
+      "dataDependencies": [
+        "a"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "An AI coding agent that stays alive in your terminal"
+        ],
+        "states": [
+          "click: #installChip > button:nth-child(4)",
+          "click: div.hero-cta > a:nth-child(2)",
+          "click: #installChip → #installChip class.add(copied=copied)",
+          "click: #installChip → #installChip class.remove(copied=copied)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 143,
+        "score": 0.95,
+        "reasons": [
+          "3 个关联交互（3 类实现行为）",
+          "1 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-2-one-palette-from-ember-to-violet",
+      "componentName": "OnePaletteFromEmberToViolet",
+      "targetFile": "src/components/OnePaletteFromEmberToViolet.ts",
+      "sourceSelector": "section.hueband",
+      "sourceSelectors": [
+        "section.hueband"
+      ],
+      "responsibility": "复现 content-section 视图：One palette, from ember to violet",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "One palette, from ember to violet"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 79,
+        "score": 0.53,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-3-nexus-owns-execution",
+      "componentName": "NexusOwnsExecution",
+      "targetFile": "src/components/NexusOwnsExecution.ts",
+      "sourceSelector": "#howScroll > article:nth-child(1)",
+      "sourceSelectors": [
+        "#howScroll > article:nth-child(1)"
+      ],
+      "responsibility": "复现 content-section 视图：Nexus owns execution",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "keydown|#howScroll|script-assignment",
+        "wheel|#howScroll|script-assignment"
+      ],
+      "mutationTargets": [
+        "#howScroll"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scroll-position",
+          "confidence": 0.82,
+          "source": "howScroll.scrollBy({ left: 460, behavior:\"smooth\" })"
+        },
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scroll-position",
+          "confidence": 0.82,
+          "source": "howScroll.scrollBy({ left:-460, behavior:\"smooth\" })"
+        },
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scrollLeft",
+          "confidence": 0.64,
+          "source": "howScroll.scrollLeft += e.deltaY"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Nexus owns execution"
+        ],
+        "states": [
+          "keydown: #howScroll → #howScroll property.set(scroll-position)",
+          "wheel: #howScroll → #howScroll property.set(scrollLeft)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-4-cli-owns-interaction",
+      "componentName": "CliOwnsInteraction",
+      "targetFile": "src/components/CliOwnsInteraction.ts",
+      "sourceSelector": "#howScroll > article:nth-child(2)",
+      "sourceSelectors": [
+        "#howScroll > article:nth-child(2)"
+      ],
+      "responsibility": "复现 content-section 视图：CLI owns interaction",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "CLI owns interaction"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 78,
+        "score": 0.52,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-5-tools-are-governed",
+      "componentName": "ToolsAreGoverned",
+      "targetFile": "src/components/ToolsAreGoverned.ts",
+      "sourceSelector": "#howScroll > article:nth-child(3)",
+      "sourceSelectors": [
+        "#howScroll > article:nth-child(3)"
+      ],
+      "responsibility": "复现 content-section 视图：Tools are governed",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Tools are governed"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 78,
+        "score": 0.52,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-6-durable-inspectable",
+      "componentName": "DurableInspectable",
+      "targetFile": "src/components/DurableInspectable.ts",
+      "sourceSelector": "#howScroll > article:nth-child(4)",
+      "sourceSelectors": [
+        "#howScroll > article:nth-child(4)"
+      ],
+      "responsibility": "复现 content-section 视图：Durable & inspectable",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Durable & inspectable"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 79,
+        "score": 0.53,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-7-worktrees-in-parallel",
+      "componentName": "WorktreesInParallel",
+      "targetFile": "src/components/WorktreesInParallel.ts",
+      "sourceSelector": "#howScroll > article:nth-child(5)",
+      "sourceSelectors": [
+        "#howScroll > article:nth-child(5)"
+      ],
+      "responsibility": "复现 content-section 视图：Worktrees, in parallel",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "static",
+      "interactionFingerprints": [],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Worktrees, in parallel"
+        ],
+        "states": [
+          "初始渲染与源页面一致"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 79,
+        "score": 0.53,
+        "reasons": [
+          "0 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-8-watch-a-sessioncycle-through-real-states",
+      "componentName": "WatchASessioncycleThroughRealStates",
+      "targetFile": "src/components/WatchASessioncycleThroughRealStates.ts",
+      "sourceSelector": "#demo",
+      "sourceSelectors": [
+        "#demo"
+      ],
+      "responsibility": "复现 content-section 视图：Watch a sessioncycle through real states",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#demoPlay|semantic-control",
+        "click|#demoReset|semantic-control"
+      ],
+      "mutationTargets": [
+        "span",
+        "#demoPlay",
+        "#demoState",
+        ".lbl",
+        ".ln",
+        "#demoTranscript",
+        ".typed",
+        ".c-stream"
+      ],
+      "stateTransitions": [
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Running",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent = \"Running\""
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": true,
+          "confidence": 0.9,
+          "source": "playBtn.disabled = true"
+        },
+        {
+          "target": "#demoState",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "data-state",
+          "confidence": 0.94,
+          "source": "demoState.setAttribute(\"data-state\", s)"
+        },
+        {
+          "target": ".lbl",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "demoLbl.textContent = s"
+        },
+        {
+          "target": ".ln",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "d.className = \"ln fade-in\" + (cls ? \" \"+cls : \"\")"
+        },
+        {
+          "target": ".ln",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "d.innerHTML = html"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "transcript.appendChild(d)"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "property",
+          "operation": "set",
+          "name": "scrollTop",
+          "confidence": 0.64,
+          "source": "transcript.scrollTop = transcript.scrollHeight"
+        },
+        {
+          "target": ".typed",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "node.textContent += ch"
+        },
+        {
+          "target": ".c-stream",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "stream.textContent += c"
+        },
+        {
+          "target": ".c-stream",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "stream.innerHTML = stream.textContent + ' <span class=\"c-grn\">✓ pass</span>'"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "transcript.innerHTML = \"\""
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": false,
+          "confidence": 0.9,
+          "source": "playBtn.disabled=false"
+        },
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Run",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent=\"Run\""
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": false,
+          "confidence": 0.9,
+          "source": "playBtn.disabled = false"
+        },
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Run",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent = \"Run\""
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Watch a sessioncycle through real states"
+        ],
+        "states": [
+          "click: #demoPlay → span content.set(textContent=Running)",
+          "click: #demoPlay → #demoPlay property.set(disabled=true)",
+          "click: #demoPlay → #demoState attribute.set(data-state)",
+          "click: #demoPlay → .lbl content.set(textContent)",
+          "click: #demoPlay → .ln class.set",
+          "click: #demoPlay → .ln content.set(innerHTML)",
+          "click: #demoPlay → #demoTranscript structure.append",
+          "click: #demoPlay → #demoTranscript property.set(scrollTop)",
+          "click: #demoPlay → .typed content.set(textContent)",
+          "click: #demoPlay → .c-stream content.set(textContent)",
+          "click: #demoPlay → .c-stream content.set(innerHTML)",
+          "click: #demoPlay → #demoTranscript content.set(innerHTML=)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 116,
+        "score": 0.77,
+        "reasons": [
+          "2 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-9-one-daemon-any-client-zero-magic",
+      "componentName": "OneDaemonAnyClientZeroMagic",
+      "targetFile": "src/components/OneDaemonAnyClientZeroMagic.ts",
+      "sourceSelector": "#architecture",
+      "sourceSelectors": [
+        "#architecture"
+      ],
+      "responsibility": "复现 content-section 视图：One daemon.Any client. Zero magic",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "scroll-driven",
+      "interactionFingerprints": [
+        "scroll-call|div.arch.reveal|script-assignment"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "callHandlers"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "One daemon.Any client. Zero magic"
+        ],
+        "states": [
+          "scroll-call: div.arch.reveal"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 79,
+        "score": 0.53,
+        "reasons": [
+          "1 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-10-pick-your-path",
+      "componentName": "PickYourPath",
+      "targetFile": "src/components/PickYourPath.ts",
+      "sourceSelector": "#paths",
+      "sourceSelectors": [
+        "#paths"
+      ],
+      "responsibility": "复现 content-section 视图：Pick your path",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|div.paths-grid > article:nth-child(1) > a:nth-child(5)|semantic-control",
+        "click|article.featured > a:nth-child(6)|semantic-control",
+        "click|div.paths-grid > article:nth-child(3) > a:nth-child(5)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Pick your path"
+        ],
+        "states": [
+          "click: div.paths-grid > article:nth-child(1) > a:nth-child(5)",
+          "click: article.featured > a:nth-child(6)",
+          "click: div.paths-grid > article:nth-child(3) > a:nth-child(5)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 104,
+        "score": 0.69,
+        "reasons": [
+          "3 个关联交互（1 类实现行为）",
+          "1 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-11-frequently-asked",
+      "componentName": "FrequentlyAsked",
+      "targetFile": "src/components/FrequentlyAsked.ts",
+      "sourceSelector": "#faq",
+      "sourceSelectors": [
+        "#faq"
+      ],
+      "responsibility": "复现 content-section 视图：Frequently asked",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment",
+        "click|#faq > div:nth-child(2) > div:nth-child(1)|script-assignment",
+        "click|#faq > div:nth-child(3) > div:nth-child(1)|script-assignment"
+      ],
+      "mutationTargets": [
+        ".faq-item",
+        "#faq > div:nth-child(1) > div:nth-child(1)",
+        "#faq > div:nth-child(2) > div:nth-child(1)",
+        "#faq > div:nth-child(3) > div:nth-child(1)"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".faq-item",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "item.classList.toggle(\"open\")"
+        },
+        {
+          "target": "#faq > div:nth-child(1) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        },
+        {
+          "target": "#faq > div:nth-child(2) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        },
+        {
+          "target": "#faq > div:nth-child(3) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        }
+      ],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Frequently asked"
+        ],
+        "states": [
+          "click: #faq > div:nth-child(1) > div:nth-child(1) → .faq-item class.toggle(open=open)",
+          "click: #faq > div:nth-child(1) > div:nth-child(1) → #faq > div:nth-child(1) > div:nth-child(1) attribute.set(aria-expanded)",
+          "click: #faq > div:nth-child(2) > div:nth-child(1) → .faq-item class.toggle(open=open)",
+          "click: #faq > div:nth-child(2) > div:nth-child(1) → #faq > div:nth-child(2) > div:nth-child(1) attribute.set(aria-expanded)",
+          "click: #faq > div:nth-child(3) > div:nth-child(1) → .faq-item class.toggle(open=open)",
+          "click: #faq > div:nth-child(3) > div:nth-child(1) → #faq > div:nth-child(3) > div:nth-child(1) attribute.set(aria-expanded)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 96,
+        "score": 0.64,
+        "reasons": [
+          "3 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-12-ready-to-shipwith-babel-o",
+      "componentName": "ReadyToShipwithBabelO",
+      "targetFile": "src/components/ReadyToShipwithBabelO.ts",
+      "sourceSelector": "#cta",
+      "sourceSelectors": [
+        "#cta"
+      ],
+      "responsibility": "复现 content-section 视图：Ready to shipwith BabeL-O?",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#installChip2 > button:nth-child(4)|semantic-control",
+        "click|div.cta-cta > a:nth-child(2)|semantic-control",
+        "scroll-call|div.cta-inner > h2:nth-child(2)|script-assignment",
+        "click|#installChip2|script-assignment"
+      ],
+      "mutationTargets": [
+        "#installChip2"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#installChip2",
+          "kind": "class",
+          "operation": "add",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.add(\"copied\")"
+        },
+        {
+          "target": "#installChip2",
+          "kind": "class",
+          "operation": "remove",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.remove(\"copied\")"
+        }
+      ],
+      "dataDependencies": [
+        "a",
+        "callHandlers"
+      ],
+      "dataContracts": [],
+      "designTokens": [
+        "--bg",
+        "--surface",
+        "--surface-2",
+        "--card",
+        "--text",
+        "--text-2",
+        "--text-3",
+        "--accent",
+        "--accent-soft",
+        "--accent-2",
+        "--c-red",
+        "--c-red-soft",
+        "--c-orange",
+        "--c-orange-soft",
+        "--c-purple",
+        "--c-purple-soft",
+        "--c-pink",
+        "--c-pink-soft",
+        "--grad-warm",
+        "--grad-warm-soft",
+        "--grad-text",
+        "--grad-band",
+        "--line",
+        "--line-2"
+      ],
+      "responsiveQueries": [
+        "(max-width:980px)",
+        "(max-width:640px)",
+        "(prefers-reduced-motion: reduce)"
+      ],
+      "acceptance": {
+        "text": [
+          "Ready to shipwith BabeL-O?"
+        ],
+        "states": [
+          "click: #installChip2 > button:nth-child(4)",
+          "click: div.cta-cta > a:nth-child(2)",
+          "scroll-call: div.cta-inner > h2:nth-child(2)",
+          "click: #installChip2 → #installChip2 class.add(copied=copied)",
+          "click: #installChip2 → #installChip2 class.remove(copied=copied)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 141,
+        "score": 0.94,
+        "reasons": [
+          "4 个关联交互（3 类实现行为）",
+          "1 个局部数据依赖",
+          "3 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "page-header-1",
+      "detail": "预计复杂度已达预算的 81%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "section-1-an-ai-coding-agent-that-stays-alive-in-your-terminal",
+      "detail": "预计复杂度已达预算的 95%"
+    },
+    {
+      "severity": "warning",
+      "code": "complexity-warning",
+      "componentId": "section-12-ready-to-shipwith-babel-o",
+      "detail": "预计复杂度已达预算的 94%"
+    }
+  ],
+  "summary": {
+    "components": 14,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 3,
+    "interactions": 42,
+    "ownedInteractions": 42,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "command": "transpile-self-contained",
+  "sourcePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
+  "outDir": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/lib",
+  "telemetry": {
+    "timing": {
+      "readParseMs": 154.246,
+      "analyzeMs": 30.857,
+      "rewriteMs": 58.813,
+      "writeMs": 6.424,
+      "totalMs": 250.376
+    },
+    "workload": {
+      "sourceBytes": 87208,
+      "classes": 135,
+      "ids": 25,
+      "executableScripts": 1,
+      "skippedScripts": 1,
+      "cssBytes": 31939,
+      "jsBytes": 54104,
+      "assetsCopied": true
+    }
+  }
+}

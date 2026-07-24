@@ -24,6 +24,9 @@ if (!sourceArg || !outArg) {
 }
 const sourcePath = resolve(sourceArg);
 const outDir = resolve(outArg);
+const assetDirectoryNames = ['assets', 'image', 'images'];
+const assetPathPattern = /^(?:\.\/)?(?:assets|image|images)\//;
+const rewriteAssetPath = (value) => value.replace(assetPathPattern, '../assets/');
 const source = readFileSync(sourcePath, 'utf8');
 const dom = new JSDOM(source);
 const document = dom.window.document;
@@ -87,9 +90,11 @@ for (const element of document.querySelectorAll('[data-group]')) {
   const value = element.getAttribute('data-group');
   if (value && idMap.has(value)) element.setAttribute('data-group', idMap.get(value));
 }
-for (const element of document.querySelectorAll('[src]')) {
-  const value = element.getAttribute('src');
-  if (value) element.setAttribute('src', value.replace(/^(?:\.\/)?(?:image|images)\//, '../assets/'));
+for (const element of document.querySelectorAll('[src], [data-src], [poster]')) {
+  for (const attribute of ['src', 'data-src', 'poster']) {
+    const value = element.getAttribute(attribute);
+    if (value) element.setAttribute(attribute, rewriteAssetPath(value));
+  }
 }
 for (const tabs of document.querySelectorAll(`.${classMap.get('tabs') || 'sg-tabs'}`)) tabs.setAttribute('role', 'tablist');
 for (const button of document.querySelectorAll(`.${classMap.get('tabs') || 'sg-tabs'} [data-tab]`)) {
@@ -130,13 +135,16 @@ csstree.walk(cssAst, (node) => {
 });
 let css = csstree.generate(cssAst);
 css = css.replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
+css = css.replace(/url\((['"]?)(?:\.\/)?(?:assets|image|images)\//g, 'url($1../assets/');
 const semanticColors = new Map([
   ['#6487fa', '--sg-primary'], ['#4268e8', '--sg-primary-dark'], ['#e8eeff', '--sg-primary-soft'],
   ['#f8f8f8', '--sg-bg'], ['#ffffff', '--sg-card'], ['#1e1f24', '--sg-text'], ['#848691', '--sg-sub'], ['#b7b9c1', '--sg-weak'],
 ]);
-const rootMatch = css.match(/^:root\{([^}]*)\}/);
+const rootMatch = css.match(/:root\{([^}]*)\}/);
 if (rootMatch) {
-  const tail = css.slice(rootMatch[0].length);
+  const rootStart = rootMatch.index || 0;
+  const prefix = css.slice(0, rootStart);
+  const tail = css.slice(rootStart + rootMatch[0].length);
   const extraColors = new Map();
   for (const match of tail.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) {
     const color = match[0].toLowerCase();
@@ -144,6 +152,7 @@ if (rootMatch) {
   }
   const variables = [...extraColors].map(([color, name]) => `${name}:${color}`).join(';');
   const aliasList = [];
+  if (!rootMatch[1].includes('--sg-primary:')) aliasList.push('--sg-primary:var(--sg-accent, #6487fa)');
   if (!rootMatch[1].includes('--sg-ink:')) aliasList.push('--sg-ink:var(--sg-text, #1e1f24)');
   if (!rootMatch[1].includes('--sg-muted:')) aliasList.push('--sg-muted:var(--sg-sub, #848691)');
   if (!rootMatch[1].includes('--sg-paper:')) aliasList.push('--sg-paper:var(--sg-card, #ffffff)');
@@ -152,7 +161,7 @@ if (rootMatch) {
   const aliases = aliasList.join(';');
   let rewrittenTail = tail;
   for (const [color, variable] of [...semanticColors, ...extraColors]) rewrittenTail = rewrittenTail.replace(new RegExp(color, 'gi'), `var(${variable})`);
-  css = `:root{${rootMatch[1]};${aliases}${variables ? `;${variables}` : ''}}${rewrittenTail}`;
+  css = `${prefix}:root{${rootMatch[1]};${aliases}${variables ? `;${variables}` : ''}}${rewrittenTail}`;
 }
 css = `#mount{display:contents}.sg-library-host{width:100%;height:100%}#sg-app-container.sg-is-large-canvas{--sg-canvas-mode:large}\n${css}\n@media(max-width:500px){#sg-app-container{font-size:14px}}@media(max-width:320px),(max-height:380px){#sg-app-container{font-size:12px}}\n`;
 
@@ -168,7 +177,7 @@ for (const [original, mapped] of classMap) {
 }
 const tokenPairs = [...new Map([...idMap, ...classMap, ...dynamicIdPrefixes, ...dynamicClassPrefixes])].sort((a, b) => b[0].length - a[0].length);
 function transformString(input) {
-  let value = input.replace(/(?:^|\.\/)(?:image|images)\//g, '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
+  let value = input.replace(/(?:^|\.\/)(?:assets|image|images)\//g, '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
   for (const [before, after] of tokenPairs) {
     const escaped = before.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     value = value.replace(new RegExp(`(^|[^\\w-])${escaped}(?=$|[^\\w-])`, 'g'), (_, lead) => `${lead}${after}`);
@@ -238,7 +247,7 @@ mkdirSync(resolve(outDir, 'src'), { recursive: true });
 mkdirSync(resolve(outDir, 'examples'), { recursive: true });
 mkdirSync(resolve(outDir, 'docs'), { recursive: true });
 mkdirSync(resolve(outDir, 'assets'), { recursive: true });
-const assetSource = ['image', 'images'].map((name) => resolve(dirname(sourcePath), name)).find((path) => existsSync(path));
+const assetSource = assetDirectoryNames.map((name) => resolve(dirname(sourcePath), name)).find((path) => existsSync(path));
 if (assetSource) cpSync(assetSource, resolve(outDir, 'assets'), { recursive: true });
 writeFileSync(resolve(outDir, 'src', `${fileStem}.css`), css);
 writeFileSync(resolve(outDir, 'src', `${fileStem}.js`), libraryJs);

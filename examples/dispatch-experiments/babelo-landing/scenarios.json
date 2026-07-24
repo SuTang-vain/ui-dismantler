@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "babelo-landing/index.html",
+  "candidatePolicy": "Reviewed critical scenarios cover theme state, clipboard feedback, async FAQ hydration/accordion state, and the long-running terminal demo reset path. Anchor navigation and external links are excluded from visual state coverage. Horizontal scroll is verified manually because the current assertion schema cannot assert scrollLeft.",
+  "scenarios": [
+    {
+      "id": "toggle-theme",
+      "label": "切换明暗主题",
+      "critical": true,
+      "covers": [
+        "click|#themeToggle|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "#themeToggle",
+            "library": "#sg-themeToggle"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": "html",
+          "attributes": {
+            "data-theme": "dark"
+          }
+        }
+      ]
+    },
+    {
+      "id": "copy-install-command",
+      "label": "复制安装命令并显示反馈",
+      "critical": true,
+      "covers": [
+        "click|#installChip|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "#installChip",
+            "library": "#sg-installChip"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#installChip",
+            "library": "#sg-installChip"
+          },
+          "classIncludes": [
+            {
+              "reference": "copied",
+              "library": "sg-copied"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-first-faq",
+      "label": "打开首个 FAQ",
+      "critical": true,
+      "covers": [
+        "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "wait",
+          "ms": 800
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": ".faq-item:first-child .faq-q",
+            "library": ".sg-faq-item:first-child .sg-faq-q"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": ".faq-item:first-child",
+            "library": ".sg-faq-item:first-child"
+          },
+          "classIncludes": [
+            {
+              "reference": "open",
+              "library": "sg-open"
+            }
+          ]
+        },
+        {
+          "target": {
+            "reference": ".faq-item:first-child .faq-q",
+            "library": ".sg-faq-item:first-child .sg-faq-q"
+          },
+          "attributes": {
+            "aria-expanded": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "run-and-reset-demo",
+      "label": "启动并复位终端状态机",
+      "critical": true,
+      "covers": [
+        "click|#demoPlay|semantic-control",
+        "click|#demoReset|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "#demoPlay",
+            "library": "#sg-demoPlay"
+          }
+        },
+        {
+          "action": "wait",
+          "ms": 100
+        },
+        {
+          "action": "click",
+          "target": {
+            "reference": "#demoReset",
+            "library": "#sg-demoReset"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#demoState",
+            "library": "#sg-demoState"
+          },
+          "attributes": {
+            "data-state": "idle"
+          }
+        },
+        {
+          "target": {
+            "reference": "#demoPlay",
+            "library": "#sg-demoPlay"
+          },
+          "attributes": {
+            "disabled": null
+          }
+        }
+      ],
+      "screenshotAnchor": {
+        "reference": "#demo",
+        "library": "#sg-demo"
+      }
+    }
+  ],
+  "waivers": []
+}

@@ -1,0 +1,2372 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
+    "title": "BabeL-O — A terminal-native AI coding agent that stays alive",
+    "templateId": null,
+    "vertical": "generic",
+    "profile": "generic",
+    "caseName": "index",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "bg",
+        "value": "#F4F1EC",
+        "original": "--bg",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* Fonts upgrade gracefully: until `.fonts-ready` is set, the system stack\n   in the var fallbacks is used. Async-loaded webfont swaps in with no FOIT. */\nbody",
+          "/* =========================================================================\n   3. NAV\n   ========================================================================= */\n.nav",
+          ".badge.solid",
+          ".ticker::before",
+          ".ticker::after",
+          "/* big CTA ticker */\n.ticker.big"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "surface",
+        "value": "#FBF9F5",
+        "original": "--surface",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".nav-links a:hover",
+          "/* theme toggle */\n.theme-toggle",
+          "/* =========================================================================\n   6. MARQUEE / TICKER (animation + pause-on-hover state)\n   ========================================================================= */\n.ticker",
+          ".stat",
+          "/* skeleton loaders (shown while async data resolves) */\n.sk",
+          ".how-scroll::-webkit-scrollbar-track"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "surface-2",
+        "value": "#F1EDE6",
+        "original": "--surface-2",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".nav-links a:hover",
+          "/* skeleton loaders (shown while async data resolves) */\n.sk",
+          ".how-scroll::-webkit-scrollbar-track"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "card",
+        "value": "#FFFFFF",
+        "original": "--card",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".btn-ghost",
+          "/* install chip (copyable) */\n.install",
+          ".badge",
+          ".feat",
+          ".step",
+          ".demo-state"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "text",
+        "value": "#1E1C22",
+        "original": "--text",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* Fonts upgrade gracefully: until `.fonts-ready` is set, the system stack\n   in the var fallbacks is used. Async-loaded webfont swaps in with no FOIT. */\nbody",
+          "h1,h2,h3",
+          ".section-lead",
+          ".nav-links a",
+          ".nav-links a:hover",
+          ".btn-ghost"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "text-2",
+        "value": "#4D4A55",
+        "original": "--text-2",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".section-lead",
+          ".nav-links a",
+          ".hero .sub",
+          ".badge",
+          ".marquee .seg .item",
+          ".feat p"
+        ],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "text-3",
+        "value": "#8A8693",
+        "original": "--text-3",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".btn-ghost:hover",
+          ".trust",
+          ".marquee .seg .dot",
+          ".stat .lab",
+          ".feat .tag",
+          ".step .arch"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "accent",
+        "value": "#FF7A18",
+        "original": "--accent",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "::selection",
+          ".nav-links a.active",
+          ".nav-links a.active::after",
+          ".theme-toggle:hover",
+          ".btn-primary",
+          ".btn-primary:hover"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "shadow",
+          "text"
+        ]
+      },
+      {
+        "name": "accent-soft",
+        "value": "#FFE7D6",
+        "original": "--accent-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".feat .ic",
+          ".path li::before"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "accent-2",
+        "value": "#7B5EA7",
+        "original": "--accent-2",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".install.copied .copy",
+          ".install .label",
+          ".demo-state[data-state=\"done\"] .pip",
+          ".demo-state[data-state=\"done\"]"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "c-red",
+        "value": "#E63946",
+        "original": "--c-red",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".stat:nth-child(1)",
+          "/* cycle icon hues across the feature grid so the band is visible, not uniform */\n.feat:nth-child(4n+1)",
+          "/* warm hue bloom behind the dark architecture card: red->purple glow low in the stack */\n.arch::before"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "c-red-soft",
+        "value": "#FBDBDE",
+        "original": "--c-red-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* cycle icon hues across the feature grid so the band is visible, not uniform */\n.feat:nth-child(4n+1)"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c-orange",
+        "value": "#FF7A18",
+        "original": "--c-orange",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* warm multi-hue ambient glow: two soft radial blooms (red-orange + purple-pink)\n   layered at low opacity so the cream canvas reads as a sunset, not a disco. */\n.hero::before",
+          ".motif.accent",
+          ".stat:nth-child(4)",
+          ".feat:nth-child(4n+2)",
+          ".arch .eyebrow"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "c-orange-soft",
+        "value": "#FFE7D6",
+        "original": "--c-orange-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".feat:nth-child(4n+2)"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c-purple",
+        "value": "#7B5EA7",
+        "original": "--c-purple",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".btn-grad:hover",
+          "/* warm multi-hue ambient glow: two soft radial blooms (red-orange + purple-pink)\n   layered at low opacity so the cream canvas reads as a sunset, not a disco. */\n.hero::before",
+          ".stat:nth-child(3)",
+          ".stats.in-view",
+          ".hueband::after",
+          ".hueband .mark"
+        ],
+        "roles": [
+          "background",
+          "shadow",
+          "text"
+        ]
+      },
+      {
+        "name": "c-purple-soft",
+        "value": "#E8DEF5",
+        "original": "--c-purple-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".feat:nth-child(4n+3)"
+        ],
+        "roles": []
+      },
+      {
+        "name": "c-pink",
+        "value": "#EC4899",
+        "original": "--c-pink",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".btn-grad",
+          "/* warm multi-hue ambient glow: two soft radial blooms (red-orange + purple-pink)\n   layered at low opacity so the cream canvas reads as a sunset, not a disco. */\n.hero::before",
+          ".stat:nth-child(2)",
+          ".hueband::after",
+          ".feat:nth-child(4n+4)",
+          ".feat .tag.hot"
+        ],
+        "roles": [
+          "background",
+          "shadow",
+          "text"
+        ]
+      },
+      {
+        "name": "c-pink-soft",
+        "value": "#FBE2EE",
+        "original": "--c-pink-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".feat:nth-child(4n+4)"
+        ],
+        "roles": []
+      },
+      {
+        "name": "grad-warm",
+        "value": "linear-gradient(115deg, var(--c-red) 0%, var(--c-orange) 32%, var(--c-pink) 64%, var(--c-purple) 100%)",
+        "original": "--grad-warm",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* =========================================================================\n   2. TOP PROGRESS BAR (scroll-driven dynamic style)\n   ========================================================================= */\n.progress",
+          ".btn-grad",
+          "/* CTA as the signature gradient moment: warm hue band behind the copy. */\n.cta::before"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "grad-warm-soft",
+        "value": "linear-gradient(115deg, var(--c-red-soft) 0%, var(--c-orange-soft) 34%, var(--c-pink-soft) 68%, var(--c-purple-soft) 100%)",
+        "original": "--grad-warm-soft",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* CTA as the signature gradient moment: warm hue band behind the copy. */\n.cta::before"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "grad-text",
+        "value": "linear-gradient(110deg, var(--c-red), var(--c-orange) 40%, var(--c-pink) 70%, var(--c-purple))",
+        "original": "--grad-text",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".eyebrow",
+          ".eyebrow::before",
+          ".words .w.acc",
+          ".hueband h2 .grad",
+          ".cta h2 .grad"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "grad-band",
+        "value": "linear-gradient(180deg, #F8F0E8 0%, #F2DECB 48%, #E6CFE0 74%, #D9C8E8 100%)",
+        "original": "--grad-band",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* =========================================================================\n   7b. HUE BAND - Ideogram-style tonal transition (cream -> peach -> lilac).\n   A full-bleed gradient strip that carries the eye from the warm hero into the\n   cooler feature section, with a single anchored line of copy.\n   ========================================================================= */\n.hueband"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "line",
+        "value": "#E6E2DC",
+        "original": "--line",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".nav.is-scrolled",
+          ".brand .mark",
+          "/* theme toggle */\n.theme-toggle",
+          ".btn-ghost",
+          "/* install chip (copyable) */\n.install",
+          ".badge"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "line-2",
+        "value": "#D6D1CA",
+        "original": "--line-2",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          ".btn-ghost",
+          ".feat:hover"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "shadow",
+        "value": "18px 28px 60px -28px rgba(60,30,80,.18), 2px 4px 14px -6px rgba(31,31,31,.08)",
+        "original": "--shadow",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* install chip (copyable) */\n.install",
+          "/* hero terminal preview */\n.term-card",
+          ".feat:hover",
+          ".demo-term",
+          ".path:hover"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 0 rgba(31,31,31,.04), 0 6px 18px -12px rgba(31,31,31,.18)",
+        "original": "--shadow-sm",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "[data-theme=\"dark\"]",
+          "/* install chip (copyable) */\n.install"
+        ],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "font-display",
+        "value": "\"Space Grotesk\",\"Inter\",system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+        "original": "--font-display",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "h1,h2,h3",
+          ".brand",
+          "/* buttons */\n.btn",
+          ".install .label",
+          ".marquee .seg .item",
+          ".stat .num",
+          ".demo-btn"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-body",
+        "value": "\"Inter\",system-ui,-apple-system,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif",
+        "original": "--font-body",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "/* Fonts upgrade gracefully: until `.fonts-ready` is set, the system stack\n   in the var fallbacks is used. Async-loaded webfont swaps in with no FOIT. */\nbody"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-mono",
+        "value": "\"SF Mono\",ui-monospace,\"JetBrains Mono\",\"Fira Code\",Menlo,Consolas,monospace",
+        "original": "--font-mono",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          ".eyebrow",
+          "/* install chip (copyable) */\n.install",
+          ".badge",
+          ".term-title",
+          ".term-body",
+          ".stat .lab",
+          ".hueband .mark"
+        ],
+        "roles": []
+      },
+      {
+        "name": "maxw",
+        "value": "1240px",
+        "original": "--maxw",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "/* =========================================================================\n   1. LAYOUT PRIMITIVES\n   ========================================================================= */\n.wrap"
+        ],
+        "roles": []
+      },
+      {
+        "name": "radius-pill",
+        "value": "999px",
+        "original": "--radius-pill",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          ".nav-links a",
+          "/* theme toggle */\n.theme-toggle",
+          "/* buttons */\n.btn",
+          "/* install chip (copyable) */\n.install",
+          ".install .copy",
+          ".badge",
+          ".demo-state"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-card",
+        "value": "22px",
+        "original": "--radius-card",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "/* hero terminal preview */\n.term-card",
+          "/* =========================================================================\n   7. STATS\n   ========================================================================= */\n.stats",
+          ".feat",
+          ".step",
+          ".demo-term",
+          "/* =========================================================================\n   11. ARCHITECTURE STATEMENT\n   ========================================================================= */\n.arch",
+          ".path"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-sm",
+        "value": "12px",
+        "original": "--radius-sm",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "nav-h",
+        "value": "72px",
+        "original": "--nav-h",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "/* =========================================================================\n   3. NAV\n   ========================================================================= */\n.nav",
+          "/* =========================================================================\n   4. HERO\n   ========================================================================= */\n.hero"
+        ],
+        "roles": []
+      },
+      {
+        "name": "scroll",
+        "value": "0",
+        "original": "--scroll",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root",
+          "/* =========================================================================\n   2. TOP PROGRESS BAR (scroll-driven dynamic style)\n   ========================================================================= */\n.progress",
+          "/* =========================================================================\n   3. NAV\n   ========================================================================= */\n.nav"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "hero-reveal",
+        "value": "0",
+        "original": "--hero-reveal",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "mouse-x",
+        "value": "50%",
+        "original": "--mouse-x",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "mouse-y",
+        "value": "50%",
+        "original": "--mouse-y",
+        "usage": [
+          "/* ---------------------------------------------------------------------------\n   Dynamic style tokens. These custom properties are the single source of\n   truth for the whole palette; toggling [data-theme] flips them, and JS also\n   writes a live --scroll progress variable here at runtime.\n   ------------------------------------------------------------------------- */\n:root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "f8f0e8",
+        "value": "#F8F0E8",
+        "original": "#F8F0E8",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "f2decb",
+        "value": "#F2DECB",
+        "original": "#F2DECB",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "e6cfe0",
+        "value": "#E6CFE0",
+        "original": "#E6CFE0",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "d9c8e8",
+        "value": "#D9C8E8",
+        "original": "#D9C8E8",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "rgba-60-30-80-18",
+        "value": "rgba(60,30,80,.18)",
+        "original": "rgba(60,30,80,.18)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-31-31-31-08",
+        "value": "rgba(31,31,31,.08)",
+        "original": "rgba(31,31,31,.08)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-31-31-31-04",
+        "value": "rgba(31,31,31,.04)",
+        "original": "rgba(31,31,31,.04)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "rgba-31-31-31-18",
+        "value": "rgba(31,31,31,.18)",
+        "original": "rgba(31,31,31,.18)",
+        "usage": [],
+        "roles": [
+          "shadow"
+        ]
+      },
+      {
+        "name": "15131c",
+        "value": "#15131C",
+        "original": "#15131C",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "1c1924",
+        "value": "#1C1924",
+        "original": "#1C1924",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "221e2c",
+        "value": "#221E2C",
+        "original": "#221E2C",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "1e1a28",
+        "value": "#1E1A28",
+        "original": "#1E1A28",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ede9f2",
+        "value": "#EDE9F2",
+        "original": "#EDE9F2",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "b8b3c4",
+        "value": "#B8B3C4",
+        "original": "#B8B3C4",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "7c7889",
+        "value": "#7C7889",
+        "original": "#7C7889",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ff9447",
+        "value": "#FF9447",
+        "original": "#FF9447",
+        "usage": [],
+        "roles": [
+          "text"
+        ]
+      },
+      {
+        "name": "2a1e11",
+        "value": "#2A1E11",
+        "original": "#2A1E11",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "a881f6",
+        "value": "#A881F6",
+        "original": "#A881F6",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ff6b7a",
+        "value": "#FF6B7A",
+        "original": "#FF6B7A",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "2e1820",
+        "value": "#2E1820",
+        "original": "#2E1820",
+        "usage": [],
+        "roles": []
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(115deg, var(--c-red) 0%, var(--c-orange) 32%, var(--c-pink) 64%, var(--c-purple) 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(115deg, var(--c-red-soft) 0%, var(--c-orange-soft) 34%, var(--c-pink-soft) 68%, var(--c-purple-soft) 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(110deg, var(--c-red), var(--c-orange) 40%, var(--c-pink) 70%, var(--c-purple))"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg, #F8F0E8 0%, #F2DECB 48%, #E6CFE0 74%, #D9C8E8 100%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(180deg, #231A2E 0%, #2A1E35 48%, #261A33 74%, #1E1530 100%)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(40% 55% at 78% 8%, color-mix(in srgb, var(--c-orange) 26%, transparent), transparent 70%),\n    radial-gradient(38% 50% at 92% 22%, color-mix(in srgb, var(--c-pink) 22%, transparent), transparent 72%),\n    radial-gradient(42% 60% at 12% 30%, color-mix(in srgb, var(--c-purple) 16%, transparent), transparent 72%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg,var(--bg),transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(270deg,var(--bg),transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg,var(--text),transparent)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(270deg,var(--text),transparent)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(50% 70% at 85% 20%, color-mix(in srgb, var(--c-pink) 22%, transparent), transparent 70%),\n  radial-gradient(45% 70% at 12% 85%, color-mix(in srgb, var(--c-purple) 18%, transparent), transparent 70%)"
+      },
+      {
+        "type": "linear",
+        "value": "linear-gradient(100deg,var(--surface-2) 30%, var(--line) 50%, var(--surface-2) 70%)"
+      },
+      {
+        "type": "radial",
+        "value": "radial-gradient(50% 70% at 20% 100%, color-mix(in srgb, var(--c-red) 30%, transparent), transparent 70%),\n             radial-gradient(45% 70% at 80% 100%, color-mix(in srgb, var(--c-purple) 34%, transparent), transparent 70%)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [],
+    "views": [
+      {
+        "id": "page-header-1",
+        "type": "page-header",
+        "structuralType": "content-region",
+        "semanticType": "page-header",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-header"
+          }
+        ],
+        "selector": "#nav",
+        "details": {
+          "text": "BabeL·O Features How it works Live demo Architecture Paths FAQ Get started",
+          "className": "nav",
+          "interactionSelectors": [
+            "#nav > div:nth-child(1) > a:nth-child(1)",
+            "nav.nav-links > a:nth-child(1)",
+            "nav.nav-links > a:nth-child(2)",
+            "nav.nav-links > a:nth-child(3)",
+            "nav.nav-links > a:nth-child(4)",
+            "nav.nav-links > a:nth-child(5)",
+            "nav.nav-links > a:nth-child(6)",
+            "#themeToggle",
+            "div.nav-right > a:nth-child(2)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "page-footer-1",
+        "type": "page-footer",
+        "structuralType": "content-region",
+        "semanticType": "page-footer",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-footer"
+          }
+        ],
+        "selector": "footer.footer",
+        "details": {
+          "text": "BabeL·O Your terminal workspace for durable coding sessions, native TUI workflows, and tool-aware agents. Product Features How it works Live demo Architecture R",
+          "className": "footer",
+          "interactionSelectors": [
+            "div.footer-grid > div:nth-child(1) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-1-an-ai-coding-agent-that-stays-alive-in-your-terminal",
+        "type": "hero-profile",
+        "structuralType": "content-region",
+        "semanticType": "an-ai-coding-agent-that-stays-alive-in-your-terminal",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "An AI coding agent that stays alive in your terminal"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "section.hero",
+        "details": {
+          "text": "An AI coding agent that stays alive in your terminal",
+          "className": "hero section",
+          "heading": "An AI coding agent that stays alive in your terminal",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "#installChip > button:nth-child(4)",
+            "div.hero-cta > a:nth-child(2)",
+            "#installChip"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-2-one-palette-from-ember-to-violet",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "one-palette-from-ember-to-violet",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "One palette, from ember to violet"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "section.hueband",
+        "details": {
+          "text": "One palette, from ember to violet",
+          "className": "hueband",
+          "heading": "One palette, from ember to violet",
+          "childRegions": 1,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-3-nexus-owns-execution",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "nexus-owns-execution",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Nexus owns execution"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 0
+          }
+        ],
+        "selector": "#howScroll > article:nth-child(1)",
+        "details": {
+          "text": "Nexus owns execution",
+          "className": "step reveal",
+          "heading": "Nexus owns execution",
+          "childRegions": 0,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-4-cli-owns-interaction",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "cli-owns-interaction",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "CLI owns interaction"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 0
+          }
+        ],
+        "selector": "#howScroll > article:nth-child(2)",
+        "details": {
+          "text": "CLI owns interaction",
+          "className": "step reveal",
+          "heading": "CLI owns interaction",
+          "childRegions": 0,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-5-tools-are-governed",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "tools-are-governed",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Tools are governed"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#howScroll > article:nth-child(3)",
+        "details": {
+          "text": "Tools are governed",
+          "className": "step reveal",
+          "heading": "Tools are governed",
+          "childRegions": 1,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-6-durable-inspectable",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "durable-inspectable",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Durable & inspectable"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#howScroll > article:nth-child(4)",
+        "details": {
+          "text": "Durable & inspectable",
+          "className": "step reveal",
+          "heading": "Durable & inspectable",
+          "childRegions": 1,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-7-worktrees-in-parallel",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "worktrees-in-parallel",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Worktrees, in parallel"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 0
+          }
+        ],
+        "selector": "#howScroll > article:nth-child(5)",
+        "details": {
+          "text": "Worktrees, in parallel",
+          "className": "step reveal",
+          "heading": "Worktrees, in parallel",
+          "childRegions": 0,
+          "interactionSelectors": []
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-8-watch-a-sessioncycle-through-real-states",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "watch-a-sessioncycle-through-real-states",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Watch a sessioncycle through real states"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#demo",
+        "details": {
+          "text": "Watch a sessioncycle through real states",
+          "className": "section",
+          "heading": "Watch a sessioncycle through real states",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "#demoPlay",
+            "#demoReset"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-9-one-daemon-any-client-zero-magic",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "one-daemon-any-client-zero-magic",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "One daemon.Any client. Zero magic"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#architecture",
+        "details": {
+          "text": "One daemon.Any client. Zero magic",
+          "className": "section",
+          "heading": "One daemon.Any client. Zero magic",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "div.arch.reveal"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-10-pick-your-path",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "pick-your-path",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Pick your path"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#paths",
+        "details": {
+          "text": "Pick your path",
+          "className": "section",
+          "heading": "Pick your path",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "div.paths-grid > article:nth-child(1) > a:nth-child(5)",
+            "article.featured > a:nth-child(6)",
+            "div.paths-grid > article:nth-child(3) > a:nth-child(5)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-11-frequently-asked",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "frequently-asked",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Frequently asked"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#faq",
+        "details": {
+          "text": "Frequently asked",
+          "className": "section",
+          "heading": "Frequently asked",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "#faq > div:nth-child(1) > div:nth-child(1)",
+            "#faq > div:nth-child(2) > div:nth-child(1)",
+            "#faq > div:nth-child(3) > div:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-12-ready-to-shipwith-babel-o",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "ready-to-shipwith-babel-o",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Ready to shipwith BabeL-O?"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#cta",
+        "details": {
+          "text": "Ready to shipwith BabeL-O?",
+          "className": "section cta",
+          "heading": "Ready to shipwith BabeL-O?",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "#installChip2 > button:nth-child(4)",
+            "div.cta-cta > a:nth-child(2)",
+            "div.cta-inner > h2:nth-child(2)",
+            "#installChip2"
+          ]
+        },
+        "componentCandidates": []
+      }
+    ],
+    "modals": [],
+    "landmarks": [
+      {
+        "tag": "header",
+        "role": null,
+        "selector": "#nav"
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "nav.nav-links"
+      },
+      {
+        "tag": "main",
+        "role": null,
+        "selector": "#top"
+      },
+      {
+        "tag": "div",
+        "role": "log",
+        "selector": "#demoTranscript"
+      },
+      {
+        "tag": "footer",
+        "role": null,
+        "selector": "footer.footer"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [
+      {
+        "name": "i",
+        "kind": "array",
+        "fields": {},
+        "count": 0
+      },
+      {
+        "name": "key",
+        "kind": "array",
+        "fields": {},
+        "count": 1
+      },
+      {
+        "name": "steps",
+        "kind": "array",
+        "fields": {},
+        "count": 5
+      },
+      {
+        "name": "streamChunks",
+        "kind": "array",
+        "fields": {},
+        "count": 10
+      }
+    ],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "#nav > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#nav > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(2)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(2)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(3)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(3)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(4)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(4)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(5)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(5)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "nav.nav-links > a:nth-child(6)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|nav.nav-links > a:nth-child(6)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "#themeToggle",
+      "event": "click",
+      "action": "root.setAttribute(\"data-theme\", next)",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#themeToggle|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "root.setAttribute(\"data-theme\", next)"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.nav-right > a:nth-child(2)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.nav-right > a:nth-child(2)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "#installChip > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#installChip > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "div.hero-cta > a:nth-child(2)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.hero-cta > a:nth-child(2)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "#demoPlay",
+      "event": "click",
+      "action": "playBtn.querySelector(\"span\").textContent = \"Running\"",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#demoPlay|semantic-control",
+      "target": "span",
+      "mutationTargets": [
+        "span",
+        "#demoPlay",
+        "#demoState",
+        ".lbl",
+        ".ln",
+        "#demoTranscript",
+        ".typed",
+        ".c-stream"
+      ],
+      "stateMutations": [
+        "playBtn.querySelector(\"span\").textContent = \"Running\"",
+        "playBtn.disabled = true",
+        "demoState.setAttribute(\"data-state\", s)",
+        "demoLbl.textContent = s",
+        "d.className = \"ln fade-in\" + (cls ? \" \"+cls : \"\")",
+        "d.innerHTML = html",
+        "transcript.appendChild(d)",
+        "transcript.scrollTop = transcript.scrollHeight",
+        "node.textContent += ch",
+        "stream.textContent += c",
+        "stream.innerHTML = stream.textContent + ' <span class=\"c-grn\">✓ pass</span>'",
+        "transcript.innerHTML = \"\"",
+        "playBtn.disabled=false",
+        "playBtn.querySelector(\"span\").textContent=\"Run\""
+      ],
+      "stateTransitions": [
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Running",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent = \"Running\""
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": true,
+          "confidence": 0.9,
+          "source": "playBtn.disabled = true"
+        },
+        {
+          "target": "#demoState",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "data-state",
+          "confidence": 0.94,
+          "source": "demoState.setAttribute(\"data-state\", s)"
+        },
+        {
+          "target": ".lbl",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "demoLbl.textContent = s"
+        },
+        {
+          "target": ".ln",
+          "kind": "class",
+          "operation": "set",
+          "confidence": 0.62,
+          "source": "d.className = \"ln fade-in\" + (cls ? \" \"+cls : \"\")"
+        },
+        {
+          "target": ".ln",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "d.innerHTML = html"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "structure",
+          "operation": "append",
+          "confidence": 0.72,
+          "source": "transcript.appendChild(d)"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "property",
+          "operation": "set",
+          "name": "scrollTop",
+          "confidence": 0.64,
+          "source": "transcript.scrollTop = transcript.scrollHeight"
+        },
+        {
+          "target": ".typed",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "node.textContent += ch"
+        },
+        {
+          "target": ".c-stream",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "stream.textContent += c"
+        },
+        {
+          "target": ".c-stream",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "confidence": 0.64,
+          "source": "stream.innerHTML = stream.textContent + ' <span class=\"c-grn\">✓ pass</span>'"
+        },
+        {
+          "target": "#demoTranscript",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "transcript.innerHTML = \"\""
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": false,
+          "confidence": 0.9,
+          "source": "playBtn.disabled=false"
+        },
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Run",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent=\"Run\""
+        }
+      ],
+      "dataDependencies": [],
+      "lifecycle": false
+    },
+    {
+      "trigger": "#demoReset",
+      "event": "click",
+      "action": "transcript.innerHTML = \"\"",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|#demoReset|semantic-control",
+      "target": "#demoTranscript",
+      "mutationTargets": [
+        "#demoTranscript",
+        "#demoState",
+        ".lbl",
+        "#demoPlay",
+        "span"
+      ],
+      "stateMutations": [
+        "transcript.innerHTML = \"\"",
+        "demoState.setAttribute(\"data-state\", s)",
+        "demoLbl.textContent = s",
+        "playBtn.disabled = false",
+        "playBtn.querySelector(\"span\").textContent = \"Run\""
+      ],
+      "stateTransitions": [
+        {
+          "target": "#demoTranscript",
+          "kind": "content",
+          "operation": "set",
+          "name": "innerHTML",
+          "value": "",
+          "confidence": 0.9,
+          "source": "transcript.innerHTML = \"\""
+        },
+        {
+          "target": "#demoState",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "data-state",
+          "confidence": 0.94,
+          "source": "demoState.setAttribute(\"data-state\", s)"
+        },
+        {
+          "target": ".lbl",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "confidence": 0.64,
+          "source": "demoLbl.textContent = s"
+        },
+        {
+          "target": "#demoPlay",
+          "kind": "property",
+          "operation": "set",
+          "name": "disabled",
+          "value": false,
+          "confidence": 0.9,
+          "source": "playBtn.disabled = false"
+        },
+        {
+          "target": "span",
+          "kind": "content",
+          "operation": "set",
+          "name": "textContent",
+          "value": "Run",
+          "confidence": 0.9,
+          "source": "playBtn.querySelector(\"span\").textContent = \"Run\""
+        }
+      ],
+      "dataDependencies": [],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.paths-grid > article:nth-child(1) > a:nth-child(5)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.paths-grid > article:nth-child(1) > a:nth-child(5)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "article.featured > a:nth-child(6)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|article.featured > a:nth-child(6)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.paths-grid > article:nth-child(3) > a:nth-child(5)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.paths-grid > article:nth-child(3) > a:nth-child(5)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "#installChip2 > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#installChip2 > button:nth-child(4)|semantic-control"
+    },
+    {
+      "trigger": "div.cta-cta > a:nth-child(2)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.cta-cta > a:nth-child(2)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+      "source": "script-assignment",
+      "analysis": "ast",
+      "confidence": 0.94,
+      "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "mutationTargets": [],
+      "stateMutations": [
+        "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
+        "window.scrollTo({ top: y, behavior: \"smooth\" })"
+      ],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "a"
+      ],
+      "lifecycle": false
+    },
+    {
+      "trigger": "html",
+      "event": "resize",
+      "action": "AST event handler for resize",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": true,
+      "confidence": 0.94,
+      "fingerprint": "resize|html|script-assignment"
+    },
+    {
+      "trigger": "div.arch.reveal",
+      "event": "scroll-call",
+      "action": "AST event handler for scroll-call",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "callHandlers"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": true,
+      "confidence": 0.94,
+      "fingerprint": "scroll-call|div.arch.reveal|script-assignment"
+    },
+    {
+      "trigger": "div.cta-inner > h2:nth-child(2)",
+      "event": "scroll-call",
+      "action": "AST event handler for scroll-call",
+      "mutationTargets": [],
+      "stateMutations": [],
+      "stateTransitions": [],
+      "dataDependencies": [
+        "callHandlers"
+      ],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": true,
+      "confidence": 0.94,
+      "fingerprint": "scroll-call|div.cta-inner > h2:nth-child(2)|script-assignment"
+    },
+    {
+      "trigger": "html",
+      "event": "scroll",
+      "action": "nav.classList.toggle(\"is-scrolled\", scrolled)",
+      "target": "#nav",
+      "mutationTargets": [
+        "#nav"
+      ],
+      "stateMutations": [
+        "nav.classList.toggle(\"is-scrolled\", scrolled)"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#nav",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "is-scrolled",
+          "value": "is-scrolled",
+          "confidence": 0.96,
+          "source": "nav.classList.toggle(\"is-scrolled\", scrolled)"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": true,
+      "confidence": 0.94,
+      "fingerprint": "scroll|html|script-assignment"
+    },
+    {
+      "trigger": "#faq > div:nth-child(1) > div:nth-child(1)",
+      "event": "click",
+      "action": "item.classList.toggle(\"open\")",
+      "target": ".faq-item",
+      "mutationTargets": [
+        ".faq-item",
+        "#faq > div:nth-child(1) > div:nth-child(1)"
+      ],
+      "stateMutations": [
+        "item.classList.toggle(\"open\")",
+        "btn.setAttribute(\"aria-expanded\", String(open))"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".faq-item",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "item.classList.toggle(\"open\")"
+        },
+        {
+          "target": "#faq > div:nth-child(1) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "#faq > div:nth-child(2) > div:nth-child(1)",
+      "event": "click",
+      "action": "item.classList.toggle(\"open\")",
+      "target": ".faq-item",
+      "mutationTargets": [
+        ".faq-item",
+        "#faq > div:nth-child(2) > div:nth-child(1)"
+      ],
+      "stateMutations": [
+        "item.classList.toggle(\"open\")",
+        "btn.setAttribute(\"aria-expanded\", String(open))"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".faq-item",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "item.classList.toggle(\"open\")"
+        },
+        {
+          "target": "#faq > div:nth-child(2) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "click|#faq > div:nth-child(2) > div:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "#faq > div:nth-child(3) > div:nth-child(1)",
+      "event": "click",
+      "action": "item.classList.toggle(\"open\")",
+      "target": ".faq-item",
+      "mutationTargets": [
+        ".faq-item",
+        "#faq > div:nth-child(3) > div:nth-child(1)"
+      ],
+      "stateMutations": [
+        "item.classList.toggle(\"open\")",
+        "btn.setAttribute(\"aria-expanded\", String(open))"
+      ],
+      "stateTransitions": [
+        {
+          "target": ".faq-item",
+          "kind": "class",
+          "operation": "toggle",
+          "name": "open",
+          "value": "open",
+          "confidence": 0.96,
+          "source": "item.classList.toggle(\"open\")"
+        },
+        {
+          "target": "#faq > div:nth-child(3) > div:nth-child(1)",
+          "kind": "attribute",
+          "operation": "set",
+          "name": "aria-expanded",
+          "confidence": 0.94,
+          "source": "btn.setAttribute(\"aria-expanded\", String(open))"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "click|#faq > div:nth-child(3) > div:nth-child(1)|script-assignment"
+    },
+    {
+      "trigger": "#installChip",
+      "event": "click",
+      "action": "chip.classList.add(\"copied\")",
+      "mutationTargets": [
+        "#installChip"
+      ],
+      "stateMutations": [
+        "chip.classList.add(\"copied\")",
+        "chip.classList.remove(\"copied\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#installChip",
+          "kind": "class",
+          "operation": "add",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.add(\"copied\")"
+        },
+        {
+          "target": "#installChip",
+          "kind": "class",
+          "operation": "remove",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.remove(\"copied\")"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "click|#installChip|script-assignment"
+    },
+    {
+      "trigger": "#installChip2",
+      "event": "click",
+      "action": "chip.classList.add(\"copied\")",
+      "mutationTargets": [
+        "#installChip2"
+      ],
+      "stateMutations": [
+        "chip.classList.add(\"copied\")",
+        "chip.classList.remove(\"copied\")"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#installChip2",
+          "kind": "class",
+          "operation": "add",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.add(\"copied\")"
+        },
+        {
+          "target": "#installChip2",
+          "kind": "class",
+          "operation": "remove",
+          "name": "copied",
+          "value": "copied",
+          "confidence": 0.96,
+          "source": "chip.classList.remove(\"copied\")"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "click|#installChip2|script-assignment"
+    },
+    {
+      "trigger": "#howScroll",
+      "event": "keydown",
+      "action": "howScroll.scrollBy({ left: 460, behavior:\"smooth\" })",
+      "mutationTargets": [
+        "#howScroll"
+      ],
+      "stateMutations": [
+        "howScroll.scrollBy({ left: 460, behavior:\"smooth\" })",
+        "howScroll.scrollBy({ left:-460, behavior:\"smooth\" })"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scroll-position",
+          "confidence": 0.82,
+          "source": "howScroll.scrollBy({ left: 460, behavior:\"smooth\" })"
+        },
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scroll-position",
+          "confidence": 0.82,
+          "source": "howScroll.scrollBy({ left:-460, behavior:\"smooth\" })"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "keydown|#howScroll|script-assignment"
+    },
+    {
+      "trigger": "#howScroll",
+      "event": "wheel",
+      "action": "howScroll.scrollLeft += e.deltaY",
+      "mutationTargets": [
+        "#howScroll"
+      ],
+      "stateMutations": [
+        "howScroll.scrollLeft += e.deltaY"
+      ],
+      "stateTransitions": [
+        {
+          "target": "#howScroll",
+          "kind": "property",
+          "operation": "set",
+          "name": "scrollLeft",
+          "confidence": 0.64,
+          "source": "howScroll.scrollLeft += e.deltaY"
+        }
+      ],
+      "dataDependencies": [],
+      "source": "script-assignment",
+      "analysis": "ast",
+      "lifecycle": false,
+      "confidence": 0.94,
+      "fingerprint": "wheel|#howScroll|script-assignment"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(max-width:980px)",
+      "minWidth": null,
+      "maxWidth": 980
+    },
+    {
+      "query": "(max-width:640px)",
+      "minWidth": null,
+      "maxWidth": 640
+    },
+    {
+      "query": "(prefers-reduced-motion: reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 5,
+    "unlabeledButtons": 0,
+    "images": 3,
+    "imagesWithoutAlt": 0,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": [
+    "已跳过 1 个非可执行 script（JSON-LD/归档元数据等）"
+  ]
+}

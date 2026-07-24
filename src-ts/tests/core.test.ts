@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -229,6 +229,36 @@ test("AST interaction analysis extracts mutation targets and local data dependen
   const tab = manifest.interactions.find((interaction) => interaction.trigger === "button.tab");
   assert.equal(tab?.analysis, "ast");
   assert.deepEqual(tab?.mutationTargets, ["#details"]);
+});
+
+test("AST interaction bindings remain lexical and do not assign library callback listeners to decorative nodes", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-ast-scope-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "scoped.html");
+  await writeFile(html, `<!doctype html><html><body><div class="decorative"></div><script>(()=>{const nodes=document.querySelectorAll('.decorative');nodes.forEach(function(t){t.className='decorative'})})();(()=>{const n=document.querySelectorAll('[data-real]');n.forEach(function(t){t.addEventListener('click',()=>{})})})();</script></body></html>`);
+  const interactions = analyzeHtml(html).interactions;
+  assert.equal(interactions.some((item) => item.event === "click" && item.trigger === "div.decorative"), false);
+  assert.equal(interactions.some((item) => item.trigger === "[data-real]"), false);
+});
+
+test("AST interaction analysis resolves helper selectors, keyboard, wheel, and global custom events", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-ast-events-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "events.html");
+  await writeFile(html, `<!doctype html><html><body><main id="panel"><div id="scroller" tabindex="0"></div><div class="call-target" data-scroll-call="card,enter"></div><div id="chip-a"></div><div id="chip-b"></div></main><script>(()=>{const $=(selector,root=document)=>root.querySelector(selector);const scroller=$('#scroller');scroller.addEventListener('keydown',()=>scroller.scrollBy({left:20}));scroller.addEventListener('wheel',event=>{scroller.scrollLeft+=event.deltaY});addEventListener('scroll-call',event=>event.target.classList.add('called'));function wire(chip){chip.addEventListener('click',()=>chip.classList.add('copied'))}wire($('#chip-a'));wire($('#chip-b'))})();</script></body></html>`);
+  const manifest = analyzeHtml(html);
+  const keydown = manifest.interactions.find((item) => item.event === "keydown" && item.trigger === "#scroller");
+  const wheel = manifest.interactions.find((item) => item.event === "wheel" && item.trigger === "#scroller");
+  const custom = manifest.interactions.find((item) => item.event === "scroll-call" && item.trigger === "div.call-target");
+  assert.deepEqual(keydown?.mutationTargets, ["#scroller"]);
+  assert.deepEqual(wheel?.mutationTargets, ["#scroller"]);
+  assert.equal(custom?.lifecycle, true);
+  assert.deepEqual(custom?.mutationTargets, ["div.call-target"]);
+  assert.equal(manifest.interactions.some((item) => item.event === "click" && item.trigger === "#chip-a" && item.mutationTargets?.includes("#chip-a")), true);
+  assert.equal(manifest.interactions.some((item) => item.event === "click" && item.trigger === "#chip-b" && item.mutationTargets?.includes("#chip-b")), true);
+  const plan = planComponents(manifest, { lineBudget: 150 });
+  assert.equal(plan.summary.unownedInteractions, 0);
+  assert.equal(plan.summary.ready, true);
 });
 
 test("AST analysis resolves dynamically created interactive class selectors", async (context) => {
@@ -492,4 +522,41 @@ test("self-contained transpiler preserves id-linked data attributes and rewrites
   assert.match(js, /options\.questions/);
   assert.match(js, /role="tab"/);
   assert.match(js, /role="tabpanel"/);
+});
+
+test("self-contained transpiler copies assets directories and rewrites lazy and dynamic asset paths", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-assets-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "assets.html");
+  const out = join(dir, "lib");
+  await mkdir(join(dir, "assets"), { recursive: true });
+  await writeFile(join(dir, "assets", "logo.png"), "asset");
+  await writeFile(html, `<!doctype html><html><head><style>body{margin:0}:root{--accent:#6487fa}.hero{background-image:url('./assets/logo.png')}</style></head><body><img class="hero" data-src="./assets/logo.png"><script>document.querySelector('.hero').src='./assets/logo.png'</script></body></html>`);
+  const { stdout } = await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "AssetFixture", "asset"]);
+  const summary = JSON.parse(stdout);
+  assert.equal(summary.assetsCopied, true);
+  assert.equal(await readFile(join(out, "assets", "logo.png"), "utf8"), "asset");
+  assert.match(await readFile(join(out, "src", "asset.js"), "utf8"), /data-src="\.\.\/assets\/logo\.png"/);
+  assert.match(await readFile(join(out, "src", "asset.js"), "utf8"), /\.\.\/assets\/logo\.png/);
+  assert.match(await readFile(join(out, "src", "asset.css"), "utf8"), /url\(['"]?\.\.\/assets\/logo\.png/);
+  assert.match(await readFile(join(out, "src", "asset.css"), "utf8"), /--sg-primary:var\(--sg-accent/);
+});
+
+test("validator handles minified selectors theme tokens and tabindex without false positives", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-validator-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  await Promise.all([
+    mkdir(join(dir, "src"), { recursive: true }),
+    mkdir(join(dir, "examples"), { recursive: true }),
+    mkdir(join(dir, "docs"), { recursive: true }),
+  ]);
+  await Promise.all([
+    writeFile(join(dir, "src", "fixture.css"), `:root{--sg-primary:#6487fa;--sg-ink:#111;--sg-muted:#777;--sg-line:#ddd;--sg-paper:#fff}[data-theme="dark"]{--sg-paper:#15131c;--sg-ink:#ede9f2}.sg-app{color:var(--sg-ink)}.sg-cta{background:var(--sg-paper)}@media(max-width:500px){.sg-app{font-size:14px}}@media(max-width:320px){.sg-app{font-size:12px}}`),
+    writeFile(join(dir, "src", "fixture.js"), `(function(global){function mount(root){root.innerHTML='<div class="sg-app" tabindex="0"><div class="sg-cta"></div></div>';root.querySelector('.sg-cta')}global.ValidatorFixture={mount:mount};})(window);`),
+    writeFile(join(dir, "examples", "fixture.html"), `<!doctype html><html lang="en"><body><div id="mount"></div><script src="../src/fixture.js"></script></body></html>`),
+    writeFile(join(dir, "README.md"), `# Fixture\n\nValidatorFixture.mount(root)`),
+    writeFile(join(dir, "docs", "设计规范.md"), `# 设计规范\n\n## 主题色`),
+  ]);
+  const report = validateLibrary(dir);
+  for (const id of ["variables", "a11y", "theme", "class-alignment"]) assert.equal(report.results.find((item) => item.id === id)?.passed, true, JSON.stringify(report, null, 2));
 });

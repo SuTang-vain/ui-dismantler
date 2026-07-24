@@ -163,6 +163,7 @@ export function loadScenarios(document: unknown): ScenarioDocument {
     if ("critical" in scenario && typeof scenario.critical !== "boolean") throw new TypeError(`场景 ${scenario.id} critical 必须是 boolean`);
     if (scenario.equivalenceGroupId !== undefined && (typeof scenario.equivalenceGroupId !== "string" || !scenario.equivalenceGroupId.trim())) throw new TypeError(`场景 ${scenario.id} equivalenceGroupId 必须是非空字符串`);
     if (scenario.viewport) for (const key of ["width", "height"] as const) if (!Number.isInteger(scenario.viewport[key]) || scenario.viewport[key] <= 0) throw new TypeError(`场景 ${scenario.id} viewport.${key} 必须为正整数`);
+    if (scenario.screenshotAnchor !== undefined && !isTarget(scenario.screenshotAnchor, true)) throw new TypeError(`场景 ${scenario.id} screenshotAnchor 无效`);
     if (!Array.isArray(scenario.steps)) throw new TypeError(`场景 ${scenario.id} steps 必须是数组`);
     scenario.steps.forEach((step, index) => {
       if (!step || !actions.has(step.action)) throw new TypeError(`场景 ${scenario.id} steps[${index}] action 不支持`);

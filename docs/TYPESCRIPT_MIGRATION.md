@@ -294,3 +294,157 @@ required 资源只包含与当前 viewport 相交的可见资源、active styles
 - `external-availability`：必需 HTTP(S) 资源是否可用。
 
 因此远程 404 可以表现为 translation fidelity 通过、external availability 失败；本地资源问题则由 resource-readiness 阻断。所有失败仍保留截图和 diff 证据。
+
+## 持久化增量视觉资源索引
+
+为避免 adaptive 稳定探针在每个 animation frame、每个场景步骤重复扫描最多 500 个元素及其伪元素，浏览器页现在维护一个按 root 隔离、生命周期与 Page 一致的资源索引：
+
+1. 每个 reference/library Page 首次探针执行一次全量扫描；
+2. `MutationObserver` 只将 class/style/src/href/srcset、子树增删等受影响节点标记为 dirty；
+3. 后续稳定检查仅重扫 dirty 子树，移除节点同步从索引删除；
+4. `PerformanceObserver` 增量记录已完成 URL；stylesheet/link 完成或 stylesheet signature 变化时才触发全量失效；
+5. 资源是否 required 仍在采样时按 CSS 可见性、非零矩形和 viewport 相交重新判断，因此布局位移不会把首屏外资源误判为必需；
+6. root 变化时主动断开旧 observer，避免跨挂载状态泄漏。
+
+新增 telemetry：
+
+```text
+resourceScanMs
+resourceFullScans
+resourceIncrementalScans
+resourceElementsScanned
+resourcePseudoElementsScanned
+resourceUrlsDiscovered
+```
+
+确定性回归会在点击后延迟修改 class，并使新背景图进入资源图，验证 observer 能在不重新创建全索引的情况下发现 URL、等待网络完成且保持像素一致。
+
+2026-07-24 BLACKPINK 三轮浏览器矩阵结果：
+
+```text
+browser total: 21.997s / 21.356s / 20.847s
+average browser total: 21.400s
+average scenario matrices: 17.354s
+average resource scan: 0.438s
+full scans: 40
+incremental scans: 80
+elements scanned: 20,428
+resource failures: 0
+stability failures: 0
+```
+
+相对 Resource Failure Graph 阶段的浏览器平均 `22.369s`，浏览器阶段降低 `4.3%`，场景矩阵降低 `3.7%`。相对“每次稳定调用重新创建索引”的首版探针，全扫描由 `96` 降至 `40`，扫描元素由 `28,148` 降至 `20,428`，平均资源扫描时间由单轮 `612.7ms` 降至 `437.5ms`。
+
+端到端单轮为 `33.283s`，相对上一阶段三轮平均 `33.103s` 有约 `0.5%` 的运行噪声级差异，尚未达到 `<=32.2s` 的理想目标；因此当前结论是“浏览器资源扫描子阶段明确改善，整体质量流程无显著回退”，不能把子阶段收益夸大为端到端同等比例收益。
+
+## Page 级增量 DOM/layout signature
+
+adaptive 稳定探针原先会在每个 animation frame 对 root 及最多 500 个后代重新执行 `getBoundingClientRect()`、文本/属性读取和 scroll 几何拼接。当前版本增加与 Page/root 同生命周期的 signature tracker：
+
+- 首次采样建立节点顺序、语义 token 和 layout token；
+- `MutationObserver` 只使发生属性/文本变化的节点语义缓存失效；
+- 纯文本 childList 变化不再重建节点拓扑，只有 Element 增删才执行结构扫描；
+- `ResizeObserver` 捕获没有 DOM mutation 的固有尺寸和 Web Animations 布局变化；
+- scroll 事件单独使滚动子树 layout token 失效；
+- stylesheet/link、head 内 style 内容变化和 `document.fonts.loadingdone` 使 layout 缓存失效；
+- 没有 dirty token 的稳定帧直接复用缓存后的完整 signature 字符串；
+- root 替换时断开旧 Mutation/Resize/scroll/font observer；
+- 连续两帧 signature 相同、assertion 满足、timer/resource/network 完成的原始硬条件保持不变。
+
+新增 telemetry：
+
+```text
+signatureScanMs
+signatureFullScans
+signatureIncrementalScans
+signatureNodesScanned
+signatureMutationInvalidations
+signatureResizeInvalidations
+signatureScrollInvalidations
+```
+
+新增确定性 ResizeObserver 回归通过 Web Animations API 改变元素宽度，期间不写 class/style attribute，验证非 DOM mutation 布局变化仍会阻止过早截图。
+
+### 2026-07-24 测量
+
+BLACKPINK 三轮：
+
+```text
+browser total average: 21.672s
+scenario matrix average: 17.645s
+DOM stability average: 12.951s
+signature scan average: 0.382s
+signature full scans: 56
+signature incremental scans: 64
+signature nodes scanned: 34,580
+resource/stability failures: 0 / 0
+```
+
+同机临时构建旧全量 signature 两轮平均：browser `21.462s`、DOM stability `13.237s`。新算法使 DOM stability 子阶段降低 `2.2%`，但 browser total 三轮平均高约 `1.0%`；紧邻基线后的交错复测为 `21.424s`，略低于旧基线。因此当前应判断为：
+
+> signature 子阶段有可测改善，端到端表现基本中性，Observer 初始化与浏览器阶段波动抵消了部分收益。
+
+正式 optimized Gold+ 仍为 `2/2 PASS`，BLACKPINK `33.245s`，相对 Resource Failure Graph 三轮平均 `33.103s` 高 `0.43%`，低于 5% 回退线。所有 Gold+ 门槛、四视口、关键交互、资源和稳定性失败条件均未降低。
+
+## Page 初始化与导航阶段的低风险优化
+
+在不改变 `page.goto(..., { waitUntil: "load" })`、资源等待和 Gold+ 门槛的前提下，补充了三项工程优化：
+
+1. 将稳定性 CSS 从每次导航后的 `page.addStyleTag` 提前到 Context init script，在 document start 安装；
+2. reference/generated Page 使用 `Promise.all` 并行创建；
+3. 同一个 libDir 的首个 example 路径通过进程内 Promise cache 复用，避免每个 viewport/scenario 重复读取 examples 目录。
+
+新增 telemetry：
+
+```text
+contextInitMs
+pagePairsCreatedInParallel
+examplePathCacheHits
+examplePathCacheMisses
+```
+
+稳定性 CSS 迁移通过回归测试验证：页面脚本在首帧读取到 `transitionDuration === "0s"`，且 selector/computed-style/pixel 门禁仍然通过。导航仍然等待完整 `load`，没有用 `DOMContentLoaded` 规避真实资源加载。
+
+2026-07-24 BLACKPINK 三轮矩阵：
+
+```text
+22.045s / 21.143s / 21.174s
+average browser total: 21.454s
+scenario matrix average: 17.465s
+context init average: 8.5ms
+page create average: 3.531s
+example path cache: 1 miss, then 19–20 hits
+page pairs created in parallel: 20
+resource failures: 0
+stability failures: 0
+```
+
+相对上一阶段 signature 优化平均 `21.672s`，本轮约降低 `1.0%`；但 page creation 本身没有明显缩短，因此当前判断为低风险的工程性收益，主要来自初始化路径和运行波动，不能把并行 Page 创建单独归因成主要加速来源。
+
+带 artifact 的完整质量流程为 `35.285s`；仅回退稳定性 CSS 注入时机的同机对照为 `35.000s`，差异约 `0.8%`，属于噪声范围。Gold+ 质量维度保持不变。
+
+## 2026-07-24：Babelo landing 异构新实例
+
+测试源：`/Users/tangyaoyue/ZCodeProject/babelo-landing`。该页面包含 Locomotive Scroll、IntersectionObserver、Google FontFace、Blob URL fetch、lazy image、主题切换、clipboard、嵌套横向滚动和长时 terminal demo 状态机。
+
+新实例驱动了以下通用修复：
+
+- transpiler 支持复制 `assets/`，并统一重写 `src`、`data-src`、`poster`、CSS URL 与 JavaScript 字符串中的资源路径；
+- adaptive 默认稳定窗口从 500ms 调整为 1200ms，与已承诺的 `setTimeout <=1000ms` 追踪范围一致；真正超时反例延长到 1400ms，硬门禁保持；
+- CSS token normalization 不再假设 `:root` 是第一条规则；
+- validator 不再把 `tabindex` 误判为 Tab/Panel，不再把 dark-theme 的 `--sg-*` 值误判为规则内硬编码色，并可从 minified CSS 稳定提取类选择器。
+
+修复前后：
+
+```text
+validation: 5/10 -> 8/10
+overall: 0.9764 -> 0.9951
+worst computed style: 0.9404 -> 0.9858
+worst pixel diff: 0.103818 -> 0.000022
+resource failures: 5 -> 0
+stability failures: 8 -> 0（稳定初始运行）
+```
+
+仍未 Gold/dispatch-ready：planner 产生 8 个装饰元素 click 假阳性且遗漏真实 keydown/wheel；`.sg-lbl` 是源页面无 CSS 的 hook，使 selector coverage 为 0.99744；远程 `font-display=swap` 字体偶发超过稳定窗口；深页面 scenario 截图需要统一 scroll anchor。
+
+完整产物和人工 QA 位于 `examples/dispatch-experiments/babelo-landing/`。

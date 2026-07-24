@@ -284,3 +284,135 @@ stability failures: 0
 ```
 
 相对 Resource Failure Graph 之前的安全 adaptive 平均 `32.16s`，增加约 `2.9%`，低于预设 5% 回退上限。
+
+## 2026-07-24：持久化增量资源索引
+
+资源探针由“每个稳定调用创建临时索引”升级为“每个隔离 Page 持久化一个 root-scoped 索引”：
+
+- 首次执行最多扫描 500 个元素；
+- `MutationObserver` 失效受影响子树；
+- `PerformanceObserver` 增量记录资源完成；
+- stylesheet/link 或 CSSOM signature 变化才触发全量失效；
+- 每次采样重新判定可见性和 viewport 相交，不缓存 required 结论；
+- reference/generated 仍保持独立 Page/Context，不共享 DOM 状态。
+
+BLACKPINK 三轮浏览器矩阵：
+
+| 指标 | 结果 |
+|---|---:|
+| browser total | 21.997s / 21.356s / 20.847s |
+| browser average | 21.400s |
+| scenario matrix average | 17.354s |
+| resource scan average | 0.438s |
+| full scans | 40 |
+| incremental scans | 80 |
+| elements scanned | 20,428 |
+| resource/stability failures | 0 / 0 |
+
+对比上一阶段 Resource Failure Graph：browser average `22.369s -> 21.400s`（`-4.3%`），scenario matrix `18.017s -> 17.354s`（`-3.7%`）。对比首个“调用内增量、调用间重建”原型：full scan `96 -> 40`，elements scanned `28,148 -> 20,428`，resource scan `612.7ms -> 437.5ms`。
+
+四个异构案例全部维持原质量分，且 resource/external/stability failure 均为 0：
+
+| 案例 | PASS | overall | total | resource scan |
+|---|---:|---:|---:|---:|
+| 秦始皇 SVG 图谱 | 是 | 0.9945 | 11.09s | 53.9ms |
+| 词语滚动交互 | 是 | 0.9996 | 24.41s | 235.5ms |
+| 孙悟空动画图鉴 | 是 | 0.9928 | 17.65s | 139.7ms |
+| 三大队关系图谱 | 是 | 0.9992 | 12.72s | 79.0ms |
+
+Diegovz 17 MB 首屏资源回归：browser `3.43s`，resource scan `40.2ms`，resource/external/stability failure 为 0；临时静态封装仍因 translation fidelity 不足而正确 FAIL。
+
+端到端 BLACKPINK 单轮 `33.283s`，比上一阶段三轮均值 `33.103s` 高约 `0.5%`，处于启动/导航抖动范围且低于 5% 回退线，但尚未达到 `<=32.2s` 的理想目标。下一阶段应继续优化 DOM/layout signature 的全量构造，而不是削弱资源检查或 Gold+ 阈值。
+
+## 2026-07-24：增量 DOM/layout signature
+
+实现 Page/root 级持久 signature tracker，使用 MutationObserver、ResizeObserver、scroll、stylesheet/font 事件驱动缓存失效。无变化的第二稳定帧直接复用完整 signature，不再读取最多 500 个节点的 rect/text/scroll。
+
+新增遥测：
+
+```text
+signatureScanMs
+signatureFullScans
+signatureIncrementalScans
+signatureNodesScanned
+signatureMutationInvalidations
+signatureResizeInvalidations
+signatureScrollInvalidations
+```
+
+BLACKPINK 三轮：
+
+| 指标 | 结果 |
+|---|---:|
+| browser average | 21.672s |
+| scenario matrix average | 17.645s |
+| DOM stability average | 12.951s |
+| signature scan average | 382.1ms |
+| full / incremental scans | 56 / 64 |
+| nodes scanned | 34,580 |
+| resource / stability failures | 0 / 0 |
+
+同机旧全量 signature A/B 两轮平均为 browser `21.462s`、DOM stability `13.237s`。新算法的 DOM stability 降低 `2.2%`，browser total 三轮平均增加约 `1.0%`；交错复测新算法为 `21.424s`。因此不宣称端到端加速，仅确认 signature 子阶段下降且总流程无显著回退。
+
+正式 optimized Gold+：
+
+```text
+2/2 PASS
+BLACKPINK: 33.245s
+worst computed style: 0.9997
+worst pixel diff: <= 0.001314
+resource failures: 0
+stability failures: 0
+```
+
+异构回归：
+
+| 案例 | PASS | overall | total | signature scan |
+|---|---:|---:|---:|---:|
+| 秦始皇 SVG 图谱 | 是 | 0.9945 | 11.27s | 156.1ms |
+| 词语滚动交互 | 是 | 0.9996 | 24.00s | 146.5ms |
+| 孙悟空动画图鉴 | 是 | 0.9928 | 18.05s | 198.1ms |
+| 三大队关系图谱 | 是 | 0.9992 | 三轮平均 13.66s | 163.4–197.0ms |
+
+Diegovz 17 MB 首屏：browser `3.00s`，DOM stability `129.0ms`，signature scan `68.9ms`，资源/外部/稳定失败为 0；translation fidelity 仍正确 FAIL。
+
+## 2026-07-24：Page 初始化与路径缓存优化
+
+新增低风险优化：
+
+- Context init script 在 document start 安装稳定性 CSS；
+- reference/generated Page 并行创建；
+- example 路径按 libDir 使用 Promise cache；
+- 不改变 `waitUntil: "load"`，不改变资源和稳定性硬门禁。
+
+BLACKPINK 三轮：
+
+| 指标 | 结果 |
+|---|---:|
+| browser total | 22.045s / 21.143s / 21.174s |
+| browser average | 21.454s |
+| scenario matrix average | 17.465s |
+| context init average | 8.5ms |
+| page create average | 3.531s |
+| cache | 1 miss，19–20 hits |
+| parallel page pairs | 20 |
+| resource / stability failures | 0 / 0 |
+
+相对上一阶段 signature 优化平均 `21.672s`，本轮降低约 `1.0%`。但 pageCreate 没有出现显著降低，因此并行创建目前只是低风险工程优化；收益不能单独归因给该项。
+
+带 artifact 的完整流程：
+
+```text
+current: 35.285s
+same-machine old-init timing: 35.000s
+change: +0.8%
+```
+
+四个异构案例均 PASS：
+
+| 案例 | Overall | Total | Browser | Resource / stability failures |
+|---|---:|---:|---:|---:|
+| 秦始皇 SVG 图谱 | 0.9945 | 12.20s | 7.09s | 0 / 0 |
+| 词语滚动交互 | 0.9996 | 26.17s | 13.48s | 0 / 0 |
+| 孙悟空动画图鉴 | 0.9931 | 18.23s | 10.09s | 0 / 0 |
+| 三大队关系图谱 | 0.9992 | 13.98s | 7.40s | 0 / 0 |

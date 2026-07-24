@@ -1,0 +1,212 @@
+{
+  "measuredAt": "2026-07-24",
+  "source": {
+    "path": "/Users/tangyaoyue/ZCodeProject/babelo-landing",
+    "htmlBytes": 87566,
+    "totalBytesApprox": 1700000,
+    "features": [
+      "Locomotive Scroll",
+      "IntersectionObserver",
+      "FontFace/Google Fonts",
+      "Blob URL fetch",
+      "lazy images",
+      "theme toggle",
+      "clipboard feedback",
+      "nested horizontal keyboard/wheel scroll",
+      "async terminal demo state machine"
+    ]
+  },
+  "planning": {
+    "summary": {
+      "components": 14,
+      "overBudget": 0,
+      "errors": 0,
+      "warnings": 3,
+      "interactions": 42,
+      "ownedInteractions": 42,
+      "unownedInteractions": 0,
+      "ready": true
+    },
+    "unownedFingerprints": [],
+    "finding": "作用域化 AST 绑定消除了外部压缩脚本导致的 8 个装饰元素 click 假阳性；新增 keydown、wheel、scroll、scroll-call/custom event 识别，并将生命周期事件标记为非阻断。"
+  },
+  "transpile": {
+    "timing": {
+      "readParseMs": 154.246,
+      "analyzeMs": 30.857,
+      "rewriteMs": 58.813,
+      "writeMs": 6.424,
+      "totalMs": 250.376
+    },
+    "workload": {
+      "sourceBytes": 87208,
+      "classes": 135,
+      "ids": 25,
+      "executableScripts": 1,
+      "skippedScripts": 1,
+      "cssBytes": 31939,
+      "jsBytes": 54104,
+      "assetsCopied": true
+    }
+  },
+  "baseline": {
+    "validation": "5/10",
+    "overall": 0.9764,
+    "worstSelector": 0.9974683544303797,
+    "worstComputedStyle": 0.9404,
+    "worstPixelDiff": 0.103818,
+    "stabilityFailures": 8,
+    "resourceFailures": 5
+  },
+  "fixes": [
+    "copy and rewrite assets/ directories including data-src and dynamic strings",
+    "extend default adaptive stability window from 500ms to 1200ms for tracked <=1000ms timers",
+    "preserve timeout hard gate with a 1400ms regression fixture",
+    "handle :root after reset rules during token normalization",
+    "remove validator false positives for tabindex, dark-theme custom properties, and minified selectors",
+    "scope-aware lexical binding records prevent cross-function and third-party variable pollution",
+    "extract keydown/wheel/scroll/scroll-call/custom lifecycle listeners and scrollLeft/scrollBy transitions",
+    "normalize scenario screenshots around an explicit screenshotAnchor without extending transient-state waits",
+    "classify swap/fallback/optional fonts as non-blocking while keeping block/auto fonts required",
+    "audit source-unstyled hooks through source CSS/script evidence and reconcile validator/runtime gates",
+    "add jsdom Blob URL/fetch/clipboard and color-scheme shims for deterministic formal scenario regression"
+  ],
+  "finalInitial": {
+    "validation": "10/10",
+    "overall": 0.9941,
+    "visual": 0.9902,
+    "dom": 1,
+    "worstSelector": 1,
+    "worstComputedStyle": 0.9858,
+    "worstPixelDiff": 2.2e-05,
+    "runtimeErrors": 0,
+    "stabilityFailures": 0,
+    "resourceFailures": 0,
+    "externalFailures": 0,
+    "viewports": [
+      {
+        "id": "desktop",
+        "selector": 1,
+        "computedStyle": 0.9858,
+        "pixelDiff": 5e-06,
+        "stabilityFailures": 0,
+        "resourceFailures": 0
+      },
+      {
+        "id": "tablet",
+        "selector": 1,
+        "computedStyle": 0.9858,
+        "pixelDiff": 5e-06,
+        "stabilityFailures": 0,
+        "resourceFailures": 0
+      },
+      {
+        "id": "mobile",
+        "selector": 1,
+        "computedStyle": 0.9994,
+        "pixelDiff": 1.2e-05,
+        "stabilityFailures": 0,
+        "resourceFailures": 0
+      },
+      {
+        "id": "tiny",
+        "selector": 1,
+        "computedStyle": 0.9994,
+        "pixelDiff": 2.2e-05,
+        "stabilityFailures": 0,
+        "resourceFailures": 0
+      }
+    ]
+  },
+  "automatedInteractions": [
+    {
+      "id": "toggle-theme",
+      "worstComputedStyle": 0.9858,
+      "worstPixelDiff": 2.2e-05,
+      "runtimeErrors": 0,
+      "stabilityFailures": 0,
+      "resourceFailures": 0,
+      "strictPassed": true
+    },
+    {
+      "id": "copy-install-command",
+      "worstComputedStyle": 0.9858,
+      "worstPixelDiff": 2.2e-05,
+      "runtimeErrors": 0,
+      "stabilityFailures": 0,
+      "resourceFailures": 0,
+      "strictPassed": true
+    },
+    {
+      "id": "open-first-faq",
+      "worstComputedStyle": 0.9863,
+      "worstPixelDiff": 0.006198,
+      "runtimeErrors": 0,
+      "stabilityFailures": 0,
+      "resourceFailures": 0,
+      "strictPassed": true
+    },
+    {
+      "id": "run-and-reset-demo",
+      "worstComputedStyle": 0.9857,
+      "worstPixelDiff": 0.006325,
+      "runtimeErrors": 0,
+      "stabilityFailures": 0,
+      "resourceFailures": 0,
+      "strictPassed": true
+    }
+  ],
+  "manualQA": {
+    "pageIdentity": true,
+    "blankPage": false,
+    "consoleErrors": 0,
+    "themeFinalStateEquivalent": true,
+    "copyFeedbackEquivalent": true,
+    "faq": {
+      "referenceExpanded": true,
+      "libraryExpanded": true,
+      "referenceHeight": 78.796875,
+      "libraryHeight": 71.8046875
+    },
+    "demoReset": {
+      "reference": {
+        "state": "idle",
+        "lines": 0,
+        "runText": "Run",
+        "disabled": false
+      },
+      "library": {
+        "state": "idle",
+        "lines": 0,
+        "runText": "Run",
+        "disabled": false
+      }
+    },
+    "horizontalKeyboardScroll": {
+      "before": [
+        4,
+        4
+      ],
+      "after": [
+        463.5,
+        464
+      ]
+    }
+  },
+  "remainingRisks": [
+    "remote Google FontFace progressive loading remains the main latency/nondeterminism risk; swap/fallback/optional faces no longer fail readiness, while block/auto faces remain required",
+    "scenario screenshot normalization requires an explicit screenshotAnchor for pages with virtual/smooth scrolling; it does not silently normalize every assertion target",
+    "Babelo visual fidelity is high but computed-style score is 0.9857, so typography/animation parity remains below perfect equality",
+    "interaction coverage was intentionally run off for this exploratory case; formal scenario coverage still requires reviewing the 42 interaction fingerprints and adding equivalence groups/waivers"
+  ],
+  "regression": {
+    "typescript": {
+      "tests": 63,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 1
+    },
+    "optimizedGold": "2/2 PASS",
+    "blackpinkGoldMs": 34077.109583
+  }
+}

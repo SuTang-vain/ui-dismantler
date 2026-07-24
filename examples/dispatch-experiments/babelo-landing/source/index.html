@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BabeL-O — A terminal-native AI coding agent that stays alive</title>
+<meta name="description" content="BabeL-O pairs a native Go TUI with a durable Nexus daemon. Your coding sessions survive disconnects, run in parallel worktrees, and finish long tasks for real." />
+<meta name="color-scheme" content="light dark" />
+
+<!--
+  BabeL-O landing page
+  Style language: adapted from the Eleveight Studio (Framer) reference — off-white canvas,
+  tight-tracked all-caps display type, pill + softly-shadowed cards, word-by-word scroll
+  reveals, dual marquees, spinning motif, sticky nav — re-tinted with BabeL-O's warm
+  orange (#FF7A18) + Everforest green brand identity.
+
+  Required capabilities, all implemented in-page (no build step):
+    [动态样式]  dynamic CSS custom properties: theme toggle (light/dark), a scroll-driven
+                --scroll variable, and per-word staggered reveal delays.
+    [异步资源]  async webfont injection (FontFace API), IntersectionObserver lazy images,
+                and a genuine fetch() of an embedded JSON blob (Blob URL) rendered into
+                skeleton placeholders.
+    [嵌套滚动]  a horizontal snap-scroll "How it works" carousel nested inside the page,
+                plus an independently-scrollable vertical terminal transcript panel.
+    [真实动画状态] a terminal demo state machine (idle → typing → executing → streaming
+                → done), hero word-reveal observer, FAQ accordion, active-nav tracking,
+                copy-to-clipboard feedback, marquee pause-on-hover.
+-->
+
+<link rel="icon" type="image/png" href="./assets/babel-o-logo.png" />
+
+<!-- Locomotive Scroll v5 (Lenis-powered): smooth scrolling + data-scroll parallax.
+     Self-contained bundle exposes window.LocomotiveScroll. -->
+<link rel="stylesheet" href="./assets/locomotive-scroll.css" />
+<style>
+/* =========================================================================
+   0. RESET + BASE
+   ========================================================================= */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+
+/* ---------------------------------------------------------------------------
+   Dynamic style tokens. These custom properties are the single source of
+   truth for the whole palette; toggling [data-theme] flips them, and JS also
+   writes a live --scroll progress variable here at runtime.
+   ------------------------------------------------------------------------- */
+:root{
+  /* palette (light) - warm cream canvas + a red->orange->purple->pink hue band,
+     applied with restraint in the Ideogram manner: gradients as moments, tints
+     via transparency, one primary accent doing the heavy lifting. */
+  --bg:#F4F1EC;           /* warm cream, a touch rosier than flat grey */
+  --surface:#FBF9F5;
+  --surface-2:#F1EDE6;
+  --card:#FFFFFF;
+  --text:#1E1C22;         /* warm near-black, slightly purple */
+  --text-2:#4D4A55;
+  --text-3:#8A8693;
+  --accent:#FF7A18;       /* primary: orange (unchanged brand) */
+  --accent-soft:#FFE7D6;
+  --accent-2:#7B5EA7;     /* secondary: purple (replaces green) */
+
+  /* hue band - red -> orange -> purple -> pink */
+  --c-red:#E63946;
+  --c-red-soft:#FBDBDE;
+  --c-orange:#FF7A18;
+  --c-orange-soft:#FFE7D6;
+  --c-purple:#7B5EA7;
+  --c-purple-soft:#E8DEF5;
+  --c-pink:#EC4899;
+  --c-pink-soft:#FBE2EE;
+
+  /* gradient tokens (signature moments, used sparingly) */
+  --grad-warm:linear-gradient(115deg, var(--c-red) 0%, var(--c-orange) 32%, var(--c-pink) 64%, var(--c-purple) 100%);
+  --grad-warm-soft:linear-gradient(115deg, var(--c-red-soft) 0%, var(--c-orange-soft) 34%, var(--c-pink-soft) 68%, var(--c-purple-soft) 100%);
+  --grad-text:linear-gradient(110deg, var(--c-red), var(--c-orange) 40%, var(--c-pink) 70%, var(--c-purple));
+  /* Ideogram-style tonal transition band: cream -> peach/sand -> lilac */
+  --grad-band:linear-gradient(180deg, #F8F0E8 0%, #F2DECB 48%, #E6CFE0 74%, #D9C8E8 100%);
+
+  --line:#E6E2DC;
+  --line-2:#D6D1CA;
+  --shadow:18px 28px 60px -28px rgba(60,30,80,.18), 2px 4px 14px -6px rgba(31,31,31,.08);
+  --shadow-sm:0 1px 0 rgba(31,31,31,.04), 0 6px 18px -12px rgba(31,31,31,.18);
+
+  /* type */
+  --font-display:"Space Grotesk","Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:"SF Mono",ui-monospace,"JetBrains Mono","Fira Code",Menlo,Consolas,monospace;
+
+  /* geometry */
+  --maxw:1240px;
+  --radius-pill:999px;
+  --radius-card:22px;
+  --radius-sm:12px;
+  --nav-h:72px;
+
+  /* live values written by JS */
+  --scroll:0;
+  --hero-reveal:0;
+  --mouse-x:50%;
+  --mouse-y:50%;
+}
+[data-theme="dark"]{
+  --bg:#15131C;           /* deep warm plum-black */
+  --surface:#1C1924;
+  --surface-2:#221E2C;
+  --card:#1E1A28;
+  --text:#EDE9F2;
+  --text-2:#B8B3C4;
+  --text-3:#7C7889;
+  --accent:#FF9447;
+  --accent-soft:#2A1E11;
+  --accent-2:#A881F6;
+
+  /* hue band - brightened for dark ground */
+  --c-red:#FF6B7A;
+  --c-red-soft:#2E1820;
+  --c-orange:#FF9447;
+  --c-orange-soft:#2A1E11;
+  --c-purple:#A881F6;
+  --c-purple-soft:#241A36;
+  --c-pink:#F472B6;
+  --c-pink-soft:#2A1626;
+
+  --grad-warm:linear-gradient(115deg, var(--c-red) 0%, var(--c-orange) 32%, var(--c-pink) 64%, var(--c-purple) 100%);
+  --grad-warm-soft:linear-gradient(115deg, var(--c-red-soft) 0%, var(--c-orange-soft) 34%, var(--c-pink-soft) 68%, var(--c-purple-soft) 100%);
+  --grad-text:linear-gradient(110deg, var(--c-red), var(--c-orange) 40%, var(--c-pink) 70%, var(--c-purple));
+  --grad-band:linear-gradient(180deg, #231A2E 0%, #2A1E35 48%, #261A33 74%, #1E1530 100%);
+
+  --line:#2C2836;
+  --line-2:#3A3548;
+  --shadow:22px 30px 64px -30px rgba(0,0,0,.7), 2px 4px 14px -6px rgba(0,0,0,.5);
+  --shadow-sm:0 1px 0 rgba(255,255,255,.03), 0 8px 22px -14px rgba(0,0,0,.6);
+}
+
+/* Fonts upgrade gracefully: until `.fonts-ready` is set, the system stack
+   in the var fallbacks is used. Async-loaded webfont swaps in with no FOIT. */
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+  font-size:18px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  transition:background .5s cubic-bezier(.4,0,.2,1), color .5s cubic-bezier(.4,0,.2,1);
+}
+::selection{background:var(--accent);color:#fff}
+
+/* =========================================================================
+   1. LAYOUT PRIMITIVES
+   ========================================================================= */
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:28px;position:relative}
+.section{padding:clamp(72px,11vw,150px) 0;position:relative}
+.eyebrow{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+  display:inline-flex;align-items:center;gap:9px;font-weight:500;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--grad-text);display:inline-block}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.03em;line-height:1.02;color:var(--text)}
+.display{font-size:clamp(40px,6.6vw,84px);letter-spacing:-.045em;line-height:.98}
+.section-title{font-size:clamp(30px,4.4vw,56px);letter-spacing:-.035em;margin-top:18px}
+.section-lead{margin-top:20px;font-size:clamp(17px,1.6vw,21px);color:var(--text-2);max-width:62ch}
+.caps{text-transform:uppercase}
+
+/* =========================================================================
+   2. TOP PROGRESS BAR (scroll-driven dynamic style)
+   ========================================================================= */
+.progress{
+  position:fixed;top:0;left:0;height:3px;width:100%;
+  transform:scaleX(var(--scroll));transform-origin:0 50%;
+  background:var(--grad-warm);
+  z-index:200;transition:transform .12s linear;
+}
+
+/* =========================================================================
+   3. NAV
+   ========================================================================= */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:100;height:var(--nav-h);
+  display:flex;align-items:center;
+  background:color-mix(in srgb, var(--bg) calc(72% + 18% * var(--scroll)), transparent);
+  backdrop-filter:saturate(140%) blur(0px);-webkit-backdrop-filter:saturate(140%) blur(0px);
+  border-bottom:1px solid transparent;
+  transition:background .3s, border-color .3s, backdrop-filter .3s;
+}
+.nav.is-scrolled{
+  border-bottom-color:var(--line);
+  backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);
+}
+.nav .wrap{display:flex;align-items:center;gap:26px;width:100%}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-weight:600;letter-spacing:-.02em;font-size:21px}
+.brand .mark{width:30px;height:30px;border-radius:9px;object-fit:cover;border:1px solid var(--line)}
+.nav-links{display:flex;gap:6px;margin-left:8px}
+.nav-links a{
+  font-size:14.5px;color:var(--text-2);padding:8px 13px;border-radius:var(--radius-pill);
+  position:relative;transition:color .25s, background .25s;
+}
+.nav-links a:hover{color:var(--text);background:var(--surface-2)}
+.nav-links a.active{color:var(--accent)}
+.nav-links a.active::after{
+  content:"";position:absolute;left:13px;right:13px;bottom:3px;height:2px;border-radius:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;animation:navunderline .35s forwards;
+}
+@keyframes navunderline{to{transform:scaleX(1)}}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+
+/* theme toggle */
+.theme-toggle{
+  width:42px;height:42px;border-radius:var(--radius-pill);border:1px solid var(--line);
+  display:grid;place-items:center;background:var(--surface);transition:border-color .25s, transform .25s, background .25s;
+}
+.theme-toggle:hover{transform:translateY(-1px);border-color:var(--accent)}
+.theme-toggle .ico{width:18px;height:18px}
+.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}
+[data-theme="dark"] .theme-toggle .moon{display:block}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:9px;font-family:var(--font-display);
+  font-weight:500;font-size:15px;padding:13px 22px;border-radius:var(--radius-pill);
+  transition:transform .25s cubic-bezier(.44,0,.56,1), background .25s, color .25s, box-shadow .25s;
+  letter-spacing:-.01em;
+}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 24px -10px var(--accent)}
+.btn-grad{background:var(--grad-warm);color:#fff;background-size:160% 100%;background-position:0 0;box-shadow:0 12px 28px -10px var(--c-pink)}
+.btn-grad:hover{transform:translateY(-2px);background-position:100% 0;box-shadow:0 18px 36px -10px var(--c-purple)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px var(--accent)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--text);background:var(--card)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:var(--text-3)}
+
+/* =========================================================================
+   4. HERO
+   ========================================================================= */
+.hero{padding-top:calc(var(--nav-h) + 8vw);padding-bottom:6vw;position:relative;overflow:hidden}
+/* warm multi-hue ambient glow: two soft radial blooms (red-orange + purple-pink)
+   layered at low opacity so the cream canvas reads as a sunset, not a disco. */
+.hero::before{
+  content:"";position:absolute;inset:-10% -5% auto -5%;height:75%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(40% 55% at 78% 8%, color-mix(in srgb, var(--c-orange) 26%, transparent), transparent 70%),
+    radial-gradient(38% 50% at 92% 22%, color-mix(in srgb, var(--c-pink) 22%, transparent), transparent 72%),
+    radial-gradient(42% 60% at 12% 30%, color-mix(in srgb, var(--c-purple) 16%, transparent), transparent 72%);
+  filter:blur(8px);
+}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:54px;align-items:center}
+.hero h1{margin-top:22px}
+.hero .sub{margin-top:26px;font-size:clamp(17px,1.7vw,21px);color:var(--text-2);max-width:54ch}
+.hero-cta{margin-top:34px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+
+/* install chip (copyable) */
+.install{
+  display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius-pill);padding:9px 9px 9px 20px;font-family:var(--font-mono);font-size:15px;
+  box-shadow:var(--shadow-sm);transition:border-color .25s, transform .25s;
+}
+.install:hover{border-color:var(--accent)}
+.install .prompt{color:var(--accent);user-select:none}
+.install .cmd{color:var(--text)}
+.install .copy{
+  width:38px;height:38px;border-radius:var(--radius-pill);display:grid;place-items:center;
+  background:var(--accent);color:#fff;transition:background .25s;
+}
+.install .copy:hover{background:color-mix(in srgb, var(--accent) 82%, #000 18%)}
+.install .copy .check{display:none}
+.install.copied .copy{background:var(--accent-2)}
+.install.copied .copy .check{display:block}
+.install.copied .copy .cp{display:none}
+.install.copied .label{display:inline}
+.install .label{display:none;color:var(--accent-2);font-family:var(--font-display);font-size:14px;margin-right:8px}
+
+.trust{margin-top:30px;display:flex;align-items:center;gap:14px;color:var(--text-3);font-size:14.5px;flex-wrap:wrap}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.badge{
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:7px 13px;border-radius:var(--radius-pill);border:1px solid var(--line);color:var(--text-2);
+  background:var(--card);
+}
+.badge.solid{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+/* spinning star motif (Eleveight) */
+.motif{position:absolute;pointer-events:none;opacity:.9}
+.motif.spin{animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.motif.top-right{top:6vw;right:-4vw;width:min(220px,18vw)}
+.motif.accent{color:var(--c-orange)}
+
+/* hero terminal preview */
+.term-card{
+  background:#0d0f0c;border-radius:var(--radius-card);overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);position:relative;
+}
+.term-bar{display:flex;align-items:center;gap:8px;padding:13px 16px;background:#15181200;border-bottom:1px solid rgba(255,255,255,.06)}
+.term-dot{width:11px;height:11px;border-radius:50%}
+.term-dot.r{background:#ff5f57}.term-dot.y{background:#febc2e}.term-dot.g{background:#28c840}
+.term-title{margin-left:10px;font-family:var(--font-mono);font-size:12px;color:#8b9183;letter-spacing:.04em}
+.term-body{padding:18px 20px;font-family:var(--font-mono);font-size:13.5px;line-height:1.7;color:#cfd6c6;min-height:280px}
+.term-body .ln{white-space:pre-wrap;word-break:break-word}
+.term-body .c-dim{color:#6b7163}
+.term-body .c-acc{color:#ff9447}
+.term-body .c-grn{color:#8fb38b}
+.term-body .c-blu{color:#7fb4d9}
+.term-body .c-red{color:#e07a6e}
+.term-body .prompt{color:#ff9447}
+.term-cursor{display:inline-block;width:8px;height:15px;background:#cfd6c6;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* =========================================================================
+   5. WORD-BY-WORD REVEAL (real animation states)
+   ========================================================================= */
+.words .w{
+  display:inline-block;opacity:0;transform:translateY(.42em) rotate(3deg);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  /* staggered delay is a computed dynamic style per word */
+  transition-delay:calc(var(--i) * 55ms);
+  will-change:transform,opacity;
+}
+.words.revealed .w{opacity:1;transform:none}
+.words .w.acc{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* =========================================================================
+   6. MARQUEE / TICKER (animation + pause-on-hover state)
+   ========================================================================= */
+.ticker{overflow:hidden;position:relative;padding:26px 0;border-block:1px solid var(--line);background:var(--surface)}
+.ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.ticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.ticker::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.marquee{display:flex;gap:0;width:max-content;animation:marquee var(--dur,34s) linear infinite}
+.ticker:hover .marquee{animation-play-state:paused}
+.marquee .seg{display:flex;align-items:center;gap:34px;padding-right:34px}
+.marquee .seg .item{font-family:var(--font-display);font-weight:500;font-size:clamp(20px,2.6vw,32px);letter-spacing:-.02em;color:var(--text-2);white-space:nowrap}
+.marquee .seg .item.hl{color:var(--accent)}
+.marquee .seg .dot{width:9px;height:9px;border-radius:50%;background:var(--text-3);flex:none}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* big CTA ticker */
+.ticker.big{padding:34px 0;border:0;background:var(--text);color:var(--bg)}
+.ticker.big::before,.ticker.big::after{background:linear-gradient(90deg,var(--text),transparent)}
+.ticker.big::after{background:linear-gradient(270deg,var(--text),transparent)}
+.ticker.big .marquee .seg .item{color:var(--bg);font-size:clamp(40px,7vw,90px);letter-spacing:-.04em;text-transform:uppercase}
+.ticker.big .marquee .seg .item.stroke{-webkit-text-stroke:1.4px var(--bg);color:transparent}
+.ticker.big .marquee .seg .dot{background:var(--accent);width:14px;height:14px}
+
+/* =========================================================================
+   7. STATS
+   ========================================================================= */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden}
+.stat{background:var(--surface);padding:34px 28px;display:flex;flex-direction:column;gap:8px}
+.stat .num{font-family:var(--font-display);font-weight:600;font-size:clamp(34px,4.4vw,56px);letter-spacing:-.04em;color:var(--text);line-height:1}
+.stat .num .acc{color:var(--accent)}
+.stat .lab{font-size:14px;color:var(--text-3);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+/* hue-band accent: each stat cell gets a different color from the red->pink->purple->orange sweep,
+   applied as a thin top edge so the band reads as one gradient across the row. */
+.stat{position:relative}
+.stat::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--hue,var(--accent));opacity:0;transition:opacity .6s}
+.stats.in-view .stat::before{opacity:1}
+.stat:nth-child(1){--hue:var(--c-red)}
+.stat:nth-child(2){--hue:var(--c-pink)}
+.stat:nth-child(3){--hue:var(--c-purple)}
+.stat:nth-child(4){--hue:var(--c-orange)}
+
+/* Locomotive-scroll state toggle: .in-view is added by data-scroll-class when the
+   stats enter the viewport. We use it to drive a count-up + glow animation that is a
+   genuinely different mechanism from the IntersectionObserver-based .reveal. */
+.stats{transition:box-shadow .8s ease}
+.stats.in-view{box-shadow:0 30px 80px -40px var(--c-purple)}
+.stat .num{transform:translateY(10px);opacity:0;transition:transform .6s cubic-bezier(.2,.7,.2,1), opacity .6s}
+.stats.in-view .stat .num{transform:none;opacity:1}
+.stats.in-view .stat:nth-child(2) .num{transition-delay:.08s}
+.stats.in-view .stat:nth-child(3) .num{transition-delay:.16s}
+.stats.in-view .stat:nth-child(4) .num{transition-delay:.24s}
+
+/* Parallax elements managed by locomotive-scroll get a hint to the compositor so the
+   transform updates stay smooth. Touch devices are auto-disabled by the lib. */
+[data-scroll-speed]{will-change:transform}
+
+/* =========================================================================
+   7b. HUE BAND - Ideogram-style tonal transition (cream -> peach -> lilac).
+   A full-bleed gradient strip that carries the eye from the warm hero into the
+   cooler feature section, with a single anchored line of copy.
+   ========================================================================= */
+.hueband{position:relative;padding:clamp(60px,9vw,120px) 0;background:var(--grad-band);overflow:hidden}
+.hueband::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(50% 70% at 85% 20%, color-mix(in srgb, var(--c-pink) 22%, transparent), transparent 70%),
+  radial-gradient(45% 70% at 12% 85%, color-mix(in srgb, var(--c-purple) 18%, transparent), transparent 70%);
+  pointer-events:none;mix-blend-mode:multiply}
+.hueband .wrap{position:relative;z-index:1}
+.hueband .mark{font-family:var(--font-mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--c-purple);font-weight:500;display:inline-flex;align-items:center;gap:9px}
+.hueband .mark::before{content:"";width:26px;height:1px;background:var(--c-purple);display:inline-block}
+.hueband h2{font-size:clamp(32px,5vw,68px);letter-spacing:-.04em;line-height:1.02;margin-top:18px;color:#2B2330;max-width:18ch}
+.hueband h2 .grad{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hueband p{margin-top:20px;font-size:clamp(16px,1.5vw,19px);color:#4D4A55;max-width:54ch}
+
+/* =========================================================================
+   8. FEATURES (async-rendered with skeletons)
+   ========================================================================= */
+.features-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:54px}
+.feat{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);
+  padding:30px 28px;transition:transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s;
+  position:relative;overflow:hidden;
+}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--line-2)}
+.feat.span6{grid-column:span 6}.feat.span4{grid-column:span 4}.feat.span8{grid-column:span 8}.feat.span12{grid-column:span 12}
+.feat .ic{
+  width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:var(--ic-soft,var(--accent-soft));
+  color:var(--ic,var(--accent));margin-bottom:18px;transition:transform .4s, background .4s;
+}
+/* cycle icon hues across the feature grid so the band is visible, not uniform */
+.feat:nth-child(4n+1){--ic:var(--c-red);--ic-soft:var(--c-red-soft)}
+.feat:nth-child(4n+2){--ic:var(--c-orange);--ic-soft:var(--c-orange-soft)}
+.feat:nth-child(4n+3){--ic:var(--c-purple);--ic-soft:var(--c-purple-soft)}
+.feat:nth-child(4n+4){--ic:var(--c-pink);--ic-soft:var(--c-pink-soft)}
+.feat:hover .ic{transform:rotate(-6deg) scale(1.06)}
+.feat h3{font-size:22px;letter-spacing:-.02em;margin-bottom:9px}
+.feat p{color:var(--text-2);font-size:15.5px;line-height:1.6}
+.feat .tag{position:absolute;top:22px;right:22px;font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:.1em}
+.feat .tag.hot{color:var(--c-pink)}
+
+/* skeleton loaders (shown while async data resolves) */
+.sk{
+  background:linear-gradient(100deg,var(--surface-2) 30%, var(--line) 50%, var(--surface-2) 70%);
+  background-size:200% 100%;animation:shimmer 1.3s linear infinite;border-radius:6px;
+}
+@keyframes shimmer{to{background-position:-200% 0}}
+.sk.line{height:13px;margin-bottom:8px;width:100%}
+.sk.line.short{width:60%}
+.sk.title{height:22px;width:55%;margin-bottom:14px}
+.sk.box{height:46px;width:46px;border-radius:13px;margin-bottom:18px}
+.feat.skeleton .ic,.feat.skeleton h3,.feat.skeleton p,.feat.skeleton .tag{visibility:hidden}
+
+/* =========================================================================
+   9. HOW IT WORKS — NESTED HORIZONTAL SNAP CAROUSEL (嵌套滚动)
+   ========================================================================= */
+.how-scroll{
+  margin-top:50px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  display:flex;gap:20px;padding:6px 4px 26px;
+  /* custom nested scrollbar */
+  scrollbar-color:var(--accent) var(--line);
+}
+.how-scroll::-webkit-scrollbar{height:9px}
+.how-scroll::-webkit-scrollbar-track{background:var(--surface-2);border-radius:9px}
+.how-scroll::-webkit-scrollbar-thumb{background:var(--accent);border-radius:9px}
+.step{
+  scroll-snap-align:start;flex:0 0 min(440px,82vw);background:var(--card);
+  border:1px solid var(--line);border-radius:var(--radius-card);padding:34px 30px;
+  display:flex;flex-direction:column;gap:14px;min-height:300px;
+  transition:border-color .3s, transform .3s;
+}
+.step:hover{border-color:var(--accent);transform:translateY(-3px)}
+.step .n{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:.14em}
+.step h3{font-size:26px}
+.step p{color:var(--text-2);font-size:15.5px}
+.step .arch{margin-top:auto;font-family:var(--font-mono);font-size:12.5px;color:var(--text-3);padding-top:16px;border-top:1px dashed var(--line)}
+.how-hint{margin-top:8px;display:flex;align-items:center;gap:10px;color:var(--text-3);font-size:13px;font-family:var(--font-mono)}
+.how-hint .arrows{display:inline-flex;gap:6px}
+.how-hint .arrows span{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:13px}
+
+/* =========================================================================
+   10. LIVE DEMO — TERMINAL STATE MACHINE (真实动画状态 + 嵌套滚动 transcript)
+   ========================================================================= */
+.demo-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center;margin-top:50px}
+.demo-controls{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.demo-state{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  padding:6px 13px;border-radius:var(--radius-pill);border:1px solid var(--line);color:var(--text-2);
+  background:var(--card);display:inline-flex;align-items:center;gap:8px;transition:all .3s;
+}
+.demo-state .pip{width:8px;height:8px;border-radius:50%;background:var(--text-3);transition:background .3s}
+.demo-state[data-state="typing"] .pip,.demo-state[data-state="executing"] .pip,.demo-state[data-state="streaming"] .pip{background:var(--accent);animation:pulse 1s infinite}
+.demo-state[data-state="done"] .pip{background:var(--accent-2)}
+@keyframes pulse{50%{opacity:.3}}
+.demo-state[data-state="executing"]{color:var(--accent);border-color:var(--accent)}
+.demo-state[data-state="done"]{color:var(--accent-2);border-color:var(--accent-2)}
+.demo-btn{padding:9px 16px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--card);font-size:13.5px;font-family:var(--font-display);transition:all .25s;display:inline-flex;gap:7px;align-items:center}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.demo-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.demo-btn.primary:hover{color:#fff;filter:brightness(1.07)}
+
+.demo-term{background:#0d0f0c;border-radius:var(--radius-card);overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow)}
+/* NESTED SCROLL: this transcript panel scrolls vertically, independent of the page */
+.demo-term .transcript{
+  height:340px;overflow-y:auto;padding:18px 20px;font-family:var(--font-mono);font-size:13px;line-height:1.65;color:#cfd6c6;
+  scrollbar-color:#3a4133 #15181200;scrollbar-width:thin;
+}
+.demo-term .transcript::-webkit-scrollbar{width:8px}
+.demo-term .transcript::-webkit-scrollbar-thumb{background:#3a4133;border-radius:8px}
+.demo-term .transcript::-webkit-scrollbar-track{background:transparent}
+.demo-term .transcript .ln{white-space:pre-wrap;word-break:break-word}
+.demo-term .transcript .ln.fade-in{animation:fadeup .3s ease both}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* =========================================================================
+   11. ARCHITECTURE STATEMENT
+   ========================================================================= */
+.arch{background:var(--text);color:var(--bg);border-radius:var(--radius-card);padding:clamp(40px,6vw,76px);overflow:hidden;position:relative}
+/* warm hue bloom behind the dark architecture card: red->purple glow low in the stack */
+.arch::before{content:"";position:absolute;inset:auto -20% -40% -20%;height:80%;z-index:0;pointer-events:none;
+  background:radial-gradient(50% 70% at 20% 100%, color-mix(in srgb, var(--c-red) 30%, transparent), transparent 70%),
+             radial-gradient(45% 70% at 80% 100%, color-mix(in srgb, var(--c-purple) 34%, transparent), transparent 70%);
+  filter:blur(6px);opacity:.8}
+.arch > *{position:relative;z-index:1}
+.arch .eyebrow{color:var(--c-orange)}
+.arch h2{color:var(--bg);font-size:clamp(30px,4.6vw,58px);letter-spacing:-.04em;line-height:1.04;margin-top:18px}
+.arch h2 .stroke{-webkit-text-stroke:1.2px var(--bg);color:transparent}
+.arch-cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:46px}
+.arch-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:26px}
+.arch-col h4{font-family:var(--font-display);font-size:19px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.arch-col .role{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.arch-col p{color:rgba(236,236,230,.7);font-size:15px}
+.arch-col ul{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.arch-col li{font-size:14px;color:rgba(236,236,230,.8);display:flex;gap:9px;align-items:flex-start}
+.arch-col li::before{content:"›";color:var(--accent);font-family:var(--font-mono)}
+
+/* =========================================================================
+   12. PRICING / DEPLOYMENT PATHS
+   ========================================================================= */
+.paths-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:50px}
+.path{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:32px 28px;
+  display:flex;flex-direction:column;gap:16px;transition:transform .3s, box-shadow .3s, border-color .3s;position:relative;
+}
+.path:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.path.featured{border-color:var(--accent);box-shadow:0 20px 44px -22px var(--accent)}
+.path .plan{font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:-.02em}
+.path .price{font-family:var(--font-display);font-size:38px;font-weight:600;letter-spacing:-.04em}
+.path .price small{font-size:15px;color:var(--text-3);font-weight:400}
+.path .desc{color:var(--text-2);font-size:15px;min-height:42px}
+.path ul{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.path li{font-size:14.5px;color:var(--text-2);display:flex;gap:10px;align-items:flex-start}
+.path li::before{content:"";width:15px;height:15px;border-radius:50%;background:var(--accent-soft);flex:none;margin-top:3px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23FF7A18' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+.path .ribbon{position:absolute;top:-1px;right:24px;background:var(--accent);color:#fff;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;padding:6px 12px;border-radius:0 0 10px 10px;text-transform:uppercase}
+
+/* =========================================================================
+   13. FAQ ACCORDION (open/close state)
+   ========================================================================= */
+.faq{max-width:880px;margin-inline:auto;margin-top:50px}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 6px;text-align:left;font-family:var(--font-display);font-weight:500;font-size:clamp(17px,2vw,21px);letter-spacing:-.015em;color:var(--text);transition:color .25s}
+.faq-q:hover{color:var(--accent)}
+.faq-q .plus{width:30px;height:30px;flex:none;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;position:relative;transition:transform .35s cubic-bezier(.2,.7,.2,1), background .25s, border-color .25s}
+.faq-q .plus::before,.faq-q .plus::after{content:"";position:absolute;background:var(--text);border-radius:2px;transition:transform .35s cubic-bezier(.2,.7,.2,1), background .25s}
+.faq-q .plus::before{width:12px;height:2px}
+.faq-q .plus::after{width:2px;height:12px}
+.faq-item.open .faq-q .plus{background:var(--accent);border-color:var(--accent)}
+.faq-item.open .faq-q .plus::before,.faq-item.open .faq-q .plus::after{background:#fff}
+.faq-item.open .faq-q .plus::after{transform:rotate(90deg)}
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.2,.7,.2,1)}
+.faq-item.open .faq-a{grid-template-rows:1fr}
+.faq-a > div{overflow:hidden}
+.faq-a p{color:var(--text-2);font-size:16px;line-height:1.65;padding:0 6px 26px;max-width:74ch}
+
+/* =========================================================================
+   14. CTA + FOOTER
+   ========================================================================= */
+.cta{position:relative}
+/* CTA as the signature gradient moment: warm hue band behind the copy. */
+.cta::before{content:"";position:absolute;inset:-4% -4%;z-index:-1;border-radius:60px;
+  background:var(--grad-warm-soft);opacity:.5;filter:blur(0px)}
+.cta-inner{text-align:center;padding:clamp(60px,9vw,110px) 0;position:relative}
+.cta h2{font-size:clamp(36px,6vw,76px);letter-spacing:-.045em;line-height:1}
+.cta h2 .grad{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cta p{margin:22px auto 0;max-width:52ch;color:var(--text-2);font-size:clamp(16px,1.6vw,19px)}
+.cta-cta{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+.footer{border-top:1px solid var(--line);padding:54px 0 40px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:34px}
+.footer .brand{font-size:22px}
+.footer p{color:var(--text-3);font-size:14px;margin-top:14px;max-width:34ch}
+.footer h5{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.footer ul li{margin-bottom:9px}
+.footer ul a{font-size:14.5px;color:var(--text-2);transition:color .2s}
+.footer ul a:hover{color:var(--accent)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:22px;border-top:1px solid var(--line);color:var(--text-3);font-size:13.5px;flex-wrap:wrap;gap:12px}
+.footer-bottom .kk{display:flex;align-items:center;gap:9px}
+.footer-bottom .kk img{width:22px;height:22px;border-radius:6px}
+
+/* =========================================================================
+   15. REVEAL ON SCROLL (generic)
+   ========================================================================= */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.08s}
+.reveal[data-d="2"]{transition-delay:.16s}
+.reveal[data-d="3"]{transition-delay:.24s}
+.reveal[data-d="4"]{transition-delay:.32s}
+
+/* =========================================================================
+   16. RESPONSIVE
+   ========================================================================= */
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:38px}
+  .demo-grid{grid-template-columns:1fr}
+  .arch-cols{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .paths-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+@media (max-width:640px){
+  body{font-size:17px}
+  .features-grid{grid-template-columns:1fr}
+  .feat.span6,.feat.span4,.feat.span8,.feat.span12{grid-column:span 12}
+  .stats{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .wrap{padding-inline:20px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+  .words .w{opacity:1;transform:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- progress bar (scroll-driven) -->
+<div class="progress" aria-hidden="true"></div>
+
+<!-- =========================================================================
+     NAV
+     ========================================================================= -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="BabeL-O home">
+      <img class="mark" data-src="./assets/babel-o-logo.png" alt="" width="30" height="30" />
+      <span>BabeL<span style="color:var(--accent)">·</span>O</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#demo">Live demo</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#paths">Paths</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="ico sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+        <svg class="ico moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+      <a class="btn btn-grad" href="#cta">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ====================================================================
+       HERO
+       ==================================================================== -->
+  <section class="hero section">
+    <!-- spinning motif (Eleveight-style star) - data-scroll-speed parallax: drifts at .6x while page scrolls at 1x -->
+    <svg class="motif spin top-right accent" data-scroll data-scroll-speed="0.6" viewBox="0 0 100 100" aria-hidden="true">
+      <g fill="currentColor">
+        <path d="M50 0 56 44 100 50 56 56 50 100 44 56 0 50 44 44Z"/>
+        <path d="M50 18 53.5 46.5 82 50 53.5 53.5 50 82 46.5 53.5 18 50 46.5 46.5Z" opacity=".55"/>
+      </g>
+    </svg>
+
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow reveal in">Terminal-native AI coding agent</span>
+        <h1 class="display words" id="heroTitle" data-reveal>
+          <span class="w">An</span> <span class="w">AI</span> <span class="w">coding</span> <span class="w">agent</span> <span class="w">that</span> <span class="w acc">stays</span> <span class="w acc">alive</span> <span class="w">in</span> <span class="w">your</span> <span class="w">terminal.</span>
+        </h1>
+        <p class="sub reveal" data-d="1">
+          BabeL-O pairs a native Go TUI with a durable <strong>Nexus</strong> daemon — so your
+          coding sessions survive disconnects, run across parallel git worktrees, and finish
+          long tasks for real. Not a demo-level toy.
+        </p>
+
+        <div class="hero-cta reveal" data-d="2">
+          <div class="install" id="installChip" title="Click to copy">
+            <span class="prompt">$</span>
+            <span class="cmd">npm install -g babel-o</span>
+            <span class="label">Copied!</span>
+            <button class="copy" aria-label="Copy install command">
+              <svg class="cp" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              <svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+          </div>
+          <a class="btn btn-ghost" href="#demo">
+            See it run
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="trust reveal" data-d="3">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/></svg>
+          Trusted by terminal-native developers who've outgrown one-shot CLI agents.
+        </div>
+        <div class="badges reveal" data-d="3">
+          <span class="badge solid">Open Source · MIT</span>
+          <span class="badge">v0.4.2</span>
+          <span class="badge">macOS · Linux</span>
+          <span class="badge">Node ≥ 22</span>
+        </div>
+      </div>
+
+      <!-- hero terminal preview (static) - parallax: moves slower than the heading as you scroll -->
+      <div class="term-card reveal" data-d="2" data-scroll data-scroll-speed="0.3" data-scroll-position="top">
+        <div class="term-bar">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span class="term-title">bbl — session #a1f3 · nexus@localhost:7331</span>
+        </div>
+        <div class="term-body" id="heroTerm">
+          <div class="ln"><span class="c-dim"># durable: client disconnected, session kept running</span></div>
+          <div class="ln"><span class="prompt">❯</span> bbl go</div>
+          <div class="ln"><span class="c-grn">●</span> nexus online · 2 sessions · ws://127.0.0.1:7331</div>
+          <div class="ln"><span class="prompt">❯</span> refactor auth module to use keychain</div>
+          <div class="ln"><span class="c-dim">  planning</span> 3-step plan <span class="c-dim">›</span> 2 file edits <span class="c-dim">›</span> 1 run</div>
+          <div class="ln"><span class="c-acc">  edit</span> clients/go-tui/.../auth.go <span class="c-dim">(+42 −18)</span></div>
+          <div class="ln"><span class="c-acc">  edit</span> lib/keychain.ts <span class="c-dim">(+11 −3)</span></div>
+          <div class="ln"><span class="c-blu">  tool</span> bash › <span class="c-dim">go test ./...</span> <span class="c-grn">✓ pass</span></div>
+          <div class="ln"><span class="c-grn">  done</span> 1m 42s · 0 issues <span class="c-dim">·</span> audit saved</div>
+          <div class="ln"><span class="prompt">❯</span> <span class="term-cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       PROVIDERS TICKER (marquee, pause on hover)
+       ==================================================================== -->
+  <section class="ticker" aria-label="Supported model providers">
+    <div class="marquee" id="provTicker" style="--dur:38s">
+      <div class="seg">
+        <span class="item hl">Anthropic</span><span class="dot"></span>
+        <span class="item">OpenAI</span><span class="dot"></span>
+        <span class="item hl">DeepSeek</span><span class="dot"></span>
+        <span class="item">Moonshot</span><span class="dot"></span>
+        <span class="item hl">Ollama</span><span class="dot"></span>
+        <span class="item">Zhipu</span><span class="dot"></span>
+        <span class="item hl">MiniMax</span><span class="dot"></span>
+        <span class="item">Local</span><span class="dot"></span>
+      </div>
+      <!-- duplicate for seamless loop -->
+      <div class="seg" aria-hidden="true">
+        <span class="item hl">Anthropic</span><span class="dot"></span>
+        <span class="item">OpenAI</span><span class="dot"></span>
+        <span class="item hl">DeepSeek</span><span class="dot"></span>
+        <span class="item">Moonshot</span><span class="dot"></span>
+        <span class="item hl">Ollama</span><span class="dot"></span>
+        <span class="item">Zhipu</span><span class="dot"></span>
+        <span class="item hl">MiniMax</span><span class="dot"></span>
+        <span class="item">Local</span><span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       STATS
+       ==================================================================== -->
+  <section class="section" id="stats">
+    <div class="wrap">
+      <div class="stats reveal" data-scroll data-scroll-class="in-view" data-scroll-repeat="false">
+        <div class="stat" data-scroll data-scroll-speed="0.2"><div class="num">8</div><div class="lab">Model providers</div></div>
+        <div class="stat" data-scroll data-scroll-speed="-0.2"><div class="num">4</div><div class="lab">Permission levels</div></div>
+        <div class="stat" data-scroll data-scroll-speed="0.2"><div class="num">~10<span class="acc">MB</span></div><div class="lab">Standalone Go binary</div></div>
+        <div class="stat" data-scroll data-scroll-speed="-0.2"><div class="num">0</div><div class="lab">Node deps on client</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       HUE BAND - Ideogram-style tonal transition (cream -> peach -> lilac)
+       ==================================================================== -->
+  <section class="hueband" aria-label="Design philosophy">
+    <div class="wrap">
+      <span class="mark">Design philosophy</span>
+      <h2>One palette, from <span class="grad">ember to violet.</span></h2>
+      <p>Warmth at the surface, depth underneath. BabeL-O treats every session as craft - so the page carries a single hue band: red where it matters, orange where it moves, purple where it thinks, pink where it invites you in.</p>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       FEATURES (async-rendered into skeletons)
+       ==================================================================== -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <span class="eyebrow reveal">Capabilities</span>
+      <h2 class="section-title reveal" data-d="1">Built for sessions that<br/>actually <span style="color:var(--accent)">finish.</span></h2>
+      <p class="section-lead reveal" data-d="2">
+        Most terminal AI coders are fragile one-shot chats: kill the process, lose the task.
+        BabeL-O's Nexus daemon owns execution state so work persists, stays inspectable,
+        and runs safely.
+      </p>
+
+      <!-- skeleton placeholders are hydrated from async JSON (see app-data below) -->
+      <div class="features-grid" id="featuresGrid">
+        <article class="feat span6 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+        <article class="feat span6 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+        <article class="feat span4 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+        <article class="feat span4 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+        <article class="feat span4 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+        <article class="feat span12 skeleton"><div class="ic sk box"></div><h3 class="sk title"></h3><p class="sk line"></p><p class="sk line short"></p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       HOW IT WORKS — NESTED HORIZONTAL SNAP CAROUSEL
+       ==================================================================== -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <span class="eyebrow reveal">The design rule</span>
+      <h2 class="section-title reveal" data-d="1"><span style="color:var(--accent)">Nexus</span> owns execution.<br/>CLI owns interaction.</h2>
+      <p class="section-lead reveal" data-d="2">
+        A background daemon holds state; the Go TUI is just one way to talk to it. Swipe the
+        carousel to see how the pieces fit together.
+      </p>
+    </div>
+    <div class="wrap">
+      <div class="how-scroll" id="howScroll" tabindex="0" aria-label="How it works — scroll horizontally" data-lenis-prevent>
+        <article class="step reveal">
+          <div class="n">01 — DAEMON</div>
+          <h3>Nexus owns execution</h3>
+          <p>A Node ≥ 22 daemon (Fastify REST + WebSocket) owns sessions, agents, the tool loop, streaming events and the audit log. Kill your terminal — the task keeps running.</p>
+          <div class="arch">nexus @ ws://127.0.0.1:7331</div>
+        </article>
+        <article class="step reveal" data-d="1">
+          <div class="n">02 — CLIENT</div>
+          <h3>CLI owns interaction</h3>
+          <p>A ~10MB Go binary (Bubble Tea) is the production surface. Reconnect any client to a live session over WebSocket — your in-flight work is right where you left it.</p>
+          <div class="arch">bbl go · bbl attach &lt;id&gt;</div>
+        </article>
+        <article class="step reveal" data-d="2">
+          <div class="n">03 — PERMISSIONS</div>
+          <h3>Tools are governed</h3>
+          <p>A four-level risk model — <em>read &lt; write &lt; execute &lt; task</em> — gates Bash, Write, Edit, MCP and memory writes. Approve once, approve per-session, or reject with feedback.</p>
+          <div class="arch">/approve · /reject · /perm session</div>
+        </article>
+        <article class="step reveal" data-d="3">
+          <div class="n">04 — STATE</div>
+          <h3>Durable &amp; inspectable</h3>
+          <p>SQLite (WAL) + JSONL append log persist sessions, events, audits, jobs and traces. <code>/context</code> shows budget, compaction, recovery and working set — agent state is never hidden.</p>
+          <div class="arch">/context · /inbox · /session</div>
+        </article>
+        <article class="step reveal" data-d="3">
+          <div class="n">05 — PARALLELISM</div>
+          <h3>Worktrees, in parallel</h3>
+          <p>Run multiple isolated sessions across git worktrees at once. Sessions trade findings, handoffs and review requests over SessionChannel — real collaboration, not serial tabs.</p>
+          <div class="arch">bbl go --worktree feat-x</div>
+        </article>
+      </div>
+      <div class="how-hint">
+        <span class="arrows"><span>←</span><span>→</span></span>
+        drag / scroll horizontally · or use ← → keys
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       LIVE DEMO — TERMINAL STATE MACHINE
+       ==================================================================== -->
+  <section class="section" id="demo">
+    <div class="wrap demo-grid">
+      <div>
+        <span class="eyebrow reveal">Live demo</span>
+        <h2 class="section-title reveal" data-d="1">Watch a session<br/>cycle through real states.</h2>
+        <p class="section-lead reveal" data-d="2">
+          This isn't a recording — it's a live state machine driving the terminal on the right.
+          It walks a real prompt through <em>idle → typing → executing → streaming → done</em>,
+          the same loop Nexus runs for every task. The transcript panel scrolls independently,
+          so scroll inside it to read the full log.
+        </p>
+        <div class="demo-controls reveal" data-d="3">
+          <span class="demo-state" id="demoState" data-state="idle"><span class="pip"></span><span class="lbl">idle</span></span>
+          <button class="demo-btn primary" id="demoPlay">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>Run</span>
+          </button>
+          <button class="demo-btn" id="demoReset">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="demo-term reveal" data-d="2">
+        <div class="term-bar">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span class="term-title">demo · session cycle</span>
+        </div>
+        <!-- NESTED SCROLL: vertical overflow, independent of page -->
+        <div class="transcript" id="demoTranscript" role="log" aria-live="polite" data-lenis-prevent></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       ARCHITECTURE
+       ==================================================================== -->
+  <section class="section" id="architecture">
+    <div class="wrap">
+      <div class="arch reveal" data-scroll data-scroll-speed="0.15" data-scroll-call="arch,enter" data-scroll-position="top,bottom">
+        <span class="eyebrow">Architecture</span>
+        <h2 data-scroll data-scroll-speed="0.4">One daemon.<br/><span class="stroke">Any client.</span> Zero magic.</h2>
+        <div class="arch-cols">
+          <div class="arch-col">
+            <div class="role">Backend · Nexus</div>
+            <h4>The durable runtime</h4>
+            <p>Holds execution state out-of-process so sessions outlive any single terminal.</p>
+            <ul>
+              <li>Fastify REST + WebSocket server</li>
+              <li>LLMCodingRuntime: context, model calls, tool loop</li>
+              <li>Permission enforcement + context compaction</li>
+              <li>SQLite WAL + JSONL audit &amp; traces</li>
+              <li>Provider failover &amp; recovery</li>
+            </ul>
+          </div>
+          <div class="arch-col">
+            <div class="role">Frontend · Go TUI</div>
+            <h4>The interactive surface</h4>
+            <p>A self-contained binary you can drop in a container and run — no Node on the client.</p>
+            <ul>
+              <li>Go 1.23 + Bubble Tea, ~10MB</li>
+              <li>Attach / detach / reconnect over WS</li>
+              <li>Streaming render, permission prompts</li>
+              <li>System keychain for API keys</li>
+              <li>Optional EverCore memory sidecar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       DEPLOYMENT PATHS (pricing-style, no fabricated prices)
+       ==================================================================== -->
+  <section class="section" id="paths">
+    <div class="wrap">
+      <span class="eyebrow reveal">Get started</span>
+      <h2 class="section-title reveal" data-d="1">Pick your path</h2>
+      <p class="section-lead reveal" data-d="2">BabeL-O is MIT-licensed. Run it yourself today, or talk to us about teams.</p>
+
+      <div class="paths-grid">
+        <article class="path reveal">
+          <div class="plan">Open Source</div>
+          <div class="price">Free</div>
+          <div class="desc">The full agent, self-hosted, forever.</div>
+          <ul>
+            <li>Native Go TUI + Nexus daemon</li>
+            <li>All 8 model providers</li>
+            <li>Parallel worktree sessions</li>
+            <li>Permission-governed tools</li>
+            <li>Community support</li>
+          </ul>
+          <a class="btn btn-ghost" href="#cta">npm i -g babel-o</a>
+        </article>
+        <article class="path featured reveal" data-d="1">
+          <span class="ribbon">Most teams</span>
+          <div class="plan">Self-Hosted</div>
+          <div class="price">Bring your own</div>
+          <div class="desc">Run Nexus on your infra with shared configs and governance.</div>
+          <ul>
+            <li>Everything in Open Source</li>
+            <li>Shared permission policies</li>
+            <li>Persistent audit &amp; trace logs</li>
+            <li>Remote Go-runner execution</li>
+            <li>Priority issue triage</li>
+          </ul>
+          <a class="btn btn-grad" href="#cta">Read the deploy guide</a>
+        </article>
+        <article class="path reveal" data-d="2">
+          <div class="plan">Enterprise</div>
+          <div class="price">Talk to us</div>
+          <div class="desc">For teams that need governance, SSO and SLAs.</div>
+          <ul>
+            <li>Everything in Self-Hosted</li>
+            <li>SSO &amp; access controls</li>
+            <li>Audit retention &amp; compliance</li>
+            <li>Onboarding &amp; training</li>
+            <li>Dedicated support SLA</li>
+          </ul>
+          <a class="btn btn-ghost" href="#cta">Contact KezhongKe</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       FAQ ACCORDION
+       ==================================================================== -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <span class="eyebrow reveal" style="display:block;text-align:center;margin-inline:auto">Questions</span>
+      <h2 class="section-title reveal" data-d="1" style="text-align:center">Frequently asked</h2>
+      <div class="faq" id="faq">
+        <!-- hydrated from async data -->
+        <div class="faq-item skeleton" style="border-bottom:1px solid var(--line)">
+          <div class="faq-q"><span class="sk line" style="height:18px;width:60%"></span><span class="plus" style="visibility:hidden"></span></div>
+        </div>
+        <div class="faq-item skeleton" style="border-bottom:1px solid var(--line)">
+          <div class="faq-q"><span class="sk line" style="height:18px;width:48%"></span><span class="plus" style="visibility:hidden"></span></div>
+        </div>
+        <div class="faq-item skeleton" style="border-bottom:1px solid var(--line)">
+          <div class="faq-q"><span class="sk line" style="height:18px;width:54%"></span><span class="plus" style="visibility:hidden"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       CTA + big ticker
+       ==================================================================== -->
+  <div class="ticker big" aria-hidden="true">
+    <div class="marquee" id="ctaTicker" style="--dur:30s">
+      <div class="seg">
+        <span class="item">Let's build</span><span class="dot"></span>
+        <span class="item stroke">BabeL-O</span><span class="dot"></span>
+        <span class="item">Let's build</span><span class="dot"></span>
+        <span class="item stroke">BabeL-O</span><span class="dot"></span>
+      </div>
+      <div class="seg" aria-hidden="true">
+        <span class="item">Let's build</span><span class="dot"></span>
+        <span class="item stroke">BabeL-O</span><span class="dot"></span>
+        <span class="item">Let's build</span><span class="dot"></span>
+        <span class="item stroke">BabeL-O</span><span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <section class="section cta" id="cta">
+    <div class="wrap">
+      <div class="cta-inner">
+        <span class="eyebrow reveal" style="justify-content:center">Ready when you are</span>
+        <h2 class="reveal" data-d="1" data-scroll data-scroll-call="cta,enter">Ready to ship<br/>with <span class="grad">BabeL-O?</span></h2>
+        <p class="reveal" data-d="2">Install in one line. Bring your own API key. Your terminal becomes a durable workspace for real coding sessions.</p>
+        <div class="cta-cta reveal" data-d="3">
+          <div class="install" id="installChip2" title="Click to copy">
+            <span class="prompt">$</span>
+            <span class="cmd">npm install -g babel-o</span>
+            <span class="label">Copied!</span>
+            <button class="copy" aria-label="Copy install command">
+              <svg class="cp" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              <svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+          </div>
+          <a class="btn btn-ghost" href="#faq">Read the docs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- =========================================================================
+     FOOTER
+     ========================================================================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="#top">
+          <img class="mark" data-src="./assets/babel-o-logo.png" alt="" width="30" height="30" />
+          <span>BabeL<span style="color:var(--accent)">·</span>O</span>
+        </a>
+        <p>Your terminal workspace for durable coding sessions, native TUI workflows, and tool-aware agents.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#demo">Live demo</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#paths">Get started</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">GitHub</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Community</h5>
+        <ul>
+          <li><a href="#">Contributing</a></li>
+          <li><a href="#">Governance</a></li>
+          <li><a href="#">Discussions</a></li>
+          <li><a href="#">License (MIT)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> BabeL-O · MIT licensed</span>
+      <span class="kk">
+        Built by
+        <img data-src="./assets/kezhongke_logo_3d.png" alt="KezhongKe" width="22" height="22" />
+        <span>KezhongKe (壳中客)</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- =========================================================================
+     APP DATA — embedded JSON, fetched async via Blob URL (异步资源)
+     ========================================================================= -->
+<script type="application/json" id="app-data">
+{
+  "features": [
+    {"span":"span6","icon":"terminal","title":"Native Go TUI","tag":"client","hot":false,
+     "body":"`bbl go` launches a ~10MB Go binary (Bubble Tea) with no Node dependency on the client side. Drop it in a container and run."},
+    {"span":"span6","icon":"pulse","title":"Durable Nexus sessions","tag":"runtime","hot":true,
+     "body":"A background daemon holds state. Disconnect the client, reconnect over WebSocket later — your in-flight task is right where you left it."},
+    {"span":"span4","icon":"layers","title":"Parallel worktrees","tag":"workflow","hot":false,
+     "body":"Run multiple isolated sessions across git worktrees simultaneously, each with its own context and permissions."},
+    {"span":"span4","icon":"shield","title":"Permission-first tools","tag":"safety","hot":true,
+     "body":"A four-level risk model — read < write < execute < task. Approve once, per session, or reject with feedback. Every action is audited."},
+    {"span":"span4","icon":"eye","title":"Inspectable context","tag":"transparency","hot":false,
+     "body":"/context shows budget, compaction, recovery and working set — agent state is never a black box."},
+    {"span":"span12","icon":"brain","title":"Optional long-term memory","tag":"opt-in","hot":false,
+     "body":"MemoryOS / EverCore is a local, opt-in, permission-gated sidecar that indexes approved session knowledge as hints — never replacing workspace evidence. Plus session collaboration via /session, /inbox and SessionChannel, and system keychain storage for API keys (macOS/Windows/Linux)."}
+  ],
+  "faq": [
+    {"q":"Is BabeL-O really open source?","a":"Yes. BabeL-O is MIT-licensed. The native Go TUI and the Nexus daemon are both open. Run it, self-host it, and audit every line."},
+    {"q":"What does 'durable session' actually mean?","a":"Nexus owns execution state out-of-process and persists it to SQLite (WAL) plus a JSONL append log. If your terminal dies or you disconnect, the session keeps running — reconnect with `bbl attach <id>` and pick up exactly where you left off."},
+    {"q":"Which model providers are supported?","a":"Eight out of the box: Anthropic, OpenAI, DeepSeek, Moonshot, Ollama, Zhipu, MiniMax, and local models. Each provider is pluggable, with failover and recovery handled by the runtime."},
+    {"q":"Where are my API keys stored?","a":"In your operating system keychain — macOS Keychain, Windows Credential Manager, or the Linux secret store. Keys never leave your machine unless you explicitly configure a remote runner."},
+    {"q":"Does it work on Windows?","a":"The daemon (Node ≥ 22) and keychain storage are cross-platform. The production interactive surface is a native Go TUI tuned for macOS and Linux terminals; on Windows use WSL for the best experience."},
+    {"q":"How is this different from other CLI agents?","a":"Most are one-shot chats tied to a single process. BabeL-O separates execution (Nexus) from interaction (CLI), so sessions are durable, parallelizable across worktrees, permission-governed, fully audited, and inspectable via /context."}
+  ]
+}
+</script>
+
+<!-- Locomotive Scroll: self-contained bundle (Lenis built-in). Loaded synchronously
+     before the app IIFE so window.LocomotiveScroll is available at init time. -->
+<script src="./assets/locomotive-scroll.min.js"></script>
+
+<script>
+(() => {
+  "use strict";
+  const $  = (s, c=document) => c.querySelector(s);
+  const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
+  const prefersReduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  /* year */
+  $("#year").textContent = new Date().getFullYear();
+
+  /* =====================================================================
+     [动态样式] 1. THEME TOGGLE  — flips [data-theme] + persists choice
+     ===================================================================== */
+  const root = document.documentElement;
+  const stored = localStorage.getItem("bbl-theme");
+  const sysDark = matchMedia("(prefers-color-scheme: dark)").matches;
+  root.setAttribute("data-theme", stored || (sysDark ? "dark" : "light"));
+  $("#themeToggle").addEventListener("click", () => {
+    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("bbl-theme", next);
+  });
+
+  /* =====================================================================
+     [动态样式] 2. LOCOMOTIVE SCROLL - smooth scrolling + data-scroll parallax
+          Drives the --scroll progress var (0..1) via scrollCallback, toggles
+          nav state, and fires data-scroll-call hooks for coordinated states.
+          Falls back gracefully to native scroll if the lib fails to load.
+     ===================================================================== */
+  const nav = $("#nav");
+  let scrollInstance = null;
+
+  // data-scroll-call registry - maps "key,event" -> handler. Locomotive fires
+  // these when a [data-scroll-call] element crosses its trigger position,
+  // giving us real, scroll-driven animation state transitions.
+  const callHandlers = {
+    "arch,enter": (el) => {
+      el.closest(".arch")?.classList.add("call-fired");
+    },
+    "cta,enter": (el) => {
+      el.classList.add("call-fired");
+    }
+  };
+  // Locomotive dispatches a window 'scroll-call' event with { trigger, way, obj }
+  addEventListener("scroll-call", (e) => {
+    const obj = e.detail?.obj || {};
+    const key = [obj.trigger, obj.way].join(",");
+    // Also try the element's own attribute as the canonical key
+    const fn = callHandlers[key];
+    if (fn && e.target instanceof Element) fn(e.target);
+  });
+
+  function applyScrollProgress(progress){
+    root.style.setProperty("--scroll", (progress || 0).toFixed(4));
+  }
+  function setNavScrolled(scrolled){
+    nav.classList.toggle("is-scrolled", scrolled);
+  }
+
+  // Initialise Locomotive Scroll (Lenis-powered). The UMD bundle attaches
+  // window.LocomotiveScroll. If the script is missing/blocked, we degrade to
+  // native scrolling and still drive --scroll from a passive scroll listener.
+  if (window.LocomotiveScroll) {
+    try {
+      scrollInstance = new window.LocomotiveScroll({
+        autoStart: true,                 // REQUIRED: Loco only starts Lenis's RAF when this is true
+        lenisOptions: {
+          duration: 1.1,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
+          smoothWheel: true,
+          touchMultiplier: 1.5
+        },
+        triggerRootMargin: "0px 0px -10% 0px",
+        rafRootMargin: "0px 0px -10% 0px",
+        scrollCallback: ({ scroll, progress, direction }) => {
+          applyScrollProgress(progress);
+          setNavScrolled((scroll || 0) > 12);
+        }
+      });
+      // expose for debugging
+      window.__loco = scrollInstance;
+      // Defensive: autoStart should start Lenis's RAF, but some environments
+      // (e.g. headless) leave isRunning=false. Force-start on the next tick so
+      // smooth scrolling + parallax reliably engage.
+      requestAnimationFrame(() => {
+        try { scrollInstance.start(); } catch (_) {}
+        if (scrollInstance.lenisInstance && !scrollInstance.lenisInstance.isRunning) {
+          try { scrollInstance.lenisInstance.start(); } catch (_) {}
+        }
+      });
+    } catch (err) {
+      console.warn("[bbl] LocomotiveScroll init failed, falling back to native scroll:", err);
+      scrollInstance = null;
+    }
+  }
+
+  // Fallback / parity: native scroll listener still updates --scroll when smooth
+  // scrolling is unavailable. Cheap no-op when Lenis is driving progress.
+  let ticking = false;
+  function onScrollNative(){
+    if (scrollInstance) return;            // Lenis owns progress
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = max > 0 ? h.scrollTop / max : 0;
+      applyScrollProgress(p);
+      setNavScrolled(h.scrollTop > 12);
+      ticking = false;
+    });
+  }
+  addEventListener("scroll", onScrollNative, { passive:true });
+  onScrollNative();
+
+  /* =====================================================================
+     [真实动画状态] 3. HERO WORD REVEAL  — staggered via --i per word
+     ===================================================================== */
+  $$(".words .w").forEach((w, i) => w.style.setProperty("--i", i));
+  const heroTitle = $("#heroTitle");
+  if (heroTitle) {
+    if (prefersReduced) heroTitle.classList.add("revealed");
+    else {
+      const io = new IntersectionObserver((es) => {
+        es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("revealed"); io.unobserve(e.target);} });
+      }, { threshold: .25 });
+      io.observe(heroTitle);
+    }
+  }
+
+  /* =====================================================================
+     [真实动画状态] 4. GENERIC REVEAL ON SCROLL
+     ===================================================================== */
+  const revealIO = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); revealIO.unobserve(e.target);} });
+  }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
+  $$(".reveal:not(.in)").forEach(el => revealIO.observe(el));
+
+  /* =====================================================================
+     [真实动画状态] 5. ACTIVE NAV LINK via section observer
+     ===================================================================== */
+  const navLinks = $$(".nav-links a");
+  const linkMap = new Map();
+  navLinks.forEach(a => linkMap.set(a.getAttribute("href").slice(1), a));
+  const sectionIO = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove("active"));
+        const link = linkMap.get(e.target.id);
+        if (link) link.classList.add("active");
+      }
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  ["features","how","demo","architecture","paths","faq"].forEach(id => {
+    const el = document.getElementById(id); if (el) sectionIO.observe(el);
+  });
+
+  /* =====================================================================
+     [异步资源] 6. ASYNC WEBFONT  — injected <link>, swap on fonts.ready
+          Graceful: if it fails/offline, system stack stays in place.
+     ===================================================================== */
+  const fontLink = document.createElement("link");
+  fontLink.rel = "stylesheet";
+  fontLink.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap";
+  fontLink.media = "print";
+  fontLink.onload = () => {
+    fontLink.media = "all";
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => root.classList.add("fonts-ready"));
+    } else {
+      root.classList.add("fonts-ready");
+    }
+  };
+  fontLink.onerror = () => { /* keep system fonts — no-op */ };
+  // small delay so first paint uses the system stack (progressive enhancement)
+  setTimeout(() => document.head.appendChild(fontLink), 60);
+
+  /* =====================================================================
+     [异步资源] 7. LAZY IMAGES  — IntersectionObserver swaps data-src -> src
+     ===================================================================== */
+  const imgIO = new IntersectionObserver((es, obs) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        const img = e.target;
+        const src = img.getAttribute("data-src");
+        if (src) { img.src = src; img.removeAttribute("data-src"); }
+        obs.unobserve(img);
+      }
+    });
+  }, { rootMargin: "200px" });
+  $$("img[data-src]").forEach(img => imgIO.observe(img));
+
+  /* =====================================================================
+     [异步资源] 8. ASYNC DATA FETCH  — genuine fetch() of a Blob URL
+          The JSON above is turned into a blob: URL and fetched, hydrating
+          skeleton placeholders. Demonstrates real async resource loading.
+     ===================================================================== */
+  const ICONS = {
+    terminal:'<path d="M4 5h16v14H4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m8 9 3 3-3 3M13 15h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    pulse:'<path d="M3 12h4l2-6 4 14 2-8h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    layers:'<path d="M12 3 3 8l9 5 9-5-9-5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m3 13 9 5 9-5M3 18l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    shield:'<path d="M12 3 4 6v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>',
+    brain:'<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 6 17a3 3 0 0 0 3 3V4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 18 17a3 3 0 0 1-3 3V4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'
+  };
+  function featIcon(name){ return '<svg viewBox="0 0 24 24" width="24" height="24">'+(ICONS[name]||ICONS.terminal)+'</svg>'; }
+
+  // turn embedded JSON into a real fetchable resource
+  const dataEl = $("#app-data");
+  const jsonText = dataEl.textContent;
+  const blob = new Blob([jsonText], { type:"application/json" });
+  const blobURL = URL.createObjectURL(blob);
+
+  async function loadAppData(){
+    // genuine async network-style fetch of the blob resource
+    const res = await fetch(blobURL, { cache:"no-store" });
+    if (!res.ok) throw new Error("data fetch failed");
+    return res.json();
+  }
+
+  function renderFeatures(features){
+    const grid = $("#featuresGrid");
+    grid.innerHTML = "";
+    features.forEach((f, i) => {
+      const a = document.createElement("article");
+      a.className = `feat ${f.span} reveal`;
+      a.setAttribute("data-d", String((i % 4) + 1));
+      a.innerHTML = `
+        <div class="ic">${featIcon(f.icon)}</div>
+        ${f.tag ? `<span class="tag ${f.hot?'hot':''}">${f.tag}</span>`:''}
+        <h3>${f.title}</h3>
+        <p>${f.body}</p>`;
+      grid.appendChild(a);
+      revealIO.observe(a);
+    });
+  }
+
+  function renderFAQ(faq){
+    const wrap = $("#faq");
+    wrap.innerHTML = "";
+    faq.forEach((item, i) => {
+      const el = document.createElement("div");
+      el.className = "faq-item reveal";
+      el.setAttribute("data-d", String((i % 3) + 1));
+      el.innerHTML = `
+        <button class="faq-q" aria-expanded="false">
+          <span>${item.q}</span>
+          <span class="plus" aria-hidden="true"></span>
+        </button>
+        <div class="faq-a"><div><p>${item.a}</p></div></div>`;
+      wrap.appendChild(el);
+      revealIO.observe(el);
+    });
+    wireAccordion();
+  }
+
+  function wireAccordion(){
+    $$(".faq-item").forEach(item => {
+      const btn = $(".faq-q", item);
+      btn.addEventListener("click", () => {
+        const open = item.classList.toggle("open");
+        btn.setAttribute("aria-expanded", String(open));
+      });
+    });
+  }
+
+  // hydrate (with a small artificial delay so skeletons are visible)
+  loadAppData().then(d => {
+    setTimeout(() => {
+      renderFeatures(d.features);
+      renderFAQ(d.faq);
+      URL.revokeObjectURL(blobURL);
+    }, 700);
+  }).catch(err => {
+    console.error("[bbl] data hydration failed:", err);
+    // graceful fallback: clear skeletons with a message
+    $("#featuresGrid").innerHTML = '<p style="grid-column:1/-1;color:var(--text-3)">Features are loading… refresh if this persists.</p>';
+  });
+
+  /* =====================================================================
+     [真实动画状态] 9. COPY-TO-CLIPBOARD with copied state
+     ===================================================================== */
+  function wireCopy(chip){
+    const cmd = $(".cmd", chip);
+    const copy = $(".copy", chip);
+    if (!cmd || !copy) return;
+    chip.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(cmd.textContent.trim());
+      } catch { /* clipboard may be blocked on file:// — still show state */ }
+      chip.classList.add("copied");
+      setTimeout(() => chip.classList.remove("copied"), 1600);
+    });
+  }
+  wireCopy($("#installChip"));
+  wireCopy($("#installChip2"));
+
+  /* =====================================================================
+     [嵌套滚动] 10. HOW-IT-WORKS HORIZONTAL CAROUSEL — keyboard + wheel
+     ===================================================================== */
+  const howScroll = $("#howScroll");
+  howScroll.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") { howScroll.scrollBy({ left: 460, behavior:"smooth" }); e.preventDefault(); }
+    if (e.key === "ArrowLeft")  { howScroll.scrollBy({ left:-460, behavior:"smooth" }); e.preventDefault(); }
+  });
+  // translate vertical wheel into horizontal scroll when focused/hovered
+  let wheelLock = false;
+  howScroll.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && howScroll.matches(":hover")) {
+      const atStart = howScroll.scrollLeft <= 0 && e.deltaY < 0;
+      const atEnd   = howScroll.scrollLeft + howScroll.clientWidth >= howScroll.scrollWidth - 1 && e.deltaY > 0;
+      if (!atStart && !atEnd) {
+        howScroll.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }
+  }, { passive:false });
+
+  /* =====================================================================
+     [真实动画状态] 11. TERMINAL DEMO STATE MACHINE
+          States: idle -> typing -> executing -> streaming -> done -> idle
+          Driven by async/await with delays; the state badge + transcript
+          reflect each transition (real animation states, not a recording).
+     ===================================================================== */
+  const demoState  = $("#demoState");
+  const demoLbl    = $(".lbl", demoState);
+  const transcript = $("#demoTranscript");
+  const playBtn    = $("#demoPlay");
+  const resetBtn   = $("#demoReset");
+
+  const setState = (s) => {
+    demoState.setAttribute("data-state", s);
+    demoLbl.textContent = s;
+  };
+
+  function tline(html, cls=""){
+    const d = document.createElement("div");
+    d.className = "ln fade-in" + (cls ? " "+cls : "");
+    d.innerHTML = html;
+    transcript.appendChild(d);
+    // keep the latest line in view (nested-scroll auto-follow)
+    transcript.scrollTop = transcript.scrollHeight;
+    return d;
+  }
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // typewriter helper that mutates a node's text character by character
+  async function typeInto(node, text, speed=18){
+    for (const ch of text) {
+      node.textContent += ch;
+      transcript.scrollTop = transcript.scrollHeight;
+      await wait(speed + Math.random()*22);
+    }
+  }
+
+  let demoRunning = false;
+  let demoAbort = false;
+
+  async function runDemo(){
+    if (demoRunning) return;
+    demoRunning = true;
+    demoAbort = false;
+    playBtn.querySelector("span").textContent = "Running";
+    playBtn.disabled = true;
+
+    setState("idle");
+    await wait(450); if (demoAbort) return;
+
+    // --- typing ---
+    setState("typing");
+    const promptLine = tline('<span class="prompt">❯ </span><span class="typed"></span>');
+    const typed = $(".typed", promptLine);
+    await typeInto(typed, "bbl go --worktree feat/keychain", 16);
+    await wait(300); if (demoAbort) return;
+    tline('<span class="c-grn">●</span> nexus online · ws://127.0.0.1:7331 · session #a1f3');
+
+    // --- executing (plan + edits) ---
+    setState("executing");
+    await wait(350); if (demoAbort) return;
+    tline('<span class="c-acc">planning</span> 3-step plan › 2 file edits › 1 run');
+    const steps = [
+      ['edit','clients/go-tui/.../auth.go','(+42 −18)'],
+      ['edit','lib/keychain.ts','(+11 −3)']
+    ];
+    for (const [k,f,d] of steps){
+      if (demoAbort) return;
+      tline(`<span class="c-acc">${k}</span> ${f} <span class="c-dim">${d}</span>`);
+      await wait(520);
+    }
+
+    // --- streaming (tool output) ---
+    setState("streaming");
+    await wait(300); if (demoAbort) return;
+    const toolLine = tline('<span class="c-blu">tool</span> bash › go test ./... <span class="c-stream"></span>');
+    const stream = $(".c-stream", toolLine);
+    const streamChunks = ["ok  ", "babel-o/nexus", "  0.842s", "  ", "\n", "ok  ", "babel-o/tui", "  1.204s", "\n", "PASS"];
+    for (const c of streamChunks){
+      if (demoAbort) return;
+      stream.textContent += c;
+      transcript.scrollTop = transcript.scrollHeight;
+      await wait(110);
+    }
+    stream.innerHTML = stream.textContent + ' <span class="c-grn">✓ pass</span>';
+
+    // --- done ---
+    setState("done");
+    await wait(250);
+    tline('<span class="c-grn">done</span> 1m 42s · 0 issues · audit saved');
+    await wait(200); if (demoAbort) return;
+    const finalPrompt = tline('<span class="prompt">❯ </span><span class="term-cursor"></span>');
+
+    await wait(1600);
+    // loop unless aborted
+    if (!demoAbort) {
+      resetDemo();
+      await wait(500);
+      if (!demoAbort) runDemo();
+      else { demoRunning = false; playBtn.disabled=false; playBtn.querySelector("span").textContent="Run"; }
+    } else {
+      demoRunning = false; playBtn.disabled=false; playBtn.querySelector("span").textContent="Run";
+    }
+  }
+
+  function resetDemo(){
+    transcript.innerHTML = "";
+    setState("idle");
+  }
+
+  playBtn.addEventListener("click", () => { if (!demoRunning) runDemo(); });
+  resetBtn.addEventListener("click", () => {
+    demoAbort = true;
+    resetDemo();
+    demoRunning = false;
+    playBtn.disabled = false;
+    playBtn.querySelector("span").textContent = "Run";
+  });
+
+  // kick off the demo when it scrolls into view
+  const demoIO = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting && !demoRunning && !prefersReduced) { runDemo(); demoIO.disconnect(); } });
+  }, { threshold:.4 });
+  demoIO.observe($("#demo"));
+
+  /* seed an initial idle line */
+  tline('<span class="c-dim"># press Run, or scroll to auto-start the cycle</span>');
+  setState("idle");
+
+  /* =====================================================================
+     smooth-scroll for in-page anchors (offset for fixed nav).
+     Routed through Locomotive/Lenis scrollTo when available so the motion
+     uses the same easeOutExpo curve as the rest of the page; falls back to
+     native window.scrollTo otherwise.
+     ===================================================================== */
+  $$('a[href^="#"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      const id = a.getAttribute("href").slice(1);
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        const offset = -((() => parseInt(getComputedStyle(root).getPropertyValue("--nav-h")))() || 72);
+        if (scrollInstance && scrollInstance.scrollTo) {
+          scrollInstance.scrollTo(el, { offset, duration: 1.2 });
+        } else {
+          const y = el.getBoundingClientRect().top + window.scrollY + offset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }
+    });
+  });
+  function var_navH(){ return parseInt(getComputedStyle(root).getPropertyValue("--nav-h")) || 72; }
+
+})();
+</script>
+</body>
+</html>

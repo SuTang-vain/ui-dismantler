@@ -54,6 +54,20 @@ test("runtime selector gate catches ID/class translation mismatch hidden from DO
   assert.equal(selectorGate?.passed, false);
 });
 
+test("selector coverage audibly exempts source classes that also have no visual selector", async () => {
+  const item = await fixture(
+    "source-unstyled-hook",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:200px;height:120px;background:#fff}</style></head><body><div class="app"><span class="lbl">Ready</span></div></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:200px;height:120px;background:var(--sg-paper)}@media(max-width:500px){.sg-app{width:200px}}@media(max-width:320px){.sg-app{width:200px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><span class="sg-lbl">Ready</span></div>'}global.Fixture={mount:mount};})(window);`,
+  );
+  const result = await evaluateBrowserQuality(item.original, item.lib);
+  assert.equal(result.selectorCoverage?.coverageRate, 1);
+  const exemption = result.selectorCoverage?.exemptClasses.find((issue) => issue.selector === ".sg-lbl");
+  assert.equal(exemption?.reason, "source-unstyled-hook");
+  assert.deepEqual(exemption?.evidence, { sourceClass: "lbl", sourceClassUses: 1, sourceSelectorAbsent: true, generatedSelectorAbsent: true });
+});
+
 test("computed style and pixel gates catch execution-order position errors with identical DOM", async () => {
   const item = await fixture(
     "order",
@@ -121,18 +135,44 @@ test("critical interaction matrix compares computed style after opening a panel"
   assert.ok(result.matrix.worstPixelDiff > 0.02 || result.matrix.worstComputedStyle < 0.98);
 });
 
+test("scenario screenshots normalize reference and generated scroll positions around an explicit anchor", async () => {
+  const item = await fixture(
+    "scenario-scroll-anchor",
+    `<!doctype html><html><head><style>body{margin:0;background:repeating-linear-gradient(#fff 0 40px,#eef2ff 40px 80px)}.spacer{height:1000px}.panel{width:280px;height:180px;background:#e11d48}.panel.done{background:#111827}.tail{height:1000px}</style></head><body><div class="spacer"></div><section class="panel" id="panel"><button id="reset">Reset</button></section><div class="tail"></div><script>document.getElementById('reset').onclick=()=>{document.getElementById('panel').classList.add('done');window.scrollBy(0,160)}</script></body></html>`,
+    `${baseVars}body{margin:0;background:repeating-linear-gradient(var(--sg-paper) 0 40px,#eef2ff 40px 80px)}.sg-spacer{height:1000px}.sg-panel{width:280px;height:180px;background:var(--sg-primary)}.sg-panel.sg-done{background:var(--sg-ink)}.sg-tail{height:1000px}@media(max-width:500px){.sg-panel{width:280px}}@media(max-width:320px){.sg-panel{width:280px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-spacer"></div><section class="sg-panel" id="sg-panel"><button id="sg-reset">Reset</button></section><div class="sg-tail"></div>';root.querySelector('#sg-reset').onclick=function(){root.querySelector('#sg-panel').classList.add('sg-done');window.scrollBy(0,-160)}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "reset-deep-panel",
+    critical: true,
+    screenshotAnchor: { reference: "#panel", library: "#sg-panel" },
+    steps: [{ action: "click" as const, target: { reference: "#reset", library: "#sg-reset" } }],
+    assertions: [{ target: { reference: "#panel", library: "#sg-panel" }, classIncludes: [{ reference: "done", library: "sg-done" }] }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+  });
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify(result.scenarios[0].evaluation.matrix, null, 2));
+  assert.ok(result.telemetry.workload.scrollAnchorNormalizations >= 2);
+  assert.ok((result.scenarios[0].evaluation.primary.pixels?.diffRate ?? 1) <= 0.02);
+});
+
 test("shared browser suite launches once and preserves isolated viewport results", async () => {
   const item = await fixture(
     "shared-browser-suite",
-    `<!doctype html><html><head><style>body{margin:0}.app{width:320px;height:240px;background:#fff}.panel{display:none;width:120px;height:100px;background:#e11d48}.app.open .panel{display:block}@media(max-width:500px){.panel{width:80px}}</style></head><body><div class="app"><button id="open">Open</button><div class="panel">Panel</div></div><script>document.getElementById('open').onclick=()=>document.querySelector('.app').classList.add('open')</script></body></html>`,
-    `${baseVars}body{margin:0}.sg-app{width:320px;height:240px;background:var(--sg-paper)}.sg-panel{display:none;width:120px;height:100px;background:var(--sg-primary)}.sg-app.sg-open .sg-panel{display:block}@media(max-width:500px){.sg-panel{width:80px}}@media(max-width:320px){.sg-panel{width:80px}}`,
-    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-open">Open</button><div class="sg-panel">Panel</div></div>';root.querySelector('#sg-open').onclick=function(){root.querySelector('.sg-app').classList.add('sg-open')}}global.Fixture={mount:mount};})(window);`,
+    `<!doctype html><html><head><style>body{margin:0}.app{width:320px;height:240px;background:#fff;transition:opacity 2s}.app.stability-init{opacity:1}.panel{display:none;width:120px;height:100px;background:#e11d48}.app.open .panel{display:block}@media(max-width:500px){.panel{width:80px}}</style></head><body><div class="app"><button id="open">Open</button><div class="panel">Panel</div></div><script>requestAnimationFrame(()=>{const app=document.querySelector('.app');if(getComputedStyle(app).transitionDuration==='0s')app.classList.add('stability-init')});document.getElementById('open').onclick=()=>document.querySelector('.app').classList.add('open')</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:320px;height:240px;background:var(--sg-paper);transition:opacity 2s}.sg-app.sg-stability-init{opacity:1}.sg-panel{display:none;width:120px;height:100px;background:var(--sg-primary)}.sg-app.sg-open .sg-panel{display:block}@media(max-width:500px){.sg-panel{width:80px}}@media(max-width:320px){.sg-panel{width:80px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-open">Open</button><div class="sg-panel">Panel</div></div>';var app=root.querySelector('.sg-app');requestAnimationFrame(function(){if(getComputedStyle(app).transitionDuration==='0s')app.classList.add('sg-stability-init')});root.querySelector('#sg-open').onclick=function(){app.classList.add('sg-open')}}global.Fixture={mount:mount};})(window);`,
   );
   const scenario = {
     id: "open-panel-shared",
     critical: true,
     steps: [{ action: "click" as const, target: { reference: "#open", library: "#sg-open" } }],
-    assertions: [{ target: { reference: ".panel", library: ".sg-panel" }, visible: true }],
+    assertions: [
+      { target: { reference: ".panel", library: ".sg-panel" }, visible: true },
+      { target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "stability-init", library: "sg-stability-init" }] },
+    ],
   };
   const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
     concurrency: 2,
@@ -141,18 +181,22 @@ test("shared browser suite launches once and preserves isolated viewport results
       { id: "mobile", label: "Mobile", width: 390, height: 844 },
     ],
   });
-  assert.equal(result.initial.matrix.passed, true);
-  assert.equal(result.scenarios[0].evaluation.matrix.passed, true);
+  assert.equal(result.initial.matrix.passed, true, JSON.stringify(result.initial.matrix, null, 2));
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify(result.scenarios[0].evaluation.matrix, null, 2));
   assert.equal(result.telemetry.workload.browserLaunches, 1);
   assert.equal(result.telemetry.workload.contextsCreated, 4);
   assert.equal(result.telemetry.workload.pagesCreated, 8);
+  assert.equal(result.telemetry.workload.pagePairsCreatedInParallel, 4);
   assert.equal(result.telemetry.workload.navigations, 8);
   assert.equal(result.telemetry.workload.viewportRuns, 4);
   assert.equal(result.telemetry.workload.scenarioMatrices, 1);
   assert.equal(result.telemetry.concurrency, 2);
   assert.ok(result.telemetry.timing.launchMs > 0);
+  assert.ok(result.telemetry.timing.contextInitMs > 0);
   assert.ok(result.telemetry.timing.navigationMs > 0);
   assert.ok(result.telemetry.timing.totalMs > 0);
+  assert.equal(result.telemetry.workload.examplePathCacheMisses, 1);
+  assert.equal(result.telemetry.workload.examplePathCacheHits, 3);
 
 });
 
@@ -250,11 +294,57 @@ test("adaptive stability waits for DOM, layout, network, and final assertions wi
     assert.equal(result.telemetry.timing.fixedWaitMs, 0);
     assert.ok(result.telemetry.timing.domStabilityMs > 0);
     assert.ok(result.telemetry.timing.networkIdleMs > 0);
+    assert.ok(result.telemetry.timing.signatureScanMs > 0);
+    assert.ok(result.telemetry.workload.signatureFullScans >= 4);
+    assert.ok(result.telemetry.workload.signatureFullScans < result.telemetry.workload.stabilityChecks);
+    assert.ok(result.telemetry.workload.signatureIncrementalScans >= 2);
+    assert.ok(result.telemetry.workload.signatureNodesScanned > 0);
+    assert.ok(result.telemetry.workload.signatureMutationInvalidations >= 2);
     assert.ok(result.telemetry.workload.resourceCacheHits >= 1);
     assert.equal(imageRequests, 1);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
+});
+
+test("adaptive stability drains tracked short timers up to one second", async () => {
+  const item = await fixture(
+    "adaptive-long-short-timer",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:180px;height:120px;background:#fff}.app.ready{opacity:1}</style></head><body><div class="app"></div><script>setTimeout(()=>document.querySelector('.app').classList.add('ready'),700)</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper)}.sg-app.sg-ready{opacity:1}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"></div>';setTimeout(function(){root.querySelector('.sg-app').classList.add('sg-ready')},700)}global.Fixture={mount:mount};})(window);`,
+  );
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+  });
+  assert.equal(result.initial.matrix.passed, true, JSON.stringify({ matrix: result.initial.matrix, telemetry: result.telemetry }, null, 2));
+  assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+  assert.equal(result.telemetry.workload.timerDrainTimeouts, 0);
+  assert.ok(result.telemetry.workload.timerAwareWaits >= 2);
+});
+
+test("adaptive signature tracker observes layout resize without DOM mutation", async () => {
+  const item = await fixture(
+    "adaptive-signature-resize",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:180px;background:#fff}.box{width:40px;height:40px;background:#111827}.status{width:100px;height:40px;background:#e11d48;color:#fff}</style></head><body><div class="app"><button id="load">Resize</button><div class="box"></div><div class="status">idle</div></div><script>document.getElementById('load').onclick=()=>{const animation=document.querySelector('.box').animate([{width:'40px'},{width:'120px'}],{duration:120,fill:'forwards'});animation.finished.then(()=>setTimeout(()=>document.querySelector('.status').textContent='done',30))}</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:240px;height:180px;background:var(--sg-paper)}.sg-box{width:40px;height:40px;background:var(--sg-ink)}.sg-status{width:100px;height:40px;background:var(--sg-primary);color:#fff}@media(max-width:500px){.sg-status{width:100px}}@media(max-width:320px){.sg-status{width:100px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-load">Resize</button><div class="sg-box"></div><div class="sg-status">idle</div></div>';root.querySelector('#sg-load').onclick=function(){var animation=root.querySelector('.sg-box').animate([{width:'40px'},{width:'120px'}],{duration:120,fill:'forwards'});animation.finished.then(function(){setTimeout(function(){root.querySelector('.sg-status').textContent='done'},30)})}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "observer-resize",
+    critical: true,
+    steps: [{ action: "click" as const, target: { reference: "#load", library: "#sg-load" } }],
+    assertions: [{ target: { reference: ".status", library: ".sg-status" }, text: "done" }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+  });
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify(result.scenarios[0].evaluation.matrix, null, 2));
+  assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+  assert.ok(result.telemetry.workload.signatureResizeInvalidations >= 2, JSON.stringify(result.telemetry.workload));
+  assert.ok(result.telemetry.workload.signatureIncrementalScans >= 2);
 });
 
 test("adaptive stability preserves temporal waits when the following target was already actionable", async () => {
@@ -343,6 +433,98 @@ test("adaptive stability drains dynamic stylesheets and CSS background images", 
   }
 });
 
+test("adaptive stability incrementally rescans delayed resource mutations", async () => {
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=", "base64");
+  let imageRequests = 0;
+  const server = createServer((request, response) => {
+    if (request.url === "/incremental-background.png") {
+      imageRequests += 1;
+      setTimeout(() => {
+        response.writeHead(200, { "content-type": "image/png", "cache-control": "no-store" });
+        response.end(png);
+      }, 50);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const imageUrl = `http://127.0.0.1:${address.port}/incremental-background.png`;
+    const item = await fixture(
+      "adaptive-incremental-resource-index",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:180px;background:#fff}.app.ready{background-image:url('${imageUrl}');background-size:24px 24px}.status{width:100px;height:40px;background:#e11d48;color:#fff}</style></head><body><div class="app"><button id="load">Load</button><div class="status">Ready</div></div><script>document.getElementById('load').onclick=()=>setTimeout(()=>document.querySelector('.app').classList.add('ready'),40)</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:240px;height:180px;background:var(--sg-paper)}.sg-app.sg-ready{background-image:url('${imageUrl}');background-size:24px 24px}.sg-status{width:100px;height:40px;background:var(--sg-primary);color:#fff}@media(max-width:500px){.sg-status{width:100px}}@media(max-width:320px){.sg-status{width:100px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-load">Load</button><div class="sg-status">Ready</div></div>';root.querySelector('#sg-load').onclick=function(){setTimeout(function(){root.querySelector('.sg-app').classList.add('sg-ready')},40)}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "load-incremental-background",
+      critical: true,
+      steps: [{ action: "click" as const, target: { reference: "#load", library: "#sg-load" } }],
+      assertions: [{ target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "ready", library: "sg-ready" }] }],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify(result.scenarios[0].evaluation.matrix, null, 2));
+    assert.equal(result.telemetry.workload.resourceDrainTimeouts, 0);
+    assert.ok(result.telemetry.workload.resourceFullScans >= 4);
+    assert.ok(result.telemetry.workload.resourceFullScans < result.telemetry.workload.stabilityChecks);
+    assert.ok(result.telemetry.workload.resourceIncrementalScans >= 2);
+    assert.ok(result.telemetry.workload.resourceElementsScanned > 0);
+    assert.ok(result.telemetry.workload.resourcePseudoElementsScanned >= result.telemetry.workload.resourceElementsScanned * 2);
+    assert.ok(result.telemetry.workload.resourceUrlsDiscovered >= 2);
+    assert.ok(result.telemetry.timing.resourceScanMs > 0);
+    assert.equal(imageRequests, 2);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("adaptive stability treats swap fonts as non-blocking fallback resources", async () => {
+  const server = createServer((request, response) => {
+    if (request.url === "/swap-font.ttf") {
+      setTimeout(() => {
+        response.writeHead(404, { "content-type": "font/ttf", "cache-control": "no-store", "access-control-allow-origin": "*" });
+        response.end("missing");
+      }, 1400);
+      return;
+    }
+    response.writeHead(404); response.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    const fontUrl = `http://127.0.0.1:${address.port}/swap-font.ttf`;
+    const startFont = `var face=new FontFace('SwapGate','url(${fontUrl})',{display:'swap'});document.fonts.add(face);face.load().catch(function(){});`;
+    const item = await fixture(
+      "adaptive-swap-font",
+      `<!doctype html><html><head><style>body{margin:0}.app{width:180px;height:120px;background:#fff;font-family:SwapGate,sans-serif}</style></head><body><div class="app"><button id="font">Font</button></div><script>document.getElementById('font').onclick=()=>{document.querySelector('.app').classList.add('ready');${startFont}}</script></body></html>`,
+      `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper);font-family:SwapGate,sans-serif}.sg-app.sg-ready{background:var(--sg-paper)}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+      `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-font">Font</button></div>';root.querySelector('#sg-font').onclick=function(){root.querySelector('.sg-app').classList.add('sg-ready');${startFont}}}global.Fixture={mount:mount};})(window);`,
+    );
+    const scenario = {
+      id: "load-swap-font",
+      critical: true,
+      steps: [{ action: "click" as const, target: { reference: "#font", library: "#sg-font" } }],
+      assertions: [{ target: { reference: ".app", library: ".sg-app" }, classIncludes: [{ reference: "ready", library: "sg-ready" }] }],
+    };
+    const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+      stabilityMode: "adaptive",
+      viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+    });
+    const viewport = result.scenarios[0].evaluation.matrix.viewports[0];
+    assert.equal(viewport.passed, true, JSON.stringify(viewport, null, 2));
+    assert.equal(viewport.stabilityFailures, 0);
+    assert.equal(viewport.resourceFailures.some((failure) => failure.type === "font" && failure.required), false);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
 test("adaptive stability observes delayed web-font loading", async (context) => {
   const fontPath = [
     "/System/Library/Fonts/Symbol.ttf",
@@ -412,7 +594,7 @@ test("adaptive stability timeouts fail the viewport even when pixels would other
       setTimeout(() => {
         response.writeHead(200, { "content-type": "text/css", "cache-control": "no-store" });
         response.end(`.app.slow-ready,.sg-app.sg-slow-ready{background:#fff}`);
-      }, 700);
+      }, 1400);
       return;
     }
     response.writeHead(404); response.end();
@@ -447,7 +629,7 @@ test("adaptive stability timeouts fail the viewport even when pixels would other
     assert.ok(viewport.resourceFailures.every((failure) => failure.owner.includes("link")));
     assert.ok(viewport.resourceFailures.every((failure) => failure.required && failure.external));
     assert.ok(viewport.resourceFailures.every((failure) => failure.state === "pending" || failure.state === "timeout"));
-    assert.ok(viewport.resourceFailures.every((failure) => (failure.elapsedMs ?? 0) >= 450));
+    assert.ok(viewport.resourceFailures.every((failure) => (failure.elapsedMs ?? 0) >= 1100));
     assert.deepEqual(new Set(viewport.resourceFailures.map((failure) => failure.role)), new Set(["reference", "library"]));
     assert.equal(viewport.passed, false);
     assert.equal(result.scenarios[0].evaluation.matrix.passed, false);

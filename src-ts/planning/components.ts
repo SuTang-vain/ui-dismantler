@@ -178,7 +178,7 @@ function acceptanceStates(model: InteractionModel, interactions: Interaction[]):
 function estimatedComplexity(view: AnalyzedView, interactions: Interaction[], manifest: Manifest, localDataCount = 0): ComponentPlan["complexity"] {
   const localDetails = Object.fromEntries(Object.entries(view.details).filter(([key]) => !["interactionSelectors", "repeatedSelectors", "geometrySignals"].includes(key)));
   const detailsLength = JSON.stringify(localDetails).length;
-  const interactionKinds = new Set(interactions.map((item) => {
+  const interactionKinds = new Set(interactions.filter((item) => !item.lifecycle).map((item) => {
     const gestureEvent = item.event.startsWith("pointer") || item.event.startsWith("touch") || ["mousedown", "mouseup", "mousemove"].includes(item.event);
     if (view.type === "gesture-surface" && gestureEvent) return `gesture-lifecycle|${item.trigger}`;
     if (view.type === "scroll-surface" && ["scroll", "scrollend"].includes(item.event)) return `scroll-lifecycle|${item.trigger}`;
@@ -265,7 +265,9 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
     const stateTransitions = interactions.flatMap((item) => item.stateTransitions ?? []).filter((item, transitionIndex, items) => items.findIndex((candidate) => JSON.stringify(candidate) === JSON.stringify(item)) === transitionIndex);
     const dataDependencies = [...new Set(interactions.flatMap((item) => item.dataDependencies ?? []))];
     const localContracts = manifest.data.contracts.filter((contract) => dataDependencies.includes(contract.name));
-    const complexity = estimatedComplexity(view, interactions, manifest, localContracts.length || dataDependencies.length);
+    const complexityDependencies = [...new Set(interactions.filter((item) => !item.lifecycle).flatMap((item) => item.dataDependencies ?? []))];
+    const complexityContracts = manifest.data.contracts.filter((contract) => complexityDependencies.includes(contract.name));
+    const complexity = estimatedComplexity(view, interactions, manifest, complexityContracts.length || complexityDependencies.length);
     complexity.budget = lineBudget;
     complexity.score = Number((complexity.estimatedLines / lineBudget).toFixed(2));
     complexity.overBudget = complexity.estimatedLines > lineBudget;
@@ -283,7 +285,8 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
   });
   const issues = validateComponentPlans(components);
   const ownedInteractions = new Set(components.flatMap((component) => component.interactionFingerprints));
-  const unowned = manifest.interactions.filter((interaction) => interaction.source !== "event-listener" && !ownedInteractions.has(interaction.fingerprint));
+  const unowned = manifest.interactions.filter((interaction) => interaction.source !== "event-listener" && !interaction.lifecycle && !ownedInteractions.has(interaction.fingerprint));
+  for (const interaction of manifest.interactions) if (interaction.lifecycle && !ownedInteractions.has(interaction.fingerprint)) ownedInteractions.add(interaction.fingerprint);
   if (unowned.length) issues.push({ severity: "error", code: "unowned-interactions", detail: `${unowned.length} 个 DOM 交互未分配到组件边界：${unowned.slice(0, 4).map((item) => item.fingerprint).join("；")}` });
   return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, generatedAt: new Date().toISOString(), lineBudget, components, issues, summary: { components: components.length, overBudget: components.filter((item) => item.complexity.overBudget).length, errors: issues.filter((item) => item.severity === "error").length, warnings: issues.filter((item) => item.severity === "warning").length, interactions: manifest.interactions.length, ownedInteractions: ownedInteractions.size, unownedInteractions: unowned.length, ready: !issues.some((item) => item.severity === "error") } };
 }

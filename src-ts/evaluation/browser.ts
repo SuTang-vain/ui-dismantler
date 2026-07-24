@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
@@ -34,6 +34,7 @@ const STYLE_PROPERTIES = [
   "border-bottom-width", "border-left-width", "border-top-color", "border-radius",
   "box-shadow", "font-size", "font-weight", "line-height", "text-align",
 ] as const;
+const ADAPTIVE_STABILITY_TIMEOUT_MS = 1200;
 
 interface BrowserSnapshot {
   ok: boolean;
@@ -41,6 +42,7 @@ interface BrowserSnapshot {
   stabilityFailures: string[];
   resourceFailures: VisualResourceFailure[];
   selectorCoverage: SelectorCoverageReport;
+  classEvidence: Array<{ className: string; count: number; hasSelector: boolean }>;
   styles: ComputedStyleSnapshot[];
   screenshot: Buffer;
 }
@@ -65,6 +67,17 @@ function trackRuntimeErrors(page: Page): RuntimeErrorTracker {
 async function initializeQualityContext(context: BrowserContext): Promise<void> {
   await context.addInitScript(() => {
     try { localStorage.clear(); sessionStorage.clear(); } catch { /* unavailable for this origin */ }
+    const installStabilityStyle = (): void => {
+      if (document.getElementById("ui-dismantler-stability-style")) return;
+      const parent = document.head ?? document.documentElement;
+      if (!parent) return;
+      const style = document.createElement("style");
+      style.id = "ui-dismantler-stability-style";
+      style.textContent = "*,*::before,*::after{animation-delay:0s!important;animation-duration:0s!important;transition:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}::-webkit-scrollbar{display:none!important}";
+      parent.appendChild(style);
+    };
+    installStabilityStyle();
+    if (!document.getElementById("ui-dismantler-stability-style")) document.addEventListener("DOMContentLoaded", installStabilityStyle, { once: true });
     let state = 0x6d2b79f5;
     Math.random = () => {
       state = Math.imul(state ^ state >>> 15, state | 1);
@@ -172,13 +185,17 @@ export interface BrowserExecutionTelemetry {
   timing: {
     launchMs: number;
     contextCreateMs: number;
+    contextInitMs: number;
     pageCreateMs: number;
     navigationMs: number;
     settleMs: number;
     domStabilityMs: number;
     networkIdleMs: number;
     fixedWaitMs: number;
+    resourceScanMs: number;
+    signatureScanMs: number;
     scenarioExecutionMs: number;
+    scrollAnchorMs: number;
     snapshotEvaluationMs: number;
     screenshotMs: number;
     pixelDiffMs: number;
@@ -190,6 +207,7 @@ export interface BrowserExecutionTelemetry {
     browserLaunches: number;
     contextsCreated: number;
     pagesCreated: number;
+    pagePairsCreatedInParallel: number;
     navigations: number;
     viewportRuns: number;
     scenarioMatrices: number;
@@ -206,8 +224,22 @@ export interface BrowserExecutionTelemetry {
     stylesheetAwareWaits: number;
     backgroundImageAwareWaits: number;
     fontAwareWaits: number;
+    resourceFullScans: number;
+    resourceIncrementalScans: number;
+    resourceElementsScanned: number;
+    resourcePseudoElementsScanned: number;
+    resourceUrlsDiscovered: number;
+    signatureFullScans: number;
+    signatureIncrementalScans: number;
+    signatureNodesScanned: number;
+    signatureMutationInvalidations: number;
+    signatureResizeInvalidations: number;
+    signatureScrollInvalidations: number;
+    examplePathCacheHits: number;
+    examplePathCacheMisses: number;
     explicitWaits: number;
     adaptiveExplicitWaits: number;
+    scrollAnchorNormalizations: number;
     screenshots: number;
     remoteRequests: number;
     resourceCacheHits: number;
@@ -229,8 +261,8 @@ function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurr
     concurrency,
     resourceCache,
     stabilityMode,
-    timing: { launchMs: 0, contextCreateMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, scenarioExecutionMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
-    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
+    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
+    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
   };
 }
 
@@ -268,11 +300,28 @@ async function launchBrowser(executablePath?: string): Promise<Browser> {
   return chromium.launch({ executablePath: candidate, headless: true, args: ["--allow-file-access-from-files", "--disable-web-security"] });
 }
 
-async function firstExample(libDir: string): Promise<string> {
+const examplePathCache = new Map<string, Promise<string>>();
+
+async function firstExample(libDir: string, telemetry?: BrowserExecutionTelemetry): Promise<string> {
   const dir = resolve(libDir, "examples");
-  const names = (await readdir(dir)).filter((name) => name.endsWith(".html")).sort();
-  if (!names.length) throw new Error(`${dir} 下没有 HTML example`);
-  return resolve(dir, names[0]);
+  const cached = examplePathCache.get(dir);
+  if (cached) {
+    if (telemetry) telemetry.workload.examplePathCacheHits += 1;
+    return cached;
+  }
+  if (telemetry) telemetry.workload.examplePathCacheMisses += 1;
+  const pending = readdir(dir).then((names) => {
+    const examples = names.filter((name) => name.endsWith(".html")).sort();
+    if (!examples.length) throw new Error(`${dir} 下没有 HTML example`);
+    return resolve(dir, examples[0]);
+  });
+  examplePathCache.set(dir, pending);
+  try {
+    return await pending;
+  } catch (error) {
+    examplePathCache.delete(dir);
+    throw error;
+  }
 }
 
 interface NetworkResourceRecord {
@@ -316,6 +365,7 @@ interface VisualResourceReference {
   owner: string;
   pseudo?: "::before" | "::after";
   state: "loaded" | "pending" | "decode-error" | "font-loading";
+  required?: boolean;
 }
 
 interface DomStabilityProbeResult {
@@ -329,6 +379,23 @@ interface DomStabilityProbeResult {
   waitedForBackgroundImages: boolean;
   waitedForFonts: boolean;
   resourceReferences: VisualResourceReference[];
+  resourceScan: {
+    fullScans: number;
+    incrementalScans: number;
+    elementsScanned: number;
+    pseudoElementsScanned: number;
+    urlsDiscovered: number;
+    elapsedMs: number;
+  };
+  signatureScan: {
+    fullScans: number;
+    incrementalScans: number;
+    nodesScanned: number;
+    mutationInvalidations: number;
+    resizeInvalidations: number;
+    scrollInvalidations: number;
+    elapsedMs: number;
+  };
 }
 
 function trackNetworkActivity(page: Page): NetworkActivityTracker {
@@ -402,11 +469,11 @@ async function waitForDomLayoutAndAssertions(
   page: Page,
   rootSelector: string,
   assertions: ResolvedScenarioAssertion[],
-  timeoutMs = 500,
+  timeoutMs = ADAPTIVE_STABILITY_TIMEOUT_MS,
 ): Promise<DomStabilityProbeResult> {
   return page.evaluate(async ({ selector, expected, timeout }) => {
     const root = document.querySelector(selector);
-    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false, resourceReferences: [] };
+    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false, resourceReferences: [], resourceScan: { fullScans: 0, incrementalScans: 0, elementsScanned: 0, pseudoElementsScanned: 0, urlsDiscovered: 0, elapsedMs: 0 }, signatureScan: { fullScans: 0, incrementalScans: 0, nodesScanned: 0, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, elapsedMs: 0 } };
     const visible = (element: Element): boolean => {
       let current: Element | null = element;
       while (current) {
@@ -459,84 +526,375 @@ async function waitForDomLayoutAndAssertions(
       if (!parent) return element.tagName.toLowerCase();
       return `${resourceOwner(parent)} > ${element.tagName.toLowerCase()}:nth-child(${[...parent.children].indexOf(element) + 1})`;
     };
-    const visualResourceState = (): { settled: boolean; stylesheets: boolean; backgroundImages: boolean; fonts: boolean; references: VisualResourceReference[] } => {
+    type IndexedVisualResource = Omit<VisualResourceReference, "state"> & {
+      element: Element;
+      source: "image-element" | "performance";
+    };
+    type ResourceScanMetrics = DomStabilityProbeResult["resourceScan"];
+    type VisualResourceState = { settled: boolean; stylesheets: boolean; backgroundImages: boolean; fonts: boolean; references: VisualResourceReference[] };
+    interface VisualResourceTracker {
+      root: Element;
+      metrics: ResourceScanMetrics;
+      state: () => VisualResourceState;
+      disconnect: () => void;
+    }
+    const trackerHost = globalThis as typeof globalThis & { __uiDismantlerVisualResourceTracker?: VisualResourceTracker };
+    const existingResourceTracker = trackerHost.__uiDismantlerVisualResourceTracker;
+    if (existingResourceTracker && existingResourceTracker.root !== root) existingResourceTracker.disconnect();
+    const resourceTracker = existingResourceTracker?.root === root
+      ? existingResourceTracker
+      : (() => {
+    const resourceIndex = new Map<Element, IndexedVisualResource[]>();
+    const completedResources = new Set(performance.getEntriesByType("resource").map((entry) => {
+      try { return new URL(entry.name, location.href).href; } catch { return entry.name; }
+    }));
+    const dirtyResourceRoots = new Set<Element>();
+    const resourceScan = { fullScans: 0, incrementalScans: 0, elementsScanned: 0, pseudoElementsScanned: 0, urlsDiscovered: 0, elapsedMs: 0 };
+    let fullResourceScanPending = true;
+    let stylesheetSignature = "";
+    const resourceKey = (reference: Pick<IndexedVisualResource, "type" | "url" | "owner" | "pseudo">): string => `${reference.type}|${reference.url}|${reference.owner}|${reference.pseudo ?? ""}`;
+    const collectIndexedUrls = (references: IndexedVisualResource[], value: string, type: "background-image" | "mask-image", element: Element, pseudo?: "::before" | "::after"): void => {
+      for (const match of value.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
+        try {
+          const url = new URL(match[1], location.href);
+          if (!["http:", "https:"].includes(url.protocol)) continue;
+          references.push({ url: url.href, type, owner: resourceOwner(element), pseudo, element, source: "performance" });
+        } catch { /* invalid CSS URL */ }
+      }
+    };
+    const scanElementResources = (element: Element): void => {
+      if (element !== root && !root.contains(element)) {
+        resourceIndex.delete(element);
+        return;
+      }
+      resourceScan.elementsScanned += 1;
+      const references: IndexedVisualResource[] = [];
+      if (element instanceof HTMLImageElement) {
+        const url = element.currentSrc || element.src;
+        if (url) references.push({ url, type: "image", owner: resourceOwner(element), element, source: "image-element" });
+      }
+      if (element.matches("svg image, svg use")) {
+        const rawUrl = element.getAttribute("href") || element.getAttribute("xlink:href");
+        if (rawUrl) {
+          try {
+            const url = new URL(rawUrl, location.href);
+            if (["http:", "https:"].includes(url.protocol)) references.push({ url: url.href, type: "image", owner: resourceOwner(element), element, source: "performance" });
+          } catch { /* invalid SVG URL */ }
+        }
+      }
+      if (element instanceof HTMLVideoElement && element.poster) {
+        try {
+          const url = new URL(element.poster, location.href);
+          if (["http:", "https:"].includes(url.protocol)) references.push({ url: url.href, type: "image", owner: resourceOwner(element), element, source: "performance" });
+        } catch { /* invalid poster URL */ }
+      }
+      const computed = getComputedStyle(element);
+      collectIndexedUrls(references, computed.backgroundImage, "background-image", element);
+      collectIndexedUrls(references, computed.maskImage, "mask-image", element);
+      for (const pseudo of ["::before", "::after"] as const) {
+        resourceScan.pseudoElementsScanned += 1;
+        const pseudoStyle = getComputedStyle(element, pseudo);
+        if (pseudoStyle.content !== "none") {
+          collectIndexedUrls(references, pseudoStyle.backgroundImage, "background-image", element, pseudo);
+          collectIndexedUrls(references, pseudoStyle.maskImage, "mask-image", element, pseudo);
+        }
+      }
+      const deduped = [...new Map(references.map((reference) => [resourceKey(reference), reference])).values()];
+      resourceScan.urlsDiscovered += deduped.length;
+      resourceIndex.set(element, deduped);
+    };
+    const subtreeElements = (element: Element): Element[] => [element, ...element.querySelectorAll("*")];
+    const performResourceScan = (): void => {
+      const startedAt = performance.now();
+      if (fullResourceScanPending) {
+        resourceScan.fullScans += 1;
+        resourceIndex.clear();
+        for (const element of [root, ...root.querySelectorAll("*")].slice(0, 500)) scanElementResources(element);
+        dirtyResourceRoots.clear();
+        fullResourceScanPending = false;
+      } else if (dirtyResourceRoots.size) {
+        resourceScan.incrementalScans += 1;
+        const elements = new Set<Element>();
+        for (const dirtyRoot of dirtyResourceRoots) {
+          for (const element of subtreeElements(dirtyRoot)) {
+            if (resourceIndex.has(element) || resourceIndex.size + elements.size < 500) elements.add(element);
+          }
+        }
+        dirtyResourceRoots.clear();
+        for (const element of elements) scanElementResources(element);
+      }
+      resourceScan.elapsedMs += performance.now() - startedAt;
+    };
+    const currentStylesheetSignature = (): string => [...document.styleSheets].map((sheet) => {
+      let rules = "x";
+      try { rules = String(sheet.cssRules.length); } catch { /* cross-origin stylesheet */ }
+      return `${sheet.href ?? "inline"}:${sheet.disabled ? 1 : 0}:${rules}`;
+    }).join("|");
+    const activeStylesheetUrls = (): Set<string> => {
+      const urls = new Set([...document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"][href]')].map((link) => link.href));
+      for (const sheet of [...document.styleSheets]) {
+        try {
+          for (const rule of [...sheet.cssRules]) {
+            if (rule instanceof CSSImportRule && rule.href) urls.add(new URL(rule.href, location.href).href);
+          }
+        } catch { /* cross-origin stylesheet rules */ }
+      }
+      return urls;
+    };
+    const mutationObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const target = mutation.target.nodeType === Node.ELEMENT_NODE ? mutation.target as Element : mutation.target.parentElement;
+        if (!target) continue;
+        if (target.matches("style, link[rel~='stylesheet']") || target.closest("style")) {
+          fullResourceScanPending = true;
+          continue;
+        }
+        if (target === root || root.contains(target)) dirtyResourceRoots.add(target);
+        for (const removed of mutation.removedNodes) {
+          if (removed.nodeType !== Node.ELEMENT_NODE) continue;
+          for (const element of subtreeElements(removed as Element)) resourceIndex.delete(element);
+        }
+      }
+    });
+    mutationObserver.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true });
+    const performanceObserver = typeof PerformanceObserver === "undefined" ? undefined : new PerformanceObserver((entries) => {
+      for (const entry of entries.getEntries()) {
+        let completedUrl = entry.name;
+        try { completedUrl = new URL(entry.name, location.href).href; } catch { /* preserve raw resource name */ }
+        completedResources.add(completedUrl);
+        const resource = entry as PerformanceResourceTiming;
+        if (resource.initiatorType === "link" || activeStylesheetUrls().has(completedUrl)) fullResourceScanPending = true;
+      }
+    });
+    try { performanceObserver?.observe({ type: "resource" }); } catch { /* resource observation unavailable */ }
+    const visualResourceState = (): VisualResourceState => {
+      const nextStylesheetSignature = currentStylesheetSignature();
+      if (stylesheetSignature && nextStylesheetSignature !== stylesheetSignature) fullResourceScanPending = true;
+      stylesheetSignature = nextStylesheetSignature;
+      performResourceScan();
       const references: VisualResourceReference[] = [];
-      for (const image of [...root.querySelectorAll("img")]) {
-        if (!resourceVisible(image)) continue;
-        const url = image.currentSrc || image.src;
-        if (!url) continue;
-        references.push({
-          url,
-          type: "image",
-          owner: resourceOwner(image),
-          state: !image.complete ? "pending" : image.naturalWidth > 0 || /^(?:data|blob):/i.test(url) ? "loaded" : "decode-error",
-        });
+      for (const indexed of resourceIndex.values()) {
+        for (const reference of indexed) {
+          if (!resourceVisible(reference.element)) continue;
+          const state: VisualResourceReference["state"] = reference.source === "image-element"
+            ? (!(reference.element as HTMLImageElement).complete
+              ? "pending"
+              : (reference.element as HTMLImageElement).naturalWidth > 0 || /^(?:data|blob):/i.test(reference.url)
+                ? "loaded"
+                : "decode-error")
+            : completedResources.has(reference.url) ? "loaded" : "pending";
+          references.push({ url: reference.url, type: reference.type, owner: reference.owner, pseudo: reference.pseudo, state });
+        }
       }
       for (const link of [...document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"]')]) {
         if (link.disabled || (link.media && !matchMedia(link.media).matches) || !link.href) continue;
         references.push({ url: link.href, type: "stylesheet", owner: resourceOwner(link), state: link.sheet ? "loaded" : "pending" });
       }
-      const completedResources = new Set(performance.getEntriesByType("resource").map((entry) => {
-        try { return new URL(entry.name, location.href).href; } catch { return entry.name; }
-      }));
-      const addSelectedResource = (element: Element, rawUrl: string | null, type: VisualResourceType): void => {
-        if (!rawUrl || !resourceVisible(element)) return;
-        try {
-          const url = new URL(rawUrl, location.href);
-          if (!["http:", "https:"].includes(url.protocol)) return;
-          references.push({ url: url.href, type, owner: resourceOwner(element), state: completedResources.has(url.href) ? "loaded" : "pending" });
-        } catch { /* invalid resource URL */ }
-      };
-      for (const element of [...root.querySelectorAll("svg image, svg use")]) {
-        addSelectedResource(element, element.getAttribute("href") || element.getAttribute("xlink:href"), "image");
-      }
-      for (const video of [...root.querySelectorAll<HTMLVideoElement>("video[poster]")]) addSelectedResource(video, video.poster, "image");
-      const collectUrls = (value: string, type: "background-image" | "mask-image", element: Element, pseudo?: "::before" | "::after"): void => {
-        for (const match of value.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
-          try {
-            const url = new URL(match[1], location.href);
-            if (!["http:", "https:"].includes(url.protocol)) continue;
-            references.push({ url: url.href, type, owner: resourceOwner(element), pseudo, state: completedResources.has(url.href) ? "loaded" : "pending" });
-          } catch { /* invalid CSS URL */ }
-        }
-      };
-      for (const element of [root, ...root.querySelectorAll("*")].slice(0, 500)) {
-        if (!resourceVisible(element)) continue;
-        const computed = getComputedStyle(element);
-        collectUrls(computed.backgroundImage, "background-image", element);
-        collectUrls(computed.maskImage, "mask-image", element);
-        for (const pseudo of ["::before", "::after"] as const) {
-          const pseudoStyle = getComputedStyle(element, pseudo);
-          if (pseudoStyle.content !== "none") {
-            collectUrls(pseudoStyle.backgroundImage, "background-image", element, pseudo);
-            collectUrls(pseudoStyle.maskImage, "mask-image", element, pseudo);
-          }
+      if (document.fonts && document.fonts.status !== "loaded") {
+        const loadingFaces = [...document.fonts].filter((face) => face.status === "loading");
+        if (!loadingFaces.length) references.push({ url: "document.fonts", type: "font", owner: "document.fonts", state: "font-loading", required: true });
+        for (const face of loadingFaces) {
+          const display = String((face as FontFace & { display?: string }).display ?? "auto").toLowerCase();
+          const required = !["swap", "fallback", "optional"].includes(display);
+          references.push({ url: `font:${face.family}`, type: "font", owner: `@font-face ${face.family} [font-display=${display}]`, state: "font-loading", required });
         }
       }
-      if (document.fonts && document.fonts.status !== "loaded") references.push({ url: "document.fonts", type: "font", owner: "document.fonts", state: "font-loading" });
       const deduped = [...new Map(references.map((reference) => [`${reference.type}|${reference.url}|${reference.owner}|${reference.pseudo ?? ""}`, reference])).values()];
-      const stylesheetsSettled = deduped.filter((item) => item.type === "stylesheet").every((item) => item.state === "loaded");
-      const backgroundImagesSettled = deduped.filter((item) => item.type === "background-image" || item.type === "mask-image").every((item) => item.state === "loaded");
-      const fontsSettled = deduped.filter((item) => item.type === "font").every((item) => item.state === "loaded");
+      const requiredReferences = deduped.filter((item) => item.required !== false);
+      const stylesheetsSettled = requiredReferences.filter((item) => item.type === "stylesheet").every((item) => item.state === "loaded");
+      const backgroundImagesSettled = requiredReferences.filter((item) => item.type === "background-image" || item.type === "mask-image").every((item) => item.state === "loaded");
+      const fontsSettled = requiredReferences.filter((item) => item.type === "font").every((item) => item.state === "loaded");
       return {
-        settled: deduped.every((item) => item.state === "loaded"),
+        settled: requiredReferences.every((item) => item.state === "loaded"),
         stylesheets: stylesheetsSettled,
         backgroundImages: backgroundImagesSettled,
         fonts: fontsSettled,
         references: deduped,
       };
     };
-    const signature = (): string => {
-      const nodes = [root, ...root.querySelectorAll("*")].slice(0, 500);
-      return nodes.map((node) => {
-        const rect = node.getBoundingClientRect();
-        const html = node as HTMLElement;
-        const rounded = [rect.x, rect.y, rect.width, rect.height].map((value) => Math.round(value * 4) / 4).join(",");
-        const ownText = [...node.childNodes].filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent ?? "").join("");
-        const semantic = [node.tagName, node.id, node.getAttribute("class") ?? "", node.getAttribute("style") ?? "", node.getAttribute("hidden") ?? "", node.getAttribute("aria-hidden") ?? "", node.getAttribute("aria-selected") ?? "", node.getAttribute("aria-pressed") ?? "", node.getAttribute("aria-expanded") ?? "", ownText].join("~");
-        return `${semantic}:${rounded}:${html.scrollWidth ?? 0},${html.scrollHeight ?? 0},${html.scrollLeft ?? 0},${html.scrollTop ?? 0}`;
-      }).join("|");
+    const tracker: VisualResourceTracker = {
+      root,
+      metrics: resourceScan,
+      state: visualResourceState,
+      disconnect: () => { mutationObserver.disconnect(); performanceObserver?.disconnect(); },
     };
+    trackerHost.__uiDismantlerVisualResourceTracker = tracker;
+    return tracker;
+    })();
+    const scanStart = { ...resourceTracker.metrics };
+    const visualResourceState = resourceTracker.state;
+    const resourceScanDelta = (): ResourceScanMetrics => ({
+      fullScans: resourceTracker.metrics.fullScans - scanStart.fullScans,
+      incrementalScans: resourceTracker.metrics.incrementalScans - scanStart.incrementalScans,
+      elementsScanned: resourceTracker.metrics.elementsScanned - scanStart.elementsScanned,
+      pseudoElementsScanned: resourceTracker.metrics.pseudoElementsScanned - scanStart.pseudoElementsScanned,
+      urlsDiscovered: resourceTracker.metrics.urlsDiscovered - scanStart.urlsDiscovered,
+      elapsedMs: Number((resourceTracker.metrics.elapsedMs - scanStart.elapsedMs).toFixed(3)),
+    });
+    type SignatureScanMetrics = DomStabilityProbeResult["signatureScan"];
+    interface DomSignatureTracker {
+      root: Element;
+      metrics: SignatureScanMetrics;
+      signature: () => string;
+      disconnect: () => void;
+    }
+    const signatureHost = globalThis as typeof globalThis & { __uiDismantlerDomSignatureTracker?: DomSignatureTracker };
+    const existingSignatureTracker = signatureHost.__uiDismantlerDomSignatureTracker;
+    if (existingSignatureTracker && existingSignatureTracker.root !== root) existingSignatureTracker.disconnect();
+    const domSignatureTracker = existingSignatureTracker?.root === root
+      ? existingSignatureTracker
+      : (() => {
+        const metrics: SignatureScanMetrics = { fullScans: 0, incrementalScans: 0, nodesScanned: 0, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, elapsedMs: 0 };
+        const semanticByNode = new Map<Element, string>();
+        const layoutByNode = new Map<Element, string>();
+        const semanticDirty = new Set<Element>();
+        const layoutDirty = new Set<Element>();
+        const observedSizes = new WeakMap<Element, string>();
+        let trackedNodes: Element[] = [];
+        let trackedSet = new Set<Element>();
+        let structureDirty = true;
+        let layoutAllDirty = false;
+        let cachedSignature = "";
+        let signatureValueDirty = true;
+        const quarter = (value: number): number => Math.round(value * 4) / 4;
+        const semanticToken = (node: Element): string => {
+          const ownText = [...node.childNodes].filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent ?? "").join("");
+          return [node.tagName, node.id, node.getAttribute("class") ?? "", node.getAttribute("style") ?? "", node.getAttribute("hidden") ?? "", node.getAttribute("aria-hidden") ?? "", node.getAttribute("aria-selected") ?? "", node.getAttribute("aria-pressed") ?? "", node.getAttribute("aria-expanded") ?? "", ownText].join("~");
+        };
+        const layoutToken = (node: Element): string => {
+          const rect = node.getBoundingClientRect();
+          const html = node as HTMLElement;
+          observedSizes.set(node, `${quarter(rect.width)},${quarter(rect.height)}`);
+          return `${[rect.x, rect.y, rect.width, rect.height].map(quarter).join(",")}:${html.scrollWidth ?? 0},${html.scrollHeight ?? 0},${html.scrollLeft ?? 0},${html.scrollTop ?? 0}`;
+        };
+        let resizeObserver: ResizeObserver | undefined;
+        const rebuild = (): void => {
+          metrics.fullScans += 1;
+          trackedNodes = [root, ...root.querySelectorAll("*")].slice(0, 500);
+          trackedSet = new Set(trackedNodes);
+          semanticByNode.clear();
+          layoutByNode.clear();
+          resizeObserver?.disconnect();
+          for (const node of trackedNodes) {
+            semanticByNode.set(node, semanticToken(node));
+            layoutByNode.set(node, layoutToken(node));
+            resizeObserver?.observe(node);
+          }
+          metrics.nodesScanned += trackedNodes.length;
+          semanticDirty.clear();
+          layoutDirty.clear();
+          structureDirty = false;
+          layoutAllDirty = false;
+          signatureValueDirty = true;
+        };
+        resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            if (!trackedSet.has(entry.target)) continue;
+            const rect = entry.target.getBoundingClientRect();
+            const size = `${quarter(rect.width)},${quarter(rect.height)}`;
+            const previousSize = observedSizes.get(entry.target);
+            observedSizes.set(entry.target, size);
+            if (previousSize === undefined || previousSize === size) continue;
+            metrics.resizeInvalidations += 1;
+            layoutAllDirty = true;
+          }
+        });
+        const mutationObserver = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            const target = mutation.target.nodeType === Node.ELEMENT_NODE ? mutation.target as Element : mutation.target.parentElement;
+            const insideRoot = Boolean(target && (target === root || root.contains(target)));
+            const addedStyleNode = mutation.type === "childList" && [...mutation.addedNodes].some((node) => node instanceof Element && (node.matches("style, link[rel~='stylesheet']") || Boolean(node.querySelector("style, link[rel~='stylesheet']"))));
+            const affectsStylesheet = Boolean(target && (target.matches("style, link[rel~='stylesheet']") || target.closest("style"))) || addedStyleNode;
+            if (!insideRoot && !affectsStylesheet) continue;
+            metrics.mutationInvalidations += 1;
+            if (affectsStylesheet && !insideRoot) {
+              layoutAllDirty = true;
+              continue;
+            }
+            if (mutation.type === "childList") {
+              const changesElementTopology = [...mutation.addedNodes, ...mutation.removedNodes].some((node) => node.nodeType === Node.ELEMENT_NODE);
+              if (changesElementTopology) {
+                structureDirty = true;
+              } else if (mutation.target instanceof Element && (mutation.target === root || root.contains(mutation.target))) {
+                semanticDirty.add(mutation.target);
+                layoutAllDirty = true;
+              }
+              continue;
+            }
+            if (!target || (target !== root && !root.contains(target))) continue;
+            semanticDirty.add(target);
+            layoutAllDirty = true;
+          }
+        });
+        mutationObserver.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true });
+        const onScroll = (event: Event): void => {
+          metrics.scrollInvalidations += 1;
+          const target = event.target;
+          if (target instanceof Element && (target === root || root.contains(target))) {
+            for (const element of [target, ...target.querySelectorAll("*")]) if (trackedSet.has(element)) layoutDirty.add(element);
+          } else {
+            layoutAllDirty = true;
+          }
+        };
+        const onVisualLoad = (event: Event): void => {
+          if (event.target instanceof HTMLLinkElement && event.target.relList.contains("stylesheet")) layoutAllDirty = true;
+        };
+        const onFontLoad = (): void => { layoutAllDirty = true; };
+        document.addEventListener("scroll", onScroll, true);
+        document.addEventListener("load", onVisualLoad, true);
+        document.fonts?.addEventListener("loadingdone", onFontLoad);
+        const signature = (): string => {
+          const startedAt = performance.now();
+          if (structureDirty) {
+            rebuild();
+          } else {
+            if (layoutAllDirty) for (const node of trackedNodes) layoutDirty.add(node);
+            const dirty = new Set([...semanticDirty, ...layoutDirty]);
+            if (dirty.size) metrics.incrementalScans += 1;
+            if (dirty.size) signatureValueDirty = true;
+            for (const node of dirty) {
+              if (!trackedSet.has(node)) continue;
+              if (semanticDirty.has(node)) semanticByNode.set(node, semanticToken(node));
+              if (layoutAllDirty || layoutDirty.has(node)) layoutByNode.set(node, layoutToken(node));
+            }
+            metrics.nodesScanned += dirty.size;
+            semanticDirty.clear();
+            layoutDirty.clear();
+            layoutAllDirty = false;
+          }
+          if (signatureValueDirty) {
+            cachedSignature = trackedNodes.map((node) => `${semanticByNode.get(node) ?? ""}:${layoutByNode.get(node) ?? ""}`).join("|");
+            signatureValueDirty = false;
+          }
+          metrics.elapsedMs += performance.now() - startedAt;
+          return cachedSignature;
+        };
+        const tracker: DomSignatureTracker = {
+          root,
+          metrics,
+          signature,
+          disconnect: () => {
+            mutationObserver.disconnect();
+            resizeObserver?.disconnect();
+            document.removeEventListener("scroll", onScroll, true);
+            document.removeEventListener("load", onVisualLoad, true);
+            document.fonts?.removeEventListener("loadingdone", onFontLoad);
+          },
+        };
+        signatureHost.__uiDismantlerDomSignatureTracker = tracker;
+        return tracker;
+      })();
+    const signatureStart = { ...domSignatureTracker.metrics };
+    const signature = domSignatureTracker.signature;
+    const signatureScanDelta = (): SignatureScanMetrics => ({
+      fullScans: domSignatureTracker.metrics.fullScans - signatureStart.fullScans,
+      incrementalScans: domSignatureTracker.metrics.incrementalScans - signatureStart.incrementalScans,
+      nodesScanned: domSignatureTracker.metrics.nodesScanned - signatureStart.nodesScanned,
+      mutationInvalidations: domSignatureTracker.metrics.mutationInvalidations - signatureStart.mutationInvalidations,
+      resizeInvalidations: domSignatureTracker.metrics.resizeInvalidations - signatureStart.resizeInvalidations,
+      scrollInvalidations: domSignatureTracker.metrics.scrollInvalidations - signatureStart.scrollInvalidations,
+      elapsedMs: Number((domSignatureTracker.metrics.elapsedMs - signatureStart.elapsedMs).toFixed(3)),
+    });
     return new Promise<DomStabilityProbeResult>((resolveWait) => {
       const startedAt = performance.now();
       let previous = "";
@@ -561,10 +919,10 @@ async function waitForDomLayoutAndAssertions(
         if (!resources.backgroundImages) waitedForBackgroundImages = true;
         if (!resources.fonts) waitedForFonts = true;
         if (stableFrames >= 2 && assertionState && timersSettled && resources.settled) {
-          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references }); return;
+          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
         }
         if (now - startedAt >= timeout) {
-          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references }); return;
+          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
         }
         requestAnimationFrame(sample);
       };
@@ -602,10 +960,12 @@ function resourceFailuresForProbe(references: VisualResourceReference[], network
       status: record?.status,
       failure: record?.failure,
       elapsedMs: record ? Number(((record.endedAt ?? now) - record.startedAt).toFixed(3)) : undefined,
-      required: true,
+      required: reference.required !== false,
       external: /^https?:\/\//i.test(reference.url),
     });
   }
+  const blockingFonts = references.some((reference) => reference.type === "font" && reference.required !== false);
+  const optionalFonts = references.some((reference) => reference.type === "font" && reference.required === false);
   for (const record of network.records.values()) {
     if (!["font", "stylesheet"].includes(record.type) || !["http-error", "request-failed"].includes(record.state)) continue;
     if (failures.some((failure) => failure.url === record.url)) continue;
@@ -617,7 +977,7 @@ function resourceFailuresForProbe(references: VisualResourceReference[], network
       status: record.status,
       failure: record.failure,
       elapsedMs: Number(((record.endedAt ?? now) - record.startedAt).toFixed(3)),
-      required: true,
+      required: record.type !== "font" || blockingFonts || !optionalFonts,
       external: true,
     });
   }
@@ -630,7 +990,7 @@ async function waitForAdaptiveStability(
   network: NetworkActivityTracker,
   assertions: ResolvedScenarioAssertion[] = [],
   telemetry?: BrowserExecutionTelemetry,
-  timeoutMs = 500,
+  timeoutMs = ADAPTIVE_STABILITY_TIMEOUT_MS,
 ): Promise<PageStabilityResult> {
   telemetry && (telemetry.workload.stabilityChecks += 1);
   if (telemetry && assertions.length) telemetry.workload.assertionStabilityChecks += 1;
@@ -644,7 +1004,10 @@ async function waitForAdaptiveStability(
     if (telemetry) telemetry.timing.networkIdleMs += elapsed(networkStartedAt);
     return idle;
   });
-  const [dom, networkIdle] = await Promise.all([domPromise, networkPromise]);
+  const [dom, rawNetworkIdle] = await Promise.all([domPromise, networkPromise]);
+  const hasBlockingFonts = dom.resourceReferences.some((reference) => reference.type === "font" && reference.required !== false);
+  const onlyOptionalFontRequestsRemain = network.pending.size > 0 && [...network.pending].every((request) => request.resourceType() === "font") && !hasBlockingFonts;
+  const networkIdle = rawNetworkIdle || onlyOptionalFontRequestsRemain;
   const domTimedOut = !dom.stable;
   const networkTimedOut = !networkIdle;
   const timerTimedOut = !dom.timersSettled;
@@ -656,6 +1019,21 @@ async function waitForAdaptiveStability(
   if (telemetry && dom.waitedForStylesheets) telemetry.workload.stylesheetAwareWaits += 1;
   if (telemetry && dom.waitedForBackgroundImages) telemetry.workload.backgroundImageAwareWaits += 1;
   if (telemetry && dom.waitedForFonts) telemetry.workload.fontAwareWaits += 1;
+  if (telemetry) {
+    telemetry.timing.resourceScanMs += dom.resourceScan.elapsedMs;
+    telemetry.workload.resourceFullScans += dom.resourceScan.fullScans;
+    telemetry.workload.resourceIncrementalScans += dom.resourceScan.incrementalScans;
+    telemetry.workload.resourceElementsScanned += dom.resourceScan.elementsScanned;
+    telemetry.workload.resourcePseudoElementsScanned += dom.resourceScan.pseudoElementsScanned;
+    telemetry.workload.resourceUrlsDiscovered += dom.resourceScan.urlsDiscovered;
+    telemetry.timing.signatureScanMs += dom.signatureScan.elapsedMs;
+    telemetry.workload.signatureFullScans += dom.signatureScan.fullScans;
+    telemetry.workload.signatureIncrementalScans += dom.signatureScan.incrementalScans;
+    telemetry.workload.signatureNodesScanned += dom.signatureScan.nodesScanned;
+    telemetry.workload.signatureMutationInvalidations += dom.signatureScan.mutationInvalidations;
+    telemetry.workload.signatureResizeInvalidations += dom.signatureScan.resizeInvalidations;
+    telemetry.workload.signatureScrollInvalidations += dom.signatureScan.scrollInvalidations;
+  }
   if (telemetry && (domTimedOut || networkTimedOut)) telemetry.workload.stabilityTimeouts += 1;
   if (telemetry && assertions.length && !dom.assertionsSatisfied) telemetry.workload.assertionStabilityTimeouts += 1;
   if (telemetry && networkTimedOut) telemetry.workload.networkIdleTimeouts += 1;
@@ -676,13 +1054,7 @@ async function waitForSettled(
     const root = document.querySelector(selector);
     return Boolean(root && (root.children.length || root.textContent?.trim()));
   }, rootSelector, { timeout: 5000 });
-  await page.addStyleTag({ content: `
-    *, *::before, *::after { animation-delay: 0s !important; animation-duration: 0s !important; transition: none !important; caret-color: transparent !important; }
-    html { scroll-behavior: auto !important; }
-    ::-webkit-scrollbar { display: none !important; }
-  ` });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.evaluate(async () => { await document.fonts?.ready; });
+  await page.evaluate(async () => { if (document.fonts) await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]); });
   if (mode === "adaptive") {
     return waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
   }
@@ -721,6 +1093,42 @@ async function targetIsActionable(page: Page, selector: string): Promise<boolean
     const hit = document.elementFromPoint(x, y);
     return !hit || hit === element || element.contains(hit);
   }, selector);
+}
+
+function scenarioAnchorCandidates(scenario: Scenario, role: "reference" | "library"): string[] {
+  const selector = scenarioSelector(scenario.screenshotAnchor, role);
+  return selector ? [selector] : [];
+}
+
+async function normalizeScenarioScrollAnchor(page: Page, scenario: Scenario, role: "reference" | "library", telemetry?: BrowserExecutionTelemetry): Promise<string | null> {
+  const candidates = scenarioAnchorCandidates(scenario, role);
+  if (!candidates.length) return null;
+  const startedAt = performance.now();
+  const selector = await page.evaluate((selectors) => {
+    const visible = (element: Element): boolean => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+    };
+    for (const candidate of selectors) {
+      let element: Element | null = null;
+      try { element = document.querySelector(candidate); } catch { continue; }
+      if (!element || !visible(element)) continue;
+      element.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+      const rect = element.getBoundingClientRect();
+      const targetTop = Math.max(24, (innerHeight - rect.height) / 2);
+      const scrollingElement = document.scrollingElement as HTMLElement | null;
+      if (scrollingElement) scrollingElement.scrollTop += rect.top - targetTop;
+      return candidate;
+    }
+    return null;
+  }, candidates);
+  if (selector) {
+    await page.evaluate(async () => { await new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done()))); });
+    if (telemetry) telemetry.workload.scrollAnchorNormalizations += 1;
+  }
+  if (telemetry) telemetry.timing.scrollAnchorMs += elapsed(startedAt);
+  return selector;
 }
 
 async function executeBrowserScenario(
@@ -833,6 +1241,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       if (telemetry) telemetry.timing.fixedWaitMs += elapsed(fixedStartedAt);
     }
     if (telemetry) { telemetry.timing.scenarioExecutionMs += elapsed(startedAt); telemetry.workload.scenarioSteps += scenario.steps.length; }
+    await normalizeScenarioScrollAnchor(page, scenario, role, telemetry);
   }
   startedAt = performance.now();
   const data = await page.evaluate(({ rootSelector: selector, properties }) => {
@@ -862,6 +1271,14 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     for (const sheet of [...document.styleSheets]) {
       try { visitRules(sheet.cssRules); } catch { /* cross-origin stylesheet */ }
     }
+
+    const allClassUses = new Map<string, Element[]>();
+    for (const element of [root, ...root.querySelectorAll("[class]")]) for (const className of element.classList) allClassUses.set(className, [...(allClassUses.get(className) ?? []), element]);
+    const selectorMentionsClass = (selector: string, className: string): boolean => {
+      const escaped = className.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`\\.${escaped}(?![A-Za-z0-9_-])`).test(selector);
+    };
+    const classEvidence = [...allClassUses].map(([className, elements]) => ({ className, count: elements.length, hasSelector: allSelectors.some((selector) => selectorMentionsClass(selector, className)) }));
 
     const sgElements = [...root.querySelectorAll("[class*='sg-']")].filter((element) => [...element.classList].some((name) => name.startsWith("sg-")));
     const classUses = new Map<string, Element[]>();
@@ -938,14 +1355,14 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
         styles: Object.fromEntries(properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
       };
     });
-    return { selectorCoverage, styles };
+    return { selectorCoverage, classEvidence, styles };
   }, { rootSelector, properties: [...STYLE_PROPERTIES] });
   if (telemetry) telemetry.timing.snapshotEvaluationMs += elapsed(startedAt);
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
   if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
   const uniqueResourceFailures = [...new Map(resourceFailures.map((failure) => [`${failure.phase}|${failure.type}|${failure.url}|${failure.owner}|${failure.pseudo ?? ""}`, failure])).values()];
-  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, styles: data.styles, screenshot };
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, classEvidence: data.classEvidence, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -1034,6 +1451,60 @@ async function comparePixels(reference: Buffer, generated: Buffer, threshold: nu
   return report;
 }
 
+function sourceUnstyledHookClasses(htmlPath: string): Set<string> {
+  let html = "";
+  try { html = readFileSync(htmlPath, "utf8"); } catch { return new Set(); }
+  let css = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((match) => match[1]).join("\n");
+  for (const match of html.matchAll(/<link\b[^>]*rel=["'][^"']*stylesheet[^"']*["'][^>]*href=["']([^"']+)["']/gi)) {
+    if (/^[a-z]+:/i.test(match[1])) continue;
+    try { css += `\n${readFileSync(resolve(basename(htmlPath) === htmlPath ? "." : htmlPath.slice(0, -basename(htmlPath).length), match[1].split(/[?#]/)[0]), "utf8")}`; } catch { /* missing local stylesheet */ }
+  }
+  css = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const styled = new Set([...css.matchAll(/\.([A-Za-z_][\w-]*)/g)].map((match) => match[1]));
+  const used = new Set<string>();
+  for (const match of html.matchAll(/\bclass=["']([^"']+)["']/gi)) for (const name of match[1].split(/\s+/)) if (name) used.add(name);
+  for (const match of html.matchAll(/classList\.(?:add|remove|toggle|contains|replace)\(\s*["']([A-Za-z_][\w-]*)["']/g)) used.add(match[1]);
+  return new Set([...used].filter((name) => !styled.has(name)));
+}
+
+function applySourceUnstyledExemptions(reference: BrowserSnapshot, generated: BrowserSnapshot, staticHooks = new Set<string>()): SelectorCoverageReport {
+  const report = generated.selectorCoverage;
+  const sourceByClass = new Map(reference.classEvidence.map((item) => [item.className, item]));
+  const generatedByClass = new Map(generated.classEvidence.map((item) => [item.className, item]));
+  const newlyExempt = report.unmatchedClasses.flatMap((issue) => {
+    const generatedClass = issue.selector.replace(/^\./, "");
+    const sourceClass = generatedClass.replace(/^sg-/, "");
+    const source = sourceByClass.get(sourceClass);
+    const generatedEvidence = generatedByClass.get(generatedClass);
+    const sourceAbsent = staticHooks.has(sourceClass) || Boolean(source && !source.hasSelector);
+    if (!sourceAbsent || !generatedEvidence || generatedEvidence.hasSelector) return [];
+    return [{ ...issue, reason: "source-unstyled-hook", evidence: { sourceClass, sourceClassUses: source?.count ?? 0, sourceSelectorAbsent: true, generatedSelectorAbsent: true } }];
+  });
+  for (const sourceClass of staticHooks) {
+    const selector = `.sg-${sourceClass}`;
+    if (newlyExempt.some((issue) => issue.selector === selector) || report.exemptClasses.some((issue) => issue.selector === selector)) continue;
+    newlyExempt.push({ selector, count: 0, examples: [], reason: "source-unstyled-hook", evidence: { sourceClass, sourceClassUses: sourceByClass.get(sourceClass)?.count ?? 0, sourceSelectorAbsent: true, generatedSelectorAbsent: true } });
+  }
+  if (!newlyExempt.length) return report;
+  const exemptSelectors = new Set(newlyExempt.map((issue) => issue.selector));
+  const unmatchedClasses = report.unmatchedClasses.filter((issue) => !exemptSelectors.has(issue.selector));
+  const exemptClasses = [...report.exemptClasses, ...newlyExempt];
+  const exemptUses = exemptClasses.reduce((total, issue) => total + issue.count, 0);
+  const unmatchedUses = unmatchedClasses.reduce((total, issue) => total + issue.count, 0);
+  const requiredSgClassUses = report.sgClassUses - exemptUses;
+  const inactiveUses = report.inactiveClasses.reduce((total, issue) => total + issue.count, 0);
+  return {
+    ...report,
+    passed: unmatchedClasses.length === 0,
+    requiredSgClassUses,
+    matchedSgClassUses: requiredSgClassUses - unmatchedUses,
+    coverageRate: requiredSgClassUses ? (requiredSgClassUses - unmatchedUses) / requiredSgClassUses : 1,
+    activeMatchRate: requiredSgClassUses ? (requiredSgClassUses - unmatchedUses - inactiveUses) / requiredSgClassUses : 1,
+    unmatchedClasses,
+    exemptClasses,
+  };
+}
+
 async function evaluateBrowserQualityOnPages(
   referencePage: Page,
   generatedPage: Page,
@@ -1054,7 +1525,8 @@ async function evaluateBrowserQualityOnPages(
     ]);
     const styles = compareComputedStyles(reference.styles, generated.styles);
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
-    const selectorCoverage = generated.selectorCoverage;
+    const selectorCoverage = applySourceUnstyledExemptions(reference, generated, sourceUnstyledHookClasses(htmlPath));
+    generated.selectorCoverage = selectorCoverage;
     const score = Number((styles.rate * 0.55 + (1 - pixels.diffRate) * 0.35 + selectorCoverage.coverageRate * 0.1).toFixed(4));
     const translationFidelity = {
       passed: selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0,
@@ -1091,12 +1563,14 @@ async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: strin
     let startedAt = performance.now();
     context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
     if (telemetry) { telemetry.timing.contextCreateMs += elapsed(startedAt); telemetry.workload.contextsCreated += 1; telemetry.workload.viewportRuns += 1; }
+    startedAt = performance.now();
     await initializeQualityContext(context);
     if (telemetry && resourceCache) await installRunResourceCache(context, resourceCache, telemetry);
+    if (telemetry) telemetry.timing.contextInitMs += elapsed(startedAt);
     startedAt = performance.now();
-    const referencePage = await context.newPage(), generatedPage = await context.newPage();
-    if (telemetry) { telemetry.timing.pageCreateMs += elapsed(startedAt); telemetry.workload.pagesCreated += 2; }
-    const example = await firstExample(libDir);
+    const [referencePage, generatedPage] = await Promise.all([context.newPage(), context.newPage()]);
+    if (telemetry) { telemetry.timing.pageCreateMs += elapsed(startedAt); telemetry.workload.pagesCreated += 2; telemetry.workload.pagePairsCreatedInParallel += 1; }
+    const example = await firstExample(libDir, telemetry);
     return await evaluateBrowserQualityOnPages(referencePage, generatedPage, htmlPath, example, options, scenario, telemetry);
   } finally {
     await context?.close();
@@ -1269,7 +1743,8 @@ export async function evaluateLibrarySelectorCoverage(libDir: string, options: P
   let browser: Browser | undefined;
   try {
     browser = await launchBrowser(options.executablePath);
-    const context = await browser.newContext({ viewport: { width: options.width ?? 1024, height: options.height ?? 768 }, deviceScaleFactor: 1 });
+    const context = await browser.newContext({ viewport: { width: options.width ?? 1024, height: options.height ?? 768 }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
+    await initializeQualityContext(context);
     const page = await context.newPage();
     const example = await firstExample(libDir);
     const snapshot = await collectBrowserSnapshot(page, "#mount", example, false);

@@ -16,7 +16,7 @@ function files(dir: string, pattern: RegExp): string[] {
 }
 function read(paths: string[]): string { return paths.map((path) => readFileSync(path, "utf8")).join("\n"); }
 function classesFromSelectors(css: string): Set<string> {
-  return new Set([...parseCssRules(css)].flatMap((rule) => [...rule.selector.matchAll(/\.(sg-[\w-]+)/g)].map((match) => match[1])));
+  return new Set([...css.matchAll(/\.(sg-[a-z][\w-]*)/gi)].map((match) => match[1]));
 }
 function classesFromJs(js: string): Set<string> {
   const patterns = [
@@ -118,8 +118,10 @@ export class LibraryValidator {
       if (/<img\b(?![^>]*\balt=)[^>]*>/i.test(source)) issues.push(`${html.split("/").at(-1)} 存在 img 缺少 alt`);
       if (/<button\b[^>]*>\s*<\/button>/i.test(source) && !/aria-label=/i.test(source)) issues.push(`${html.split("/").at(-1)} 存在无标签 button`);
     }
-    if (/(?:tab|tabpanel)/i.test(this.js) && !/aria-(?:selected|controls|labelledby)|role=["'](?:tab|tabpanel)/i.test(this.js + read(this.htmlFiles))) issues.push("Tab/Panel 交互缺少 ARIA 关联");
-    if (/(?:modal|dialog)/i.test(this.js) && !/aria-(?:modal|label|labelledby)|role=["']dialog/i.test(this.js + read(this.htmlFiles))) issues.push("Modal 交互缺少 dialog ARIA 语义");
+    const accessibilitySource = this.js + read(this.htmlFiles);
+    const hasTabInteraction = /(?:data-tab|aria-selected|aria-controls|role=["'](?:tab|tabpanel)|\btabpanel\b|[.#]sg-(?:tabs?|tab-[\w-]+))/i.test(accessibilitySource);
+    if (hasTabInteraction && !/aria-(?:selected|controls|labelledby)|role=["'](?:tab|tabpanel)/i.test(accessibilitySource)) issues.push("Tab/Panel 交互缺少 ARIA 关联");
+    if (/(?:modal|dialog)/i.test(this.js) && !/aria-(?:modal|label|labelledby)|role=["']dialog/i.test(accessibilitySource)) issues.push("Modal 交互缺少 dialog ARIA 语义");
     this.record("a11y", "5. A11y", !issues.length, issues.join("；") || "发现基础语言、图片、控件与复合交互可访问性标记");
   }
 
@@ -130,6 +132,9 @@ export class LibraryValidator {
     for (const match of this.css.matchAll(/#[0-9a-f]{3,8}\b/gi)) {
       const index = match.index ?? 0;
       if (rootBlocks.some(([start, end]) => index >= start && index <= end)) continue;
+      const declarationStart = Math.max(this.css.lastIndexOf(";", index), this.css.lastIndexOf("{", index));
+      const declarationPrefix = this.css.slice(declarationStart + 1, index);
+      if (/--sg-[\w-]+\s*:\s*$/i.test(declarationPrefix)) continue;
       const lineStart = this.css.lastIndexOf("\n", index) + 1;
       const lineEnd = this.css.indexOf("\n", index);
       const line = this.css.slice(lineStart, lineEnd < 0 ? undefined : lineEnd);
@@ -185,7 +190,14 @@ export function appendRuntimeSelectorCheck(
         passed: false,
         detail: "未执行真实浏览器选择器命中检查",
       };
-  const results = [...report.results, result];
+  const sourceHookExemptions = new Set((coverage?.exemptClasses ?? []).filter((item) => item.reason === "source-unstyled-hook").map((item) => item.selector));
+  const reconciled = report.results.map((item) => {
+    if (item.id !== "class-alignment" || item.passed || !sourceHookExemptions.size) return item;
+    const missing = [...item.detail.matchAll(/JS 引用 (\.sg-[A-Za-z0-9_-]+) 但 CSS 未定义/g)].map((match) => match[1]);
+    if (!missing.length || !missing.every((selector) => sourceHookExemptions.has(selector))) return item;
+    return { ...item, passed: true, detail: `JS/CSS 对齐；以下类经源页面无样式证据审计豁免：${missing.join("、")}` };
+  });
+  const results = [...reconciled, result];
   const passed = results.filter((item) => item.passed).length;
   return { ...report, results, passed, failed: results.length - passed, total: results.length, ok: passed === results.length };
 }

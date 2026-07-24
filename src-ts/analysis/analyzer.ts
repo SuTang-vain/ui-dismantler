@@ -670,6 +670,22 @@ function sectionView(element: Element, index: number): AnalyzedView {
   };
 }
 
+function attachInteractionSelectors(document: Document, views: AnalyzedView[], interactions: Interaction[]): void {
+  const viewElements = views.map((view) => {
+    try { return { view, element: document.querySelector(view.selector) }; } catch { return { view, element: null }; }
+  }).filter((item): item is { view: AnalyzedView; element: Element } => Boolean(item.element));
+  for (const interaction of interactions) {
+    if (interaction.trigger === "html" || interaction.trigger.startsWith("@")) continue;
+    let triggers: Element[] = [];
+    try { triggers = [...document.querySelectorAll(interaction.trigger)]; } catch { continue; }
+    for (const { view, element } of viewElements) {
+      if (!triggers.some((trigger) => element === trigger || element.contains(trigger))) continue;
+      const existing = Array.isArray(view.details.interactionSelectors) ? view.details.interactionSelectors.filter((item): item is string => typeof item === "string") : [];
+      view.details.interactionSelectors = [...new Set([...existing, interaction.trigger])];
+    }
+  }
+}
+
 export class HtmlAnalyzer {
   readonly htmlPath: string;
   constructor(
@@ -698,6 +714,7 @@ export class HtmlAnalyzer {
     const views = this.analyzeViews(document, scriptSource.text);
     const contracts = extractContracts(scripts);
     const interactions = this.analyzeInteractions(document, scripts);
+    attachInteractionSelectors(document, views, interactions);
     const a11y = this.analyzeA11y(document);
     if (document.querySelectorAll("script[src^=http], link[href^=http], img[src^=http]").length) warnings.push("包含远程资源，运行态 roundtrip 可能无法完全复现");
     if (a11y.imagesWithoutAlt) warnings.push(`${a11y.imagesWithoutAlt} 个图片缺少 alt 文本`);

@@ -101,12 +101,38 @@ function runtimeBootstrap(viewportWidth, viewportHeight) {
     });
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: ${viewportWidth} });
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: ${viewportHeight} });
+    window.URL.createObjectURL = window.URL.createObjectURL || function (blob) {
+      window.__roundtripBlobStore = window.__roundtripBlobStore || new Map();
+      var key = 'blob:roundtrip/' + Math.random().toString(36).slice(2);
+      window.__roundtripBlobStore.set(key, blob);
+      return key;
+    };
+    window.URL.revokeObjectURL = window.URL.revokeObjectURL || function (key) {
+      if (window.__roundtripBlobStore) window.__roundtripBlobStore.delete(key);
+    };
+    window.fetch = window.fetch || async function (resource) {
+      var key = String(resource);
+      var blob = window.__roundtripBlobStore && window.__roundtripBlobStore.get(key);
+      if (!blob) throw new Error('roundtrip fetch only supports generated blob URLs: ' + key);
+      var text = await new Promise(function (resolveText, rejectText) {
+        if (typeof blob.text === 'function') { blob.text().then(resolveText, rejectText); return; }
+        var reader = new window.FileReader();
+        reader.onload = function () { resolveText(String(reader.result || '')); };
+        reader.onerror = function () { rejectText(reader.error || new Error('blob read failed')); };
+        reader.readAsText(blob);
+      });
+      return { ok: true, status: 200, text: async function () { return text; }, json: async function () { return JSON.parse(text); } };
+    };
+    if (!window.navigator.clipboard) window.navigator.clipboard = { writeText: async function () {} };
     window.matchMedia = window.matchMedia || function (query) {
       var minWidth = /min-width\\s*:\\s*(\\d+)px/i.exec(query);
       var maxWidth = /max-width\\s*:\\s*(\\d+)px/i.exec(query);
       var minHeight = /min-height\\s*:\\s*(\\d+)px/i.exec(query);
       var maxHeight = /max-height\\s*:\\s*(\\d+)px/i.exec(query);
-      var matches = (!minWidth || ${viewportWidth} >= Number(minWidth[1])) &&
+      var colorSchemeMatches = !/prefers-color-scheme\\s*:\\s*dark/i.test(query);
+      var motionMatches = !/prefers-reduced-motion\\s*:\\s*no-preference/i.test(query);
+      var matches = colorSchemeMatches && motionMatches &&
+        (!minWidth || ${viewportWidth} >= Number(minWidth[1])) &&
         (!maxWidth || ${viewportWidth} <= Number(maxWidth[1])) &&
         (!minHeight || ${viewportHeight} >= Number(minHeight[1])) &&
         (!maxHeight || ${viewportHeight} <= Number(maxHeight[1]));

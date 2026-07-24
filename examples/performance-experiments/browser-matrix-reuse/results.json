@@ -371,5 +371,189 @@
       "blackpinkGoldMs": 34816.442,
       "crossCaseResourceFailures": 0
     }
+  },
+  "incrementalResourceIndexExperiment": {
+    "measuredAt": "2026-07-24",
+    "algorithm": [
+      "page-persistent-root-scoped-index",
+      "mutation-observer-dirty-subtrees",
+      "performance-observer-completed-urls",
+      "stylesheet-signature-full-invalidation",
+      "sample-time-viewport-required-filter"
+    ],
+    "telemetryFields": [
+      "resourceScanMs",
+      "resourceFullScans",
+      "resourceIncrementalScans",
+      "resourceElementsScanned",
+      "resourcePseudoElementsScanned",
+      "resourceUrlsDiscovered"
+    ],
+    "blackpinkBrowserRuns": {
+      "runsMs": [21997.39, 21355.928, 20847.138],
+      "averageMs": 21400.152,
+      "scenarioMatrixAverageMs": 17353.968,
+      "resourceScanAverageMs": 437.5,
+      "fullScans": 40,
+      "incrementalScans": 80,
+      "elementsScanned": 20428,
+      "pseudoElementsScanned": 40856,
+      "urlsDiscovered": 1308,
+      "resourceFailures": 0,
+      "stabilityFailures": 0,
+      "changeVsResourceFailureGraphBrowser": -0.043324,
+      "changeVsResourceFailureGraphScenarios": -0.036789
+    },
+    "prototypeComparison": {
+      "fullScansBefore": 96,
+      "fullScansAfter": 40,
+      "elementsScannedBefore": 28148,
+      "elementsScannedAfter": 20428,
+      "resourceScanMsBefore": 612.7,
+      "resourceScanMsAfterAverage": 437.5
+    },
+    "endToEnd": {
+      "singleRunMs": 33282.622,
+      "previousThreeRunAverageMs": 33103.094,
+      "change": 0.005424,
+      "assessment": "within runtime noise and below the 5% regression limit; <=32.2s target not reached"
+    },
+    "crossCaseRegression": [
+      { "case": "qinshihuang-0716-ts", "passed": true, "overall": 0.9945, "totalMs": 11091.944, "resourceScanMs": 53.9, "resourceFailures": 0, "externalFailures": 0, "stabilityFailures": 0 },
+      { "case": "ciyu-scrollbar-ts", "passed": true, "overall": 0.9996, "totalMs": 24408.271, "resourceScanMs": 235.5, "resourceFailures": 0, "externalFailures": 0, "stabilityFailures": 0 },
+      { "case": "sun-wukong-0722-ts", "passed": true, "overall": 0.9928, "totalMs": 17653.225, "resourceScanMs": 139.7, "resourceFailures": 0, "externalFailures": 0, "stabilityFailures": 0 },
+      { "case": "sandadui-graph-ts", "passed": true, "overall": 0.9992, "totalMs": 12715.087, "resourceScanMs": 79.0, "resourceFailures": 0, "externalFailures": 0, "stabilityFailures": 0 }
+    ],
+    "diegovz17Mb": {
+      "browserTotalMs": 3432.702,
+      "domStabilityMs": 243.371,
+      "resourceScanMs": 40.2,
+      "fullScans": 2,
+      "elementsScanned": 1000,
+      "resourceFailures": 0,
+      "externalFailures": 0,
+      "stabilityFailures": 0,
+      "translationFidelity": false
+    }
+  },
+  "incrementalDomSignatureExperiment": {
+    "measuredAt": "2026-07-24",
+    "algorithm": [
+      "page-persistent-root-scoped-signature",
+      "mutation-observer-semantic-invalidation",
+      "resize-observer-layout-invalidation",
+      "scroll-subtree-invalidation",
+      "stylesheet-and-font-layout-invalidation",
+      "cached-signature-reuse-on-clean-frames"
+    ],
+    "telemetryFields": [
+      "signatureScanMs",
+      "signatureFullScans",
+      "signatureIncrementalScans",
+      "signatureNodesScanned",
+      "signatureMutationInvalidations",
+      "signatureResizeInvalidations",
+      "signatureScrollInvalidations"
+    ],
+    "deterministicTests": {
+      "mutationDrivenSemanticAndLayout": true,
+      "resizeObserverWithoutDomMutation": true,
+      "dynamicStylesheet": true,
+      "resourceMutation": true
+    },
+    "blackpinkRuns": {
+      "runsMs": [22156.05, 21757.382, 21101.389],
+      "averageMs": 21671.607,
+      "scenarioMatrixAverageMs": 17644.719,
+      "domStabilityAverageMs": 12951.155,
+      "signatureScanAverageMs": 382.133,
+      "signatureFullScans": 56,
+      "signatureIncrementalScans": 64,
+      "signatureNodesScanned": 34580,
+      "resourceFailures": 0,
+      "stabilityFailures": 0
+    },
+    "sameMachineBaseline": {
+      "oldFullSignatureRunsMs": [21557.575, 21367.191],
+      "oldFullSignatureAverageMs": 21462.383,
+      "oldDomStabilityAverageMs": 13236.659,
+      "newDomStabilityChange": -0.021569,
+      "newBrowserTotalChange": 0.009748,
+      "interleavedNewRunMs": 21424.142,
+      "assessment": "signature phase improves while browser total remains statistically neutral"
+    },
+    "optimizedGold": {
+      "passed": "2/2 PASS",
+      "blackpinkMs": 33244.906,
+      "changeVsResourceFailureGraphAverage": 0.004284,
+      "worstComputedStyle": 0.9997,
+      "worstPixelDiff": 0.001314,
+      "resourceFailures": 0,
+      "stabilityFailures": 0
+    },
+    "typescriptRegression": {
+      "tests": 55,
+      "passed": 54,
+      "failed": 0,
+      "skipped": 1
+    },
+    "crossCaseRegression": [
+      { "case": "qinshihuang-0716-ts", "passed": true, "overall": 0.9945, "totalMs": 11268.168, "signatureScanMs": 156.1, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "ciyu-scrollbar-ts", "passed": true, "overall": 0.9996, "totalMs": 23998.739, "signatureScanMs": 146.5, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "sun-wukong-0722-ts", "passed": true, "overall": 0.9928, "totalMs": 18047.96, "signatureScanMs": 198.1, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "sandadui-graph-ts", "passed": true, "overall": 0.9992, "totalAverageMs": 13656.448, "signatureScanMsRange": [163.4, 197.0], "resourceFailures": 0, "stabilityFailures": 0 }
+    ],
+    "diegovz17Mb": {
+      "browserTotalMs": 3002.364,
+      "domStabilityMs": 129.005,
+      "signatureScanMs": 68.9,
+      "signatureFullScans": 2,
+      "signatureIncrementalScans": 0,
+      "signatureNodesScanned": 1000,
+      "resourceFailures": 0,
+      "externalFailures": 0,
+      "stabilityFailures": 0,
+      "translationFidelity": false
+    }
+  },
+  "pageInitializationExperiment": {
+    "measuredAt": "2026-07-24",
+    "algorithm": [
+      "document-start-stability-style",
+      "parallel-reference-generated-page-creation",
+      "lib-example-path-promise-cache",
+      "preserve-wait-until-load"
+    ],
+    "telemetryFields": [
+      "contextInitMs",
+      "pagePairsCreatedInParallel",
+      "examplePathCacheHits",
+      "examplePathCacheMisses"
+    ],
+    "blackpinkRuns": {
+      "runsMs": [22045.109, 21143.436, 21173.732],
+      "averageMs": 21454.092,
+      "scenarioMatrixAverageMs": 17464.639,
+      "contextInitAverageMs": 8.544,
+      "pageCreateAverageMs": 3530.781,
+      "examplePathCacheHits": [19, 20, 20],
+      "examplePathCacheMisses": [1, 0, 0],
+      "pagePairsCreatedInParallel": [20, 20, 20],
+      "resourceFailures": 0,
+      "stabilityFailures": 0,
+      "changeVsSignatureAverage": -0.010039
+    },
+    "artifactAblation": {
+      "currentMs": 35284.172,
+      "oldInitTimingMs": 34999.7,
+      "change": 0.008128,
+      "assessment": "within noise; document-start style does not regress quality"
+    },
+    "crossCaseRegression": [
+      { "case": "qinshihuang-0716-ts", "passed": true, "overall": 0.9945, "totalMs": 12204.507, "browserTotalMs": 7088.183, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "ciyu-scrollbar-ts", "passed": true, "overall": 0.9996, "totalMs": 26167.429, "browserTotalMs": 13475.837, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "sun-wukong-0722-ts", "passed": true, "overall": 0.9931, "totalMs": 18225.863, "browserTotalMs": 10090.904, "resourceFailures": 0, "stabilityFailures": 0 },
+      { "case": "sandadui-graph-ts", "passed": true, "overall": 0.9992, "totalMs": 13975.844, "browserTotalMs": 7397.652, "resourceFailures": 0, "stabilityFailures": 0 }
+    ]
   }
 }
