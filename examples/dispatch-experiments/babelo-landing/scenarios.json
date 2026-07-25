@@ -1,7 +1,37 @@
 {
   "schemaVersion": "1.0",
   "generatedFrom": "babelo-landing/index.html",
-  "candidatePolicy": "Reviewed critical scenarios cover theme state, clipboard feedback, async FAQ hydration/accordion state, and the long-running terminal demo reset path. Anchor navigation and external links are excluded from visual state coverage. Horizontal scroll is verified manually because the current assertion schema cannot assert scrollLeft.",
+  "candidatePolicy": "Lifecycle、navigation-action 与 no-op-control 由责任模型结构化排除；Reviewed equivalence groups cover repeated copy and FAQ behavior. Keyboard and wheel protocols assert scrollLeft numerically.",
+  "equivalenceGroups": [
+    {
+      "id": "copy-install-command-equivalence",
+      "signature": "reviewed|copy-chip|bubbling-control-and-container",
+      "event": "click",
+      "triggerShape": "#installChip(*) / nested copy button",
+      "representativeFingerprint": "click|#installChip|script-assignment",
+      "memberFingerprints": [
+        "click|#installChip > button:nth-child(4)|semantic-control",
+        "click|#installChip2 > button:nth-child(4)|semantic-control",
+        "click|#installChip|script-assignment",
+        "click|#installChip2|script-assignment"
+      ],
+      "reason": "两个安装命令组件及其嵌套按钮共享同一冒泡路径、clipboard 写入和 copied class 状态机；代表场景验证真实父级状态。"
+    },
+    {
+      "id": "faq-accordion-equivalence",
+      "signature": "reviewed|faq-item|same-rendered-data-contract",
+      "event": "click",
+      "triggerShape": "#faq > div:nth-child(*) > div:nth-child(1)",
+      "representativeFingerprint": "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment",
+      "memberFingerprints": [
+        "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment",
+        "click|#faq > div:nth-child(2) > div:nth-child(1)|script-assignment",
+        "click|#faq > div:nth-child(3) > div:nth-child(1)|script-assignment"
+      ],
+      "reason": "三个 FAQ 项由同一数据循环和同一处理器生成，均执行 open class 与 aria-expanded 的同构状态转换。"
+    }
+  ],
+  "coverageWaivers": [],
   "scenarios": [
     {
       "id": "toggle-theme",
@@ -57,7 +87,8 @@
             }
           ]
         }
-      ]
+      ],
+      "equivalenceGroupId": "copy-install-command-equivalence"
     },
     {
       "id": "open-first-faq",
@@ -101,7 +132,8 @@
             "aria-expanded": "true"
           }
         }
-      ]
+      ],
+      "equivalenceGroupId": "faq-accordion-equivalence"
     },
     {
       "id": "run-and-reset-demo",
@@ -155,7 +187,76 @@
         "reference": "#demo",
         "library": "#sg-demo"
       }
+    },
+    {
+      "id": "scroll-how-with-keyboard",
+      "label": "键盘横向滚动 How it works",
+      "critical": false,
+      "covers": [
+        "keydown|#howScroll|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "key",
+          "target": {
+            "reference": "#howScroll",
+            "library": "#sg-howScroll"
+          },
+          "key": "ArrowRight"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#howScroll",
+            "library": "#sg-howScroll"
+          },
+          "propertyRanges": {
+            "scrollLeft": {
+              "min": 1
+            }
+          }
+        }
+      ],
+      "screenshotAnchor": {
+        "reference": "#how",
+        "library": "#sg-how"
+      }
+    },
+    {
+      "id": "scroll-how-with-wheel",
+      "label": "滚轮协议驱动横向滚动",
+      "critical": false,
+      "covers": [
+        "wheel|#howScroll|script-assignment"
+      ],
+      "steps": [
+        {
+          "action": "wheel",
+          "target": {
+            "reference": "#howScroll",
+            "library": "#sg-howScroll"
+          },
+          "deltaY": 120
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "#howScroll",
+            "library": "#sg-howScroll"
+          },
+          "propertyRanges": {
+            "scrollLeft": {
+              "min": 1
+            }
+          }
+        }
+      ],
+      "screenshotAnchor": {
+        "reference": "#how",
+        "library": "#sg-how"
+      }
     }
-  ],
-  "waivers": []
+  ]
 }

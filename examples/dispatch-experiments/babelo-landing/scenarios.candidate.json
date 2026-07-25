@@ -6,181 +6,6 @@
   "scenarios": [
     {
       "id": "candidate-click-1",
-      "label": "Candidate: click (#nav > div:nth-child(1) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|#nav > div:nth-child(1) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "#nav > div:nth-child(1) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "#nav > div:nth-child(1) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-2",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-3",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(2)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-4",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(3))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(3)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(3)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(3)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-5",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(4))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(4)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(4)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(4)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-6",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(5))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(5)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(5)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(5)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-7",
-      "label": "Candidate: click (nav.nav-links > a:nth-child(6))",
-      "candidate": true,
-      "covers": [
-        "click|nav.nav-links > a:nth-child(6)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "nav.nav-links > a:nth-child(6)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "nav.nav-links > a:nth-child(6)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-8",
       "label": "Candidate: click (#themeToggle)",
       "candidate": true,
       "covers": [
@@ -205,32 +30,7 @@
       ]
     },
     {
-      "id": "candidate-click-9",
-      "label": "Candidate: click (div.nav-right > a:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|div.nav-right > a:nth-child(2)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.nav-right > a:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.nav-right > a:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-10",
+      "id": "candidate-click-2",
       "label": "Candidate: click (#installChip > button:nth-child(4))",
       "candidate": true,
       "covers": [
@@ -255,32 +55,7 @@
       ]
     },
     {
-      "id": "candidate-click-11",
-      "label": "Candidate: click (div.hero-cta > a:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|div.hero-cta > a:nth-child(2)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.hero-cta > a:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.hero-cta > a:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-12",
+      "id": "candidate-click-3",
       "label": "Candidate: click (#demoPlay)",
       "candidate": true,
       "covers": [
@@ -305,7 +80,7 @@
       ]
     },
     {
-      "id": "candidate-click-13",
+      "id": "candidate-click-4",
       "label": "Candidate: click (#demoReset)",
       "candidate": true,
       "covers": [
@@ -330,82 +105,7 @@
       ]
     },
     {
-      "id": "candidate-click-14",
-      "label": "Candidate: click (div.paths-grid > article:nth-child(1) > a:nth-child(5))",
-      "candidate": true,
-      "covers": [
-        "click|div.paths-grid > article:nth-child(1) > a:nth-child(5)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.paths-grid > article:nth-child(1) > a:nth-child(5)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.paths-grid > article:nth-child(1) > a:nth-child(5)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-15",
-      "label": "Candidate: click (article.featured > a:nth-child(6))",
-      "candidate": true,
-      "covers": [
-        "click|article.featured > a:nth-child(6)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "article.featured > a:nth-child(6)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "article.featured > a:nth-child(6)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-16",
-      "label": "Candidate: click (div.paths-grid > article:nth-child(3) > a:nth-child(5))",
-      "candidate": true,
-      "covers": [
-        "click|div.paths-grid > article:nth-child(3) > a:nth-child(5)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.paths-grid > article:nth-child(3) > a:nth-child(5)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.paths-grid > article:nth-child(3) > a:nth-child(5)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-17",
+      "id": "candidate-click-5",
       "label": "Candidate: click (#installChip2 > button:nth-child(4))",
       "candidate": true,
       "covers": [
@@ -430,457 +130,7 @@
       ]
     },
     {
-      "id": "candidate-click-18",
-      "label": "Candidate: click (div.cta-cta > a:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "click|div.cta-cta > a:nth-child(2)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.cta-cta > a:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.cta-cta > a:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-19",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(1) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(1) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(1) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(1) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-20",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-21",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-22",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-23",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-24",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-25",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-26",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-27",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-28",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-29",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-30",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-31",
-      "label": "Candidate: click (div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1))",
-      "candidate": true,
-      "covers": [
-        "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-resize-32",
-      "label": "Candidate: click (html)",
-      "candidate": true,
-      "covers": [
-        "resize|html|script-assignment"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "html"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "html",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-scroll-call-33",
-      "label": "Candidate: click (div.arch.reveal)",
-      "candidate": true,
-      "covers": [
-        "scroll-call|div.arch.reveal|script-assignment"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.arch.reveal"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.arch.reveal",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-scroll-call-34",
-      "label": "Candidate: click (div.cta-inner > h2:nth-child(2))",
-      "candidate": true,
-      "covers": [
-        "scroll-call|div.cta-inner > h2:nth-child(2)|script-assignment"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "div.cta-inner > h2:nth-child(2)"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "div.cta-inner > h2:nth-child(2)",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-scroll-35",
-      "label": "Candidate: click (html)",
-      "candidate": true,
-      "covers": [
-        "scroll|html|script-assignment"
-      ],
-      "notes": [
-        "人工确认 selector 是否命中预期控件",
-        "补充证明状态真实发生的 assertions",
-        "确认后移除 candidate 标记再纳入覆盖率门禁"
-      ],
-      "steps": [
-        {
-          "action": "click",
-          "target": "html"
-        }
-      ],
-      "assertions": [
-        {
-          "target": "html",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "candidate-click-36",
+      "id": "candidate-click-6",
       "label": "Candidate: click (#faq > div:nth-child(1) > div:nth-child(1))",
       "candidate": true,
       "covers": [
@@ -905,7 +155,7 @@
       ]
     },
     {
-      "id": "candidate-click-37",
+      "id": "candidate-click-7",
       "label": "Candidate: click (#faq > div:nth-child(2) > div:nth-child(1))",
       "candidate": true,
       "covers": [
@@ -930,7 +180,7 @@
       ]
     },
     {
-      "id": "candidate-click-38",
+      "id": "candidate-click-8",
       "label": "Candidate: click (#faq > div:nth-child(3) > div:nth-child(1))",
       "candidate": true,
       "covers": [
@@ -955,7 +205,7 @@
       ]
     },
     {
-      "id": "candidate-click-39",
+      "id": "candidate-click-9",
       "label": "Candidate: click (#installChip)",
       "candidate": true,
       "covers": [
@@ -987,7 +237,7 @@
       ]
     },
     {
-      "id": "candidate-click-40",
+      "id": "candidate-click-10",
       "label": "Candidate: click (#installChip2)",
       "candidate": true,
       "covers": [
@@ -1019,7 +269,7 @@
       ]
     },
     {
-      "id": "candidate-keydown-41",
+      "id": "candidate-keydown-11",
       "label": "Candidate: key (#howScroll)",
       "candidate": true,
       "covers": [
@@ -1045,21 +295,23 @@
       ]
     },
     {
-      "id": "candidate-wheel-42",
-      "label": "Candidate: click (#howScroll)",
+      "id": "candidate-wheel-12",
+      "label": "Candidate: wheel (#howScroll)",
       "candidate": true,
       "covers": [
         "wheel|#howScroll|script-assignment"
       ],
       "notes": [
+        "已生成真实 wheel delta 步骤；审核目标 hover/focus 前置条件，并补充 scrollLeft 等数值状态断言",
         "人工确认 selector 是否命中预期控件",
         "补充证明状态真实发生的 assertions",
         "确认后移除 candidate 标记再纳入覆盖率门禁"
       ],
       "steps": [
         {
-          "action": "click",
-          "target": "#howScroll"
+          "action": "wheel",
+          "target": "#howScroll",
+          "deltaY": 120
         }
       ],
       "assertions": [

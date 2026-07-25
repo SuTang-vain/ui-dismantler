@@ -124,6 +124,18 @@ function runtimeBootstrap(viewportWidth, viewportHeight) {
       return { ok: true, status: 200, text: async function () { return text; }, json: async function () { return JSON.parse(text); } };
     };
     if (!window.navigator.clipboard) window.navigator.clipboard = { writeText: async function () {} };
+    if (window.HTMLElement) {
+      window.HTMLElement.prototype.scrollBy = window.HTMLElement.prototype.scrollBy || function (options) {
+        var left = typeof options === 'number' ? Number(arguments[0] || 0) : Number(options && options.left || 0);
+        var top = typeof options === 'number' ? Number(arguments[1] || 0) : Number(options && options.top || 0);
+        this.scrollLeft = Number(this.scrollLeft || 0) + left;
+        this.scrollTop = Number(this.scrollTop || 0) + top;
+      };
+      window.HTMLElement.prototype.scrollTo = window.HTMLElement.prototype.scrollTo || function (options) {
+        this.scrollLeft = typeof options === 'number' ? Number(arguments[0] || 0) : Number(options && options.left || 0);
+        this.scrollTop = typeof options === 'number' ? Number(arguments[1] || 0) : Number(options && options.top || 0);
+      };
+    }
     window.matchMedia = window.matchMedia || function (query) {
       var minWidth = /min-width\\s*:\\s*(\\d+)px/i.exec(query);
       var maxWidth = /max-width\\s*:\\s*(\\d+)px/i.exec(query);
@@ -468,6 +480,11 @@ function evaluateAssertion(window, assertion, role, index) {
       const actual = element.getAttribute(name);
       check(`attribute:${name}`, expected, actual, actual === expected);
     }
+    for (const [name, range] of Object.entries(assertion.propertyRanges || {})) {
+      const actual = Number(element[name]);
+      const passed = Number.isFinite(actual) && (range.min === undefined || actual >= range.min) && (range.max === undefined || actual <= range.max);
+      check(`propertyRange:${name}`, range, actual, passed);
+    }
   } catch (error) {
     result.ok = false;
     result.error = String(error && error.message || error);
@@ -523,6 +540,21 @@ async function executeScenario(window, scenario, role, root) {
         element.dispatchEvent(new window.KeyboardEvent('keyup', options));
         result.target = selectorForRole(step.target, role) || 'document';
         result.key = step.key;
+      } else if (step.action === 'wheel') {
+        const element = queryTarget(window, step.target, role);
+        const options = { deltaX: Number(step.deltaX || 0), deltaY: Number(step.deltaY || 0), bubbles: true, cancelable: true };
+        if (Number(element.scrollWidth || 0) <= Number(element.clientWidth || 0)) {
+          Object.defineProperty(element, 'clientWidth', { configurable: true, value: 320 });
+          Object.defineProperty(element, 'scrollWidth', { configurable: true, value: 1280 });
+        }
+        const ownMatches = Object.prototype.hasOwnProperty.call(element, 'matches');
+        const previousMatches = element.matches;
+        element.matches = function (selector) { return selector === ':hover' || previousMatches.call(this, selector); };
+        try { element.dispatchEvent(new window.WheelEvent('wheel', options)); }
+        finally { if (ownMatches) element.matches = previousMatches; else delete element.matches; }
+        result.target = selectorForRole(step.target, role);
+        result.deltaX = options.deltaX;
+        result.deltaY = options.deltaY;
       } else if (step.action === 'wait') {
         await new Promise((resolveWait) => setTimeout(resolveWait, step.ms));
         result.ms = step.ms;

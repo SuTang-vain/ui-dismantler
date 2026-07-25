@@ -21,14 +21,14 @@
       "components": 14,
       "overBudget": 0,
       "errors": 0,
-      "warnings": 3,
+      "warnings": 0,
       "interactions": 42,
       "ownedInteractions": 42,
       "unownedInteractions": 0,
       "ready": true
     },
     "unownedFingerprints": [],
-    "finding": "作用域化 AST 绑定消除了外部压缩脚本导致的 8 个装饰元素 click 假阳性；新增 keydown、wheel、scroll、scroll-call/custom event 识别，并将生命周期事件标记为非阻断。"
+    "finding": "交互责任已结构化为 user、gesture、navigation、no-op 与 lifecycle；Babelo 的 42 个交互全部保留为规划证据，正式场景分母仅包含 12 个需要应用状态证明的交互。"
   },
   "transpile": {
     "timing": {
@@ -69,8 +69,45 @@
     "normalize scenario screenshots around an explicit screenshotAnchor without extending transient-state waits",
     "classify swap/fallback/optional fonts as non-blocking while keeping block/auto fonts required",
     "audit source-unstyled hooks through source CSS/script evidence and reconcile validator/runtime gates",
-    "add jsdom Blob URL/fetch/clipboard and color-scheme shims for deterministic formal scenario regression"
+    "add jsdom Blob URL/fetch/clipboard and color-scheme shims for deterministic formal scenario regression",
+    "classify valid href controls as navigation-action only when no durable application-state mutation is present",
+    "classify inert href=# and disabled controls as no-op-control while promoting stateful controls back to user-action",
+    "remove 26 manual Babelo coverage waivers without reducing verified coverage",
+    "compare reference/generated fragment, relative, external, mailto, tel, and download navigation semantics as a hard browser gate",
+    "count only required resources in resource-readiness while retaining non-blocking font observations for audit",
+    "compare reference/generated FontFace descriptors and loading semantics without treating optional fallback state as a blocking mismatch",
+    "preserve URL query parameters during DOM token prefixing; fixed display=swap being rewritten to sg-display=swap",
+    "treat offscreen but visible/enabled controls as action-ready because Playwright scrolls them into view",
+    "emit viewport-level stability failure details with reference/library role and phase"
   ],
+  "responsibility": {
+    "total": 42,
+    "counts": {
+      "user-action": 11,
+      "gesture-protocol": 1,
+      "navigation-action": 20,
+      "no-op-control": 6,
+      "viewport-lifecycle": 1,
+      "scroll-lifecycle": 1,
+      "custom-lifecycle": 2
+    }
+  },
+  "coverage": {
+    "totalInteractions": 42,
+    "scenarioRequiredInteractions": 12,
+    "lifecycleInteractions": 4,
+    "navigationInteractions": 20,
+    "noOpInteractions": 6,
+    "nonScenarioInteractions": 30,
+    "eligibleInteractions": 12,
+    "waivedInteractions": 0,
+    "declaredCovered": 12,
+    "verifiedCovered": 12,
+    "declaredRate": 1,
+    "verifiedRate": 1,
+    "missing": [],
+    "waivers": []
+  },
   "finalInitial": {
     "validation": "10/10",
     "overall": 0.9941,
@@ -116,7 +153,10 @@
         "stabilityFailures": 0,
         "resourceFailures": 0
       }
-    ]
+    ],
+    "worstNavigationIntegrity": 1,
+    "navigationFailures": 0,
+    "nonBlockingResourceObservations": 0
   },
   "automatedInteractions": [
     {
@@ -156,6 +196,102 @@
       "strictPassed": true
     }
   ],
+  "formalScenarioState": {
+    "passed": 6,
+    "total": 6,
+    "criticalVisualScenarios": 4
+  },
+  "telemetry": {
+    "timing": {
+      "analyzeMs": 1.819,
+      "validateMs": 14.887,
+      "roundtripMs": 1321.404,
+      "visualMatrixMs": 7517.243,
+      "scenarioStateMs": 8642.972,
+      "scenarioVisualMatrixMs": 38154.445,
+      "totalMs": 58026.652
+    },
+    "workload": {
+      "interactions": 42,
+      "formalScenarios": 6,
+      "criticalScenarios": 4,
+      "coverageWaivers": 0,
+      "viewports": 4,
+      "scenarioViewportRuns": 16
+    },
+    "browser": {
+      "mode": "shared-browser",
+      "concurrency": 1,
+      "resourceCache": "run-local",
+      "stabilityMode": "adaptive",
+      "timing": {
+        "launchMs": 506.178,
+        "contextCreateMs": 375.5880000000001,
+        "contextInitMs": 12.462,
+        "pageCreateMs": 4561.627,
+        "navigationMs": 9392.191,
+        "settleMs": 34382.658,
+        "domStabilityMs": 39944.47600000001,
+        "networkIdleMs": 13621.930999999993,
+        "fixedWaitMs": 6414.734,
+        "timerGraceMs": 0,
+        "resourceScanMs": 666.2999999999998,
+        "signatureScanMs": 1779.7999999999997,
+        "scenarioExecutionMs": 15426.669,
+        "scrollAnchorMs": 273.139,
+        "snapshotEvaluationMs": 5032.361999999998,
+        "screenshotMs": 1621.6350000000004,
+        "pixelDiffMs": 495.6940000000001,
+        "artifactWriteMs": 644.2189999999999,
+        "closeMs": 1865.555,
+        "totalMs": 48043.496
+      },
+      "workload": {
+        "browserLaunches": 1,
+        "contextsCreated": 20,
+        "pagesCreated": 40,
+        "pagePairsCreatedInParallel": 20,
+        "navigations": 40,
+        "viewportRuns": 20,
+        "scenarioMatrices": 4,
+        "scenarioSteps": 56,
+        "stabilityChecks": 80,
+        "stabilityTimeouts": 0,
+        "assertionStabilityChecks": 40,
+        "assertionStabilityTimeouts": 0,
+        "networkIdleTimeouts": 0,
+        "timerAwareWaits": 55,
+        "timerDrainTimeouts": 0,
+        "timerGraceExtensions": 0,
+        "resourceAwareWaits": 38,
+        "resourceDrainTimeouts": 0,
+        "stylesheetAwareWaits": 0,
+        "backgroundImageAwareWaits": 0,
+        "fontAwareWaits": 38,
+        "resourceFullScans": 79,
+        "resourceIncrementalScans": 93,
+        "resourceElementsScanned": 40050,
+        "resourcePseudoElementsScanned": 80100,
+        "resourceUrlsDiscovered": 97,
+        "signatureFullScans": 88,
+        "signatureIncrementalScans": 151,
+        "signatureNodesScanned": 110534,
+        "signatureMutationInvalidations": 712,
+        "signatureResizeInvalidations": 1979,
+        "signatureScrollInvalidations": 17,
+        "examplePathCacheHits": 19,
+        "examplePathCacheMisses": 1,
+        "explicitWaits": 16,
+        "adaptiveExplicitWaits": 8,
+        "scrollAnchorNormalizations": 8,
+        "screenshots": 40,
+        "remoteRequests": 272,
+        "resourceCacheHits": 230,
+        "resourceCacheMisses": 2,
+        "resourceCacheBytes": 70752
+      }
+    }
+  },
   "manualQA": {
     "pageIdentity": true,
     "blankPage": false,
@@ -194,19 +330,59 @@
     }
   },
   "remainingRisks": [
-    "remote Google FontFace progressive loading remains the main latency/nondeterminism risk; swap/fallback/optional faces no longer fail readiness, while block/auto faces remain required",
-    "scenario screenshot normalization requires an explicit screenshotAnchor for pages with virtual/smooth scrolling; it does not silently normalize every assertion target",
-    "Babelo visual fidelity is high but computed-style score is 0.9857, so typography/animation parity remains below perfect equality",
-    "interaction coverage was intentionally run off for this exploratory case; formal scenario coverage still requires reviewing the 42 interaction fingerprints and adding equivalence groups/waivers"
+    "remote Google FontFace progressive loading remains the main latency/nondeterminism risk; swap/fallback/optional faces are non-blocking while block/auto faces remain required",
+    "scenario screenshot normalization still requires an explicit screenshotAnchor for virtual/smooth scrolling pages",
+    "Babelo computed-style floor is 0.9857, so typography/animation parity remains below perfect equality",
+    "navigation-action is separated from DOM-state coverage, but cross-page navigation, downloads, and SPA router transitions still need a dedicated navigation-integrity metric"
   ],
   "regression": {
     "typescript": {
-      "tests": 63,
-      "passed": 62,
+      "tests": 73,
+      "passed": 71,
       "failed": 0,
-      "skipped": 1
+      "skipped": 2,
+      "durationMs": 52775.63675
     },
-    "optimizedGold": "2/2 PASS",
-    "blackpinkGoldMs": 34077.109583
+    "optimizedGold": "3/3 PASS",
+    "planningMs": 3681.8295,
+    "blackpinkGoldMs": 32502.792708,
+    "babeloGoldMs": 59267.484292,
+    "totalMs": 96232.887416
+  },
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "failures": 0,
+    "coverage": [
+      "fragment target existence",
+      "relative URL preservation",
+      "external URL preservation",
+      "mailto/tel classification",
+      "download target and filename"
+    ],
+    "remaining": "SPA router transitions without href still require a separate history/location contract."
+  },
+  "fontFaceAlignment": {
+    "passed": true,
+    "alignmentFailures": 0,
+    "blockingStateMismatches": 0,
+    "facesDiscoveredObservations": 1320,
+    "blockingFaceObservations": 0,
+    "nonBlockingFaceObservations": 1320,
+    "loadedFaceObservations": 240,
+    "fallbackFaceObservations": 1080,
+    "failedFaceObservations": 0,
+    "fontStateMismatches": 0,
+    "fontPreflightMs": 22.641
+  },
+  "performanceFollowUp": {
+    "report": "examples/performance-baselines/babelo-readiness-font-alignment-2026-07-24.json",
+    "runs": 3,
+    "passedRuns": 3,
+    "stabilityFailureRate": 0,
+    "baselineMedianMs": 58773.347,
+    "followUpMedianMs": 61779.921,
+    "totalChangePercent": 5.1,
+    "activePhaseFinding": "Initial/scenario visual matrices and DOM stability improved around 1-2%, but browser close median increased by 3.378s; no end-to-end speedup is claimed."
   }
 }

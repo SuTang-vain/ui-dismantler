@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
+import { compareFontFaces, evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -52,6 +52,37 @@ test("runtime selector gate catches ID/class translation mismatch hidden from DO
   const selectorGate = report.results.find((result) => result.id === "selector-runtime");
   assert.equal(report.total, 10);
   assert.equal(selectorGate?.passed, false);
+});
+
+
+
+
+
+test("font face alignment distinguishes blocking mismatches from optional fallback", () => {
+  const optional = { family: "Inter", style: "normal", weight: "400", stretch: "normal", display: "swap", status: "loading" as const, blocking: false };
+  const blocking = { family: "Display", style: "normal", weight: "700", stretch: "normal", display: "block", status: "loading" as const, blocking: true };
+  const optionalReport = compareFontFaces([optional], []);
+  assert.equal(optionalReport.passed, true);
+  assert.equal(optionalReport.nonBlockingMissingFaces, 1);
+  assert.equal(optionalReport.blockingMissingFaces, 0);
+  const blockingReport = compareFontFaces([blocking], []);
+  assert.equal(blockingReport.passed, false);
+  assert.equal(blockingReport.blockingMissingFaces, 1);
+});
+
+test("navigation integrity rejects preserved pixels with a broken fragment target", async () => {
+  const item = await fixture(
+    "navigation-integrity",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:140px;background:#fff}.link{display:block;color:#111827}.panel{height:80px}</style></head><body><div class="app"><a class="link" href="#details">Details</a><section class="panel" id="details">Panel</section></div></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:240px;height:140px;background:var(--sg-paper)}.sg-link{display:block;color:var(--sg-ink)}.sg-panel{height:80px}@media(max-width:500px){.sg-app{width:240px}}@media(max-width:320px){.sg-app{width:240px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><a class="sg-link" href="#sg-missing">Details</a><section class="sg-panel" id="sg-details">Panel</section></div>'}global.Fixture={mount:mount};})(window);`,
+  );
+  const result = await evaluateBrowserQuality(item.original, item.lib);
+  assert.equal(result.available, true);
+  assert.equal(result.navigationIntegrity?.passed, false);
+  assert.equal(result.navigationIntegrity?.issues[0]?.reason, "target-mismatch");
+  assert.ok((result.pixels?.diffRate ?? 1) <= 0.02);
+  assert.equal(result.passed, false);
 });
 
 test("selector coverage audibly exempts source classes that also have no visual selector", async () => {
@@ -324,6 +355,29 @@ test("adaptive stability drains tracked short timers up to one second", async ()
   assert.ok(result.telemetry.workload.timerAwareWaits >= 2);
 });
 
+test("adaptive timer grace only extends a tracked timer through final stable frames", async () => {
+  const item = await fixture(
+    "adaptive-timer-grace",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:180px;height:120px;background:#fff}.status{color:#111}</style></head><body><div class="app"><button id="defer">Defer</button><div class="status">idle</div></div><script>document.getElementById('defer').onclick=()=>setTimeout(()=>{const until=performance.now()+230;while(performance.now()<until){}document.querySelector('.status').textContent='done'},1000)</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:180px;height:120px;background:var(--sg-paper)}.sg-status{color:var(--sg-ink)}@media(max-width:500px){.sg-app{width:180px}}@media(max-width:320px){.sg-app{width:180px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-defer">Defer</button><div class="sg-status">idle</div></div>';root.querySelector('#sg-defer').onclick=function(){setTimeout(function(){var until=performance.now()+230;while(performance.now()<until){}root.querySelector('.sg-status').textContent='done'},1000)}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "timer-grace",
+    critical: true,
+    steps: [{ action: "click" as const, target: { reference: "#defer", library: "#sg-defer" } }],
+    assertions: [{ target: { reference: ".status", library: ".sg-status" }, text: "done" }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }],
+  });
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify({ matrix: result.scenarios[0].evaluation.matrix, telemetry: result.telemetry }, null, 2));
+  assert.equal(result.telemetry.workload.timerDrainTimeouts, 0);
+  assert.ok(result.telemetry.workload.timerGraceExtensions >= 2);
+  assert.ok(result.telemetry.timing.timerGraceMs > 0);
+});
+
 test("adaptive signature tracker observes layout resize without DOM mutation", async () => {
   const item = await fixture(
     "adaptive-signature-resize",
@@ -372,6 +426,34 @@ test("adaptive stability preserves temporal waits when the following target was 
   assert.equal(result.telemetry.workload.explicitWaits, 2);
   assert.equal(result.telemetry.workload.adaptiveExplicitWaits, 0);
   assert.ok(result.telemetry.timing.fixedWaitMs >= 200);
+  assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
+});
+
+
+
+test("adaptive intermediate readiness accepts offscreen controls that Playwright can scroll into view", async () => {
+  const item = await fixture(
+    "adaptive-offscreen-ready",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:1800px;background:#fff}.apply{margin-top:1400px}.status{height:40px;background:#e11d48;color:#fff}</style></head><body><div class="app"><button id="prepare">Prepare</button><button class="apply" id="apply">Apply</button><div class="status">idle</div></div><script>let ready=false;document.getElementById('prepare').onclick=()=>setTimeout(()=>{ready=true},60);document.getElementById('apply').onclick=()=>{document.querySelector('.status').textContent=ready?'ready':'early'}</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:240px;height:1800px;background:var(--sg-paper)}.sg-apply{margin-top:1400px}.sg-status{height:40px;background:var(--sg-primary);color:#fff}@media(max-width:500px){.sg-app{width:240px}}@media(max-width:320px){.sg-app{width:240px}}`,
+    `(function(global){function mount(root){var ready=false;root.innerHTML='<div class="sg-app"><button id="sg-prepare">Prepare</button><button class="sg-apply" id="sg-apply">Apply</button><div class="sg-status">idle</div></div>';root.querySelector('#sg-prepare').onclick=function(){setTimeout(function(){ready=true},60)};root.querySelector('#sg-apply').onclick=function(){root.querySelector('.sg-status').textContent=ready?'ready':'early'}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "offscreen-following-control",
+    critical: true,
+    steps: [
+      { action: "click" as const, target: { reference: "#prepare", library: "#sg-prepare" } },
+      { action: "wait" as const, ms: 100 },
+      { action: "click" as const, target: { reference: "#apply", library: "#sg-apply" } },
+    ],
+    assertions: [{ target: { reference: ".status", library: ".sg-status" }, text: "ready" }],
+  };
+  const result = await evaluateBrowserQualitySuite(item.original, item.lib, [scenario], {
+    stabilityMode: "adaptive",
+    viewports: [{ id: "tiny", label: "Tiny", width: 320, height: 568 }],
+  });
+  assert.equal(result.scenarios[0].evaluation.matrix.passed, true, JSON.stringify(result.scenarios[0].evaluation.matrix, null, 2));
+  assert.equal(result.telemetry.workload.adaptiveExplicitWaits, 0);
   assert.equal(result.telemetry.workload.stabilityTimeouts, 0);
 });
 
@@ -520,6 +602,14 @@ test("adaptive stability treats swap fonts as non-blocking fallback resources", 
     assert.equal(viewport.passed, true, JSON.stringify(viewport, null, 2));
     assert.equal(viewport.stabilityFailures, 0);
     assert.equal(viewport.resourceFailures.some((failure) => failure.type === "font" && failure.required), false);
+    assert.equal(result.scenarios[0].evaluation.matrix.resourceFailures, 0);
+    assert.ok(result.scenarios[0].evaluation.matrix.nonBlockingResourceObservations >= 1);
+    assert.equal(result.scenarios[0].evaluation.matrix.fontAlignmentFailures, 0);
+    assert.equal(result.scenarios[0].evaluation.matrix.viewports[0].fontFaceAlignment?.passed, true);
+    assert.ok(result.telemetry.timing.fontPreflightMs >= 0);
+    assert.ok(result.telemetry.workload.fontPreflightWaits >= 0);
+    assert.ok(result.telemetry.workload.facesDiscovered >= 2);
+    assert.ok(result.telemetry.workload.nonBlockingFaces >= 2);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }

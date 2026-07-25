@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
-  "generatedAt": "2026-07-24T09:07:03.998Z",
+  "generatedAt": "2026-07-24T15:37:06.505Z",
   "lineBudget": 150,
   "components": [
     {
@@ -101,11 +101,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 122,
-        "score": 0.81,
+        "estimatedLines": 96,
+        "score": 0.64,
         "reasons": [
-          "10 个关联交互（2 类实现行为）",
-          "1 个局部数据依赖",
+          "10 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -202,11 +202,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 108,
-        "score": 0.72,
+        "estimatedLines": 82,
+        "score": 0.55,
         "reasons": [
-          "13 个关联交互（1 类实现行为）",
-          "1 个局部数据依赖",
+          "13 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -306,11 +306,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 143,
-        "score": 0.95,
+        "estimatedLines": 117,
+        "score": 0.78,
         "reasons": [
-          "3 个关联交互（3 类实现行为）",
-          "1 个局部数据依赖",
+          "3 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1172,11 +1172,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 104,
-        "score": 0.69,
+        "estimatedLines": 78,
+        "score": 0.52,
         "reasons": [
-          "3 个关联交互（1 类实现行为）",
-          "1 个局部数据依赖",
+          "3 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1401,11 +1401,11 @@
         ]
       },
       "complexity": {
-        "estimatedLines": 141,
-        "score": 0.94,
+        "estimatedLines": 115,
+        "score": 0.77,
         "reasons": [
-          "4 个关联交互（3 类实现行为）",
-          "1 个局部数据依赖",
+          "4 个关联交互（2 类实现行为）",
+          "0 个局部数据依赖",
           "3 个响应式查询（复杂度计入前 8 个）"
         ],
         "budget": 150,
@@ -1413,31 +1413,12 @@
       }
     }
   ],
-  "issues": [
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "page-header-1",
-      "detail": "预计复杂度已达预算的 81%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "section-1-an-ai-coding-agent-that-stays-alive-in-your-terminal",
-      "detail": "预计复杂度已达预算的 95%"
-    },
-    {
-      "severity": "warning",
-      "code": "complexity-warning",
-      "componentId": "section-12-ready-to-shipwith-babel-o",
-      "detail": "预计复杂度已达预算的 94%"
-    }
-  ],
+  "issues": [],
   "summary": {
     "components": 14,
     "overBudget": 0,
     "errors": 0,
-    "warnings": 3,
+    "warnings": 0,
     "interactions": 42,
     "ownedInteractions": 42,
     "unownedInteractions": 0,

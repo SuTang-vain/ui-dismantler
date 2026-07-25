@@ -1,4 +1,5 @@
 import type { Interaction, InteractionEquivalenceGroup, Manifest, Scenario, ScenarioAssertion, ScenarioDocument, UIStateTransition } from "../types.js";
+import { interactionResponsibility, isInteractionEquivalenceEligible, isLifecycleInteraction, requiresInteractionScenario } from "../analysis/interaction-responsibility.js";
 
 export function interactionFingerprint(interaction: Interaction): string {
   return interaction.fingerprint || `${interaction.event}|${interaction.trigger}|${interaction.target ?? interaction.action}`;
@@ -39,6 +40,7 @@ function transitionSignature(transition: UIStateTransition): string {
 }
 
 export function interactionEquivalenceSignature(interaction: Interaction): string | null {
+  if (!isInteractionEquivalenceEligible(interaction)) return null;
   const triggerShape = repeatedTriggerShape(interaction.trigger);
   if (!triggerShape || (interaction.dataDependencies?.length ?? 0) > 0) return null;
   const mutationTargets = [...(interaction.mutationTargets ?? [])].sort();
@@ -81,15 +83,18 @@ export function groupEquivalentInteractions(interactions: Interaction[]): Array<
 }
 
 function candidateFor(interaction: Interaction, index: number, group?: InteractionEquivalenceGroup): Scenario {
+  const gestureProtocol = interactionResponsibility(interaction) === "gesture-protocol";
   const pointerGesture = interaction.event.startsWith("pointer") || interaction.event.startsWith("touch");
-  const action = pointerGesture ? "unsupported-pointer" : interaction.event === "input" || interaction.event === "change" ? "input" : ["keydown", "keyup"].includes(interaction.event) ? "key" : "click";
+  const action = pointerGesture ? "unsupported-pointer" : interaction.event === "wheel" ? "wheel" : gestureProtocol ? "unsupported-gesture" : interaction.event === "input" || interaction.event === "change" ? "input" : ["keydown", "keyup"].includes(interaction.event) ? "key" : "click";
   const step = action === "input"
     ? { action: "input" as const, target: targetFor(interaction), value: "test" }
     : action === "key"
       ? { action: "key" as const, target: targetFor(interaction), key: "Enter" }
       : action === "click"
         ? { action: "click" as const, target: targetFor(interaction) }
-        : null;
+        : action === "wheel"
+          ? { action: "wheel" as const, target: targetFor(interaction), deltaY: 120 }
+          : null;
   const derived = (interaction.stateTransitions ?? []).map(assertionForTransition).filter((item): item is ScenarioAssertion => Boolean(item));
   const assertions = derived.length ? derived.slice(0, 6) : [{ target: targetFor(interaction), visible: true }];
   const notes = derived.length
@@ -101,7 +106,11 @@ function candidateFor(interaction: Interaction, index: number, group?: Interacti
     equivalenceGroupId: group?.id,
     covers: group?.memberFingerprints ?? [interactionFingerprint(interaction)],
     notes: pointerGesture
-      ? ["pointer 手势需要坐标、位移和阈值，禁止降级为 click；人工补充 pointer action 支持或 coverage waiver"]
+      ? ["pointer/touch 手势需要真实坐标、位移和阈值，禁止降级为 click；人工补充协议 action 支持或 coverage waiver"]
+      : interaction.event === "wheel"
+        ? ["已生成真实 wheel delta 步骤；审核目标 hover/focus 前置条件，并补充 scrollLeft 等数值状态断言", ...notes]
+        : gestureProtocol
+          ? ["手势协议需要真实事件参数、坐标/位移或阈值，禁止降级为 click；人工补充协议 action 支持或 coverage waiver"]
       : group
         ? [`严格交互等价组：${group.memberFingerprints.length} 个重复实例共享事件、处理动作和可观察状态转换`, "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景", ...notes]
         : notes,
@@ -111,7 +120,8 @@ function candidateFor(interaction: Interaction, index: number, group?: Interacti
 
 export function generateScenarios(manifest: Manifest): ScenarioDocument {
   if (!Array.isArray(manifest.interactions)) throw new TypeError("manifest.interactions 必须是数组");
-  const grouped = groupEquivalentInteractions(manifest.interactions);
+  const scenarioInteractions = manifest.interactions.filter(requiresInteractionScenario);
+  const grouped = groupEquivalentInteractions(scenarioInteractions);
   return {
     schemaVersion: "1.0",
     generatedFrom: manifest.meta.source,
@@ -134,7 +144,7 @@ export function loadScenarios(document: unknown): ScenarioDocument {
   const value = document as Partial<ScenarioDocument>;
   if (value.schemaVersion !== "1.0" || !Array.isArray(value.scenarios) || value.scenarios.length === 0) throw new TypeError("场景文件必须是 schemaVersion=1.0 且包含非空 scenarios 数组");
   const seen = new Set<string>();
-  const actions = new Set(["click", "input", "key", "wait"]);
+  const actions = new Set(["click", "input", "key", "wheel", "wait"]);
   if (value.coverageWaivers !== undefined) {
     if (!Array.isArray(value.coverageWaivers)) throw new TypeError("coverageWaivers 必须是数组");
     const waiverFingerprints = new Set<string>();
@@ -167,30 +177,37 @@ export function loadScenarios(document: unknown): ScenarioDocument {
     if (!Array.isArray(scenario.steps)) throw new TypeError(`场景 ${scenario.id} steps 必须是数组`);
     scenario.steps.forEach((step, index) => {
       if (!step || !actions.has(step.action)) throw new TypeError(`场景 ${scenario.id} steps[${index}] action 不支持`);
-      if (["click", "input"].includes(step.action) && !isTarget(step.target, true)) throw new TypeError(`场景 ${scenario.id} steps[${index}] target 无效`);
+      if (["click", "input", "wheel"].includes(step.action) && !isTarget(step.target, true)) throw new TypeError(`场景 ${scenario.id} steps[${index}] target 无效`);
       if (step.action === "key" && (typeof step.key !== "string" || !step.key)) throw new TypeError(`场景 ${scenario.id} steps[${index}].key 必须是非空字符串`);
+      if (step.action === "wheel" && ![step.deltaX, step.deltaY].some((value) => typeof value === "number" && Number.isFinite(value) && value !== 0)) throw new TypeError(`场景 ${scenario.id} steps[${index}] wheel 至少需要一个非零 delta`);
       if (step.action === "input" && typeof step.value !== "string") throw new TypeError(`场景 ${scenario.id} steps[${index}].value 必须是字符串`);
       if (step.action === "wait" && (!Number.isInteger(step.ms) || (step.ms ?? -1) < 0 || (step.ms ?? 5001) > 5000)) throw new TypeError(`场景 ${scenario.id} steps[${index}].ms 必须位于 0..5000`);
     });
     if (!Array.isArray(scenario.assertions) || !scenario.assertions.length) throw new TypeError(`场景 ${scenario.id} assertions 必须是非空数组`);
     scenario.assertions.forEach((assertion, index) => {
       if (!assertion || !isTarget(assertion.target, true)) throw new TypeError(`场景 ${scenario.id} assertions[${index}] target 无效`);
-      const checks = ["visible", "text", "textContains", "value", "focused", "classIncludes", "classExcludes", "attributes"] as const;
+      const checks = ["visible", "text", "textContains", "value", "focused", "classIncludes", "classExcludes", "attributes", "propertyRanges"] as const;
       if (!checks.some((key) => key in assertion)) throw new TypeError(`场景 ${scenario.id} assertions[${index}] 至少需要一个检查项`);
       if ("visible" in assertion && typeof assertion.visible !== "boolean") throw new TypeError(`场景 ${scenario.id} assertions[${index}].visible 必须是 boolean`);
       if ("focused" in assertion && typeof assertion.focused !== "boolean") throw new TypeError(`场景 ${scenario.id} assertions[${index}].focused 必须是 boolean`);
       for (const key of ["text", "textContains", "value"] as const) if (key in assertion && typeof assertion[key] !== "string") throw new TypeError(`场景 ${scenario.id} assertions[${index}].${key} 必须是字符串`);
       for (const key of ["classIncludes", "classExcludes"] as const) if (key in assertion && (!Array.isArray(assertion[key]) || !assertion[key]?.every((item) => typeof item === "string" || isTarget(item, true)))) throw new TypeError(`场景 ${scenario.id} assertions[${index}].${key} 必须是字符串或按 role 分支的 selector 数组`);
+      if (assertion.propertyRanges !== undefined && (typeof assertion.propertyRanges !== "object" || Object.values(assertion.propertyRanges).some((range) => !range || (range.min === undefined && range.max === undefined) || [range.min, range.max].some((bound) => bound !== undefined && (typeof bound !== "number" || !Number.isFinite(bound)))))) throw new TypeError(`场景 ${scenario.id} assertions[${index}].propertyRanges 必须包含有限 min/max`);
     });
   }
   return value as ScenarioDocument;
 }
 
 export function computeCoverage(interactions: Interaction[], scenarios: ScenarioDocument, verifiedFingerprints = new Set<string>()) {
-  const declared = new Set(interactions.map(interactionFingerprint));
+  const allDeclared = new Set(interactions.map(interactionFingerprint));
+  const scenarioRequired = new Set(interactions.filter(requiresInteractionScenario).map(interactionFingerprint));
+  const lifecycle = new Set(interactions.filter(isLifecycleInteraction).map(interactionFingerprint));
+  const navigation = new Set(interactions.filter((item) => interactionResponsibility(item) === "navigation-action").map(interactionFingerprint));
+  const noOp = new Set(interactions.filter((item) => interactionResponsibility(item) === "no-op-control").map(interactionFingerprint));
   const waiverReasons = new Map((scenarios.coverageWaivers ?? []).map((waiver) => [waiver.fingerprint, waiver.reason]));
-  const waived = [...declared].filter((item) => waiverReasons.has(item));
-  const eligible = [...declared].filter((item) => !waiverReasons.has(item));
+  const waived = [...scenarioRequired].filter((item) => waiverReasons.has(item));
+  const eligible = [...scenarioRequired].filter((item) => !waiverReasons.has(item));
+  const declared = scenarioRequired;
   const expandEquivalent = (input: Iterable<string>): Set<string> => {
     const expanded = new Set(input);
     for (const group of scenarios.equivalenceGroups ?? []) {
@@ -205,7 +222,12 @@ export function computeCoverage(interactions: Interaction[], scenarios: Scenario
   const declaredCovered = eligible.filter((item) => scenarioFingerprints.has(item));
   const verifiedCovered = declaredCovered.filter((item) => verifiedEquivalentFingerprints.has(item));
   return {
-    totalInteractions: declared.size,
+    totalInteractions: allDeclared.size,
+    scenarioRequiredInteractions: scenarioRequired.size,
+    lifecycleInteractions: lifecycle.size,
+    navigationInteractions: navigation.size,
+    noOpInteractions: noOp.size,
+    nonScenarioInteractions: allDeclared.size - scenarioRequired.size,
     eligibleInteractions: eligible.length,
     waivedInteractions: waived.length,
     declaredCovered: declaredCovered.length,

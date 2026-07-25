@@ -1261,6 +1261,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|#nav > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1269,8 +1270,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(1)",
@@ -1280,6 +1280,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1288,8 +1289,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(2)",
@@ -1299,6 +1299,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1307,8 +1308,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(3)",
@@ -1318,6 +1318,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(3)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1326,8 +1327,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(4)",
@@ -1337,6 +1337,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(4)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1345,8 +1346,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(5)",
@@ -1356,6 +1356,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(5)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1364,8 +1365,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "nav.nav-links > a:nth-child(6)",
@@ -1375,6 +1375,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|nav.nav-links > a:nth-child(6)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1383,8 +1384,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "#themeToggle",
@@ -1394,13 +1394,13 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|#themeToggle|semantic-control",
+      "responsibility": "user-action",
       "mutationTargets": [],
       "stateMutations": [
         "root.setAttribute(\"data-theme\", next)"
       ],
       "stateTransitions": [],
-      "dataDependencies": [],
-      "lifecycle": false
+      "dataDependencies": []
     },
     {
       "trigger": "div.nav-right > a:nth-child(2)",
@@ -1410,6 +1410,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.nav-right > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1418,8 +1419,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "#installChip > button:nth-child(4)",
@@ -1428,7 +1428,8 @@
       "source": "semantic-control",
       "analysis": "semantic",
       "confidence": 0.6,
-      "fingerprint": "click|#installChip > button:nth-child(4)|semantic-control"
+      "fingerprint": "click|#installChip > button:nth-child(4)|semantic-control",
+      "responsibility": "user-action"
     },
     {
       "trigger": "div.hero-cta > a:nth-child(2)",
@@ -1438,6 +1439,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.hero-cta > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1446,8 +1448,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "#demoPlay",
@@ -1457,6 +1458,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|#demoPlay|semantic-control",
+      "responsibility": "user-action",
       "target": "span",
       "mutationTargets": [
         "span",
@@ -1601,8 +1603,7 @@
           "source": "playBtn.querySelector(\"span\").textContent=\"Run\""
         }
       ],
-      "dataDependencies": [],
-      "lifecycle": false
+      "dataDependencies": []
     },
     {
       "trigger": "#demoReset",
@@ -1612,6 +1613,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|#demoReset|semantic-control",
+      "responsibility": "user-action",
       "target": "#demoTranscript",
       "mutationTargets": [
         "#demoTranscript",
@@ -1672,8 +1674,7 @@
           "source": "playBtn.querySelector(\"span\").textContent = \"Run\""
         }
       ],
-      "dataDependencies": [],
-      "lifecycle": false
+      "dataDependencies": []
     },
     {
       "trigger": "div.paths-grid > article:nth-child(1) > a:nth-child(5)",
@@ -1683,6 +1684,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.paths-grid > article:nth-child(1) > a:nth-child(5)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1691,8 +1693,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "article.featured > a:nth-child(6)",
@@ -1702,6 +1703,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|article.featured > a:nth-child(6)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1710,8 +1712,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.paths-grid > article:nth-child(3) > a:nth-child(5)",
@@ -1721,6 +1722,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.paths-grid > article:nth-child(3) > a:nth-child(5)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1729,8 +1731,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "#installChip2 > button:nth-child(4)",
@@ -1739,7 +1740,8 @@
       "source": "semantic-control",
       "analysis": "semantic",
       "confidence": 0.6,
-      "fingerprint": "click|#installChip2 > button:nth-child(4)|semantic-control"
+      "fingerprint": "click|#installChip2 > button:nth-child(4)|semantic-control",
+      "responsibility": "user-action"
     },
     {
       "trigger": "div.cta-cta > a:nth-child(2)",
@@ -1749,6 +1751,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.cta-cta > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1757,8 +1760,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(1) > a:nth-child(1)",
@@ -1768,6 +1770,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1776,8 +1779,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
@@ -1787,6 +1789,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1795,8 +1798,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
@@ -1806,6 +1808,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1814,8 +1817,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
@@ -1825,6 +1827,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1833,8 +1836,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
@@ -1844,6 +1846,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1852,8 +1855,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
@@ -1863,6 +1865,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1871,8 +1874,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
@@ -1882,6 +1884,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1890,8 +1893,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
@@ -1901,6 +1903,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1909,8 +1912,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
@@ -1920,6 +1922,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1928,8 +1931,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
@@ -1939,6 +1941,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1947,8 +1950,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
@@ -1958,6 +1960,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1966,8 +1969,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
@@ -1977,6 +1979,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -1985,8 +1988,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
@@ -1996,6 +1998,7 @@
       "analysis": "ast",
       "confidence": 0.94,
       "fingerprint": "click|div.footer-grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control",
       "mutationTargets": [],
       "stateMutations": [
         "scrollInstance.scrollTo(el, { offset, duration: 1.2 })",
@@ -2004,8 +2007,7 @@
       "stateTransitions": [],
       "dataDependencies": [
         "a"
-      ],
-      "lifecycle": false
+      ]
     },
     {
       "trigger": "html",
@@ -2017,7 +2019,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": true,
+      "responsibility": "viewport-lifecycle",
       "confidence": 0.94,
       "fingerprint": "resize|html|script-assignment"
     },
@@ -2033,7 +2035,7 @@
       ],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": true,
+      "responsibility": "custom-lifecycle",
       "confidence": 0.94,
       "fingerprint": "scroll-call|div.arch.reveal|script-assignment"
     },
@@ -2049,7 +2051,7 @@
       ],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": true,
+      "responsibility": "custom-lifecycle",
       "confidence": 0.94,
       "fingerprint": "scroll-call|div.cta-inner > h2:nth-child(2)|script-assignment"
     },
@@ -2078,7 +2080,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": true,
+      "responsibility": "scroll-lifecycle",
       "confidence": 0.94,
       "fingerprint": "scroll|html|script-assignment"
     },
@@ -2117,7 +2119,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "click|#faq > div:nth-child(1) > div:nth-child(1)|script-assignment"
     },
@@ -2156,7 +2158,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "click|#faq > div:nth-child(2) > div:nth-child(1)|script-assignment"
     },
@@ -2195,7 +2197,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "click|#faq > div:nth-child(3) > div:nth-child(1)|script-assignment"
     },
@@ -2233,7 +2235,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "click|#installChip|script-assignment"
     },
@@ -2271,7 +2273,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "click|#installChip2|script-assignment"
     },
@@ -2307,7 +2309,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "user-action",
       "confidence": 0.94,
       "fingerprint": "keydown|#howScroll|script-assignment"
     },
@@ -2334,7 +2336,7 @@
       "dataDependencies": [],
       "source": "script-assignment",
       "analysis": "ast",
-      "lifecycle": false,
+      "responsibility": "gesture-protocol",
       "confidence": 0.94,
       "fingerprint": "wheel|#howScroll|script-assignment"
     }

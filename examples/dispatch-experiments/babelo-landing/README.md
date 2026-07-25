@@ -17,4 +17,4 @@ Open:
 http://127.0.0.1:4187/examples/dispatch-experiments/babelo-landing/lib/examples/babelo.html
 ```
 
-The compact measured result is in `results.json`; detailed conclusions are in `RESULTS.md`.
+The compact measured result is in `results.json`; detailed conclusions are in `RESULTS.md`. This case is now part of the formal optimized Gold+ regression with strict interaction coverage enabled (`verifiedCoverage = 1`). Navigation and inert controls are classified structurally, so the formal model requires no coverage waivers.

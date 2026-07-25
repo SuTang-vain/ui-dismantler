@@ -201,6 +201,12 @@ export async function runQualityGate(options: {
     gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0 && scenarioRuntimeErrors === 0 && stabilityFailures === 0, detail: `initialViewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors + scenarioRuntimeErrors}，stabilityFailures=${stabilityFailures}` });
     gates.push({ id: "resource-readiness", passed: resourceFailures === 0, detail: `requiredResourceFailures=${resourceFailures}` });
     gates.push({ id: "external-availability", passed: externalAvailabilityFailures === 0, detail: `requiredExternalFailures=${externalAvailabilityFailures}` });
+    const navigationFailures = browserMatrix.navigationFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.navigationFailures, 0);
+    const worstNavigationIntegrity = Math.min(browserMatrix.worstNavigationIntegrity, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstNavigationIntegrity));
+    gates.push({ id: "navigation-integrity", passed: navigationFailures === 0 && worstNavigationIntegrity >= 1, detail: `worstNavigationIntegrity=${worstNavigationIntegrity}，navigationFailures=${navigationFailures}` });
+    const fontAlignmentFailures = browserMatrix.fontAlignmentFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.fontAlignmentFailures, 0);
+    const blockingFontStateMismatches = browserMatrix.blockingFontStateMismatches + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.blockingFontStateMismatches, 0);
+    gates.push({ id: "font-face-alignment", passed: fontAlignmentFailures === 0, detail: `alignmentFailures=${fontAlignmentFailures}，blockingStateMismatches=${blockingFontStateMismatches}` });
     gates.push({ id: "selector-coverage", passed: worstSelectorCoverage >= thresholds.selectorCoverage, detail: `worstSelectorCoverage=${worstSelectorCoverage}，门槛=${thresholds.selectorCoverage}` });
     gates.push({ id: "computed-style", passed: worstComputedStyle >= thresholds.style, detail: `worstComputedStyle=${worstComputedStyle}，门槛=${thresholds.style}` });
     gates.push({ id: "pixel-diff", passed: worstPixelDiff <= thresholds.pixelDiff, detail: `worstPixelDiff=${worstPixelDiff}，门槛=${thresholds.pixelDiff}` });
@@ -223,7 +229,7 @@ export async function runQualityGate(options: {
       id: "coverage",
       passed: Boolean(coverage && coverage.verifiedRate >= (thresholds.interactionCoverage as number)),
       detail: coverage
-        ? `verifiedCoverage=${coverage.verifiedRate.toFixed(3)}，门槛=${thresholds.interactionCoverage}，eligible=${coverage.eligibleInteractions}，waived=${coverage.waivedInteractions}`
+        ? `verifiedCoverage=${coverage.verifiedRate.toFixed(3)}，门槛=${thresholds.interactionCoverage}，eligible=${coverage.eligibleInteractions}，waived=${coverage.waivedInteractions}，navigation=${coverage.navigationInteractions ?? 0}，noOp=${coverage.noOpInteractions ?? 0}，lifecycle=${coverage.lifecycleInteractions ?? 0}`
         : `未生成交互覆盖报告，门槛=${thresholds.interactionCoverage}`,
     });
   }

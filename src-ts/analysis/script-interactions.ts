@@ -1,6 +1,7 @@
 import { parse, type AnyNode } from "acorn";
 import { fullAncestor, simple } from "acorn-walk";
 import type { Interaction, UIStateTransition } from "../types.js";
+import { classifyInteractionResponsibility } from "./interaction-responsibility.js";
 
 interface SelectorBinding {
   selector: string;
@@ -525,7 +526,7 @@ export function extractScriptInteractions(script: string, document: Document, st
           dataDependencies: evidence.dataDependencies,
           source: "script-assignment",
           analysis: "ast",
-          lifecycle: ["resize", "orientationchange", "scroll", "scrollend", "scroll-call", "load", "error", "DOMContentLoaded"].includes(registration.event),
+          responsibility: classifyInteractionResponsibility(registration.event),
           confidence: triggerBinding.kind === "dynamic" ? 0.72 : 0.94,
           fingerprint: `${registration.event}|${selector}|script-assignment`,
         });

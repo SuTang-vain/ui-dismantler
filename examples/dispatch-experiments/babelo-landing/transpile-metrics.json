@@ -5,11 +5,11 @@
   "outDir": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/lib",
   "telemetry": {
     "timing": {
-      "readParseMs": 154.246,
-      "analyzeMs": 30.857,
-      "rewriteMs": 58.813,
-      "writeMs": 6.424,
-      "totalMs": 250.376
+      "readParseMs": 174.185,
+      "analyzeMs": 26.751,
+      "rewriteMs": 63.458,
+      "writeMs": 4.932,
+      "totalMs": 269.441
     },
     "workload": {
       "sourceBytes": 87208,
@@ -18,7 +18,7 @@
       "executableScripts": 1,
       "skippedScripts": 1,
       "cssBytes": 31939,
-      "jsBytes": 54104,
+      "jsBytes": 53932,
       "assetsCopied": true
     }
   }

@@ -36,6 +36,8 @@ export interface UIStateTransition {
   source: string;
 }
 
+export type InteractionResponsibility = "user-action" | "navigation-action" | "no-op-control" | "gesture-protocol" | "scroll-lifecycle" | "viewport-lifecycle" | "resource-lifecycle" | "custom-lifecycle";
+
 export interface Interaction {
   trigger: string;
   event: string;
@@ -46,6 +48,8 @@ export interface Interaction {
   stateTransitions?: UIStateTransition[];
   dataDependencies?: string[];
   analysis?: "attribute" | "semantic" | "regex" | "ast";
+  responsibility?: InteractionResponsibility;
+  /** @deprecated Read-only compatibility for manifests generated before responsibility was structured. */
   lifecycle?: boolean;
   confidence?: number;
   source: "html-attribute" | "event-listener" | "script-assignment" | "semantic-control";
@@ -155,7 +159,7 @@ export interface RenderResult {
 export type ScenarioTarget = string | { reference?: string; library?: string; default?: string };
 
 export interface ScenarioStep {
-  action: "click" | "input" | "key" | "wait";
+  action: "click" | "input" | "key" | "wheel" | "wait";
   target?: ScenarioTarget;
   value?: string;
   commit?: boolean;
@@ -165,6 +169,8 @@ export interface ScenarioStep {
   ctrlKey?: boolean;
   metaKey?: boolean;
   shiftKey?: boolean;
+  deltaX?: number;
+  deltaY?: number;
   ms?: number;
 }
 
@@ -178,6 +184,7 @@ export interface ScenarioAssertion {
   classIncludes?: Array<string | ScenarioTarget>;
   classExcludes?: Array<string | ScenarioTarget>;
   attributes?: Record<string, string | null>;
+  propertyRanges?: Record<string, { min?: number; max?: number }>;
 }
 
 export interface Scenario {
@@ -349,6 +356,61 @@ export interface ExternalAvailabilityReport {
   externalFailures: number;
 }
 
+export type NavigationReferenceKind = "fragment" | "relative-url" | "external-url" | "mailto" | "tel" | "download" | "inert";
+
+export interface NavigationReferenceSnapshot {
+  selector: string;
+  text: string;
+  href: string;
+  normalizedTarget: string;
+  kind: NavigationReferenceKind;
+  download: string | null;
+  fragmentTargetExists: boolean | null;
+}
+
+export interface NavigationIntegrityIssue {
+  index: number;
+  reason: "count-mismatch" | "target-mismatch" | "kind-mismatch" | "download-mismatch" | "missing-fragment-target";
+  reference?: NavigationReferenceSnapshot;
+  generated?: NavigationReferenceSnapshot;
+}
+
+export interface NavigationIntegrityReport {
+  passed: boolean;
+  total: number;
+  matched: number;
+  rate: number;
+  issues: NavigationIntegrityIssue[];
+}
+
+export interface FontFaceSnapshot {
+  family: string;
+  style: string;
+  weight: string;
+  stretch: string;
+  display: string;
+  status: "unloaded" | "loading" | "loaded" | "error";
+  blocking: boolean;
+}
+
+export interface FontFaceAlignmentReport {
+  passed: boolean;
+  referenceFaces: number;
+  generatedFaces: number;
+  matchedFaces: number;
+  blockingFaces: number;
+  nonBlockingFaces: number;
+  loadedFaces: number;
+  fallbackFaces: number;
+  failedFaces: number;
+  blockingMissingFaces: number;
+  nonBlockingMissingFaces: number;
+  blockingStateMismatches: number;
+  nonBlockingStateMismatches: number;
+  missing: Array<{ role: "reference" | "library"; key: string }>;
+}
+
+
 export interface QualityViewport {
   id: string;
   label: string;
@@ -361,9 +423,12 @@ export interface BrowserViewportReport extends QualityViewport {
   error?: string;
   runtimeErrors: number;
   stabilityFailures: number;
+  stabilityFailureDetails: Array<{ role: "reference" | "library"; message: string }>;
   resourceFailures: VisualResourceFailure[];
   translationFidelity?: TranslationFidelityReport;
   externalAvailability?: ExternalAvailabilityReport;
+  navigationIntegrity?: NavigationIntegrityReport;
+  fontFaceAlignment?: FontFaceAlignmentReport;
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
   styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
   pixels?: PixelDiffReport;
@@ -382,7 +447,13 @@ export interface BrowserQualityMatrixReport {
   runtimeErrors: number;
   stabilityFailures: number;
   resourceFailures: number;
+  nonBlockingResourceObservations: number;
   externalAvailabilityFailures: number;
+  navigationFailures: number;
+  worstNavigationIntegrity: number;
+  fontAlignmentFailures: number;
+  blockingFontStateMismatches: number;
+  failedFontFaces: number;
 }
 
 export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrixReport {
@@ -413,6 +484,8 @@ export interface BrowserQualityReport {
   styles?: StyleComparisonReport;
   translationFidelity?: TranslationFidelityReport;
   externalAvailability?: ExternalAvailabilityReport;
+  navigationIntegrity?: NavigationIntegrityReport;
+  fontFaceAlignment?: FontFaceAlignmentReport;
   pixels?: PixelDiffReport;
   score?: number;
   passed?: boolean;

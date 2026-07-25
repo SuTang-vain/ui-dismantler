@@ -16,6 +16,10 @@ import type {
   Scenario,
   ScenarioAssertion,
   SelectorCoverageReport,
+  NavigationIntegrityReport,
+  NavigationReferenceSnapshot,
+  FontFaceAlignmentReport,
+  FontFaceSnapshot,
   StyleComparisonReport,
   VisualResourceFailure,
   VisualResourceType,
@@ -35,6 +39,7 @@ const STYLE_PROPERTIES = [
   "box-shadow", "font-size", "font-weight", "line-height", "text-align",
 ] as const;
 const ADAPTIVE_STABILITY_TIMEOUT_MS = 1200;
+const ADAPTIVE_TIMER_SETTLE_GRACE_MS = 350;
 
 interface BrowserSnapshot {
   ok: boolean;
@@ -43,6 +48,8 @@ interface BrowserSnapshot {
   resourceFailures: VisualResourceFailure[];
   selectorCoverage: SelectorCoverageReport;
   classEvidence: Array<{ className: string; count: number; hasSelector: boolean }>;
+  navigationReferences: NavigationReferenceSnapshot[];
+  fontFaces: FontFaceSnapshot[];
   styles: ComputedStyleSnapshot[];
   screenshot: Buffer;
 }
@@ -192,6 +199,8 @@ export interface BrowserExecutionTelemetry {
     domStabilityMs: number;
     networkIdleMs: number;
     fixedWaitMs: number;
+    fontPreflightMs: number;
+    timerGraceMs: number;
     resourceScanMs: number;
     signatureScanMs: number;
     scenarioExecutionMs: number;
@@ -219,6 +228,15 @@ export interface BrowserExecutionTelemetry {
     networkIdleTimeouts: number;
     timerAwareWaits: number;
     timerDrainTimeouts: number;
+    timerGraceExtensions: number;
+    fontPreflightWaits: number;
+    facesDiscovered: number;
+    blockingFaces: number;
+    nonBlockingFaces: number;
+    loadedFaces: number;
+    fallbackFaces: number;
+    failedFaces: number;
+    fontStateMismatches: number;
     resourceAwareWaits: number;
     resourceDrainTimeouts: number;
     stylesheetAwareWaits: number;
@@ -261,8 +279,8 @@ function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurr
     concurrency,
     resourceCache,
     stabilityMode,
-    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
-    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
+    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
+    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, timerGraceExtensions: 0, fontPreflightWaits: 0, facesDiscovered: 0, blockingFaces: 0, nonBlockingFaces: 0, loadedFaces: 0, fallbackFaces: 0, failedFaces: 0, fontStateMismatches: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
   };
 }
 
@@ -372,6 +390,7 @@ interface DomStabilityProbeResult {
   stable: boolean;
   assertionsSatisfied: boolean;
   timersSettled: boolean;
+  timerGraceMs: number;
   resourcesSettled: boolean;
   waitedForTimers: boolean;
   waitedForResources: boolean;
@@ -471,9 +490,9 @@ async function waitForDomLayoutAndAssertions(
   assertions: ResolvedScenarioAssertion[],
   timeoutMs = ADAPTIVE_STABILITY_TIMEOUT_MS,
 ): Promise<DomStabilityProbeResult> {
-  return page.evaluate(async ({ selector, expected, timeout }) => {
+  return page.evaluate(async ({ selector, expected, timeout, timerGrace }) => {
     const root = document.querySelector(selector);
-    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false, resourceReferences: [], resourceScan: { fullScans: 0, incrementalScans: 0, elementsScanned: 0, pseudoElementsScanned: 0, urlsDiscovered: 0, elapsedMs: 0 }, signatureScan: { fullScans: 0, incrementalScans: 0, nodesScanned: 0, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, elapsedMs: 0 } };
+    if (!root) return { stable: false, assertionsSatisfied: false, timersSettled: false, timerGraceMs: 0, resourcesSettled: false, waitedForTimers: false, waitedForResources: false, waitedForStylesheets: false, waitedForBackgroundImages: false, waitedForFonts: false, resourceReferences: [], resourceScan: { fullScans: 0, incrementalScans: 0, elementsScanned: 0, pseudoElementsScanned: 0, urlsDiscovered: 0, elapsedMs: 0 }, signatureScan: { fullScans: 0, incrementalScans: 0, nodesScanned: 0, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, elapsedMs: 0 } };
     const visible = (element: Element): boolean => {
       let current: Element | null = element;
       while (current) {
@@ -500,10 +519,7 @@ async function waitForDomLayoutAndAssertions(
         const rect = element.getBoundingClientRect();
         const disabled = "disabled" in html && Boolean((html as HTMLButtonElement).disabled);
         if (!visible(element) || disabled || element.getAttribute("aria-disabled") === "true" || rect.width <= 0 || rect.height <= 0) return false;
-        const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
-        const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
-        const hit = document.elementFromPoint(x, y);
-        if (hit && hit !== element && !element.contains(hit)) return false;
+
       }
       if (assertion.text !== undefined && text(element) !== assertion.text) return false;
       if (assertion.textContains !== undefined && !text(element).includes(assertion.textContains)) return false;
@@ -512,6 +528,10 @@ async function waitForDomLayoutAndAssertions(
       if (assertion.classIncludes?.some((name) => !element.classList.contains(name))) return false;
       if (assertion.classExcludes?.some((name) => element.classList.contains(name))) return false;
       if (assertion.attributes && Object.entries(assertion.attributes).some(([name, value]) => element.getAttribute(name) !== value)) return false;
+      if (assertion.propertyRanges && Object.entries(assertion.propertyRanges).some(([name, range]) => {
+        const value = Number((element as unknown as Record<string, unknown>)[name]);
+        return !Number.isFinite(value) || (range.min !== undefined && value < range.min) || (range.max !== undefined && value > range.max);
+      })) return false;
       return true;
     });
     const pendingTimerDeadlines = (): number[] => {
@@ -897,6 +917,8 @@ async function waitForDomLayoutAndAssertions(
     });
     return new Promise<DomStabilityProbeResult>((resolveWait) => {
       const startedAt = performance.now();
+      const hardTimerGraceDeadline = startedAt + timeout + timerGrace;
+      let latestTrackedTimerDeadline = 0;
       let previous = "";
       let stableFrames = 0;
       let waitedForTimers = false;
@@ -912,23 +934,29 @@ async function waitForDomLayoutAndAssertions(
         const now = performance.now();
         const pendingTimers = pendingTimerDeadlines().filter((deadline) => deadline - now <= timeout);
         const timersSettled = pendingTimers.length === 0;
-        if (!timersSettled) waitedForTimers = true;
+        if (!timersSettled) {
+          waitedForTimers = true;
+          latestTrackedTimerDeadline = Math.max(latestTrackedTimerDeadline, ...pendingTimers);
+        }
         const resources = visualResourceState();
         if (!resources.settled) waitedForResources = true;
         if (!resources.stylesheets) waitedForStylesheets = true;
         if (!resources.backgroundImages) waitedForBackgroundImages = true;
         if (!resources.fonts) waitedForFonts = true;
         if (stableFrames >= 2 && assertionState && timersSettled && resources.settled) {
-          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
+          resolveWait({ stable: true, assertionsSatisfied: true, timersSettled: true, timerGraceMs: Math.max(0, Number((now - startedAt - timeout).toFixed(3))), resourcesSettled: true, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
         }
         if (now - startedAt >= timeout) {
-          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
+          const timerGraceDeadline = Math.min(hardTimerGraceDeadline, latestTrackedTimerDeadline + timerGrace);
+          const timerDrivenGrace = waitedForTimers && latestTrackedTimerDeadline > 0 && assertionState && resources.settled;
+          if (timerDrivenGrace && now < timerGraceDeadline) { requestAnimationFrame(sample); return; }
+          resolveWait({ stable: false, assertionsSatisfied: assertionState, timersSettled, timerGraceMs: Math.max(0, Number((now - startedAt - timeout).toFixed(3))), resourcesSettled: resources.settled, waitedForTimers, waitedForResources, waitedForStylesheets, waitedForBackgroundImages, waitedForFonts, resourceReferences: resources.references, resourceScan: resourceScanDelta(), signatureScan: signatureScanDelta() }); return;
         }
         requestAnimationFrame(sample);
       };
       requestAnimationFrame(sample);
     });
-  }, { selector: rootSelector, expected: assertions, timeout: timeoutMs });
+  }, { selector: rootSelector, expected: assertions, timeout: timeoutMs, timerGrace: ADAPTIVE_TIMER_SETTLE_GRACE_MS });
 }
 
 function resourceFailuresForProbe(references: VisualResourceReference[], network: NetworkActivityTracker): VisualResourceFailure[] {
@@ -1015,6 +1043,7 @@ async function waitForAdaptiveStability(
   const resourceFailures = resourceFailuresForProbe(dom.resourceReferences, network);
   const resourceFailed = resourceFailures.some((failure) => failure.required);
   if (telemetry && dom.waitedForTimers) telemetry.workload.timerAwareWaits += 1;
+  if (telemetry && dom.timerGraceMs > 0) { telemetry.workload.timerGraceExtensions += 1; telemetry.timing.timerGraceMs += dom.timerGraceMs; }
   if (telemetry && dom.waitedForResources) telemetry.workload.resourceAwareWaits += 1;
   if (telemetry && dom.waitedForStylesheets) telemetry.workload.stylesheetAwareWaits += 1;
   if (telemetry && dom.waitedForBackgroundImages) telemetry.workload.backgroundImageAwareWaits += 1;
@@ -1054,10 +1083,17 @@ async function waitForSettled(
     const root = document.querySelector(selector);
     return Boolean(root && (root.children.length || root.textContent?.trim()));
   }, rootSelector, { timeout: 5000 });
-  await page.evaluate(async () => { if (document.fonts) await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]); });
-  if (mode === "adaptive") {
-    return waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
+  const fontStartedAt = performance.now();
+  const fontPreflightWaited = await page.evaluate(async () => {
+    if (!document.fonts || document.fonts.status === "loaded") return false;
+    await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
+    return true;
+  });
+  if (telemetry) {
+    telemetry.timing.fontPreflightMs += elapsed(fontStartedAt);
+    if (fontPreflightWaited) telemetry.workload.fontPreflightWaits += 1;
   }
+  if (mode === "adaptive") return waitForAdaptiveStability(page, rootSelector, network, [], telemetry);
   await page.evaluate(async () => {
     await new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done())));
   });
@@ -1088,10 +1124,9 @@ async function targetIsActionable(page: Page, selector: string): Promise<boolean
     if (("disabled" in html && Boolean((html as HTMLButtonElement).disabled)) || element.getAttribute("aria-disabled") === "true") return false;
     const rect = element.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return false;
-    const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
-    const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
-    const hit = document.elementFromPoint(x, y);
-    return !hit || hit === element || element.contains(hit);
+    // Playwright scrolls offscreen controls into view before acting. Readiness should
+    // describe semantic visibility/enabled state, not current viewport hit-testing.
+    return true;
   }, selector);
 }
 
@@ -1188,6 +1223,10 @@ async function executeBrowserScenario(
       if (locator) await locator.focus();
       const modifiers = [step.ctrlKey && "Control", step.altKey && "Alt", step.shiftKey && "Shift", step.metaKey && "Meta"].filter(Boolean);
       await page.keyboard.press([...modifiers, step.key ?? "Enter"].join("+"));
+    } else if (step.action === "wheel") {
+      if (!locator) throw new Error(`${scenario.id}: wheel 缺少 target`);
+      await locator.hover();
+      await page.mouse.wheel(step.deltaX ?? 0, step.deltaY ?? 0);
     }
     if (mode === "adaptive") {
       if (scenario.steps[index + 1]?.action !== "wait") {
@@ -1244,7 +1283,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     await normalizeScenarioScrollAnchor(page, scenario, role, telemetry);
   }
   startedAt = performance.now();
-  const data = await page.evaluate(({ rootSelector: selector, properties }) => {
+  const data = await page.evaluate(({ rootSelector: selector, properties, role }) => {
     const root = document.querySelector(selector);
     if (!root) throw new Error(`缺少根节点 ${selector}`);
 
@@ -1339,6 +1378,43 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       mismatchHints,
     };
 
+    const navigationReferences = [...root.querySelectorAll<HTMLAnchorElement>("a[href], area[href]")].map((element) => {
+      const href = element.getAttribute("href")?.trim() ?? "";
+      const download = element.hasAttribute("download") ? element.getAttribute("download") ?? "" : null;
+      const kind: NavigationReferenceSnapshot["kind"] = download !== null ? "download"
+        : href === "" || href === "#" || /^javascript:\s*(?:void\s*\(\s*0\s*\)|;?)?$/i.test(href) ? "inert"
+        : href.startsWith("#") ? "fragment"
+        : href.toLowerCase().startsWith("mailto:") ? "mailto"
+        : href.toLowerCase().startsWith("tel:") ? "tel"
+        : /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith("//") ? "external-url"
+        : "relative-url";
+      const fragmentId = kind === "fragment" ? decodeURIComponent(href.slice(1)) : null;
+      const normalizedFragment = fragmentId && role === "library" && fragmentId.startsWith("sg-") ? fragmentId.slice(3) : fragmentId;
+      const normalizedTarget = kind === "fragment" ? `#${normalizedFragment ?? ""}` : href.replace(/^\.\//, "");
+      return {
+        selector: stableSelector(element),
+        text: (element.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 120),
+        href,
+        normalizedTarget,
+        kind,
+        download,
+        fragmentTargetExists: fragmentId === null ? null : document.getElementById(fragmentId) !== null,
+      };
+    });
+
+    const fontFaces: FontFaceSnapshot[] = document.fonts ? [...document.fonts].map((face) => {
+      const display = String((face as FontFace & { display?: string }).display ?? "auto").toLowerCase();
+      return {
+        family: face.family,
+        style: face.style,
+        weight: face.weight,
+        stretch: face.stretch,
+        display,
+        status: face.status,
+        blocking: !["swap", "fallback", "optional"].includes(display),
+      };
+    }) : [];
+
     const nodes = [root, ...root.querySelectorAll("[id], [class], [style]")].slice(0, 500);
     const styles = nodes.map((element, index) => {
       const computed = getComputedStyle(element);
@@ -1355,14 +1431,14 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
         styles: Object.fromEntries(properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
       };
     });
-    return { selectorCoverage, classEvidence, styles };
-  }, { rootSelector, properties: [...STYLE_PROPERTIES] });
+    return { selectorCoverage, classEvidence, navigationReferences, fontFaces, styles };
+  }, { rootSelector, properties: [...STYLE_PROPERTIES], role });
   if (telemetry) telemetry.timing.snapshotEvaluationMs += elapsed(startedAt);
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
   if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
   const uniqueResourceFailures = [...new Map(resourceFailures.map((failure) => [`${failure.phase}|${failure.type}|${failure.url}|${failure.owner}|${failure.pseudo ?? ""}`, failure])).values()];
-  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, classEvidence: data.classEvidence, styles: data.styles, screenshot };
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, classEvidence: data.classEvidence, navigationReferences: data.navigationReferences, fontFaces: data.fontFaces, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -1505,6 +1581,59 @@ function applySourceUnstyledExemptions(reference: BrowserSnapshot, generated: Br
   };
 }
 
+export function compareFontFaces(reference: FontFaceSnapshot[], generated: FontFaceSnapshot[]): FontFaceAlignmentReport {
+  const key = (face: FontFaceSnapshot): string => [face.family, face.style, face.weight, face.stretch, face.display].join("|").toLowerCase();
+  const referenceMap = new Map(reference.map((face) => [key(face), face]));
+  const generatedMap = new Map(generated.map((face) => [key(face), face]));
+  const keys = new Set([...referenceMap.keys(), ...generatedMap.keys()]);
+  let matchedFaces = 0, blockingMissingFaces = 0, nonBlockingMissingFaces = 0, blockingStateMismatches = 0, nonBlockingStateMismatches = 0;
+  const missing: FontFaceAlignmentReport["missing"] = [];
+  for (const faceKey of keys) {
+    const expected = referenceMap.get(faceKey), actual = generatedMap.get(faceKey);
+    if (!expected) { missing.push({ role: "reference", key: faceKey }); actual?.blocking ? blockingMissingFaces += 1 : nonBlockingMissingFaces += 1; continue; }
+    if (!actual) { missing.push({ role: "library", key: faceKey }); expected.blocking ? blockingMissingFaces += 1 : nonBlockingMissingFaces += 1; continue; }
+    matchedFaces += 1;
+    if (expected.status !== actual.status) {
+      if (expected.blocking || actual.blocking) blockingStateMismatches += 1;
+      else nonBlockingStateMismatches += 1;
+    }
+  }
+  const all = [...reference, ...generated];
+  const failedFaces = all.filter((face) => face.status === "error").length;
+  return {
+    passed: blockingMissingFaces === 0 && blockingStateMismatches === 0 && all.every((face) => !face.blocking || face.status !== "error"),
+    referenceFaces: reference.length,
+    generatedFaces: generated.length,
+    matchedFaces,
+    blockingFaces: all.filter((face) => face.blocking).length,
+    nonBlockingFaces: all.filter((face) => !face.blocking).length,
+    loadedFaces: all.filter((face) => face.status === "loaded").length,
+    fallbackFaces: all.filter((face) => !face.blocking && face.status !== "loaded" && face.status !== "error").length,
+    failedFaces,
+    blockingMissingFaces,
+    nonBlockingMissingFaces,
+    blockingStateMismatches,
+    nonBlockingStateMismatches,
+    missing: missing.slice(0, 50),
+  };
+}
+
+export function compareNavigationIntegrity(reference: NavigationReferenceSnapshot[], generated: NavigationReferenceSnapshot[]): NavigationIntegrityReport {
+  const issues: NavigationIntegrityReport["issues"] = [];
+  const total = Math.max(reference.length, generated.length);
+  let matched = 0;
+  for (let index = 0; index < total; index += 1) {
+    const expected = reference[index], actual = generated[index];
+    if (!expected || !actual) { issues.push({ index, reason: "count-mismatch", reference: expected, generated: actual }); continue; }
+    if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); continue; }
+    if (expected.normalizedTarget !== actual.normalizedTarget) { issues.push({ index, reason: "target-mismatch", reference: expected, generated: actual }); continue; }
+    if (expected.download !== actual.download) { issues.push({ index, reason: "download-mismatch", reference: expected, generated: actual }); continue; }
+    if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); continue; }
+    matched += 1;
+  }
+  return { passed: issues.length === 0, total, matched, rate: total ? Number((matched / total).toFixed(4)) : 1, issues: issues.slice(0, 100) };
+}
+
 async function evaluateBrowserQualityOnPages(
   referencePage: Page,
   generatedPage: Page,
@@ -1526,10 +1655,21 @@ async function evaluateBrowserQualityOnPages(
     const styles = compareComputedStyles(reference.styles, generated.styles);
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
     const selectorCoverage = applySourceUnstyledExemptions(reference, generated, sourceUnstyledHookClasses(htmlPath));
+    const navigationIntegrity = compareNavigationIntegrity(reference.navigationReferences, generated.navigationReferences);
+    const fontFaceAlignment = compareFontFaces(reference.fontFaces, generated.fontFaces);
+    if (telemetry) {
+      telemetry.workload.facesDiscovered += fontFaceAlignment.referenceFaces + fontFaceAlignment.generatedFaces;
+      telemetry.workload.blockingFaces += fontFaceAlignment.blockingFaces;
+      telemetry.workload.nonBlockingFaces += fontFaceAlignment.nonBlockingFaces;
+      telemetry.workload.loadedFaces += fontFaceAlignment.loadedFaces;
+      telemetry.workload.fallbackFaces += fontFaceAlignment.fallbackFaces;
+      telemetry.workload.failedFaces += fontFaceAlignment.failedFaces;
+      telemetry.workload.fontStateMismatches += fontFaceAlignment.blockingStateMismatches + fontFaceAlignment.nonBlockingStateMismatches;
+    }
     generated.selectorCoverage = selectorCoverage;
     const score = Number((styles.rate * 0.55 + (1 - pixels.diffRate) * 0.35 + selectorCoverage.coverageRate * 0.1).toFixed(4));
     const translationFidelity = {
-      passed: selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0,
+      passed: selectorCoverage.coverageRate >= selectorThreshold && styles.rate >= styleThreshold && pixels.passed && navigationIntegrity.passed && generated.runtimeErrors.length === 0 && reference.runtimeErrors.length === 0,
       score,
       selectorCoverage: selectorCoverage.coverageRate,
       computedStyle: styles.rate,
@@ -1549,7 +1689,7 @@ async function evaluateBrowserQualityOnPages(
       available: true,
       reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, resourceFailures: reference.resourceFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
       generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, resourceFailures: generated.resourceFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
-      selectorCoverage, styles, pixels, translationFidelity, externalAvailability, score, passed,
+      selectorCoverage, styles, pixels, navigationIntegrity, fontFaceAlignment, translationFidelity, externalAvailability, score, passed,
     };
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
@@ -1592,6 +1732,10 @@ export async function evaluateBrowserQuality(htmlPath: string, libDir: string, o
 function summarizeViewport(viewport: QualityViewport, report: BrowserQualityReport): BrowserViewportReport {
   const runtimeErrors = (report.reference?.runtimeErrors.length ?? 0) + (report.generated?.runtimeErrors.length ?? 0);
   const stabilityFailures = (report.reference?.stabilityFailures.length ?? 0) + (report.generated?.stabilityFailures.length ?? 0);
+  const stabilityFailureDetails = [
+    ...(report.reference?.stabilityFailures ?? []).map((message) => ({ role: "reference" as const, message })),
+    ...(report.generated?.stabilityFailures ?? []).map((message) => ({ role: "library" as const, message })),
+  ];
   const resourceFailures = [
     ...(report.reference?.resourceFailures ?? []).map((failure) => ({ ...failure, role: "reference" as const })),
     ...(report.generated?.resourceFailures ?? []).map((failure) => ({ ...failure, role: "library" as const })),
@@ -1602,9 +1746,12 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
     error: report.error,
     runtimeErrors,
     stabilityFailures,
+    stabilityFailureDetails,
     resourceFailures,
     translationFidelity: report.translationFidelity,
     externalAvailability: report.externalAvailability,
+    navigationIntegrity: report.navigationIntegrity,
+    fontFaceAlignment: report.fontFaceAlignment,
     selectorCoverage: report.selectorCoverage && {
       passed: report.selectorCoverage.passed,
       coverageRate: report.selectorCoverage.coverageRate,
@@ -1651,8 +1798,14 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
   const worstPixel = entries.length ? Math.max(...entries.map((entry) => entry.pixels?.diffRate ?? 1)) : 1;
   const runtimeErrors = entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0);
   const stabilityFailures = entries.reduce((sum, entry) => sum + entry.stabilityFailures, 0);
-  const resourceFailures = entries.reduce((sum, entry) => sum + entry.resourceFailures.length, 0);
+  const resourceFailures = entries.reduce((sum, entry) => sum + entry.resourceFailures.filter((failure) => failure.required).length, 0);
+  const nonBlockingResourceObservations = entries.reduce((sum, entry) => sum + entry.resourceFailures.filter((failure) => !failure.required).length, 0);
   const externalAvailabilityFailures = entries.reduce((sum, entry) => sum + (entry.externalAvailability?.requiredFailures ?? 0), 0);
+  const navigationFailures = entries.reduce((sum, entry) => sum + (entry.navigationIntegrity?.issues.length ?? 0), 0);
+  const worstNavigationIntegrity = entries.length ? Math.min(...entries.map((entry) => entry.navigationIntegrity?.rate ?? 0)) : 0;
+  const fontAlignmentFailures = entries.reduce((sum, entry) => sum + (entry.fontFaceAlignment && !entry.fontFaceAlignment.passed ? 1 : 0), 0);
+  const blockingFontStateMismatches = entries.reduce((sum, entry) => sum + (entry.fontFaceAlignment?.blockingStateMismatches ?? 0), 0);
+  const failedFontFaces = entries.reduce((sum, entry) => sum + (entry.fontFaceAlignment?.failedFaces ?? 0), 0);
   const matrix: BrowserQualityMatrixReport = {
     viewports: entries,
     passed: entries.length > 0 && entries.every((entry) => entry.passed),
@@ -1664,7 +1817,13 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
     runtimeErrors,
     stabilityFailures,
     resourceFailures,
+    nonBlockingResourceObservations,
     externalAvailabilityFailures,
+    navigationFailures,
+    worstNavigationIntegrity,
+    fontAlignmentFailures,
+    blockingFontStateMismatches,
+    failedFontFaces,
   };
   return { primary, matrix, worstSelectorCoverage: reports[entries.indexOf(worstSelectorEntry)]?.selectorCoverage };
 }
@@ -1691,7 +1850,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
     const primary: BrowserQualityReport = { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
     return {
       primary,
-      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0, resourceFailures: 0, externalAvailabilityFailures: 0 },
+      matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0, resourceFailures: 0, nonBlockingResourceObservations: 0, externalAvailabilityFailures: 0, navigationFailures: 0, worstNavigationIntegrity: 0, fontAlignmentFailures: 0, blockingFontStateMismatches: 0, failedFontFaces: 0 },
     };
   } finally {
     if (ownsBrowser) await browser?.close();

@@ -178,6 +178,9 @@ for (const [original, mapped] of classMap) {
 const tokenPairs = [...new Map([...idMap, ...classMap, ...dynamicIdPrefixes, ...dynamicClassPrefixes])].sort((a, b) => b[0].length - a[0].length);
 function transformString(input) {
   let value = input.replace(/(?:^|\.\/)(?:assets|image|images)\//g, '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
+  // URL query keys and remote path segments are transport semantics, not DOM IDs/classes.
+  // Prefixing `display=swap` to `sg-display=swap` silently changes Google Fonts behavior.
+  if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(value) || /^[^\s?#]+\?[^\s]*=/.test(value)) return value;
   for (const [before, after] of tokenPairs) {
     const escaped = before.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     value = value.replace(new RegExp(`(^|[^\\w-])${escaped}(?=$|[^\\w-])`, 'g'), (_, lead) => `${lead}${after}`);
@@ -238,7 +241,7 @@ transformedScript = transformedScript.replace(/var slots = \[([\s\S]*?)\n\s*\];/
 
 const runtimeBodyClasses = [...scriptSource.matchAll(/document\.body\.classList\.add\(\s*['\"]([^'\"]+)['\"]/g)].map((match) => classMap.get(match[1]) || prefixed(match[1]));
 const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${').replace(/<\/script/gi, '<\\/script');
-const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n    ${runtimeBodyClasses.map((name) => `    root.classList.add('${name}');`).join('\n')}\n    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => `    ${line.replace(/\s+$/, '')}`).join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
+const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n${runtimeBodyClasses.map((name) => `    root.classList.add('${name}');`).join('\n')}${runtimeBodyClasses.length ? '\n' : ''}    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => line.trimEnd() ? `    ${line.trimEnd()}` : '').join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
 
 const rewriteMs = elapsed(phaseStartedAt);
 phaseStartedAt = performance.now();

@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { analyzeHtml } from "../analysis/analyzer.js";
+import { classifyInteractionResponsibility, requiresInteractionScenario } from "../analysis/interaction-responsibility.js";
 import { computeCoverage, generateScenarios, groupEquivalentInteractions, loadScenarios } from "../evaluation/scenarios.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { validateLibrary } from "../validation/library.js";
@@ -72,6 +73,69 @@ test("reviewed equivalence groups expand verified coverage from one representati
   assert.equal(coverage.declaredCovered, 3);
   assert.equal(coverage.verifiedCovered, 3);
   assert.equal(coverage.verifiedRate, 1);
+});
+
+
+
+test("structured interaction responsibility controls scenarios, lifecycle coverage, and gesture candidates", () => {
+  assert.equal(classifyInteractionResponsibility("click"), "user-action");
+  assert.equal(classifyInteractionResponsibility("wheel"), "gesture-protocol");
+  assert.equal(classifyInteractionResponsibility("scroll"), "scroll-lifecycle");
+  assert.equal(classifyInteractionResponsibility("resize"), "viewport-lifecycle");
+  assert.equal(classifyInteractionResponsibility("load"), "resource-lifecycle");
+  assert.equal(classifyInteractionResponsibility("scroll-call"), "custom-lifecycle");
+
+  const interactions: Interaction[] = [
+    { trigger: "#button", event: "click", action: "toggle", source: "script-assignment", responsibility: "user-action", fingerprint: "click|#button|script-assignment" },
+    { trigger: "#scroller", event: "wheel", action: "scrollLeft", source: "script-assignment", responsibility: "gesture-protocol", fingerprint: "wheel|#scroller|script-assignment" },
+    { trigger: "html", event: "resize", action: "layout", source: "script-assignment", responsibility: "viewport-lifecycle", fingerprint: "resize|html|script-assignment" },
+    { trigger: "html", event: "scroll", action: "progress", source: "script-assignment", responsibility: "scroll-lifecycle", fingerprint: "scroll|html|script-assignment" },
+    { trigger: "#docs", event: "click", action: "semantic-control", source: "semantic-control", responsibility: "navigation-action", fingerprint: "click|#docs|semantic-control" },
+    { trigger: "#placeholder", event: "click", action: "semantic-control", source: "semantic-control", responsibility: "no-op-control", fingerprint: "click|#placeholder|semantic-control" },
+  ];
+  assert.deepEqual(interactions.map(requiresInteractionScenario), [true, true, false, false, false, false]);
+  const candidates = generateScenarios({ schemaVersion: "1.0", meta: { source: "fixture.html", title: "", templateId: null, vertical: "generic", profile: "generic", caseName: "fixture", canvas: { pc: null, wise: null, extreme: null, frameSelector: null } }, theme: { tokens: [], gradients: [] }, structure: { tabs: [], views: [], modals: [], landmarks: [] }, data: { contracts: [], members: [], timeline: [], works: [], moreFacts: [] }, interactions, responsive: [], a11y: { hasLang: true, buttons: 1, unlabeledButtons: 0, images: 0, imagesWithoutAlt: 0, tabs: 0, tabpanels: 0, dialogs: 0 }, warnings: [] });
+  assert.equal(candidates.scenarios.length, 2);
+  assert.equal(candidates.scenarios.some((scenario) => scenario.covers?.includes("resize|html|script-assignment")), false);
+  const gesture = candidates.scenarios.find((scenario) => scenario.covers?.includes("wheel|#scroller|script-assignment"));
+  assert.deepEqual(gesture?.steps, [{ action: "wheel", target: "#scroller", deltaY: 120 }]);
+  assert.match(gesture?.notes?.[0] ?? "", /真实 wheel delta/);
+
+  const reviewed = loadScenarios({ schemaVersion: "1.0", scenarios: [{ id: "click", covers: ["click|#button|script-assignment"], steps: [{ action: "click", target: "#button" }], assertions: [{ target: "#button", visible: true }] }], coverageWaivers: [{ fingerprint: "wheel|#scroller|script-assignment", reason: "该 fixture 不提供可滚动宽度，协议不可达。" }] });
+  const coverage = computeCoverage(interactions, reviewed, new Set(["click|#button|script-assignment"]));
+  assert.equal(coverage.totalInteractions, 6);
+  assert.equal(coverage.scenarioRequiredInteractions, 2);
+  assert.equal(coverage.lifecycleInteractions, 2);
+  assert.equal(coverage.navigationInteractions, 1);
+  assert.equal(coverage.noOpInteractions, 1);
+  assert.equal(coverage.nonScenarioInteractions, 4);
+  assert.equal(coverage.eligibleInteractions, 1);
+  assert.equal(coverage.waivedInteractions, 1);
+  assert.equal(coverage.verifiedRate, 1);
+});
+
+
+
+test("DOM semantics distinguish navigation, inert controls, and durable application actions", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-responsibility-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "index.html");
+  await writeFile(html, `<!doctype html><html><body>
+    <a id="docs" href="#section">Docs</a>
+    <a id="placeholder" href="#">Placeholder</a>
+    <a id="stateful" href="#section">Stateful</a>
+    <button id="disabled" disabled>Disabled</button>
+    <section id="section">Section</section>
+    <script>document.getElementById('stateful').addEventListener('click', () => document.body.classList.toggle('active'));</script>
+  </body></html>`, "utf8");
+  const manifest = analyzeHtml(html);
+  const byTrigger = new Map(manifest.interactions.map((interaction) => [interaction.trigger, interaction]));
+  assert.equal(byTrigger.get("#docs")?.responsibility, "navigation-action");
+  assert.equal(byTrigger.get("#placeholder")?.responsibility, "no-op-control");
+  assert.equal(byTrigger.get("#disabled")?.responsibility, "no-op-control");
+  assert.equal(byTrigger.get("#stateful")?.responsibility, "user-action");
+  const candidates = generateScenarios(manifest);
+  assert.deepEqual(candidates.scenarios.flatMap((scenario) => scenario.covers ?? []), [byTrigger.get("#stateful")?.fingerprint]);
 });
 
 test("roundtrip score is compatible with the existing benchmark score", async () => {
@@ -252,7 +316,9 @@ test("AST interaction analysis resolves helper selectors, keyboard, wheel, and g
   const custom = manifest.interactions.find((item) => item.event === "scroll-call" && item.trigger === "div.call-target");
   assert.deepEqual(keydown?.mutationTargets, ["#scroller"]);
   assert.deepEqual(wheel?.mutationTargets, ["#scroller"]);
-  assert.equal(custom?.lifecycle, true);
+  assert.equal(keydown?.responsibility, "user-action");
+  assert.equal(wheel?.responsibility, "gesture-protocol");
+  assert.equal(custom?.responsibility, "custom-lifecycle");
   assert.deepEqual(custom?.mutationTargets, ["div.call-target"]);
   assert.equal(manifest.interactions.some((item) => item.event === "click" && item.trigger === "#chip-a" && item.mutationTargets?.includes("#chip-a")), true);
   assert.equal(manifest.interactions.some((item) => item.event === "click" && item.trigger === "#chip-b" && item.mutationTargets?.includes("#chip-b")), true);
@@ -491,6 +557,23 @@ test("self-contained transpiler preserves application JSON and rewrites ID refer
   assert.match(js, /var memberList = \(options && options\.memberList\) \|\| \[/);
   assert.match(js, /<\\\/script>/);
   assert.match(js, /id="sg-works-data"/);
+});
+
+
+
+test("self-contained transpiler preserves URL query semantics while prefixing DOM tokens", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-url-semantics-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "url.html");
+  const out = join(dir, "lib");
+  await writeFile(html, `<!doctype html><html><head><style>:root{--ink:#111}.display{color:var(--ink)}</style></head><body><div id="display" class="display">Font</div><script>const fontUrl="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap";const routeUrl="https://example.com/page?display=compact#display";document.getElementById("display").setAttribute("data-font",fontUrl);</script></body></html>`);
+  await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "UrlFixture", "url"]);
+  const js = await readFile(join(out, "src", "url.js"), "utf8");
+  assert.match(js, /id="sg-display"/);
+  assert.match(js, /class="sg-display"/);
+  assert.match(js, /[?&]display=swap/);
+  assert.match(js, /page\?display=compact#display/);
+  assert.doesNotMatch(js, /sg-display=swap|\?sg-display=compact/);
 });
 
 test("self-contained transpiler ignores JSON-LD and supports pages without asset directories", async (context) => {

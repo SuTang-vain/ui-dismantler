@@ -3,6 +3,7 @@ import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
+import { classifyInteractionResponsibility, refineInteractionResponsibility } from "./interaction-responsibility.js";
 import { analyzeGraphGeometry, geometrySignalsForRole, geometrySignalsMatchRegion, type GraphGeometryResponsibility, type GraphGeometrySignals } from "./geometry-signals.js";
 import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
 
@@ -810,8 +811,10 @@ export class HtmlAnalyzer {
       if (incoming.target && !existing.target) existing.target = incoming.target;
       if (incoming.analysis === "ast") existing.analysis = "ast";
       existing.confidence = Math.max(existing.confidence ?? 0, incoming.confidence ?? 0);
+      existing.responsibility = incoming.responsibility ?? existing.responsibility ?? classifyInteractionResponsibility(existing.event);
     };
     const append = (interaction: Interaction) => {
+      interaction.responsibility ??= classifyInteractionResponsibility(interaction.event);
       const existing = items.find((item) => item.event === interaction.event && item.trigger === interaction.trigger);
       if (existing) {
         if (interaction.analysis === "ast" && existing.analysis !== "ast") {
@@ -855,6 +858,7 @@ export class HtmlAnalyzer {
         append({ trigger: "event-listener", event: match[1], action: "unresolved listener from malformed script", source: "event-listener", analysis: "regex", confidence: 0.25, fingerprint: `${match[1]}|event-listener|${match.index ?? 0}` });
       }
     }
+    for (const interaction of items) interaction.responsibility = refineInteractionResponsibility(document, interaction);
     return items;
   }
 
