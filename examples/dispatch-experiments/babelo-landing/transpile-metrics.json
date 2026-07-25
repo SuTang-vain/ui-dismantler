@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0",
   "command": "transpile-self-contained",
-  "sourcePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
-  "outDir": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/lib",
+  "sourcePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/source/index.html",
+  "outDir": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/babelo-landing/lib",
   "telemetry": {
     "timing": {
       "readParseMs": 174.185,

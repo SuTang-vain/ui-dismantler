@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/qinshihuang-0716-ts/original.html",
+  "generatedFrom": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/qinshihuang-0716-ts/original.html",
   "candidatePolicy": "formal scenarios verify modal, keyboard dismissal, and event selection; horizontal scroll arrows are waived because the jsdom/browser protocol does not expose scrollLeft as a stable assertion",
   "scenarios": [
     {

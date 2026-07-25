@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
       "title": "刘浩存光影星途互动图鉴",
       "templateId": null,
       "vertical": "generic",
@@ -1379,7 +1379,7 @@
     "warnings": []
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -26223,9 +26223,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/diff.png"
     },
     "score": 0.9993,
     "passed": true
@@ -26331,9 +26331,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/diff.png"
         },
         "score": 0.9993,
         "passed": true
@@ -26437,9 +26437,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tablet/diff.png"
         },
         "score": 0.9993,
         "passed": true
@@ -27047,9 +27047,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/mobile/diff.png"
         },
         "score": 0.9939,
         "passed": true
@@ -27657,9 +27657,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/artifacts/tiny/diff.png"
         },
         "score": 0.9939,
         "passed": true

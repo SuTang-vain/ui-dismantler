@@ -3,7 +3,7 @@
 Source snapshot:
 
 ```text
-/Users/tangyaoyue/Downloads/Warp — The Agentic Development Environment (2026_7_22 16：32：26).html
+/Users/<user>/Downloads/Warp — The Agentic Development Environment (2026_7_22 16：32：26).html
 ```
 
 This case validates the TypeScript visual-quality pipeline against a 3.0 MB SingleFile archive with 1,035 classes, 23 IDs, 98 SVG elements, embedded fonts/media, Tailwind arbitrary-value selectors, 95 original links, and no executable application scripts.
@@ -11,7 +11,7 @@ This case validates the TypeScript visual-quality pipeline against a 3.0 MB Sing
 ## Inspect the generated library
 
 ```bash
-cd /Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse
+cd /Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse
 python3 -m http.server 4192 --bind 127.0.0.1
 ```
 

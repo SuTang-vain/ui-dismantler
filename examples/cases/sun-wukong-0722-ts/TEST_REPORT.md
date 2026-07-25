@@ -2,7 +2,7 @@
 
 测试分支：`codex/component-planning-pipeline`
 
-输入：`/Users/tangyaoyue/Downloads/孙悟空破界成圣进化史图鉴_0722/index.html`
+输入：`/Users/<user>/Downloads/孙悟空破界成圣进化史图鉴_0722/index.html`
 
 ## 结论
 

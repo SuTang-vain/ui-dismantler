@@ -2,7 +2,7 @@
 
 ## 输入
 
-原始目录：`/Users/tangyaoyue/Downloads/超绝最稳版本-《庆余年》人物图谱与剧情脉络-（人物关系图谱）-1`
+原始目录：`/Users/<user>/Downloads/超绝最稳版本-《庆余年》人物图谱与剧情脉络-（人物关系图谱）-1`
 
 测试副本：`examples/cases/qingyu-nian-graph-ts/original.html`
 

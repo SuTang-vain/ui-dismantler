@@ -2,7 +2,7 @@
 
 ## 输入
 
-原始目录：`/Users/tangyaoyue/Downloads/刘浩存光影星途互动图鉴0721 3`
+原始目录：`/Users/<user>/Downloads/刘浩存光影星途互动图鉴0721 3`
 
 仓库测试副本：`examples/cases/liu-haocun-0721-ts/original.html`
 

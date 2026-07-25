@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
+  "generatedFrom": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/liu-haocun-0722-ts/original.html",
   "candidatePolicy": "Reviewed representative scenarios cover all directly executable click surfaces; pointer gesture registrations are waived because click scenarios exercise the same observable state transitions without synthetic pointer coordinates.",
   "coverageWaivers": [
     {

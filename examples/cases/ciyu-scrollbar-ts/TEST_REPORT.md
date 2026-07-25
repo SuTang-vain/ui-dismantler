@@ -2,7 +2,7 @@
 
 测试分支：`codex/component-planning-pipeline`
 
-输入：`/Users/tangyaoyue/Downloads/词语-修滚动条/index.html`
+输入：`/Users/<user>/Downloads/词语-修滚动条/index.html`
 
 ## 结论
 

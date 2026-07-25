@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/original.html",
       "title": "刘浩存光影星途互动图鉴",
       "templateId": null,
       "vertical": "entertainment",
@@ -527,7 +527,7 @@
     "warnings": []
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -22024,9 +22024,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
     },
     "score": 0.9987,
     "passed": true
@@ -22132,9 +22132,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/diff.png"
         },
         "score": 0.9987,
         "passed": true
@@ -22238,9 +22238,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tablet/diff.png"
         },
         "score": 0.9987,
         "passed": true
@@ -22614,9 +22614,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/mobile/diff.png"
         },
         "score": 0.9934,
         "passed": true
@@ -22990,9 +22990,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/tiny/diff.png"
         },
         "score": 0.9934,
         "passed": true
@@ -23110,9 +23110,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/diff.png"
           },
           "score": 0.9988,
           "passed": true
@@ -23216,9 +23216,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tablet/diff.png"
           },
           "score": 0.9988,
           "passed": true
@@ -23628,9 +23628,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/mobile/diff.png"
           },
           "score": 0.9933,
           "passed": true
@@ -24040,9 +24040,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/liu-haocun-0721-ts/artifacts/scenarios/open-actor-modal/tiny/diff.png"
           },
           "score": 0.9933,
           "passed": true

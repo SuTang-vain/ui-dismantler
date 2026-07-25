@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/original.html",
       "title": "三大队：人物关系与剧情全解析",
       "templateId": null,
       "vertical": "generic",
@@ -718,7 +718,7 @@
     "warnings": []
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -42547,9 +42547,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/diff.png"
     },
     "score": 0.9994,
     "passed": true
@@ -42649,9 +42649,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/diff.png"
         },
         "score": 0.9994,
         "passed": true
@@ -42757,9 +42757,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tablet/diff.png"
         },
         "score": 0.9994,
         "passed": true
@@ -42865,9 +42865,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/mobile/diff.png"
         },
         "score": 0.9994,
         "passed": true
@@ -42980,9 +42980,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/tiny/diff.png"
         },
         "score": 0.9994,
         "passed": true
@@ -43094,9 +43094,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/diff.png"
           },
           "score": 0.9994,
           "passed": true
@@ -43202,9 +43202,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tablet/diff.png"
           },
           "score": 0.9994,
           "passed": true
@@ -43310,9 +43310,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/mobile/diff.png"
           },
           "score": 0.9994,
           "passed": true
@@ -43425,9 +43425,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler/examples/cases/sandadui-graph-ts/artifacts/scenarios/open-chengbing-panel/tiny/diff.png"
           },
           "score": 0.9994,
           "passed": true

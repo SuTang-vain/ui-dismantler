@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/original.html",
       "title": "BLACKPINK · 动态百科成员探索卡",
       "templateId": null,
       "vertical": "blackpink",
@@ -4553,7 +4553,7 @@
     ]
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -68213,9 +68213,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/diff.png"
     },
     "score": 0.9998,
     "passed": true
@@ -68279,9 +68279,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/diff.png"
         },
         "score": 0.9998,
         "passed": true
@@ -68343,9 +68343,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tablet/diff.png"
         },
         "score": 0.9998,
         "passed": true
@@ -68407,9 +68407,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/mobile/diff.png"
         },
         "score": 0.9998,
         "passed": true
@@ -68471,9 +68471,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/tiny/diff.png"
         },
         "score": 0.9998,
         "passed": true
@@ -68549,9 +68549,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68613,9 +68613,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tablet/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68677,9 +68677,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/mobile/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68741,9 +68741,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-members-and-select-jennie/tiny/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68818,9 +68818,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68882,9 +68882,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tablet/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -68946,9 +68946,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/mobile/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69010,9 +69010,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/enter-works-and-next/tiny/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69087,9 +69087,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69151,9 +69151,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tablet/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69215,9 +69215,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/mobile/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69279,9 +69279,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-work-story/tiny/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69356,9 +69356,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69420,9 +69420,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tablet/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69484,9 +69484,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/mobile/diff.png"
           },
           "score": 0.9998,
           "passed": true
@@ -69548,9 +69548,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-qin-dispatch/examples/cases/blackpink-star-group-ts/artifacts/scenarios/open-more-modal-from-entry/tiny/diff.png"
           },
           "score": 0.9998,
           "passed": true

@@ -4,7 +4,7 @@
 
 ## 输入
 
-- 原始目录：`/Users/tangyaoyue/Downloads/刘浩存光影星途互动图鉴0722 2`
+- 原始目录：`/Users/<user>/Downloads/刘浩存光影星途互动图鉴0722 2`
 - 仓库测试副本：`examples/cases/liu-haocun-0722-ts/original.html`
 - 输入规模：HTML 117,100 bytes，资源目录约 4.1 MB。
 

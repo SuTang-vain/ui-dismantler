@@ -2,7 +2,7 @@
 
 测试日期：2026-07-23
 测试分支：`codex/qinshihuang-dispatch-experiment`
-源文件：`/Users/tangyaoyue/Downloads/明星组合_BLACKPINK/index.html`
+源文件：`/Users/<user>/Downloads/明星组合_BLACKPINK/index.html`
 
 ## 结论
 

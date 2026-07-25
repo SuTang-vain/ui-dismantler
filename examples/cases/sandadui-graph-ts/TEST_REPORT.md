@@ -2,7 +2,7 @@
 
 ## 输入
 
-- 原始目录：`/Users/tangyaoyue/Downloads/三大队：人物关系与剧情全解析`
+- 原始目录：`/Users/<user>/Downloads/三大队：人物关系与剧情全解析`
 - 原始入口：`index.html`
 - 测试副本：`examples/cases/sandadui-graph-ts/original.html`
 - 测试分支：`codex/ts-visual-quality-gates`

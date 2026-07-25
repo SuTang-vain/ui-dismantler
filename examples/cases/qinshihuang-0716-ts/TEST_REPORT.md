@@ -4,7 +4,7 @@
 
 测试日期：2026-07-22
 
-输入目录：`/Users/tangyaoyue/Downloads/秦始皇・七大事件与人物关系-0716`
+输入目录：`/Users/<user>/Downloads/秦始皇・七大事件与人物关系-0716`
 
 输入页面：`index.html`
 

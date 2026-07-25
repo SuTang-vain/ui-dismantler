@@ -425,7 +425,7 @@ stability failures: 0
 
 ## 2026-07-24：Babelo landing 异构新实例
 
-测试源：`/Users/tangyaoyue/ZCodeProject/babelo-landing`。该页面包含 Locomotive Scroll、IntersectionObserver、Google FontFace、Blob URL fetch、lazy image、主题切换、clipboard、嵌套横向滚动和长时 terminal demo 状态机。
+测试源：`/Users/<user>/ZCodeProject/babelo-landing`。该页面包含 Locomotive Scroll、IntersectionObserver、Google FontFace、Blob URL fetch、lazy image、主题切换、clipboard、嵌套横向滚动和长时 terminal demo 状态机。
 
 新实例驱动了以下通用修复：
 

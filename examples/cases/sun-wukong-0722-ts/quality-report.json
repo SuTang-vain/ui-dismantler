@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/original.html",
       "title": "孙悟空：人物图谱与角色档案全解析",
       "templateId": null,
       "vertical": "generic",
@@ -664,7 +664,7 @@
     "warnings": []
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -43949,9 +43949,9 @@
       "diffRate": 0.006818,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/diff.png"
     },
     "score": 0.9914,
     "passed": true
@@ -44513,9 +44513,9 @@
           "diffRate": 0.006818,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/diff.png"
         },
         "score": 0.9914,
         "passed": true
@@ -45029,9 +45029,9 @@
           "diffRate": 0.014119,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tablet/diff.png"
         },
         "score": 0.9894,
         "passed": true
@@ -45545,9 +45545,9 @@
           "diffRate": 0.009093,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/mobile/diff.png"
         },
         "score": 0.9912,
         "passed": true
@@ -46068,9 +46068,9 @@
           "diffRate": 0.008676,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/tiny/diff.png"
         },
         "score": 0.9913,
         "passed": true
@@ -46590,9 +46590,9 @@
             "diffRate": 0.008593,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/diff.png"
           },
           "score": 0.9914,
           "passed": true
@@ -47088,9 +47088,9 @@
             "diffRate": 0.002051,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tablet/diff.png"
           },
           "score": 0.9939,
           "passed": true
@@ -47568,9 +47568,9 @@
             "diffRate": 0.001279,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/mobile/diff.png"
           },
           "score": 0.9944,
           "passed": true
@@ -48055,9 +48055,9 @@
             "diffRate": 0.001529,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-character-panel/tiny/diff.png"
           },
           "score": 0.9943,
           "passed": true
@@ -48630,9 +48630,9 @@
             "diffRate": 0.001325,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/diff.png"
           },
           "score": 0.9934,
           "passed": true
@@ -49146,9 +49146,9 @@
             "diffRate": 0.00242,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tablet/diff.png"
           },
           "score": 0.9936,
           "passed": true
@@ -49662,9 +49662,9 @@
             "diffRate": 0.001464,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/mobile/diff.png"
           },
           "score": 0.9939,
           "passed": true
@@ -50185,9 +50185,9 @@
             "diffRate": 0.001078,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/sun-wukong-0722-ts/artifacts/scenarios/open-cast-modal/tiny/diff.png"
           },
           "score": 0.9941,
           "passed": true

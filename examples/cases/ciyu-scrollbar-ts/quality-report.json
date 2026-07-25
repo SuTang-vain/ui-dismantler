@@ -2,7 +2,7 @@
   "manifest": {
     "schemaVersion": "1.0",
     "meta": {
-      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
+      "source": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/original.html",
       "title": "白月光和朱砂痣 · 动态百科",
       "templateId": null,
       "vertical": "interactive-encyclopedia",
@@ -1088,7 +1088,7 @@
     "warnings": []
   },
   "validation": {
-    "target": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/lib",
+    "target": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/lib",
     "passed": 10,
     "failed": 0,
     "total": 10,
@@ -59981,9 +59981,9 @@
       "diffRate": 0,
       "passed": true,
       "threshold": 0.02,
-      "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/reference.png",
-      "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/generated.png",
-      "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/diff.png"
+      "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/reference.png",
+      "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/generated.png",
+      "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/diff.png"
     },
     "score": 1,
     "passed": true
@@ -60022,9 +60022,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/diff.png"
         },
         "score": 1,
         "passed": true
@@ -60061,9 +60061,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tablet/diff.png"
         },
         "score": 1,
         "passed": true
@@ -60100,9 +60100,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/mobile/diff.png"
         },
         "score": 1,
         "passed": true
@@ -60139,9 +60139,9 @@
           "diffRate": 0,
           "passed": true,
           "threshold": 0.02,
-          "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/reference.png",
-          "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/generated.png",
-          "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/diff.png"
+          "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/reference.png",
+          "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/generated.png",
+          "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/tiny/diff.png"
         },
         "score": 1,
         "passed": true
@@ -60192,9 +60192,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60231,9 +60231,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tablet/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60270,9 +60270,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/mobile/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60309,9 +60309,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/switch-basic-panel/tiny/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60361,9 +60361,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60400,9 +60400,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tablet/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60506,9 +60506,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/mobile/diff.png"
           },
           "score": 0.9994,
           "passed": true
@@ -60612,9 +60612,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/select-graph-node/tiny/diff.png"
           },
           "score": 0.9994,
           "passed": true
@@ -60664,9 +60664,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60703,9 +60703,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tablet/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60742,9 +60742,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/mobile/diff.png"
           },
           "score": 1,
           "passed": true
@@ -60781,9 +60781,9 @@
             "diffRate": 0,
             "passed": true,
             "threshold": 0.02,
-            "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/reference.png",
-            "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/generated.png",
-            "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/diff.png"
+            "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/reference.png",
+            "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/generated.png",
+            "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-component-planning/examples/cases/ciyu-scrollbar-ts/artifacts/scenarios/answer-first-question/tiny/diff.png"
           },
           "score": 1,
           "passed": true

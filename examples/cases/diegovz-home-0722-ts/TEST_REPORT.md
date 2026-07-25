@@ -2,7 +2,7 @@
 
 测试分支：`codex/component-planning-pipeline`
 
-输入：`/Users/tangyaoyue/Downloads/Home — Diegovz (2026_7_22 16：28：53).html`
+输入：`/Users/<user>/Downloads/Home — Diegovz (2026_7_22 16：28：53).html`
 
 ## 阶段结论
 
