@@ -1,0 +1,942 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/source/index.html",
+  "generatedAt": "2026-07-25T03:53:55.596Z",
+  "lineBudget": 150,
+  "components": [
+    {
+      "id": "page-header-1",
+      "componentName": "PageHeader",
+      "targetFile": "src/components/PageHeader.ts",
+      "sourceSelector": "#navbar",
+      "sourceSelectors": [
+        "#navbar"
+      ],
+      "responsibility": "复现 page-header 视图：:root{--scroll-padding-top:5.25rem}ProductsSolutionsResourcesEnterprisePricing64kContact salesDownlo",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|a.items-stretch|semantic-control",
+        "click|el-popover-group.flex > span:nth-child(1) > button:nth-child(1)|semantic-control",
+        "click|el-popover-group.flex > span:nth-child(2) > button:nth-child(1)|semantic-control",
+        "click|el-popover-group.flex > span:nth-child(3) > button:nth-child(1)|semantic-control",
+        "click|el-popover-group.flex > span:nth-child(4) > button:nth-child(1)|semantic-control",
+        "click|a.justify-between|semantic-control",
+        "click|a.rounded-lg|semantic-control",
+        "click|a.rounded-\\5b var\\28 --btn-radius\\29 \\5d |semantic-control",
+        "click|div.gap-5 > a:nth-child(3)|semantic-control",
+        "click|button.p-1\\2e 5|semantic-control",
+        "click|div.mt-6 > details:nth-child(1) > summary:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+        "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(3)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > summary:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > summary:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(8) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(4) > summary:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+        "click|a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 8|semantic-control",
+        "click|a.bg-\\5b var\\28 --color-text\\29 \\5d |semantic-control",
+        "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(2)|semantic-control",
+        "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(3)|semantic-control",
+        "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(4)|semantic-control",
+        "click|a.group.shrink-0|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          ":root{--scroll-padding-top:5.25rem}ProductsSolutionsResourcesEnterprisePricing64kContact salesDownloadDProductsWarp TerminalA modern terminal for agentic coding"
+        ],
+        "states": [
+          "click: a.items-stretch",
+          "click: el-popover-group.flex > span:nth-child(1) > button:nth-child(1)",
+          "click: el-popover-group.flex > span:nth-child(2) > button:nth-child(1)",
+          "click: el-popover-group.flex > span:nth-child(3) > button:nth-child(1)",
+          "click: el-popover-group.flex > span:nth-child(4) > button:nth-child(1)",
+          "click: a.justify-between",
+          "click: a.rounded-lg",
+          "click: a.rounded-\\5b var\\28 --btn-radius\\29 \\5d ",
+          "click: div.gap-5 > a:nth-child(3)",
+          "click: button.p-1\\2e 5",
+          "click: div.mt-6 > details:nth-child(1) > summary:nth-child(1)",
+          "click: div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 102,
+        "score": 0.68,
+        "reasons": [
+          "46 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "page-footer-1",
+      "componentName": "PageFooter",
+      "targetFile": "src/components/PageFooter.ts",
+      "sourceSelector": "#footer",
+      "sourceSelectors": [
+        "#footer"
+      ],
+      "responsibility": "复现 page-footer 视图：ProductDownloadPricingEnterpriseChangelogDocsOpen SourceStatusResourcesBlogFAQCommunitySupportDo Thi",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(7) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+        "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+        "click|a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 5|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "ProductDownloadPricingEnterpriseChangelogDocsOpen SourceStatusResourcesBlogFAQCommunitySupportDo Things with WarpTerminusCompanyAboutHow We WorkCareersPressCont"
+        ],
+        "states": [
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(7) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+          "click: nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 97,
+        "score": 0.65,
+        "reasons": [
+          "31 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-1-from-the-terminal-to-the-cloud-with-any-agent",
+      "componentName": "HeroProfile",
+      "targetFile": "src/components/HeroProfile.ts",
+      "sourceSelector": "#home-hero",
+      "sourceSelectors": [
+        "#home-hero"
+      ],
+      "responsibility": "复现 hero-profile 视图：From the terminal to the cloud, with any agent",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|a.self-stretch|semantic-control",
+        "click|div.self-stretch > button:nth-child(2)|semantic-control",
+        "click|#home-hero > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)|semantic-control",
+        "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)|semantic-control",
+        "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)|semantic-control",
+        "input|input.w-full|semantic-control",
+        "click|div.h-10 > div:nth-child(2) > button:nth-child(1)|semantic-control",
+        "click|div.space-y-1 > button:nth-child(1)|semantic-control",
+        "click|button.story-reveal|semantic-control",
+        "click|div.space-y-1 > button:nth-child(3)|semantic-control",
+        "click|div.space-y-1 > button:nth-child(4)|semantic-control",
+        "click|button.hover\\3a bg-background\\2f 35|semantic-control",
+        "click|button.bg-primary|semantic-control",
+        "click|div.mt-3 > div:nth-child(1) > button:nth-child(1)|semantic-control",
+        "click|div.mt-3 > div:nth-child(2) > button:nth-child(1)|semantic-control",
+        "click|div.mt-3 > button:nth-child(3)|semantic-control",
+        "click|button.disabled\\3a opacity-50|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(2)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(3)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(4)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(5)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(6)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(7)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(8)|semantic-control",
+        "click|div.shrink-0.absolute > button:nth-child(9)|semantic-control",
+        "click|button.size-\\5b 34px\\5d |semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "From the terminal to the cloud, with any agent"
+        ],
+        "states": [
+          "click: a.self-stretch",
+          "click: div.self-stretch > button:nth-child(2)",
+          "click: #home-hero > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+          "click: header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)",
+          "click: header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)",
+          "click: header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)",
+          "input: input.w-full",
+          "click: div.h-10 > div:nth-child(2) > button:nth-child(1)",
+          "click: div.space-y-1 > button:nth-child(1)",
+          "click: button.story-reveal",
+          "click: div.space-y-1 > button:nth-child(3)",
+          "click: div.space-y-1 > button:nth-child(4)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 114,
+        "score": 0.76,
+        "reasons": [
+          "27 个关联交互（1 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-2-build-with-any-agent-in-a-modern-terminal",
+      "componentName": "BuildWithAnyAgentInAModernTerminal",
+      "targetFile": "src/components/BuildWithAnyAgentInAModernTerminal.ts",
+      "sourceSelector": "#home-agent-control-warp-terminal",
+      "sourceSelectors": [
+        "#home-agent-control-warp-terminal"
+      ],
+      "responsibility": "复现 content-section 视图：Build with any agent in a modern terminal",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#home-agent-control-warp-terminal > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Build with any agent in a modern terminal"
+        ],
+        "states": [
+          "click: #home-agent-control-warp-terminal > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 95,
+        "score": 0.63,
+        "reasons": [
+          "1 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-3-move-from-local-to-cloud-development",
+      "componentName": "MoveFromLocalToCloudDevelopment",
+      "targetFile": "src/components/MoveFromLocalToCloudDevelopment.ts",
+      "sourceSelector": "#home-agent-control-oz-agent-platform",
+      "sourceSelectors": [
+        "#home-agent-control-oz-agent-platform"
+      ],
+      "responsibility": "复现 content-section 视图：Move from local to cloud development",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#home-agent-control-oz-agent-platform > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Move from local to cloud development"
+        ],
+        "states": [
+          "click: #home-agent-control-oz-agent-platform > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 95,
+        "score": 0.63,
+        "reasons": [
+          "1 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-4-access-any-model-with-the-warp-agent",
+      "componentName": "AccessAnyModelWithTheWarpAgent",
+      "targetFile": "src/components/AccessAnyModelWithTheWarpAgent.ts",
+      "sourceSelector": "#home-agent-control-warp-agent",
+      "sourceSelectors": [
+        "#home-agent-control-warp-agent"
+      ],
+      "responsibility": "复现 content-section 视图：Access any model with the Warp Agent",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#home-agent-control-warp-agent > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Access any model with the Warp Agent"
+        ],
+        "states": [
+          "click: #home-agent-control-warp-agent > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 95,
+        "score": 0.63,
+        "reasons": [
+          "1 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-5-scale-responsibly-across-your-team",
+      "componentName": "ScaleResponsiblyAcrossYourTeam",
+      "targetFile": "src/components/ScaleResponsiblyAcrossYourTeam.ts",
+      "sourceSelector": "#home-agent-control-scale-across-your-team",
+      "sourceSelectors": [
+        "#home-agent-control-scale-across-your-team"
+      ],
+      "responsibility": "复现 content-section 视图：Scale responsibly across your team",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "combined",
+      "interactionFingerprints": [
+        "click|#home-agent-control-scale-across-your-team > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Scale responsibly across your team"
+        ],
+        "states": [
+          "click: #home-agent-control-scale-across-your-team > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 95,
+        "score": 0.63,
+        "reasons": [
+          "1 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-6-warp-terminal-is-now-open-source",
+      "componentName": "WarpTerminalIsNowOpenSource",
+      "targetFile": "src/components/WarpTerminalIsNowOpenSource.ts",
+      "sourceSelector": "#open-source",
+      "sourceSelectors": [
+        "#open-source"
+      ],
+      "responsibility": "复现 content-section 视图：Warp Terminal is now open-source",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.lg\\3a absolute > a:nth-child(3)|semantic-control",
+        "click|button.btn-wipe|semantic-control",
+        "click|a.px-4|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Warp Terminal is now open-source"
+        ],
+        "states": [
+          "click: div.lg\\3a absolute > a:nth-child(3)",
+          "click: button.btn-wipe",
+          "click: a.px-4"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 96,
+        "score": 0.64,
+        "reasons": [
+          "3 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    },
+    {
+      "id": "section-7-start-shipping-with-agents",
+      "componentName": "StartShippingWithAgents",
+      "targetFile": "src/components/StartShippingWithAgents.ts",
+      "sourceSelector": "#home-agent-cta",
+      "sourceSelectors": [
+        "#home-agent-cta"
+      ],
+      "responsibility": "复现 content-section 视图：Start shipping with agents",
+      "parentId": null,
+      "dependencies": [],
+      "interactionModel": "click-driven",
+      "interactionFingerprints": [
+        "click|div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1)|semantic-control",
+        "click|div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(2)|semantic-control"
+      ],
+      "mutationTargets": [],
+      "stateTransitions": [],
+      "dataDependencies": [],
+      "dataContracts": [],
+      "designTokens": [
+        "--sf-img-8",
+        "--sf-img-9",
+        "--sf-img-11",
+        "--sf-img-33",
+        "--sf-img-35",
+        "--sf-img-34",
+        "--font-sans",
+        "--font-serif",
+        "--font-mono",
+        "--color-red-50",
+        "--color-red-400",
+        "--color-red-500",
+        "--color-red-600",
+        "--color-red-700",
+        "--color-red-950",
+        "--color-amber-50",
+        "--color-amber-400",
+        "--color-amber-500",
+        "--color-amber-600",
+        "--color-amber-700",
+        "--color-amber-950",
+        "--color-yellow-500",
+        "--color-yellow-700",
+        "--color-green-500"
+      ],
+      "responsiveQueries": [
+        "(hover:hover)",
+        "(hover:hover)",
+        "(forced-colors:active)",
+        "(hover:hover)",
+        "(prefers-reduced-motion:reduce)",
+        "not all and (min-width:64rem)",
+        "(min-width:40rem)",
+        "(hover:hover)",
+        "(min-width:48rem)",
+        "(min-width:64rem)",
+        "(hover:hover)",
+        "(pointer:fine)",
+        "(min-width:64rem)",
+        "(hover:hover)"
+      ],
+      "acceptance": {
+        "text": [
+          "Start shipping with agents"
+        ],
+        "states": [
+          "click: div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1)",
+          "click: div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(2)"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet",
+          "mobile",
+          "tiny"
+        ]
+      },
+      "complexity": {
+        "estimatedLines": 95,
+        "score": 0.63,
+        "reasons": [
+          "2 个关联交互（0 类实现行为）",
+          "0 个局部数据依赖",
+          "14 个响应式查询（复杂度计入前 8 个）"
+        ],
+        "budget": 150,
+        "overBudget": false
+      }
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "components": 9,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 0,
+    "interactions": 138,
+    "ownedInteractions": 138,
+    "unownedInteractions": 0,
+    "ready": true
+  }
+}

@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, resolve } from "node:path";
 import { JSDOM } from "jsdom";
-import { extractGradients, extractMediaQueries, extractRootVariables, inferVariableRoles, normalizeTokenName } from "../core/css.js";
+import { analyzeCssVariableReferences, extractGradients, extractMediaQueries, extractRootVariables, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
 import { classifyInteractionResponsibility, refineInteractionResponsibility } from "./interaction-responsibility.js";
 import { analyzeGraphGeometry, geometrySignalsForRole, geometrySignalsMatchRegion, type GraphGeometryResponsibility, type GraphGeometrySignals } from "./geometry-signals.js";
@@ -131,23 +131,58 @@ function scriptsFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget)
 
 function escapeSelector(value: string): string { return value.replace(/[^a-zA-Z0-9_-]/g, (char) => `\\${char.charCodeAt(0).toString(16)} `); }
 
+interface StableSelectorCache {
+  selectors: WeakMap<Element, string>;
+  matchCounts: Map<string, number>;
+}
+
+const stableSelectorCaches = new WeakMap<Document, StableSelectorCache>();
+
+function selectorCache(document: Document): StableSelectorCache {
+  let cache = stableSelectorCaches.get(document);
+  if (!cache) {
+    cache = { selectors: new WeakMap(), matchCounts: new Map() };
+    stableSelectorCaches.set(document, cache);
+  }
+  return cache;
+}
+
 function stableSelector(element: Element): string {
-  if (element.id) return `#${escapeSelector(element.id)}`;
+  const cache = selectorCache(element.ownerDocument);
+  const cached = cache.selectors.get(element);
+  if (cached) return cached;
+  const remember = (selector: string) => {
+    cache.selectors.set(element, selector);
+    return selector;
+  };
+  if (element.id) return remember(`#${escapeSelector(element.id)}`);
   const tag = element.tagName.toLowerCase();
   const classes = [...element.classList].filter((item) => item.length > 1 && !/^(?:active|current|selected|open|closed|disabled|hidden|focus|hover)$/i.test(item));
   const preferred = [...classes].sort((a, b) => Number(/^elementor-element-[a-f0-9]+$/i.test(b)) - Number(/^elementor-element-[a-f0-9]+$/i.test(a)));
+  const uniquelyMatches = (candidate: string) => {
+    const known = cache.matchCounts.get(candidate);
+    if (known !== undefined) return known === 1;
+    try {
+      const count = element.ownerDocument.querySelectorAll(candidate).length;
+      cache.matchCounts.set(candidate, count);
+      return count === 1;
+    } catch {
+      cache.matchCounts.set(candidate, 0);
+      return false;
+    }
+  };
   for (const item of preferred) {
     const candidate = `${tag}.${escapeSelector(item)}`;
-    try { if (element.ownerDocument.querySelectorAll(candidate).length === 1) return candidate; } catch { /* Try a structural selector. */ }
+    if (uniquelyMatches(candidate)) return remember(candidate);
   }
   for (let size = Math.min(3, preferred.length); size >= 1; size -= 1) {
     const candidate = `${tag}.${preferred.slice(0, size).map((item) => escapeSelector(item)).join(".")}`;
-    try { if (element.ownerDocument.querySelectorAll(candidate).length === 1) return candidate; } catch { /* Try a structural selector. */ }
+    if (uniquelyMatches(candidate)) return remember(candidate);
   }
   const parent = element.parentElement;
-  if (!parent) return tag;
+  if (!parent) return remember(tag);
   const index = [...parent.children].indexOf(element) + 1;
-  return `${stableSelector(parent)} > ${tag}:nth-child(${index})`;
+  return remember(`${stableSelector(parent)} > ${tag}:nth-child(${index})`);
 }
 
 function slug(value: string): string {
@@ -654,14 +689,15 @@ function isSectionCandidate(element: Element): boolean {
   if (element.matches("header, footer")) return false;
   if (!heading || heading.length > 100 || textOf(element).length < heading.length + 5) return false;
   const headingCount = element.querySelectorAll("h1, h2, h3").length;
-  const direct = element.matches("section, article, main") && (headingCount === 1 || (element.matches("section") && headingCount <= 3 && /designing|currently|profile|intro|hero/i.test(heading))) && !element.closest("section section");
+  const explicitHero = element.matches('section[id*="hero" i], section[class*="hero" i], [data-hero]');
+  const direct = element.matches("section, article, main") && (headingCount === 1 || explicitHero || (element.matches("section") && headingCount <= 3 && /designing|currently|profile|intro|hero/i.test(heading))) && !element.closest("section section");
   const builder = element.matches(".e-con-inner > .elementor-element") && (headingElement?.tagName === "H1" || GENERIC_SECTION_NAMES.has(heading.toLowerCase()));
   return direct || builder;
 }
 
 function sectionView(element: Element, index: number): AnalyzedView {
   const heading = sectionHeading(element) || (element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`);
-  const hero = /designing|currently|profile|intro|hero/i.test(heading) || element.matches("header, [class*=hero]");
+  const hero = /designing|currently|profile|intro|hero/i.test(heading) || element.matches('header, [class*="hero" i], [id*="hero" i], [data-hero]');
   const type = element.matches("footer") ? "page-footer" : hero ? "hero-profile" : "content-section";
   const repeated = [...element.children].filter((child) => child.children.length > 0).length;
   return {
@@ -722,13 +758,14 @@ export class HtmlAnalyzer {
     if (!views.length) warnings.push("未识别到已注册视图范式，将按 generic 处理");
 
     const rootVariables = extractRootVariables(css);
+    const variableReferences = analyzeCssVariableReferences(css, Object.keys(rootVariables));
     const cssColors = parseCssColors(css);
     const tokens = Object.entries(rootVariables).map(([original, value]) => ({
       name: normalizeTokenName(original),
       value,
       original,
-      usage: [...css.matchAll(new RegExp(`([^{}]+)\\{[^{}]*${original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "gi"))].map((match) => match[1].trim()).slice(0, 8),
-      roles: inferVariableRoles(css, original),
+      usage: variableReferences[original]?.usage ?? [],
+      roles: variableReferences[original]?.roles ?? [],
     }));
     for (const value of cssColors.filter((candidate) => !Object.values(rootVariables).includes(candidate)).slice(0, 20)) {
       tokens.push({ name: slug(value), value, original: value, usage: [], roles: colorRoles(css, value) });
@@ -831,9 +868,10 @@ export class HtmlAnalyzer {
       append({ trigger, event, action: action.slice(0, 120), target, source: "html-attribute", analysis: "attribute", confidence: 0.98, fingerprint: `${event}|${trigger}|${target ?? action}` });
     }
     for (const element of [...document.querySelectorAll("button, a, input, select, summary")]) {
-      if (items.some((item) => item.trigger === stableSelector(element))) continue;
+      const trigger = stableSelector(element);
+      if (items.some((item) => item.trigger === trigger)) continue;
       const event = element.tagName.toLowerCase() === "input" || element.tagName.toLowerCase() === "select" ? "input" : "click";
-      append({ trigger: stableSelector(element), event, action: "semantic-control", source: "semantic-control", analysis: "semantic", confidence: 0.6, fingerprint: `${event}|${stableSelector(element)}|semantic-control` });
+      append({ trigger, event, action: "semantic-control", source: "semantic-control", analysis: "semantic", confidence: 0.6, fingerprint: `${event}|${trigger}|semantic-control` });
     }
     const scriptText = scripts.join("\n");
     const ast = extractScriptInteractions(scriptText, document, stableSelector);

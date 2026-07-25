@@ -375,6 +375,7 @@ interface PageStabilityResult {
   resourceTimedOut: boolean;
   resourceFailed: boolean;
   resourceFailures: VisualResourceFailure[];
+  pendingNetwork: NetworkResourceRecord[];
 }
 
 interface VisualResourceReference {
@@ -1068,7 +1069,8 @@ async function waitForAdaptiveStability(
   if (telemetry && networkTimedOut) telemetry.workload.networkIdleTimeouts += 1;
   if (telemetry && timerTimedOut) telemetry.workload.timerDrainTimeouts += 1;
   if (telemetry && resourceTimedOut) telemetry.workload.resourceDrainTimeouts += 1;
-  return { stable: dom.stable && networkIdle && !resourceFailed, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut, resourceTimedOut, resourceFailed, resourceFailures };
+  const pendingNetwork = [...network.pending].map((request) => network.records.get(request)).filter((record): record is NetworkResourceRecord => Boolean(record)).map((record) => ({ ...record }));
+  return { stable: dom.stable && networkIdle && !resourceFailed, assertionsSatisfied: dom.assertionsSatisfied, domTimedOut, networkTimedOut, timerTimedOut, resourceTimedOut, resourceFailed, resourceFailures, pendingNetwork };
 }
 
 async function waitForSettled(
@@ -1260,7 +1262,10 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       result.resourceTimedOut && "resource-timeout",
       result.resourceFailed && "resource-failure",
     ].filter(Boolean).join(",");
-    stabilityFailures.push(`${phase}: ${causes || "unknown"}${result.resourceFailed && !result.resourceTimedOut ? "" : " stability timeout"}`);
+    const pending = result.networkTimedOut && result.pendingNetwork.length
+      ? `; pending=${result.pendingNetwork.slice(0, 4).map((record) => `${record.type}:${record.url}`).join(" | ")}`
+      : "";
+    stabilityFailures.push(`${phase}: ${causes || "unknown"}${result.resourceFailed && !result.resourceTimedOut ? "" : " stability timeout"}${pending}`);
   };
   tracker.reset();
   let startedAt = performance.now();
@@ -1351,10 +1356,11 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
     const requiredSgClassUses = sgClassUses - exemptUses;
     const inactiveUses = inactiveClasses.reduce((total, issue) => total + issue.count, 0);
     const mismatchHints = unmatchedClasses.flatMap((issue) => {
-      const token = issue.selector.replace(/^\.sg-/, "").split("-").at(-1) ?? "";
+      const rawToken = issue.selector.replace(/^\.sg-/, "").split("-").at(-1) ?? "";
+      const token = rawToken.replace(/[^A-Za-z0-9_-]/g, "").toLowerCase();
       const candidate = orphanSgSelectors.find((orphan) => {
         const normalized = orphan.selector.replace(/[.#]sg-/g, "").toLowerCase();
-        return token.length > 2 && new RegExp(`(?:[.#-]|^)${token}(?:[\s.#:[>+~]|$)`).test(normalized);
+        return token.length > 2 && normalized.includes(token);
       });
       if (!candidate) return [];
       return [{
@@ -1698,7 +1704,7 @@ async function evaluateBrowserQualityOnPages(
 
 async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: string, libDir: string, options: BrowserQualityOptions = {}, scenario?: Scenario, telemetry?: BrowserExecutionTelemetry, resourceCache?: RunResourceCache): Promise<BrowserQualityReport> {
   const width = options.width ?? 1024, height = options.height ?? 768;
-  let context;
+  let context: BrowserContext | undefined;
   try {
     let startedAt = performance.now();
     context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, colorScheme: "light", reducedMotion: "reduce" });
@@ -1829,7 +1835,15 @@ function summarizeMatrix(viewports: QualityViewport[], reports: BrowserQualityRe
 }
 
 async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: string, options: BrowserQualityMatrixOptions = {}, scenario?: Scenario, sharedBrowser?: Browser, telemetry?: BrowserExecutionTelemetry, resourceCache?: RunResourceCache): Promise<{ primary: BrowserQualityReport; matrix: BrowserQualityMatrixReport; worstSelectorCoverage?: SelectorCoverageReport }> {
-  const viewports = options.viewports?.length ? options.viewports : DEFAULT_QUALITY_VIEWPORTS;
+  const configuredViewports = options.viewports?.length ? options.viewports : DEFAULT_QUALITY_VIEWPORTS;
+  const viewports = scenario?.viewport
+    ? [configuredViewports.find((viewport) => viewport.width === scenario.viewport!.width && viewport.height === scenario.viewport!.height) ?? {
+        id: `scenario-${scenario.viewport.width}x${scenario.viewport.height}`,
+        label: `Scenario ${scenario.viewport.width}×${scenario.viewport.height}`,
+        width: scenario.viewport.width,
+        height: scenario.viewport.height,
+      }]
+    : configuredViewports;
   let browser: Browser | undefined = sharedBrowser;
   const ownsBrowser = !sharedBrowser;
   try {

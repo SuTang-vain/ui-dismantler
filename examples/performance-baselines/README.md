@@ -54,3 +54,29 @@ After the baseline, the tool added font-face alignment telemetry and fixed adapt
 | Browser close | 3.226s | 6.604s | +104.7% |
 
 All three follow-up runs passed with zero stability failures. The active evaluation phases improved slightly, but total runtime did not improve because Chromium shutdown time increased by roughly 3.4 seconds. Therefore this iteration is classified as a **quality/stability improvement, not a proven end-to-end speedup**. The attempted global adaptive font-preflight skip was rejected and reverted after measurement showed no benefit.
+
+## 2026-07-25 four-case repeat
+
+A second four-case × three-run baseline is stored in `quality-baseline-2026-07-25.json`. All **12/12** runs passed with zero runtime, stability, required-resource, or navigation failures.
+
+| Case | Median total | Std dev | Change from 2026-07-24 | Browser close median |
+|---|---:|---:|---:|---:|
+| BLACKPINK | 35.298s | 0.673s | -1.8% | 0.245s |
+| Babelo | 61.299s | 0.791s | +4.3% | 7.976s |
+| Qinshihuang | 12.474s | 0.243s | -6.5% | 0.246s |
+| Sandadui | 14.666s | 0.084s | -7.7% | 0.244s |
+
+The repeat confirms that Babelo is the only case with material Chromium shutdown latency. Its active quality phases remain stable; the close phase is the outlier.
+
+### Explicit page-close experiment (rejected)
+
+`babelo-explicit-page-close-2026-07-25.json` records a three-run experiment that explicitly closed both pages in parallel before closing each context and finally the browser.
+
+| Metric | Baseline median | Explicit page close | Change |
+|---|---:|---:|---:|
+| Total quality time | 61.299s | 61.872s | +0.9% |
+| Browser close | 7.976s | 7.099s | -11.0% |
+| Explicit page close | — | 0.198s | added |
+| Context close | — | 0.271s | measured |
+
+All runs passed, but end-to-end time did not improve and variance increased. The explicit-close behavior was therefore reverted. The experiment narrows the remaining cost to final Chromium process shutdown rather than page/context cleanup.

@@ -127,42 +127,50 @@ for (const script of [...document.scripts]) {
   if (executableScriptType(type) || type !== 'application/json' || !script.id) script.remove();
 }
 for (const style of [...document.querySelectorAll('style')]) style.remove();
-const template = [...document.body.children].map((element) => element.outerHTML).join('\n');
-
-csstree.walk(cssAst, (node) => {
-  if (node.type === 'ClassSelector' && classMap.has(node.name)) node.name = classMap.get(node.name);
-  if (node.type === 'IdSelector' && idMap.has(node.name)) node.name = idMap.get(node.name);
-});
-let css = csstree.generate(cssAst);
-css = css.replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
-css = css.replace(/url\((['"]?)(?:\.\/)?(?:assets|image|images)\//g, 'url($1../assets/');
 const semanticColors = new Map([
   ['#6487fa', '--sg-primary'], ['#4268e8', '--sg-primary-dark'], ['#e8eeff', '--sg-primary-soft'],
   ['#f8f8f8', '--sg-bg'], ['#ffffff', '--sg-card'], ['#1e1f24', '--sg-text'], ['#848691', '--sg-sub'], ['#b7b9c1', '--sg-weak'],
 ]);
-const rootMatch = css.match(/:root\{([^}]*)\}/);
-if (rootMatch) {
-  const rootStart = rootMatch.index || 0;
-  const prefix = css.slice(0, rootStart);
-  const tail = css.slice(rootStart + rootMatch[0].length);
-  const extraColors = new Map();
-  for (const match of tail.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) {
-    const color = match[0].toLowerCase();
-    if (!semanticColors.has(color)) extraColors.set(color, `--sg-color-${color.slice(1)}`);
+const colorVariables = new Map();
+const prefixCustomProperty = (name) => name.startsWith('--sg-') ? name : name.replace(/^--/, '--sg-');
+csstree.walk(cssAst, (node) => {
+  if (node.type === 'ClassSelector' && classMap.has(node.name)) node.name = classMap.get(node.name);
+  if (node.type === 'IdSelector' && idMap.has(node.name)) node.name = idMap.get(node.name);
+  if (node.type === 'Declaration' && node.property.startsWith('--')) node.property = prefixCustomProperty(node.property);
+  if (node.type === 'Identifier' && node.name.startsWith('--')) node.name = prefixCustomProperty(node.name);
+  if (node.type === 'Rule' && node.prelude?.type === 'SelectorList') {
+    const selectors = node.prelude.children.toArray().map((selector) => csstree.generate(selector));
+    if (selectors.some((selector) => selector === ':root' || selector === ':host') && !selectors.includes('.sg-library-host')) {
+      node.prelude.children.appendData(csstree.parse('.sg-library-host', { context: 'selector' }));
+    }
   }
-  const variables = [...extraColors].map(([color, name]) => `${name}:${color}`).join(';');
-  const aliasList = [];
-  if (!rootMatch[1].includes('--sg-primary:')) aliasList.push('--sg-primary:var(--sg-accent, #6487fa)');
-  if (!rootMatch[1].includes('--sg-ink:')) aliasList.push('--sg-ink:var(--sg-text, #1e1f24)');
-  if (!rootMatch[1].includes('--sg-muted:')) aliasList.push('--sg-muted:var(--sg-sub, #848691)');
-  if (!rootMatch[1].includes('--sg-paper:')) aliasList.push('--sg-paper:var(--sg-card, #ffffff)');
-  if (!rootMatch[1].includes('--sg-line:')) aliasList.push('--sg-line:var(--sg-border, rgba(100,135,250,0.16))');
-  aliasList.push('--sg-white:var(--sg-card, #ffffff)');
-  const aliases = aliasList.join(';');
-  let rewrittenTail = tail;
-  for (const [color, variable] of [...semanticColors, ...extraColors]) rewrittenTail = rewrittenTail.replace(new RegExp(color, 'gi'), `var(${variable})`);
-  css = `${prefix}:root{${rootMatch[1]};${aliases}${variables ? `;${variables}` : ''}}${rewrittenTail}`;
-}
+});
+csstree.walk(cssAst, {
+  visit: 'Declaration',
+  enter(node) {
+    if (node.property.startsWith('--')) return;
+    const originalValue = csstree.generate(node.value);
+    const rewrittenValue = originalValue.replace(/#[0-9a-fA-F]{3,8}\b/g, (raw) => {
+      const color = raw.toLowerCase();
+      const variable = semanticColors.get(color) || `--sg-color-${color.slice(1)}`;
+      colorVariables.set(color, variable);
+      return `var(${variable})`;
+    });
+    if (rewrittenValue !== originalValue) node.value = csstree.parse(rewrittenValue, { context: 'value' });
+  },
+});
+let css = csstree.generate(cssAst);
+css = css.replace(/url\((['"]?)(?:\.\/)?(?:assets|image|images)\//g, 'url($1../assets/');
+const aliasList = [];
+if (!css.includes('--sg-primary:')) aliasList.push('--sg-primary:var(--sg-accent, #6487fa)');
+if (!css.includes('--sg-ink:')) aliasList.push('--sg-ink:var(--sg-text, #1e1f24)');
+if (!css.includes('--sg-muted:')) aliasList.push('--sg-muted:var(--sg-sub, #848691)');
+if (!css.includes('--sg-paper:')) aliasList.push('--sg-paper:var(--sg-card, #ffffff)');
+if (!css.includes('--sg-line:')) aliasList.push('--sg-line:var(--sg-border, rgba(100,135,250,0.16))');
+if (!css.includes('--sg-white:')) aliasList.push('--sg-white:var(--sg-card, #ffffff)');
+const colorDeclarations = [...colorVariables].filter(([, name]) => !css.includes(`${name}:`)).map(([color, name]) => `${name}:${color}`);
+const rootAdditions = [...aliasList, ...colorDeclarations].join(';');
+if (rootAdditions) css = `:root,.sg-library-host{${rootAdditions}}\n${css}`;
 css = `#mount{display:contents}.sg-library-host{width:100%;height:100%}#sg-app-container.sg-is-large-canvas{--sg-canvas-mode:large}\n${css}\n@media(max-width:500px){#sg-app-container{font-size:14px}}@media(max-width:320px),(max-height:380px){#sg-app-container{font-size:12px}}\n`;
 
 const dynamicIdPrefixes = new Map();
@@ -187,6 +195,27 @@ function transformString(input) {
   }
   return value;
 }
+
+function transformInlineStyle(input) {
+  let value = input.replace(/(?:^|\.\/)(?:assets|image|images)\//g, '../assets/').replace(/--(?!sg-)([a-zA-Z][\w-]*)/g, '--sg-$1');
+  value = value.replace(/url\(\s*(["']?)#([^)'"\s]+)\1\s*\)/g, (_match, quote, id) => `url(${quote}#${idMap.get(id) || id}${quote})`);
+  return value;
+}
+
+for (const element of document.querySelectorAll('[style]')) {
+  const value = element.getAttribute('style');
+  if (value) element.setAttribute('style', transformInlineStyle(value));
+}
+const sourceRootClasses = [...new Set([...document.documentElement.classList, ...document.body.classList])];
+const sourceRootAttributes = new Map();
+for (const element of [document.documentElement, document.body]) {
+  for (const attribute of [...element.attributes]) {
+    if (attribute.name === 'class' || attribute.name === 'style' || attribute.name === 'id') continue;
+    if (attribute.name === 'lang' || attribute.name === 'dir' || attribute.name.startsWith('data-') || attribute.name.startsWith('aria-')) sourceRootAttributes.set(attribute.name, attribute.value);
+  }
+}
+const sourceRootStyle = [document.documentElement.getAttribute('style'), document.body.getAttribute('style')].filter(Boolean).map(transformInlineStyle).join(';');
+const template = [...document.body.children].map((element) => element.outerHTML).join('\n');
 
 let jsAst = null;
 let scriptParseWarning = null;
@@ -239,9 +268,15 @@ for (const [name, optionName] of dataBindings) {
 
 transformedScript = transformedScript.replace(/var slots = \[([\s\S]*?)\n\s*\];/, 'var slots = Array.of($1\n              );');
 
-const runtimeBodyClasses = [...scriptSource.matchAll(/document\.body\.classList\.add\(\s*['\"]([^'\"]+)['\"]/g)].map((match) => classMap.get(match[1]) || prefixed(match[1]));
+const runtimeBodyClasses = [...scriptSource.matchAll(/document\.body\.classList\.add\(\s*['"]([^'"]+)['"]/g)].map((match) => classMap.get(match[1]) || prefixed(match[1]));
+const mountedRootClasses = [...new Set(['sg-library-host', ...sourceRootClasses, ...runtimeBodyClasses])];
+const rootSetupLines = [
+  ...mountedRootClasses.map((name) => `    root.classList.add(${JSON.stringify(name)});`),
+  ...[...sourceRootAttributes].map(([name, value]) => `    root.setAttribute(${JSON.stringify(name)}, ${JSON.stringify(value)});`),
+  ...(sourceRootStyle ? [`    root.style.cssText += ${JSON.stringify(`;${sourceRootStyle}`)};`] : []),
+];
 const escapedTemplate = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${').replace(/<\/script/gi, '<\\/script');
-const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n${runtimeBodyClasses.map((name) => `    root.classList.add('${name}');`).join('\n')}${runtimeBodyClasses.length ? '\n' : ''}    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => line.trimEnd() ? `    ${line.trimEnd()}` : '').join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
+const libraryJs = `/* Parser-backed decomposition from ${basename(sourcePath)}. */\n(function(global){\n  'use strict';\n  var TEMPLATE = \`${escapedTemplate}\`;\n  function mount(root, options) {\n    if (!root) throw new Error('mount root is required');\n${rootSetupLines.join('\n')}${rootSetupLines.length ? '\n' : ''}    root.innerHTML = TEMPLATE;\n${transformedScript.split('\n').map((line) => line.trimEnd() ? `    ${line.trimEnd()}` : '').join('\n')}\n    return { root: root, destroy: function(){ root.innerHTML = ''; } };\n  }\n  function create(options) {\n    var root = document.createElement('div');\n    root.className = 'sg-library-host';\n    mount(root, options || {});\n    return root;\n  }\n  global.${globalName} = { mount: mount, create: create };\n})(window);\n`;
 
 const rewriteMs = elapsed(phaseStartedAt);
 phaseStartedAt = performance.now();

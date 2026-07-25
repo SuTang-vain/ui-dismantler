@@ -138,6 +138,77 @@ test("DOM semantics distinguish navigation, inert controls, and durable applicat
   assert.deepEqual(candidates.scenarios.flatMap((scenario) => scenario.covers ?? []), [byTrigger.get("#stateful")?.fingerprint]);
 });
 
+test("scriptless snapshots classify plain buttons as no-op while preserving native controls", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-static-controls-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "index.html");
+  await writeFile(html, `<!doctype html><html><body>
+    <button id="decorative" type="button">Captured control</button>
+    <button id="popover" command="toggle-popover" commandfor="menu">Menu</button>
+    <div id="menu" popover>Menu content</div>
+    <button id="captured-command" command="show-modal" commandfor="captured-dialog">Captured dialog</button>
+    <dialog id="captured-dialog" class="captured-hidden"><details><summary id="captured-summary">Dialog details</summary></details></dialog>
+    <style>.captured-hidden{display:none!important}</style>
+    <details><summary id="summary">Details</summary><p>Body</p></details>
+    <input id="query">
+    <script type="application/ld+json">{"name":"Static snapshot"}</script>
+  </body></html>`, "utf8");
+  const manifest = analyzeHtml(html);
+  const byTrigger = new Map(manifest.interactions.map((interaction) => [interaction.trigger, interaction]));
+  assert.equal(byTrigger.get("#decorative")?.responsibility, "no-op-control");
+  assert.equal(byTrigger.get("#popover")?.responsibility, "user-action");
+  assert.equal(byTrigger.get("#captured-command")?.responsibility, "no-op-control");
+  assert.equal(byTrigger.get("#captured-summary")?.responsibility, "no-op-control");
+  assert.equal(byTrigger.get("#summary")?.responsibility, "user-action");
+  assert.equal(byTrigger.get("#query")?.responsibility, "user-action");
+});
+
+test("top-level hero sections retain ownership when embedded demos contain nested headings", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-hero-demo-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "index.html");
+  await writeFile(html, `<!doctype html><html><body><main>
+    <section id="home-hero"><div><h1>Build with agents</h1><p>Primary experience.</p></div>
+      <section class="embedded-demo"><h2>Session</h2><h3>Plan</h3><input id="prompt"><h3>Output</h3></section>
+    </section>
+  </main></body></html>`, "utf8");
+  const manifest = analyzeHtml(html);
+  assert.equal(manifest.structure.views.some((view) => view.selector === "#home-hero" && view.type === "hero-profile"), true);
+  const plan = planComponents(manifest);
+  assert.equal(plan.summary.unownedInteractions, 0);
+  assert.equal(plan.summary.ready, true);
+});
+
+test("large generated token sets are analyzed without per-variable stylesheet rescans", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-large-theme-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "index.html");
+  const variables = Array.from({ length: 240 }, (_, index) => `--token-${index}:#${(index + 4096).toString(16).padStart(6, "0")}`).join(";");
+  const rules = Array.from({ length: 240 }, (_, index) => `.item-${index}{color:var(--token-${index});background:var(--token-${(index + 1) % 240})}`).join("");
+  const controls = Array.from({ length: 80 }, (_, index) => `<button class="shared utility-${index % 8}" type="button">${index}</button>`).join("");
+  await writeFile(html, `<!doctype html><html><head><style>:root{${variables}}${rules}</style></head><body><main><h1>Archive</h1>${controls}</main></body></html>`, "utf8");
+  const startedAt = performance.now();
+  const manifest = analyzeHtml(html);
+  const elapsedMs = performance.now() - startedAt;
+  assert.equal(manifest.theme.tokens.filter((token) => token.original.startsWith("--token-")).length, 240);
+  assert.deepEqual(manifest.theme.tokens.find((token) => token.original === "--token-0")?.roles, ["background", "text"]);
+  assert.ok(elapsedMs < 5_000, `large theme analysis took ${elapsedMs.toFixed(1)}ms`);
+});
+
+test("roundtrip renderer flushes JSON snapshots larger than the pipe high-water mark", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-large-render-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "index.html");
+  const nodes = Array.from({ length: 900 }, (_, index) => `<div class="item-${index} shared-class-with-a-long-name-${index}">Node ${index}</div>`).join("");
+  await writeFile(html, `<!doctype html><html><body>${nodes}</body></html>`, "utf8");
+  const renderer = join(root, "scripts", "_roundtrip_render.mjs");
+  const { stdout } = await execFileAsync(process.execPath, [renderer, html, "--ref", "--width", "1024", "--height", "768"], { maxBuffer: 2_000_000 });
+  assert.ok(Buffer.byteLength(stdout, "utf8") > 65_536);
+  const rendered = JSON.parse(stdout);
+  assert.equal(rendered.ok, true);
+  assert.ok(rendered.serializedNodes > 900);
+});
+
 test("roundtrip score is compatible with the existing benchmark score", async () => {
   const result = await evaluateRoundtrip(fixture, library);
   assert.ok(result.score);
@@ -574,6 +645,31 @@ test("self-contained transpiler preserves URL query semantics while prefixing DO
   assert.match(js, /[?&]display=swap/);
   assert.match(js, /page\?display=compact#display/);
   assert.doesNotMatch(js, /sg-display=swap|\?sg-display=compact/);
+});
+
+test("self-contained transpiler preserves document-root theme context and inline custom properties", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-root-context-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const html = join(dir, "root.html");
+  const out = join(dir, "lib");
+  await writeFile(html, `<!doctype html><html lang="en" data-color-mode="light" class="font-root"><head><style>:root{--heading-size:48px;--ink:#111}.font-root{--font-heading:serif}[data-color-mode=light] .hero{color:var(--ink)}.token--ink{border-color:var(--ink)}.tone-\\#fff{background:#fff}</style></head><body class="body-theme"><h1 class="hero token--ink tone-#fff" style="font-family:var(--font-heading);font-size:var(--heading-size);--reveal-delay:0ms">Hero</h1></body></html>`);
+  await execFileAsync(process.execPath, [`${root}scripts/transpile_self_contained_case.mjs`, html, out, "RootFixture", "root"]);
+  const js = await readFile(join(out, "src", "root.js"), "utf8");
+  assert.match(js, /root\.classList\.add\("sg-library-host"\)/);
+  assert.match(js, /root\.classList\.add\("sg-font-root"\)/);
+  assert.match(js, /root\.classList\.add\("sg-body-theme"\)/);
+  assert.match(js, /root\.setAttribute\("data-color-mode", "light"\)/);
+  assert.match(js, /root\.setAttribute\("lang", "en"\)/);
+  assert.match(js, /font-family:var\(--sg-font-heading\)/);
+  assert.match(js, /font-size:var\(--sg-heading-size\)/);
+  assert.match(js, /--sg-reveal-delay:0ms/);
+  assert.match(js, /sg-token--ink/);
+  assert.match(js, /sg-tone-#fff/);
+  const css = await readFile(join(out, "src", "root.css"), "utf8");
+  assert.match(css, /:root[^{}]*\.sg-library-host|\.sg-library-host[^{}]*:root/);
+  assert.match(css, /\.sg-token--ink\{border-color:var\(--sg-ink\)\}/);
+  assert.match(css, /\.sg-tone-\\#fff\{background:var\(--sg-color-fff\)\}/);
+  assert.doesNotMatch(css, /sg-token--sg-ink|sg-tone-[^{]*var\(/);
 });
 
 test("self-contained transpiler ignores JSON-LD and supports pages without asset directories", async (context) => {

@@ -28,7 +28,11 @@ function classesFromJs(js: string): Set<string> {
     /setAttribute\(\s*['"]class['"]\s*,\s*['"]([^'"]*)['"]/g,
   ];
   const result = new Set<string>();
-  for (const pattern of patterns) for (const match of js.matchAll(pattern)) for (const token of match[1].matchAll(/(sg-[a-z][\w-]*)/g)) result.add(token[1]);
+  for (const pattern of patterns) {
+    for (const match of js.matchAll(pattern)) {
+      for (const token of match[1].split(/\s+/)) if (/^sg-[a-z][\w-]*$/i.test(token)) result.add(token);
+    }
+  }
   return result;
 }
 

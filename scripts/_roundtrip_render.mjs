@@ -6,7 +6,7 @@
 //
 // 本地 CSS/JS 会按 DOM 顺序内联；远程资源不会发起网络请求。
 
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
@@ -61,7 +61,9 @@ function loadScenario(path, id) {
 }
 
 function output(value) {
-  console.log(JSON.stringify(value));
+  // Synchronously flush snapshots before process.exit(). Pipe-backed stdout can
+  // otherwise truncate large JSON payloads at exactly 64 KiB.
+  writeFileSync(1, `${JSON.stringify(value)}\n`);
 }
 
 function cleanResourcePath(resource) {
@@ -327,7 +329,7 @@ function serialize(root) {
     const tag = node.tagName.toLowerCase();
     if (SKIP_TAGS.has(tag)) return null;
     nodeCount += 1;
-    const classes = (node.getAttribute('class') || '').split(/\s+/).filter(Boolean);
+    const classes = depth === 0 ? [] : (node.getAttribute('class') || '').split(/\s+/).filter(Boolean);
     // 累加 class_coverage 统计
     for (const cls of classes) {
       totalClassUses += 1;
@@ -492,6 +494,29 @@ function evaluateAssertion(window, assertion, role, index) {
   return result;
 }
 
+function applyNativeCommandFallback(window, element) {
+  const command = (element.getAttribute && element.getAttribute('command') || '').trim().toLowerCase();
+  const targetId = element.getAttribute && element.getAttribute('commandfor');
+  if (!command || !targetId) return;
+  const target = window.document.getElementById(targetId);
+  if (!target) return;
+  if (command === 'toggle-popover' || command === 'show-popover' || command === 'hide-popover') {
+    const visible = isElementVisible(window, target);
+    const shouldShow = command === 'show-popover' || (command === 'toggle-popover' && !visible);
+    const shouldHide = command === 'hide-popover' || (command === 'toggle-popover' && visible);
+    if (shouldShow && !visible) {
+      target.style.display = 'block';
+      target.setAttribute('data-roundtrip-popover-open', '');
+    } else if (shouldHide && visible) {
+      target.style.display = 'none';
+      target.removeAttribute('data-roundtrip-popover-open');
+    }
+    return;
+  }
+  if ((command === 'show-modal') && !target.hasAttribute('open')) target.setAttribute('open', '');
+  if ((command === 'close' || command === 'request-close') && target.hasAttribute('open')) target.removeAttribute('open');
+}
+
 async function executeScenario(window, scenario, role, root) {
   if (!scenario) return null;
   if (!Array.isArray(scenario.steps)) {
@@ -512,6 +537,7 @@ async function executeScenario(window, scenario, role, root) {
       if (step.action === 'click') {
         const element = queryTarget(window, step.target, role);
         element.click();
+        applyNativeCommandFallback(window, element);
         result.target = selectorForRole(step.target, role);
       } else if (step.action === 'input') {
         const element = queryTarget(window, step.target, role);

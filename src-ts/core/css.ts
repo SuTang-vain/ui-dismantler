@@ -88,6 +88,59 @@ export function extractGradients(css: string): Array<{ type: string; value: stri
   return values;
 }
 
+export interface CssVariableReferenceSummary {
+  usage: string[];
+  roles: string[];
+}
+
+function roleForProperty(property: string): string | null {
+  const normalized = property.toLowerCase();
+  if (normalized.includes("background")) return "background";
+  if (normalized.includes("border") || normalized.includes("outline")) return "border";
+  if (normalized === "color") return "text";
+  if (normalized.includes("shadow")) return "shadow";
+  if (normalized === "fill" || normalized === "stroke") return "icon-fill";
+  return null;
+}
+
+/**
+ * Analyze all requested CSS custom-property references in one pass.
+ * This avoids rescanning large stylesheets once per variable, which becomes
+ * quadratic for SingleFile archives containing hundreds of generated tokens.
+ */
+export function analyzeCssVariableReferences(css: string, variableNames: Iterable<string>): Record<string, CssVariableReferenceSummary> {
+  const requested = new Set(variableNames);
+  const usage = new Map<string, Set<string>>();
+  const roles = new Map<string, Set<string>>();
+  for (const name of requested) {
+    usage.set(name, new Set());
+    roles.set(name, new Set());
+  }
+  if (!requested.size) return {};
+
+  const clean = stripCssComments(css);
+  for (const rule of clean.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selector = rule[1].trim();
+    const body = rule[2];
+    for (const reference of body.matchAll(/var\(\s*(--[\w-]+)/gi)) {
+      const name = reference[1];
+      if (!requested.has(name)) continue;
+      if (selector && usage.get(name)!.size < 8) usage.get(name)!.add(selector);
+      const offset = reference.index ?? 0;
+      const declarationStart = body.lastIndexOf(";", offset) + 1;
+      const colon = body.indexOf(":", declarationStart);
+      if (colon < declarationStart || colon > offset) continue;
+      const role = roleForProperty(body.slice(declarationStart, colon).trim());
+      if (role) roles.get(name)!.add(role);
+    }
+  }
+
+  return Object.fromEntries([...requested].map((name) => [name, {
+    usage: [...usage.get(name)!],
+    roles: [...roles.get(name)!].sort(),
+  }]));
+}
+
 export function inferVariableRoles(css: string, variableName: string): string[] {
   const roles = new Set<string>();
   const escaped = variableName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

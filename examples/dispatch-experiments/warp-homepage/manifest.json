@@ -1,0 +1,4609 @@
+{
+  "schemaVersion": "1.0",
+  "meta": {
+    "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/source/index.html",
+    "title": "Warp — The Agentic Development Environment",
+    "templateId": null,
+    "vertical": "generic",
+    "profile": "generic",
+    "caseName": "index",
+    "canvas": {
+      "pc": null,
+      "wise": null,
+      "extreme": null,
+      "frameSelector": null
+    }
+  },
+  "theme": {
+    "tokens": [
+      {
+        "name": "sf-img-8",
+        "value": "url(\"data:image/svg+xml",
+        "original": "--sf-img-8",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "sf-img-9",
+        "value": "url(\"data:image/svg+xml",
+        "original": "--sf-img-9",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "sf-img-11",
+        "value": "url(\"data:image/svg+xml",
+        "original": "--sf-img-11",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "sf-img-33",
+        "value": "url(\"data:image/png",
+        "original": "--sf-img-33",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "sf-img-35",
+        "value": "url(\"data:image/png",
+        "original": "--sf-img-35",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "sf-img-34",
+        "value": "url(\"data:image/png",
+        "original": "--sf-img-34",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-sans",
+        "value": "var(--font-body,var(--font-inter),system-ui,sans-serif)",
+        "original": "--font-sans",
+        "usage": [
+          ":root,:host",
+          ".font-sans"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-serif",
+        "value": "ui-serif,Georgia,Cambria,\"Times New Roman\",Times,serif",
+        "original": "--font-serif",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-mono",
+        "value": "var(--font-azeret-mono),ui-monospace,monospace",
+        "original": "--font-mono",
+        "usage": [
+          ":root,:host",
+          ".font-mono"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-red-50",
+        "value": "lab(96.5005%4.18508 1.52328)",
+        "original": "--color-red-50",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-red-400",
+        "value": "lab(63.7053%60.745 31.3109)",
+        "original": "--color-red-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-red-500",
+        "value": "lab(55.4814%75.0732 48.8528)",
+        "original": "--color-red-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-red-600",
+        "value": "lab(48.4493%77.4328 61.5452)",
+        "original": "--color-red-600",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-red-700",
+        "value": "lab(40.4273%67.2623 53.7441)",
+        "original": "--color-red-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-red-950",
+        "value": "lab(13.003%29.04 16.7519)",
+        "original": "--color-red-950",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-50",
+        "value": "lab(98.6252% -.635922 8.42309)",
+        "original": "--color-amber-50",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-400",
+        "value": "lab(80.1641%16.6016 99.2089)",
+        "original": "--color-amber-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-500",
+        "value": "lab(72.7183%31.8672 97.9407)",
+        "original": "--color-amber-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-600",
+        "value": "lab(60.3514%40.5624 87.1228)",
+        "original": "--color-amber-600",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-700",
+        "value": "lab(47.2709%42.9082 69.2966)",
+        "original": "--color-amber-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-amber-950",
+        "value": "lab(15.8111%20.9107 23.3752)",
+        "original": "--color-amber-950",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-yellow-500",
+        "value": "lab(76.3898%14.5258 98.4589)",
+        "original": "--color-yellow-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-yellow-700",
+        "value": "lab(47.8202%25.2426 66.5015)",
+        "original": "--color-yellow-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-green-500",
+        "value": "lab(70.5521% -66.5147 45.8073)",
+        "original": "--color-green-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-green-700",
+        "value": "lab(47.0329% -47.0239 31.4788)",
+        "original": "--color-green-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-emerald-50",
+        "value": "lab(97.8462% -6.94966 1.85487)",
+        "original": "--color-emerald-50",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-emerald-400",
+        "value": "lab(75.0771% -60.7313 19.4147)",
+        "original": "--color-emerald-400",
+        "usage": [
+          ".hover\\:bg-emerald-400:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-emerald-500",
+        "value": "lab(66.9756% -58.27 19.5419)",
+        "original": "--color-emerald-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-emerald-600",
+        "value": "lab(55.0481% -49.9246 15.93)",
+        "original": "--color-emerald-600",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-emerald-700",
+        "value": "lab(44.4871% -41.0396 11.0361)",
+        "original": "--color-emerald-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-teal-500",
+        "value": "lab(67.3859% -49.0983-2.63511)",
+        "original": "--color-teal-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-teal-700",
+        "value": "lab(44.4134% -33.1436-4.22149)",
+        "original": "--color-teal-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-cyan-500",
+        "value": "lab(67.805% -35.3952-30.2018)",
+        "original": "--color-cyan-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-cyan-700",
+        "value": "lab(44.7267% -21.5987-26.118)",
+        "original": "--color-cyan-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-sky-400",
+        "value": "lab(70.687% -23.6078-45.9483)",
+        "original": "--color-sky-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-blue-300",
+        "value": "lab(77.5052% -6.4629-36.42)",
+        "original": "--color-blue-300",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-blue-400",
+        "value": "lab(65.0361% -1.42065-56.9802)",
+        "original": "--color-blue-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-blue-500",
+        "value": "lab(54.1736%13.3369-74.6839)",
+        "original": "--color-blue-500",
+        "usage": [
+          ".hover\\:bg-blue-500\\/30:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-blue-700",
+        "value": "lab(36.9089%35.0961-85.6872)",
+        "original": "--color-blue-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-indigo-400",
+        "value": "lab(59.866%22.4834-64.4485)",
+        "original": "--color-indigo-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-violet-50",
+        "value": "lab(96.2416%2.28849-5.51657)",
+        "original": "--color-violet-50",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-violet-400",
+        "value": "lab(62.8239%34.9159-60.0512)",
+        "original": "--color-violet-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-violet-500",
+        "value": "lab(49.9355%55.1776-81.8963)",
+        "original": "--color-violet-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-violet-600",
+        "value": "lab(41.088%68.9966-91.995)",
+        "original": "--color-violet-600",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-violet-700",
+        "value": "lab(35.2783%67.9912-88.793)",
+        "original": "--color-violet-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-purple-500",
+        "value": "lab(52.0183%66.11-78.2316)",
+        "original": "--color-purple-500",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-purple-700",
+        "value": "lab(36.1758%69.8525-80.0381)",
+        "original": "--color-purple-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-fuchsia-400",
+        "value": "lab(66.1178%66.0652-52.4733)",
+        "original": "--color-fuchsia-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-zinc-950",
+        "value": "lab(2.51107%.242703-.886115)",
+        "original": "--color-zinc-950",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-100",
+        "value": "lab(96.0988% -.493258 1.82395)",
+        "original": "--color-olive-100",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-400",
+        "value": "lab(69.6658% -2.009 7.72947)",
+        "original": "--color-olive-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-600",
+        "value": "lab(38.2553% -2.31101 9.30823)",
+        "original": "--color-olive-600",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-700",
+        "value": "lab(29.8862% -2.11598 8.58277)",
+        "original": "--color-olive-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-900",
+        "value": "lab(10.5512% -1.19986 4.84231)",
+        "original": "--color-olive-900",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-olive-950",
+        "value": "lab(3.26204% -.309289 1.13377)",
+        "original": "--color-olive-950",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-black",
+        "value": "#000",
+        "original": "--color-black",
+        "usage": [
+          ".bg-black",
+          ".text-black",
+          ".ring-black\\/10",
+          ":is(.\\*\\:ring-black\\/10>*)",
+          ".hover\\:bg-black:hover",
+          ".hover\\:bg-black\\/5:hover",
+          ".hover\\:bg-black\\/\\[0\\.1\\]:hover",
+          ".hover\\:bg-black\\/\\[0\\.02\\]:hover"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-white",
+        "value": "#fff",
+        "original": "--color-white",
+        "usage": [
+          ".border-white\\/15",
+          ".bg-white",
+          ".bg-white\\/20",
+          ".text-white",
+          ".ring-white\\/10",
+          ".placeholder\\:text-white\\/20::placeholder",
+          ".placeholder\\:text-white\\/70::placeholder",
+          ".hover\\:bg-white\\/10:hover"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "icon-fill",
+          "text"
+        ]
+      },
+      {
+        "name": "spacing",
+        "value": "calc(.25rem*var(--density))",
+        "original": "--spacing",
+        "usage": [
+          ".-top-1",
+          ".top-5",
+          ".-right-1",
+          ".right-3",
+          ".right-5",
+          ".right-6",
+          ".-bottom-1",
+          ".bottom-2\\.5"
+        ],
+        "roles": []
+      },
+      {
+        "name": "container-xs",
+        "value": "20rem",
+        "original": "--container-xs",
+        "usage": [
+          ".sm\\:max-w-xs"
+        ],
+        "roles": []
+      },
+      {
+        "name": "container-sm",
+        "value": "24rem",
+        "original": "--container-sm",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-md",
+        "value": "28rem",
+        "original": "--container-md",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-lg",
+        "value": "32rem",
+        "original": "--container-lg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-xl",
+        "value": "36rem",
+        "original": "--container-xl",
+        "usage": [
+          ".max-w-xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "container-2xl",
+        "value": "42rem",
+        "original": "--container-2xl",
+        "usage": [
+          ".max-w-2xl",
+          ".lg\\:max-w-2xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "container-3xl",
+        "value": "48rem",
+        "original": "--container-3xl",
+        "usage": [
+          ".max-w-3xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "container-4xl",
+        "value": "56rem",
+        "original": "--container-4xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-5xl",
+        "value": "64rem",
+        "original": "--container-5xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-6xl",
+        "value": "72rem",
+        "original": "--container-6xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "container-7xl",
+        "value": "80rem",
+        "original": "--container-7xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-xs",
+        "value": "var(--type-xs)",
+        "original": "--text-xs",
+        "usage": [
+          ".text-xs",
+          ".text-xs\\/4",
+          ".text-xs\\/5",
+          ".text-xs\\/7"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-xs--line-height",
+        "value": "var(--lh-normal)",
+        "original": "--text-xs--line-height",
+        "usage": [
+          ".text-xs"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-sm",
+        "value": "var(--type-sm)",
+        "original": "--text-sm",
+        "usage": [
+          ".text-sm",
+          ".text-sm\\/6",
+          ".text-sm\\/7",
+          ".lg\\:text-sm\\/7"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-sm--line-height",
+        "value": "var(--lh-normal)",
+        "original": "--text-sm--line-height",
+        "usage": [
+          ".text-sm"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-base",
+        "value": "var(--type-md)",
+        "original": "--text-base",
+        "usage": [
+          ".text-base",
+          ".text-base\\/5"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-base--line-height",
+        "value": "var(--lh-normal)",
+        "original": "--text-base--line-height",
+        "usage": [
+          ".text-base"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-lg",
+        "value": "var(--type-lg)",
+        "original": "--text-lg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-lg--line-height",
+        "value": "var(--lh-relaxed)",
+        "original": "--text-lg--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-xl",
+        "value": "var(--type-xl)",
+        "original": "--text-xl",
+        "usage": [
+          ".text-xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-xl--line-height",
+        "value": "var(--lh-snug)",
+        "original": "--text-xl--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-2xl",
+        "value": "var(--type-2xl)",
+        "original": "--text-2xl",
+        "usage": [
+          ".text-2xl\\/8"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-2xl--line-height",
+        "value": "var(--lh-snug)",
+        "original": "--text-2xl--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-3xl",
+        "value": "var(--type-3xl)",
+        "original": "--text-3xl",
+        "usage": [
+          ".text-3xl\\/10",
+          ".sm\\:text-3xl\\/10"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-3xl--line-height",
+        "value": "var(--lh-tight)",
+        "original": "--text-3xl--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-4xl",
+        "value": "var(--type-4xl)",
+        "original": "--text-4xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-4xl--line-height",
+        "value": "var(--lh-tight)",
+        "original": "--text-4xl--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-5xl",
+        "value": "var(--type-5xl)",
+        "original": "--text-5xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-5xl--line-height",
+        "value": "var(--lh-none)",
+        "original": "--text-5xl--line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "text-6xl",
+        "value": "var(--type-6xl)",
+        "original": "--text-6xl",
+        "usage": [
+          ".text-6xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-6xl--line-height",
+        "value": "var(--lh-none)",
+        "original": "--text-6xl--line-height",
+        "usage": [
+          ".text-6xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-7xl",
+        "value": "var(--type-7xl)",
+        "original": "--text-7xl",
+        "usage": [
+          ".sm\\:text-7xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-7xl--line-height",
+        "value": "var(--lh-none)",
+        "original": "--text-7xl--line-height",
+        "usage": [
+          ".sm\\:text-7xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-8xl",
+        "value": "var(--type-8xl)",
+        "original": "--text-8xl",
+        "usage": [
+          ".lg\\:text-8xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "text-8xl--line-height",
+        "value": "var(--lh-none)",
+        "original": "--text-8xl--line-height",
+        "usage": [
+          ".lg\\:text-8xl"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-weight-thin",
+        "value": "100",
+        "original": "--font-weight-thin",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-weight-extralight",
+        "value": "200",
+        "original": "--font-weight-extralight",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-weight-light",
+        "value": "300",
+        "original": "--font-weight-light",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-weight-normal",
+        "value": "400",
+        "original": "--font-weight-normal",
+        "usage": [
+          ".font-normal"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-weight-medium",
+        "value": "500",
+        "original": "--font-weight-medium",
+        "usage": [
+          ".font-medium"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-weight-semibold",
+        "value": "600",
+        "original": "--font-weight-semibold",
+        "usage": [
+          ".font-semibold"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-weight-bold",
+        "value": "700",
+        "original": "--font-weight-bold",
+        "usage": [
+          ".font-bold"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-weight-extrabold",
+        "value": "800",
+        "original": "--font-weight-extrabold",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-weight-black",
+        "value": "900",
+        "original": "--font-weight-black",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "tracking-tighter",
+        "value": "-.05em",
+        "original": "--tracking-tighter",
+        "usage": [
+          ".tracking-tighter"
+        ],
+        "roles": []
+      },
+      {
+        "name": "tracking-tight",
+        "value": "-.025em",
+        "original": "--tracking-tight",
+        "usage": [
+          ".tracking-tight"
+        ],
+        "roles": []
+      },
+      {
+        "name": "tracking-wide",
+        "value": ".025em",
+        "original": "--tracking-wide",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "tracking-wider",
+        "value": ".05em",
+        "original": "--tracking-wider",
+        "usage": [
+          ".tracking-wider"
+        ],
+        "roles": []
+      },
+      {
+        "name": "tracking-widest",
+        "value": ".1em",
+        "original": "--tracking-widest",
+        "usage": [
+          ".tracking-widest"
+        ],
+        "roles": []
+      },
+      {
+        "name": "leading-tight",
+        "value": "1.25",
+        "original": "--leading-tight",
+        "usage": [
+          ".leading-tight"
+        ],
+        "roles": []
+      },
+      {
+        "name": "leading-snug",
+        "value": "1.375",
+        "original": "--leading-snug",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "leading-relaxed",
+        "value": "1.625",
+        "original": "--leading-relaxed",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "radius-xs",
+        "value": "calc(var(--radius)*.375)",
+        "original": "--radius-xs",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "radius-sm",
+        "value": "calc(var(--radius)*.5)",
+        "original": "--radius-sm",
+        "usage": [
+          ".rounded-sm",
+          ".after\\:rounded-sm:after"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-md",
+        "value": "var(--radius)",
+        "original": "--radius-md",
+        "usage": [
+          ".rounded-md"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-lg",
+        "value": "calc(var(--radius)*1.5)",
+        "original": "--radius-lg",
+        "usage": [
+          ".rounded-\\[var\\(--radius-lg\\)\\]",
+          ".rounded-lg",
+          ".lg\\:rounded-lg"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-xl",
+        "value": "calc(var(--radius)*2)",
+        "original": "--radius-xl",
+        "usage": [
+          ".rounded-\\[var\\(--radius-xl\\)\\]"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "radius-2xl",
+        "value": "calc(var(--radius)*3)",
+        "original": "--radius-2xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "radius-3xl",
+        "value": "calc(var(--radius)*4)",
+        "original": "--radius-3xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ease-in",
+        "value": "cubic-bezier(.4,0,1,1)",
+        "original": "--ease-in",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0,0,.2,1)",
+        "original": "--ease-out",
+        "usage": [
+          ".ease-out"
+        ],
+        "roles": []
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(.4,0,.2,1)",
+        "original": "--ease-in-out",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "animate-spin",
+        "value": "spin 1s linear infinite",
+        "original": "--animate-spin",
+        "usage": [
+          ".animate-spin"
+        ],
+        "roles": []
+      },
+      {
+        "name": "animate-pulse",
+        "value": "pulse 2s cubic-bezier(.4,0,.6,1) infinite",
+        "original": "--animate-pulse",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "blur-sm",
+        "value": "8px",
+        "original": "--blur-sm",
+        "usage": [
+          ".backdrop-blur-sm"
+        ],
+        "roles": []
+      },
+      {
+        "name": "blur-md",
+        "value": "12px",
+        "original": "--blur-md",
+        "usage": [
+          ".backdrop-blur-md"
+        ],
+        "roles": []
+      },
+      {
+        "name": "blur-xl",
+        "value": "24px",
+        "original": "--blur-xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "blur-2xl",
+        "value": "40px",
+        "original": "--blur-2xl",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "aspect-video",
+        "value": "16/9",
+        "original": "--aspect-video",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "default-transition-duration",
+        "value": ".15s",
+        "original": "--default-transition-duration",
+        "usage": [
+          ".transition",
+          ".transition-colors",
+          ".transition-opacity",
+          ".transition-transform"
+        ],
+        "roles": []
+      },
+      {
+        "name": "default-transition-timing-function",
+        "value": "cubic-bezier(.4,0,.2,1)",
+        "original": "--default-transition-timing-function",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "default-font-family",
+        "value": "var(--font-sans)",
+        "original": "--default-font-family",
+        "usage": [
+          "html,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "default-mono-font-family",
+        "value": "var(--font-mono)",
+        "original": "--default-mono-font-family",
+        "usage": [
+          "kbd"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-display",
+        "value": "var(--font-heading,var(--font-the-future),\"The Future\",system-ui,sans-serif)",
+        "original": "--font-display",
+        "usage": [
+          ".font-display"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-hack",
+        "value": "\"Hack\",var(--font-azeret-mono),ui-monospace,monospace",
+        "original": "--font-hack",
+        "usage": [
+          ".font-hack"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-matter",
+        "value": "\"Matter\",system-ui,sans-serif",
+        "original": "--font-matter",
+        "usage": [
+          ".font-matter"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-background",
+        "value": "color-mix(in oklch,white 75%,var(--gray-50))",
+        "original": "--color-background",
+        "usage": [
+          "html",
+          ".bg-\\[var\\(--color-background\\)\\]",
+          ".bg-\\[var\\(--color-background\\)\\]\\/70",
+          ".text-\\[var\\(--color-background\\)\\]",
+          ".hover\\:bg-background\\/35:hover",
+          ".focus\\:ring-offset-background:focus",
+          ".supports-\\[backdrop-filter\\]\\:bg-\\[var\\(--color-background\\)\\]\\/60"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-foreground",
+        "value": "lab(96.5592%.310391 3.81117)",
+        "original": "--color-foreground",
+        "usage": [
+          ".bg-foreground\\/30",
+          ".group-hover\\:text-foreground:is(:where(.group):hover *)",
+          ".hover\\:text-foreground:hover"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-card",
+        "value": "lab(9.53514%.133313 1.53074)",
+        "original": "--color-card",
+        "usage": [
+          ".border-card",
+          ".bg-card\\/35"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "color-card-foreground",
+        "value": "lab(96.5592%.310391 3.81117)",
+        "original": "--color-card-foreground",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-primary",
+        "value": "var(--gray-600)",
+        "original": "--color-primary",
+        "usage": [
+          ":root",
+          ".group-hover\\:text-\\[var\\(--color-primary\\)\\]:is(:where(.group):hover *)",
+          ".hover\\:bg-primary\\/80:hover",
+          ".hover\\:bg-primary\\/90:hover",
+          ".hover\\:text-\\[var\\(--color-primary\\)\\]:hover",
+          ".focus\\:border-\\[var\\(--color-primary\\)\\]:focus",
+          ".focus\\:ring-\\[var\\(--color-primary\\)\\]\\/40:focus"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "color-primary-foreground",
+        "value": "#121212",
+        "original": "--color-primary-foreground",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-secondary",
+        "value": "lab(17.659%.165299 1.91246)",
+        "original": "--color-secondary",
+        "usage": [
+          ".hover\\:bg-secondary\\/80:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-secondary-foreground",
+        "value": "lab(96.5592%.310391 3.81117)",
+        "original": "--color-secondary-foreground",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-muted",
+        "value": "color-mix(in oklch,var(--gray-600) 80%,var(--gray-500))",
+        "original": "--color-muted",
+        "usage": [
+          ".border-muted",
+          ".bg-muted\\/40",
+          ".bg-muted\\/55",
+          ".bg-muted\\/80",
+          ".text-\\[var\\(--color-muted\\)\\]",
+          ".marker\\:text-\\[var\\(--color-muted\\)\\] ::marker",
+          ".marker\\:text-\\[var\\(--color-muted\\)\\]::marker",
+          ".marker\\:text-\\[var\\(--color-muted\\)\\] ::-webkit-details-marker"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "color-muted-foreground",
+        "value": "lab(66.9712%.25034 3.0503)",
+        "original": "--color-muted-foreground",
+        "usage": [
+          ".bg-muted-foreground\\/45",
+          ".placeholder\\:text-muted-foreground::placeholder",
+          ".disabled\\:hover\\:text-muted-foreground:disabled:hover"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-accent",
+        "value": "var(--color-primary)",
+        "original": "--color-accent",
+        "usage": [
+          ".group-hover\\:text-\\[var\\(--color-accent\\)\\]:is(:where(.group):hover *)",
+          ".hover\\:bg-\\[color-mix\\(in_oklch\\,var\\(--color-accent\\)_10\\%\\,transparent\\)\\]:hover"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-accent-foreground",
+        "value": "lab(96.5592%.310391 3.81117)",
+        "original": "--color-accent-foreground",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-border",
+        "value": "var(--gray-300)",
+        "original": "--color-border",
+        "usage": [
+          ":root",
+          ":where(.divide-\\[var\\(--color-border\\)\\]\\/20>:not(:last-child))",
+          ".border-\\[var\\(--color-border\\)\\]",
+          ".ring-\\[var\\(--color-border\\)\\]",
+          ".ring-border",
+          ".after\\:outline-\\[var\\(--color-border\\)\\]:after",
+          ".hover\\:border-\\[var\\(--color-border\\)\\]\\/50:hover",
+          ".hover\\:bg-\\[var\\(--color-border\\)\\]:hover"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "color-input",
+        "value": "lab(29.263%.195071 2.29271)",
+        "original": "--color-input",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-ring",
+        "value": "lab(96.5592%.310391 3.81117)",
+        "original": "--color-ring",
+        "usage": [
+          ".focus\\:ring-ring:focus",
+          ".focus-visible\\:ring-ring:focus-visible"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-theme-accent",
+        "value": "#00c2ff",
+        "original": "--color-theme-accent",
+        "usage": [
+          ".bg-theme-accent\\/20",
+          ".hover\\:border-theme-accent\\/30:hover"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "color-theme-cursor",
+        "value": "#00c2ff",
+        "original": "--color-theme-cursor",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-status-success",
+        "value": "lab(69.7863% -53.411 45.1934)",
+        "original": "--color-status-success",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-status-active",
+        "value": "lab(57.7421%5.71477-72.009)",
+        "original": "--color-status-active",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-status-warning",
+        "value": "lab(79.2935%13.5666 82.2486)",
+        "original": "--color-status-warning",
+        "usage": [
+          ".border-status-warning",
+          ".bg-status-warning"
+        ],
+        "roles": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "name": "color-status-error",
+        "value": "lab(53.6853%69.6775 43.7724)",
+        "original": "--color-status-error",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-subtle-bg",
+        "value": "#0000000d",
+        "original": "--color-factory-subtle-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-teal",
+        "value": "#008ec4",
+        "original": "--color-factory-teal",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-teal-bg",
+        "value": "#008ec41a",
+        "original": "--color-factory-teal-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-purple",
+        "value": "#523c79",
+        "original": "--color-factory-purple",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-purple-bg",
+        "value": "#523c791a",
+        "original": "--color-factory-purple-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-warning-bg",
+        "value": "#a89c141a",
+        "original": "--color-factory-warning-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-factory-stage",
+        "value": "#f3ecff",
+        "original": "--color-factory-stage",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "gray-hue",
+        "value": "220",
+        "original": "--gray-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-chroma",
+        "value": ".007",
+        "original": "--gray-chroma",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-50",
+        "value": "oklch(97% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-50",
+        "usage": [
+          ":root"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "gray-100",
+        "value": "oklch(95% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-100",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-200",
+        "value": "oklch(91% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-200",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-300",
+        "value": "oklch(78% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-300",
+        "usage": [
+          ":root"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "gray-400",
+        "value": "oklch(66% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "gray-500",
+        "value": "oklch(53% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-500",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-600",
+        "value": "oklch(40% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-600",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "gray-700",
+        "value": "oklch(30% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-700",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "gray-800",
+        "value": "oklch(20% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-800",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "gray-900",
+        "value": "oklch(12% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-900",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "gray-950",
+        "value": "oklch(7% var(--gray-chroma) var(--gray-hue))",
+        "original": "--gray-950",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-text",
+        "value": "var(--gray-950)",
+        "original": "--color-text",
+        "usage": [
+          ":root",
+          "html",
+          ":where(.divide-\\[var\\(--color-text\\)\\]\\/10>:not(:last-child))",
+          ".bg-\\[var\\(--color-text\\)\\],.bg-\\[var\\(--color-text\\)\\]\\/5",
+          ".bg-\\[var\\(--color-text\\)\\]\\/5",
+          ".bg-\\[var\\(--color-text\\)\\]\\/8",
+          ".text-\\[var\\(--color-text\\)\\]",
+          ".group-hover\\:text-\\[var\\(--color-text\\)\\]:is(:where(.group):hover *)"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "color-text-secondary",
+        "value": "var(--gray-600)",
+        "original": "--color-text-secondary",
+        "usage": [
+          ".bg-\\[var\\(--color-text-secondary\\)\\]",
+          ".text-\\[var\\(--color-text-secondary\\)\\],.text-\\[var\\(--color-text-secondary\\)\\]\\/60",
+          ".text-\\[var\\(--color-text-secondary\\)\\]\\/60",
+          ".group-hover\\:text-\\[var\\(--color-text-secondary\\)\\]:is(:where(.group):hover *)",
+          ".group-hover\\/tab\\:text-\\[var\\(--color-text-secondary\\)\\]:is(:where(.group\\/tab):hover *)",
+          ".marker\\:text-\\[var\\(--color-text-secondary\\)\\] ::marker",
+          ".marker\\:text-\\[var\\(--color-text-secondary\\)\\]::marker",
+          ".marker\\:text-\\[var\\(--color-text-secondary\\)\\] ::-webkit-details-marker"
+        ],
+        "roles": [
+          "background",
+          "border",
+          "text"
+        ]
+      },
+      {
+        "name": "color-text-body",
+        "value": "lab(16.4913%.1041 1.1425)",
+        "original": "--color-text-body",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-surface",
+        "value": "var(--gray-100)",
+        "original": "--color-surface",
+        "usage": [
+          ".bg-\\[var\\(--color-surface\\)\\]",
+          ".hover\\:bg-\\[var\\(--color-surface\\)\\]:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-panel",
+        "value": "var(--gray-100)",
+        "original": "--color-panel",
+        "usage": [
+          ".hover\\:bg-\\[color-mix\\(in_oklch\\,var\\(--color-panel\\)_70\\%\\,var\\(--color-text\\)\\)\\]:hover",
+          ".hover\\:bg-\\[var\\(--color-panel\\)\\]:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-surface-hover",
+        "value": "color-mix(in oklch,var(--color-text) 5%,transparent)",
+        "original": "--color-surface-hover",
+        "usage": [
+          ".hover\\:bg-\\[var\\(--color-surface-hover\\)\\]:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "color-surface-active",
+        "value": "color-mix(in oklch,var(--color-text) 10%,transparent)",
+        "original": "--color-surface-active",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-border-subtle",
+        "value": "color-mix(in oklch,var(--color-border) 40%,transparent)",
+        "original": "--color-border-subtle",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-border-dim",
+        "value": "color-mix(in oklch,var(--color-border) 20%,transparent)",
+        "original": "--color-border-dim",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-accent-purple",
+        "value": "#cbb0f7",
+        "original": "--color-accent-purple",
+        "usage": [
+          ".group-hover\\:bg-\\[var\\(--color-accent-purple\\)\\]:is(:where(.group):hover *)",
+          ".hover\\:bg-\\[color-mix\\(in_oklch\\,var\\(--color-accent-purple\\)_12\\%\\,transparent\\)\\]:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]:hover,.hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/10:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/10:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/15:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/20:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/25:hover",
+          ".hover\\:bg-\\[var\\(--color-accent-purple\\)\\]\\/70:hover"
+        ],
+        "roles": [
+          "background",
+          "text"
+        ]
+      },
+      {
+        "name": "color-tertiary",
+        "value": "#c59fff",
+        "original": "--color-tertiary",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "radius",
+        "value": ".125rem",
+        "original": "--radius",
+        "usage": [
+          ":root,:host",
+          ":root",
+          ".rounded-\\[calc\\(var\\(--radius\\)\\*1\\.5\\)\\]",
+          ".rounded-\\[calc\\(var\\(--radius\\)\\*3\\)\\]"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "shadow",
+        "value": "none",
+        "original": "--shadow",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-base",
+        "value": "1rem",
+        "original": "--type-base",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "heading-size",
+        "value": "calc(var(--type-base)*5)",
+        "original": "--heading-size",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "body-size",
+        "value": "var(--type-base)",
+        "original": "--body-size",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-xs",
+        "value": "calc(var(--type-base)*.75)",
+        "original": "--type-xs",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-sm",
+        "value": "calc(var(--type-base)*.875)",
+        "original": "--type-sm",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-md",
+        "value": "var(--type-base)",
+        "original": "--type-md",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-lg",
+        "value": "calc(var(--type-base)*1.125)",
+        "original": "--type-lg",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-xl",
+        "value": "calc(var(--type-base)*1.25)",
+        "original": "--type-xl",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-2xl",
+        "value": "calc(var(--type-base)*1.5)",
+        "original": "--type-2xl",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-3xl",
+        "value": "calc(var(--type-base)*1.875)",
+        "original": "--type-3xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-4xl",
+        "value": "calc(var(--type-base)*2.25)",
+        "original": "--type-4xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-5xl",
+        "value": "calc(var(--type-base)*3)",
+        "original": "--type-5xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-6xl",
+        "value": "calc(var(--type-base)*3.75)",
+        "original": "--type-6xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-7xl",
+        "value": "calc(var(--type-base)*4.5)",
+        "original": "--type-7xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-8xl",
+        "value": "calc(var(--type-base)*6)",
+        "original": "--type-8xl",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "type-display",
+        "value": "var(--heading-size)",
+        "original": "--type-display",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-h2",
+        "value": "calc(var(--heading-size)*.7)",
+        "original": "--type-h2",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-h3",
+        "value": "var(--type-2xl)",
+        "original": "--type-h3",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-h4",
+        "value": "var(--type-xl)",
+        "original": "--type-h4",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-body",
+        "value": "var(--type-md)",
+        "original": "--type-body",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "type-small",
+        "value": "var(--type-sm)",
+        "original": "--type-small",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "lh-none",
+        "value": "1",
+        "original": "--lh-none",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "lh-tight",
+        "value": "1.1",
+        "original": "--lh-tight",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "lh-snug",
+        "value": "1.25",
+        "original": "--lh-snug",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "lh-normal",
+        "value": "1.5",
+        "original": "--lh-normal",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "lh-relaxed",
+        "value": "1.75",
+        "original": "--lh-relaxed",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "lh-loose",
+        "value": "2",
+        "original": "--lh-loose",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "font-heading",
+        "value": "var(--font-the-future),\"The Future\",system-ui,sans-serif",
+        "original": "--font-heading",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "font-body",
+        "value": "\"Matter\",system-ui,sans-serif",
+        "original": "--font-body",
+        "usage": [
+          ":root,:host"
+        ],
+        "roles": []
+      },
+      {
+        "name": "heading-weight",
+        "value": "400",
+        "original": "--heading-weight",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "heading-letter-spacing",
+        "value": "-.035em",
+        "original": "--heading-letter-spacing",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "body-weight",
+        "value": "400",
+        "original": "--body-weight",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "body-line-height",
+        "value": "var(--lh-normal)",
+        "original": "--body-line-height",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "layout-max-width",
+        "value": "80rem",
+        "original": "--layout-max-width",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "content-max-width",
+        "value": "var(--layout-max-width)",
+        "original": "--content-max-width",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "nav-max-width",
+        "value": "var(--layout-max-width)",
+        "original": "--nav-max-width",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "section-bg-alt",
+        "value": "transparent",
+        "original": "--section-bg-alt",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "surface-texture",
+        "value": "none",
+        "original": "--surface-texture",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "surface-texture-size",
+        "value": "200px 200px",
+        "original": "--surface-texture-size",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "surface-texture-opacity",
+        "value": "0",
+        "original": "--surface-texture-opacity",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "border-treatment",
+        "value": "none",
+        "original": "--border-treatment",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "border-width",
+        "value": "0px",
+        "original": "--border-width",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "heading-transform",
+        "value": "none",
+        "original": "--heading-transform",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "heading-font-style",
+        "value": "normal",
+        "original": "--heading-font-style",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "easing",
+        "value": "cubic-bezier(.4,0,.2,1)",
+        "original": "--easing",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "hover-transform",
+        "value": "none",
+        "original": "--hover-transform",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "divider-display",
+        "value": "none",
+        "original": "--divider-display",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "divider-style",
+        "value": "none",
+        "original": "--divider-style",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "card-bg",
+        "value": "#fff",
+        "original": "--card-bg",
+        "usage": [
+          ".bg-\\[var\\(--card-bg\\)\\]",
+          ".hover\\:bg-\\[var\\(--card-bg\\)\\]:hover"
+        ],
+        "roles": [
+          "background"
+        ]
+      },
+      {
+        "name": "card-backdrop-blur",
+        "value": "0px",
+        "original": "--card-backdrop-blur",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "card-border",
+        "value": "none",
+        "original": "--card-border",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-agent-kit-surface",
+        "value": "color-mix(in oklch,var(--gray-100) 50%,var(--gray-200))",
+        "original": "--color-agent-kit-surface",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-font-family",
+        "value": "var(--font-azeret-mono),ui-monospace,monospace",
+        "original": "--btn-font-family",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-bg",
+        "value": "var(--color-text)",
+        "original": "--btn-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-border",
+        "value": "none",
+        "original": "--btn-border",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-text-color",
+        "value": "var(--gray-50)",
+        "original": "--btn-text-color",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-padding",
+        "value": "calc(.25rem*var(--density)) calc(1rem*var(--density))",
+        "original": "--btn-padding",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-radius",
+        "value": "0rem",
+        "original": "--btn-radius",
+        "usage": [
+          ".rounded-\\[var\\(--btn-radius\\)\\]",
+          ".rounded-l-\\[var\\(--btn-radius\\)\\]",
+          ".rounded-r-\\[var\\(--btn-radius\\)\\]"
+        ],
+        "roles": [
+          "border"
+        ]
+      },
+      {
+        "name": "btn-transform",
+        "value": "none",
+        "original": "--btn-transform",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "btn-icon-display",
+        "value": "none",
+        "original": "--btn-icon-display",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "accent-heading-color",
+        "value": "inherit",
+        "original": "--accent-heading-color",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "img-radius",
+        "value": "var(--radius)",
+        "original": "--img-radius",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "img-shadow",
+        "value": "0 8px 30px #0000001f",
+        "original": "--img-shadow",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "img-border",
+        "value": "none",
+        "original": "--img-border",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "density",
+        "value": "1",
+        "original": "--density",
+        "usage": [
+          ":root,:host",
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "motion-speed",
+        "value": "1",
+        "original": "--motion-speed",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "space-xs",
+        "value": "calc(.25rem*var(--density))",
+        "original": "--space-xs",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "space-sm",
+        "value": "calc(.5rem*var(--density))",
+        "original": "--space-sm",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "space-md",
+        "value": "calc(1rem*var(--density))",
+        "original": "--space-md",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "space-lg",
+        "value": "calc(1.5rem*var(--density))",
+        "original": "--space-lg",
+        "usage": [
+          ".gap-\\[var\\(--space-lg\\)\\]",
+          ".py-\\[var\\(--space-lg\\)\\]",
+          ".lg\\:px-\\[var\\(--space-lg\\)\\]"
+        ],
+        "roles": []
+      },
+      {
+        "name": "space-xl",
+        "value": "calc(2rem*var(--density))",
+        "original": "--space-xl",
+        "usage": [
+          ".gap-\\[var\\(--space-xl\\)\\]",
+          ".pt-\\[var\\(--space-xl\\)\\]"
+        ],
+        "roles": []
+      },
+      {
+        "name": "space-2xl",
+        "value": "calc(3rem*var(--density))",
+        "original": "--space-2xl",
+        "usage": [
+          ".gap-\\[var\\(--space-2xl\\)\\]",
+          ".lg\\:gap-\\[var\\(--space-2xl\\)\\]"
+        ],
+        "roles": []
+      },
+      {
+        "name": "space-section",
+        "value": "calc(4rem*var(--density))",
+        "original": "--space-section",
+        "usage": [
+          ".gap-\\[var\\(--space-section\\)\\]",
+          ".py-\\[var\\(--space-section\\)\\]",
+          ".pb-\\[var\\(--space-section\\)\\]",
+          ".sm\\:gap-\\[var\\(--space-section\\)\\]",
+          ".lg\\:gap-\\[var\\(--space-section\\)\\]"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-primary-green",
+        "value": "lab(69.7863% -53.411 45.1934)",
+        "original": "--color-primary-green",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-primary-yellow",
+        "value": "lab(79.2935%13.5666 82.2486)",
+        "original": "--color-primary-yellow",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-primary-red",
+        "value": "lab(53.6853%69.6775 43.7724)",
+        "original": "--color-primary-red",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "color-lighten-50",
+        "value": "lab(59.4%0 0)",
+        "original": "--color-lighten-50",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-error",
+        "value": "var(--color-primary-red)",
+        "original": "--color-error",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-success",
+        "value": "var(--color-primary-green)",
+        "original": "--color-success",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "color-warning",
+        "value": "var(--color-primary-yellow)",
+        "original": "--color-warning",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-blue-hue",
+        "value": "255",
+        "original": "--terminus-blue-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "terminus-green-hue",
+        "value": "145",
+        "original": "--terminus-green-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "terminus-purple-hue",
+        "value": "300",
+        "original": "--terminus-purple-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "terminus-red-hue",
+        "value": "45",
+        "original": "--terminus-red-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "terminus-fuchsia-hue",
+        "value": "335",
+        "original": "--terminus-fuchsia-hue",
+        "usage": [
+          ":root"
+        ],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-blue-bg",
+        "value": "oklch(65%.21 var(--terminus-blue-hue))",
+        "original": "--terminus-theme-blue-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-blue-fg",
+        "value": "oklch(18%.07 var(--terminus-blue-hue))",
+        "original": "--terminus-theme-blue-fg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-green-bg",
+        "value": "oklch(78%.22 var(--terminus-green-hue))",
+        "original": "--terminus-theme-green-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-green-fg",
+        "value": "oklch(20%.08 var(--terminus-green-hue))",
+        "original": "--terminus-theme-green-fg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-purple-bg",
+        "value": "oklch(62%.22 var(--terminus-purple-hue))",
+        "original": "--terminus-theme-purple-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-purple-fg",
+        "value": "oklch(18%.07 var(--terminus-purple-hue))",
+        "original": "--terminus-theme-purple-fg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-red-bg",
+        "value": "oklch(72%.2 var(--terminus-red-hue))",
+        "original": "--terminus-theme-red-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-red-fg",
+        "value": "oklch(20%.07 var(--terminus-red-hue))",
+        "original": "--terminus-theme-red-fg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-fuchsia-bg",
+        "value": "oklch(68%.27 var(--terminus-fuchsia-hue))",
+        "original": "--terminus-theme-fuchsia-bg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-theme-fuchsia-fg",
+        "value": "oklch(20%.08 var(--terminus-fuchsia-hue))",
+        "original": "--terminus-theme-fuchsia-fg",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "terminus-sticky-top",
+        "value": "6rem",
+        "original": "--terminus-sticky-top",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "duration-fast",
+        "value": "calc(.1s*var(--motion-speed))",
+        "original": "--duration-fast",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "duration-normal",
+        "value": "calc(.2s*var(--motion-speed))",
+        "original": "--duration-normal",
+        "usage": [
+          ".duration-\\[var\\(--duration-normal\\)\\]"
+        ],
+        "roles": []
+      },
+      {
+        "name": "duration-slow",
+        "value": "calc(.4s*var(--motion-speed))",
+        "original": "--duration-slow",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "scroll-padding-top",
+        "value": "5.25rem",
+        "original": "--scroll-padding-top",
+        "usage": [
+          "html",
+          ".top-\\[calc\\(var\\(--scroll-padding-top\\)-0\\.75rem\\)\\]",
+          ".h-\\(--scroll-padding-top\\)"
+        ],
+        "roles": []
+      },
+      {
+        "name": "rgb-from-red-r-g-b",
+        "value": "rgb(from red r g b)",
+        "original": "rgb(from red r g b)",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "0000",
+        "value": "#0000",
+        "original": "#0000",
+        "usage": [],
+        "roles": [
+          "background",
+          "border",
+          "shadow",
+          "text"
+        ]
+      },
+      {
+        "name": "fef2f2",
+        "value": "#fef2f2",
+        "original": "#fef2f2",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ff6568",
+        "value": "#ff6568",
+        "original": "#ff6568",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "fb2c36",
+        "value": "#fb2c36",
+        "original": "#fb2c36",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "e40014",
+        "value": "#e40014",
+        "original": "#e40014",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "bf000f",
+        "value": "#bf000f",
+        "original": "#bf000f",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "460809",
+        "value": "#460809",
+        "original": "#460809",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "fffbeb",
+        "value": "#fffbeb",
+        "original": "#fffbeb",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "fcbb00",
+        "value": "#fcbb00",
+        "original": "#fcbb00",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "f99c00",
+        "value": "#f99c00",
+        "original": "#f99c00",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "dd7400",
+        "value": "#dd7400",
+        "original": "#dd7400",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "b75000",
+        "value": "#b75000",
+        "original": "#b75000",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "461901",
+        "value": "#461901",
+        "original": "#461901",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "edb200",
+        "value": "#edb200",
+        "original": "#edb200",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "a36100",
+        "value": "#a36100",
+        "original": "#a36100",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "00c758",
+        "value": "#00c758",
+        "original": "#00c758",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "008138",
+        "value": "#008138",
+        "original": "#008138",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "ecfdf5",
+        "value": "#ecfdf5",
+        "original": "#ecfdf5",
+        "usage": [],
+        "roles": []
+      },
+      {
+        "name": "00d294",
+        "value": "#00d294",
+        "original": "#00d294",
+        "usage": [],
+        "roles": []
+      }
+    ],
+    "gradients": [
+      {
+        "type": "linear",
+        "value": "linear-gradient(90deg,#0000,#000 4% 96%,#0000)"
+      }
+    ]
+  },
+  "structure": {
+    "tabs": [
+      {
+        "id": "tab-1",
+        "label": "64k",
+        "selector": "span.tabular-nums",
+        "target": null
+      },
+      {
+        "id": "tab-2",
+        "label": "1 / 3",
+        "selector": "div.mt-12 > figure:nth-child(1) > figcaption:nth-child(2) > p:nth-child(2)",
+        "target": null
+      },
+      {
+        "id": "tab-3",
+        "label": "2 / 3",
+        "selector": "figure.opacity-100 > figcaption:nth-child(2) > p:nth-child(2)",
+        "target": null
+      },
+      {
+        "id": "tab-4",
+        "label": "3 / 3",
+        "selector": "div.mt-12 > figure:nth-child(3) > figcaption:nth-child(2) > p:nth-child(2)",
+        "target": null
+      }
+    ],
+    "views": [
+      {
+        "id": "page-header-1",
+        "type": "page-header",
+        "structuralType": "content-region",
+        "semanticType": "page-header",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-header"
+          }
+        ],
+        "selector": "#navbar",
+        "details": {
+          "text": ":root{--scroll-padding-top:5.25rem}ProductsSolutionsResourcesEnterprisePricing64kContact salesDownloadDProductsWarp TerminalA modern terminal for agentic coding",
+          "className": "sticky top-0 z-10 bg-[var(--color-background)]/70 backdrop-blur-md supports-[backdrop-filter]:bg-[var(--color-background)]/60",
+          "interactionSelectors": [
+            "a.items-stretch",
+            "el-popover-group.flex > span:nth-child(1) > button:nth-child(1)",
+            "el-popover-group.flex > span:nth-child(2) > button:nth-child(1)",
+            "el-popover-group.flex > span:nth-child(3) > button:nth-child(1)",
+            "el-popover-group.flex > span:nth-child(4) > button:nth-child(1)",
+            "a.justify-between",
+            "a.rounded-lg",
+            "a.rounded-\\5b var\\28 --btn-radius\\29 \\5d ",
+            "div.gap-5 > a:nth-child(3)",
+            "button.p-1\\2e 5",
+            "div.mt-6 > details:nth-child(1) > summary:nth-child(1)",
+            "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+            "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(3)",
+            "div.mt-6 > details:nth-child(2) > summary:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > summary:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(8) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(4) > summary:nth-child(1)",
+            "div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(1)",
+            "div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(2)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "page-footer-1",
+        "type": "page-footer",
+        "structuralType": "content-region",
+        "semanticType": "page-footer",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "signal": "page-shell-region",
+            "value": "page-footer"
+          }
+        ],
+        "selector": "#footer",
+        "details": {
+          "text": "ProductDownloadPricingEnterpriseChangelogDocsOpen SourceStatusResourcesBlogFAQCommunitySupportDo Things with WarpTerminusCompanyAboutHow We WorkCareersPressCont",
+          "className": "pt-0",
+          "interactionSelectors": [
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+            "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(7) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+            "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+            "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+            "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+            "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+            "a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 5"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-1-from-the-terminal-to-the-cloud-with-any-agent",
+        "type": "hero-profile",
+        "structuralType": "content-region",
+        "semanticType": "from-the-terminal-to-the-cloud-with-any-agent",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "From the terminal to the cloud, with any agent"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "#home-hero",
+        "details": {
+          "text": "From the terminal to the cloud, with any agent",
+          "className": "pt-16 pb-0",
+          "heading": "From the terminal to the cloud, with any agent",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "a.self-stretch",
+            "div.self-stretch > button:nth-child(2)",
+            "#home-hero > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+            "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)",
+            "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)",
+            "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)",
+            "input.w-full",
+            "div.h-10 > div:nth-child(2) > button:nth-child(1)",
+            "div.space-y-1 > button:nth-child(1)",
+            "button.story-reveal",
+            "div.space-y-1 > button:nth-child(3)",
+            "div.space-y-1 > button:nth-child(4)",
+            "button.hover\\3a bg-background\\2f 35",
+            "button.bg-primary",
+            "div.mt-3 > div:nth-child(1) > button:nth-child(1)",
+            "div.mt-3 > div:nth-child(2) > button:nth-child(1)",
+            "div.mt-3 > button:nth-child(3)",
+            "button.disabled\\3a opacity-50",
+            "div.shrink-0.absolute > button:nth-child(2)",
+            "div.shrink-0.absolute > button:nth-child(3)",
+            "div.shrink-0.absolute > button:nth-child(4)",
+            "div.shrink-0.absolute > button:nth-child(5)",
+            "div.shrink-0.absolute > button:nth-child(6)",
+            "div.shrink-0.absolute > button:nth-child(7)",
+            "div.shrink-0.absolute > button:nth-child(8)",
+            "div.shrink-0.absolute > button:nth-child(9)",
+            "button.size-\\5b 34px\\5d "
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-2-build-with-any-agent-in-a-modern-terminal",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "build-with-any-agent-in-a-modern-terminal",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Build with any agent in a modern terminal"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "#home-agent-control-warp-terminal",
+        "details": {
+          "text": "Build with any agent in a modern terminal",
+          "className": "scroll-mt-28",
+          "heading": "Build with any agent in a modern terminal",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "#home-agent-control-warp-terminal > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-3-move-from-local-to-cloud-development",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "move-from-local-to-cloud-development",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Move from local to cloud development"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "#home-agent-control-oz-agent-platform",
+        "details": {
+          "text": "Move from local to cloud development",
+          "className": "scroll-mt-28",
+          "heading": "Move from local to cloud development",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "#home-agent-control-oz-agent-platform > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-4-access-any-model-with-the-warp-agent",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "access-any-model-with-the-warp-agent",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Access any model with the Warp Agent"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "#home-agent-control-warp-agent",
+        "details": {
+          "text": "Access any model with the Warp Agent",
+          "className": "scroll-mt-28",
+          "heading": "Access any model with the Warp Agent",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "#home-agent-control-warp-agent > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-5-scale-responsibly-across-your-team",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "scale-responsibly-across-your-team",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Scale responsibly across your team"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 2
+          }
+        ],
+        "selector": "#home-agent-control-scale-across-your-team",
+        "details": {
+          "text": "Scale responsibly across your team",
+          "className": "scroll-mt-28",
+          "heading": "Scale responsibly across your team",
+          "childRegions": 2,
+          "interactionSelectors": [
+            "#home-agent-control-scale-across-your-team > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-6-warp-terminal-is-now-open-source",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "warp-terminal-is-now-open-source",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Warp Terminal is now open-source"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 3
+          }
+        ],
+        "selector": "#open-source",
+        "details": {
+          "text": "Warp Terminal is now open-source",
+          "className": "overflow-hidden lg:relative lg:min-h-[600px]",
+          "heading": "Warp Terminal is now open-source",
+          "childRegions": 3,
+          "interactionSelectors": [
+            "div.lg\\3a absolute > a:nth-child(3)",
+            "button.btn-wipe",
+            "a.px-4"
+          ]
+        },
+        "componentCandidates": []
+      },
+      {
+        "id": "section-7-start-shipping-with-agents",
+        "type": "content-section",
+        "structuralType": "content-region",
+        "semanticType": "start-shipping-with-agents",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "signal": "heading-led-section",
+            "value": "Start shipping with agents"
+          },
+          {
+            "signal": "direct-child-regions",
+            "value": 1
+          }
+        ],
+        "selector": "#home-agent-cta",
+        "details": {
+          "text": "Start shipping with agents",
+          "className": "py-[var(--space-section)]",
+          "heading": "Start shipping with agents",
+          "childRegions": 1,
+          "interactionSelectors": [
+            "div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1)",
+            "div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(2)"
+          ]
+        },
+        "componentCandidates": []
+      }
+    ],
+    "modals": [],
+    "landmarks": [
+      {
+        "tag": "div",
+        "role": "banner",
+        "selector": "div.theme-invert"
+      },
+      {
+        "tag": "header",
+        "role": null,
+        "selector": "#navbar"
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "#navbar > nav:nth-child(2)"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "a.rounded-lg > svg:nth-child(1)"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "div.gap-5 > a:nth-child(3) > svg:nth-child(1)"
+      },
+      {
+        "tag": "main",
+        "role": null,
+        "selector": "main.isolate"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "a.self-stretch > svg:nth-child(1)"
+      },
+      {
+        "tag": "header",
+        "role": null,
+        "selector": "header.grid"
+      },
+      {
+        "tag": "aside",
+        "role": null,
+        "selector": "aside.overflow-visible"
+      },
+      {
+        "tag": "div",
+        "role": "separator",
+        "selector": "div.-right-1"
+      },
+      {
+        "tag": "main",
+        "role": null,
+        "selector": "main.flex"
+      },
+      {
+        "tag": "header",
+        "role": null,
+        "selector": "header.relative"
+      },
+      {
+        "tag": "div",
+        "role": "separator",
+        "selector": "div.-top-1"
+      },
+      {
+        "tag": "aside",
+        "role": null,
+        "selector": "aside.flex"
+      },
+      {
+        "tag": "div",
+        "role": "separator",
+        "selector": "div.-left-1"
+      },
+      {
+        "tag": "header",
+        "role": null,
+        "selector": "header.justify-between"
+      },
+      {
+        "tag": "span",
+        "role": "tooltip",
+        "selector": "span.z-\\5b 80\\5d "
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "nav.lg\\3a sticky"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1) > svg:nth-child(1)"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > svg:nth-child(1)"
+      },
+      {
+        "tag": "svg",
+        "role": "image",
+        "selector": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > svg:nth-child(1)"
+      },
+      {
+        "tag": "footer",
+        "role": null,
+        "selector": "#footer"
+      },
+      {
+        "tag": "nav",
+        "role": null,
+        "selector": "nav.grid"
+      },
+      {
+        "tag": "ul",
+        "role": "list",
+        "selector": "nav.grid > div:nth-child(1) > ul:nth-child(2)"
+      },
+      {
+        "tag": "ul",
+        "role": "list",
+        "selector": "nav.grid > div:nth-child(2) > ul:nth-child(2)"
+      },
+      {
+        "tag": "ul",
+        "role": "list",
+        "selector": "nav.grid > div:nth-child(3) > ul:nth-child(2)"
+      },
+      {
+        "tag": "ul",
+        "role": "list",
+        "selector": "nav.grid > div:nth-child(4) > ul:nth-child(2)"
+      },
+      {
+        "tag": "ul",
+        "role": "list",
+        "selector": "nav.grid > div:nth-child(5) > ul:nth-child(2)"
+      }
+    ]
+  },
+  "data": {
+    "contracts": [],
+    "members": [],
+    "timeline": [],
+    "works": [],
+    "moreFacts": []
+  },
+  "interactions": [
+    {
+      "trigger": "a.gap-0\\2e 5",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.gap-0\\2e 5|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "button.right-3",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.right-3|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "a.items-stretch",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.items-stretch|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "el-popover-group.flex > span:nth-child(1) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|el-popover-group.flex > span:nth-child(1) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "el-popover-group.flex > span:nth-child(2) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|el-popover-group.flex > span:nth-child(2) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "el-popover-group.flex > span:nth-child(3) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|el-popover-group.flex > span:nth-child(3) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "el-popover-group.flex > span:nth-child(4) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|el-popover-group.flex > span:nth-child(4) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "a.justify-between",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.justify-between|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.rounded-lg",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.rounded-lg|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.rounded-\\5b var\\28 --btn-radius\\29 \\5d ",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.rounded-\\5b var\\28 --btn-radius\\29 \\5d |semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.gap-5 > a:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.gap-5 > a:nth-child(3)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "button.p-1\\2e 5",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.p-1\\2e 5|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(1) > summary:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(1) > summary:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(1) > div:nth-child(2) > a:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > summary:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > summary:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > summary:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > summary:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(8) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(8) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(4) > summary:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(4) > summary:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-6 > details:nth-child(4) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "a.self-stretch",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.self-stretch|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.self-stretch > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.self-stretch > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "#home-hero > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#home-hero > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|header.grid > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "input.w-full",
+      "event": "input",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "input|input.w-full|semantic-control",
+      "responsibility": "user-action"
+    },
+    {
+      "trigger": "div.h-10 > div:nth-child(2) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.h-10 > div:nth-child(2) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.space-y-1 > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.space-y-1 > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.story-reveal",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.story-reveal|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.space-y-1 > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.space-y-1 > button:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.space-y-1 > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.space-y-1 > button:nth-child(4)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.hover\\3a bg-background\\2f 35",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.hover\\3a bg-background\\2f 35|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.bg-primary",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.bg-primary|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-3 > div:nth-child(1) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-3 > div:nth-child(1) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-3 > div:nth-child(2) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-3 > div:nth-child(2) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.mt-3 > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.mt-3 > button:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.disabled\\3a opacity-50",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.disabled\\3a opacity-50|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(4)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(5)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(5)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(6)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(6)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(7)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(7)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(8)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(8)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.shrink-0.absolute > button:nth-child(9)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.shrink-0.absolute > button:nth-child(9)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.size-\\5b 34px\\5d ",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.size-\\5b 34px\\5d |semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 8",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 8|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.bg-\\5b var\\28 --color-text\\29 \\5d ",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.bg-\\5b var\\28 --color-text\\29 \\5d |semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(3)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(4)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.lg\\3a sticky > div:nth-child(1) > a:nth-child(4)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "#home-agent-control-warp-terminal > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#home-agent-control-warp-terminal > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "#home-agent-control-oz-agent-platform > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#home-agent-control-oz-agent-platform > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "#home-agent-control-warp-agent > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#home-agent-control-warp-agent > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "#home-agent-control-scale-across-your-team > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#home-agent-control-scale-across-your-team > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.lg\\3a absolute > a:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.lg\\3a absolute > a:nth-child(3)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "button.btn-wipe",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.btn-wipe|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "a.px-4",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.px-4|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "button.opacity-100",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|button.opacity-100|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > button:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > button:nth-child(1)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|#testimonials > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.flex.flex-col.gap-\\5b var\\28 --space-xl\\29 \\5d  > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.link-underline-reveal.hover\\3a opacity-80",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.link-underline-reveal.hover\\3a opacity-80|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.group.shrink-0",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.group.shrink-0|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(1) > div:nth-child(3) > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(1) > div:nth-child(3) > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(2) > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(3) > button:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(3) > button:nth-child(2)|semantic-control",
+      "responsibility": "no-op-control"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|div.divide-\\5b var\\28 --color-border\\29 \\5d \\2f 20 > div:nth-child(3) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(7) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(1) > ul:nth-child(2) > li:nth-child(7) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(2) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(3) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(4) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(2) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(3) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(4) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(5) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|nav.grid > div:nth-child(5) > ul:nth-child(2) > li:nth-child(6) > a:nth-child(1)|semantic-control",
+      "responsibility": "navigation-action"
+    },
+    {
+      "trigger": "a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 5",
+      "event": "click",
+      "action": "semantic-control",
+      "source": "semantic-control",
+      "analysis": "semantic",
+      "confidence": 0.6,
+      "fingerprint": "click|a.bg-\\5b var\\28 --color-text\\29 \\5d \\2f 5|semantic-control",
+      "responsibility": "navigation-action"
+    }
+  ],
+  "responsive": [
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(forced-colors:active)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(prefers-reduced-motion:reduce)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "not all and (min-width:64rem)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:40rem)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:48rem)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:64rem)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(pointer:fine)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(min-width:64rem)",
+      "minWidth": null,
+      "maxWidth": null
+    },
+    {
+      "query": "(hover:hover)",
+      "minWidth": null,
+      "maxWidth": null
+    }
+  ],
+  "a11y": {
+    "hasLang": true,
+    "buttons": 38,
+    "unlabeledButtons": 3,
+    "images": 43,
+    "imagesWithoutAlt": 1,
+    "tabs": 0,
+    "tabpanels": 0,
+    "dialogs": 0
+  },
+  "warnings": [
+    "CSS 分析预算生效：读取 291812 bytes，跳过 369977 bytes；DOM/文本分析保持完整",
+    "已跳过 3 个非可执行 script（JSON-LD/归档元数据等）",
+    "包含远程资源，运行态 roundtrip 可能无法完全复现",
+    "1 个图片缺少 alt 文本"
+  ]
+}

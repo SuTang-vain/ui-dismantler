@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/source/index.html",
+  "candidatePolicy": "candidate scenarios are excluded from coverage until reviewed; strict repeated-instance equivalence groups require representative review",
+  "equivalenceGroups": [],
+  "scenarios": [
+    {
+      "id": "candidate-input-1",
+      "label": "Candidate: input (input.w-full)",
+      "candidate": true,
+      "covers": [
+        "input|input.w-full|semantic-control"
+      ],
+      "notes": [
+        "人工确认 selector 是否命中预期控件",
+        "补充证明状态真实发生的 assertions",
+        "确认后移除 candidate 标记再纳入覆盖率门禁"
+      ],
+      "steps": [
+        {
+          "action": "input",
+          "target": "input.w-full",
+          "value": "test"
+        }
+      ],
+      "assertions": [
+        {
+          "target": "input.w-full",
+          "visible": true
+        }
+      ]
+    }
+  ]
+}

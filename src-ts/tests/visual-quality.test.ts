@@ -88,15 +88,15 @@ test("navigation integrity rejects preserved pixels with a broken fragment targe
 test("selector coverage audibly exempts source classes that also have no visual selector", async () => {
   const item = await fixture(
     "source-unstyled-hook",
-    `<!doctype html><html><head><style>body{margin:0}.app{width:200px;height:120px;background:#fff}</style></head><body><div class="app"><span class="lbl">Ready</span></div></body></html>`,
-    `${baseVars}body{margin:0}.sg-app{width:200px;height:120px;background:var(--sg-paper)}@media(max-width:500px){.sg-app{width:200px}}@media(max-width:320px){.sg-app{width:200px}}`,
-    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><span class="sg-lbl">Ready</span></div>'}global.Fixture={mount:mount};})(window);`,
+    `<!doctype html><html><head><style>body{margin:0}.app{width:200px;height:120px;background:#fff}</style></head><body><div class="app"><span class="lbl-border)]">Ready</span></div></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:200px;height:120px;background:var(--sg-paper)}.sg-border{display:block}@media(max-width:500px){.sg-app{width:200px}}@media(max-width:320px){.sg-app{width:200px}}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><span class="sg-lbl-border)]">Ready</span></div>'}global.Fixture={mount:mount};})(window);`,
   );
   const result = await evaluateBrowserQuality(item.original, item.lib);
   assert.equal(result.selectorCoverage?.coverageRate, 1);
-  const exemption = result.selectorCoverage?.exemptClasses.find((issue) => issue.selector === ".sg-lbl");
+  const exemption = result.selectorCoverage?.exemptClasses.find((issue) => issue.selector === ".sg-lbl-border)]");
   assert.equal(exemption?.reason, "source-unstyled-hook");
-  assert.deepEqual(exemption?.evidence, { sourceClass: "lbl", sourceClassUses: 1, sourceSelectorAbsent: true, generatedSelectorAbsent: true });
+  assert.deepEqual(exemption?.evidence, { sourceClass: "lbl-border)]", sourceClassUses: 1, sourceSelectorAbsent: true, generatedSelectorAbsent: true });
 });
 
 test("computed style and pixel gates catch execution-order position errors with identical DOM", async () => {
@@ -164,6 +164,30 @@ test("critical interaction matrix compares computed style after opening a panel"
   assert.equal(result.matrix.passed, false);
   assert.equal(result.matrix.worstViewport, "mobile");
   assert.ok(result.matrix.worstPixelDiff > 0.02 || result.matrix.worstComputedStyle < 0.98);
+});
+
+test("scenario viewport constrains critical visual execution to the reviewed viewport", async () => {
+  const item = await fixture(
+    "scenario-viewport-constraint",
+    `<!doctype html><html><head><style>body{margin:0}.mobile{display:none}@media(max-width:500px){.mobile{display:block}}</style></head><body><button class="mobile" id="open">Open</button><div id="panel"></div><script>document.getElementById('open').onclick=()=>document.getElementById('panel').classList.add('open')</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-mobile{display:none}@media(max-width:500px){.sg-mobile{display:block}}@media(max-width:320px){.sg-mobile{display:block}}`,
+    `(function(global){function mount(root){root.innerHTML='<button class="sg-mobile" id="sg-open">Open</button><div id="sg-panel"></div>';root.querySelector('#sg-open').onclick=function(){root.querySelector('#sg-panel').classList.add('sg-open')}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "mobile-only",
+    critical: true,
+    viewport: { width: 390, height: 844 },
+    steps: [{ action: "click" as const, target: { reference: "#open", library: "#sg-open" } }],
+    assertions: [{ target: { reference: "#panel", library: "#sg-panel" }, classIncludes: [{ reference: "open", library: "sg-open" }] }],
+  };
+  const result = await evaluateScenarioBrowserQualityMatrix(item.original, item.lib, scenario, {
+    viewports: [
+      { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+      { id: "mobile", label: "Mobile", width: 390, height: 844 },
+    ],
+  });
+  assert.deepEqual(result.matrix.viewports.map((viewport) => viewport.id), ["mobile"]);
+  assert.equal(result.matrix.passed, true);
 });
 
 test("scenario screenshots normalize reference and generated scroll positions around an explicit anchor", async () => {

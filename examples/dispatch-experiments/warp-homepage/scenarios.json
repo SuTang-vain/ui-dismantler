@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFrom": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/source/index.html",
+  "equivalenceGroups": [],
+  "scenarios": [
+    {
+      "id": "edit-session-search",
+      "label": "Edit session search input",
+      "critical": true,
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "covers": [
+        "input|input.w-full|semantic-control"
+      ],
+      "steps": [
+        {
+          "action": "input",
+          "target": {
+            "reference": "input.w-full",
+            "library": "input.sg-w-full"
+          },
+          "value": "warp quality"
+        }
+      ],
+      "assertions": [
+        {
+          "target": {
+            "reference": "input.w-full",
+            "library": "input.sg-w-full"
+          },
+          "value": "warp quality"
+        }
+      ],
+      "screenshotAnchor": {
+        "reference": "input.w-full",
+        "library": "input.sg-w-full"
+      },
+      "notes": [
+        "Reviewed native input state at the desktop viewport with an explicit screenshot anchor."
+      ]
+    }
+  ]
+}

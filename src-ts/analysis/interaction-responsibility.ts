@@ -15,6 +15,19 @@ const LIFECYCLE_RESPONSIBILITIES = new Set<InteractionResponsibility>([
   "scroll-lifecycle", "viewport-lifecycle", "resource-lifecycle", "custom-lifecycle",
 ]);
 const NAVIGATION_MUTATION = /(?:\bscroll(?:To|By)?\b|scrollLeft|scrollTop|location\b|history\.(?:pushState|replaceState)|navigate\b)/i;
+const NATIVE_COMMANDS = new Set(["toggle-popover", "show-popover", "hide-popover", "show-modal", "close", "request-close"]);
+const executableScriptCache = new WeakMap<Document, boolean>();
+
+function documentHasExecutableScripts(document: Document): boolean {
+  const cached = executableScriptCache.get(document);
+  if (cached !== undefined) return cached;
+  const present = [...document.scripts].some((script) => {
+    const type = (script.getAttribute("type") ?? "").trim().toLowerCase().split(";")[0];
+    return !type || type === "module" || /^(?:text|application)\/(?:java|ecma)script$/.test(type);
+  });
+  executableScriptCache.set(document, present);
+  return present;
+}
 
 export function classifyInteractionResponsibility(event: string): InteractionResponsibility {
   if (GESTURE_EVENTS.has(event)) return "gesture-protocol";
@@ -25,12 +38,61 @@ export function classifyInteractionResponsibility(event: string): InteractionRes
   return "user-action";
 }
 
-function semanticControlResponsibility(element: Element): InteractionResponsibility | null {
+const persistentHiddenCache = new WeakMap<Element, boolean>();
+
+function hasPersistentAuthorHiddenStyle(document: Document, element: Element): boolean {
+  const cached = persistentHiddenCache.get(element);
+  if (cached !== undefined) return cached;
+  let hidden = element.hasAttribute("hidden");
+  if (!hidden) {
+    for (const sheet of [...document.styleSheets]) {
+      let rules: CSSRuleList;
+      try { rules = sheet.cssRules; } catch { continue; }
+      for (const rule of [...rules]) {
+        const candidate = rule as CSSStyleRule;
+        if (!candidate.selectorText || candidate.style?.getPropertyValue("display").trim().toLowerCase() !== "none" || candidate.style.getPropertyPriority("display") !== "important") continue;
+        try {
+          if (element.matches(candidate.selectorText)) { hidden = true; break; }
+        } catch { /* Invalid or unsupported selector evidence is ignored. */ }
+      }
+      if (hidden) break;
+    }
+  }
+  persistentHiddenCache.set(element, hidden);
+  return hidden;
+}
+
+function semanticControlResponsibility(document: Document, element: Element): InteractionResponsibility | null {
   if (element.matches("button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled=true]")) return "no-op-control";
-  if (!element.matches("a")) return null;
-  const href = element.getAttribute("href")?.trim() ?? "";
-  if (!href || href === "#" || /^(?:javascript:\s*(?:void\s*\(\s*0\s*\)|;?)?)$/i.test(href)) return "no-op-control";
-  return "navigation-action";
+  if (!documentHasExecutableScripts(document)) {
+    let ancestor: Element | null = element;
+    while (ancestor) {
+      if (hasPersistentAuthorHiddenStyle(document, ancestor)) return "no-op-control";
+      ancestor = ancestor.parentElement;
+    }
+  }
+  if (element.matches("a")) {
+    const href = element.getAttribute("href")?.trim() ?? "";
+    if (!href || href === "#" || /^(?:javascript:\s*(?:void\s*\(\s*0\s*\)|;?)?)$/i.test(href)) return "no-op-control";
+    return "navigation-action";
+  }
+  if (!element.matches("button")) return null;
+
+  const command = element.getAttribute("command")?.trim().toLowerCase() ?? "";
+  if ((command && NATIVE_COMMANDS.has(command)) || element.hasAttribute("popovertarget")) {
+    const targetId = element.getAttribute("commandfor") || element.getAttribute("popovertarget");
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (!documentHasExecutableScripts(document) && target && hasPersistentAuthorHiddenStyle(document, target)) return "no-op-control";
+    return null;
+  }
+  const type = element.getAttribute("type")?.trim().toLowerCase() ?? "submit";
+  if (element.closest("form") && (type === "submit" || type === "reset")) return null;
+
+  // A saved/static document with no executable scripts cannot give a plain button
+  // durable application semantics. Keep native inputs/details/commands above active,
+  // but classify captured decorative controls as auditable no-ops.
+  if (!documentHasExecutableScripts(document)) return "no-op-control";
+  return null;
 }
 
 function hasApplicationStateEvidence(interaction: Pick<Interaction, "mutationTargets" | "stateTransitions" | "stateMutations">): boolean {
@@ -50,7 +112,7 @@ export function refineInteractionResponsibility(document: Document, interaction:
   let elements: Element[] = [];
   try { elements = [...document.querySelectorAll(interaction.trigger)]; } catch { return interaction.responsibility ?? eventResponsibility; }
   if (!elements.length) return interaction.responsibility ?? eventResponsibility;
-  const semantic = elements.map(semanticControlResponsibility);
+  const semantic = elements.map((element) => semanticControlResponsibility(document, element));
   if (semantic.some((item) => item === null) || new Set(semantic).size !== 1) return interaction.responsibility ?? eventResponsibility;
   const responsibility = semantic[0] as InteractionResponsibility;
   if (responsibility === "navigation-action" && hasApplicationStateEvidence(interaction)) return "user-action";

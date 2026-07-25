@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "command": "transpile-self-contained",
+  "sourcePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/source/index.html",
+  "outDir": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/dispatch-experiments/warp-homepage/lib",
+  "telemetry": {
+    "timing": {
+      "readParseMs": 483.719,
+      "analyzeMs": 79.753,
+      "rewriteMs": 113.569,
+      "writeMs": 7.234,
+      "totalMs": 684.315
+    },
+    "workload": {
+      "sourceBytes": 3197410,
+      "classes": 1035,
+      "ids": 23,
+      "executableScripts": 0,
+      "skippedScripts": 3,
+      "cssBytes": 672911,
+      "jsBytes": 2549211,
+      "assetsCopied": false
+    }
+  }
+}
