@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "status": "draft",
+  "snapshotDate": "2026-07-25",
+  "commit": "d8b01f277adff68bf72846918ab66bfa0dce5a7c",
+  "tag": "v0.1.0-research-preview",
+  "case": "babelo-landing",
+  "planning": {
+    "components": 14,
+    "overBudget": 0,
+    "errors": 0,
+    "warnings": 0,
+    "interactions": 42,
+    "ownedInteractions": 42,
+    "unownedInteractions": 0,
+    "ready": true
+  },
+  "responsibility": {
+    "total": 42,
+    "userAction": 11,
+    "gestureProtocol": 1,
+    "navigationAction": 20,
+    "noOpControl": 6,
+    "viewportLifecycle": 1,
+    "scrollLifecycle": 1,
+    "customLifecycle": 2
+  },
+  "coverage": {
+    "scenarioRequiredInteractions": 12,
+    "eligibleInteractions": 12,
+    "declaredCovered": 12,
+    "verifiedCovered": 12,
+    "verifiedRate": 1,
+    "waivedInteractions": 0
+  },
+  "quality": {
+    "validation": "10/10",
+    "dom": 1,
+    "visual": 0.9902,
+    "overall": 0.9941,
+    "viewportsPassed": "4/4",
+    "formalScenariosPassed": "6/6",
+    "criticalScenarioMatricesPassed": "4/4",
+    "worstInitialSelectorCoverage": 1,
+    "worstInitialComputedStyle": 0.9858,
+    "worstInitialPixelDiff": 0.000022,
+    "worstCriticalScenarioComputedStyle": 0.9857,
+    "worstCriticalScenarioPixelDiff": 0.006325,
+    "runtimeErrors": 0,
+    "stabilityFailures": 0,
+    "requiredResourceFailures": 0,
+    "requiredExternalFailures": 0
+  },
+  "regression": {
+    "typescript": {
+      "tests": 90,
+      "passed": 87,
+      "failed": 0,
+      "skippedGoldByDefault": 3,
+      "durationMs": 66792.766542
+    },
+    "optimizedGold": {
+      "result": "4/4 PASS",
+      "cases": ["planning-regression", "blackpink", "babelo", "warp"],
+      "totalMs": 111140.595541,
+      "note": "冻结 commit 上的单次通过记录；稳定耗时以 repeatability 三次基线为准"
+    }
+  },
+  "repeatability": {
+    "requiredRunsBeforePublication": 3,
+    "completed": true,
+    "measuredAt": "2026-07-25T17:02:44.495Z",
+    "report": "examples/performance-baselines/quality-baseline-2026-07-25.json",
+    "medianMs": 57885.82,
+    "minMs": 53672,
+    "maxMs": 58140,
+    "cases": {
+      "blackpink": { "runs": 3, "passedRuns": 3, "medianMs": 30687.425, "minMs": 30428, "maxMs": 34621, "stabilityFailureRate": 0 },
+      "babelo": { "runs": 3, "passedRuns": 3, "medianMs": 57885.82, "minMs": 53672, "maxMs": 58140, "stabilityFailureRate": 0 },
+      "qinshihuang": { "runs": 3, "passedRuns": 3, "medianMs": 10301.187, "minMs": 10112, "maxMs": 10409, "stabilityFailureRate": 0 },
+      "sandadui": { "runs": 3, "passedRuns": 3, "medianMs": 12247.217, "minMs": 12170, "maxMs": 12368, "stabilityFailureRate": 0 }
+    }
+  },
+  "sourceOfTruth": [
+    "examples/dispatch-experiments/babelo-landing/results.json",
+    "examples/dispatch-experiments/babelo-landing/scenarios.json",
+    "examples/dispatch-experiments/babelo-landing/component-plan.json"
+  ]
+}
