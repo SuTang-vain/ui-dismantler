@@ -1,0 +1,333 @@
+{
+  "schemaVersion": "1.0",
+  "baseUrl": "https://todomvc.com/examples/react/dist/",
+  "scenarios": [
+    {
+      "id": "add-two-todos",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        }
+      ],
+      "assertions": {
+        "path": "/examples/react/dist/",
+        "visibleText": "Task Alpha",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "active-filter-route",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".todo-list li:first-child .toggle"
+        },
+        {
+          "action": "click",
+          "target": ".filters a[href='#/active']"
+        }
+      ],
+      "assertions": {
+        "path": "/examples/react/dist/",
+        "hash": "#/active",
+        "visibleText": "Task Beta",
+        "absentText": "Task Alpha",
+        "visibleSelector": ".filters a.selected[href='#/active']",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "completed-filter-route",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".todo-list li:first-child .toggle"
+        },
+        {
+          "action": "click",
+          "target": ".filters a[href='#/completed']"
+        }
+      ],
+      "assertions": {
+        "path": "/examples/react/dist/",
+        "hash": "#/completed",
+        "visibleText": "Task Alpha",
+        "absentText": "Task Beta",
+        "visibleSelector": ".filters a.selected[href='#/completed']",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "edit-todo",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "dblclick",
+          "target": ".todo-list li:first-child label"
+        },
+        {
+          "action": "input",
+          "target": ".todo-list li:first-child .edit",
+          "value": "Task Alpha Updated"
+        },
+        {
+          "action": "key",
+          "target": ".todo-list li:first-child .edit",
+          "key": "Enter"
+        }
+      ],
+      "assertions": {
+        "visibleText": "Task Alpha Updated",
+        "absentExactText": "Task Alpha",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "destroy-completed-todo",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".todo-list li:first-child .toggle"
+        },
+        {
+          "action": "hover",
+          "target": ".todo-list li:first-child"
+        },
+        {
+          "action": "click",
+          "target": ".todo-list li:first-child .destroy"
+        }
+      ],
+      "assertions": {
+        "visibleText": "Task Beta",
+        "absentText": "Task Alpha",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "clear-completed",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".todo-list li:first-child .toggle"
+        },
+        {
+          "action": "click",
+          "target": ".clear-completed"
+        }
+      ],
+      "assertions": {
+        "visibleText": "Task Beta",
+        "absentText": "Task Alpha",
+        "absentSelector": ".clear-completed",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "toggle-all",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Beta"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".toggle-all"
+        }
+      ],
+      "assertions": {
+        "visibleText": "Task Alpha",
+        "selectorCount": {
+          "target": ".todo-list li.completed",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "filter-history-back",
+      "entryPath": "./",
+      "steps": [
+        {
+          "action": "input",
+          "target": ".new-todo",
+          "value": "Task Alpha"
+        },
+        {
+          "action": "key",
+          "target": ".new-todo",
+          "key": "Enter"
+        },
+        {
+          "action": "click",
+          "target": ".filters a[href='#/active']"
+        },
+        {
+          "action": "click",
+          "target": ".filters a[href='#/completed']"
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "hash": "#/active",
+        "visibleSelector": ".filters a.selected[href='#/active']",
+        "selectorCount": {
+          "target": ".todo-list li",
+          "count": 1
+        }
+      }
+    }
+  ],
+  "execution": {
+    "contractConcurrency": 2,
+    "visualConcurrency": 2
+  }
+}

@@ -1,0 +1,861 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4195",
+  "generatedBaseUrl": "http://127.0.0.1:4195",
+  "passed": true,
+  "scenariosPassed": 5,
+  "scenariosTotal": 5,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "results": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/explore",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/settings",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{}"
+        },
+        {
+          "method": "popstate",
+          "target": "/settings",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/login",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/login",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/settings",
+      "transitions": [],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4195",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4195",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "reference": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "reference": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "reference": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "reference": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 14,
+    "totalScenarios": 14,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "router-link-explore",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/desktop/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/desktop/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/tablet/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/tablet/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/mobile/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/mobile/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/router-link-explore/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0
+      },
+      {
+        "scenarioId": "login-guard-redirect",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/desktop/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/desktop/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/tablet/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/tablet/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/mobile/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/mobile/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/login-guard-redirect/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0
+      },
+      {
+        "scenarioId": "history-deep-link-reload",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/desktop/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/desktop/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/tablet/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/tablet/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/mobile/reference.png",
+              "generatedImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/mobile/generated.png",
+              "diffImagePath": "/Users/<user>/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/yesplaymusic/visual-artifacts/history-deep-link-reload/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0
+      }
+    ],
+    "scenarioCount": 3,
+    "viewportRuns": 9,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 9,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=5/5，generated=5/5"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "3/3 SPA route states 通过，viewportRuns=9，worstComputedStyle=1，worstPixelDiff=0"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=14/14，rate=1，failures=0"
+    }
+  ]
+}

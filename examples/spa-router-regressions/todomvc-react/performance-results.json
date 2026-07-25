@@ -1,0 +1,42 @@
+{
+  "runs": [
+    {
+      "round": 1,
+      "ms": 54516,
+      "passed": true,
+      "stabilityFailures": 0,
+      "adaptiveWaitMs": 2660,
+      "reused": 8,
+      "fresh": 16,
+      "worstStyle": 1,
+      "worstPixel": 0
+    },
+    {
+      "round": 2,
+      "ms": 53364,
+      "passed": true,
+      "stabilityFailures": 0,
+      "adaptiveWaitMs": 2626,
+      "reused": 8,
+      "fresh": 16,
+      "worstStyle": 1,
+      "worstPixel": 0
+    },
+    {
+      "round": 3,
+      "ms": 57840,
+      "passed": true,
+      "stabilityFailures": 0,
+      "adaptiveWaitMs": 2897,
+      "reused": 8,
+      "fresh": 16,
+      "worstStyle": 1,
+      "worstPixel": 0
+    }
+  ],
+  "medianMs": 54516,
+  "meanMs": 55240,
+  "standardDeviationMs": 2324,
+  "failureRate": 0,
+  "stabilityFailureRate": 0
+}

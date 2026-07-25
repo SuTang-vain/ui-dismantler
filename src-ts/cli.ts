@@ -5,6 +5,7 @@ import { analyzeHtml } from "./analysis/analyzer.js";
 import { generateScenarios } from "./evaluation/scenarios.js";
 import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
 import { evaluateRoundtrip } from "./evaluation/roundtrip.js";
+import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "./evaluation/spa-router.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/library.js";
 import { planComponents, writeComponentPlanningReport, writeComponentSpecs } from "./planning/components.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
@@ -20,7 +21,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--out <report.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -81,6 +82,28 @@ async function main(argv: string[]): Promise<number> {
       if (out) await writeFile(resolve(out), serialized, "utf8"); console.log(serialized);
       return report.score && report.score.overall >= 0.85 && (!browser || browser.passed === true) ? 0 : 1;
     }
+    if (command === "spa-router") {
+      const configPath = args[0]; if (!configPath) throw new Error("spa-router 需要 <config.json>");
+      const config = JSON.parse(await readFile(resolve(configPath), "utf8")) as SpaRouterContractConfig;
+      const report = await evaluateSpaRouterContract(config);
+      const serialized = `${JSON.stringify(report, null, 2)}\n`;
+      const out = flag(args, "--out"); if (out) await writeFile(resolve(out), serialized, "utf8");
+      if (report.mode === "reference-generated") {
+        for (const comparison of report.comparisons ?? []) {
+          const failureDetail = comparison.failures.map((failure) => failure.detail).join("；");
+          console.log(`${comparison.passed ? "[PASS]" : "[FAIL]"} ${comparison.id}: referenceTransitions=${comparison.reference?.transitions.length ?? 0}，generatedTransitions=${comparison.generated?.transitions.length ?? 0}${failureDetail ? `，${failureDetail}` : ""}`);
+        }
+      } else {
+        for (const result of report.results) console.log(`${result.passed ? "[PASS]" : "[FAIL]"} ${result.id}: ${new URL(result.finalUrl).pathname}，transitions=${result.transitions.length}，runtimeErrors=${result.runtimeErrors.length}，unmockedApi=${result.unmockedApiRequests.length}`);
+      }
+      for (const gate of report.qualityGates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`);
+      if (report.telemetry.visualTargetRuns > 0) {
+        console.log(`[INFO] visual reuse: targetRuns=${report.telemetry.visualTargetRuns}，reused=${report.telemetry.visualTargetReusedRuns}，fresh=${report.telemetry.visualTargetFreshRuns}`);
+        console.log(`[INFO] visual stability: adaptiveWaitMs=${report.telemetry.visualAdaptiveWaitMs}，failures=${report.telemetry.visualStabilityFailures}`);
+      }
+      console.log(`\nSPA Router 合同: ${report.passed ? "PASS" : "FAIL"} (${report.scenariosPassed}/${report.scenariosTotal})`);
+      return report.passed ? 0 : 1;
+    }
     if (command === "quality") {
       const html = args[0]; const lib = flag(args, "--lib"); if (!html || !lib) throw new Error("quality 需要 <html> 和 --lib");
       const interactionCoverage = optionalThreshold(args, "--interaction-coverage");
@@ -96,7 +119,7 @@ async function main(argv: string[]): Promise<number> {
       if (!["off", "run-local"].includes(browserResourceCache)) throw new Error("--browser-resource-cache 必须是 off 或 run-local");
       const browserStability = flag(args, "--browser-stability") ?? "fixed";
       if (!["fixed", "adaptive"].includes(browserStability)) throw new Error("--browser-stability 必须是 fixed 或 adaptive");
-      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", thresholds });
+      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", spaRouterConfigPath: flag(args, "--spa-router"), thresholds });
       const out = flag(args, "--out"); const serialized = `${JSON.stringify(report, null, 2)}\n`;
       if (out) await writeFile(resolve(out), serialized, "utf8"); for (const gate of report.gates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`); console.log(`\n质量门禁: ${report.passed ? "PASS" : "FAIL"}`); return report.passed ? 0 : 1;
     }

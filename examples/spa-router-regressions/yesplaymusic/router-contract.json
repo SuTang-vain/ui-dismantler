@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "1.0",
+  "measuredAt": "2026-07-25T14:48:00+08:00",
+  "source": {
+    "repository": "qier222/YesPlayMusic",
+    "localPath": "/Users/<user>/DEV/Baidu/YesPlayMusic",
+    "branch": "master",
+    "commit": "df075cca247eab7bf8686155cb8cc9a1f4c7e271",
+    "runtime": "Vue 2.6 + Vue Router 3.4",
+    "webRouterMode": "history",
+    "electronRouterMode": "hash"
+  },
+  "inventory": {
+    "namedRoutes": 19,
+    "routerPushCalls": 22,
+    "routerReplaceCalls": 0,
+    "routerGoCalls": 4,
+    "routerLinks": 24,
+    "beforeEachGuards": 1,
+    "dynamicRoutes": [
+      "/playlist/:id",
+      "/album/:id",
+      "/artist/:id",
+      "/artist/:id/mv",
+      "/mv/:id",
+      "/search/:keywords?",
+      "/search/:keywords/:type"
+    ]
+  },
+  "environment": {
+    "node": "16.20.2",
+    "packageManager": "yarn 1.22.22",
+    "frontendUrl": "http://127.0.0.1:4195",
+    "apiUrl": "http://127.0.0.1:3000",
+    "apiObservation": "all /api requests used deterministic Playwright route fixtures during automated regression",
+    "lintPluginSkippedForRuntimeTest": true,
+    "reason": "upstream settings.vue currently fails four Prettier lint-on-save checks; source was not modified"
+  },
+  "scenarios": [
+    {
+      "id": "router-link-explore",
+      "entry": "/",
+      "action": "click navigation link 发现",
+      "expectedPath": "/explore",
+      "observedPath": "/explore",
+      "domEvidence": "heading 发现 and active navigation link",
+      "passed": true
+    },
+    {
+      "id": "router-go-back",
+      "entry": "/explore",
+      "action": "click application back button using router.go(-1)",
+      "expectedPath": "/",
+      "observedPath": "/",
+      "domEvidence": "home navigation state restored",
+      "passed": true
+    },
+    {
+      "id": "dynamic-search-route",
+      "entry": "/",
+      "action": "enter 周杰伦 and press Enter",
+      "expectedPath": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "observedPath": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "domEvidence": "searchbox retains 周杰伦",
+      "passed": true
+    },
+    {
+      "id": "login-guard-redirect",
+      "entry": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "action": "click protected navigation link 音乐库",
+      "expectedPath": "/login",
+      "observedPath": "/login",
+      "domEvidence": "login choices rendered while library link remains active",
+      "passed": true
+    },
+    {
+      "id": "history-deep-link-reload",
+      "entry": "/settings",
+      "action": "reload current document",
+      "expectedPath": "/settings",
+      "observedPath": "/settings",
+      "domEvidence": "settings controls rendered before and after reload",
+      "passed": true
+    }
+  ],
+  "quality": {
+    "routerScenariosPassed": 5,
+    "routerScenariosTotal": 5,
+    "routeContractRate": 1,
+    "frameworkOverlay": false,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "ignoredEphemeralStateKeys": [
+      "key"
+    ],
+    "sourceRouterContractReady": true,
+    "formalTranslationGoldReady": false,
+    "formalTranslationGoldBlockers": [
+      "Run the same contract against a generated/dismantled build",
+      "Compare reference/generated transition sequences after explicit ephemeral-state normalization",
+      "Add desktop and mobile screenshot matrices for each critical route state"
+    ]
+  }
+}

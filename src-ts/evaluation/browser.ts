@@ -26,7 +26,7 @@ import type {
   VisualResourceType,
 } from "../types.js";
 
-const STYLE_PROPERTIES = [
+export const COMPUTED_STYLE_PROPERTIES = [
   "display", "position", "visibility", "opacity", "box-sizing",
   "width", "height", "min-width", "min-height", "max-width", "max-height",
   "top", "right", "bottom", "left", "inset", "transform", "transform-origin",
@@ -1517,7 +1517,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       };
     });
     return { selectorCoverage, classEvidence, navigationReferences, navigationTransitions, fontFaces, styles };
-  }, { rootSelector, properties: [...STYLE_PROPERTIES], role });
+  }, { rootSelector, properties: [...COMPUTED_STYLE_PROPERTIES], role });
   if (telemetry) telemetry.timing.snapshotEvaluationMs += elapsed(startedAt);
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
@@ -1576,7 +1576,7 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
     if (bestIndex < 0 || bestScore < 0.35) continue;
     used.add(bestIndex); matched += 1;
     const actual = generated[bestIndex];
-    for (const property of STYLE_PROPERTIES) {
+    for (const property of COMPUTED_STYLE_PROPERTIES) {
       propertyCount += 1;
       const left = expected.styles[property] ?? "", right = actual.styles[property] ?? "";
       if (valuesEqual(property, left, right)) matchingProperties += 1;
@@ -1591,7 +1591,7 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
   return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, mismatches };
 }
 
-async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string, telemetry?: BrowserExecutionTelemetry): Promise<PixelDiffReport> {
+export async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string, telemetry?: BrowserExecutionTelemetry): Promise<PixelDiffReport> {
   const startedAt = performance.now();
   const a = PNG.sync.read(reference), b = PNG.sync.read(generated);
   const width = Math.min(a.width, b.width), height = Math.min(a.height, b.height);

@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "single",
+  "baseUrl": "https://todomvc.com/examples/react/dist/",
+  "passed": true,
+  "scenariosPassed": 8,
+  "scenariosTotal": 8,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "results": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 8,
+    "totalScenarios": 8,
+    "failures": 0
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "8/8 场景断言通过"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "runtimeErrors=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "unmockedApiRequests=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "source-only contract=8/8"
+    }
+  ]
+}

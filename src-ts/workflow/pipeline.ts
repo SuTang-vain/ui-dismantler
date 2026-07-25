@@ -5,6 +5,7 @@ import { analyzeHtml } from "../analysis/analyzer.js";
 import { generateScenarios, computeCoverage, loadScenarios } from "../evaluation/scenarios.js";
 import { evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip, evaluateScenario } from "../evaluation/roundtrip.js";
+import { evaluateSpaRouterContract, type SpaRouterContractConfig, type SpaRouterContractReport } from "../evaluation/spa-router.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 import type { BrowserExecutionTelemetry } from "../evaluation/browser.js";
 import type { BrowserQualityMatrixReport, BrowserScenarioQualityMatrixReport, Manifest, QualityThresholds, QualityViewport, Scenario, ScenarioDocument } from "../types.js";
@@ -39,6 +40,7 @@ export interface QualityGateReport {
   browser?: Awaited<ReturnType<typeof evaluateBrowserQualityMatrix>>["primary"];
   browserMatrix?: BrowserQualityMatrixReport;
   scenarioVisualMatrices?: BrowserScenarioQualityMatrixReport[];
+  spaRouter?: SpaRouterContractReport;
   scores: { dom: number; visual: number | null; overall: number };
   passed: boolean;
   gates: Array<{ id: string; passed: boolean; detail: string }>;
@@ -50,6 +52,7 @@ export interface QualityGateReport {
       visualMatrixMs: number;
       scenarioStateMs: number;
       scenarioVisualMatrixMs: number;
+      spaRouterMs: number;
       totalMs: number;
     };
     workload: {
@@ -59,6 +62,8 @@ export interface QualityGateReport {
       coverageWaivers: number;
       viewports: number;
       scenarioViewportRuns: number;
+      spaRouterScenarios: number;
+      spaRouterViewportRuns: number;
     };
     browser?: BrowserExecutionTelemetry;
   };
@@ -69,6 +74,7 @@ export async function runQualityGate(options: {
   libDir: string;
   manifestPath?: string;
   scenarioPath?: string;
+  spaRouterConfigPath?: string;
   visual?: boolean;
   visualArtifactsDir?: string;
   viewports?: QualityViewport[];
@@ -79,7 +85,7 @@ export async function runQualityGate(options: {
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
   const totalStartedAt = performance.now();
-  const timing = { analyzeMs: 0, validateMs: 0, roundtripMs: 0, visualMatrixMs: 0, scenarioStateMs: 0, scenarioVisualMatrixMs: 0, totalMs: 0 };
+  const timing = { analyzeMs: 0, validateMs: 0, roundtripMs: 0, visualMatrixMs: 0, scenarioStateMs: 0, scenarioVisualMatrixMs: 0, spaRouterMs: 0, totalMs: 0 };
   const elapsed = (startedAt: number): number => Number((performance.now() - startedAt).toFixed(3));
   const thresholds = { ...DEFAULT_THRESHOLDS, ...options.thresholds };
   let phaseStartedAt = performance.now();
@@ -177,6 +183,14 @@ export async function runQualityGate(options: {
       timing.scenarioVisualMatrixMs = elapsed(phaseStartedAt);
     }
   }
+  let spaRouter: SpaRouterContractReport | undefined;
+  if (options.spaRouterConfigPath) {
+    phaseStartedAt = performance.now();
+    const spaRouterConfig = JSON.parse(await readFile(resolve(options.spaRouterConfigPath), "utf8")) as SpaRouterContractConfig;
+    spaRouter = await evaluateSpaRouterContract(spaRouterConfig);
+    timing.spaRouterMs = elapsed(phaseStartedAt);
+  }
+  const spaGate = (id: SpaRouterContractReport["qualityGates"][number]["id"]): boolean => spaRouter?.qualityGates.find((gate) => gate.id === id)?.passed ?? true;
   const visualScores = [browserMatrix?.score ?? 0, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.score)];
   const visualScore = browserMatrix ? Number(Math.min(...visualScores).toFixed(4)) : 0;
   const finalOverall = browserMatrix ? Number(((roundtrip.score?.overall ?? 0) * 0.4 + visualScore * 0.6).toFixed(4)) : (roundtrip.score?.overall ?? 0);
@@ -197,19 +211,32 @@ export async function runQualityGate(options: {
     const worstComputedStyle = Math.min(browserMatrix.worstComputedStyle, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstComputedStyle));
     const worstPixelDiff = Math.max(browserMatrix.worstPixelDiff, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstPixelDiff));
     gates.push({ id: "viewport-matrix", passed: browserMatrix.passed, detail: `${passedViewports}/${browserMatrix.viewports.length} 视口通过，worst=${browserMatrix.worstViewport}` });
-    if (scenarioVisualMatrices?.length) gates.push({ id: "scenario-viewport-matrix", passed: scenarioVisualMatrices.every((matrix) => matrix.passed), detail: `${scenarioVisualMatrices.filter((matrix) => matrix.passed).length}/${scenarioVisualMatrices.length} 关键交互状态矩阵通过` });
-    gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0 && scenarioRuntimeErrors === 0 && stabilityFailures === 0, detail: `initialViewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors + scenarioRuntimeErrors}，stabilityFailures=${stabilityFailures}` });
-    gates.push({ id: "resource-readiness", passed: resourceFailures === 0, detail: `requiredResourceFailures=${resourceFailures}` });
+    if (scenarioVisualMatrices?.length || spaRouter?.visualMatrix) {
+      const localPassed = !scenarioVisualMatrices?.length || scenarioVisualMatrices.every((matrix) => matrix.passed);
+      const spaPassed = spaRouter?.visualMatrix?.passed ?? true;
+      gates.push({ id: "scenario-viewport-matrix", passed: localPassed && spaPassed, detail: `interaction=${scenarioVisualMatrices?.filter((matrix) => matrix.passed).length ?? 0}/${scenarioVisualMatrices?.length ?? 0}，spaRouteStates=${spaRouter?.visualMatrix?.scenarios.filter((matrix) => matrix.passed).length ?? 0}/${spaRouter?.visualMatrix?.scenarioCount ?? 0}，spaViewportRuns=${spaRouter?.visualMatrix?.viewportRuns ?? 0}` });
+    }
+    gates.push({ id: "visual-runtime", passed: browserMatrix.viewports.length > 0 && browserMatrix.viewports.every((viewport) => viewport.available) && browserMatrix.runtimeErrors === 0 && scenarioRuntimeErrors === 0 && stabilityFailures === 0 && spaGate("visual-runtime"), detail: `initialViewports=${browserMatrix.viewports.length}，runtimeErrors=${browserMatrix.runtimeErrors + scenarioRuntimeErrors}，stabilityFailures=${stabilityFailures}，spaRuntimeErrors=${spaRouter?.runtimeErrors ?? 0}` });
+    gates.push({ id: "resource-readiness", passed: resourceFailures === 0 && spaGate("resource-readiness"), detail: `requiredResourceFailures=${resourceFailures}，spaUnmockedApi=${spaRouter?.unmockedApiRequests ?? 0}` });
     gates.push({ id: "external-availability", passed: externalAvailabilityFailures === 0, detail: `requiredExternalFailures=${externalAvailabilityFailures}` });
     const navigationFailures = browserMatrix.navigationFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.navigationFailures, 0);
     const worstNavigationIntegrity = Math.min(browserMatrix.worstNavigationIntegrity, ...(scenarioVisualMatrices ?? []).map((matrix) => matrix.worstNavigationIntegrity));
-    gates.push({ id: "navigation-integrity", passed: navigationFailures === 0 && worstNavigationIntegrity >= 1, detail: `worstNavigationIntegrity=${worstNavigationIntegrity}，navigationFailures=${navigationFailures}` });
+    gates.push({ id: "navigation-integrity", passed: navigationFailures === 0 && worstNavigationIntegrity >= 1 && spaGate("navigation-integrity"), detail: `worstNavigationIntegrity=${worstNavigationIntegrity}，navigationFailures=${navigationFailures}，spaNavigationIntegrity=${spaRouter?.navigationIntegrity.rate ?? "n/a"}，spaNavigationFailures=${spaRouter?.navigationIntegrity.failures ?? 0}` });
     const fontAlignmentFailures = browserMatrix.fontAlignmentFailures + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.fontAlignmentFailures, 0);
     const blockingFontStateMismatches = browserMatrix.blockingFontStateMismatches + (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.blockingFontStateMismatches, 0);
     gates.push({ id: "font-face-alignment", passed: fontAlignmentFailures === 0, detail: `alignmentFailures=${fontAlignmentFailures}，blockingStateMismatches=${blockingFontStateMismatches}` });
     gates.push({ id: "selector-coverage", passed: worstSelectorCoverage >= thresholds.selectorCoverage, detail: `worstSelectorCoverage=${worstSelectorCoverage}，门槛=${thresholds.selectorCoverage}` });
     gates.push({ id: "computed-style", passed: worstComputedStyle >= thresholds.style, detail: `worstComputedStyle=${worstComputedStyle}，门槛=${thresholds.style}` });
     gates.push({ id: "pixel-diff", passed: worstPixelDiff <= thresholds.pixelDiff, detail: `worstPixelDiff=${worstPixelDiff}，门槛=${thresholds.pixelDiff}` });
+  }
+  if (spaRouter && !browserMatrix) {
+    if (spaRouter.visualMatrix) gates.push({ id: "scenario-viewport-matrix", passed: spaGate("scenario-viewport-matrix"), detail: `spaRouteStates=${spaRouter.visualMatrix.scenarios.filter((matrix) => matrix.passed).length}/${spaRouter.visualMatrix.scenarioCount}，spaViewportRuns=${spaRouter.visualMatrix.viewportRuns}，worstComputedStyle=${spaRouter.visualMatrix.worstComputedStyle}，worstPixelDiff=${spaRouter.visualMatrix.worstPixelDiff}` });
+    gates.push({ id: "visual-runtime", passed: spaGate("visual-runtime"), detail: `spaRuntimeErrors=${spaRouter.runtimeErrors}` });
+    gates.push({ id: "resource-readiness", passed: spaGate("resource-readiness"), detail: `spaUnmockedApi=${spaRouter.unmockedApiRequests}` });
+    gates.push({ id: "navigation-integrity", passed: spaGate("navigation-integrity"), detail: `spaNavigationIntegrity=${spaRouter.navigationIntegrity.rate}，spaNavigationFailures=${spaRouter.navigationIntegrity.failures}` });
+  }
+  if (spaRouter) {
+    gates.push({ id: "spa-router-contract", passed: spaGate("scenario-protocol"), detail: `${spaRouter.scenariosPassed}/${spaRouter.scenariosTotal} 双端 SPA 场景通过，mode=${spaRouter.mode}` });
   }
   const interactionGateEnabled = thresholds.interactionCoverage !== null && manifest.interactions.length > 0;
   if (interactionGateEnabled) {
@@ -243,10 +270,12 @@ export async function runQualityGate(options: {
       coverageWaivers: scenarioDocument?.coverageWaivers?.length ?? 0,
       viewports: browserMatrix?.viewports.length ?? 0,
       scenarioViewportRuns: (scenarioVisualMatrices ?? []).reduce((sum, matrix) => sum + matrix.viewports.length, 0),
+      spaRouterScenarios: spaRouter?.scenariosTotal ?? 0,
+      spaRouterViewportRuns: spaRouter?.visualMatrix?.viewportRuns ?? 0,
     },
     browser: browserTelemetry,
   };
-  return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, telemetry, passed: gates.every((gate) => gate.passed) };
+  return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, spaRouter, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, telemetry, passed: gates.every((gate) => gate.passed) };
 }
 
 export async function writeManifest(path: string, manifest: Manifest): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(manifest, null, 2)}\n`, "utf8"); }

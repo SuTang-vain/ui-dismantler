@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "single",
+  "baseUrl": "http://127.0.0.1:4195",
+  "passed": true,
+  "scenariosPassed": 5,
+  "scenariosTotal": 5,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "results": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/explore",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/settings",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{}"
+        },
+        {
+          "method": "popstate",
+          "target": "/settings",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/login",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/login",
+          "state": "{}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4195/settings",
+      "finalUrl": "http://127.0.0.1:4195/settings",
+      "transitions": [],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 5,
+    "totalScenarios": 5,
+    "failures": 0
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "5/5 场景断言通过"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "runtimeErrors=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "unmockedApiRequests=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "source-only contract=5/5"
+    }
+  ]
+}

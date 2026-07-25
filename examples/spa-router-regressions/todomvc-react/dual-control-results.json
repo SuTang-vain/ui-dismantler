@@ -1,0 +1,1554 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "https://todomvc.com/examples/react/dist/",
+  "generatedBaseUrl": "https://todomvc.com/examples/react/dist/",
+  "passed": true,
+  "scenariosPassed": 8,
+  "scenariosTotal": 8,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "results": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/react/dist/",
+      "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/react/dist/",
+          "state": "{\"idx\":0}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/react/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "https://todomvc.com/examples/react/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "https://todomvc.com/examples/react/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "reference": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "reference": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "reference": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "reference": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "reference": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "reference": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 20,
+    "totalScenarios": 20,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "add-two-todos",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 220,
+            "durationMs": 124.136,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 228,
+            "durationMs": 3613.365,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 219,
+            "durationMs": 3348.636,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/add-two-todos/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 3613.634
+      },
+      {
+        "scenarioId": "active-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/react/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 525,
+            "durationMs": 101.06,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/react/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 216,
+            "durationMs": 4121.028,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/react/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 217,
+            "durationMs": 4079.802,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/active-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 4180.92
+      },
+      {
+        "scenarioId": "completed-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/react/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 341,
+            "durationMs": 78.283,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/react/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 213,
+            "durationMs": 3974.567,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/react/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 302,
+            "durationMs": 4135.74,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/completed-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 4214.1
+      },
+      {
+        "scenarioId": "edit-todo",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 221,
+            "durationMs": 78.669,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 215,
+            "durationMs": 3524.021,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 0,
+              "totalPixels": 786432,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/react/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 353,
+            "durationMs": 3610.106,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 0,
+              "totalPixels": 329160,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/todomvc-react/visual-artifacts/edit-todo/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 3688.832
+      }
+    ],
+    "scenarioCount": 4,
+    "viewportRuns": 12,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 12,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 3270,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 24,
+    "reusedTargetRuns": 8,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 16,
+    "visualViewportRuns": 12,
+    "visualTargetRuns": 24,
+    "visualTargetReusedRuns": 8,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 3270,
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "timing": {
+      "browserLaunchMs": 849.46,
+      "contractMs": 15417.077,
+      "comparisonMs": 0.488,
+      "visualMatrixMs": 15697.811,
+      "browserCloseMs": 12787.817,
+      "totalMs": 44752.863
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=8/8，generated=8/8"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "4/4 SPA route states 通过，viewportRuns=12，worstComputedStyle=1，worstPixelDiff=0"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=20/20，rate=1，failures=0"
+    }
+  ]
+}

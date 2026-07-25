@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "testedAt": "2026-07-25",
+  "portalUrl": "https://todomvc.com/",
+  "implementationUrl": "https://todomvc.com/examples/react/dist/",
+  "implementation": "React",
+  "router": {
+    "kind": "hash",
+    "routes": ["#/", "#/active", "#/completed"],
+    "observedTransition": "hashchange"
+  },
+  "state": {
+    "storage": "in-memory per isolated context",
+    "apiRequired": false
+  },
+  "reviewedScenarios": [
+    "add-two-todos",
+    "active-filter-route",
+    "completed-filter-route",
+    "edit-todo",
+    "destroy-completed-todo",
+    "clear-completed",
+    "toggle-all",
+    "filter-history-back"
+  ],
+  "visualStates": [
+    "add-two-todos",
+    "active-filter-route",
+    "completed-filter-route",
+    "edit-todo"
+  ],
+  "viewports": ["1024x768", "768x1024", "390x844"],
+  "status": "source contract and same-target visual control ready; generated translation target not provided"
+}

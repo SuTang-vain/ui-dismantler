@@ -28,7 +28,8 @@
     "test:planning-regression:ts": "npm run build:ts && node --test dist-ts/tests/case-regression.test.js --test-name-pattern=\"formal planning regression\"",
     "test:gold:ts": "npm run build:ts && UI_DISMANTLER_GOLD_REGRESSION=1 node --test dist-ts/tests/case-regression.test.js",
     "test:gold:optimized:ts": "npm run build:ts && UI_DISMANTLER_GOLD_REGRESSION=1 UI_DISMANTLER_BROWSER_MODE=shared-browser UI_DISMANTLER_BROWSER_CONCURRENCY=1 UI_DISMANTLER_BROWSER_RESOURCE_CACHE=run-local UI_DISMANTLER_BROWSER_STABILITY=adaptive node --test dist-ts/tests/case-regression.test.js",
-    "benchmark:quality:ts": "npm run build:ts && node dist-ts/benchmarks/quality-baseline.js"
+    "benchmark:quality:ts": "npm run build:ts && node dist-ts/benchmarks/quality-baseline.js",
+    "spa-router:ts": "npm run build:ts && node dist-ts/cli.js spa-router"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",
