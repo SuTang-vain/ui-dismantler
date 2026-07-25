@@ -45,6 +45,28 @@ test("candidate scenarios remain review-gated", () => {
   assert.doesNotThrow(() => loadScenarios(document));
 });
 
+test("planner proposes review-only screenshot anchors from durable state transitions", () => {
+  const manifest = analyzeHtml(fixture);
+  manifest.interactions = [{
+    trigger: "#open",
+    event: "click",
+    action: "openPanel",
+    source: "script-assignment",
+    fingerprint: "click|#open|openPanel",
+    mutationTargets: ["#panel"],
+    stateTransitions: [{ target: "#panel", kind: "class", operation: "add", name: "open", value: "open", confidence: 0.96, source: "panel.classList.add('open')" }],
+  }];
+  const document = generateScenarios(manifest);
+  const scenario = document.scenarios[0];
+  assert.equal(scenario.screenshotAnchor, undefined, "planner must never approve an anchor without review");
+  assert.deepEqual(scenario.screenshotAnchorCandidates?.map((candidate) => candidate.target), ["#panel"]);
+  assert.equal(scenario.screenshotAnchorCandidates?.[0].reviewRequired, true);
+  assert.doesNotThrow(() => loadScenarios(document));
+
+  manifest.interactions = [{ trigger: "#noop", event: "click", action: "semantic-control", source: "semantic-control", fingerprint: "click|#noop|semantic-control" }];
+  assert.equal(generateScenarios(manifest).scenarios[0].screenshotAnchorCandidates, undefined, "fallback visibility assertions must not become anchors automatically");
+});
+
 test("strict interaction equivalence groups repeated instances without collapsing data-driven navigation or pointer protocols", () => {
   const transition = { target: ".item", kind: "class" as const, operation: "add" as const, name: "active", value: "active", confidence: 0.96, source: "item.classList.add('active')" };
   const repeated = [1, 2, 3].map((index): Interaction => ({

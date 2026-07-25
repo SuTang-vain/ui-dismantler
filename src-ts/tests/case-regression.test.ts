@@ -16,6 +16,7 @@ const planningCases = [
   { id: "sandadui-graph-ts", html: "original.html", profile: "generic", base: "examples/cases" },
   { id: "sun-wukong-0722-ts", html: "original.html", profile: "sun-wukong", base: "examples/cases" },
   { id: "babelo-landing", html: "source/index.html", profile: "generic", base: "examples/dispatch-experiments" },
+  { id: "warp-homepage", html: "source/index.html", profile: "generic", base: "examples/dispatch-experiments" },
 ] as const;
 
 test("formal planning regression keeps all representative cases dispatch-ready", () => {
@@ -133,4 +134,50 @@ test("Babelo Gold+ regression preserves structured coverage and critical visual 
   assert.equal(report.telemetry.workload.scenarioViewportRuns, 16);
   assert.ok(report.telemetry.timing.scenarioVisualMatrixMs > 0);
   if (browserMode !== "legacy") assert.equal(report.telemetry.browser?.mode, browserMode);
+});
+
+
+test("Warp Gold+ regression preserves large snapshot fidelity and reviewed search interaction", { skip: !runGoldRegression, timeout: 900_000 }, async () => {
+  const caseDir = `${root}examples/dispatch-experiments/warp-homepage`;
+  const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
+  const browserConcurrency = Number(process.env.UI_DISMANTLER_BROWSER_CONCURRENCY ?? "1");
+  const browserResourceCache = (process.env.UI_DISMANTLER_BROWSER_RESOURCE_CACHE ?? "off") as "off" | "run-local";
+  const browserStability = (process.env.UI_DISMANTLER_BROWSER_STABILITY ?? "fixed") as "fixed" | "adaptive";
+  const report = await runQualityGate({
+    htmlPath: `${caseDir}/source/index.html`,
+    libDir: `${caseDir}/lib`,
+    manifestPath: `${caseDir}/manifest.json`,
+    scenarioPath: `${caseDir}/scenarios.json`,
+    visualArtifactsDir: `${caseDir}/artifacts-regression`,
+    browserMode,
+    browserConcurrency,
+    browserResourceCache,
+    browserStability,
+    thresholds: { interactionCoverage: 1 },
+  });
+
+  assert.equal(report.passed, true, JSON.stringify({ failedGates: report.gates.filter((gate) => !gate.passed) }, null, 2));
+  assert.equal(report.validation.passed, 10);
+  assert.equal(report.validation.failed, 0);
+  assert.equal(report.roundtrip.score?.structure.nodeMatchRate, 1);
+  assert.equal(report.roundtrip.score?.text.textMatchRate, 1);
+  assert.equal(report.browserMatrix?.viewports.length, 4);
+  assert.equal(report.browserMatrix?.runtimeErrors, 0);
+  assert.equal(report.browserMatrix?.navigationFailures, 0);
+  assert.equal(report.browserMatrix?.fontAlignmentFailures, 0);
+  assert.ok((report.browserMatrix?.worstSelectorCoverage ?? 0) >= 1);
+  assert.ok((report.browserMatrix?.worstComputedStyle ?? 0) >= 0.98);
+  assert.ok((report.browserMatrix?.worstPixelDiff ?? 1) <= 0.02);
+  assert.equal(report.coverage?.totalInteractions, 138);
+  assert.equal(report.coverage?.scenarioRequiredInteractions, 1);
+  assert.equal(report.coverage?.navigationInteractions, 69);
+  assert.equal(report.coverage?.noOpInteractions, 68);
+  assert.equal(report.coverage?.waivedInteractions, 0);
+  assert.equal(report.coverage?.verifiedRate, 1);
+  assert.deepEqual(report.scenarioVisualMatrices?.map((matrix) => matrix.scenarioId), ["edit-session-search"]);
+  assert.equal(report.scenarioVisualMatrices?.every((matrix) => matrix.passed), true);
+  assert.equal(report.telemetry.workload.formalScenarios, 1);
+  assert.equal(report.telemetry.workload.criticalScenarios, 1);
+  assert.equal(report.telemetry.workload.viewports, 4);
+  assert.equal(report.telemetry.workload.scenarioViewportRuns, 1);
 });

@@ -82,6 +82,31 @@ export function groupEquivalentInteractions(interactions: Interaction[]): Array<
   return result.sort((left, right) => interactions.indexOf(left.representative) - interactions.indexOf(right.representative));
 }
 
+function screenshotAnchorCandidatesFor(interaction: Interaction) {
+  const proposals = new Map<string, { target: string; confidence: number; source: "state-transition" | "mutation-target"; reason: string; reviewRequired: true }>();
+  const validTarget = (target: string): boolean => Boolean(target)
+    && target !== interaction.trigger
+    && !target.startsWith("@")
+    && !/^(?:html|body|document|window)$/i.test(target);
+  const add = (target: string, confidence: number, source: "state-transition" | "mutation-target", reason: string): void => {
+    if (!validTarget(target) || confidence < 0.78) return;
+    const existing = proposals.get(target);
+    if (!existing || existing.confidence < confidence) proposals.set(target, { target, confidence: Number(confidence.toFixed(2)), source, reason, reviewRequired: true });
+  };
+  for (const transition of interaction.stateTransitions ?? []) {
+    if (transition.confidence < 0.88) continue;
+    const visuallyDurable = transition.kind === "class" || transition.kind === "style"
+      || (transition.kind === "property" && ["hidden", "open", "value"].includes(transition.name ?? ""))
+      || (transition.kind === "attribute" && ["aria-expanded", "aria-selected", "aria-hidden", "open", "data-state"].includes(transition.name ?? ""));
+    if (!visuallyDurable) continue;
+    add(transition.target, Math.min(0.98, transition.confidence + 0.04), "state-transition", `高置信状态转换 ${transition.kind}:${transition.operation} 命中可见状态目标；仅作为候选，需审核 reference/library selector 后写入 screenshotAnchor`);
+  }
+  if (!proposals.size && (interaction.stateTransitions?.some((transition) => transition.confidence >= 0.88) ?? false)) {
+    for (const target of interaction.mutationTargets ?? []) add(target, 0.8, "mutation-target", "交互存在高置信状态转换，且该 selector 是独立 mutation target；需人工确认其是否适合作为稳定截图锚点");
+  }
+  return [...proposals.values()].sort((left, right) => right.confidence - left.confidence).slice(0, 3);
+}
+
 function candidateFor(interaction: Interaction, index: number, group?: InteractionEquivalenceGroup): Scenario {
   const gestureProtocol = interactionResponsibility(interaction) === "gesture-protocol";
   const pointerGesture = interaction.event.startsWith("pointer") || interaction.event.startsWith("touch");
@@ -100,6 +125,7 @@ function candidateFor(interaction: Interaction, index: number, group?: Interacti
   const notes = derived.length
     ? ["已从 AST 状态转换生成 assertions；仍需人工确认初始状态、动态 selector 与跨组件前置步骤", "确认后移除 candidate 标记再纳入覆盖率门禁"]
     : ["人工确认 selector 是否命中预期控件", "补充证明状态真实发生的 assertions", "确认后移除 candidate 标记再纳入覆盖率门禁"];
+  const screenshotAnchorCandidates = screenshotAnchorCandidatesFor(interaction);
   return {
     id: `candidate-${interaction.event}-${index + 1}`.replace(/[^a-z0-9-]/gi, "-").toLowerCase(),
     label: `Candidate: ${action} (${interaction.trigger})`, candidate: true,
@@ -114,6 +140,7 @@ function candidateFor(interaction: Interaction, index: number, group?: Interacti
       : group
         ? [`严格交互等价组：${group.memberFingerprints.length} 个重复实例共享事件、处理动作和可观察状态转换`, "审核代表实例后可覆盖组内 fingerprints；若实例存在内容语义差异，应拆回独立场景", ...notes]
         : notes,
+    ...(screenshotAnchorCandidates.length ? { screenshotAnchorCandidates } : {}),
     steps: step ? [step] : [], assertions,
   };
 }
@@ -174,6 +201,15 @@ export function loadScenarios(document: unknown): ScenarioDocument {
     if (scenario.equivalenceGroupId !== undefined && (typeof scenario.equivalenceGroupId !== "string" || !scenario.equivalenceGroupId.trim())) throw new TypeError(`场景 ${scenario.id} equivalenceGroupId 必须是非空字符串`);
     if (scenario.viewport) for (const key of ["width", "height"] as const) if (!Number.isInteger(scenario.viewport[key]) || scenario.viewport[key] <= 0) throw new TypeError(`场景 ${scenario.id} viewport.${key} 必须为正整数`);
     if (scenario.screenshotAnchor !== undefined && !isTarget(scenario.screenshotAnchor, true)) throw new TypeError(`场景 ${scenario.id} screenshotAnchor 无效`);
+    if (scenario.screenshotAnchorCandidates !== undefined) {
+      if (!Array.isArray(scenario.screenshotAnchorCandidates) || !scenario.screenshotAnchorCandidates.length) throw new TypeError(`场景 ${scenario.id} screenshotAnchorCandidates 必须是非空数组`);
+      for (const [index, candidate] of scenario.screenshotAnchorCandidates.entries()) {
+        if (!candidate || !isTarget(candidate.target, true)) throw new TypeError(`场景 ${scenario.id} screenshotAnchorCandidates[${index}].target 无效`);
+        if (typeof candidate.confidence !== "number" || candidate.confidence < 0 || candidate.confidence > 1) throw new TypeError(`场景 ${scenario.id} screenshotAnchorCandidates[${index}].confidence 必须位于 0..1`);
+        if (!["state-transition", "mutation-target"].includes(candidate.source)) throw new TypeError(`场景 ${scenario.id} screenshotAnchorCandidates[${index}].source 无效`);
+        if (typeof candidate.reason !== "string" || !candidate.reason.trim() || candidate.reviewRequired !== true) throw new TypeError(`场景 ${scenario.id} screenshotAnchorCandidates[${index}] 必须包含审核说明并保持 reviewRequired=true`);
+      }
+    }
     if (!Array.isArray(scenario.steps)) throw new TypeError(`场景 ${scenario.id} steps 必须是数组`);
     scenario.steps.forEach((step, index) => {
       if (!step || !actions.has(step.action)) throw new TypeError(`场景 ${scenario.id} steps[${index}] action 不支持`);

@@ -187,6 +187,14 @@ export interface ScenarioAssertion {
   propertyRanges?: Record<string, { min?: number; max?: number }>;
 }
 
+export interface ScreenshotAnchorCandidate {
+  target: ScenarioTarget;
+  confidence: number;
+  source: "state-transition" | "mutation-target";
+  reason: string;
+  reviewRequired: true;
+}
+
 export interface Scenario {
   id: string;
   label?: string;
@@ -197,6 +205,7 @@ export interface Scenario {
   notes?: string[];
   viewport?: { width: number; height: number };
   screenshotAnchor?: ScenarioTarget;
+  screenshotAnchorCandidates?: ScreenshotAnchorCandidate[];
   steps: ScenarioStep[];
   assertions: ScenarioAssertion[];
 }
@@ -368,11 +377,21 @@ export interface NavigationReferenceSnapshot {
   fragmentTargetExists: boolean | null;
 }
 
+export type NavigationTransitionMethod = "pushState" | "replaceState" | "popstate" | "hashchange";
+
+export interface NavigationTransitionSnapshot {
+  method: NavigationTransitionMethod;
+  target: string;
+  state: string;
+}
+
 export interface NavigationIntegrityIssue {
   index: number;
-  reason: "count-mismatch" | "target-mismatch" | "kind-mismatch" | "download-mismatch" | "missing-fragment-target";
+  reason: "count-mismatch" | "target-mismatch" | "kind-mismatch" | "download-mismatch" | "missing-fragment-target" | "transition-count-mismatch" | "transition-method-mismatch" | "transition-target-mismatch" | "transition-state-mismatch";
   reference?: NavigationReferenceSnapshot;
   generated?: NavigationReferenceSnapshot;
+  referenceTransition?: NavigationTransitionSnapshot;
+  generatedTransition?: NavigationTransitionSnapshot;
 }
 
 export interface NavigationIntegrityReport {

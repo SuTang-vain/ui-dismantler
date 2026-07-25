@@ -80,3 +80,16 @@ The repeat confirms that Babelo is the only case with material Chromium shutdown
 | Context close | — | 0.271s | measured |
 
 All runs passed, but end-to-end time did not improve and variance increased. The explicit-close behavior was therefore reverted. The experiment narrows the remaining cost to final Chromium process shutdown rather than page/context cleanup.
+
+### Browser-process shutdown profile
+
+`babelo-browser-process-shutdown-profile-2026-07-25.json` uses the opt-in `UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE=1` launcher. It separates the Playwright client disconnect from the Chromium server-process shutdown without changing quality thresholds, viewport isolation, or scenario coverage.
+
+| Metric | Three-run median | Std dev |
+|---|---:|---:|
+| Total quality time | 61.600s | 0.533s |
+| Combined close phase | 7.376s | 0.622s |
+| Playwright disconnect | 0.001s | <0.001s |
+| Chromium process shutdown | 7.375s | 0.621s |
+
+All **3/3** runs passed with zero runtime, stability, required-resource, or navigation failures. More than 99.9% of the close phase is spent waiting for the Chromium process itself after the Playwright connection has already disconnected. This confirms that further page/context-close rearrangement is not the right optimization target. The profiling launcher remains opt-in and does not change the formal default execution path.

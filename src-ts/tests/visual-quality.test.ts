@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { compareFontFaces, evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
+import { compareFontFaces, compareNavigationIntegrity, evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -68,6 +68,30 @@ test("font face alignment distinguishes blocking mismatches from optional fallba
   const blockingReport = compareFontFaces([blocking], []);
   assert.equal(blockingReport.passed, false);
   assert.equal(blockingReport.blockingMissingFaces, 1);
+});
+
+test("SPA router contracts compare pushState target and normalized state", async () => {
+  const item = await fixture(
+    "spa-navigation-contract",
+    `<!doctype html><html><head><style>body{margin:0}.app{width:240px;height:140px;background:#fff}.panel.active{color:#e11d48}</style></head><body><div class="app"><button id="route">Route</button><div id="panel" class="panel">Workspace</div></div><script>document.getElementById('route').onclick=()=>{history.pushState({view:'workspace',anchor:'#panel'},'', '?route=workspace#panel');document.getElementById('panel').classList.add('active')}</script></body></html>`,
+    `${baseVars}body{margin:0}.sg-app{width:240px;height:140px;background:var(--sg-paper)}.sg-panel.sg-active{color:var(--sg-primary)}${media}`,
+    `(function(global){function mount(root){root.innerHTML='<div class="sg-app"><button id="sg-route">Route</button><div id="sg-panel" class="sg-panel">Workspace</div></div>';root.querySelector('#sg-route').onclick=function(){history.pushState({anchor:'#sg-panel',view:'workspace'},'', '?route=workspace#sg-panel');root.querySelector('#sg-panel').classList.add('sg-active')}}global.Fixture={mount:mount};})(window);`,
+  );
+  const scenario = {
+    id: "route-workspace",
+    steps: [{ action: "click" as const, target: { reference: "#route", library: "#sg-route" } }],
+    assertions: [{ target: { reference: "#panel", library: "#sg-panel" }, classIncludes: [{ reference: "active", library: "sg-active" }] }],
+  };
+  const result = await evaluateScenarioBrowserQualityMatrix(item.original, item.lib, scenario, { viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] });
+  assert.equal(result.primary.navigationIntegrity?.passed, true, JSON.stringify(result.primary.navigationIntegrity, null, 2));
+  assert.equal(result.primary.navigationIntegrity?.total, 1);
+
+  const mismatch = compareNavigationIntegrity([], [],
+    [{ method: "replaceState", target: "?route=workspace#panel", state: '{"view":"workspace"}' }],
+    [{ method: "pushState", target: "?route=broken#panel", state: '{"view":"workspace"}' }],
+  );
+  assert.equal(mismatch.passed, false);
+  assert.equal(mismatch.issues[0]?.reason, "transition-method-mismatch");
 });
 
 test("navigation integrity rejects preserved pixels with a broken fragment target", async () => {

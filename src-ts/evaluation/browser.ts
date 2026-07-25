@@ -5,7 +5,7 @@ import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
-import { chromium, type Browser, type BrowserContext, type Page, type Request, type Route } from "playwright-core";
+import { chromium, type Browser, type BrowserContext, type BrowserServer, type Page, type Request, type Route } from "playwright-core";
 import type {
   BrowserQualityReport,
   ComputedStyleSnapshot,
@@ -18,6 +18,7 @@ import type {
   SelectorCoverageReport,
   NavigationIntegrityReport,
   NavigationReferenceSnapshot,
+  NavigationTransitionSnapshot,
   FontFaceAlignmentReport,
   FontFaceSnapshot,
   StyleComparisonReport,
@@ -49,6 +50,7 @@ interface BrowserSnapshot {
   selectorCoverage: SelectorCoverageReport;
   classEvidence: Array<{ className: string; count: number; hasSelector: boolean }>;
   navigationReferences: NavigationReferenceSnapshot[];
+  navigationTransitions: NavigationTransitionSnapshot[];
   fontFaces: FontFaceSnapshot[];
   styles: ComputedStyleSnapshot[];
   screenshot: Buffer;
@@ -74,6 +76,47 @@ function trackRuntimeErrors(page: Page): RuntimeErrorTracker {
 async function initializeQualityContext(context: BrowserContext): Promise<void> {
   await context.addInitScript(() => {
     try { localStorage.clear(); sessionStorage.clear(); } catch { /* unavailable for this origin */ }
+    const navigationHost = globalThis as typeof globalThis & { __uiDismantlerNavigationTransitions?: NavigationTransitionSnapshot[] };
+    const navigationTransitions: NavigationTransitionSnapshot[] = [];
+    navigationHost.__uiDismantlerNavigationTransitions = navigationTransitions;
+    const normalizeNavigationText = (value: string): string => value.replace(/#sg-([A-Za-z0-9_-]+)/g, "#$1");
+    const stableNavigationState = (value: unknown): string => {
+      const seen = new WeakSet<object>();
+      const normalize = (input: unknown): unknown => {
+        if (typeof input === "string") return normalizeNavigationText(input);
+        if (!input || typeof input !== "object") return input;
+        if (seen.has(input)) return "[Circular]";
+        seen.add(input);
+        if (Array.isArray(input)) return input.map(normalize);
+        return Object.fromEntries(Object.keys(input as Record<string, unknown>).sort().map((key) => [key, normalize((input as Record<string, unknown>)[key])]));
+      };
+      try { return JSON.stringify(normalize(value)) ?? "undefined"; } catch { return String(value); }
+    };
+    const normalizeNavigationTarget = (value: string | URL | null | undefined): string => {
+      if (value == null || String(value) === "") return "";
+      const raw = normalizeNavigationText(String(value));
+      if (raw.startsWith("#")) return raw;
+      try {
+        const target = new URL(raw, location.href);
+        if (target.origin !== location.origin && target.protocol !== "file:") return target.href;
+        if (raw.startsWith("/")) return `${target.pathname}${target.search}${target.hash}`;
+        if (raw.startsWith("?")) return `${target.search}${target.hash}`;
+        return raw.replace(/^\.\//, "");
+      } catch { return raw.replace(/^\.\//, ""); }
+    };
+    const recordNavigation = (method: NavigationTransitionSnapshot["method"], target: string | URL | null | undefined, state: unknown): void => {
+      navigationTransitions.push({ method, target: normalizeNavigationTarget(target), state: stableNavigationState(state) });
+    };
+    for (const method of ["pushState", "replaceState"] as const) {
+      const native = history[method].bind(history);
+      history[method] = ((state: unknown, title: string, url?: string | URL | null) => {
+        const result = native(state, title, url);
+        recordNavigation(method, url, state);
+        return result;
+      }) as History[typeof method];
+    }
+    addEventListener("popstate", (event) => recordNavigation("popstate", `${location.pathname}${location.search}${location.hash}`, event.state));
+    addEventListener("hashchange", () => recordNavigation("hashchange", location.hash, history.state));
     const installStabilityStyle = (): void => {
       if (document.getElementById("ui-dismantler-stability-style")) return;
       const parent = document.head ?? document.documentElement;
@@ -210,6 +253,8 @@ export interface BrowserExecutionTelemetry {
     pixelDiffMs: number;
     artifactWriteMs: number;
     closeMs: number;
+    browserDisconnectMs: number;
+    browserProcessCloseMs: number;
     totalMs: number;
   };
   workload: {
@@ -279,7 +324,7 @@ function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurr
     concurrency,
     resourceCache,
     stabilityMode,
-    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, totalMs: 0 },
+    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, browserDisconnectMs: 0, browserProcessCloseMs: 0, totalMs: 0 },
     workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, timerGraceExtensions: 0, fontPreflightWaits: 0, facesDiscovered: 0, blockingFaces: 0, nonBlockingFaces: 0, loadedFaces: 0, fallbackFaces: 0, failedFaces: 0, fontStateMismatches: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
   };
 }
@@ -312,10 +357,41 @@ function chromeCandidates(): string[] {
   ].filter((value): value is string => Boolean(value));
 }
 
+interface ProfiledBrowserProcess { server: BrowserServer }
+const profiledBrowserProcesses = new WeakMap<Browser, ProfiledBrowserProcess>();
+
 async function launchBrowser(executablePath?: string): Promise<Browser> {
   const candidate = executablePath ?? chromeCandidates().find(existsSync);
   if (!candidate) throw new Error("未找到 Chrome/Chromium；可通过 CHROME_PATH 指定浏览器路径");
-  return chromium.launch({ executablePath: candidate, headless: true, args: ["--allow-file-access-from-files", "--disable-web-security"] });
+  const launchOptions = { executablePath: candidate, headless: true, args: ["--allow-file-access-from-files", "--disable-web-security"] };
+  if (process.env.UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE === "1") {
+    const server = await chromium.launchServer(launchOptions);
+    const browser = await chromium.connect(server.wsEndpoint());
+    profiledBrowserProcesses.set(browser, { server });
+    return browser;
+  }
+  return chromium.launch(launchOptions);
+}
+
+async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExecutionTelemetry): Promise<void> {
+  if (!browser) return;
+  const profiled = profiledBrowserProcesses.get(browser);
+  if (!profiled) {
+    const startedAt = performance.now();
+    await browser.close();
+    if (telemetry) telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+    return;
+  }
+  let startedAt = performance.now();
+  try {
+    await browser.close();
+    if (telemetry) telemetry.timing.browserDisconnectMs += elapsed(startedAt);
+  } finally {
+    startedAt = performance.now();
+    await profiled.server.close();
+    if (telemetry) telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+    profiledBrowserProcesses.delete(browser);
+  }
 }
 
 const examplePathCache = new Map<string, Promise<string>>();
@@ -1408,6 +1484,9 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       };
     });
 
+    const navigationState = globalThis as typeof globalThis & { __uiDismantlerNavigationTransitions?: NavigationTransitionSnapshot[] };
+    const navigationTransitions = [...(navigationState.__uiDismantlerNavigationTransitions ?? [])];
+
     const fontFaces: FontFaceSnapshot[] = document.fonts ? [...document.fonts].map((face) => {
       const display = String((face as FontFace & { display?: string }).display ?? "auto").toLowerCase();
       return {
@@ -1437,14 +1516,14 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
         styles: Object.fromEntries(properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
       };
     });
-    return { selectorCoverage, classEvidence, navigationReferences, fontFaces, styles };
+    return { selectorCoverage, classEvidence, navigationReferences, navigationTransitions, fontFaces, styles };
   }, { rootSelector, properties: [...STYLE_PROPERTIES], role });
   if (telemetry) telemetry.timing.snapshotEvaluationMs += elapsed(startedAt);
   startedAt = performance.now();
   const screenshot = withScreenshot ? await page.screenshot({ type: "png", fullPage: false, animations: "disabled" }) : Buffer.alloc(0);
   if (telemetry && withScreenshot) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 1; }
   const uniqueResourceFailures = [...new Map(resourceFailures.map((failure) => [`${failure.phase}|${failure.type}|${failure.url}|${failure.owner}|${failure.pseudo ?? ""}`, failure])).values()];
-  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, classEvidence: data.classEvidence, navigationReferences: data.navigationReferences, fontFaces: data.fontFaces, styles: data.styles, screenshot };
+  return { ok: true, runtimeErrors: tracker.errors.slice(0, 20), stabilityFailures, resourceFailures: uniqueResourceFailures, selectorCoverage: data.selectorCoverage, classEvidence: data.classEvidence, navigationReferences: data.navigationReferences, navigationTransitions: data.navigationTransitions, fontFaces: data.fontFaces, styles: data.styles, screenshot };
 }
 
 function normalizeClasses(values: string[]): Set<string> {
@@ -1624,11 +1703,17 @@ export function compareFontFaces(reference: FontFaceSnapshot[], generated: FontF
   };
 }
 
-export function compareNavigationIntegrity(reference: NavigationReferenceSnapshot[], generated: NavigationReferenceSnapshot[]): NavigationIntegrityReport {
+export function compareNavigationIntegrity(
+  reference: NavigationReferenceSnapshot[],
+  generated: NavigationReferenceSnapshot[],
+  referenceTransitions: NavigationTransitionSnapshot[] = [],
+  generatedTransitions: NavigationTransitionSnapshot[] = [],
+): NavigationIntegrityReport {
   const issues: NavigationIntegrityReport["issues"] = [];
-  const total = Math.max(reference.length, generated.length);
+  const staticTotal = Math.max(reference.length, generated.length);
+  const transitionTotal = Math.max(referenceTransitions.length, generatedTransitions.length);
   let matched = 0;
-  for (let index = 0; index < total; index += 1) {
+  for (let index = 0; index < staticTotal; index += 1) {
     const expected = reference[index], actual = generated[index];
     if (!expected || !actual) { issues.push({ index, reason: "count-mismatch", reference: expected, generated: actual }); continue; }
     if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); continue; }
@@ -1637,6 +1722,16 @@ export function compareNavigationIntegrity(reference: NavigationReferenceSnapsho
     if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); continue; }
     matched += 1;
   }
+  for (let transitionIndex = 0; transitionIndex < transitionTotal; transitionIndex += 1) {
+    const index = staticTotal + transitionIndex;
+    const expected = referenceTransitions[transitionIndex], actual = generatedTransitions[transitionIndex];
+    if (!expected || !actual) { issues.push({ index, reason: "transition-count-mismatch", referenceTransition: expected, generatedTransition: actual }); continue; }
+    if (expected.method !== actual.method) { issues.push({ index, reason: "transition-method-mismatch", referenceTransition: expected, generatedTransition: actual }); continue; }
+    if (expected.target !== actual.target) { issues.push({ index, reason: "transition-target-mismatch", referenceTransition: expected, generatedTransition: actual }); continue; }
+    if (expected.state !== actual.state) { issues.push({ index, reason: "transition-state-mismatch", referenceTransition: expected, generatedTransition: actual }); continue; }
+    matched += 1;
+  }
+  const total = staticTotal + transitionTotal;
   return { passed: issues.length === 0, total, matched, rate: total ? Number((matched / total).toFixed(4)) : 1, issues: issues.slice(0, 100) };
 }
 
@@ -1661,7 +1756,7 @@ async function evaluateBrowserQualityOnPages(
     const styles = compareComputedStyles(reference.styles, generated.styles);
     const pixels = await comparePixels(reference.screenshot, generated.screenshot, pixelThreshold, options.artifactDir, telemetry);
     const selectorCoverage = applySourceUnstyledExemptions(reference, generated, sourceUnstyledHookClasses(htmlPath));
-    const navigationIntegrity = compareNavigationIntegrity(reference.navigationReferences, generated.navigationReferences);
+    const navigationIntegrity = compareNavigationIntegrity(reference.navigationReferences, generated.navigationReferences, reference.navigationTransitions, generated.navigationTransitions);
     const fontFaceAlignment = compareFontFaces(reference.fontFaces, generated.fontFaces);
     if (telemetry) {
       telemetry.workload.facesDiscovered += fontFaceAlignment.referenceFaces + fontFaceAlignment.generatedFaces;
@@ -1731,7 +1826,7 @@ export async function evaluateBrowserQuality(htmlPath: string, libDir: string, o
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
   } finally {
-    await browser?.close();
+    await closeBrowser(browser);
   }
 }
 
@@ -1867,7 +1962,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
       matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0, resourceFailures: 0, nonBlockingResourceObservations: 0, externalAvailabilityFailures: 0, navigationFailures: 0, worstNavigationIntegrity: 0, fontAlignmentFailures: 0, blockingFontStateMismatches: 0, failedFontFaces: 0 },
     };
   } finally {
-    if (ownsBrowser) await browser?.close();
+    if (ownsBrowser) await closeBrowser(browser);
   }
 }
 
@@ -1904,7 +1999,7 @@ export async function evaluateBrowserQualitySuite(htmlPath: string, libDir: stri
     return { initial, scenarios: scenarioEvaluations, phaseTiming: { initialMatrixMs, scenarioMatricesMs: elapsed(startedAt) }, telemetry };
   } finally {
     const closeStartedAt = performance.now();
-    await browser?.close();
+    await closeBrowser(browser, telemetry);
     telemetry.timing.closeMs = elapsed(closeStartedAt);
     telemetry.timing.totalMs = elapsed(totalStartedAt);
   }
@@ -1925,6 +2020,6 @@ export async function evaluateLibrarySelectorCoverage(libDir: string, options: P
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error) };
   } finally {
-    await browser?.close();
+    await closeBrowser(browser);
   }
 }
