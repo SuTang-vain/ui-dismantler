@@ -1719,10 +1719,17 @@ export async function comparePixels(reference: Buffer, generated: Buffer, thresh
   const startedAt = performance.now();
   const a = PNG.sync.read(reference), b = PNG.sync.read(generated);
   const width = Math.min(a.width, b.width), height = Math.min(a.height, b.height);
+  const crop = (image: PNG): Buffer => {
+    if (image.width === width && image.height === height) return image.data;
+    const data = Buffer.alloc(width * height * 4);
+    for (let y = 0; y < height; y += 1) image.data.copy(data, y * width * 4, y * image.width * 4, y * image.width * 4 + width * 4);
+    return data;
+  };
   const diff = new PNG({ width, height });
-  const differentPixels = pixelmatch(a.data, b.data, diff.data, width, height, { threshold: 0.1, includeAA: false });
+  const differentPixels = pixelmatch(crop(a), crop(b), diff.data, width, height, { threshold: 0.1, includeAA: false });
   const totalPixels = width * height;
-  const report: PixelDiffReport = { width, height, differentPixels, totalPixels, diffRate: Number((differentPixels / totalPixels).toFixed(6)), passed: differentPixels / totalPixels <= threshold, threshold };
+  const dimensionMismatch = a.width !== b.width || a.height !== b.height;
+  const report: PixelDiffReport = { width, height, referenceWidth: a.width, referenceHeight: a.height, generatedWidth: b.width, generatedHeight: b.height, dimensionMismatch, differentPixels, totalPixels, diffRate: Number((differentPixels / totalPixels).toFixed(6)), passed: !dimensionMismatch && differentPixels / totalPixels <= threshold, threshold };
   if (telemetry) telemetry.timing.pixelDiffMs += elapsed(startedAt);
   if (artifactDir) {
     const artifactStartedAt = performance.now();

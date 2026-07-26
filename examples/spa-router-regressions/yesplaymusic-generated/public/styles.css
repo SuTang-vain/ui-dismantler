@@ -1,0 +1,96 @@
+@font-face { font-family: 'Barlow'; font-weight: 400; src: url('/assets/fonts/Barlow-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 500; src: url('/assets/fonts/Barlow-Medium.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 600; src: url('/assets/fonts/Barlow-SemiBold.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 700; src: url('/assets/fonts/Barlow-Bold.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 800; src: url('/assets/fonts/Barlow-ExtraBold.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 900; src: url('/assets/fonts/Barlow-Black.woff2') format('woff2'); }
+:root {
+  --color-body-bg: #fff;
+  --color-text: #000;
+  --color-primary: #335eea;
+  --color-primary-bg: #eaeffd;
+  --color-primary-gradient: var(--color-primary);
+  --color-secondary: #7a7a7b;
+  --color-secondary-bg: #f5f5f7;
+  --color-navbar-bg: rgba(255,255,255,.86);
+  --color-primary-bg-for-transparent: rgba(189,207,255,.28);
+  --color-secondary-bg-for-transparent: rgba(209,209,214,.28);
+}
+#app, input { font-family: 'Barlow', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif, microsoft uighur; }
+html { min-width: 768px; overscroll-behavior: none; }
+body { background-color: var(--color-body-bg); }
+#app { width: 100%; }
+select, button { font-family: inherit; }
+button { background: none; border: none; cursor: pointer; user-select: none; }
+input:focus, button:focus { outline: none; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+nav {
+  position: fixed; top: 0; right: 0; left: 0; display: flex; justify-content: space-between; align-items: center;
+  height: 64px; padding-right: 10vw; padding-left: 10vw; backdrop-filter: saturate(180%) blur(20px);
+  background-color: var(--color-navbar-bg); z-index: 100;
+}
+@media (max-width: 1336px) { nav { padding: 0 max(5vw, 90px); } }
+.navigation-buttons { flex: 1; display: flex; align-items: center; }
+.navigation-buttons button { display: flex; justify-content: center; align-items: center; padding: 8px; background: transparent; margin: 4px; border-radius: 25%; transition: .2s; }
+.navigation-buttons button:first-child { margin-left: 0; }
+.navigation-buttons svg { height: 16px; width: 16px; display: block; }
+@media (max-width: 970px) { .navigation-buttons { flex: unset; } }
+.navigation-links { flex: 1; display: flex; justify-content: center; text-transform: uppercase; user-select: none; }
+.navigation-links a { font-size: 18px; font-weight: 700; border-radius: 6px; padding: 6px 10px; margin-right: 12px; margin-left: 12px; transition: .2s; }
+.navigation-links a.active { color: var(--color-primary); }
+.right-part { flex: 1; display: flex; align-items: center; justify-content: flex-end; }
+.search-box { display: flex; justify-content: flex-end; }
+.search-container { display: flex; align-items: center; height: 32px; background: var(--color-secondary-bg-for-transparent); border-radius: 8px; width: 200px; }
+.search-container > svg { height: 15px; width: 15px; color: var(--color-text); opacity: .28; margin-left: 8px; margin-right: 4px; }
+.search-container .input { flex: 1; }
+.search-container input { font-size: 16px; border: none; background: transparent; width: 96%; font-weight: 600; margin-top: -1px; color: var(--color-text); }
+.avatar { user-select: none; height: 30px; margin-left: 12px; vertical-align: -7px; border-radius: 50%; }
+main { position: fixed; top: 0; bottom: 0; right: 0; left: 0; overflow: auto; padding: 64px 10vw 96px; box-sizing: border-box; scrollbar-width: none; }
+@media (max-width: 1336px) { main { padding: 64px 5vw 96px; } }
+main::-webkit-scrollbar { width: 0; }
+
+/* Explore mirrors the source component, including its default h1 margins. */
+.explore-page h1 { color: var(--color-text); font-size: 56px; }
+.buttons { display: flex; flex-wrap: wrap; }
+.button { user-select: none; cursor: pointer; padding: 8px 16px; margin: 10px 16px 6px 0; display: flex; justify-content: center; align-items: center; font-weight: 600; font-size: 18px; border-radius: 10px; background-color: var(--color-secondary-bg); color: var(--color-secondary); transition: .2s; }
+.button.active { background-color: var(--color-primary-bg); color: var(--color-primary); }
+.button.more span { display: block; height: 24px; line-height: 14px; font-size: 19px; letter-spacing: 2px; }
+.playlists { margin-top: 24px; }
+.load-more { display: flex; justify-content: center; margin-top: 32px; }
+.explore-page::after { content: ''; display: block; height: 24px; }
+
+/* Login mirrors the source structure rather than compensating with fixed padding. */
+.login { display: flex; flex-direction: column; justify-content: center; align-items: center; height: calc(100vh - 192px); }
+.section-1 { margin-bottom: 16px; display: flex; align-items: center; }
+.section-1 img { height: 64px; margin: 20px; }
+.section-1 .x-icon { height: 24px; width: 24px; color: rgba(82,82,82,.28); }
+.section-2 { display: flex; align-items: center; flex-direction: column; }
+.card { cursor: pointer; margin-top: 14px; margin-bottom: 14px; display: flex; justify-content: center; align-items: center; background: #eaeffd; border-radius: 8px; height: 128px; width: 300px; transition: all .3s; padding-left: 22px; box-sizing: border-box; }
+.card-container { display: flex; align-items: center; color: #335eea; }
+.title-info { transition: all .3s; }
+.card .title { font-size: 24px; font-weight: 600; }
+.card .info { margin-top: 2px; font-size: 14px; color: rgba(51,94,234,.78); }
+.card-arrow { opacity: 0; width: 24px; margin-left: 16px; font-size: 28px; }
+
+/* Settings mirrors the source container, item rhythm and native controls. */
+.settings-page { display: flex; justify-content: center; margin-top: 32px; }
+.settings-page .container { margin-top: 24px; width: 720px; }
+.settings-page h3 { margin-top: 48px; padding-bottom: 12px; font-size: 26px; color: var(--color-text); border-bottom: 1px solid rgba(128,128,128,.18); }
+.item { margin: 24px 0; display: flex; align-items: center; justify-content: space-between; color: var(--color-text); }
+.item .title { font-size: 16px; font-weight: 500; opacity: .78; }
+.settings-page select { min-width: 192px; max-width: 600px; font-weight: 600; border: none; padding: 8px 12px; border-radius: 8px; color: var(--color-text); background: var(--color-secondary-bg); appearance: none; }
+.settings-page button { color: var(--color-text); background: var(--color-secondary-bg); padding: 8px 12px; font-weight: 600; border-radius: 8px; transition: .2s; }
+.toggle { margin: auto; }
+.toggle input { opacity: 0; position: absolute; }
+.toggle input + label { position: relative; display: inline-block; user-select: none; transition: .4s ease; height: 32px; width: 52px; background: var(--color-secondary-bg); border-radius: 8px; }
+.toggle input + label::before { content: ''; position: absolute; display: block; transition: .2s cubic-bezier(.24,0,.5,1); height: 32px; width: 52px; top: 0; left: 0; border-radius: 8px; }
+.toggle input + label::after { content: ''; position: absolute; display: block; box-shadow: 0 0 0 1px hsla(0,0%,0%,.02),0 4px 0 0 hsla(0,0%,0%,.01),0 4px 9px hsla(0,0%,0%,.08),0 3px 3px hsla(0,0%,0%,.03); transition: .35s cubic-bezier(.54,1.6,.5,1); background: #fff; height: 20px; width: 20px; top: 6px; left: 6px; border-radius: 6px; }
+.toggle input:checked + label::before { background: var(--color-primary-gradient); transition: width .2s cubic-bezier(0,0,0,.1); }
+.toggle input:checked + label::after { left: 26px; }
+.reversed-cat { display: inline-block; transform: scaleX(-1); }
+.footer { text-align: center; margin-top: 6rem; color: var(--color-text); font-weight: 600; }
+.footer .author { font-size: .9rem; }
+.footer .version { font-size: .88rem; opacity: .58; margin-top: -10px; }
+.vercel-mark { height: 39px; line-height: 39px; overflow: hidden; margin-top: 0; font-size: 28px; opacity: .72; }
+.search-page h1 { margin-bottom: 20px; }
+.search-result { padding: 18px 0; border-bottom: 1px solid #eee; color: #777; }

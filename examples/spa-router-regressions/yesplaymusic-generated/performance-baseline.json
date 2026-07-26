@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "case": "YesPlayMusic generated SPA",
+  "createdAt": "2026-07-26T15:23:05.092Z",
+  "runs": [
+    {
+      "run": 1,
+      "passed": true,
+      "routeStatesPassed": 3,
+      "routeStatesTotal": 3,
+      "viewportRuns": 9,
+      "worstStyle": 1,
+      "worstPixel": 0.00615,
+      "stabilityFailures": 0,
+      "totalMs": 17308.912,
+      "visualMs": 8722.441,
+      "adaptiveWaitMs": 5266,
+      "browserCloseMs": 17.455,
+      "blockingHandles": 0
+    },
+    {
+      "run": 2,
+      "passed": true,
+      "routeStatesPassed": 3,
+      "routeStatesTotal": 3,
+      "viewportRuns": 9,
+      "worstStyle": 1,
+      "worstPixel": 0.00615,
+      "stabilityFailures": 0,
+      "totalMs": 16633.332,
+      "visualMs": 8965.072,
+      "adaptiveWaitMs": 5221,
+      "browserCloseMs": 17.689,
+      "blockingHandles": 0
+    },
+    {
+      "run": 3,
+      "passed": true,
+      "routeStatesPassed": 3,
+      "routeStatesTotal": 3,
+      "viewportRuns": 9,
+      "worstStyle": 1,
+      "worstPixel": 0.00615,
+      "stabilityFailures": 0,
+      "totalMs": 17017.949,
+      "visualMs": 9198.702,
+      "adaptiveWaitMs": 5225,
+      "browserCloseMs": 17.808,
+      "blockingHandles": 0
+    }
+  ],
+  "aggregate": {
+    "passedRuns": 3,
+    "totalRuns": 3,
+    "medianTotalMs": 17017.949,
+    "stddevTotalMs": 338.87,
+    "medianVisualMs": 8965.072,
+    "stddevVisualMs": 238.145,
+    "medianAdaptiveWaitMs": 5225,
+    "stddevAdaptiveWaitMs": 24.906,
+    "medianBrowserCloseMs": 17.689,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.00615,
+    "stabilityFailures": 0,
+    "maxBlockingHandles": 0
+  }
+}

@@ -324,6 +324,11 @@ export interface StyleComparisonReport {
 export interface PixelDiffReport {
   width: number;
   height: number;
+  referenceWidth: number;
+  referenceHeight: number;
+  generatedWidth: number;
+  generatedHeight: number;
+  dimensionMismatch: boolean;
   differentPixels: number;
   totalPixels: number;
   diffRate: number;

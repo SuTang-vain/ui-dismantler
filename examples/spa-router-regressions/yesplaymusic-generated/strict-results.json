@@ -1,0 +1,1062 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4195",
+  "generatedBaseUrl": "http://127.0.0.1:4196",
+  "passed": false,
+  "scenariosPassed": 0,
+  "scenariosTotal": 5,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 6,
+  "results": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4196/settings",
+      "finalUrl": "http://127.0.0.1:4196/explore",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4196/settings",
+      "finalUrl": "http://127.0.0.1:4196/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        },
+        {
+          "stepIndex": 1,
+          "action": "back",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4196/settings",
+      "finalUrl": "http://127.0.0.1:4196/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"generated\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/settings"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4196/settings",
+      "finalUrl": "http://127.0.0.1:4196/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/login",
+          "state": "{\"route\":\"/login\",\"source\":\"generated\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4196/settings",
+      "finalUrl": "http://127.0.0.1:4196/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4195",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 6,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079421307&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1431592712.1785079422&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079422&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1442 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079421307&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1431592712.1785079422&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938466~115938469~118897920~118897930~119896802&sid=1785079422&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=7&tfd=1508 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785079423892&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1927011666.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119527020~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079424&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1526 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785079423892&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1927011666.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938466~115938469~118897920~118897930~119527020~119896803&sid=1785079424&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=6&tfd=2127 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079424079&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1352507118.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119724321~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079424&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1003 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079424079&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1352507118.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938468~118395333~118897920~118897930~119724321~119896803&sid=1785079424&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=7&tfd=1288 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4196",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "router-link-explore",
+      "passed": false,
+      "reference": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 1,
+          "generated": 2,
+          "detail": "transition 数量 reference=1 generated=2"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 0,
+          "reference": "pushState",
+          "generated": "replaceState",
+          "detail": "transition[0] method reference=pushState generated=replaceState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/explore",
+          "generated": "/settings",
+          "detail": "transition[0] target reference=/explore generated=/settings"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{}",
+          "generated": "{\"route\":\"/settings\",\"source\":\"generated\"}",
+          "detail": "transition[0] state reference={} generated={\"route\":\"/settings\",\"source\":\"generated\"}"
+        }
+      ]
+    },
+    {
+      "id": "router-go-back",
+      "passed": false,
+      "reference": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079421307&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1431592712.1785079422&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079422&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1442 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079421307&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1431592712.1785079422&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938466~115938469~118897920~118897930~119896802&sid=1785079422&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=7&tfd=1508 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 2,
+          "generated": 3,
+          "detail": "transition 数量 reference=2 generated=3"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 0,
+          "reference": "pushState",
+          "generated": "replaceState",
+          "detail": "transition[0] method reference=pushState generated=replaceState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/explore",
+          "generated": "/settings",
+          "detail": "transition[0] target reference=/explore generated=/settings"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{}",
+          "generated": "{\"route\":\"/settings\",\"source\":\"generated\"}",
+          "detail": "transition[0] state reference={} generated={\"route\":\"/settings\",\"source\":\"generated\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 1,
+          "reference": "popstate",
+          "generated": "pushState",
+          "detail": "transition[1] method reference=popstate generated=pushState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 1,
+          "reference": "/settings",
+          "generated": "/explore",
+          "detail": "transition[1] target reference=/settings generated=/explore"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 1,
+          "reference": "null",
+          "generated": "{\"route\":\"/explore\",\"source\":\"generated\"}",
+          "detail": "transition[1] state reference=null generated={\"route\":\"/explore\",\"source\":\"generated\"}"
+        }
+      ]
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": false,
+      "reference": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785079423892&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1927011666.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119527020~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079424&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1526 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785079423892&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1927011666.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938466~115938469~118897920~118897930~119527020~119896803&sid=1785079424&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=6&tfd=2127 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 1,
+          "generated": 2,
+          "detail": "transition 数量 reference=1 generated=2"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 0,
+          "reference": "pushState",
+          "generated": "replaceState",
+          "detail": "transition[0] method reference=pushState generated=replaceState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "generated": "/settings",
+          "detail": "transition[0] target reference=/search/%E5%91%A8%E6%9D%B0%E4%BC%A6 generated=/settings"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{}",
+          "generated": "{\"route\":\"/settings\",\"source\":\"generated\"}",
+          "detail": "transition[0] state reference={} generated={\"route\":\"/settings\",\"source\":\"generated\"}"
+        }
+      ]
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": false,
+      "reference": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079424079&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1352507118.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119724321~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785079424&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1003 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785079424079&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1352507118.1785079425&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938468~118395333~118897920~118897930~119724321~119896803&sid=1785079424&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=7&tfd=1288 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 1,
+          "generated": 2,
+          "detail": "transition 数量 reference=1 generated=2"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 0,
+          "reference": "pushState",
+          "generated": "replaceState",
+          "detail": "transition[0] method reference=pushState generated=replaceState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/login",
+          "generated": "/settings",
+          "detail": "transition[0] target reference=/login generated=/settings"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{}",
+          "generated": "{\"route\":\"/settings\",\"source\":\"generated\"}",
+          "detail": "transition[0] state reference={} generated={\"route\":\"/settings\",\"source\":\"generated\"}"
+        }
+      ]
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": false,
+      "reference": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 0,
+          "generated": 1,
+          "detail": "transition 数量 reference=0 generated=1"
+        }
+      ]
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": false,
+    "rate": 0,
+    "matchedScenarios": 0,
+    "totalScenarios": 5,
+    "failures": 20
+  },
+  "telemetry": {
+    "contractTargetRuns": 10,
+    "visualViewportRuns": 0,
+    "visualTargetRuns": 0,
+    "visualTargetReusedRuns": 0,
+    "visualTargetFreshRuns": 0,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 0,
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "graceful-fallback",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 11,
+      "totalBlockingHandles": 8,
+      "standardIoHandles": 3,
+      "handlesByType": {
+        "stdio": 3,
+        "socket": 6,
+        "child-process": 1,
+        "server": 1
+      },
+      "resourcesByType": {
+        "TTYWrap": 3,
+        "pipe": 4,
+        "ProcessWrap": 1,
+        "server": 1,
+        "socket": 2
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 3,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 3,
+      "handlesByType": {
+        "stdio": 3
+      },
+      "resourcesByType": {
+        "filesystem": 1,
+        "TTYWrap": 3
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "timing": {
+      "browserLaunchMs": 630.541,
+      "contractMs": 7262.186,
+      "comparisonMs": 1.705,
+      "visualMatrixMs": 0.185,
+      "browserCloseMs": 310.592,
+      "browserDisconnectMs": 2.142,
+      "browserProcessCloseMs": 308.398,
+      "reportReadyMs": 7896.699,
+      "totalMs": 8207.317
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=5/5，generated=5/5"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": false,
+      "detail": "matched=0/5，rate=0，failures=20"
+    }
+  ]
+}

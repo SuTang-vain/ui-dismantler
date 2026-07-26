@@ -558,17 +558,30 @@ async function initializeVisualStabilityTracking(context: BrowserContext): Promi
   });
 }
 
-async function settleVisual(page: Page, requestActivity: RequestActivity, timeoutMs = 1800): Promise<VisualStabilityResult> {
+async function visibleBlockingRequests(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig): Promise<Request[]> {
+  const candidates = [...requestActivity.active].filter((request) => !isNonBlockingNetworkRequest(request, config));
+  const imageCandidates = candidates.filter((request) => request.resourceType() === "image");
+  if (!imageCandidates.length) return candidates;
+  const referencedImageUrls = new Set(await page.evaluate(() => [...document.images].map((image) => image.currentSrc || image.src)));
+  return candidates.filter((request) => request.resourceType() !== "image" || referencedImageUrls.has(request.url()));
+}
+
+async function settleVisual(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig, timeoutMs = 1800): Promise<VisualStabilityResult> {
   const startedAt = Date.now(), quietWindowMs = 120;
   await page.evaluate(async () => {
     if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
-    await Promise.all([...document.images].map(async (image) => {
+    const visibleImages = [...document.images].filter((image) => {
+      const style = getComputedStyle(image), rect = image.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+    });
+    await Promise.all(visibleImages.map(async (image) => {
       if (!image.complete) await new Promise<void>((done) => { image.addEventListener("load", () => done(), { once: true }); image.addEventListener("error", () => done(), { once: true }); setTimeout(done, 1200); });
       if (typeof image.decode === "function") await image.decode().catch(() => undefined);
     }));
   });
   const deadline = Date.now() + timeoutMs;
   let previousSignature = "", stableSamples = 0;
+  let lastBlockingRequests: Request[] = [];
   let lastState = { mutationQuiet: false, resizeQuiet: false, layoutStable: false, networkQuiet: false };
   while (Date.now() < deadline) {
     const sample = await page.evaluate((quietMs) => {
@@ -582,7 +595,8 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, timeou
     }, quietWindowMs);
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
     previousSignature = sample.signature;
-    const networkQuiet = requestActivity.active.size === 0 && Date.now() - requestActivity.lastActivityAt >= quietWindowMs;
+    lastBlockingRequests = await visibleBlockingRequests(page, requestActivity, config);
+    const networkQuiet = lastBlockingRequests.length === 0;
     lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, layoutStable: stableSamples >= 2, networkQuiet };
     if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt };
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -590,7 +604,10 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, timeou
   const stabilityFailures: string[] = [];
   if (!lastState.mutationQuiet) stabilityFailures.push("DOM mutation quiet window was not reached before visual capture");
   if (!lastState.resizeQuiet || !lastState.layoutStable) stabilityFailures.push("layout rect did not remain stable for two consecutive samples before visual capture");
-  if (!lastState.networkQuiet) stabilityFailures.push(`network quiet window was not reached before visual capture: active=${requestActivity.active.size}`);
+  if (!lastState.networkQuiet) {
+    const pending = lastBlockingRequests.slice(0, 6).map((request) => `${request.resourceType()}:${request.method()} ${request.url()}`).join(" | ");
+    stabilityFailures.push(`network quiet window was not reached before visual capture: active=${lastBlockingRequests.length}${pending ? `; pending=${pending}` : ""}`);
+  }
   return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt };
 }
 
@@ -663,9 +680,14 @@ async function normalizeScrollAnchor(page: Page, visual: SpaRouterScenarioVisual
   return selector;
 }
 
-async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole, requestActivity: RequestActivity, stabilityTimeoutMs?: number): Promise<SpaRouterVisualCapture> {
-  const stability = await settleVisual(page, requestActivity, stabilityTimeoutMs);
+async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole, requestActivity: RequestActivity, config: SpaRouterContractConfig, stabilityTimeoutMs?: number): Promise<SpaRouterVisualCapture> {
+  const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs);
   const anchor = await normalizeScrollAnchor(page, visual, role);
+  const postAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs);
+  const stability = {
+    stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
+    adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
+  };
   const targets = visual.styleTargets?.length ? visual.styleTargets : [{ id: "document-body", selector: "body" }];
   const failures: string[] = [];
   const styles: ComputedStyleSnapshot[] = [];
@@ -711,7 +733,9 @@ function isNonBlockingNetworkRequest(request: Request, config: SpaRouterContract
   let hostname = "";
   try { hostname = new URL(request.url()).hostname.toLowerCase(); } catch { /* malformed URL will be treated as required */ }
   const knownTelemetry = ["www.google-analytics.com", "www.googletagmanager.com", "google-analytics.com", "doubleclick.net", "segment.io", "sentry.io", "hotjar.com"];
-  return knownTelemetry.some((host) => hostname === host || hostname.endsWith(`.${host}`)) || (config.nonBlockingNetworkHosts ?? []).some((host) => hostname === host.toLowerCase() || hostname.endsWith(`.${host.toLowerCase()}`));
+  let telemetryEndpoint = false;
+  try { const url = new URL(request.url()); telemetryEndpoint = (url.hostname === "www.google.com" || url.hostname === "google.com") && url.pathname === "/g/collect"; } catch { /* malformed URL will be treated as required */ }
+  return telemetryEndpoint || knownTelemetry.some((host) => hostname === host || hostname.endsWith(`.${host}`)) || (config.nonBlockingNetworkHosts ?? []).some((host) => hostname === host.toLowerCase() || hostname.endsWith(`.${host.toLowerCase()}`));
 }
 
 async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: { viewport?: QualityViewport; role?: SpaRouterTargetRole; captureVisual?: boolean } = {}): Promise<SpaRouterScenarioExecution> {
@@ -726,7 +750,10 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
       const request = route.request(), url = new URL(request.url());
       const fixture = fixtures.get(`${request.method().toUpperCase()} ${url.pathname}`);
       if (fixture) {
-        await route.fulfill({ status: fixture.status ?? 200, headers: { "content-type": "application/json; charset=utf-8", ...(fixture.headers ?? {}) }, body: JSON.stringify(fixture.body) });
+        const headers: Record<string, string> = { "content-type": "application/json; charset=utf-8", ...(fixture.headers ?? {}) };
+        const contentType = headers["content-type"] ?? headers["Content-Type"] ?? "";
+        const body = typeof fixture.body === "string" && !/json/i.test(contentType) ? fixture.body : JSON.stringify(fixture.body);
+        await route.fulfill({ status: fixture.status ?? 200, headers, body });
         return;
       }
       if (config.apiPrefix && url.pathname.startsWith(config.apiPrefix)) {
@@ -771,7 +798,7 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     const uniqueRuntimeErrors = [...new Set(runtimeErrors)], uniqueUnmocked = [...new Set(unmockedApiRequests)];
     const uniqueRequiredNetworkFailures = [...new Set(requiredNetworkFailures)], uniqueNonBlockingNetworkFailures = [...new Set(nonBlockingNetworkFailures)];
     const result: SpaRouterScenarioResult = { id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0 && uniqueRequiredNetworkFailures.length === 0, entryUrl, finalUrl: page.url(), transitions, stepRoutes, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked, requiredNetworkFailures: uniqueRequiredNetworkFailures, nonBlockingNetworkFailures: uniqueNonBlockingNetworkFailures, assertionFailures };
-    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config.visualMatrix?.stabilityTimeoutMs) : undefined;
+    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config, config.visualMatrix?.stabilityTimeoutMs) : undefined;
     return { result, visual };
   } finally { await context.close(); }
 }
