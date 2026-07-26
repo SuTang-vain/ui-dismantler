@@ -2,41 +2,45 @@
   "runs": [
     {
       "round": 1,
-      "ms": 54516,
+      "ms": 46866,
       "passed": true,
+      "fastShutdownUsed": true,
+      "fastShutdownConfirmed": true,
+      "processCloseMs": 9.317,
       "stabilityFailures": 0,
-      "adaptiveWaitMs": 2660,
-      "reused": 8,
-      "fresh": 16,
+      "newChromePids": [],
       "worstStyle": 1,
       "worstPixel": 0
     },
     {
       "round": 2,
-      "ms": 53364,
+      "ms": 45684,
       "passed": true,
+      "fastShutdownUsed": true,
+      "fastShutdownConfirmed": true,
+      "processCloseMs": 9.964,
       "stabilityFailures": 0,
-      "adaptiveWaitMs": 2626,
-      "reused": 8,
-      "fresh": 16,
+      "newChromePids": [],
       "worstStyle": 1,
       "worstPixel": 0
     },
     {
       "round": 3,
-      "ms": 57840,
+      "ms": 45977,
       "passed": true,
+      "fastShutdownUsed": true,
+      "fastShutdownConfirmed": true,
+      "processCloseMs": 8.627,
       "stabilityFailures": 0,
-      "adaptiveWaitMs": 2897,
-      "reused": 8,
-      "fresh": 16,
+      "newChromePids": [],
       "worstStyle": 1,
       "worstPixel": 0
     }
   ],
-  "medianMs": 54516,
-  "meanMs": 55240,
-  "standardDeviationMs": 2324,
+  "medianMs": 45977,
+  "meanMs": 46176,
+  "standardDeviationMs": 616,
   "failureRate": 0,
-  "stabilityFailureRate": 0
+  "stabilityFailureRate": 0,
+  "newOrphanRate": 0
 }

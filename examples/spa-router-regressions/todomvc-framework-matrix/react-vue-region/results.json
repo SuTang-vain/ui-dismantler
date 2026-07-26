@@ -1,0 +1,3238 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "https://todomvc.com/examples/react/dist/",
+  "generatedBaseUrl": "https://todomvc.com/examples/vue/dist/",
+  "passed": true,
+  "scenariosPassed": 8,
+  "scenariosTotal": 8,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 16,
+  "results": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522750&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1830867565.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119259606~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2153 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/vue/dist/#/active",
+          "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/vue/dist/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522737&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1430912917.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2118 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/completed",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/completed\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/vue/dist/#/completed",
+          "state": "{\"back\":\"/\",\"current\":\"/completed\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/vue/dist/#/completed"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039525631&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1307718819.1785039525&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2217 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "dblclick",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039526274&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1690750622.1785039526&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1590 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "hover",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 6,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=745396846.1785039529&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2154 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1912135124.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119793973~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1939 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/vue/dist/#/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039533243&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1302445795.1785039533&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119527019~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039533&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2273 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/vue/dist/",
+      "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/",
+          "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/vue/dist/#/active",
+          "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/vue/dist/#/active",
+          "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/vue/dist/#/completed",
+          "state": "{\"back\":\"/active\",\"current\":\"/completed\",\"forward\":null,\"position\":3,\"replaced\":false,\"scroll\":null}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/vue/dist/#/active",
+          "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/vue/dist/#/active",
+          "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/vue/dist/#/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/examples/vue/dist/#/active"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/examples/vue/dist/#/completed"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/examples/vue/dist/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785039535700&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=7872709.1785039536&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119793974~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039536&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=4088 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "https://todomvc.com/examples/react/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522744&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2112072012.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527020~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2179 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522784&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1074411847.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2241 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039526003&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=224696464.1785039526&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1987 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039526771&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2074851196.1785039527&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039527&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1720 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529978&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1917314429.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1887 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039530343&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=673540131.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1622 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039534094&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=360886822.1785039534&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039534&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1702 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039534085&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=794515975.1785039534&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119793972~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039534&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1643 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "https://todomvc.com/examples/vue/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522750&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1830867565.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119259606~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2153 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522737&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1430912917.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2118 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/completed\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/completed",
+            "state": "{\"back\":\"/\",\"current\":\"/completed\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039525631&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1307718819.1785039525&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2217 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039526274&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1690750622.1785039526&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1590 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=745396846.1785039529&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2154 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1912135124.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119793973~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1939 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039533243&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1302445795.1785039533&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119527019~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039533&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2273 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/completed",
+            "state": "{\"back\":\"/active\",\"current\":\"/completed\",\"forward\":null,\"position\":3,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/vue/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/vue/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/vue/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785039535700&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=7872709.1785039536&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119793974~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039536&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=4088 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "reference": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522744&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2112072012.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527020~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2179 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522750&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1830867565.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119259606~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2153 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522784&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1074411847.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2241 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039522737&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1430912917.1785039523&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039523&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2118 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039526003&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=224696464.1785039526&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1987 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/completed\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/completed",
+            "state": "{\"back\":\"/\",\"current\":\"/completed\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039525631&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1307718819.1785039525&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2217 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "reference": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039526771&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2074851196.1785039527&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039527&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1720 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039526274&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1690750622.1785039526&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039526&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1590 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "reference": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529978&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1917314429.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1887 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=745396846.1785039529&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2154 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "reference": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785039530343&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=673540131.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1622 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039529983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1912135124.1785039530&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119793973~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039530&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1939 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "reference": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039534094&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=360886822.1785039534&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039534&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1702 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/vue/dist/#/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039533243&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1302445795.1785039533&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119527019~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039533&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2273 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "reference": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785039534085&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=794515975.1785039534&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119793972~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785039534&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1643 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/vue/dist/",
+        "finalUrl": "https://todomvc.com/examples/vue/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/",
+            "state": "{\"back\":null,\"current\":\"/\",\"forward\":\"/active\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/vue/dist/#/completed",
+            "state": "{\"back\":\"/active\",\"current\":\"/completed\",\"forward\":null,\"position\":3,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/vue/dist/#/active",
+            "state": "{\"back\":\"/\",\"current\":\"/active\",\"forward\":\"/completed\",\"position\":2,\"replaced\":false,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/vue/dist/#/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/vue/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/vue/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/vue/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785039535700&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=7872709.1785039536&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119793974~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fvue%2Fdist%2F&dt=TodoMVC%3A%20Vue&sid=1785039536&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=4088 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 20,
+    "totalScenarios": 20,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "add-two-todos",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 225.59375
+            },
+            "generatedRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 225.59375
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 316,
+            "durationMs": 74.97,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 225,
+              "differentPixels": 4,
+              "totalPixels": 123750,
+              "diffRate": 0.000032,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 225.59375
+            },
+            "generatedRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 225.59375
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 269,
+            "durationMs": 3196.329,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 225,
+              "differentPixels": 4,
+              "totalPixels": 123750,
+              "diffRate": 0.000032,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 255.59375
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 255.59375
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 222,
+            "durationMs": 3322.628,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 255,
+              "differentPixels": 4,
+              "totalPixels": 99450,
+              "diffRate": 0.00004,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/add-two-todos/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.00004,
+        "durationMs": 3397.971
+      },
+      {
+        "scenarioId": "active-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/vue/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 235,
+            "durationMs": 18.794,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 4,
+              "totalPixels": 90750,
+              "diffRate": 0.000044,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/vue/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 217,
+            "durationMs": 4086.479,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 4,
+              "totalPixels": 90750,
+              "diffRate": 0.000044,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/vue/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 216,
+            "durationMs": 4207.418,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 195,
+              "differentPixels": 4,
+              "totalPixels": 76050,
+              "diffRate": 0.000053,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/active-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000053,
+        "durationMs": 4226.248
+      },
+      {
+        "scenarioId": "completed-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/vue/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 255,
+            "durationMs": 11.497,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 42,
+              "totalPixels": 90750,
+              "diffRate": 0.000463,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/vue/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 219,
+            "durationMs": 4320.462,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 42,
+              "totalPixels": 90750,
+              "diffRate": 0.000463,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/vue/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 224,
+            "durationMs": 4202.783,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 195,
+              "differentPixels": 42,
+              "totalPixels": 76050,
+              "diffRate": 0.000552,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/completed-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000552,
+        "durationMs": 4320.52
+      },
+      {
+        "scenarioId": "edit-todo",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 387,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 275,
+            "durationMs": 10.926,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 4,
+              "totalPixels": 90750,
+              "diffRate": 0.000044,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "generatedRegionRect": {
+              "x": 109,
+              "y": 130,
+              "width": 550,
+              "height": 165.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 313,
+            "durationMs": 3701.418,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 550,
+              "height": 165,
+              "differentPixels": 4,
+              "totalPixels": 90750,
+              "diffRate": 0.000044,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/vue/dist/#/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "referenceRegion": ".todoapp",
+            "generatedRegion": ".todoapp",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 130,
+              "width": 390,
+              "height": 195.796875
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 282,
+            "durationMs": 3690.295,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 195,
+              "differentPixels": 4,
+              "totalPixels": 76050,
+              "diffRate": 0.000053,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-vue-region/visual-artifacts/edit-todo/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000053,
+        "durationMs": 3701.469
+      }
+    ],
+    "scenarioCount": 4,
+    "viewportRuns": 12,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 12,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 3043,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.000552,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 24,
+    "reusedTargetRuns": 8,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 16,
+    "visualViewportRuns": 12,
+    "visualTargetRuns": 24,
+    "visualTargetReusedRuns": 8,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 3043,
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "fast-kill",
+    "fastShutdownUsed": true,
+    "fastShutdownConfirmed": true,
+    "fastShutdownLockAcquired": true,
+    "fastShutdownLockWaitMs": 1.36,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 8,
+      "handlesByType": {
+        "socket": 6,
+        "child-process": 1,
+        "server": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 4,
+        "ProcessWrap": 1,
+        "server": 1,
+        "socket": 2
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 0,
+      "handlesByType": {},
+      "resourcesByType": {
+        "filesystem": 3,
+        "timer": 2
+      },
+      "requestsByType": {
+        "filesystem": 3
+      }
+    },
+    "timing": {
+      "browserLaunchMs": 504.556,
+      "contractMs": 17045.504,
+      "comparisonMs": 1.161,
+      "visualMatrixMs": 15646.65,
+      "browserCloseMs": 15.261,
+      "browserDisconnectMs": 0.688,
+      "browserProcessCloseMs": 14.546,
+      "reportReadyMs": 33198.266,
+      "totalMs": 33213.537
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=8/8，generated=8/8"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "4/4 SPA route states 通过，viewportRuns=12，worstComputedStyle=1，worstPixelDiff=0.000552"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=20/20，rate=1，failures=0"
+    }
+  ]
+}

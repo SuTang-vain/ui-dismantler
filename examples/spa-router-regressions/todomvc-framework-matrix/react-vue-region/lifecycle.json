@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "pid": 43871,
+  "reportReady": true,
+  "reportWritten": true,
+  "beforeExitObserved": true,
+  "exitObserved": true,
+  "reportReadyMs": 33198.266,
+  "browserCloseMs": 15.261,
+  "activeHandlesAfterClose": {
+    "totalHandles": 0,
+    "handlesByType": {},
+    "resourcesByType": {
+      "filesystem": 3,
+      "timer": 2
+    },
+    "requestsByType": {
+      "filesystem": 3
+    }
+  },
+  "createdAt": "2026-07-26T04:19:13.217Z",
+  "beforeExitAt": "2026-07-26T04:19:14.204Z",
+  "exitCode": 0,
+  "exitAt": "2026-07-26T04:19:14.205Z"
+}

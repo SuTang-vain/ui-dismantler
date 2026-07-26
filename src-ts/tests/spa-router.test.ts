@@ -52,6 +52,12 @@ test("SPA router contract captures push, replace, popstate, deep reload and dete
   assert.equal(report.results.flatMap((result) => result.transitions).some((transition) => transition.state.includes('"key"')), false);
   assert.ok(report.results.some((result) => result.transitions.some((transition) => transition.method === "pushState")));
   assert.ok(report.results.find((result) => result.id === "router-back")?.transitions.some((transition) => transition.method === "popstate"));
+  assert.ok(report.telemetry.timing.reportReadyMs > 0);
+  assert.ok(report.telemetry.timing.totalMs >= report.telemetry.timing.reportReadyMs);
+  assert.ok(report.telemetry.activeHandlesBeforeClose.totalHandles >= 0);
+  assert.ok(report.telemetry.activeHandlesAfterClose.totalHandles >= 0);
+  assert.ok(report.telemetry.activeHandlesAfterClose.totalBlockingHandles >= 0);
+  assert.equal(typeof report.telemetry.fastShutdownLockWaitMs, "number");
 });
 
 test("SPA router contract strictly compares reference and generated transition order, target and normalized state", async () => {
@@ -69,6 +75,47 @@ test("SPA router contract strictly compares reference and generated transition o
   assert.equal(report.navigationIntegrity.rate, 1);
   assert.equal(report.comparisons?.every((comparison) => comparison.passed), true);
   assert.equal(report.qualityGates.find((gate) => gate.id === "navigation-integrity")?.passed, true);
+});
+
+test("SPA semantic navigation compares base-relative route observations and supports role-specific selectors", async () => {
+  const semanticServer = createServer((request, response) => {
+    const generated = request.url?.startsWith("/generated/") ?? false;
+    const prefix = generated ? "/generated" : "/reference";
+    const exploreId = generated ? "explore-generated" : "explore-reference";
+    const extraInit = generated ? "history.replaceState({router:'generated',phase:'extra'},'',location.href);" : "";
+    const page = `<!doctype html><html><body><a id="${exploreId}" href="${prefix}/explore">Explore</a><main id="view"></main><script>
+const prefix=${JSON.stringify(prefix)},view=document.getElementById('view');
+const render=()=>view.textContent=location.pathname===prefix+'/explore'?'Explore':'Home';
+const navigate=path=>{history.pushState({router:${generated ? "'generated'" : "'reference'"}},'',path);render()};
+history.replaceState({router:${generated ? "'generated'" : "'reference'"}},'',location.href);${extraInit}
+document.querySelector('a').onclick=e=>{e.preventDefault();navigate(e.currentTarget.getAttribute('href'))};
+addEventListener('popstate',render);render();
+</script></body></html>`;
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(page);
+  });
+  await new Promise<void>((resolve) => semanticServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = semanticServer.address(); if (!address || typeof address === "string") throw new Error("missing semantic server address");
+    const host = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: `${host}/reference/`, generatedBaseUrl: `${host}/generated/`, navigationComparison: "semantic",
+      scenarios: [{
+        id: "role-aware-history", entryPath: "./", steps: [
+          { action: "click", target: { reference: "#explore-reference", generated: "#explore-generated" } },
+          { action: "back" },
+        ],
+        assertions: { path: { reference: "/reference/", generated: "/generated/" }, visibleText: "Home" },
+      }],
+    });
+    assert.equal(report.reference?.passed, true, JSON.stringify(report, null, 2));
+    assert.equal(report.generated?.passed, true, JSON.stringify(report, null, 2));
+    assert.notEqual(report.reference?.results[0]?.transitions.length, report.generated?.results[0]?.transitions.length);
+    assert.equal(report.comparisons?.[0]?.failures.length, 0, JSON.stringify(report.comparisons, null, 2));
+    assert.equal(report.navigationIntegrity.rate, 1);
+    assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+  } finally {
+    await new Promise<void>((resolve, reject) => semanticServer.close((error) => error ? reject(error) : resolve()));
+  }
 });
 
 test("SPA router navigation-integrity gate rejects a generated history-state mismatch even when route assertions pass", async () => {
@@ -129,6 +176,7 @@ test("SPA route-state visual matrix compares reviewed styles and pixels across v
   const report = await evaluateSpaRouterContract({
     schemaVersion: "1.0", referenceBaseUrl: baseUrl, generatedBaseUrl: baseUrl, apiPrefix: "/api/", ignoredStateKeys: ["key"],
     fixtures: [{ path: "/api/bootstrap", body: { ready: true } }],
+    execution: { browserShutdown: "fast-kill" },
     visualMatrix: {
       artifactDir,
       viewports: [
@@ -153,8 +201,43 @@ test("SPA route-state visual matrix compares reviewed styles and pixels across v
   assert.equal(report.telemetry.visualTargetFreshRuns, 2);
   assert.equal(report.telemetry.visualStabilityFailures, 0);
   assert.ok(report.telemetry.visualAdaptiveWaitMs > 0);
+  assert.equal(report.telemetry.browserShutdownMode, "fast-kill");
+  assert.equal(report.telemetry.fastShutdownUsed, true);
+  assert.equal(report.telemetry.fastShutdownConfirmed, true);
   assert.equal(report.visualMatrix?.scenarios[0]?.viewports.every((viewport) => viewport.referenceAnchor === "#view" && viewport.generatedAnchor === "#view"), true);
   assert.equal(report.qualityGates.find((gate) => gate.id === "scenario-viewport-matrix")?.passed, true);
+});
+
+test("SPA reviewed screenshot region excludes non-owned shell differences while preserving region evidence", async () => {
+  const shellMismatchApp = app.replace("</head>", "<style>body{background:#e11d48}#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
+  const referenceRegionApp = app.replace("</head>", "<style>#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
+  const regionServer = createServer((request, response) => {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(request.url?.startsWith("/generated") ? shellMismatchApp : referenceRegionApp);
+  });
+  await new Promise<void>((resolve) => regionServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = regionServer.address(); if (!address || typeof address === "string") throw new Error("missing region server address");
+    const host = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: `${host}/reference/`, generatedBaseUrl: `${host}/generated/`, navigationComparison: "semantic", apiPrefix: "/api/", ignoredStateKeys: ["key"],
+      fixtures: [{ path: "/api/bootstrap", body: { ready: true } }],
+      visualMatrix: { viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+      scenarios: [{
+        id: "reviewed-region", entryPath: "./", steps: [], assertions: { visibleText: "Home" },
+        visual: { screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "route-view", selector: "#view" }] },
+      }],
+    });
+    const viewport = report.visualMatrix?.scenarios[0]?.viewports[0];
+    assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+    assert.equal(viewport?.referenceRegion, "#view");
+    assert.equal(viewport?.generatedRegion, "#view");
+    assert.ok((viewport?.referenceRegionRect?.width ?? 1024) < 1024);
+    assert.ok((viewport?.referenceRegionRect?.height ?? 768) < 768);
+    assert.equal(viewport?.pixels.diffRate, 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => regionServer.close((error) => error ? reject(error) : resolve()));
+  }
 });
 
 test("SPA route-state visual matrix catches a generated mobile-only regression", async () => {
@@ -234,6 +317,7 @@ test("SPA adaptive visual stability fails continuous DOM mutations instead of ca
     const base = `http://127.0.0.1:${address.port}`;
     const report = await evaluateSpaRouterContract({
       schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      execution: { browserShutdown: "fast-kill" },
       visualMatrix: { stabilityTimeoutMs: 220, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
       scenarios: [{ id: "unstable", entryPath: "/", steps: [], assertions: { visibleText: "Ready" }, visual: { screenshotAnchor: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
     });
@@ -244,7 +328,41 @@ test("SPA adaptive visual stability fails continuous DOM mutations instead of ca
     assert.ok((report.telemetry.visualAdaptiveWaitMs ?? 0) >= 400);
     assert.equal(report.qualityGates.find((gate) => gate.id === "visual-runtime")?.passed, false);
     assert.equal(report.qualityGates.find((gate) => gate.id === "scenario-viewport-matrix")?.passed, false);
+    assert.equal(report.telemetry.browserShutdownMode, "graceful-fallback");
+    assert.equal(report.telemetry.fastShutdownUsed, false);
   } finally {
     await new Promise<void>((resolve, reject) => unstableServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("SPA resource readiness separates required document assets from non-blocking image failures", async () => {
+  const resourceApp = `<!doctype html><html><head><link rel="stylesheet" href="/missing.css"></head><body><script src="/missing.js"></script><img src="/missing.png"><main>Ready</main></body></html>`;
+  const resourceServer = createServer((_request, response) => { response.writeHead(404, { "content-type": "text/plain" }); response.end("missing"); });
+  const pageServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(resourceApp); });
+  await new Promise<void>((resolve) => pageServer.listen(0, "127.0.0.1", resolve));
+  await new Promise<void>((resolve) => resourceServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const pageAddress = pageServer.address(), resourceAddress = resourceServer.address();
+    if (!pageAddress || typeof pageAddress === "string" || !resourceAddress || typeof resourceAddress === "string") throw new Error("missing resource server address");
+    // The page server redirects asset requests to the explicit 404 server so the test can classify types.
+    await new Promise<void>((resolve, reject) => pageServer.close((error) => error ? reject(error) : resolve()));
+    const proxyServer = createServer((request, response) => {
+      if (request.url === "/") { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(resourceApp.replaceAll("http://asset.invalid", `http://127.0.0.1:${resourceAddress.port}`)); return; }
+      response.writeHead(404); response.end("missing");
+    });
+    await new Promise<void>((resolve) => proxyServer.listen(0, "127.0.0.1", resolve));
+    try {
+      const proxyAddress = proxyServer.address(); if (!proxyAddress || typeof proxyAddress === "string") throw new Error("missing proxy address");
+      const report = await evaluateSpaRouterContract({ schemaVersion: "1.0", baseUrl: `http://127.0.0.1:${proxyAddress.port}`, scenarios: [{ id: "resources", entryPath: "/", steps: [], assertions: { visibleText: "Ready" } }] });
+      assert.equal(report.passed, false);
+      assert.ok((report.requiredNetworkFailures ?? 0) >= 1, JSON.stringify(report, null, 2));
+      assert.ok((report.nonBlockingNetworkFailures ?? 0) >= 0);
+      assert.equal(report.qualityGates.find((gate) => gate.id === "resource-readiness")?.passed, false);
+    } finally {
+      await new Promise<void>((resolve, reject) => proxyServer.close((error) => error ? reject(error) : resolve()));
+    }
+  } finally {
+    await new Promise<void>((resolve, reject) => resourceServer.close((error) => error ? reject(error) : resolve()));
+    if (pageServer.listening) await new Promise<void>((resolve, reject) => pageServer.close((error) => error ? reject(error) : resolve()));
   }
 });

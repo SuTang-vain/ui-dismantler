@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "measuredAt": "2026-07-26",
+  "qualityThresholds": {
+    "computedStyle": 0.98,
+    "pixelDiff": 0.02,
+    "navigationIntegrity": 1,
+    "runtimeErrors": 0,
+    "requiredResourceFailures": 0
+  },
+  "spaRouter": {
+    "passed": true,
+    "cases": {
+      "react-vue-region": {
+        "runs": 3,
+        "passedRuns": 3,
+        "failureRate": 0,
+        "lifecycleFailureRate": 0,
+        "blockingHandleLeakRate": 0,
+        "externalWallMedianMs": 39775.875,
+        "totalMedianMs": 37620.123,
+        "browserCloseMedianMs": 18.56,
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000552,
+        "navigationIntegrity": 1
+      },
+      "react-svelte-full": {
+        "runs": 3,
+        "passedRuns": 3,
+        "failureRate": 0,
+        "lifecycleFailureRate": 0,
+        "blockingHandleLeakRate": 0,
+        "externalWallMedianMs": 33429.226,
+        "totalMedianMs": 31542.549,
+        "browserCloseMedianMs": 15.491,
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.016735,
+        "navigationIntegrity": 1
+      }
+    }
+  },
+  "babelo": {
+    "phases": [
+      {
+        "id": "graceful-before-generic-shutdown",
+        "report": "quality-baseline-babelo-2026-07-26.json",
+        "runs": 3,
+        "failureRate": 0.333333,
+        "stabilityFailureRate": 0.333333,
+        "totalMedianMs": 62963.889,
+        "browserCloseMedianMs": 7202.795
+      },
+      {
+        "id": "fast-kill-before-optional-font-stylesheet",
+        "report": "quality-baseline-babelo-fast-2026-07-26.json",
+        "runs": 3,
+        "failureRate": 0.666667,
+        "stabilityFailureRate": 0.666667,
+        "totalMedianMs": 54791.864,
+        "browserCloseMedianMs": 14.274
+      },
+      {
+        "id": "fast-kill-after-optional-font-stylesheet",
+        "report": "quality-baseline-babelo-font-swap-2026-07-26.json",
+        "runs": 3,
+        "failureRate": 0,
+        "stabilityFailureRate": 0,
+        "totalMedianMs": 54888.91,
+        "browserCloseMedianMs": 15.04,
+        "optionalFontStylesheetBypasses": 1,
+        "blockingHandleLeakRuns": 0
+      }
+    ],
+    "final": {
+      "passed": true,
+      "runs": 3,
+      "passedRuns": 3,
+      "failureRate": 0,
+      "stabilityFailureRate": 0,
+      "totalMedianMs": 54888.91,
+      "totalStandardDeviationMs": 523.201,
+      "browserCloseMedianMs": 15.04,
+      "worstComputedStyle": 0.9857,
+      "worstPixelDiff": 0.006325
+    },
+    "improvement": {
+      "totalMedianRate": 0.128248,
+      "browserCloseMedianRate": 0.997912
+    }
+  },
+  "conclusions": [
+    "SPA Router 两案例 6/6 重复运行通过，无 lifecycle 或 blocking handle 泄漏。",
+    "通用 browser fast-kill 将 Babelo browser close 中位数从秒级降至约 15ms。",
+    "Google Fonts display=swap stylesheet 被窄范围识别为非阻塞字体资源，Babelo 最终 3/3 通过。",
+    "普通 stylesheet、display=block 字体和业务资源仍保持严格门禁。"
+  ],
+  "commitReadiness": {
+    "preFixReportsExplicitlyLabeled": true,
+    "postFixReport": "quality-baseline-babelo-font-swap-2026-07-26.json",
+    "diagnosticReports": [
+      "quality-baseline-babelo-2026-07-26.json",
+      "quality-baseline-babelo-fast-2026-07-26.json"
+    ]
+  }
+}

@@ -1,7 +1,9 @@
 import { existsSync } from "node:fs";
+import { open, readFile, stat, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
-import { chromium, type Browser, type BrowserContext, type Page, type Request } from "playwright-core";
+import { chromium, type Browser, type BrowserContext, type BrowserServer, type Page, type Request } from "playwright-core";
 import { compareComputedStyles, comparePixels, COMPUTED_STYLE_PROPERTIES } from "./browser.js";
 import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport, StyleComparisonReport } from "../types.js";
 
@@ -13,28 +15,30 @@ export interface SpaRouterFixture {
   body: JsonValue;
 }
 
+export type SpaRouterRoleValue = string | { default?: string; reference?: string; generated?: string };
+
 export interface SpaRouterStep {
   action: "click" | "dblclick" | "hover" | "input" | "key" | "back" | "forward" | "reload" | "wait";
-  target?: string;
+  target?: SpaRouterRoleValue;
   value?: string;
   key?: string;
   ms?: number;
 }
 
 export interface SpaRouterAssertion {
-  path?: string;
-  search?: string;
-  hash?: string;
+  path?: SpaRouterRoleValue;
+  search?: SpaRouterRoleValue;
+  hash?: SpaRouterRoleValue;
   visibleText?: string;
-  visibleSelector?: string;
+  visibleSelector?: SpaRouterRoleValue;
   absentText?: string;
   absentExactText?: string;
-  absentSelector?: string;
-  selectorCount?: { target: string; count: number };
-  inputValue?: { target: string; value: string };
+  absentSelector?: SpaRouterRoleValue;
+  selectorCount?: { target: SpaRouterRoleValue; count: number };
+  inputValue?: { target: SpaRouterRoleValue; value: string };
 }
 
-export type SpaRouterRoleSelector = string | { default?: string; reference?: string; generated?: string };
+export type SpaRouterRoleSelector = SpaRouterRoleValue;
 
 export interface SpaRouterVisualStyleTarget {
   id: string;
@@ -42,7 +46,10 @@ export interface SpaRouterVisualStyleTarget {
 }
 
 export interface SpaRouterScenarioVisualState {
+  /** Scroll alignment target; capture remains viewport-wide unless screenshotRegion is also supplied. */
   screenshotAnchor?: SpaRouterRoleSelector;
+  /** Reviewed visual responsibility region. When supplied, pixels are captured only inside this element. */
+  screenshotRegion?: SpaRouterRoleSelector;
   styleTargets?: SpaRouterVisualStyleTarget[];
 }
 
@@ -65,6 +72,7 @@ export interface SpaRouterVisualMatrixConfig {
 export interface SpaRouterExecutionConfig {
   contractConcurrency?: number;
   visualConcurrency?: number;
+  browserShutdown?: "graceful" | "fast-kill";
 }
 
 export interface SpaRouterContractConfig {
@@ -76,7 +84,12 @@ export interface SpaRouterContractConfig {
   /** Generated/dismantled target for strict translation comparison. */
   generatedBaseUrl?: string;
   apiPrefix?: string;
+  nonBlockingNetworkHosts?: string[];
   ignoredStateKeys?: string[];
+  /** strict compares raw History API transitions; semantic compares user-observable route state after each step. */
+  navigationComparison?: "strict" | "semantic";
+  /** Canonical route aliases applied after each target is normalized relative to its own base URL. */
+  semanticRouteAliases?: Record<string, string>;
   fixtures?: SpaRouterFixture[];
   scenarios: SpaRouterScenario[];
   /** Explicitly enables route-state visual replay for scenarios that declare `visual`. */
@@ -90,14 +103,23 @@ export interface SpaRouterTransition {
   state: string;
 }
 
+export interface SpaRouterStepRoute {
+  stepIndex: number;
+  action: SpaRouterStep["action"];
+  route: string;
+}
+
 export interface SpaRouterScenarioResult {
   id: string;
   passed: boolean;
   entryUrl: string;
   finalUrl: string;
   transitions: SpaRouterTransition[];
+  stepRoutes: SpaRouterStepRoute[];
   runtimeErrors: string[];
   unmockedApiRequests: string[];
+  requiredNetworkFailures: string[];
+  nonBlockingNetworkFailures: string[];
   assertionFailures: string[];
 }
 
@@ -108,6 +130,8 @@ export interface SpaRouterTargetReport {
   scenariosTotal: number;
   runtimeErrors: number;
   unmockedApiRequests: number;
+  requiredNetworkFailures: number;
+  nonBlockingNetworkFailures: number;
   results: SpaRouterScenarioResult[];
 }
 
@@ -120,6 +144,8 @@ export type SpaRouterComparisonFailureReason =
   | "transition-method-mismatch"
   | "transition-target-mismatch"
   | "transition-state-mismatch"
+  | "step-route-count-mismatch"
+  | "step-route-mismatch"
   | "final-route-mismatch";
 
 export interface SpaRouterComparisonFailure {
@@ -152,8 +178,13 @@ export interface SpaRouterVisualViewportResult extends QualityViewport {
   generatedFinalRoute: string;
   referenceAnchor: string | null;
   generatedAnchor: string | null;
+  referenceRegion: string | null;
+  generatedRegion: string | null;
+  referenceRegionRect: SpaRouterCaptureRect | null;
+  generatedRegionRect: SpaRouterCaptureRect | null;
   runtimeErrors: number;
   unmockedApiRequests: number;
+  requiredNetworkFailures: number;
   stabilityFailures: string[];
   adaptiveWaitMs: number;
   durationMs: number;
@@ -180,6 +211,7 @@ export interface SpaRouterVisualMatrixReport {
   viewportRuns: number;
   runtimeErrors: number;
   unmockedApiRequests: number;
+  requiredNetworkFailures: number;
   navigationFailures: number;
   navigationMatchedRuns: number;
   worstComputedStyle: number;
@@ -193,6 +225,15 @@ export interface SpaRouterVisualMatrixReport {
   adaptiveWaitMs: number;
 }
 
+export interface SpaRouterActiveHandleSnapshot {
+  totalHandles: number;
+  totalBlockingHandles: number;
+  standardIoHandles: number;
+  handlesByType: Record<string, number>;
+  resourcesByType: Record<string, number>;
+  requestsByType: Record<string, number>;
+}
+
 export interface SpaRouterExecutionTelemetry {
   contractTargetRuns: number;
   visualViewportRuns: number;
@@ -203,12 +244,22 @@ export interface SpaRouterExecutionTelemetry {
   visualAdaptiveWaitMs: number;
   contractConcurrency: number;
   visualConcurrency: number;
+  browserShutdownMode: "graceful" | "profiled-graceful" | "fast-kill" | "graceful-fallback";
+  fastShutdownUsed: boolean;
+  fastShutdownConfirmed: boolean;
+  fastShutdownLockAcquired: boolean;
+  fastShutdownLockWaitMs: number;
+  activeHandlesBeforeClose: SpaRouterActiveHandleSnapshot;
+  activeHandlesAfterClose: SpaRouterActiveHandleSnapshot;
   timing: {
     browserLaunchMs: number;
     contractMs: number;
     comparisonMs: number;
     visualMatrixMs: number;
     browserCloseMs: number;
+    browserDisconnectMs: number;
+    browserProcessCloseMs: number;
+    reportReadyMs: number;
     totalMs: number;
   };
 }
@@ -231,6 +282,8 @@ export interface SpaRouterContractReport {
   scenariosTotal: number;
   runtimeErrors: number;
   unmockedApiRequests: number;
+  requiredNetworkFailures: number;
+  nonBlockingNetworkFailures: number;
   /** Source-only results, or generated results in comparison mode for backward-compatible consumers. */
   results: SpaRouterScenarioResult[];
   reference?: SpaRouterTargetReport;
@@ -242,11 +295,15 @@ export interface SpaRouterContractReport {
   qualityGates: SpaRouterQualityGate[];
 }
 
+export interface SpaRouterCaptureRect { x: number; y: number; width: number; height: number; }
+
 type SpaRouterTargetRole = "single" | "reference" | "generated";
 interface SpaRouterVisualCapture {
   screenshot: Buffer;
   styles: ComputedStyleSnapshot[];
   anchor: string | null;
+  region: string | null;
+  regionRect: SpaRouterCaptureRect | null;
   failures: string[];
   stabilityFailures: string[];
   adaptiveWaitMs: number;
@@ -267,8 +324,71 @@ const DEFAULT_VISUAL_VIEWPORTS: QualityViewport[] = [
 ];
 const NAVIGATION_FAILURE_REASONS = new Set<SpaRouterComparisonFailureReason>([
   "missing-reference-scenario", "missing-generated-scenario", "transition-count-mismatch", "transition-method-mismatch",
-  "transition-target-mismatch", "transition-state-mismatch", "final-route-mismatch",
+  "transition-target-mismatch", "transition-state-mismatch", "step-route-count-mismatch", "step-route-mismatch", "final-route-mismatch",
 ]);
+
+function countByType(names: string[]): Record<string, number> {
+  return names.reduce<Record<string, number>>((counts, name) => { counts[name] = (counts[name] ?? 0) + 1; return counts; }, {});
+}
+
+function classifyHandleName(name: string): string {
+  const lower = name.toLowerCase();
+  if (lower.includes("timer") || lower.includes("timeout") || lower.includes("immediate")) return "timer";
+  if (lower.includes("server") || lower.includes("tcpserver")) return "server";
+  if (lower.includes("socket") || lower.includes("tcp")) return "socket";
+  if (lower.includes("pipe")) return "pipe";
+  if (lower.includes("child")) return "child-process";
+  if (lower.includes("fs") || lower.includes("file")) return "filesystem";
+  return name || "unknown";
+}
+
+function activeHandleSnapshot(): SpaRouterActiveHandleSnapshot {
+  const nodeProcess = process as typeof process & {
+    _getActiveHandles?: () => unknown[];
+    _getActiveRequests?: () => unknown[];
+    getActiveResourcesInfo?: () => string[];
+  };
+  const handles = (nodeProcess._getActiveHandles?.() ?? []).map((handle) => {
+    const candidate = handle as { constructor?: { name?: string }; fd?: number };
+    if (handle === process.stdin || handle === process.stdout || handle === process.stderr || [0, 1, 2].includes(candidate.fd ?? -1)) return "stdio";
+    return classifyHandleName(candidate.constructor?.name ?? "unknown");
+  });
+  const requests = (nodeProcess._getActiveRequests?.() ?? []).map((request) => classifyHandleName((request as { constructor?: { name?: string } })?.constructor?.name ?? "unknown"));
+  const resources = (nodeProcess.getActiveResourcesInfo?.() ?? []).map(classifyHandleName);
+  const standardIoHandles = handles.filter((name) => name === "stdio").length;
+  return { totalHandles: handles.length, totalBlockingHandles: handles.length - standardIoHandles, standardIoHandles, handlesByType: countByType(handles), resourcesByType: countByType(resources), requestsByType: countByType(requests) };
+}
+
+const FAST_SHUTDOWN_LOCK_PATH = resolve(tmpdir(), "ui-dismantler-playwright-fast-shutdown.lock");
+const sleep = (ms: number): Promise<void> => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
+
+async function withFastShutdownLock<T>(worker: () => Promise<T>): Promise<{ acquired: boolean; waitMs: number; value?: T }> {
+  const startedAt = performance.now();
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    let handle;
+    try {
+      handle = await open(FAST_SHUTDOWN_LOCK_PATH, "wx");
+      await handle.writeFile(`${process.pid}\n`, "utf8");
+      try { return { acquired: true, waitMs: Number((performance.now() - startedAt).toFixed(3)), value: await worker() }; }
+      finally { await handle.close().catch(() => undefined); await unlink(FAST_SHUTDOWN_LOCK_PATH).catch(() => undefined); }
+    } catch (error) {
+      await handle?.close().catch(() => undefined);
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") return { acquired: false, waitMs: Number((performance.now() - startedAt).toFixed(3)) };
+      let stale = false;
+      try {
+        const info = await stat(FAST_SHUTDOWN_LOCK_PATH);
+        stale = Date.now() - info.mtimeMs > 30_000;
+        if (!stale) {
+          const owner = Number((await readFile(FAST_SHUTDOWN_LOCK_PATH, "utf8")).trim());
+          if (Number.isInteger(owner) && owner > 0) { try { process.kill(owner, 0); } catch { stale = true; } }
+        }
+      } catch { stale = true; }
+      if (stale) await unlink(FAST_SHUTDOWN_LOCK_PATH).catch(() => undefined);
+      else await sleep(50);
+    }
+  }
+  return { acquired: false, waitMs: Number((performance.now() - startedAt).toFixed(3)) };
+}
 
 function chromePath(explicit?: string): string {
   const candidates = [
@@ -285,9 +405,52 @@ function chromePath(explicit?: string): string {
   return selected;
 }
 
+async function launchSpaBrowser(executablePath?: string, forceServer = false): Promise<{ browser: Browser; server?: BrowserServer }> {
+  const launchOptions = { executablePath: chromePath(executablePath), headless: true };
+  if (forceServer || process.env.UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE === "1") {
+    const server = await chromium.launchServer(launchOptions);
+    const browser = await chromium.connect(server.wsEndpoint());
+    return { browser, server };
+  }
+  return { browser: await chromium.launch(launchOptions) };
+}
+
+async function terminateBrowserServerFast(server: BrowserServer): Promise<boolean> {
+  const child = server.process();
+  if (child.exitCode !== null || child.signalCode !== null) return true;
+  const exited = new Promise<boolean>((resolveExit) => child.once("exit", () => resolveExit(true)));
+  child.kill("SIGKILL");
+  child.unref();
+  const confirmed = await Promise.race([exited, new Promise<boolean>((resolveTimeout) => setTimeout(() => resolveTimeout(false), 1000))]);
+  if (!confirmed) { await server.kill(); const streams = [child.stdin, child.stdout, child.stderr]; for (const stream of streams) stream?.destroy(); return false; }
+  // The browser server owns these child stdio streams. Destroy them only after
+  // the owned Chromium process has exited so fast shutdown cannot affect an
+  // unrelated process or hide a still-running browser.
+  for (const stream of [child.stdin, child.stdout, child.stderr]) stream?.destroy();
+  // launchServer also owns a Playwright WebSocket listener. The public
+  // BrowserServer API does not expose that listener; close the version-guarded
+  // internal hook after the browser process is confirmed dead.
+  const internal = server as BrowserServer & { _disconnectForTest?: () => Promise<void> };
+  if (typeof internal._disconnectForTest === "function") {
+    await Promise.race([internal._disconnectForTest().catch(() => undefined), new Promise<void>((resolveTimeout) => setTimeout(resolveTimeout, 500))]);
+  }
+  return true;
+}
+
 function targetUrl(baseUrl: string, path: string): string { return new URL(path, baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`).href; }
 function routeOf(value: string): string { const url = new URL(value); return `${url.pathname}${url.search}${url.hash}`; }
-function selectorForRole(value: SpaRouterRoleSelector | undefined, role: SpaRouterTargetRole): string | undefined {
+function semanticRouteOf(value: string, baseUrl: string, aliases: Record<string, string> = {}): string {
+  const url = new URL(value, baseUrl), base = new URL(baseUrl);
+  const basePath = base.pathname.endsWith("/") ? base.pathname : `${base.pathname}/`;
+  let relativePath = url.pathname;
+  if (relativePath === base.pathname || relativePath === basePath) relativePath = "/";
+  else if (relativePath.startsWith(basePath)) relativePath = `/${relativePath.slice(basePath.length)}`;
+  if (!relativePath.startsWith("/")) relativePath = `/${relativePath}`;
+  const semanticHash = url.hash === "#/" ? "" : url.hash;
+  const route = `${relativePath}${url.search}${semanticHash}`;
+  return aliases[route] ?? route;
+}
+function valueForRole(value: SpaRouterRoleValue | undefined, role: SpaRouterTargetRole): string | undefined {
   if (!value) return undefined;
   if (typeof value === "string") return value;
   if (role === "generated") return value.generated ?? value.default ?? value.reference;
@@ -308,9 +471,11 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
   const ids = config.scenarios.map((scenario) => scenario.id);
   if (ids.some((id) => !id) || new Set(ids).size !== ids.length) throw new TypeError("SPA Router scenarios 必须包含非空且唯一的 id");
   const mode = resolveMode(config);
-  for (const [name, value] of Object.entries(config.execution ?? {})) {
-    if (!Number.isInteger(value) || Number(value) < 1 || Number(value) > 4) throw new TypeError(`execution.${name} 必须是 1..4 的整数`);
+  for (const [name, value] of [["contractConcurrency", config.execution?.contractConcurrency], ["visualConcurrency", config.execution?.visualConcurrency]] as const) {
+    if (value !== undefined && (!Number.isInteger(value) || value < 1 || value > 4)) throw new TypeError(`execution.${name} 必须是 1..4 的整数`);
   }
+  if (config.execution?.browserShutdown && !["graceful", "fast-kill"].includes(config.execution.browserShutdown)) throw new TypeError("execution.browserShutdown 必须是 graceful 或 fast-kill");
+  if (config.navigationComparison && !["strict", "semantic"].includes(config.navigationComparison)) throw new TypeError("navigationComparison 必须是 strict 或 semantic");
   if (config.visualMatrix) {
     if (mode.mode !== "reference-generated") throw new TypeError("SPA route-state visualMatrix 需要 referenceBaseUrl/generatedBaseUrl 双端配置");
     const visualScenarios = config.scenarios.filter((scenario) => scenario.visual);
@@ -429,13 +594,14 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, timeou
   return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt };
 }
 
-async function executeStep(page: Page, step: SpaRouterStep): Promise<void> {
+async function executeStep(page: Page, step: SpaRouterStep, role: SpaRouterTargetRole): Promise<void> {
   if (step.action === "wait") { await page.waitForTimeout(step.ms ?? 250); return; }
   if (step.action === "back") { await page.goBack({ waitUntil: "domcontentloaded" }); await settle(page); return; }
   if (step.action === "forward") { await page.goForward({ waitUntil: "domcontentloaded" }); await settle(page); return; }
   if (step.action === "reload") { await page.reload({ waitUntil: "domcontentloaded" }); await settle(page); return; }
-  if (!step.target) throw new TypeError(`${step.action} step 缺少 target`);
-  const locator = page.locator(step.target).first();
+  const target = valueForRole(step.target, role);
+  if (!target) throw new TypeError(`${step.action} step 缺少 ${role} target`);
+  const locator = page.locator(target).first();
   if (step.action === "click") await locator.click();
   else if (step.action === "dblclick") await locator.dblclick();
   else if (step.action === "hover") await locator.hover();
@@ -444,30 +610,41 @@ async function executeStep(page: Page, step: SpaRouterStep): Promise<void> {
   await settle(page);
 }
 
-async function assertScenario(page: Page, assertion: SpaRouterAssertion): Promise<string[]> {
+async function assertScenario(page: Page, assertion: SpaRouterAssertion, role: SpaRouterTargetRole): Promise<string[]> {
   const failures: string[] = [];
   const url = new URL(page.url());
-  if (assertion.path !== undefined && url.pathname !== assertion.path) failures.push(`path expected=${assertion.path} actual=${url.pathname}`);
-  if (assertion.search !== undefined && url.search !== assertion.search) failures.push(`search expected=${assertion.search} actual=${url.search}`);
-  if (assertion.hash !== undefined && url.hash !== assertion.hash) failures.push(`hash expected=${assertion.hash} actual=${url.hash}`);
+  const expectedPath = valueForRole(assertion.path, role), expectedSearch = valueForRole(assertion.search, role), expectedHash = valueForRole(assertion.hash, role);
+  if (expectedPath !== undefined && url.pathname !== expectedPath) failures.push(`path expected=${expectedPath} actual=${url.pathname}`);
+  if (expectedSearch !== undefined && url.search !== expectedSearch) failures.push(`search expected=${expectedSearch} actual=${url.search}`);
+  if (expectedHash !== undefined && url.hash !== expectedHash) failures.push(`hash expected=${expectedHash} actual=${url.hash}`);
   if (assertion.visibleText !== undefined && !(await page.getByText(assertion.visibleText, { exact: false }).first().isVisible().catch(() => false))) failures.push(`visibleText missing=${assertion.visibleText}`);
-  if (assertion.visibleSelector !== undefined && !(await page.locator(assertion.visibleSelector).first().isVisible().catch(() => false))) failures.push(`visibleSelector missing=${assertion.visibleSelector}`);
+  const visibleSelector = valueForRole(assertion.visibleSelector, role);
+  if (visibleSelector !== undefined && !(await page.locator(visibleSelector).first().isVisible().catch(() => false))) failures.push(`visibleSelector missing=${visibleSelector}`);
   if (assertion.absentText !== undefined && await page.getByText(assertion.absentText, { exact: false }).first().isVisible().catch(() => false)) failures.push(`absentText still visible=${assertion.absentText}`);
   if (assertion.absentExactText !== undefined && await page.getByText(assertion.absentExactText, { exact: true }).first().isVisible().catch(() => false)) failures.push(`absentExactText still visible=${assertion.absentExactText}`);
-  if (assertion.absentSelector !== undefined && await page.locator(assertion.absentSelector).first().isVisible().catch(() => false)) failures.push(`absentSelector still visible=${assertion.absentSelector}`);
+  const absentSelector = valueForRole(assertion.absentSelector, role);
+  if (absentSelector !== undefined && await page.locator(absentSelector).first().isVisible().catch(() => false)) failures.push(`absentSelector still visible=${absentSelector}`);
   if (assertion.selectorCount !== undefined) {
-    const count = await page.locator(assertion.selectorCount.target).count();
-    if (count !== assertion.selectorCount.count) failures.push(`selectorCount ${assertion.selectorCount.target} expected=${assertion.selectorCount.count} actual=${count}`);
+    const target = valueForRole(assertion.selectorCount.target, role);
+    if (!target) failures.push(`selectorCount missing ${role} target`);
+    else {
+      const count = await page.locator(target).count();
+      if (count !== assertion.selectorCount.count) failures.push(`selectorCount ${target} expected=${assertion.selectorCount.count} actual=${count}`);
+    }
   }
   if (assertion.inputValue !== undefined) {
-    const value = await page.locator(assertion.inputValue.target).first().inputValue().catch(() => "<missing>");
-    if (value !== assertion.inputValue.value) failures.push(`inputValue ${assertion.inputValue.target} expected=${assertion.inputValue.value} actual=${value}`);
+    const target = valueForRole(assertion.inputValue.target, role);
+    if (!target) failures.push(`inputValue missing ${role} target`);
+    else {
+      const value = await page.locator(target).first().inputValue().catch(() => "<missing>");
+      if (value !== assertion.inputValue.value) failures.push(`inputValue ${target} expected=${assertion.inputValue.value} actual=${value}`);
+    }
   }
   return failures;
 }
 
 async function normalizeScrollAnchor(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole): Promise<string | null> {
-  const selector = selectorForRole(visual.screenshotAnchor, role);
+  const selector = valueForRole(visual.screenshotAnchor, role);
   if (!selector) return null;
   const normalized = await page.evaluate((target) => {
     let element: Element | null = null;
@@ -493,7 +670,7 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
   const failures: string[] = [];
   const styles: ComputedStyleSnapshot[] = [];
   for (const target of targets) {
-    const selector = selectorForRole(target.selector, role);
+    const selector = valueForRole(target.selector, role);
     if (!selector) { failures.push(`style target ${target.id} 缺少 ${role} selector`); continue; }
     const snapshot = await page.locator(selector).first().evaluate((element, input) => {
       const computed = getComputedStyle(element), rect = element.getBoundingClientRect();
@@ -506,12 +683,35 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
     if (snapshot) styles.push(snapshot);
     else failures.push(`style target ${target.id} 未命中 selector=${selector}`);
   }
-  const screenshot = await page.screenshot({ type: "png", fullPage: false, animations: "disabled" });
-  return { screenshot, styles, anchor, failures: [...failures, ...stability.stabilityFailures], stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs };
+  const region = valueForRole(visual.screenshotRegion, role) ?? null;
+  let regionRect: SpaRouterCaptureRect | null = null;
+  if (region) {
+    regionRect = await page.evaluate((selector) => {
+      let element: Element | null = null;
+      try { element = document.querySelector(selector); } catch { return null; }
+      if (!element) return null;
+      const style = getComputedStyle(element), rect = element.getBoundingClientRect();
+      if (style.display === "none" || style.visibility === "hidden" || rect.width <= 0 || rect.height <= 0) return null;
+      const x = Math.max(0, rect.x), y = Math.max(0, rect.y);
+      const width = Math.min(innerWidth - x, rect.right - x), height = Math.min(innerHeight - y, rect.bottom - y);
+      if (width <= 0 || height <= 0) return null;
+      return { x, y, width, height };
+    }, region);
+    if (!regionRect) failures.push(`screenshot region 未命中或不可见 selector=${region}`);
+  }
+  const screenshot = await page.screenshot({ type: "png", fullPage: false, animations: "disabled", ...(regionRect ? { clip: regionRect } : {}) });
+  return { screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures], stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs };
 }
 
 function fixtureMap(config: SpaRouterContractConfig): Map<string, SpaRouterFixture> {
   return new Map((config.fixtures ?? []).map((fixture) => [`${(fixture.method ?? "GET").toUpperCase()} ${fixture.path}`, fixture]));
+}
+
+function isNonBlockingNetworkRequest(request: Request, config: SpaRouterContractConfig): boolean {
+  let hostname = "";
+  try { hostname = new URL(request.url()).hostname.toLowerCase(); } catch { /* malformed URL will be treated as required */ }
+  const knownTelemetry = ["www.google-analytics.com", "www.googletagmanager.com", "google-analytics.com", "doubleclick.net", "segment.io", "sentry.io", "hotjar.com"];
+  return knownTelemetry.some((host) => hostname === host || hostname.endsWith(`.${host}`)) || (config.nonBlockingNetworkHosts ?? []).some((host) => hostname === host.toLowerCase() || hostname.endsWith(`.${host.toLowerCase()}`));
 }
 
 async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: { viewport?: QualityViewport; role?: SpaRouterTargetRole; captureVisual?: boolean } = {}): Promise<SpaRouterScenarioExecution> {
@@ -538,20 +738,40 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     });
     const page = await context.newPage();
     const requestActivity: RequestActivity = { active: new Set<Request>(), lastActivityAt: Date.now() };
+    const requiredNetworkFailures: string[] = [], nonBlockingNetworkFailures: string[] = [];
+    const requiredResourceTypes = new Set(["document", "script", "stylesheet", "xhr", "fetch"]);
+    const recordNetworkFailure = (request: Request, detail: string): void => {
+      const target = `${request.method()} ${request.resourceType()} ${request.url()} ${detail}`;
+      const collection = requiredResourceTypes.has(request.resourceType()) && !isNonBlockingNetworkRequest(request, config) ? requiredNetworkFailures : nonBlockingNetworkFailures;
+      if (!collection.includes(target)) collection.push(target);
+    };
+    page.on("response", (response) => {
+      if (response.status() < 400) return;
+      const request = response.request();
+      if (config.apiPrefix && new URL(request.url()).pathname.startsWith(config.apiPrefix)) return;
+      recordNetworkFailure(request, `HTTP ${response.status()}`);
+    });
     page.on("request", (request) => { requestActivity.active.add(request); requestActivity.lastActivityAt = Date.now(); });
     page.on("requestfinished", (request) => { requestActivity.active.delete(request); requestActivity.lastActivityAt = Date.now(); });
-    page.on("requestfailed", (request) => { requestActivity.active.delete(request); requestActivity.lastActivityAt = Date.now(); });
+    page.on("requestfailed", (request) => { requestActivity.active.delete(request); requestActivity.lastActivityAt = Date.now(); recordNetworkFailure(request, `FAILED ${request.failure()?.errorText ?? "unknown"}`); });
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
     page.on("console", (message) => { if (message.type() === "error" && !/^Failed to load resource:/i.test(message.text())) runtimeErrors.push(message.text()); });
     const entryUrl = targetUrl(baseUrl, scenario.entryPath);
     await page.goto(entryUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await settle(page, 500);
-    for (const step of scenario.steps) await executeStep(page, step);
-    const assertionFailures = await assertScenario(page, scenario.assertions);
+    const role = options.role ?? "single";
+    const stepRoutes: SpaRouterStepRoute[] = [];
+    for (let stepIndex = 0; stepIndex < scenario.steps.length; stepIndex += 1) {
+      const step = scenario.steps[stepIndex];
+      await executeStep(page, step, role);
+      stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
+    }
+    const assertionFailures = await assertScenario(page, scenario.assertions, role);
     const transitions = await page.evaluate(() => ([...((globalThis as typeof globalThis & { __uiDismantlerSpaTransitions?: SpaRouterTransition[] }).__uiDismantlerSpaTransitions ?? [])]));
     const uniqueRuntimeErrors = [...new Set(runtimeErrors)], uniqueUnmocked = [...new Set(unmockedApiRequests)];
-    const result: SpaRouterScenarioResult = { id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0, entryUrl, finalUrl: page.url(), transitions, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked, assertionFailures };
-    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, options.role ?? "single", requestActivity, config.visualMatrix?.stabilityTimeoutMs) : undefined;
+    const uniqueRequiredNetworkFailures = [...new Set(requiredNetworkFailures)], uniqueNonBlockingNetworkFailures = [...new Set(nonBlockingNetworkFailures)];
+    const result: SpaRouterScenarioResult = { id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0 && uniqueRequiredNetworkFailures.length === 0, entryUrl, finalUrl: page.url(), transitions, stepRoutes, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked, requiredNetworkFailures: uniqueRequiredNetworkFailures, nonBlockingNetworkFailures: uniqueNonBlockingNetworkFailures, assertionFailures };
+    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config.visualMatrix?.stabilityTimeoutMs) : undefined;
     return { result, visual };
   } finally { await context.close(); }
 }
@@ -583,33 +803,57 @@ async function evaluateTarget(browser: Browser, baseUrl: string, config: SpaRout
       baseUrl, passed: results.every((result) => result.passed),
       scenariosPassed: results.filter((result) => result.passed).length, scenariosTotal: results.length,
       runtimeErrors: results.reduce((sum, result) => sum + result.runtimeErrors.length, 0),
-      unmockedApiRequests: results.reduce((sum, result) => sum + result.unmockedApiRequests.length, 0), results,
+      unmockedApiRequests: results.reduce((sum, result) => sum + result.unmockedApiRequests.length, 0),
+      requiredNetworkFailures: results.reduce((sum, result) => sum + result.requiredNetworkFailures.length, 0),
+      nonBlockingNetworkFailures: results.reduce((sum, result) => sum + result.nonBlockingNetworkFailures.length, 0), results,
     },
     executions,
   };
 }
 
-function compareScenario(id: string, reference: SpaRouterScenarioResult | undefined, generated: SpaRouterScenarioResult | undefined): SpaRouterScenarioComparison {
+function compareScenario(
+  id: string,
+  reference: SpaRouterScenarioResult | undefined,
+  generated: SpaRouterScenarioResult | undefined,
+  options: { mode?: "strict" | "semantic"; referenceBaseUrl?: string; generatedBaseUrl?: string; aliases?: Record<string, string> } = {},
+): SpaRouterScenarioComparison {
   const failures: SpaRouterComparisonFailure[] = [];
   if (!reference) failures.push({ reason: "missing-reference-scenario", detail: `reference 缺少场景 ${id}` });
   if (!generated) failures.push({ reason: "missing-generated-scenario", detail: `generated 缺少场景 ${id}` });
   if (!reference || !generated) return { id, passed: false, reference, generated, failures };
   if (reference.assertionFailures.length) failures.push({ reason: "reference-assertion-failure", reference: reference.assertionFailures.join("; "), detail: `reference 场景断言失败: ${reference.assertionFailures.join("; ")}` });
   if (generated.assertionFailures.length) failures.push({ reason: "generated-assertion-failure", generated: generated.assertionFailures.join("; "), detail: `generated 场景断言失败: ${generated.assertionFailures.join("; ")}` });
-  if (reference.transitions.length !== generated.transitions.length) failures.push({ reason: "transition-count-mismatch", reference: reference.transitions.length, generated: generated.transitions.length, detail: `transition 数量 reference=${reference.transitions.length} generated=${generated.transitions.length}` });
-  const totalTransitions = Math.max(reference.transitions.length, generated.transitions.length);
-  for (let index = 0; index < totalTransitions; index += 1) {
-    const expected = reference.transitions[index], actual = generated.transitions[index];
-    if (!expected || !actual) continue;
-    if (expected.method !== actual.method) failures.push({ reason: "transition-method-mismatch", transitionIndex: index, reference: expected.method, generated: actual.method, detail: `transition[${index}] method reference=${expected.method} generated=${actual.method}` });
-    if (expected.target !== actual.target) failures.push({ reason: "transition-target-mismatch", transitionIndex: index, reference: expected.target, generated: actual.target, detail: `transition[${index}] target reference=${expected.target} generated=${actual.target}` });
-    if (expected.state !== actual.state) failures.push({ reason: "transition-state-mismatch", transitionIndex: index, reference: expected.state, generated: actual.state, detail: `transition[${index}] state reference=${expected.state} generated=${actual.state}` });
+  const comparisonMode = options.mode ?? "strict";
+  if (comparisonMode === "strict") {
+    if (reference.transitions.length !== generated.transitions.length) failures.push({ reason: "transition-count-mismatch", reference: reference.transitions.length, generated: generated.transitions.length, detail: `transition 数量 reference=${reference.transitions.length} generated=${generated.transitions.length}` });
+    const totalTransitions = Math.max(reference.transitions.length, generated.transitions.length);
+    for (let index = 0; index < totalTransitions; index += 1) {
+      const expected = reference.transitions[index], actual = generated.transitions[index];
+      if (!expected || !actual) continue;
+      if (expected.method !== actual.method) failures.push({ reason: "transition-method-mismatch", transitionIndex: index, reference: expected.method, generated: actual.method, detail: `transition[${index}] method reference=${expected.method} generated=${actual.method}` });
+      if (expected.target !== actual.target) failures.push({ reason: "transition-target-mismatch", transitionIndex: index, reference: expected.target, generated: actual.target, detail: `transition[${index}] target reference=${expected.target} generated=${actual.target}` });
+      if (expected.state !== actual.state) failures.push({ reason: "transition-state-mismatch", transitionIndex: index, reference: expected.state, generated: actual.state, detail: `transition[${index}] state reference=${expected.state} generated=${actual.state}` });
+    }
+  } else {
+    const referenceBaseUrl = options.referenceBaseUrl ?? reference.entryUrl, generatedBaseUrl = options.generatedBaseUrl ?? generated.entryUrl;
+    if (reference.stepRoutes.length !== generated.stepRoutes.length) failures.push({ reason: "step-route-count-mismatch", reference: reference.stepRoutes.length, generated: generated.stepRoutes.length, detail: `step route 数量 reference=${reference.stepRoutes.length} generated=${generated.stepRoutes.length}` });
+    const totalStepRoutes = Math.max(reference.stepRoutes.length, generated.stepRoutes.length);
+    for (let index = 0; index < totalStepRoutes; index += 1) {
+      const expected = reference.stepRoutes[index], actual = generated.stepRoutes[index];
+      if (!expected || !actual) continue;
+      const expectedRoute = semanticRouteOf(expected.route, referenceBaseUrl, options.aliases), actualRoute = semanticRouteOf(actual.route, generatedBaseUrl, options.aliases);
+      if (expectedRoute !== actualRoute) failures.push({ reason: "step-route-mismatch", transitionIndex: index, reference: expectedRoute, generated: actualRoute, detail: `stepRoute[${index}] (${expected.action}) reference=${expectedRoute} generated=${actualRoute}` });
+    }
   }
-  const referenceRoute = routeOf(reference.finalUrl), generatedRoute = routeOf(generated.finalUrl);
+  const referenceRoute = comparisonMode === "semantic"
+    ? semanticRouteOf(reference.finalUrl, options.referenceBaseUrl ?? reference.entryUrl, options.aliases)
+    : routeOf(reference.finalUrl);
+  const generatedRoute = comparisonMode === "semantic"
+    ? semanticRouteOf(generated.finalUrl, options.generatedBaseUrl ?? generated.entryUrl, options.aliases)
+    : routeOf(generated.finalUrl);
   if (referenceRoute !== generatedRoute) failures.push({ reason: "final-route-mismatch", reference: referenceRoute, generated: generatedRoute, detail: `final route reference=${referenceRoute} generated=${generatedRoute}` });
   return { id, passed: failures.length === 0 && reference.passed && generated.passed, reference, generated, failures };
 }
-
 function navigationIntegrityForComparisons(comparisons: SpaRouterScenarioComparison[]): SpaRouterNavigationIntegrityReport {
   const failureCounts = comparisons.map((comparison) => comparison.failures.filter((failure) => NAVIGATION_FAILURE_REASONS.has(failure.reason)).length);
   const failures = failureCounts.reduce((sum, count) => sum + count, 0), matchedScenarios = failureCounts.filter((count) => count === 0).length;
@@ -637,7 +881,7 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       reusedTargetRuns += Number(Boolean(referenceReuse?.visual)) + Number(Boolean(generatedReuse?.visual));
       freshTargetRuns += Number(!referenceReuse?.visual) + Number(!generatedReuse?.visual);
       if (!reference.visual || !generated.visual) throw new Error(`场景 ${scenario.id} 的 visual capture 未生成`);
-      const comparison = compareScenario(scenario.id, reference.result, generated.result);
+      const comparison = compareScenario(scenario.id, reference.result, generated.result, { mode: config.navigationComparison, referenceBaseUrl, generatedBaseUrl, aliases: config.semanticRouteAliases });
       const navigationFailures = comparison.failures.filter((failure) => NAVIGATION_FAILURE_REASONS.has(failure.reason));
       const styles = compareComputedStyles(reference.visual.styles, generated.visual.styles);
       const artifactDir = visualConfig.artifactDir ? resolve(visualConfig.artifactDir, scenario.id, viewport.id) : undefined;
@@ -645,11 +889,13 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       const captureFailures = [...reference.visual.failures.map((failure) => `reference: ${failure}`), ...generated.visual.failures.map((failure) => `generated: ${failure}`)];
       const runtimeErrors = reference.result.runtimeErrors.length + generated.result.runtimeErrors.length;
       const unmockedApiRequests = reference.result.unmockedApiRequests.length + generated.result.unmockedApiRequests.length;
+      const requiredNetworkFailures = reference.result.requiredNetworkFailures.length + generated.result.requiredNetworkFailures.length;
       return {
         ...viewport, passed: comparison.passed && navigationFailures.length === 0 && captureFailures.length === 0 && styles.rate >= styleThreshold && pixels.passed,
         referenceFinalRoute: routeOf(reference.result.finalUrl), generatedFinalRoute: routeOf(generated.result.finalUrl),
         referenceAnchor: reference.visual.anchor, generatedAnchor: generated.visual.anchor,
-        runtimeErrors, unmockedApiRequests, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs, durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
+        referenceRegion: reference.visual.region, generatedRegion: generated.visual.region, referenceRegionRect: reference.visual.regionRect, generatedRegionRect: generated.visual.regionRect,
+        runtimeErrors, unmockedApiRequests, requiredNetworkFailures, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs, durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
       };
     });
     matrices.push({ scenarioId: scenario.id, passed: viewportResults.every((viewport) => viewport.passed), viewports: viewportResults, worstComputedStyle: Math.min(...viewportResults.map((viewport) => viewport.styles.rate)), worstPixelDiff: Math.max(...viewportResults.map((viewport) => viewport.pixels.diffRate)), durationMs: Number((performance.now() - scenarioStartedAt).toFixed(3)) });
@@ -657,7 +903,7 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
   const entries = matrices.flatMap((matrix) => matrix.viewports);
   return {
     passed: matrices.length > 0 && matrices.every((matrix) => matrix.passed), scenarios: matrices, scenarioCount: matrices.length, viewportRuns: entries.length,
-    runtimeErrors: entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0), unmockedApiRequests: entries.reduce((sum, entry) => sum + entry.unmockedApiRequests, 0),
+    runtimeErrors: entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0), unmockedApiRequests: entries.reduce((sum, entry) => sum + entry.unmockedApiRequests, 0), requiredNetworkFailures: entries.reduce((sum, entry) => sum + entry.requiredNetworkFailures, 0),
     navigationFailures: entries.reduce((sum, entry) => sum + entry.navigationFailures.length, 0), navigationMatchedRuns: entries.filter((entry) => entry.navigationPassed).length,
     stabilityFailures: entries.reduce((sum, entry) => sum + entry.stabilityFailures.length, 0), adaptiveWaitMs: entries.reduce((sum, entry) => sum + entry.adaptiveWaitMs, 0),
     worstComputedStyle: entries.length ? Math.min(...entries.map((entry) => entry.styles.rate)) : 0, worstPixelDiff: entries.length ? Math.max(...entries.map((entry) => entry.pixels.diffRate)) : 1,
@@ -673,7 +919,7 @@ function singleQualityGates(target: SpaRouterTargetReport): SpaRouterQualityGate
   return [
     { id: "scenario-protocol", passed: assertionsPassed === target.scenariosTotal, detail: `${assertionsPassed}/${target.scenariosTotal} 场景断言通过` },
     { id: "visual-runtime", passed: target.runtimeErrors === 0, detail: `runtimeErrors=${target.runtimeErrors}` },
-    { id: "resource-readiness", passed: target.unmockedApiRequests === 0, detail: `unmockedApiRequests=${target.unmockedApiRequests}` },
+    { id: "resource-readiness", passed: target.unmockedApiRequests === 0 && target.requiredNetworkFailures === 0, detail: `unmockedApiRequests=${target.unmockedApiRequests}，requiredNetworkFailures=${target.requiredNetworkFailures}` },
     { id: "navigation-integrity", passed: assertionsPassed === target.scenariosTotal, detail: `source-only contract=${assertionsPassed}/${target.scenariosTotal}` },
   ];
 }
@@ -683,7 +929,7 @@ function comparisonQualityGates(reference: SpaRouterTargetReport, generated: Spa
   const gates: SpaRouterQualityGate[] = [
     { id: "scenario-protocol", passed: referenceAssertions === reference.scenariosTotal && generatedAssertions === generated.scenariosTotal, detail: `reference=${referenceAssertions}/${reference.scenariosTotal}，generated=${generatedAssertions}/${generated.scenariosTotal}` },
     { id: "visual-runtime", passed: reference.runtimeErrors + generated.runtimeErrors + (visualMatrix?.runtimeErrors ?? 0) === 0 && (visualMatrix?.stabilityFailures ?? 0) === 0, detail: `referenceRuntimeErrors=${reference.runtimeErrors}，generatedRuntimeErrors=${generated.runtimeErrors}，visualRuntimeErrors=${visualMatrix?.runtimeErrors ?? 0}，stabilityFailures=${visualMatrix?.stabilityFailures ?? 0}` },
-    { id: "resource-readiness", passed: reference.unmockedApiRequests + generated.unmockedApiRequests + (visualMatrix?.unmockedApiRequests ?? 0) === 0, detail: `referenceUnmockedApi=${reference.unmockedApiRequests}，generatedUnmockedApi=${generated.unmockedApiRequests}，visualUnmockedApi=${visualMatrix?.unmockedApiRequests ?? 0}` },
+    { id: "resource-readiness", passed: reference.unmockedApiRequests + generated.unmockedApiRequests + (visualMatrix?.unmockedApiRequests ?? 0) === 0 && reference.requiredNetworkFailures + generated.requiredNetworkFailures + (visualMatrix?.requiredNetworkFailures ?? 0) === 0, detail: `referenceUnmockedApi=${reference.unmockedApiRequests}，generatedUnmockedApi=${generated.unmockedApiRequests}，visualUnmockedApi=${visualMatrix?.unmockedApiRequests ?? 0}，requiredNetworkFailures=${reference.requiredNetworkFailures + generated.requiredNetworkFailures + (visualMatrix?.requiredNetworkFailures ?? 0)}` },
     { id: "navigation-integrity", passed: navigationIntegrity.passed, detail: `matched=${navigationIntegrity.matchedScenarios}/${navigationIntegrity.totalScenarios}，rate=${navigationIntegrity.rate}，failures=${navigationIntegrity.failures}` },
   ];
   if (visualMatrix) gates.splice(1, 0, { id: "scenario-viewport-matrix", passed: visualMatrix.passed, detail: `${visualMatrix.scenarios.filter((matrix) => matrix.passed).length}/${visualMatrix.scenarioCount} SPA route states 通过，viewportRuns=${visualMatrix.viewportRuns}，worstComputedStyle=${visualMatrix.worstComputedStyle}，worstPixelDiff=${visualMatrix.worstPixelDiff}` });
@@ -692,11 +938,16 @@ function comparisonQualityGates(reference: SpaRouterTargetReport, generated: Spa
 
 export async function evaluateSpaRouterContract(config: SpaRouterContractConfig, options: { executablePath?: string } = {}): Promise<SpaRouterContractReport> {
   const totalStartedAt = performance.now();
-  const timing = { browserLaunchMs: 0, contractMs: 0, comparisonMs: 0, visualMatrixMs: 0, browserCloseMs: 0, totalMs: 0 };
+  const timing = { browserLaunchMs: 0, contractMs: 0, comparisonMs: 0, visualMatrixMs: 0, browserCloseMs: 0, browserDisconnectMs: 0, browserProcessCloseMs: 0, reportReadyMs: 0, totalMs: 0 };
   const elapsed = (startedAt: number): number => Number((performance.now() - startedAt).toFixed(3));
   const resolved = validateConfig(config);
   let phaseStartedAt = performance.now();
-  const browser: Browser = await chromium.launch({ executablePath: chromePath(options.executablePath), headless: true });
+  const requestedFastShutdown = config.execution?.browserShutdown === "fast-kill";
+  const launched = await launchSpaBrowser(options.executablePath, requestedFastShutdown);
+  const browser = launched.browser;
+  let allowFastShutdown = false;
+  let fastShutdownConfirmed = false;
+  let completedReport: SpaRouterContractReport | undefined;
   timing.browserLaunchMs = elapsed(phaseStartedAt);
   try {
     if (resolved.mode === "single") {
@@ -704,12 +955,16 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
       const targetEvaluation = await evaluateTarget(browser, resolved.baseUrl, config), target = targetEvaluation.report;
       timing.contractMs = elapsed(phaseStartedAt);
       const qualityGates = singleQualityGates(target);
-      return {
+      const report: SpaRouterContractReport = {
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
-        results: target.results, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, timing }, qualityGates,
+        results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
+      timing.reportReadyMs = elapsed(totalStartedAt);
+      allowFastShutdown = requestedFastShutdown && report.passed;
+      completedReport = report;
+      return report;
     }
     const visualViewports = config.visualMatrix?.viewports ?? (config.visualMatrix ? DEFAULT_VISUAL_VIEWPORTS : []);
     const reusableViewport = visualViewports.find((viewport) => viewport.width === 1024 && viewport.height === 768);
@@ -723,7 +978,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
     phaseStartedAt = performance.now();
     const referenceById = new Map(reference.results.map((result) => [result.id, result])), generatedById = new Map(generated.results.map((result) => [result.id, result]));
     const scenarioIds = [...new Set([...config.scenarios.map((scenario) => scenario.id), ...referenceById.keys(), ...generatedById.keys()])];
-    const comparisons = scenarioIds.map((id) => compareScenario(id, referenceById.get(id), generatedById.get(id)));
+    const comparisons = scenarioIds.map((id) => compareScenario(id, referenceById.get(id), generatedById.get(id), { mode: config.navigationComparison, referenceBaseUrl: resolved.referenceBaseUrl, generatedBaseUrl: resolved.generatedBaseUrl, aliases: config.semanticRouteAliases }));
     const baseNavigationIntegrity = navigationIntegrityForComparisons(comparisons);
     timing.comparisonMs = elapsed(phaseStartedAt);
     phaseStartedAt = performance.now();
@@ -738,10 +993,10 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
     };
     const qualityGates = comparisonQualityGates(reference, generated, navigationIntegrity, visualMatrix);
     timing.comparisonMs = Number((timing.comparisonMs + elapsed(phaseStartedAt)).toFixed(3));
-    return {
+    const report: SpaRouterContractReport = {
       schemaVersion: "1.0", mode: "reference-generated", referenceBaseUrl: resolved.referenceBaseUrl, generatedBaseUrl: resolved.generatedBaseUrl,
       passed: qualityGates.every((gate) => gate.passed), scenariosPassed: comparisons.filter((comparison) => comparison.passed).length, scenariosTotal: comparisons.length,
-      runtimeErrors: reference.runtimeErrors + generated.runtimeErrors + (visualMatrix?.runtimeErrors ?? 0), unmockedApiRequests: reference.unmockedApiRequests + generated.unmockedApiRequests + (visualMatrix?.unmockedApiRequests ?? 0),
+      runtimeErrors: reference.runtimeErrors + generated.runtimeErrors + (visualMatrix?.runtimeErrors ?? 0), unmockedApiRequests: reference.unmockedApiRequests + generated.unmockedApiRequests + (visualMatrix?.unmockedApiRequests ?? 0), requiredNetworkFailures: reference.requiredNetworkFailures + generated.requiredNetworkFailures + (visualMatrix?.requiredNetworkFailures ?? 0), nonBlockingNetworkFailures: reference.nonBlockingNetworkFailures + generated.nonBlockingNetworkFailures,
       results: generated.results, reference, generated, comparisons, navigationIntegrity, visualMatrix,
       telemetry: {
         contractTargetRuns: reference.scenariosTotal + generated.scenariosTotal,
@@ -753,14 +1008,53 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         visualAdaptiveWaitMs: visualMatrix?.adaptiveWaitMs ?? 0,
         contractConcurrency: config.execution?.contractConcurrency ?? 1,
         visualConcurrency: config.execution?.visualConcurrency ?? 1,
+        browserShutdownMode: "graceful",
+        fastShutdownUsed: false,
+        fastShutdownConfirmed: false,
+        fastShutdownLockAcquired: false,
+        fastShutdownLockWaitMs: 0,
+        activeHandlesBeforeClose: activeHandleSnapshot(),
+        activeHandlesAfterClose: activeHandleSnapshot(),
         timing,
       },
       qualityGates,
     };
+    timing.reportReadyMs = elapsed(totalStartedAt);
+    allowFastShutdown = requestedFastShutdown && report.passed;
+    completedReport = report;
+    return report;
   } finally {
-    phaseStartedAt = performance.now();
-    await browser.close();
-    timing.browserCloseMs = elapsed(phaseStartedAt);
+    const closeStartedAt = performance.now();
+    const handlesBeforeClose = activeHandleSnapshot();
+    if (completedReport) completedReport.telemetry.activeHandlesBeforeClose = handlesBeforeClose;
+    let fastShutdownLockAcquired = false, fastShutdownLockWaitMs = 0;
+    if (launched.server) {
+      phaseStartedAt = performance.now();
+      await browser.close();
+      timing.browserDisconnectMs = elapsed(phaseStartedAt);
+      phaseStartedAt = performance.now();
+      if (requestedFastShutdown && allowFastShutdown) {
+        const lock = await withFastShutdownLock(() => terminateBrowserServerFast(launched.server!));
+        fastShutdownLockAcquired = lock.acquired; fastShutdownLockWaitMs = lock.waitMs;
+        if (lock.acquired && lock.value !== undefined) fastShutdownConfirmed = lock.value;
+        else await launched.server.close();
+      } else await launched.server.close();
+      timing.browserProcessCloseMs = elapsed(phaseStartedAt);
+    } else {
+      phaseStartedAt = performance.now();
+      await browser.close();
+      timing.browserProcessCloseMs = elapsed(phaseStartedAt);
+    }
+    timing.browserCloseMs = elapsed(closeStartedAt);
     timing.totalMs = elapsed(totalStartedAt);
+    const handlesAfterClose = activeHandleSnapshot();
+    if (completedReport) {
+      completedReport.telemetry.fastShutdownUsed = Boolean(launched.server && requestedFastShutdown && allowFastShutdown && fastShutdownLockAcquired);
+      completedReport.telemetry.fastShutdownConfirmed = fastShutdownConfirmed;
+      completedReport.telemetry.fastShutdownLockAcquired = fastShutdownLockAcquired;
+      completedReport.telemetry.fastShutdownLockWaitMs = fastShutdownLockWaitMs;
+      completedReport.telemetry.activeHandlesAfterClose = handlesAfterClose;
+      completedReport.telemetry.browserShutdownMode = completedReport.telemetry.fastShutdownUsed && fastShutdownConfirmed ? "fast-kill" : requestedFastShutdown ? "graceful-fallback" : launched.server ? "profiled-graceful" : "graceful";
+    }
   }
 }

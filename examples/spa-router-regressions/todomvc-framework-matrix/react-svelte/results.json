@@ -1,0 +1,2783 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "https://todomvc.com/examples/react/dist/",
+  "generatedBaseUrl": "https://todomvc.com/examples/svelte/dist/",
+  "passed": true,
+  "scenariosPassed": 8,
+  "scenariosTotal": 8,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 16,
+  "results": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501057&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1000516724.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1863 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+      "transitions": [
+        {
+          "method": "popstate",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/svelte/dist/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501072&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1565271206.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1792 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/#/completed",
+      "transitions": [
+        {
+          "method": "popstate",
+          "target": "/examples/svelte/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/svelte/dist/#/completed",
+          "state": "null"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/svelte/dist/#/completed"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033503851&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1753042044.1785033504&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1977 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "dblclick",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033504944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1071710924.1785033505&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033505&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1920 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "hover",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 6,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033507944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1605323876.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2281 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033508190&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1043094601.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1645 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/svelte/dist/"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033511169&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=578478603.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033511&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1641 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+      "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+      "transitions": [
+        {
+          "method": "popstate",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/svelte/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/svelte/dist/#/completed",
+          "state": "null"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/svelte/dist/#/active",
+          "state": "null"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/svelte/dist/"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/examples/svelte/dist/#/active"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/examples/svelte/dist/#/completed"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/examples/svelte/dist/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785033511493&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1318364261.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033512&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1804 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "https://todomvc.com/examples/react/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501101&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1682838271.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1960 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033501224&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=804424561.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2096 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033504385&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1047357849.1785033504&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395334~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1928 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033505309&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1442956266.1785033505&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033505&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1704 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033508196&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=183887619.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=10&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1643 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033509052&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=460035549.1785033509&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033509&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1669 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033511830&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1958461741.1785033512&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938468~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033512&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1814 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033512644&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=24266978.1785033512&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118395335~118897920~118897930~119724322~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033513&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1728 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "https://todomvc.com/examples/svelte/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501057&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1000516724.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1863 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501072&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1565271206.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1792 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/completed",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033503851&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1753042044.1785033504&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1977 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033504944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1071710924.1785033505&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033505&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1920 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033507944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1605323876.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2281 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033508190&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1043094601.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1645 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033511169&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=578478603.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033511&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1641 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/svelte/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785033511493&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1318364261.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033512&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1804 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "reference": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501101&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1682838271.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1960 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501057&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1000516724.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1863 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033501224&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=804424561.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2096 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033501072&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1565271206.1785033501&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033501&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1792 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033504385&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1047357849.1785033504&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395334~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1928 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/completed",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033503851&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1753042044.1785033504&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1977 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "reference": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033505309&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1442956266.1785033505&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033505&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1704 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033504944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1071710924.1785033505&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033505&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1920 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "reference": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033508196&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=183887619.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=10&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1643 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033507944&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1605323876.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2281 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "reference": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033509052&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=460035549.1785033509&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033509&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1669 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033508190&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1043094601.1785033508&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=13&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118395335~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033508&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1645 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "reference": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033511830&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1958461741.1785033512&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938468~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033512&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1814 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/svelte/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033511169&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=578478603.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033511&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1641 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": true,
+      "reference": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033512644&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=24266978.1785033512&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118395335~118897920~118897930~119724322~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033513&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1728 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/svelte/dist/",
+        "finalUrl": "https://todomvc.com/examples/svelte/dist/#/active",
+        "transitions": [
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/svelte/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/svelte/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/svelte/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/svelte/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785033511493&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1318364261.1785033511&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=4&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fsvelte%2Fdist%2F&dt=TodoMVC%3A%20Svelte&sid=1785033512&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1804 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 20,
+    "totalScenarios": 20,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "add-two-todos",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 212,
+            "durationMs": 143.501,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 12761,
+              "totalPixels": 786432,
+              "diffRate": 0.016226,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 240,
+            "durationMs": 3410.314,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 452,
+              "totalPixels": 786432,
+              "diffRate": 0.000575,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 228,
+            "durationMs": 3365.266,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 452,
+              "totalPixels": 329160,
+              "diffRate": 0.001373,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/add-two-todos/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.016226,
+        "durationMs": 3509.395
+      },
+      {
+        "scenarioId": "active-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/svelte/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 234,
+            "durationMs": 100.061,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 12667,
+              "totalPixels": 786432,
+              "diffRate": 0.016107,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/svelte/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 246,
+            "durationMs": 4066.554,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 358,
+              "totalPixels": 786432,
+              "diffRate": 0.000455,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/svelte/dist/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 248,
+            "durationMs": 4068.752,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 358,
+              "totalPixels": 329160,
+              "diffRate": 0.001088,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/active-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.016107,
+        "durationMs": 4168.857
+      },
+      {
+        "scenarioId": "completed-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/svelte/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 217,
+            "durationMs": 98.013,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 13161,
+              "totalPixels": 786432,
+              "diffRate": 0.016735,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/svelte/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 220,
+            "durationMs": 4177.294,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 852,
+              "totalPixels": 786432,
+              "diffRate": 0.001083,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/svelte/dist/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 324,
+            "durationMs": 4288.43,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 852,
+              "totalPixels": 329160,
+              "diffRate": 0.002588,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/completed-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.016735,
+        "durationMs": 4386.522
+      },
+      {
+        "scenarioId": "edit-todo",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 230,
+            "durationMs": 107.811,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 12761,
+              "totalPixels": 786432,
+              "diffRate": 0.016226,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 223,
+            "durationMs": 4727.232,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 452,
+              "totalPixels": 786432,
+              "diffRate": 0.000575,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/svelte/dist/",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 256,
+            "durationMs": 3624.616,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 452,
+              "totalPixels": 329160,
+              "diffRate": 0.001373,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-svelte/visual-artifacts/edit-todo/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.016226,
+        "durationMs": 4727.371
+      }
+    ],
+    "scenarioCount": 4,
+    "viewportRuns": 12,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 12,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 2878,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.016735,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 24,
+    "reusedTargetRuns": 8,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 16,
+    "visualViewportRuns": 12,
+    "visualTargetRuns": 24,
+    "visualTargetReusedRuns": 8,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 2878,
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "fast-kill",
+    "fastShutdownUsed": true,
+    "fastShutdownConfirmed": true,
+    "timing": {
+      "browserLaunchMs": 769.907,
+      "contractMs": 15524.618,
+      "comparisonMs": 0.859,
+      "visualMatrixMs": 16792.548,
+      "browserCloseMs": 12.254,
+      "browserDisconnectMs": 0.75,
+      "browserProcessCloseMs": 11.487,
+      "totalMs": 33100.439
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=8/8，generated=8/8"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "4/4 SPA route states 通过，viewportRuns=12，worstComputedStyle=1，worstPixelDiff=0.016735"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=20/20，rate=1，failures=0"
+    }
+  ]
+}

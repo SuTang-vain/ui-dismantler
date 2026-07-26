@@ -1,0 +1,2888 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "https://todomvc.com/examples/react/dist/",
+  "generatedBaseUrl": "https://todomvc.com/examples/angular/dist/browser/",
+  "passed": false,
+  "scenariosPassed": 7,
+  "scenariosTotal": 8,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 16,
+  "results": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721214&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1139934765.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118395333~118897920~118897930~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1953 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/angular/dist/browser/#/active",
+          "state": "{\"navigationId\":2}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721182&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1847955315.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2083 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/completed",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/angular/dist/browser/#/completed",
+          "state": "{\"navigationId\":2}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/completed"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724003&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=53029818.1785033724&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119724322~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033724&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1798 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "dblclick",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1235525135.1785033725&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033725&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1838 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 5,
+          "action": "hover",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 6,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033727874&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=554929052.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118012007~118897920~118897930~119527020~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1813 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033728175&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=841594105.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119724320~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1520 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 3,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/all"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731434&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=547158844.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1596 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": false,
+      "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+      "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/all",
+          "state": "{\"navigationId\":1}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/angular/dist/browser/#/active",
+          "state": "{\"navigationId\":2}"
+        },
+        {
+          "method": "pushState",
+          "target": "/examples/angular/dist/browser/#/completed",
+          "state": "{\"navigationId\":3}"
+        },
+        {
+          "method": "popstate",
+          "target": "/examples/angular/dist/browser/#/active",
+          "state": "{\"navigationId\":2}"
+        },
+        {
+          "method": "hashchange",
+          "target": "/examples/angular/dist/browser/#/active",
+          "state": "{\"navigationId\":2}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/examples/angular/dist/browser/#/active",
+          "state": "{\"navigationId\":4}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/examples/angular/dist/browser/#/all"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/active"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/examples/angular/dist/browser/#/completed"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/examples/angular/dist/browser/#/active"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731641&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1875417496.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033732&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1639 FAILED net::ERR_ABORTED"
+      ],
+      "assertionFailures": [
+        "visibleSelector missing=.filters a.selected[href='#/active']",
+        "selectorCount .todo-list li expected=1 actual=0"
+      ]
+    }
+  ],
+  "reference": {
+    "baseUrl": "https://todomvc.com/examples/react/dist/",
+    "passed": true,
+    "scenariosPassed": 8,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033720851&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2117720702.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1819 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033720817&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1544472447.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118012008~118395334~118897920~118897930~119724320~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1697 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033723697&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=795636239.1785033723&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033724&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2111 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724636&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=499202900.1785033724&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119724322~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033725&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1947 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033727689&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2001832263.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2183 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033727901&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1695550469.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1802 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731151&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=638093570.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1912 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033731147&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=480784436.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1636 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "https://todomvc.com/examples/angular/dist/browser/",
+    "passed": false,
+    "scenariosPassed": 7,
+    "scenariosTotal": 8,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721214&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1139934765.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118395333~118897920~118897930~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1953 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721182&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1847955315.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2083 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/completed",
+            "state": "{\"navigationId\":2}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724003&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=53029818.1785033724&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119724322~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033724&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1798 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1235525135.1785033725&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033725&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1838 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033727874&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=554929052.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118012007~118897920~118897930~119527020~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1813 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033728175&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=841594105.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119724320~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1520 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731434&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=547158844.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1596 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "filter-history-back",
+        "passed": false,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/completed",
+            "state": "{\"navigationId\":3}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":4}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/angular/dist/browser/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731641&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1875417496.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033732&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1639 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": [
+          "visibleSelector missing=.filters a.selected[href='#/active']",
+          "selectorCount .todo-list li expected=1 actual=0"
+        ]
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "add-two-todos",
+      "passed": true,
+      "reference": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033720851&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2117720702.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1819 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "add-two-todos",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721214&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1139934765.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118395333~118897920~118897930~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1953 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "active-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033720817&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1544472447.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=14&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118012008~118395334~118897920~118897930~119724320~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1697 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "active-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033721182&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1847955315.1785033721&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033721&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2083 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "completed-filter-route",
+      "passed": true,
+      "reference": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033723697&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=795636239.1785033723&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=5&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033724&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2111 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "completed-filter-route",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/completed",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/completed",
+            "state": "{\"navigationId\":2}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/completed"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724003&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=53029818.1785033724&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118897920~118897930~119724322~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033724&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1798 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "edit-todo",
+      "passed": true,
+      "reference": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724636&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=499202900.1785033724&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119724322~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033725&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1947 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "edit-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "dblclick",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033724983&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1235525135.1785033725&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033725&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1838 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "destroy-completed-todo",
+      "passed": true,
+      "reference": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033727689&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2001832263.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=17&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119527019~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2183 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "destroy-completed-todo",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "hover",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 6,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033727874&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=554929052.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118012007~118897920~118897930~119527020~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1813 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "clear-completed",
+      "passed": true,
+      "reference": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033727901&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1695550469.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=15&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1802 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "clear-completed",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033728175&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=841594105.1785033728&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119724320~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033728&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1520 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "toggle-all",
+      "passed": true,
+      "reference": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/react/dist/"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731151&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=638093570.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118395334~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1912 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "toggle-all",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/all",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 3,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/all"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731434&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=547158844.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1596 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "filter-history-back",
+      "passed": false,
+      "reference": {
+        "id": "filter-history-back",
+        "passed": true,
+        "entryUrl": "https://todomvc.com/examples/react/dist/",
+        "finalUrl": "https://todomvc.com/examples/react/dist/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/react/dist/",
+            "state": "{\"idx\":0}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/completed",
+            "state": "null"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/react/dist/#/active",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/react/dist/"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/react/dist/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/react/dist/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/react/dist/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785033731147&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=480784436.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785033731&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1636 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "filter-history-back",
+        "passed": false,
+        "entryUrl": "https://todomvc.com/examples/angular/dist/browser/",
+        "finalUrl": "https://todomvc.com/examples/angular/dist/browser/#/active",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/all",
+            "state": "{\"navigationId\":1}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "pushState",
+            "target": "/examples/angular/dist/browser/#/completed",
+            "state": "{\"navigationId\":3}"
+          },
+          {
+            "method": "popstate",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":2}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/examples/angular/dist/browser/#/active",
+            "state": "{\"navigationId\":4}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/examples/angular/dist/browser/#/all"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/active"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/examples/angular/dist/browser/#/completed"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/examples/angular/dist/browser/#/active"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785033731641&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1875417496.1785033731&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Fangular%2Fdist%2Fbrowser%2F&dt=TodoMVC%3A%20Angular&sid=1785033732&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1639 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": [
+          "visibleSelector missing=.filters a.selected[href='#/active']",
+          "selectorCount .todo-list li expected=1 actual=0"
+        ]
+      },
+      "failures": [
+        {
+          "reason": "generated-assertion-failure",
+          "generated": "visibleSelector missing=.filters a.selected[href='#/active']; selectorCount .todo-list li expected=1 actual=0",
+          "detail": "generated 场景断言失败: visibleSelector missing=.filters a.selected[href='#/active']; selectorCount .todo-list li expected=1 actual=0"
+        }
+      ]
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 20,
+    "totalScenarios": 20,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "add-two-todos",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 265,
+            "durationMs": 132.507,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 14460,
+              "totalPixels": 786432,
+              "diffRate": 0.018387,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 233,
+            "durationMs": 3349.243,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 1897,
+              "totalPixels": 786432,
+              "diffRate": 0.002412,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 239,
+            "durationMs": 3216.752,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 1897,
+              "totalPixels": 329160,
+              "diffRate": 0.005763,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/add-two-todos/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.018387,
+        "durationMs": 3349.452
+      },
+      {
+        "scenarioId": "active-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 247,
+            "durationMs": 100.961,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 14460,
+              "totalPixels": 786432,
+              "diffRate": 0.018387,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 234,
+            "durationMs": 3927.497,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 1897,
+              "totalPixels": 786432,
+              "diffRate": 0.002412,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/active",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/active",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 362,
+            "durationMs": 4006.619,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 1897,
+              "totalPixels": 329160,
+              "diffRate": 0.005763,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/active-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.018387,
+        "durationMs": 4107.633
+      },
+      {
+        "scenarioId": "completed-filter-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 282,
+            "durationMs": 87.672,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 14498,
+              "totalPixels": 786432,
+              "diffRate": 0.018435,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 214,
+            "durationMs": 4121.915,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 1935,
+              "totalPixels": 786432,
+              "diffRate": 0.00246,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/#/completed",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/completed",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 215,
+            "durationMs": 4034.017,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 1935,
+              "totalPixels": 329160,
+              "diffRate": 0.005879,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/completed-filter-route/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.018435,
+        "durationMs": 4121.959
+      },
+      {
+        "scenarioId": "edit-todo",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 211,
+            "durationMs": 80.421,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "differentPixels": 14460,
+              "totalPixels": 786432,
+              "diffRate": 0.018387,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 218,
+            "durationMs": 3558.403,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 768,
+              "height": 1024,
+              "differentPixels": 1897,
+              "totalPixels": 786432,
+              "diffRate": 0.002412,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/examples/react/dist/",
+            "generatedFinalRoute": "/examples/angular/dist/browser/#/all",
+            "referenceAnchor": ".todoapp",
+            "generatedAnchor": ".todoapp",
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 259,
+            "durationMs": 3520.339,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "differentPixels": 1897,
+              "totalPixels": 329160,
+              "diffRate": 0.005763,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/mobile/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/mobile/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/todomvc-framework-matrix/react-angular/visual-artifacts/edit-todo/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.018387,
+        "durationMs": 3600.803
+      }
+    ],
+    "scenarioCount": 4,
+    "viewportRuns": 12,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 12,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 2979,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.018435,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 24,
+    "reusedTargetRuns": 8,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 16,
+    "visualViewportRuns": 12,
+    "visualTargetRuns": 24,
+    "visualTargetReusedRuns": 8,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 2979,
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "timing": {
+      "browserLaunchMs": 480.663,
+      "contractMs": 14501.639,
+      "comparisonMs": 0.835,
+      "visualMatrixMs": 15180.188,
+      "browserCloseMs": 49562.004,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 49561.983,
+      "totalMs": 79725.546
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": false,
+      "detail": "reference=8/8，generated=7/8"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "4/4 SPA route states 通过，viewportRuns=12，worstComputedStyle=1，worstPixelDiff=0.018435"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=20/20，rate=1，failures=0"
+    }
+  ]
+}

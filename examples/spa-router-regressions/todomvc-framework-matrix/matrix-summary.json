@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "1.1",
+  "testedAt": "2026-07-26",
+  "reference": "https://todomvc.com/examples/react/dist/",
+  "targets": {
+    "vue": "https://todomvc.com/examples/vue/dist/",
+    "svelte": "https://todomvc.com/examples/svelte/dist/",
+    "angular": "https://todomvc.com/examples/angular/dist/browser/"
+  },
+  "comparisonMode": "semantic",
+  "thresholds": {
+    "computedStyle": 0.98,
+    "pixelDiff": 0.02,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "navigationIntegrity": 1
+  },
+  "rows": [
+    {
+      "pair": "react-vue",
+      "passed": true,
+      "scenarios": "8/8",
+      "navigation": "20/20",
+      "viewportRuns": 12,
+      "visualPassed": true,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.011387,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "nonBlockingNetworkFailures": 16,
+      "stabilityFailures": 0,
+      "internalTotalMs": 31901.692,
+      "browserCloseMs": 12.233,
+      "failureScenarios": []
+    },
+    {
+      "pair": "react-svelte",
+      "passed": true,
+      "scenarios": "8/8",
+      "navigation": "20/20",
+      "viewportRuns": 12,
+      "visualPassed": true,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.016735,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "nonBlockingNetworkFailures": 16,
+      "stabilityFailures": 0,
+      "internalTotalMs": 33100.439,
+      "browserCloseMs": 12.254,
+      "failureScenarios": []
+    },
+    {
+      "pair": "react-angular",
+      "passed": false,
+      "scenarios": "7/8",
+      "navigation": "20/20",
+      "viewportRuns": 12,
+      "visualPassed": true,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.018435,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "nonBlockingNetworkFailures": 16,
+      "stabilityFailures": 0,
+      "internalTotalMs": 79725.546,
+      "browserCloseMs": 49562.004,
+      "failureScenarios": [
+        {
+          "id": "filter-history-back",
+          "failures": [
+            "generated 场景断言失败: visibleSelector missing=.filters a.selected[href='#/active']; selectorCount .todo-list li expected=1 actual=0"
+          ]
+        }
+      ]
+    }
+  ],
+  "orchestrationNotes": {
+    "reactVueExternalWallSeconds": 46.98,
+    "reactSvelteReportCompleted": true,
+    "reactSvelteProcessExit": "stalled after complete report; externally terminated",
+    "parallelFastKillInterference": true,
+    "reactAngularExternalWallSeconds": 80.48,
+    "reactAngularGracefulBrowserCloseMs": 49562.004,
+    "modelApiReconnectObservedDuringThisRun": false,
+    "historical": true,
+    "resolvedByLatestOptimization": {
+      "browserExitTailObserved": false,
+      "activeHandlesAfterClose": 0,
+      "lifecycleExitObserved": true,
+      "parallelFastKillRegression": "2/2 PASS, no lock or process residue"
+    }
+  },
+  "visualModes": {
+    "fullViewport": {
+      "description": "整个 viewport，包含框架说明栏与应用区域",
+      "rows": [
+        {
+          "pair": "react-vue",
+          "passed": true,
+          "scenarios": "8/8",
+          "navigation": "20/20",
+          "viewportRuns": 12,
+          "visualPassed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.011387,
+          "runtimeErrors": 0,
+          "requiredNetworkFailures": 0,
+          "nonBlockingNetworkFailures": 16,
+          "stabilityFailures": 0,
+          "internalTotalMs": 31901.692,
+          "browserCloseMs": 12.233,
+          "failureScenarios": []
+        },
+        {
+          "pair": "react-svelte",
+          "passed": true,
+          "scenarios": "8/8",
+          "navigation": "20/20",
+          "viewportRuns": 12,
+          "visualPassed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.016735,
+          "runtimeErrors": 0,
+          "requiredNetworkFailures": 0,
+          "nonBlockingNetworkFailures": 16,
+          "stabilityFailures": 0,
+          "internalTotalMs": 33100.439,
+          "browserCloseMs": 12.254,
+          "failureScenarios": []
+        },
+        {
+          "pair": "react-angular",
+          "passed": false,
+          "scenarios": "7/8",
+          "navigation": "20/20",
+          "viewportRuns": 12,
+          "visualPassed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.018435,
+          "runtimeErrors": 0,
+          "requiredNetworkFailures": 0,
+          "nonBlockingNetworkFailures": 16,
+          "stabilityFailures": 0,
+          "internalTotalMs": 79725.546,
+          "browserCloseMs": 49562.004,
+          "failureScenarios": [
+            {
+              "id": "filter-history-back",
+              "failures": [
+                "generated 场景断言失败: visibleSelector missing=.filters a.selected[href='#/active']; selectorCount .todo-list li expected=1 actual=0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "reviewedRegion": {
+      "description": "仅比较人工审核的视觉责任区域",
+      "rows": [
+        {
+          "pair": "react-vue",
+          "region": ".todoapp",
+          "passed": true,
+          "scenarios": "8/8",
+          "navigation": "20/20",
+          "viewportRuns": 12,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.000552,
+          "runtimeErrors": 0,
+          "requiredNetworkFailures": 0,
+          "stabilityFailures": 0,
+          "timing": {
+            "browserLaunchMs": 504.556,
+            "contractMs": 17045.504,
+            "comparisonMs": 1.161,
+            "visualMatrixMs": 15646.65,
+            "browserCloseMs": 15.261,
+            "browserDisconnectMs": 0.688,
+            "browserProcessCloseMs": 14.546,
+            "reportReadyMs": 33198.266,
+            "totalMs": 33213.537
+          },
+          "shutdown": {
+            "mode": "fast-kill",
+            "lockAcquired": true,
+            "lockWaitMs": 1.36,
+            "activeHandlesAfterClose": {
+              "totalHandles": 0,
+              "handlesByType": {},
+              "resourcesByType": {
+                "filesystem": 3,
+                "timer": 2
+              },
+              "requestsByType": {
+                "filesystem": 3
+              }
+            }
+          },
+          "lifecycle": {
+            "reportReady": true,
+            "reportWritten": true,
+            "beforeExitObserved": true,
+            "exitObserved": true,
+            "exitCode": 0
+          }
+        }
+      ]
+    }
+  },
+  "latestOptimization": {
+    "name": "reviewed-screenshot-region-and-safe-browser-shutdown",
+    "verifiedAt": "2026-07-26",
+    "fullViewportWorstPixelDiff": 0.011387,
+    "reviewedRegionWorstPixelDiff": 0.000552,
+    "activeHandlesAfterClose": 0,
+    "reportReadyMs": 33198.266,
+    "totalMs": 33213.537,
+    "lifecycleExitObserved": true,
+    "fullTypeScriptSuite": {
+      "tests": 93,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 3
+    }
+  }
+}

@@ -82,6 +82,7 @@ export async function runQualityGate(options: {
   browserConcurrency?: number;
   browserResourceCache?: "off" | "run-local";
   browserStability?: "fixed" | "adaptive";
+  browserShutdown?: "graceful" | "fast-kill";
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
   const totalStartedAt = performance.now();
@@ -130,6 +131,7 @@ export async function runQualityGate(options: {
         concurrency: browserConcurrency,
         resourceCache: options.browserResourceCache ?? "off",
         stabilityMode: options.browserStability ?? "fixed",
+        browserShutdown: options.browserShutdown ?? "graceful",
       });
       browserEvaluation = suite.initial;
       browserTelemetry = suite.telemetry;
@@ -146,6 +148,7 @@ export async function runQualityGate(options: {
         viewports: options.viewports,
         concurrency: browserConcurrency,
         stabilityMode: options.browserStability ?? "fixed",
+        browserShutdown: options.browserShutdown ?? "graceful",
       });
       timing.visualMatrixMs = elapsed(phaseStartedAt);
     }

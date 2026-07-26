@@ -8,6 +8,8 @@
   "scenariosTotal": 8,
   "runtimeErrors": 0,
   "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 16,
   "results": [
     {
       "id": "add-two-todos",
@@ -23,6 +25,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012206653&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=964649089.1785012206&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803~120084215&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2151 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -49,6 +55,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206658&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=13378344.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119259605~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2034 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -75,6 +85,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012209464&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1052292835.1785012209&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395335~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1782 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -91,6 +105,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012210337&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=982040440.1785012210&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012211&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1815 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -107,6 +125,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012213174&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=99602411.1785012213&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012213&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1961 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -123,6 +145,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012214495&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2036614555.1785012214&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012215&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2503 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -139,6 +165,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012216608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1298296570.1785012216&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724320~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1679 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     },
     {
@@ -185,6 +215,10 @@
       ],
       "runtimeErrors": [],
       "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [
+        "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012217981&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2061990840.1785012218&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012218&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1723 FAILED net::ERR_ABORTED"
+      ],
       "assertionFailures": []
     }
   ],
@@ -195,6 +229,8 @@
     "scenariosTotal": 8,
     "runtimeErrors": 0,
     "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
     "results": [
       {
         "id": "add-two-todos",
@@ -210,6 +246,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206654&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=592542836.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724320~119793972~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2182 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -236,6 +276,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206656&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=157301859.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2142 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -262,6 +306,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012209459&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2063109444.1785012209&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1860 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -278,6 +326,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785012210337&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=921977986.1785012210&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1689 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -294,6 +346,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012213158&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=478785647.1785012213&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012213&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1985 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -310,6 +366,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012213814&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2028841065.1785012214&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012214&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1667 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -326,6 +386,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012216761&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1391630836.1785012216&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119791749~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1779 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -372,6 +436,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012217110&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1345745968.1785012217&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1522 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       }
     ]
@@ -383,6 +451,8 @@
     "scenariosTotal": 8,
     "runtimeErrors": 0,
     "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
     "results": [
       {
         "id": "add-two-todos",
@@ -398,6 +468,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012206653&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=964649089.1785012206&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803~120084215&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2151 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -424,6 +498,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206658&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=13378344.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119259605~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2034 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -450,6 +528,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012209464&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1052292835.1785012209&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395335~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1782 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -466,6 +548,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012210337&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=982040440.1785012210&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012211&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1815 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -482,6 +568,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012213174&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=99602411.1785012213&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012213&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1961 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -498,6 +588,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012214495&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2036614555.1785012214&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012215&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2503 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -514,6 +608,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012216608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1298296570.1785012216&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724320~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1679 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       {
@@ -560,6 +658,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012217981&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2061990840.1785012218&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012218&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1723 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       }
     ]
@@ -582,6 +684,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206654&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=592542836.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724320~119793972~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2182 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -598,6 +704,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012206653&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=964649089.1785012206&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=0&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896803~120084215&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2151 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -629,6 +739,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206656&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=157301859.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2142 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -655,6 +769,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012206658&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=13378344.1785012207&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119259605~119527020~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012207&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2034 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -686,6 +804,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012209459&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2063109444.1785012209&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=11&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119724321~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1860 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -712,6 +834,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012209464&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1052292835.1785012209&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395335~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1782 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -733,6 +859,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0h1v9123080148za20g&_p=1785012210337&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=921977986.1785012210&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012210&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1689 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -749,6 +879,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012210337&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=982040440.1785012210&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118395333~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012211&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1815 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -770,6 +904,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012213158&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=478785647.1785012213&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=6&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012213&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1985 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -786,6 +924,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012213174&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=99602411.1785012213&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=2&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012213&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1961 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -807,6 +949,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012213814&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2028841065.1785012214&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=3&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012214&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1667 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -823,6 +969,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012214495&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2036614555.1785012214&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896802&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012215&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2503 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -844,6 +994,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012216761&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1391630836.1785012216&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=9&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938469~118897920~118897930~119791749~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1779 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -860,6 +1014,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012216608&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1298296570.1785012216&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=19&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724320~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1679 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -911,6 +1069,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m1h2v9123080148za20g&_p=1785012217110&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=1345745968.1785012217&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=8&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012217&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1522 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "generated": {
@@ -957,6 +1119,10 @@
         ],
         "runtimeErrors": [],
         "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-T3XWXPZX5B&gtm=45je67m0v9123080148za20g&_p=1785012217981&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=EBAI&are=1&cid=2061990840.1785012218&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dl=https%3A%2F%2Ftodomvc.com%2Fexamples%2Freact%2Fdist%2F&dt=TodoMVC%3A%20React&sid=1785012218&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1723 FAILED net::ERR_ABORTED"
+        ],
         "assertionFailures": []
       },
       "failures": []
@@ -988,9 +1154,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 220,
-            "durationMs": 124.136,
+            "adaptiveWaitMs": 222,
+            "durationMs": 112.141,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1028,9 +1195,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 228,
-            "durationMs": 3613.365,
+            "adaptiveWaitMs": 214,
+            "durationMs": 3046.546,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1068,9 +1236,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 219,
-            "durationMs": 3348.636,
+            "adaptiveWaitMs": 303,
+            "durationMs": 3090.108,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1099,7 +1268,7 @@
         ],
         "worstComputedStyle": 1,
         "worstPixelDiff": 0,
-        "durationMs": 3613.634
+        "durationMs": 3202.497
       },
       {
         "scenarioId": "active-filter-route",
@@ -1117,9 +1286,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 525,
-            "durationMs": 101.06,
+            "adaptiveWaitMs": 404,
+            "durationMs": 76.581,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1157,9 +1327,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 216,
-            "durationMs": 4121.028,
+            "adaptiveWaitMs": 237,
+            "durationMs": 3847.012,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1197,9 +1368,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 217,
-            "durationMs": 4079.802,
+            "adaptiveWaitMs": 239,
+            "durationMs": 3839.481,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1228,7 +1400,7 @@
         ],
         "worstComputedStyle": 1,
         "worstPixelDiff": 0,
-        "durationMs": 4180.92
+        "durationMs": 3916.092
       },
       {
         "scenarioId": "completed-filter-route",
@@ -1246,9 +1418,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 341,
-            "durationMs": 78.283,
+            "adaptiveWaitMs": 222,
+            "durationMs": 79.942,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1286,9 +1459,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 213,
-            "durationMs": 3974.567,
+            "adaptiveWaitMs": 218,
+            "durationMs": 3705.989,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1326,9 +1500,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 302,
-            "durationMs": 4135.74,
+            "adaptiveWaitMs": 340,
+            "durationMs": 3803.196,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1357,7 +1532,7 @@
         ],
         "worstComputedStyle": 1,
         "worstPixelDiff": 0,
-        "durationMs": 4214.1
+        "durationMs": 3883.179
       },
       {
         "scenarioId": "edit-todo",
@@ -1375,9 +1550,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 221,
-            "durationMs": 78.669,
+            "adaptiveWaitMs": 219,
+            "durationMs": 87.202,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1415,9 +1591,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 215,
-            "durationMs": 3524.021,
+            "adaptiveWaitMs": 257,
+            "durationMs": 3507.826,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1455,9 +1632,10 @@
             "generatedAnchor": ".todoapp",
             "runtimeErrors": 0,
             "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
             "stabilityFailures": [],
-            "adaptiveWaitMs": 353,
-            "durationMs": 3610.106,
+            "adaptiveWaitMs": 222,
+            "durationMs": 3280.993,
             "navigationPassed": true,
             "navigationFailures": [],
             "captureFailures": [],
@@ -1486,17 +1664,18 @@
         ],
         "worstComputedStyle": 1,
         "worstPixelDiff": 0,
-        "durationMs": 3688.832
+        "durationMs": 3507.869
       }
     ],
     "scenarioCount": 4,
     "viewportRuns": 12,
     "runtimeErrors": 0,
     "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
     "navigationFailures": 0,
     "navigationMatchedRuns": 12,
     "stabilityFailures": 0,
-    "adaptiveWaitMs": 3270,
+    "adaptiveWaitMs": 3097,
     "worstComputedStyle": 1,
     "worstPixelDiff": 0,
     "styleThreshold": 0.98,
@@ -1512,16 +1691,21 @@
     "visualTargetReusedRuns": 8,
     "visualTargetFreshRuns": 16,
     "visualStabilityFailures": 0,
-    "visualAdaptiveWaitMs": 3270,
+    "visualAdaptiveWaitMs": 3097,
     "contractConcurrency": 2,
     "visualConcurrency": 2,
+    "browserShutdownMode": "fast-kill",
+    "fastShutdownUsed": true,
+    "fastShutdownConfirmed": true,
     "timing": {
-      "browserLaunchMs": 849.46,
-      "contractMs": 15417.077,
-      "comparisonMs": 0.488,
-      "visualMatrixMs": 15697.811,
-      "browserCloseMs": 12787.817,
-      "totalMs": 44752.863
+      "browserLaunchMs": 347.288,
+      "contractMs": 15090.544,
+      "comparisonMs": 0.459,
+      "visualMatrixMs": 14509.957,
+      "browserCloseMs": 12.147,
+      "browserDisconnectMs": 1.479,
+      "browserProcessCloseMs": 10.651,
+      "totalMs": 29960.596
     }
   },
   "qualityGates": [
@@ -1543,7 +1727,7 @@
     {
       "id": "resource-readiness",
       "passed": true,
-      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0"
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
     },
     {
       "id": "navigation-integrity",

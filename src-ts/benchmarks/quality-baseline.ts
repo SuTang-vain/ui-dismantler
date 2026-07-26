@@ -23,6 +23,10 @@ export interface BenchmarkSample {
   failedGates: string[];
   timing: QualityGateReport["telemetry"]["timing"];
   browserTiming?: BrowserExecutionTelemetry["timing"];
+  browserShutdown?: BrowserExecutionTelemetry["browserShutdown"];
+  fastShutdownConfirmed?: boolean;
+  blockingHandlesAfterClose?: number;
+  stabilityFailureDetails: Array<{ matrix: string; viewport: string; role: "reference" | "library"; message: string }>;
   workload: QualityGateReport["telemetry"]["workload"];
   browserWorkload?: BrowserExecutionTelemetry["workload"];
   quality: {
@@ -138,6 +142,14 @@ export function aggregateBenchmarkSamples(samples: BenchmarkSample[]): Record<st
   }));
 }
 
+function stabilityDetailsFromReport(report: QualityGateReport): Array<{ matrix: string; viewport: string; role: "reference" | "library"; message: string }> {
+  const matrices = [
+    ...(report.browserMatrix ? [{ id: "initial", report: report.browserMatrix }] : []),
+    ...(report.scenarioVisualMatrices ?? []).map((matrix) => ({ id: `scenario:${matrix.scenarioId}`, report: matrix })),
+  ];
+  return matrices.flatMap(({ id, report: matrix }) => matrix.viewports.flatMap((viewport) => viewport.stabilityFailureDetails.map((failure) => ({ matrix: id, viewport: viewport.id, role: failure.role, message: failure.message }))));
+}
+
 function sampleFromReport(caseId: string, round: number, report: QualityGateReport): BenchmarkSample {
   const initial = report.browserMatrix;
   const scenario = report.scenarioVisualMatrices ?? [];
@@ -151,6 +163,10 @@ function sampleFromReport(caseId: string, round: number, report: QualityGateRepo
     failedGates: report.gates.filter((gate) => !gate.passed).map((gate) => gate.id),
     timing: report.telemetry.timing,
     browserTiming: report.telemetry.browser?.timing,
+    browserShutdown: report.telemetry.browser?.browserShutdown,
+    fastShutdownConfirmed: report.telemetry.browser?.fastShutdownConfirmed,
+    blockingHandlesAfterClose: report.telemetry.browser?.activeHandlesAfterClose.totalBlockingHandles,
+    stabilityFailureDetails: stabilityDetailsFromReport(report),
     workload: report.telemetry.workload,
     browserWorkload: report.telemetry.browser?.workload,
     quality: {
@@ -183,6 +199,7 @@ export async function runQualityBaseline(options: { cases: BenchmarkCase[]; runs
           browserMode: "shared-browser",
           browserConcurrency: 1,
           browserResourceCache: "run-local",
+          browserShutdown: "fast-kill",
           browserStability: "adaptive",
           thresholds: { interactionCoverage: 1 },
         });
@@ -197,7 +214,7 @@ export async function runQualityBaseline(options: { cases: BenchmarkCase[]; runs
   const aggregates = aggregateBenchmarkSamples(samples);
   const result = { passed: samples.every((sample) => sample.passed), samples, aggregates };
   await mkdir(dirname(options.outputPath), { recursive: true });
-  await writeFile(options.outputPath, `${JSON.stringify({ schemaVersion: "1.0", measuredAt: new Date().toISOString(), configuration: { runs: options.runs, browserMode: "shared-browser", browserConcurrency: 1, browserResourceCache: "run-local", browserStability: "adaptive", interactionCoverage: 1, caseOrder: options.cases.map((item) => item.id) }, ...result }, null, 2)}\n`, "utf8");
+  await writeFile(options.outputPath, `${JSON.stringify({ schemaVersion: "1.0", measuredAt: new Date().toISOString(), configuration: { runs: options.runs, browserMode: "shared-browser", browserConcurrency: 1, browserResourceCache: "run-local", browserStability: "adaptive", browserShutdown: "fast-kill", interactionCoverage: 1, caseOrder: options.cases.map((item) => item.id) }, ...result }, null, 2)}\n`, "utf8");
   return result;
 }
 

@@ -6,7 +6,11 @@
   "implementation": "React",
   "router": {
     "kind": "hash",
-    "routes": ["#/", "#/active", "#/completed"],
+    "routes": [
+      "#/",
+      "#/active",
+      "#/completed"
+    ],
     "observedTransition": "hashchange"
   },
   "state": {
@@ -29,6 +33,24 @@
     "completed-filter-route",
     "edit-todo"
   ],
-  "viewports": ["1024x768", "768x1024", "390x844"],
-  "status": "source contract and same-target visual control ready; generated translation target not provided"
+  "viewports": [
+    "1024x768",
+    "768x1024",
+    "390x844"
+  ],
+  "status": "source contract and same-target visual control ready; generated translation target not provided",
+  "networkPolicy": {
+    "requiredResourceTypes": [
+      "document",
+      "script",
+      "stylesheet",
+      "xhr",
+      "fetch"
+    ],
+    "nonBlockingHosts": [
+      "google-analytics.com"
+    ],
+    "observedNonBlockingFailureCount": 16,
+    "observedRequiredFailureCount": 0
+  }
 }

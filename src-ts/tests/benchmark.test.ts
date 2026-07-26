@@ -11,7 +11,8 @@ function sample(round: number, totalMs: number, stabilityFailures = 0, passed = 
     scores: { dom: 1, visual: 0.99, overall: 0.994 },
     failedGates: passed ? [] : ["viewport-matrix"],
     timing: { analyzeMs: 1, validateMs: 2, roundtripMs: 3, visualMatrixMs: 4, scenarioStateMs: 5, scenarioVisualMatrixMs: 6, spaRouterMs: 0, totalMs },
-    browserTiming: { launchMs: 1, contextCreateMs: 1, contextInitMs: 1, pageCreateMs: 1, navigationMs: 2, settleMs: 3, domStabilityMs: 4, networkIdleMs: 5, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 1, signatureScanMs: 1, scenarioExecutionMs: 1, scrollAnchorMs: 0, snapshotEvaluationMs: 1, screenshotMs: 1, pixelDiffMs: 1, artifactWriteMs: 1, closeMs: 1, browserDisconnectMs: 0, browserProcessCloseMs: 1, totalMs: totalMs - 1 },
+    browserTiming: { launchMs: 1, contextCreateMs: 1, contextInitMs: 1, pageCreateMs: 1, navigationMs: 2, settleMs: 3, domStabilityMs: 4, networkIdleMs: 5, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 1, signatureScanMs: 1, scenarioExecutionMs: 1, scrollAnchorMs: 0, snapshotEvaluationMs: 1, screenshotMs: 1, pixelDiffMs: 1, artifactWriteMs: 1, closeMs: 1, browserDisconnectMs: 0, browserProcessCloseMs: 1, reportReadyMs: totalMs - 2, totalMs: totalMs - 1 },
+    stabilityFailureDetails: [],
     workload: { interactions: 2, formalScenarios: 1, criticalScenarios: 1, coverageWaivers: 0, viewports: 4, scenarioViewportRuns: 4, spaRouterScenarios: 0, spaRouterViewportRuns: 0 },
     quality: { worstSelectorCoverage: 1, worstComputedStyle: 0.99, worstPixelDiff: 0.01, runtimeErrors: 0, stabilityFailures, resourceFailures: 0, externalAvailabilityFailures: 0, navigationFailures: 0, worstNavigationIntegrity: 1 },
   };

@@ -81,6 +81,20 @@ selectorCount
 
 A local synthetic regression covers these behaviors without depending on the public site.
 
+## Network interference classification
+
+The runner records page-level request failures separately from model/API orchestration. In the final TodoMVC run:
+
+```text
+required network failures: 0
+non-blocking network failures: 16
+unmocked API requests: 0
+```
+
+The 16 non-blocking observations were Google Analytics telemetry `fetch` requests ending in `ERR_ABORTED`. They are explicitly listed in `nonBlockingNetworkHosts`; document, script, stylesheet, and same-origin business fetch/xhr failures remain blocking. This avoids treating third-party analytics noise as an application failure while retaining strict core-resource gates.
+
+A model API reconnect can interrupt orchestration, cleanup, or progress reporting, but it does not generate these page-level request records. The report therefore keeps the two failure classes separate.
+
 ## Execution reuse and adaptive stability optimization
 
 The original dual-target contract plus visual matrix took:
@@ -108,6 +122,9 @@ mean: 55.240s
 standard deviation: 2.324s
 failure rate: 0%
 stability failure rate: 0%
+new orphan Chrome rate: 0%
+fast shutdown confirmed: 3/3
+process close: 8.6–10.0ms
 ```
 
 Median wall time improved by approximately 38.4% without reducing scenarios, viewports, or thresholds. Every round reported:

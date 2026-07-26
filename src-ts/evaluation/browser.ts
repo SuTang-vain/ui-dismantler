@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { mkdir, readdir, writeFile } from "node:fs/promises";
+import { mkdir, open, readFile, readdir, stat, unlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { basename, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
@@ -219,6 +220,7 @@ export interface BrowserQualityOptions {
   artifactDir?: string;
   executablePath?: string;
   stabilityMode?: "fixed" | "adaptive";
+  browserShutdown?: "graceful" | "fast-kill";
 }
 
 export interface BrowserQualityMatrixOptions extends Omit<BrowserQualityOptions, "width" | "height"> {
@@ -232,6 +234,13 @@ export interface BrowserExecutionTelemetry {
   concurrency: number;
   resourceCache: "off" | "run-local";
   stabilityMode: "fixed" | "adaptive";
+  browserShutdown: "graceful" | "fast-kill" | "graceful-fallback";
+  fastShutdownUsed: boolean;
+  fastShutdownConfirmed: boolean;
+  fastShutdownLockAcquired: boolean;
+  fastShutdownLockWaitMs: number;
+  activeHandlesBeforeClose: BrowserActiveHandleSnapshot;
+  activeHandlesAfterClose: BrowserActiveHandleSnapshot;
   timing: {
     launchMs: number;
     contextCreateMs: number;
@@ -255,6 +264,7 @@ export interface BrowserExecutionTelemetry {
     closeMs: number;
     browserDisconnectMs: number;
     browserProcessCloseMs: number;
+    reportReadyMs: number;
     totalMs: number;
   };
   workload: {
@@ -282,6 +292,7 @@ export interface BrowserExecutionTelemetry {
     fallbackFaces: number;
     failedFaces: number;
     fontStateMismatches: number;
+    optionalFontStylesheetBypasses: number;
     resourceAwareWaits: number;
     resourceDrainTimeouts: number;
     stylesheetAwareWaits: number;
@@ -318,14 +329,94 @@ export interface BrowserQualitySuiteReport {
   telemetry: BrowserExecutionTelemetry;
 }
 
+export interface BrowserActiveHandleSnapshot {
+  totalHandles: number;
+  totalBlockingHandles: number;
+  standardIoHandles: number;
+  handlesByType: Record<string, number>;
+  resourcesByType: Record<string, number>;
+  requestsByType: Record<string, number>;
+}
+
+function countHandleTypes(names: string[]): Record<string, number> {
+  return names.reduce<Record<string, number>>((counts, name) => { counts[name] = (counts[name] ?? 0) + 1; return counts; }, {});
+}
+function classifyBrowserHandle(name: string): string {
+  const lower = name.toLowerCase();
+  if (lower.includes("timer") || lower.includes("timeout") || lower.includes("immediate")) return "timer";
+  if (lower.includes("server") || lower.includes("tcpserver")) return "server";
+  if (lower.includes("socket") || lower.includes("tcp")) return "socket";
+  if (lower.includes("pipe")) return "pipe";
+  if (lower.includes("child")) return "child-process";
+  if (lower.includes("fs") || lower.includes("file")) return "filesystem";
+  return name || "unknown";
+}
+function browserActiveHandleSnapshot(): BrowserActiveHandleSnapshot {
+  const nodeProcess = process as typeof process & { _getActiveHandles?: () => unknown[]; _getActiveRequests?: () => unknown[]; getActiveResourcesInfo?: () => string[] };
+  const handles = (nodeProcess._getActiveHandles?.() ?? []).map((handle) => {
+    const candidate = handle as { constructor?: { name?: string }; fd?: number };
+    if (handle === process.stdin || handle === process.stdout || handle === process.stderr || [0, 1, 2].includes(candidate.fd ?? -1)) return "stdio";
+    return classifyBrowserHandle(candidate.constructor?.name ?? "unknown");
+  });
+  const requests = (nodeProcess._getActiveRequests?.() ?? []).map((request) => classifyBrowserHandle((request as { constructor?: { name?: string } })?.constructor?.name ?? "unknown"));
+  const resources = (nodeProcess.getActiveResourcesInfo?.() ?? []).map(classifyBrowserHandle);
+  const standardIoHandles = handles.filter((name) => name === "stdio").length;
+  return { totalHandles: handles.length, totalBlockingHandles: handles.length - standardIoHandles, standardIoHandles, handlesByType: countHandleTypes(handles), resourcesByType: countHandleTypes(resources), requestsByType: countHandleTypes(requests) };
+}
+
+const BROWSER_FAST_SHUTDOWN_LOCK = resolve(tmpdir(), "ui-dismantler-playwright-fast-shutdown.lock");
+const browserSleep = (ms: number): Promise<void> => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
+async function withBrowserFastShutdownLock<T>(worker: () => Promise<T>): Promise<{ acquired: boolean; waitMs: number; value?: T }> {
+  const startedAt = performance.now();
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    let handle;
+    try {
+      handle = await open(BROWSER_FAST_SHUTDOWN_LOCK, "wx");
+      await handle.writeFile(`${process.pid}\n`, "utf8");
+      try { return { acquired: true, waitMs: Number((performance.now() - startedAt).toFixed(3)), value: await worker() }; }
+      finally { await handle.close().catch(() => undefined); await unlink(BROWSER_FAST_SHUTDOWN_LOCK).catch(() => undefined); }
+    } catch (error) {
+      await handle?.close().catch(() => undefined);
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") return { acquired: false, waitMs: Number((performance.now() - startedAt).toFixed(3)) };
+      let stale = false;
+      try {
+        const info = await stat(BROWSER_FAST_SHUTDOWN_LOCK); stale = Date.now() - info.mtimeMs > 30_000;
+        if (!stale) { const owner = Number((await readFile(BROWSER_FAST_SHUTDOWN_LOCK, "utf8")).trim()); if (Number.isInteger(owner) && owner > 0) { try { process.kill(owner, 0); } catch { stale = true; } } }
+      } catch { stale = true; }
+      if (stale) await unlink(BROWSER_FAST_SHUTDOWN_LOCK).catch(() => undefined); else await browserSleep(50);
+    }
+  }
+  return { acquired: false, waitMs: Number((performance.now() - startedAt).toFixed(3)) };
+}
+async function terminateProfiledBrowserFast(server: BrowserServer): Promise<boolean> {
+  const child = server.process();
+  if (child.exitCode === null && child.signalCode === null) {
+    const exited = new Promise<boolean>((resolveExit) => child.once("exit", () => resolveExit(true)));
+    child.kill("SIGKILL"); child.unref();
+    const confirmed = await Promise.race([exited, browserSleep(1000).then(() => false)]);
+    if (!confirmed) { await server.kill(); return false; }
+  }
+  for (const stream of [child.stdin, child.stdout, child.stderr]) stream?.destroy();
+  const internal = server as BrowserServer & { _disconnectForTest?: () => Promise<void> };
+  if (typeof internal._disconnectForTest === "function") await Promise.race([internal._disconnectForTest().catch(() => undefined), browserSleep(500)]);
+  return true;
+}
+
 function createBrowserTelemetry(mode: BrowserExecutionTelemetry["mode"], concurrency: number, resourceCache: BrowserExecutionTelemetry["resourceCache"] = "off", stabilityMode: BrowserExecutionTelemetry["stabilityMode"] = "fixed"): BrowserExecutionTelemetry {
   return {
     mode,
     concurrency,
     resourceCache,
     stabilityMode,
-    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, browserDisconnectMs: 0, browserProcessCloseMs: 0, totalMs: 0 },
-    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, timerGraceExtensions: 0, fontPreflightWaits: 0, facesDiscovered: 0, blockingFaces: 0, nonBlockingFaces: 0, loadedFaces: 0, fallbackFaces: 0, failedFaces: 0, fontStateMismatches: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
+    browserShutdown: "graceful",
+    fastShutdownUsed: false,
+    fastShutdownConfirmed: false,
+    fastShutdownLockAcquired: false,
+    fastShutdownLockWaitMs: 0,
+    activeHandlesBeforeClose: browserActiveHandleSnapshot(),
+    activeHandlesAfterClose: browserActiveHandleSnapshot(),
+    timing: { launchMs: 0, contextCreateMs: 0, contextInitMs: 0, pageCreateMs: 0, navigationMs: 0, settleMs: 0, domStabilityMs: 0, networkIdleMs: 0, fixedWaitMs: 0, fontPreflightMs: 0, timerGraceMs: 0, resourceScanMs: 0, signatureScanMs: 0, scenarioExecutionMs: 0, scrollAnchorMs: 0, snapshotEvaluationMs: 0, screenshotMs: 0, pixelDiffMs: 0, artifactWriteMs: 0, closeMs: 0, browserDisconnectMs: 0, browserProcessCloseMs: 0, reportReadyMs: 0, totalMs: 0 },
+    workload: { browserLaunches: 0, contextsCreated: 0, pagesCreated: 0, pagePairsCreatedInParallel: 0, navigations: 0, viewportRuns: 0, scenarioMatrices: 0, scenarioSteps: 0, stabilityChecks: 0, stabilityTimeouts: 0, assertionStabilityChecks: 0, assertionStabilityTimeouts: 0, networkIdleTimeouts: 0, timerAwareWaits: 0, timerDrainTimeouts: 0, timerGraceExtensions: 0, fontPreflightWaits: 0, facesDiscovered: 0, blockingFaces: 0, nonBlockingFaces: 0, loadedFaces: 0, fallbackFaces: 0, failedFaces: 0, fontStateMismatches: 0, optionalFontStylesheetBypasses: 0, resourceAwareWaits: 0, resourceDrainTimeouts: 0, stylesheetAwareWaits: 0, backgroundImageAwareWaits: 0, fontAwareWaits: 0, resourceFullScans: 0, resourceIncrementalScans: 0, resourceElementsScanned: 0, resourcePseudoElementsScanned: 0, resourceUrlsDiscovered: 0, signatureFullScans: 0, signatureIncrementalScans: 0, signatureNodesScanned: 0, signatureMutationInvalidations: 0, signatureResizeInvalidations: 0, signatureScrollInvalidations: 0, examplePathCacheHits: 0, examplePathCacheMisses: 0, explicitWaits: 0, adaptiveExplicitWaits: 0, scrollAnchorNormalizations: 0, screenshots: 0, remoteRequests: 0, resourceCacheHits: 0, resourceCacheMisses: 0, resourceCacheBytes: 0 },
   };
 }
 
@@ -360,11 +451,11 @@ function chromeCandidates(): string[] {
 interface ProfiledBrowserProcess { server: BrowserServer }
 const profiledBrowserProcesses = new WeakMap<Browser, ProfiledBrowserProcess>();
 
-async function launchBrowser(executablePath?: string): Promise<Browser> {
+async function launchBrowser(executablePath?: string, forceServer = false): Promise<Browser> {
   const candidate = executablePath ?? chromeCandidates().find(existsSync);
   if (!candidate) throw new Error("未找到 Chrome/Chromium；可通过 CHROME_PATH 指定浏览器路径");
   const launchOptions = { executablePath: candidate, headless: true, args: ["--allow-file-access-from-files", "--disable-web-security"] };
-  if (process.env.UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE === "1") {
+  if (forceServer || process.env.UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE === "1") {
     const server = await chromium.launchServer(launchOptions);
     const browser = await chromium.connect(server.wsEndpoint());
     profiledBrowserProcesses.set(browser, { server });
@@ -373,23 +464,42 @@ async function launchBrowser(executablePath?: string): Promise<Browser> {
   return chromium.launch(launchOptions);
 }
 
-async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExecutionTelemetry): Promise<void> {
+async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExecutionTelemetry, requestedFastShutdown = false): Promise<void> {
   if (!browser) return;
   const profiled = profiledBrowserProcesses.get(browser);
+  if (telemetry) telemetry.activeHandlesBeforeClose = browserActiveHandleSnapshot();
   if (!profiled) {
     const startedAt = performance.now();
     await browser.close();
-    if (telemetry) telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+    if (telemetry) {
+      telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+      telemetry.activeHandlesAfterClose = browserActiveHandleSnapshot();
+      telemetry.browserShutdown = "graceful";
+    }
     return;
   }
   let startedAt = performance.now();
+  let lockAcquired = false, lockWaitMs = 0, fastConfirmed = false;
   try {
     await browser.close();
     if (telemetry) telemetry.timing.browserDisconnectMs += elapsed(startedAt);
   } finally {
     startedAt = performance.now();
-    await profiled.server.close();
-    if (telemetry) telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+    if (requestedFastShutdown) {
+      const lock = await withBrowserFastShutdownLock(() => terminateProfiledBrowserFast(profiled.server));
+      lockAcquired = lock.acquired; lockWaitMs = lock.waitMs;
+      if (lock.acquired && lock.value !== undefined) fastConfirmed = lock.value;
+      else await profiled.server.close();
+    } else await profiled.server.close();
+    if (telemetry) {
+      telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
+      telemetry.fastShutdownUsed = requestedFastShutdown && lockAcquired;
+      telemetry.fastShutdownConfirmed = fastConfirmed;
+      telemetry.fastShutdownLockAcquired = lockAcquired;
+      telemetry.fastShutdownLockWaitMs = lockWaitMs;
+      telemetry.browserShutdown = telemetry.fastShutdownUsed && fastConfirmed ? "fast-kill" : requestedFastShutdown ? "graceful-fallback" : "graceful";
+      telemetry.activeHandlesAfterClose = browserActiveHandleSnapshot();
+    }
     profiledBrowserProcesses.delete(browser);
   }
 }
@@ -1089,6 +1199,17 @@ function resourceFailuresForProbe(references: VisualResourceReference[], network
   return failures;
 }
 
+export function isNonBlockingFontStylesheetRequest(urlValue: string, resourceType: string): boolean {
+  if (resourceType !== "stylesheet") return false;
+  try {
+    const url = new URL(urlValue);
+    const hostname = url.hostname.toLowerCase();
+    if (hostname !== "fonts.googleapis.com") return false;
+    if (!/^\/css(?:2)?(?:\/|$)/.test(url.pathname)) return false;
+    return ["swap", "fallback", "optional"].includes((url.searchParams.get("display") ?? "").toLowerCase());
+  } catch { return false; }
+}
+
 async function waitForAdaptiveStability(
   page: Page,
   rootSelector: string,
@@ -1111,7 +1232,10 @@ async function waitForAdaptiveStability(
   });
   const [dom, rawNetworkIdle] = await Promise.all([domPromise, networkPromise]);
   const hasBlockingFonts = dom.resourceReferences.some((reference) => reference.type === "font" && reference.required !== false);
-  const onlyOptionalFontRequestsRemain = network.pending.size > 0 && [...network.pending].every((request) => request.resourceType() === "font") && !hasBlockingFonts;
+  const pendingRequests = [...network.pending];
+  const onlyOptionalFontRequestsRemain = pendingRequests.length > 0 && pendingRequests.every((request) => request.resourceType() === "font" || isNonBlockingFontStylesheetRequest(request.url(), request.resourceType())) && !hasBlockingFonts;
+  const optionalFontStylesheetBypassed = !rawNetworkIdle && onlyOptionalFontRequestsRemain && pendingRequests.some((request) => isNonBlockingFontStylesheetRequest(request.url(), request.resourceType()));
+  if (telemetry && optionalFontStylesheetBypassed) telemetry.workload.optionalFontStylesheetBypasses += 1;
   const networkIdle = rawNetworkIdle || onlyOptionalFontRequestsRemain;
   const domTimedOut = !dom.stable;
   const networkTimedOut = !networkIdle;
@@ -1821,12 +1945,12 @@ async function evaluateBrowserQualityInBrowser(browser: Browser, htmlPath: strin
 export async function evaluateBrowserQuality(htmlPath: string, libDir: string, options: BrowserQualityOptions = {}): Promise<BrowserQualityReport> {
   let browser: Browser | undefined;
   try {
-    browser = await launchBrowser(options.executablePath);
+    browser = await launchBrowser(options.executablePath, options.browserShutdown === "fast-kill");
     return await evaluateBrowserQualityInBrowser(browser, htmlPath, libDir, options);
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
   } finally {
-    await closeBrowser(browser);
+    await closeBrowser(browser, undefined, options.browserShutdown === "fast-kill");
   }
 }
 
@@ -1942,7 +2066,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
   let browser: Browser | undefined = sharedBrowser;
   const ownsBrowser = !sharedBrowser;
   try {
-    if (!browser) browser = await launchBrowser(options.executablePath);
+    if (!browser) browser = await launchBrowser(options.executablePath, options.browserShutdown === "fast-kill");
     const reports = await mapWithConcurrency(viewports, options.concurrency ?? 1, async (viewport, index) => {
       const artifactDir = options.artifactDir
         ? index === 0 ? options.artifactDir : resolve(options.artifactDir, viewport.id)
@@ -1962,7 +2086,7 @@ async function evaluateBrowserQualityMatrixInternal(htmlPath: string, libDir: st
       matrix: { viewports: [], passed: false, score: 0, worstViewport: "unavailable", worstSelectorCoverage: 0, worstComputedStyle: 0, worstPixelDiff: 1, runtimeErrors: 0, stabilityFailures: 0, resourceFailures: 0, nonBlockingResourceObservations: 0, externalAvailabilityFailures: 0, navigationFailures: 0, worstNavigationIntegrity: 0, fontAlignmentFailures: 0, blockingFontStateMismatches: 0, failedFontFaces: 0 },
     };
   } finally {
-    if (ownsBrowser) await closeBrowser(browser);
+    if (ownsBrowser) await closeBrowser(browser, telemetry, options.browserShutdown === "fast-kill");
   }
 }
 
@@ -1982,7 +2106,8 @@ export async function evaluateBrowserQualitySuite(htmlPath: string, libDir: stri
   const resourceCache: RunResourceCache | undefined = options.resourceCache === "run-local" ? new Map() : undefined;
   try {
     let startedAt = performance.now();
-    browser = await launchBrowser(options.executablePath);
+    browser = await launchBrowser(options.executablePath, options.browserShutdown === "fast-kill");
+    telemetry.browserShutdown = options.browserShutdown ?? "graceful";
     telemetry.timing.launchMs = elapsed(startedAt);
     telemetry.workload.browserLaunches = 1;
     startedAt = performance.now();
@@ -1999,7 +2124,8 @@ export async function evaluateBrowserQualitySuite(htmlPath: string, libDir: stri
     return { initial, scenarios: scenarioEvaluations, phaseTiming: { initialMatrixMs, scenarioMatricesMs: elapsed(startedAt) }, telemetry };
   } finally {
     const closeStartedAt = performance.now();
-    await closeBrowser(browser, telemetry);
+    telemetry.timing.reportReadyMs = elapsed(totalStartedAt);
+    await closeBrowser(browser, telemetry, options.browserShutdown === "fast-kill");
     telemetry.timing.closeMs = elapsed(closeStartedAt);
     telemetry.timing.totalMs = elapsed(totalStartedAt);
   }

@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { after, test } from "node:test";
-import { compareFontFaces, compareNavigationIntegrity, evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix } from "../evaluation/browser.js";
+import { compareFontFaces, compareNavigationIntegrity, evaluateBrowserQuality, evaluateBrowserQualityMatrix, evaluateBrowserQualitySuite, evaluateLibrarySelectorCoverage, evaluateScenarioBrowserQualityMatrix, isNonBlockingFontStylesheetRequest } from "../evaluation/browser.js";
 import { evaluateRoundtrip } from "../evaluation/roundtrip.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 
@@ -611,6 +611,14 @@ test("adaptive stability incrementally rescans delayed resource mutations", asyn
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
+});
+
+test("optional font stylesheet classification is narrow and auditable", () => {
+  assert.equal(isNonBlockingFontStylesheetRequest("https://fonts.googleapis.com/css2?family=Inter&display=swap", "stylesheet"), true);
+  assert.equal(isNonBlockingFontStylesheetRequest("https://fonts.googleapis.com/css?family=Inter&display=optional", "stylesheet"), true);
+  assert.equal(isNonBlockingFontStylesheetRequest("https://fonts.googleapis.com/css2?family=Inter&display=block", "stylesheet"), false);
+  assert.equal(isNonBlockingFontStylesheetRequest("https://cdn.example.com/theme.css?display=swap", "stylesheet"), false);
+  assert.equal(isNonBlockingFontStylesheetRequest("https://fonts.googleapis.com/css2?family=Inter&display=swap", "font"), false);
 });
 
 test("adaptive stability treats swap fonts as non-blocking fallback resources", async () => {

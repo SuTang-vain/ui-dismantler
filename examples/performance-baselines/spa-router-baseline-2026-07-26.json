@@ -1,0 +1,400 @@
+{
+  "schemaVersion": "1.0",
+  "measuredAt": "2026-07-26T04:38:05.314Z",
+  "configuration": {
+    "runs": 3,
+    "cases": [
+      "react-vue-region",
+      "react-svelte-full"
+    ],
+    "browserShutdown": "fast-kill",
+    "contractConcurrency": 2,
+    "visualConcurrency": 2
+  },
+  "passed": true,
+  "samples": [
+    {
+      "caseId": "react-vue-region",
+      "round": 1,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 41791.86,
+      "reportReadyMs": 39804.996,
+      "totalMs": 39826.919,
+      "browserCloseMs": 21.853,
+      "contractMs": 19958.171,
+      "visualMatrixMs": 19126.249,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.000552,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 3.489,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    },
+    {
+      "caseId": "react-vue-region",
+      "round": 2,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 39775.875,
+      "reportReadyMs": 37601.89,
+      "totalMs": 37620.123,
+      "browserCloseMs": 18.223,
+      "contractMs": 18737.835,
+      "visualMatrixMs": 18109.982,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.000552,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 1.605,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    },
+    {
+      "caseId": "react-vue-region",
+      "round": 3,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 37459.854,
+      "reportReadyMs": 35443.587,
+      "totalMs": 35462.16,
+      "browserCloseMs": 18.56,
+      "contractMs": 17610.212,
+      "visualMatrixMs": 17256.018,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.000552,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 2.466,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    },
+    {
+      "caseId": "react-svelte-full",
+      "round": 1,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 34728.943,
+      "reportReadyMs": 32773.947,
+      "totalMs": 32809.27,
+      "browserCloseMs": 35.317,
+      "contractMs": 15943.526,
+      "visualMatrixMs": 16251.361,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.016735,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 2.352,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    },
+    {
+      "caseId": "react-svelte-full",
+      "round": 2,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 33429.226,
+      "reportReadyMs": 31529.529,
+      "totalMs": 31542.549,
+      "browserCloseMs": 13.015,
+      "contractMs": 15338.841,
+      "visualMatrixMs": 15628.474,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.016735,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 1.097,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    },
+    {
+      "caseId": "react-svelte-full",
+      "round": 3,
+      "exitCode": 0,
+      "passed": true,
+      "externalWallMs": 32037.635,
+      "reportReadyMs": 30261.03,
+      "totalMs": 30276.532,
+      "browserCloseMs": 15.491,
+      "contractMs": 14537.946,
+      "visualMatrixMs": 15244.14,
+      "worstComputedStyle": 1,
+      "worstPixelDiff": 0.016735,
+      "navigationIntegrity": 1,
+      "stabilityFailures": 0,
+      "activeHandlesAfterClose": 3,
+      "blockingHandlesAfterClose": 0,
+      "standardIoHandlesAfterClose": 3,
+      "fastShutdownLockWaitMs": 1.488,
+      "beforeExitObserved": true,
+      "exitObserved": true,
+      "stderr": ""
+    }
+  ],
+  "aggregates": {
+    "react-vue-region": {
+      "samples": 3,
+      "passedRuns": 3,
+      "failureRate": 0,
+      "lifecycleFailureRate": 0,
+      "handleLeakRate": 0,
+      "timing": {
+        "externalWallMs": {
+          "count": 3,
+          "min": 37459.854,
+          "max": 41791.86,
+          "mean": 39675.863,
+          "median": 39775.875,
+          "variance": 4699070.796117,
+          "standardDeviation": 2167.734023,
+          "coefficientOfVariation": 0.054636
+        },
+        "reportReadyMs": {
+          "count": 3,
+          "min": 35443.587,
+          "max": 39804.996,
+          "mean": 37616.824333,
+          "median": 37601.89,
+          "variance": 4755639.392054,
+          "standardDeviation": 2180.742853,
+          "coefficientOfVariation": 0.057973
+        },
+        "totalMs": {
+          "count": 3,
+          "min": 35462.16,
+          "max": 39826.919,
+          "mean": 37636.400667,
+          "median": 37620.123,
+          "variance": 4762979.003844,
+          "standardDeviation": 2182.425028,
+          "coefficientOfVariation": 0.057987
+        },
+        "contractMs": {
+          "count": 3,
+          "min": 17610.212,
+          "max": 19958.171,
+          "mean": 18768.739333,
+          "median": 18737.835,
+          "variance": 1378944.174784,
+          "standardDeviation": 1174.284537,
+          "coefficientOfVariation": 0.062566
+        },
+        "visualMatrixMs": {
+          "count": 3,
+          "min": 17256.018,
+          "max": 19126.249,
+          "mean": 18164.083,
+          "median": 18109.982,
+          "variance": 876636.186991,
+          "standardDeviation": 936.288517,
+          "coefficientOfVariation": 0.051546
+        },
+        "browserCloseMs": {
+          "count": 3,
+          "min": 18.223,
+          "max": 21.853,
+          "mean": 19.545333,
+          "median": 18.56,
+          "variance": 4.022386,
+          "standardDeviation": 2.005589,
+          "coefficientOfVariation": 0.102612
+        },
+        "fastShutdownLockWaitMs": {
+          "count": 3,
+          "min": 1.605,
+          "max": 3.489,
+          "mean": 2.52,
+          "median": 2.466,
+          "variance": 0.889551,
+          "standardDeviation": 0.94316,
+          "coefficientOfVariation": 0.37427
+        }
+      },
+      "quality": {
+        "worstComputedStyle": {
+          "count": 3,
+          "min": 1,
+          "max": 1,
+          "mean": 1,
+          "median": 1,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "worstPixelDiff": {
+          "count": 3,
+          "min": 0.000552,
+          "max": 0.000552,
+          "mean": 0.000552,
+          "median": 0.000552,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "navigationIntegrity": {
+          "count": 3,
+          "min": 1,
+          "max": 1,
+          "mean": 1,
+          "median": 1,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "stabilityFailures": {
+          "count": 3,
+          "min": 0,
+          "max": 0,
+          "mean": 0,
+          "median": 0,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        }
+      }
+    },
+    "react-svelte-full": {
+      "samples": 3,
+      "passedRuns": 3,
+      "failureRate": 0,
+      "lifecycleFailureRate": 0,
+      "handleLeakRate": 0,
+      "timing": {
+        "externalWallMs": {
+          "count": 3,
+          "min": 32037.635,
+          "max": 34728.943,
+          "mean": 33398.601333,
+          "median": 33429.226,
+          "variance": 1811488.090372,
+          "standardDeviation": 1345.915336,
+          "coefficientOfVariation": 0.040299
+        },
+        "reportReadyMs": {
+          "count": 3,
+          "min": 30261.03,
+          "max": 32773.947,
+          "mean": 31521.502,
+          "median": 31529.529,
+          "variance": 1578736.286769,
+          "standardDeviation": 1256.47773,
+          "coefficientOfVariation": 0.039861
+        },
+        "totalMs": {
+          "count": 3,
+          "min": 30276.532,
+          "max": 32809.27,
+          "mean": 31542.783667,
+          "median": 31542.549,
+          "variance": 1603690.485462,
+          "standardDeviation": 1266.369016,
+          "coefficientOfVariation": 0.040148
+        },
+        "contractMs": {
+          "count": 3,
+          "min": 14537.946,
+          "max": 15943.526,
+          "mean": 15273.437667,
+          "median": 15338.841,
+          "variance": 497121.981108,
+          "standardDeviation": 705.068778,
+          "coefficientOfVariation": 0.046163
+        },
+        "visualMatrixMs": {
+          "count": 3,
+          "min": 15244.14,
+          "max": 16251.361,
+          "mean": 15707.991667,
+          "median": 15628.474,
+          "variance": 258365.830194,
+          "standardDeviation": 508.29699,
+          "coefficientOfVariation": 0.032359
+        },
+        "browserCloseMs": {
+          "count": 3,
+          "min": 13.015,
+          "max": 35.317,
+          "mean": 21.274333,
+          "median": 15.491,
+          "variance": 149.430009,
+          "standardDeviation": 12.224157,
+          "coefficientOfVariation": 0.574596
+        },
+        "fastShutdownLockWaitMs": {
+          "count": 3,
+          "min": 1.097,
+          "max": 2.352,
+          "mean": 1.645667,
+          "median": 1.488,
+          "variance": 0.4124,
+          "standardDeviation": 0.642184,
+          "coefficientOfVariation": 0.390227
+        }
+      },
+      "quality": {
+        "worstComputedStyle": {
+          "count": 3,
+          "min": 1,
+          "max": 1,
+          "mean": 1,
+          "median": 1,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "worstPixelDiff": {
+          "count": 3,
+          "min": 0.016735,
+          "max": 0.016735,
+          "mean": 0.016735,
+          "median": 0.016735,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "navigationIntegrity": {
+          "count": 3,
+          "min": 1,
+          "max": 1,
+          "mean": 1,
+          "median": 1,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        },
+        "stabilityFailures": {
+          "count": 3,
+          "min": 0,
+          "max": 0,
+          "mean": 0,
+          "median": 0,
+          "variance": 0,
+          "standardDeviation": 0,
+          "coefficientOfVariation": 0
+        }
+      }
+    }
+  },
+  "qualityNote": "pixel diff metrics preserve six decimal places; blockingHandlesAfterClose excludes standard I/O pipes"
+}

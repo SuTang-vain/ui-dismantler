@@ -329,5 +329,8 @@
   "execution": {
     "contractConcurrency": 2,
     "visualConcurrency": 2
-  }
+  },
+  "nonBlockingNetworkHosts": [
+    "google-analytics.com"
+  ]
 }

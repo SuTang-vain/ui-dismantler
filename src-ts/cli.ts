@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
+import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { analyzeHtml } from "./analysis/analyzer.js";
 import { generateScenarios } from "./evaluation/scenarios.js";
@@ -21,7 +22,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -88,6 +89,15 @@ async function main(argv: string[]): Promise<number> {
       const report = await evaluateSpaRouterContract(config);
       const serialized = `${JSON.stringify(report, null, 2)}\n`;
       const out = flag(args, "--out"); if (out) await writeFile(resolve(out), serialized, "utf8");
+      const lifecycleOut = flag(args, "--lifecycle-out");
+      if (lifecycleOut) {
+        const lifecyclePath = resolve(lifecycleOut);
+        const lifecycle: Record<string, unknown> = { schemaVersion: "1.0", pid: process.pid, reportReady: true, reportWritten: Boolean(out), beforeExitObserved: false, exitObserved: false, reportReadyMs: report.telemetry.timing.reportReadyMs, browserCloseMs: report.telemetry.timing.browserCloseMs, activeHandlesAfterClose: report.telemetry.activeHandlesAfterClose, createdAt: new Date().toISOString() };
+        const writeLifecycle = (): void => writeFileSync(lifecyclePath, `${JSON.stringify(lifecycle, null, 2)}\n`, "utf8");
+        process.once("beforeExit", () => { lifecycle.beforeExitObserved = true; lifecycle.beforeExitAt = new Date().toISOString(); writeLifecycle(); });
+        process.once("exit", (code) => { lifecycle.exitObserved = true; lifecycle.exitCode = code; lifecycle.exitAt = new Date().toISOString(); writeLifecycle(); });
+        writeLifecycle();
+      }
       if (report.mode === "reference-generated") {
         for (const comparison of report.comparisons ?? []) {
           const failureDetail = comparison.failures.map((failure) => failure.detail).join("；");
@@ -100,6 +110,7 @@ async function main(argv: string[]): Promise<number> {
       if (report.telemetry.visualTargetRuns > 0) {
         console.log(`[INFO] visual reuse: targetRuns=${report.telemetry.visualTargetRuns}，reused=${report.telemetry.visualTargetReusedRuns}，fresh=${report.telemetry.visualTargetFreshRuns}`);
         console.log(`[INFO] visual stability: adaptiveWaitMs=${report.telemetry.visualAdaptiveWaitMs}，failures=${report.telemetry.visualStabilityFailures}`);
+        console.log(`[INFO] browser shutdown: disconnectMs=${report.telemetry.timing.browserDisconnectMs}，processCloseMs=${report.telemetry.timing.browserProcessCloseMs}，totalCloseMs=${report.telemetry.timing.browserCloseMs}`);
       }
       console.log(`\nSPA Router 合同: ${report.passed ? "PASS" : "FAIL"} (${report.scenariosPassed}/${report.scenariosTotal})`);
       return report.passed ? 0 : 1;
@@ -119,7 +130,9 @@ async function main(argv: string[]): Promise<number> {
       if (!["off", "run-local"].includes(browserResourceCache)) throw new Error("--browser-resource-cache 必须是 off 或 run-local");
       const browserStability = flag(args, "--browser-stability") ?? "fixed";
       if (!["fixed", "adaptive"].includes(browserStability)) throw new Error("--browser-stability 必须是 fixed 或 adaptive");
-      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", spaRouterConfigPath: flag(args, "--spa-router"), thresholds });
+      const browserShutdown = flag(args, "--browser-shutdown") ?? "graceful";
+      if (!["graceful", "fast-kill"].includes(browserShutdown)) throw new Error("--browser-shutdown 必须是 graceful 或 fast-kill");
+      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", browserShutdown: browserShutdown as "graceful" | "fast-kill", spaRouterConfigPath: flag(args, "--spa-router"), thresholds });
       const out = flag(args, "--out"); const serialized = `${JSON.stringify(report, null, 2)}\n`;
       if (out) await writeFile(resolve(out), serialized, "utf8"); for (const gate of report.gates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`); console.log(`\n质量门禁: ${report.passed ? "PASS" : "FAIL"}`); return report.passed ? 0 : 1;
     }

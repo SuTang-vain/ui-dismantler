@@ -422,6 +422,10 @@
   },
   "execution": {
     "contractConcurrency": 2,
-    "visualConcurrency": 2
-  }
+    "visualConcurrency": 2,
+    "browserShutdown": "fast-kill"
+  },
+  "nonBlockingNetworkHosts": [
+    "google-analytics.com"
+  ]
 }
