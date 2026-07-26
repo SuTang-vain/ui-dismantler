@@ -8,12 +8,26 @@ import { compareComputedStyles, comparePixels, COMPUTED_STYLE_PROPERTIES } from 
 import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport, StyleComparisonReport } from "../types.js";
 
 export interface SpaRouterFixture {
-  path: string;
+  /** Exact URL pathname. Kept optional so host-wide fixtures can be expressed explicitly. */
+  path?: string;
+  /** Exact hostname, or a leading-wildcard hostname such as `*.example.com`. */
+  hostname?: string;
   method?: string;
+  /** Optional Playwright resource type guard, for example `image`, `stylesheet`, or `fetch`. */
+  resourceType?: string;
   status?: number;
   headers?: Record<string, string>;
   body: JsonValue;
 }
+
+export type SpaRouterRequestClassification =
+  | "non-blocking-telemetry"
+  | "non-blocking-configured-host"
+  | "blocking-required"
+  | "blocking-current-dom-image"
+  | "ignored-stale-image";
+
+export type SpaRouterRequestClassificationCounts = Record<SpaRouterRequestClassification, number>;
 
 export type SpaRouterRoleValue = string | { default?: string; reference?: string; generated?: string };
 
@@ -185,8 +199,13 @@ export interface SpaRouterVisualViewportResult extends QualityViewport {
   runtimeErrors: number;
   unmockedApiRequests: number;
   requiredNetworkFailures: number;
+  requiredNetworkFailureDetails: string[];
+  nonBlockingNetworkFailureDetails: string[];
   stabilityFailures: string[];
   adaptiveWaitMs: number;
+  preAnchorWaitMs: number;
+  postAnchorWaitMs: number;
+  requestClassifications: SpaRouterRequestClassificationCounts;
   durationMs: number;
   navigationPassed: boolean;
   navigationFailures: SpaRouterComparisonFailure[];
@@ -223,6 +242,9 @@ export interface SpaRouterVisualMatrixReport {
   freshTargetRuns: number;
   stabilityFailures: number;
   adaptiveWaitMs: number;
+  preAnchorWaitMs: number;
+  postAnchorWaitMs: number;
+  requestClassifications: SpaRouterRequestClassificationCounts;
 }
 
 export interface SpaRouterActiveHandleSnapshot {
@@ -242,6 +264,9 @@ export interface SpaRouterExecutionTelemetry {
   visualTargetFreshRuns: number;
   visualStabilityFailures: number;
   visualAdaptiveWaitMs: number;
+  visualPreAnchorWaitMs: number;
+  visualPostAnchorWaitMs: number;
+  visualRequestClassifications: SpaRouterRequestClassificationCounts;
   contractConcurrency: number;
   visualConcurrency: number;
   browserShutdownMode: "graceful" | "profiled-graceful" | "fast-kill" | "graceful-fallback";
@@ -307,6 +332,9 @@ interface SpaRouterVisualCapture {
   failures: string[];
   stabilityFailures: string[];
   adaptiveWaitMs: number;
+  preAnchorWaitMs: number;
+  postAnchorWaitMs: number;
+  requestClassifications: SpaRouterRequestClassificationCounts;
 }
 interface SpaRouterScenarioExecution {
   result: SpaRouterScenarioResult;
@@ -315,6 +343,30 @@ interface SpaRouterScenarioExecution {
 interface SpaRouterTargetEvaluation {
   report: SpaRouterTargetReport;
   executions: Map<string, SpaRouterScenarioExecution>;
+}
+
+const REQUEST_CLASSIFICATIONS: SpaRouterRequestClassification[] = [
+  "non-blocking-telemetry",
+  "non-blocking-configured-host",
+  "blocking-required",
+  "blocking-current-dom-image",
+  "ignored-stale-image",
+];
+
+function emptyRequestClassificationCounts(): SpaRouterRequestClassificationCounts {
+  return Object.fromEntries(REQUEST_CLASSIFICATIONS.map((classification) => [classification, 0])) as SpaRouterRequestClassificationCounts;
+}
+
+function countRequestClassifications(classifications: Iterable<SpaRouterRequestClassification>): SpaRouterRequestClassificationCounts {
+  const counts = emptyRequestClassificationCounts();
+  for (const classification of classifications) counts[classification] += 1;
+  return counts;
+}
+
+function addRequestClassificationCounts(...entries: SpaRouterRequestClassificationCounts[]): SpaRouterRequestClassificationCounts {
+  const totals = emptyRequestClassificationCounts();
+  for (const entry of entries) for (const classification of REQUEST_CLASSIFICATIONS) totals[classification] += entry[classification] ?? 0;
+  return totals;
 }
 
 const DEFAULT_VISUAL_VIEWPORTS: QualityViewport[] = [
@@ -476,6 +528,11 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
   }
   if (config.execution?.browserShutdown && !["graceful", "fast-kill"].includes(config.execution.browserShutdown)) throw new TypeError("execution.browserShutdown 必须是 graceful 或 fast-kill");
   if (config.navigationComparison && !["strict", "semantic"].includes(config.navigationComparison)) throw new TypeError("navigationComparison 必须是 strict 或 semantic");
+  for (const fixture of config.fixtures ?? []) {
+    if (!fixture.path && !fixture.hostname) throw new TypeError("SPA Router fixture 必须至少声明 path 或 hostname");
+    if (fixture.path && !fixture.path.startsWith("/")) throw new TypeError(`SPA Router fixture path 必须以 / 开头: ${fixture.path}`);
+    if (fixture.hostname && /[:/]/.test(fixture.hostname)) throw new TypeError(`SPA Router fixture hostname 只能包含主机名: ${fixture.hostname}`);
+  }
   if (config.visualMatrix) {
     if (mode.mode !== "reference-generated") throw new TypeError("SPA route-state visualMatrix 需要 referenceBaseUrl/generatedBaseUrl 双端配置");
     const visualScenarios = config.scenarios.filter((scenario) => scenario.visual);
@@ -532,6 +589,7 @@ async function settle(page: Page, ms = 250): Promise<void> {
 interface VisualStabilityResult {
   stabilityFailures: string[];
   adaptiveWaitMs: number;
+  requestClassifications: SpaRouterRequestClassificationCounts;
 }
 interface RequestActivity {
   active: Set<Request>;
@@ -558,16 +616,49 @@ async function initializeVisualStabilityTracking(context: BrowserContext): Promi
   });
 }
 
-async function visibleBlockingRequests(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig): Promise<Request[]> {
-  const candidates = [...requestActivity.active].filter((request) => !isNonBlockingNetworkRequest(request, config));
+function configuredHostMatches(hostname: string, configuredHost: string): boolean {
+  const expected = configuredHost.toLowerCase();
+  return expected.startsWith("*.") ? hostname.endsWith(expected.slice(1)) : hostname === expected || hostname.endsWith(`.${expected}`);
+}
+
+export function classifySpaRouterNetworkRequest(
+  input: { url: string; resourceType: string; domImageReferenced?: boolean },
+  config: Pick<SpaRouterContractConfig, "nonBlockingNetworkHosts"> = {},
+): SpaRouterRequestClassification {
+  let url: URL | null = null;
+  try { url = new URL(input.url); } catch { /* malformed URLs remain blocking */ }
+  const hostname = url?.hostname.toLowerCase() ?? "";
+  const knownTelemetry = ["www.google-analytics.com", "www.googletagmanager.com", "google-analytics.com", "doubleclick.net", "segment.io", "sentry.io", "hotjar.com"];
+  const exactGoogleCollect = Boolean(url && (hostname === "www.google.com" || hostname === "google.com") && url.pathname === "/g/collect");
+  if (exactGoogleCollect || knownTelemetry.some((host) => hostname === host || hostname.endsWith(`.${host}`))) return "non-blocking-telemetry";
+  if ((config.nonBlockingNetworkHosts ?? []).some((host) => configuredHostMatches(hostname, host))) return "non-blocking-configured-host";
+  if (input.resourceType === "image") return input.domImageReferenced === false ? "ignored-stale-image" : "blocking-current-dom-image";
+  return "blocking-required";
+}
+
+async function visibleBlockingRequests(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig): Promise<{ blocking: Request[]; classifications: Map<string, SpaRouterRequestClassification> }> {
+  const candidates = [...requestActivity.active];
   const imageCandidates = candidates.filter((request) => request.resourceType() === "image");
-  if (!imageCandidates.length) return candidates;
-  const referencedImageUrls = new Set(await page.evaluate(() => [...document.images].map((image) => image.currentSrc || image.src)));
-  return candidates.filter((request) => request.resourceType() !== "image" || referencedImageUrls.has(request.url()));
+  const referencedImageUrls = imageCandidates.length
+    ? new Set(await page.evaluate(() => [...document.images].map((image) => image.currentSrc || image.src)))
+    : new Set<string>();
+  const classifications = new Map<string, SpaRouterRequestClassification>();
+  const blocking: Request[] = [];
+  for (const request of candidates) {
+    const classification = classifySpaRouterNetworkRequest({
+      url: request.url(),
+      resourceType: request.resourceType(),
+      domImageReferenced: request.resourceType() === "image" ? referencedImageUrls.has(request.url()) : undefined,
+    }, config);
+    classifications.set(`${request.method()}|${request.resourceType()}|${request.url()}`, classification);
+    if (classification === "blocking-required" || classification === "blocking-current-dom-image") blocking.push(request);
+  }
+  return { blocking, classifications };
 }
 
 async function settleVisual(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig, timeoutMs = 1800): Promise<VisualStabilityResult> {
   const startedAt = Date.now(), quietWindowMs = 120;
+  const observedClassifications = new Map<string, SpaRouterRequestClassification>();
   await page.evaluate(async () => {
     if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
     const visibleImages = [...document.images].filter((image) => {
@@ -575,8 +666,13 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
       return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
     });
     await Promise.all(visibleImages.map(async (image) => {
-      if (!image.complete) await new Promise<void>((done) => { image.addEventListener("load", () => done(), { once: true }); image.addEventListener("error", () => done(), { once: true }); setTimeout(done, 1200); });
-      if (typeof image.decode === "function") await image.decode().catch(() => undefined);
+      await Promise.race([
+        (async () => {
+          if (!image.complete) await new Promise<void>((done) => { image.addEventListener("load", () => done(), { once: true }); image.addEventListener("error", () => done(), { once: true }); });
+          if (typeof image.decode === "function") await image.decode().catch(() => undefined);
+        })(),
+        new Promise<void>((done) => setTimeout(done, 1200)),
+      ]);
     }));
   });
   const deadline = Date.now() + timeoutMs;
@@ -595,10 +691,12 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
     }, quietWindowMs);
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
     previousSignature = sample.signature;
-    lastBlockingRequests = await visibleBlockingRequests(page, requestActivity, config);
+    const requestDecision = await visibleBlockingRequests(page, requestActivity, config);
+    lastBlockingRequests = requestDecision.blocking;
+    for (const [key, classification] of requestDecision.classifications) observedClassifications.set(key, classification);
     const networkQuiet = lastBlockingRequests.length === 0;
     lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, layoutStable: stableSamples >= 2, networkQuiet };
-    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt };
+    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   const stabilityFailures: string[] = [];
@@ -608,7 +706,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
     const pending = lastBlockingRequests.slice(0, 6).map((request) => `${request.resourceType()}:${request.method()} ${request.url()}`).join(" | ");
     stabilityFailures.push(`network quiet window was not reached before visual capture: active=${lastBlockingRequests.length}${pending ? `; pending=${pending}` : ""}`);
   }
-  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt };
+  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
 }
 
 async function executeStep(page: Page, step: SpaRouterStep, role: SpaRouterTargetRole): Promise<void> {
@@ -687,6 +785,9 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
   const stability = {
     stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
     adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
+    preAnchorWaitMs: preAnchorStability.adaptiveWaitMs,
+    postAnchorWaitMs: postAnchorStability.adaptiveWaitMs,
+    requestClassifications: addRequestClassificationCounts(preAnchorStability.requestClassifications, postAnchorStability.requestClassifications),
   };
   const targets = visual.styleTargets?.length ? visual.styleTargets : [{ id: "document-body", selector: "body" }];
   const failures: string[] = [];
@@ -722,20 +823,34 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
     if (!regionRect) failures.push(`screenshot region 未命中或不可见 selector=${region}`);
   }
   const screenshot = await page.screenshot({ type: "png", fullPage: false, animations: "disabled", ...(regionRect ? { clip: regionRect } : {}) });
-  return { screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures], stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs };
+  return {
+    screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures],
+    stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs,
+    preAnchorWaitMs: stability.preAnchorWaitMs, postAnchorWaitMs: stability.postAnchorWaitMs,
+    requestClassifications: stability.requestClassifications,
+  };
 }
 
-function fixtureMap(config: SpaRouterContractConfig): Map<string, SpaRouterFixture> {
-  return new Map((config.fixtures ?? []).map((fixture) => [`${(fixture.method ?? "GET").toUpperCase()} ${fixture.path}`, fixture]));
+function fixtureHostnameMatches(actual: string, expected: string): boolean {
+  const normalized = expected.toLowerCase();
+  return normalized.startsWith("*.") ? actual.endsWith(normalized.slice(1)) : actual === normalized;
+}
+
+export function findSpaRouterFixture(config: Pick<SpaRouterContractConfig, "fixtures">, input: { url: string; method: string; resourceType: string }): SpaRouterFixture | undefined {
+  let url: URL;
+  try { url = new URL(input.url); } catch { return undefined; }
+  return (config.fixtures ?? []).find((fixture) => {
+    if ((fixture.method ?? "GET").toUpperCase() !== input.method.toUpperCase()) return false;
+    if (fixture.hostname && !fixtureHostnameMatches(url.hostname.toLowerCase(), fixture.hostname)) return false;
+    if (fixture.path && url.pathname !== fixture.path) return false;
+    if (fixture.resourceType && fixture.resourceType !== input.resourceType) return false;
+    return true;
+  });
 }
 
 function isNonBlockingNetworkRequest(request: Request, config: SpaRouterContractConfig): boolean {
-  let hostname = "";
-  try { hostname = new URL(request.url()).hostname.toLowerCase(); } catch { /* malformed URL will be treated as required */ }
-  const knownTelemetry = ["www.google-analytics.com", "www.googletagmanager.com", "google-analytics.com", "doubleclick.net", "segment.io", "sentry.io", "hotjar.com"];
-  let telemetryEndpoint = false;
-  try { const url = new URL(request.url()); telemetryEndpoint = (url.hostname === "www.google.com" || url.hostname === "google.com") && url.pathname === "/g/collect"; } catch { /* malformed URL will be treated as required */ }
-  return telemetryEndpoint || knownTelemetry.some((host) => hostname === host || hostname.endsWith(`.${host}`)) || (config.nonBlockingNetworkHosts ?? []).some((host) => hostname === host.toLowerCase() || hostname.endsWith(`.${host.toLowerCase()}`));
+  const classification = classifySpaRouterNetworkRequest({ url: request.url(), resourceType: request.resourceType() }, config);
+  return classification === "non-blocking-telemetry" || classification === "non-blocking-configured-host";
 }
 
 async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: { viewport?: QualityViewport; role?: SpaRouterTargetRole; captureVisual?: boolean } = {}): Promise<SpaRouterScenarioExecution> {
@@ -745,13 +860,14 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
   try {
     await initializeRouterTracking(context, config.ignoredStateKeys ?? []);
     if (options.captureVisual) await initializeVisualStabilityTracking(context);
-    const fixtures = fixtureMap(config);
     await context.route("**/*", async (route) => {
       const request = route.request(), url = new URL(request.url());
-      const fixture = fixtures.get(`${request.method().toUpperCase()} ${url.pathname}`);
+      const fixture = findSpaRouterFixture(config, { url: request.url(), method: request.method(), resourceType: request.resourceType() });
       if (fixture) {
-        const headers: Record<string, string> = { "content-type": "application/json; charset=utf-8", ...(fixture.headers ?? {}) };
-        const contentType = headers["content-type"] ?? headers["Content-Type"] ?? "";
+        const headers: Record<string, string> = { ...(fixture.headers ?? {}) };
+        const contentTypeHeader = Object.keys(headers).find((key) => key.toLowerCase() === "content-type");
+        if (!contentTypeHeader) headers["content-type"] = "application/json; charset=utf-8";
+        const contentType = contentTypeHeader ? headers[contentTypeHeader] : headers["content-type"];
         const body = typeof fixture.body === "string" && !/json/i.test(contentType) ? fixture.body : JSON.stringify(fixture.body);
         await route.fulfill({ status: fixture.status ?? 200, headers, body });
         return;
@@ -916,13 +1032,23 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       const captureFailures = [...reference.visual.failures.map((failure) => `reference: ${failure}`), ...generated.visual.failures.map((failure) => `generated: ${failure}`)];
       const runtimeErrors = reference.result.runtimeErrors.length + generated.result.runtimeErrors.length;
       const unmockedApiRequests = reference.result.unmockedApiRequests.length + generated.result.unmockedApiRequests.length;
-      const requiredNetworkFailures = reference.result.requiredNetworkFailures.length + generated.result.requiredNetworkFailures.length;
+      const requiredNetworkFailureDetails = [
+        ...reference.result.requiredNetworkFailures.map((failure) => `reference: ${failure}`),
+        ...generated.result.requiredNetworkFailures.map((failure) => `generated: ${failure}`),
+      ];
+      const nonBlockingNetworkFailureDetails = [
+        ...reference.result.nonBlockingNetworkFailures.map((failure) => `reference: ${failure}`),
+        ...generated.result.nonBlockingNetworkFailures.map((failure) => `generated: ${failure}`),
+      ];
+      const requiredNetworkFailures = requiredNetworkFailureDetails.length;
       return {
         ...viewport, passed: comparison.passed && navigationFailures.length === 0 && captureFailures.length === 0 && styles.rate >= styleThreshold && pixels.passed,
         referenceFinalRoute: routeOf(reference.result.finalUrl), generatedFinalRoute: routeOf(generated.result.finalUrl),
         referenceAnchor: reference.visual.anchor, generatedAnchor: generated.visual.anchor,
         referenceRegion: reference.visual.region, generatedRegion: generated.visual.region, referenceRegionRect: reference.visual.regionRect, generatedRegionRect: generated.visual.regionRect,
-        runtimeErrors, unmockedApiRequests, requiredNetworkFailures, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs, durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
+        runtimeErrors, unmockedApiRequests, requiredNetworkFailures, requiredNetworkFailureDetails, nonBlockingNetworkFailureDetails, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs,
+        preAnchorWaitMs: reference.visual.preAnchorWaitMs + generated.visual.preAnchorWaitMs, postAnchorWaitMs: reference.visual.postAnchorWaitMs + generated.visual.postAnchorWaitMs,
+        requestClassifications: addRequestClassificationCounts(reference.visual.requestClassifications, generated.visual.requestClassifications), durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
       };
     });
     matrices.push({ scenarioId: scenario.id, passed: viewportResults.every((viewport) => viewport.passed), viewports: viewportResults, worstComputedStyle: Math.min(...viewportResults.map((viewport) => viewport.styles.rate)), worstPixelDiff: Math.max(...viewportResults.map((viewport) => viewport.pixels.diffRate)), durationMs: Number((performance.now() - scenarioStartedAt).toFixed(3)) });
@@ -933,6 +1059,8 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
     runtimeErrors: entries.reduce((sum, entry) => sum + entry.runtimeErrors, 0), unmockedApiRequests: entries.reduce((sum, entry) => sum + entry.unmockedApiRequests, 0), requiredNetworkFailures: entries.reduce((sum, entry) => sum + entry.requiredNetworkFailures, 0),
     navigationFailures: entries.reduce((sum, entry) => sum + entry.navigationFailures.length, 0), navigationMatchedRuns: entries.filter((entry) => entry.navigationPassed).length,
     stabilityFailures: entries.reduce((sum, entry) => sum + entry.stabilityFailures.length, 0), adaptiveWaitMs: entries.reduce((sum, entry) => sum + entry.adaptiveWaitMs, 0),
+    preAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.preAnchorWaitMs, 0), postAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.postAnchorWaitMs, 0),
+    requestClassifications: addRequestClassificationCounts(...entries.map((entry) => entry.requestClassifications)),
     worstComputedStyle: entries.length ? Math.min(...entries.map((entry) => entry.styles.rate)) : 0, worstPixelDiff: entries.length ? Math.max(...entries.map((entry) => entry.pixels.diffRate)) : 1,
     styleThreshold, pixelThreshold,
     targetRuns: reusedTargetRuns + freshTargetRuns, reusedTargetRuns, freshTargetRuns,
@@ -986,7 +1114,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
         results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
       timing.reportReadyMs = elapsed(totalStartedAt);
       allowFastShutdown = requestedFastShutdown && report.passed;
@@ -1033,6 +1161,9 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         visualTargetFreshRuns: visualMatrix?.freshTargetRuns ?? 0,
         visualStabilityFailures: visualMatrix?.stabilityFailures ?? 0,
         visualAdaptiveWaitMs: visualMatrix?.adaptiveWaitMs ?? 0,
+        visualPreAnchorWaitMs: visualMatrix?.preAnchorWaitMs ?? 0,
+        visualPostAnchorWaitMs: visualMatrix?.postAnchorWaitMs ?? 0,
+        visualRequestClassifications: visualMatrix?.requestClassifications ?? emptyRequestClassificationCounts(),
         contractConcurrency: config.execution?.contractConcurrency ?? 1,
         visualConcurrency: config.execution?.visualConcurrency ?? 1,
         browserShutdownMode: "graceful",

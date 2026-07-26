@@ -4,8 +4,10 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
-import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
+import { classifySpaRouterNetworkRequest, evaluateSpaRouterContract, findSpaRouterFixture, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
+import { comparePixels } from "../evaluation/browser.js";
 import { runQualityGate } from "../workflow/pipeline.js";
+import { PNG } from "pngjs";
 
 const root = new URL("../../", import.meta.url).pathname;
 
@@ -364,5 +366,122 @@ test("SPA resource readiness separates required document assets from non-blockin
   } finally {
     await new Promise<void>((resolve, reject) => resourceServer.close((error) => error ? reject(error) : resolve()));
     if (pageServer.listening) await new Promise<void>((resolve, reject) => pageServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+
+test("pixel comparison reports dimension mismatch without throwing or masking the failure", async () => {
+  const image = (width: number, height: number, red: number): Buffer => {
+    const png = new PNG({ width, height });
+    for (let index = 0; index < png.data.length; index += 4) {
+      png.data[index] = red; png.data[index + 1] = 20; png.data[index + 2] = 40; png.data[index + 3] = 255;
+    }
+    return PNG.sync.write(png);
+  };
+  const report = await comparePixels(image(40, 30, 200), image(32, 24, 200), 0.02);
+  assert.equal(report.dimensionMismatch, true);
+  assert.equal(report.passed, false);
+  assert.deepEqual(
+    { reference: [report.referenceWidth, report.referenceHeight], generated: [report.generatedWidth, report.generatedHeight], overlap: [report.width, report.height] },
+    { reference: [40, 30], generated: [32, 24], overlap: [32, 24] },
+  );
+});
+
+test("SPA fixtures match hostname, path and resource type while preserving raw CSS and SVG bodies", async () => {
+  const fixtureApp = `<!doctype html><html><head><link rel="stylesheet" href="https://assets.fixture.test/theme.css"></head><body><main id="view">Loading</main><img id="logo" src="https://assets.fixture.test/logo.svg"><script>addEventListener('load',()=>{const css=getComputedStyle(document.getElementById('view')).color==='rgb(1, 2, 3)';const svg=document.getElementById('logo').naturalWidth===24;document.getElementById('view').textContent=(css?'CSS OK':'CSS BAD')+' '+(svg?'SVG OK':'SVG BAD')})</script></body></html>`;
+  const fixtureServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(fixtureApp); });
+  await new Promise<void>((resolve) => fixtureServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = fixtureServer.address(); if (!address || typeof address === "string") throw new Error("missing fixture server address");
+    const config: SpaRouterContractConfig = {
+      schemaVersion: "1.0", baseUrl: `http://127.0.0.1:${address.port}`,
+      fixtures: [
+        { hostname: "assets.fixture.test", path: "/theme.css", resourceType: "stylesheet", headers: { "Content-Type": "text/css; charset=utf-8" }, body: "#view{color:rgb(1,2,3)}" },
+        { hostname: "assets.fixture.test", path: "/logo.svg", resourceType: "image", headers: { "content-type": "image/svg+xml" }, body: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="12"><rect width="24" height="12" fill="#123456"/></svg>' },
+      ],
+      scenarios: [{ id: "raw-assets", entryPath: "/", steps: [{ action: "wait", ms: 100 }], assertions: { visibleText: "CSS OK SVG OK" } }],
+    };
+    assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css?cache=1", method: "GET", resourceType: "stylesheet" })?.path, "/theme.css");
+    assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css", method: "GET", resourceType: "image" }), undefined);
+    const report = await evaluateSpaRouterContract(config);
+    assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+    assert.equal(report.requiredNetworkFailures, 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => fixtureServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("network classification ignores only the exact Google collect endpoint, not the Google domain", () => {
+  assert.equal(classifySpaRouterNetworkRequest({ url: "https://www.google.com/g/collect?v=2", resourceType: "fetch" }), "non-blocking-telemetry");
+  assert.equal(classifySpaRouterNetworkRequest({ url: "https://google.com/g/collect", resourceType: "fetch" }), "non-blocking-telemetry");
+  assert.equal(classifySpaRouterNetworkRequest({ url: "https://www.google.com/search?q=required", resourceType: "fetch" }), "blocking-required");
+  assert.equal(classifySpaRouterNetworkRequest({ url: "https://notgoogle.com/g/collect", resourceType: "fetch" }), "blocking-required");
+  assert.equal(classifySpaRouterNetworkRequest({ url: "https://metrics.example.test/event", resourceType: "fetch" }, { nonBlockingNetworkHosts: ["metrics.example.test"] }), "non-blocking-configured-host");
+});
+
+async function runPendingImageVisualCase(removeImage: boolean): Promise<Awaited<ReturnType<typeof evaluateSpaRouterContract>>> {
+  const pendingApp = `<!doctype html><html><head><style>body{margin:0}#view{width:240px;height:120px;background:#4466ee;color:white}img{width:32px;height:32px}</style></head><body><main id="view">Ready</main><img id="pending" src="/slow.png"><script>${removeImage ? "setTimeout(()=>document.getElementById('pending')?.remove(),40)" : ""}</script></body></html>`;
+  const pendingServer = createServer((request, response) => {
+    if (request.url === "/slow.png") {
+      const timer = setTimeout(() => { if (!response.destroyed) { response.writeHead(200, { "content-type": "image/png" }); response.end(); } }, 5000);
+      response.on("close", () => clearTimeout(timer));
+      return;
+    }
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(pendingApp);
+  });
+  await new Promise<void>((resolve) => pendingServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = pendingServer.address(); if (!address || typeof address === "string") throw new Error("missing pending image server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    return await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      visualMatrix: { stabilityTimeoutMs: 260, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+      scenarios: [{ id: removeImage ? "stale-image" : "current-image", entryPath: "/", steps: [], assertions: { visibleText: "Ready" }, visual: { screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
+    });
+  } finally {
+    await new Promise<void>((resolve, reject) => {
+      pendingServer.close((error) => error ? reject(error) : resolve());
+      pendingServer.closeAllConnections?.();
+    });
+  }
+}
+
+test("an image request removed from the current DOM no longer blocks visual stability", async () => {
+  const report = await runPendingImageVisualCase(true);
+  assert.equal(report.passed, true, JSON.stringify(report.visualMatrix, null, 2));
+  assert.equal(report.visualMatrix?.stabilityFailures, 0);
+  assert.ok((report.telemetry.visualRequestClassifications["ignored-stale-image"] ?? 0) >= 2, JSON.stringify(report.telemetry, null, 2));
+  assert.equal(report.telemetry.visualRequestClassifications["blocking-current-dom-image"], 0);
+});
+
+test("an image request still referenced by the current DOM remains a blocking stability failure", async () => {
+  const report = await runPendingImageVisualCase(false);
+  assert.equal(report.passed, false, JSON.stringify(report.visualMatrix, null, 2));
+  assert.ok((report.visualMatrix?.stabilityFailures ?? 0) > 0, JSON.stringify(report.visualMatrix, null, 2));
+  assert.ok((report.telemetry.visualRequestClassifications["blocking-current-dom-image"] ?? 0) >= 2, JSON.stringify(report.telemetry, null, 2));
+  assert.equal(report.qualityGates.find((gate) => gate.id === "visual-runtime")?.passed, false);
+});
+
+test("post-anchor stability waits for scroll-triggered layout mutations before style and pixel capture", async () => {
+  const anchorApp = `<!doctype html><html><head><style>body{margin:0;height:2200px}#anchor{position:absolute;top:1500px;width:180px;height:120px;background:#2457d6;color:white}</style></head><body><main id="anchor">Anchor</main><script>addEventListener('scroll',()=>setTimeout(()=>{const el=document.getElementById('anchor');el.style.width='240px';el.textContent='Anchor Settled'},80),{once:true})</script></body></html>`;
+  const anchorServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(anchorApp); });
+  await new Promise<void>((resolve) => anchorServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = anchorServer.address(); if (!address || typeof address === "string") throw new Error("missing anchor server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      visualMatrix: { stabilityTimeoutMs: 900, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+      scenarios: [{ id: "anchor-mutation", entryPath: "/", steps: [], assertions: { visibleText: "Anchor" }, visual: { screenshotAnchor: "#anchor", screenshotRegion: "#anchor", styleTargets: [{ id: "anchor", selector: "#anchor" }] } }],
+    });
+    assert.equal(report.passed, true, JSON.stringify(report.visualMatrix, null, 2));
+    const viewport = report.visualMatrix?.scenarios[0]?.viewports[0];
+    assert.ok(viewport);
+    assert.ok((viewport?.postAnchorWaitMs ?? 0) >= 120, JSON.stringify(viewport, null, 2));
+    assert.equal(viewport?.styles.mismatches.length, 0);
+    assert.equal(report.telemetry.visualPostAnchorWaitMs, report.visualMatrix?.postAnchorWaitMs);
+    assert.equal(report.telemetry.visualPreAnchorWaitMs, report.visualMatrix?.preAnchorWaitMs);
+  } finally {
+    await new Promise<void>((resolve, reject) => anchorServer.close((error) => error ? reject(error) : resolve()));
   }
 });

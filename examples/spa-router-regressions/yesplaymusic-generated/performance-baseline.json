@@ -1,7 +1,12 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "case": "YesPlayMusic generated SPA",
-  "createdAt": "2026-07-26T15:23:05.092Z",
+  "createdAt": "2026-07-26T15:55:35.841Z",
+  "diagnosticWarmup": {
+    "passed": false,
+    "requiredNetworkFailures": 1,
+    "note": "首次诊断运行出现单个瞬态 required network failure；该运行促使 viewport 报告增加具体失败明细，未纳入后续三次通过基线。"
+  },
   "runs": [
     {
       "run": 1,
@@ -12,10 +17,20 @@
       "worstStyle": 1,
       "worstPixel": 0.00615,
       "stabilityFailures": 0,
-      "totalMs": 17308.912,
-      "visualMs": 8722.441,
-      "adaptiveWaitMs": 5266,
-      "browserCloseMs": 17.455,
+      "requiredNetworkFailures": 0,
+      "totalMs": 13165.371,
+      "visualMs": 7187.608,
+      "adaptiveWaitMs": 4446,
+      "preAnchorWaitMs": 2172,
+      "postAnchorWaitMs": 2274,
+      "requestClassifications": {
+        "non-blocking-telemetry": 17,
+        "non-blocking-configured-host": 0,
+        "blocking-required": 1,
+        "blocking-current-dom-image": 0,
+        "ignored-stale-image": 0
+      },
+      "browserCloseMs": 10.906,
       "blockingHandles": 0
     },
     {
@@ -27,10 +42,20 @@
       "worstStyle": 1,
       "worstPixel": 0.00615,
       "stabilityFailures": 0,
-      "totalMs": 16633.332,
-      "visualMs": 8965.072,
-      "adaptiveWaitMs": 5221,
-      "browserCloseMs": 17.689,
+      "requiredNetworkFailures": 0,
+      "totalMs": 13478.19,
+      "visualMs": 7165.432,
+      "adaptiveWaitMs": 4404,
+      "preAnchorWaitMs": 2232,
+      "postAnchorWaitMs": 2172,
+      "requestClassifications": {
+        "non-blocking-telemetry": 18,
+        "non-blocking-configured-host": 0,
+        "blocking-required": 3,
+        "blocking-current-dom-image": 0,
+        "ignored-stale-image": 0
+      },
+      "browserCloseMs": 12.207,
       "blockingHandles": 0
     },
     {
@@ -42,26 +67,41 @@
       "worstStyle": 1,
       "worstPixel": 0.00615,
       "stabilityFailures": 0,
-      "totalMs": 17017.949,
-      "visualMs": 9198.702,
-      "adaptiveWaitMs": 5225,
-      "browserCloseMs": 17.808,
+      "requiredNetworkFailures": 0,
+      "totalMs": 13649.715,
+      "visualMs": 7256.287,
+      "adaptiveWaitMs": 4574,
+      "preAnchorWaitMs": 2199,
+      "postAnchorWaitMs": 2375,
+      "requestClassifications": {
+        "non-blocking-telemetry": 22,
+        "non-blocking-configured-host": 0,
+        "blocking-required": 0,
+        "blocking-current-dom-image": 0,
+        "ignored-stale-image": 0
+      },
+      "browserCloseMs": 13.021,
       "blockingHandles": 0
     }
   ],
   "aggregate": {
     "passedRuns": 3,
     "totalRuns": 3,
-    "medianTotalMs": 17017.949,
-    "stddevTotalMs": 338.87,
-    "medianVisualMs": 8965.072,
-    "stddevVisualMs": 238.145,
-    "medianAdaptiveWaitMs": 5225,
-    "stddevAdaptiveWaitMs": 24.906,
-    "medianBrowserCloseMs": 17.689,
+    "medianTotalMs": 13478.19,
+    "stddevTotalMs": 245.583,
+    "medianVisualMs": 7187.608,
+    "stddevVisualMs": 47.369,
+    "medianAdaptiveWaitMs": 4446,
+    "stddevAdaptiveWaitMs": 88.551,
+    "medianPreAnchorWaitMs": 2199,
+    "stddevPreAnchorWaitMs": 30.05,
+    "medianPostAnchorWaitMs": 2274,
+    "stddevPostAnchorWaitMs": 101.5,
+    "medianBrowserCloseMs": 12.207,
     "worstComputedStyle": 1,
     "worstPixelDiff": 0.00615,
     "stabilityFailures": 0,
+    "requiredNetworkFailures": 0,
     "maxBlockingHandles": 0
   }
 }

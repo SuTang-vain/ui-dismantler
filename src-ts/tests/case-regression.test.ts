@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { planComponents } from "../planning/components.js";
@@ -30,6 +32,39 @@ test("formal planning regression keeps all representative cases dispatch-ready",
     assert.equal(report.summary.unownedInteractions, 0, `${item.id}: every interaction must have an owner`);
     assert.equal(report.summary.ownedInteractions, report.summary.interactions, `${item.id}: interaction ownership must remain complete`);
   }
+});
+
+test("YesPlayMusic frozen Semantic Gold+ regression preserves reviewed route fidelity and artifact identity", () => {
+  const caseDir = `${root}examples/spa-router-regressions/yesplaymusic-generated`;
+  const config = JSON.parse(readFileSync(`${caseDir}/semantic-gold.config.json`, "utf8"));
+  const report = JSON.parse(readFileSync(`${caseDir}/semantic-results.json`, "utf8"));
+  const frozen = JSON.parse(readFileSync(`${caseDir}/frozen-artifact.json`, "utf8"));
+
+  assert.equal(frozen.scope, "reviewed-partial-route-shell", "the generated route shell must not be represented as the full application");
+  assert.equal(frozen.modelCallsDuringQualityRun, 0, "quality evidence must remain isolated from model API availability");
+  for (const [relativePath, expectedHash] of Object.entries(frozen.files as Record<string, string>)) {
+    const actualHash = createHash("sha256").update(readFileSync(`${caseDir}/${relativePath}`)).digest("hex");
+    assert.equal(actualHash, expectedHash, `${relativePath}: frozen artifact hash changed without review`);
+  }
+
+  assert.equal(config.navigationComparison, "semantic");
+  assert.deepEqual(config.visualMatrix.viewports.map((viewport: { id: string }) => viewport.id), ["desktop", "tablet", "mobile"]);
+  assert.equal(report.passed, true);
+  assert.equal(report.scenariosPassed, 5);
+  assert.equal(report.scenariosTotal, 5);
+  assert.equal(report.navigationIntegrity.rate, 1);
+  assert.equal(report.navigationIntegrity.failures, 0);
+  assert.equal(report.visualMatrix.viewportRuns, 9);
+  assert.equal(report.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(report.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(report.visualMatrix.stabilityFailures, 0);
+  assert.ok(report.visualMatrix.preAnchorWaitMs > 0);
+  assert.ok(report.visualMatrix.postAnchorWaitMs > 0);
+  assert.equal(typeof report.visualMatrix.requestClassifications["non-blocking-telemetry"], "number");
+  assert.equal(report.visualMatrix.scenarios.every((scenario: { viewports: Array<{ requiredNetworkFailureDetails: string[]; nonBlockingNetworkFailureDetails: string[] }> }) => scenario.viewports.every((viewport) => Array.isArray(viewport.requiredNetworkFailureDetails) && Array.isArray(viewport.nonBlockingNetworkFailureDetails))), true);
+  assert.equal(report.runtimeErrors, 0);
+  assert.equal(report.requiredNetworkFailures, 0);
+  assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
 });
 
 const runGoldRegression = process.env.UI_DISMANTLER_GOLD_REGRESSION === "1";

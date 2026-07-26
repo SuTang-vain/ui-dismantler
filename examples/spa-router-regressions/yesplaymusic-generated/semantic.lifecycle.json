@@ -1,30 +1,27 @@
 {
   "schemaVersion": "1.0",
-  "pid": 20240,
+  "pid": 28436,
   "reportReady": true,
   "reportWritten": true,
   "beforeExitObserved": true,
   "exitObserved": true,
-  "reportReadyMs": 17000.118,
-  "browserCloseMs": 17.808,
+  "reportReadyMs": 13636.683,
+  "browserCloseMs": 13.021,
   "activeHandlesAfterClose": {
-    "totalHandles": 1,
+    "totalHandles": 0,
     "totalBlockingHandles": 0,
-    "standardIoHandles": 1,
-    "handlesByType": {
-      "stdio": 1
-    },
+    "standardIoHandles": 0,
+    "handlesByType": {},
     "resourcesByType": {
       "filesystem": 3,
-      "TTYWrap": 1,
       "timer": 2
     },
     "requestsByType": {
       "filesystem": 3
     }
   },
-  "createdAt": "2026-07-26T15:23:04.001Z",
-  "beforeExitAt": "2026-07-26T15:23:04.989Z",
+  "createdAt": "2026-07-26T15:55:35.841Z",
+  "beforeExitAt": "2026-07-26T15:55:36.831Z",
   "exitCode": 0,
-  "exitAt": "2026-07-26T15:23:04.989Z"
+  "exitAt": "2026-07-26T15:55:36.832Z"
 }

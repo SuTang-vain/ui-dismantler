@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "artifact": "yesplaymusic-generated-route-shell",
+  "scope": "reviewed-partial-route-shell",
+  "modelCallsDuringQualityRun": 0,
+  "files": {
+    "public/index.html": "50e85e05469ea6da1c0bbf3aab119121981d22e9505ce87bd3ae26c9fe343ce5",
+    "public/app.js": "4f54f6fd3640a816d2bc580c975e8d1899f3442bd49ae0a813a6607b8a62617b",
+    "public/styles.css": "6cd7c5ec04e2fb8ce5d10ca5e1a1eabfe0b92a9001d6708b9f392ca1de5c7316",
+    "server.mjs": "e89a309d3371aecd299d3f5d3ef464b7e25ac25bcc476b10492c7e765ea4d483",
+    "semantic-gold.config.json": "3d39a50bb1c1b2d189eb3cbe69713d9c49a65035f1d3403b13ca08fe355d9718"
+  }
+}
