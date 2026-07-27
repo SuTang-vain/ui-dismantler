@@ -1,0 +1,428 @@
+{
+  "schemaVersion": "1.1",
+  "networkIsolated": true,
+  "modelCalls": 0,
+  "sourceCommit": "6858a9ad67483025f6a9432a926beb9327037be3",
+  "thresholds": {
+    "computedStyle": 0.98,
+    "pixelDiff": 0.02,
+    "navigationIntegrity": 1,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "suite": {
+    "scenarios": 6,
+    "visualRouteStates": 5,
+    "viewportRuns": 13,
+    "runs": [
+      {
+        "run": 1,
+        "passed": true,
+        "totalMs": 64350.196,
+        "browserCloseMs": 239.818,
+        "worstComputedStyle": 0.9912,
+        "worstPixelDiff": 0.012977,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "nonBlockingNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0,
+        "states": [
+          {
+            "id": "unauthenticated-dashboard-guard",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.011186,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.004096
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006751
+              },
+              {
+                "id": "mobile",
+                "style": 1,
+                "pixel": 0.011186
+              }
+            ]
+          },
+          {
+            "id": "admin-login-dashboard",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          },
+          {
+            "id": "admin-nested-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006486,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.003598
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006486
+              }
+            ]
+          },
+          {
+            "id": "admin-permission-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006511,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.006425
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006511
+              }
+            ]
+          },
+          {
+            "id": "admin-deep-link-reload",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": 2,
+        "passed": true,
+        "totalMs": 64310.977,
+        "browserCloseMs": 233.983,
+        "worstComputedStyle": 0.9912,
+        "worstPixelDiff": 0.012977,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "nonBlockingNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0,
+        "states": [
+          {
+            "id": "unauthenticated-dashboard-guard",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.011186,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.004096
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006751
+              },
+              {
+                "id": "mobile",
+                "style": 1,
+                "pixel": 0.011186
+              }
+            ]
+          },
+          {
+            "id": "admin-login-dashboard",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          },
+          {
+            "id": "admin-nested-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006486,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.003598
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006486
+              }
+            ]
+          },
+          {
+            "id": "admin-permission-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006511,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.006425
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006511
+              }
+            ]
+          },
+          {
+            "id": "admin-deep-link-reload",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": 3,
+        "passed": true,
+        "totalMs": 64090.468,
+        "browserCloseMs": 233.362,
+        "worstComputedStyle": 0.9912,
+        "worstPixelDiff": 0.012977,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "nonBlockingNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0,
+        "states": [
+          {
+            "id": "unauthenticated-dashboard-guard",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.011186,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.004096
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006751
+              },
+              {
+                "id": "mobile",
+                "style": 1,
+                "pixel": 0.011186
+              }
+            ]
+          },
+          {
+            "id": "admin-login-dashboard",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          },
+          {
+            "id": "admin-nested-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006486,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.003598
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006486
+              }
+            ]
+          },
+          {
+            "id": "admin-permission-route",
+            "passed": true,
+            "worstComputedStyle": 1,
+            "worstPixelDiff": 0.006511,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.006425
+              },
+              {
+                "id": "tablet",
+                "style": 1,
+                "pixel": 0.006511
+              }
+            ]
+          },
+          {
+            "id": "admin-deep-link-reload",
+            "passed": true,
+            "worstComputedStyle": 0.9912,
+            "worstPixelDiff": 0.012977,
+            "viewports": [
+              {
+                "id": "desktop",
+                "style": 1,
+                "pixel": 0.007159
+              },
+              {
+                "id": "tablet",
+                "style": 0.9912,
+                "pixel": 0.007551
+              },
+              {
+                "id": "mobile",
+                "style": 0.9912,
+                "pixel": 0.012977
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "median": {
+      "totalMs": 64310.977,
+      "browserCloseMs": 233.983,
+      "worstComputedStyle": 0.9912,
+      "worstPixelDiff": 0.012977
+    },
+    "ranges": {
+      "totalMs": [
+        64090.468,
+        64350.196
+      ],
+      "browserCloseMs": [
+        233.362,
+        239.818
+      ],
+      "worstComputedStyle": [
+        0.9912,
+        0.9912
+      ],
+      "worstPixelDiff": [
+        0.012977,
+        0.012977
+      ]
+    },
+    "stable": true
+  },
+  "beforeAfter": {
+    "permissionTabletPixel": [
+      0.028475,
+      0.006511
+    ],
+    "loginWorstPixel": [
+      0.157136,
+      0.011186
+    ],
+    "dashboardDesktopPixel": [
+      0.151814,
+      0.007159
+    ],
+    "formalMatrixPassingStates": [
+      "1/5",
+      "5/5"
+    ]
+  }
+}

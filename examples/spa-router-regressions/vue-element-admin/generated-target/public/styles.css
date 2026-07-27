@@ -1,0 +1,372 @@
+:root { color-scheme: light; font-family: Arial, Helvetica, sans-serif; color: #303133; background: #f5f7fa; }
+* { box-sizing: border-box; }
+html, body, #app { min-height: 100%; margin: 0; }
+body { min-height: 100vh; }
+.login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #2d3a4b; padding: 24px; }
+.login-form { width: min(520px, 100%); padding: 42px; border-radius: 6px; background: #fff; box-shadow: 0 14px 40px rgba(0,0,0,.2); }
+.login-form .title-container { margin-bottom: 24px; text-align: center; }
+.login-form .title { margin: 0; font-size: 26px; font-weight: 600; }
+.login-form .el-form-item { margin: 16px 0; }
+.login-form input { width: 100%; height: 42px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 12px; font-size: 14px; }
+.login-form button { width: 100%; height: 42px; border: 0; border-radius: 4px; color: #fff; background: #1890ff; cursor: pointer; }
+.app-shell { min-height: 100vh; display: flex; background: #f0f2f5; }
+.sidebar-container { width: 240px; flex: 0 0 240px; color: #bfcbd9; background: #304156; }
+.sidebar-container a { color: inherit; text-decoration: none; }
+.sidebar-title, .el-submenu__title, .el-menu-item { min-height: 48px; display: flex; align-items: center; padding: 0 20px; cursor: pointer; }
+.sidebar-title { color: #fff; font-weight: 700; background: #263445; }
+.el-submenu__title:hover, .el-menu-item:hover, a.router-link-active .el-menu-item { background: #263445; }
+.el-menu { margin: 0; padding: 0; list-style: none; }
+.el-menu--inline { display: none; padding-left: 12px; }
+.el-menu--inline.is-open { display: block; }
+.app-main { min-width: 0; flex: 1; padding: 28px; }
+.app-header { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: #fff; border-bottom: 1px solid #ebeef5; }
+.breadcrumb { color: #909399; }
+.dashboard-container, .route-page { min-height: 500px; margin-top: 24px; padding: 28px; border-radius: 6px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.dashboard-container h1, .route-page h1 { margin-top: 0; }
+.card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.card { padding: 20px; border-radius: 6px; color: #fff; background: linear-gradient(135deg,#409eff,#67c23a); }
+@media (max-width: 900px) { .sidebar-container { width: 200px; flex-basis: 200px; } .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .app-shell { display: block; } .sidebar-container { width: 100%; } .app-main { padding: 16px; } .card-grid { grid-template-columns: 1fr; } .sidebar-title { display: none; } }
+/* Reviewed layout alignment pass: these rules align the generated shell boundary with the reference app shell. */
+:root { font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif; color: #000; line-height: 18.4px; }
+.login-container { display: block; min-height: 100%; height: 100vh; overflow: hidden; padding: 0; color: #000; line-height: 18.4px; }
+.login-form { position: relative; width: 520px; height: 493.828px; margin: 0 auto; padding: 160px 35px 0; overflow: hidden; background: transparent; border-radius: 0; box-shadow: none; color: #000; line-height: 18.4px; }
+.sidebar-container { width: 210px; flex-basis: 210px; }
+.app-header { height: 84px; padding: 0 28px; }
+.app-main { position: relative; width: calc(100vw - 210px); min-height: calc(100vh - 84px); padding: 0; overflow: hidden; color: #000; line-height: 18.4px; }
+.dashboard-container { width: 100%; height: 1462.6875px; min-height: 0; margin: 0; padding: 0; background: transparent; border-radius: 0; box-shadow: none; color: #000; line-height: 18.4px; }
+@media (max-width: 600px) {
+  .login-form { width: 100%; margin: 0; }
+  .sidebar-container { width: 100%; }
+  .app-header { height: 64px; }
+  .app-main { width: 100%; min-height: calc(100vh - 64px); }
+}
+
+/* Reviewed Permission route reconstruction. The markup mirrors directive.vue responsibilities without replacing Vue Router. */
+.permission-page {
+  position: relative;
+  min-height: 100%;
+  padding: 20px;
+  background: #fff;
+  color: #000;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.role-summary { margin-bottom: 12px; }
+.switch-roles { display: flex; align-items: center; gap: 6px; }
+.role-buttons { display: inline-flex; }
+.role-button {
+  height: 36px;
+  margin: 0;
+  padding: 0 20px;
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  color: #606266;
+  font-size: 14px;
+  line-height: 34px;
+}
+.role-button:first-child { border-radius: 4px 0 0 4px; }
+.role-button:last-child { margin-left: -1px; border-radius: 0 4px 4px 0; }
+.role-button.is-active { z-index: 1; border-color: #409eff; background: #409eff; color: #fff; }
+.permission-examples { margin-top: 30px; }
+.permission-row { min-height: 55px; white-space: nowrap; }
+.permission-alert {
+  display: inline-block;
+  width: 320px;
+  margin-top: 15px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #f0f9eb;
+  color: #67c23a;
+  line-height: 24px;
+}
+.el-tag {
+  display: inline-block;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d9ecff;
+  border-radius: 4px;
+  background-color: #ecf5ff;
+  color: #409eff;
+  font-size: 12px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+.permission-tag { height: 24px; padding: 0 8px; line-height: 22px; vertical-align: 1px; }
+.el-tag--info { border-color: #e9e9eb; background-color: #f4f4f5; color: #909399; }
+.permission-sourceCode { margin-left: 15px; vertical-align: middle; }
+.permission-check { margin-top: 60px; }
+.permission-check aside {
+  margin: 0 0 20px;
+  padding: 8px 24px;
+  border-left: 2px solid #e6e6e6;
+  background: #eef1f6;
+  color: #2c3e50;
+  font-size: 16px;
+  line-height: 32px;
+}
+.permission-tabs {
+  width: 550px;
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+}
+.permission-tab-list { display: flex; height: 39px; background: #f5f7fa; }
+.permission-tab {
+  min-width: 81px;
+  padding: 0 20px;
+  border-right: 1px solid #dcdfe6;
+  border-bottom: 1px solid #dcdfe6;
+  color: #909399;
+  line-height: 39px;
+}
+.permission-tab.is-active { border-bottom-color: #fff; background: #fff; color: #409eff; }
+.permission-tab-panel { height: 58px; padding: 15px; font-size: 16px; line-height: 28px; }
+.permission-tab-panel .permission-sourceCode { vertical-align: 1px; }
+.settings-drawer-button {
+  position: absolute;
+  top: 82px;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 6px 0 0 6px;
+  background: #1890ff;
+  color: #fff;
+  font-size: 24px;
+  line-height: 48px;
+}
+@media (max-width: 1100px) {
+  .permission-check aside { font-size: 16px; }
+}
+@media (max-width: 600px) {
+  .permission-page { overflow-x: auto; }
+  .permission-sourceCode { margin-left: 8px; }
+  .permission-check { min-width: 550px; }
+}
+.permission-page { min-height: calc(100vh - 84px); }
+@media (max-width: 600px) { .permission-page { min-height: calc(100vh - 64px); } }
+/* Element UI typography alignment for the reviewed Permission boundary. */
+.permission-page { background: transparent; font-size: 16px; line-height: 18.4px; }
+.role-summary { margin-bottom: 15px; }
+.switch-roles { display: block; line-height: 18.4px; }
+.role-buttons { display: inline-flex; vertical-align: middle; }
+.role-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 14px;
+}
+.permission-alert { font-size: 16px; line-height: 18.4px; }
+.permission-check aside { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; }
+.permission-tabs { font-size: 16px; line-height: 18.4px; }
+/* Tablet pixel alignment after direct reference/generated geometry inspection. */
+.permission-page { background: #fff; }
+.role-buttons { margin-left: 4px; }
+.permission-check aside { border: 0; }
+.permission-tab { min-width: 0; font-size: 14px; }
+.settings-drawer-button { top: 166px; }
+
+/* Reviewed Login route reconstruction based on the locked Vue SFC. */
+.login-container { width: 100%; min-height: 100%; background-color: #2d3a4b; overflow: hidden; }
+.login-form {
+  position: relative;
+  width: 520px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 160px 35px 0;
+  overflow: hidden;
+  color: #000;
+}
+.login-form .title-container { margin: 0; position: relative; }
+.login-form .title {
+  margin: 0 auto 40px;
+  color: #eee;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 29.9px;
+  text-align: center;
+}
+.login-form .el-form-item.login-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 52px;
+  margin: 0 0 22px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, .1);
+  color: #454545;
+}
+.login-form .svg-container {
+  display: inline-flex;
+  width: 45px;
+  flex: 0 0 45px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 5px 6px 15px;
+  color: #889aa4;
+  vertical-align: middle;
+}
+.login-icon { width: 14px; height: 14px; fill: currentColor; }
+.login-icon-user path { stroke: currentColor; }
+.login-icon-eye { width: 16px; height: 8px; }
+.login-form .login-field input {
+  display: inline-block;
+  width: 85%;
+  height: 47px;
+  padding: 12px 5px 12px 15px;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  caret-color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 23px;
+}
+.login-form .show-pwd {
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  display: flex;
+  width: 24px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #889aa4;
+  cursor: pointer;
+}
+.login-form .login-submit {
+  width: 100%;
+  height: 36px;
+  margin: 0 0 30px;
+  padding: 10px 20px;
+  border: 1px solid #1890ff;
+  border-radius: 4px;
+  background: #1890ff;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 14px;
+}
+.login-help { position: relative; }
+.login-form .tips { margin-bottom: 10px; color: #fff; font-size: 14px; line-height: 16.1px; }
+.login-form .tips span:first-of-type { margin-right: 16px; }
+.login-form .tips:nth-child(2) span:first-of-type { margin-right: 18px; }
+.login-form .thirdparty-button {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  width: auto;
+  height: 36px;
+  padding: 10px 20px;
+  border: 1px solid #1890ff;
+  border-radius: 4px;
+  background: #1890ff;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 14px;
+}
+@media only screen and (max-width: 470px) {
+  .login-form .thirdparty-button { display: none; }
+}
+.login-container { align-items: normal; justify-content: normal; }
+.login-form { height: 493.828125px; }
+
+/* Reviewed Dashboard component responsibilities: panel group, line/radar/pie/bar charts, and lower content boundaries. */
+.dashboard-container { width: 100%; height: 1462.6875px; min-height: 0; margin: 0; padding: 0; overflow: visible; }
+.dashboard-editor-container { position: relative; min-height: 1462.6875px; padding: 32px; background: rgb(240, 242, 245); }
+.github-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  background: linear-gradient(45deg, transparent 49.5%, #40c9c6 50%);
+}
+.github-corner-mark { position: absolute; top: 14px; right: 17px; color: #fff; font-size: 28px; transform: rotate(45deg); }
+.panel-group { display: flex; flex-wrap: wrap; margin: 18px -20px 0; }
+.card-panel-col { width: 25%; margin-bottom: 32px; padding: 0 20px; }
+.card-panel {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 108px;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-color: rgba(0,0,0,.05);
+  background: #fff;
+  box-shadow: 4px 4px 40px rgba(0,0,0,.05);
+  color: #666;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+}
+.card-panel-icon-wrapper { float: left; margin: 14px 0 0 14px; padding: 16px; border-radius: 6px; }
+.card-panel-icon { display: block; width: 48px; height: 48px; fill: currentColor; }
+.icon-people { color: #40c9c6; }
+.icon-message { color: #36a3f7; }
+.icon-money { color: #f4516c; }
+.icon-shopping { color: #34bfa3; }
+.card-panel-description { float: right; margin: 26px 26px 26px 0; font-weight: 700; }
+.card-panel-text { display: block; margin-bottom: 12px; color: rgba(0,0,0,.45); font-size: 16px; line-height: 18px; white-space: nowrap; }
+.card-panel-num { display: block; color: #666; font-size: 20px; line-height: 23px; }
+.line-chart-wrapper { height: 366px; margin-bottom: 32px; padding: 16px 16px 0; background: #fff; }
+.dashboard-chart { width: 100%; }
+.line-chart { height: 350px; }
+.dashboard-chart-row { display: flex; flex-wrap: wrap; margin: 0 -16px; }
+.dashboard-chart-col { width: 33.333333%; padding: 0 16px; }
+.chart-wrapper { margin-bottom: 32px; padding: 16px 16px 0; background: #fff; }
+.small-chart { height: 300px; }
+.dashboard-lower-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
+.transaction-card, .todo-card, .profile-card { min-height: 280px; padding: 20px; background: #fff; color: #909399; }
+.dashboard-editor-container::after {
+  content: "⚙";
+  position: absolute;
+  top: 226px;
+  right: 0;
+  z-index: 4;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px 0 0 6px;
+  background: #1890ff;
+  color: #fff;
+  font-size: 24px;
+  line-height: 48px;
+  text-align: center;
+}
+@media (max-width: 1199px) {
+  .card-panel-col { width: 50%; }
+  .dashboard-chart-col { width: 100%; }
+}
+@media (max-width: 1024px) {
+  .chart-wrapper { padding: 8px 8px 0; }
+}
+@media (max-width: 550px) {
+  .card-panel-description { display: none; }
+  .card-panel-icon-wrapper { float: none; width: 100%; height: 100%; margin: 0; }
+  .card-panel-icon { margin: 14px auto; }
+  .dashboard-lower-row { grid-template-columns: 1fr; }
+}
+@media (min-width: 601px) and (max-width: 1199px) {
+  .dashboard-container, .dashboard-editor-container { height: 2779.6875px; min-height: 2779.6875px; }
+}
+@media (max-width: 600px) {
+  .app-main { min-height: calc(100vh - 84px); }
+  .dashboard-container, .dashboard-editor-container { height: 3414.890625px; min-height: 3414.890625px; }
+}

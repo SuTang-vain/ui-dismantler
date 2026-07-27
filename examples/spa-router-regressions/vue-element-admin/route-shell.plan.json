@@ -1,0 +1,306 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "mode": "single",
+    "configScenarios": 6,
+    "reportIncluded": true,
+    "reportPassed": true
+  },
+  "routes": [
+    {
+      "route": "/#/dashboard",
+      "pattern": "/#/dashboard",
+      "scenarios": [
+        "unauthenticated-dashboard-guard",
+        "admin-login-dashboard",
+        "admin-nested-route",
+        "admin-history-back",
+        "admin-permission-route",
+        "admin-deep-link-reload"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "admin-login-dashboard",
+          "visibleText": "Dashboard",
+          "visibleSelector": ".dashboard-container"
+        },
+        {
+          "scenarioId": "admin-history-back",
+          "visibleText": "Dashboard",
+          "visibleSelector": ".dashboard-container"
+        },
+        {
+          "scenarioId": "admin-deep-link-reload",
+          "visibleText": "Dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "admin-login-dashboard",
+          "anchor": ".dashboard-container",
+          "region": ".app-main",
+          "styleTargets": [
+            ".app-main",
+            ".dashboard-container"
+          ]
+        },
+        {
+          "scenarioId": "admin-deep-link-reload",
+          "anchor": ".dashboard-container",
+          "region": ".app-main",
+          "styleTargets": [
+            ".app-main",
+            ".dashboard-container"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/#/login?redirect=%2Fdashboard",
+      "pattern": "/#/login?redirect=%2Fdashboard",
+      "scenarios": [
+        "unauthenticated-dashboard-guard"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "unauthenticated-dashboard-guard",
+          "visibleText": "Login",
+          "visibleSelector": ".login-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "unauthenticated-dashboard-guard",
+          "anchor": ".login-container",
+          "region": ".login-container",
+          "styleTargets": [
+            ".login-container",
+            ".login-form"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/#/login",
+      "pattern": "/#/login",
+      "scenarios": [
+        "admin-login-dashboard",
+        "admin-nested-route",
+        "admin-history-back",
+        "admin-permission-route",
+        "admin-deep-link-reload"
+      ],
+      "entry": true,
+      "final": false,
+      "assertions": [],
+      "visualStates": []
+    },
+    {
+      "route": "/#/nested/menu1/menu1-1",
+      "pattern": "/#/nested/menu1/menu1-1",
+      "scenarios": [
+        "admin-nested-route"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "admin-nested-route",
+          "visibleText": "Menu 1-1",
+          "visibleSelector": ".app-main"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "admin-nested-route",
+          "anchor": ".app-main",
+          "region": ".app-main",
+          "viewports": [
+            "desktop",
+            "tablet"
+          ],
+          "styleTargets": [
+            ".app-main"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/#/documentation/index",
+      "pattern": "/#/documentation/index",
+      "scenarios": [
+        "admin-history-back"
+      ],
+      "entry": false,
+      "final": false,
+      "assertions": [],
+      "visualStates": []
+    },
+    {
+      "route": "/#/permission/directive",
+      "pattern": "/#/permission/directive",
+      "scenarios": [
+        "admin-permission-route"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "admin-permission-route",
+          "visibleText": "Directive Permission",
+          "visibleSelector": ".app-main"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "admin-permission-route",
+          "anchor": ".app-main",
+          "region": ".app-main",
+          "viewports": [
+            "desktop",
+            "tablet"
+          ],
+          "styleTargets": [
+            ".app-main"
+          ]
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "scenarioId": "unauthenticated-dashboard-guard",
+      "stepIndex": 0,
+      "action": "wait",
+      "from": "/#/dashboard",
+      "to": "/#/login?redirect=%2Fdashboard"
+    },
+    {
+      "scenarioId": "admin-login-dashboard",
+      "stepIndex": 2,
+      "action": "click",
+      "from": "/#/login",
+      "to": "/#/dashboard",
+      "target": "button.el-button--primary:not(.thirdparty-button)"
+    },
+    {
+      "scenarioId": "admin-nested-route",
+      "stepIndex": 2,
+      "action": "click",
+      "from": "/#/login",
+      "to": "/#/dashboard",
+      "target": "button.el-button--primary:not(.thirdparty-button)"
+    },
+    {
+      "scenarioId": "admin-nested-route",
+      "stepIndex": 5,
+      "action": "click",
+      "from": "/#/dashboard",
+      "to": "/#/nested/menu1/menu1-1",
+      "target": "a[href='#/nested/menu1/menu1-1']"
+    },
+    {
+      "scenarioId": "admin-history-back",
+      "stepIndex": 2,
+      "action": "click",
+      "from": "/#/login",
+      "to": "/#/dashboard",
+      "target": "button.el-button--primary:not(.thirdparty-button)"
+    },
+    {
+      "scenarioId": "admin-history-back",
+      "stepIndex": 3,
+      "action": "click",
+      "from": "/#/dashboard",
+      "to": "/#/documentation/index",
+      "target": "a[href='#/documentation/index']"
+    },
+    {
+      "scenarioId": "admin-history-back",
+      "stepIndex": 4,
+      "action": "back",
+      "from": "/#/documentation/index",
+      "to": "/#/dashboard"
+    },
+    {
+      "scenarioId": "admin-permission-route",
+      "stepIndex": 2,
+      "action": "click",
+      "from": "/#/login",
+      "to": "/#/dashboard",
+      "target": "button.el-button--primary:not(.thirdparty-button)"
+    },
+    {
+      "scenarioId": "admin-permission-route",
+      "stepIndex": 4,
+      "action": "click",
+      "from": "/#/dashboard",
+      "to": "/#/permission/directive",
+      "target": "a[href='#/permission/directive']"
+    },
+    {
+      "scenarioId": "admin-deep-link-reload",
+      "stepIndex": 2,
+      "action": "click",
+      "from": "/#/login",
+      "to": "/#/dashboard",
+      "target": "button.el-button--primary:not(.thirdparty-button)"
+    },
+    {
+      "scenarioId": "admin-deep-link-reload",
+      "stepIndex": 3,
+      "action": "reload",
+      "from": "/#/dashboard",
+      "to": "/#/dashboard"
+    }
+  ],
+  "selectorMappings": [],
+  "fixtureDependencies": [
+    {
+      "method": "GET",
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+      "resourceType": "image",
+      "responseContentType": "image/gif",
+      "binary": true
+    },
+    {
+      "method": "GET",
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png",
+      "resourceType": "image",
+      "responseContentType": "image/png",
+      "binary": true
+    }
+  ],
+  "capabilities": {
+    "historyBack": true,
+    "historyForward": false,
+    "reload": true,
+    "dynamicInputRoutes": false,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 5
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "route observations describe behavior, not production component boundaries",
+    "guard and redirect intent must be reviewed before code generation",
+    "visual selectors are acceptance targets and must not be treated as implementation selectors automatically",
+    "fixture bodies may contain sensitive or environment-specific data and are intentionally summarized"
+  ]
+}

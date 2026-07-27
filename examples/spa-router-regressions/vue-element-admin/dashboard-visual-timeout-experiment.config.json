@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "navigationComparison": "semantic",
+  "execution": {
+    "contractConcurrency": 1,
+    "browserShutdown": "graceful",
+    "actionTimeoutMs": 5000
+  },
+  "scenarios": [
+    {
+      "id": "admin-login-dashboard",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/dashboard",
+        "visibleSelector": ".dashboard-container",
+        "visibleText": "Dashboard"
+      },
+      "visual": {
+        "screenshotAnchor": ".dashboard-container",
+        "screenshotRegion": ".app-main",
+        "styleTargets": [
+          {
+            "id": "main",
+            "selector": ".app-main"
+          },
+          {
+            "id": "dashboard",
+            "selector": ".dashboard-container"
+          }
+        ]
+      }
+    }
+  ],
+  "visualMatrix": {
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      }
+    ],
+    "stabilityTimeoutMs": 8000
+  },
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "fixtures": [
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/gif",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+    },
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/png",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    }
+  ]
+}

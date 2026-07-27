@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-integration-patch",
+  "deterministic": true,
+  "reviewRequired": true,
+  "applied": false,
+  "sourcePath": "src/router/index.js",
+  "sourceLines": 404,
+  "patchedLines": 406,
+  "changedLines": 2,
+  "changedHunks": 1,
+  "edits": [
+    {
+      "id": "router-import",
+      "matched": true,
+      "count": 1,
+      "detail": "inserted createRouter import"
+    },
+    {
+      "id": "local-navigate-helper",
+      "matched": false,
+      "count": 0,
+      "detail": "replaced local pushState/replaceState helper with router handle"
+    },
+    {
+      "id": "guard-navigation",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated observed guard redirect to generated guard table"
+    },
+    {
+      "id": "link-navigation",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated link navigation to generated router"
+    },
+    {
+      "id": "history-back",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated history back to generated router"
+    },
+    {
+      "id": "history-forward",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated history forward to generated router"
+    },
+    {
+      "id": "dynamic-input-navigation",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated dynamic input route to generated router"
+    },
+    {
+      "id": "router-lifecycle",
+      "matched": false,
+      "count": 0,
+      "detail": "replaced manual popstate/render bootstrap with generated router lifecycle"
+    }
+  ],
+  "blocked": true,
+  "blockingReasons": [
+    "plan requires history.back but source pattern was not found",
+    "router lifecycle bootstrap pattern was not found"
+  ],
+  "modelCalls": 0,
+  "generatedCode": true,
+  "qualityRuns": 0,
+  "reviewReasons": [
+    "the patch is a preview and is never applied automatically",
+    "the visual DOM and CSS remain owned by the source route shell",
+    "guard redirect rewrites require human approval",
+    "the patched application must run the same Semantic Gold+ and visual matrix before acceptance"
+  ]
+}

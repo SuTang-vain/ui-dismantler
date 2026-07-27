@@ -1,0 +1,5 @@
+--- src/router/index.js
++++ src/router/index.js.generated
+@@ -1,0 +1,2 @@
++import { createRouter } from "./generated/router.js";
++

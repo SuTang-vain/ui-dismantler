@@ -14,6 +14,8 @@ import { planComponents, writeComponentPlanningReport, writeComponentSpecs } fro
 import { generateSpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { generateSpaRouteShellArtifact } from "./planning/spa-route-shell-generator.js";
 import { generateSpaRouteShellIntegrationPatch } from "./planning/spa-route-shell-patch.js";
+import { analyzeVueRouterResponsibility } from "./planning/vue-router-responsibility.js";
+import { generateVueRouterIntegrationPatch } from "./planning/vue-router-patch.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
@@ -34,7 +36,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -118,6 +120,35 @@ async function main(argv: string[]): Promise<number> {
       console.log(`✓ 已生成 SPA route shell 计划: ${resolve(out)}`);
       console.log(`  routes=${plan.routes.length}，transitions=${plan.transitions.length}，visualStates=${plan.capabilities.reviewedVisualStates}，reviewRequired=${plan.reviewRequired}，generationMs=${generationMs}`);
       return 0;
+    }
+    if (command === "spa-vue-router-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("spa-vue-router-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeVueRouterResponsibility(resolve(sourceRoot));
+      const serializable = { ...graph, sourceRoot: "<external-source>" };
+      await writeFile(resolve(out), `${JSON.stringify(serializable, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 Vue Router responsibility graph: ${resolve(out)}`);
+      console.log(`  files=${graph.metrics.filesScanned}，routes=${graph.metrics.routesDiscovered}，evidence=${graph.metrics.evidenceCount}，blocked=${graph.blockers.length > 0}，reviewRequired=${graph.reviewRequired}`);
+      for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
+      return graph.blockers.length > 0 ? 1 : 0;
+    }
+    if (command === "spa-vue-router-patch") {
+      const sourceRoot = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");
+      if (!sourceRoot || !sourcePath || !outDir) throw new Error("spa-vue-router-patch 需要 <source-root>、--source 和 --out-dir");
+      const graph = analyzeVueRouterResponsibility(resolve(sourceRoot));
+      const source = await readFile(resolve(sourcePath), "utf8");
+      const patch = generateVueRouterIntegrationPatch(graph, source, { sourcePath: "permission.js", importPath: flag(args, "--import-path") });
+      const absoluteOutDir = resolve(outDir);
+      await mkdir(absoluteOutDir, { recursive: true });
+      await writeFile(resolve(absoluteOutDir, "responsibility.graph.json"), `${JSON.stringify({ ...graph, sourceRoot: "<external-source>" }, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "vue-router-contract-adapter.js.preview"), patch.adapter, "utf8");
+      await writeFile(resolve(absoluteOutDir, "permission.js.preview"), patch.patched, "utf8");
+      await writeFile(resolve(absoluteOutDir, "integration.patch"), patch.diff, "utf8");
+      await writeFile(resolve(absoluteOutDir, "integration.metrics.json"), `${JSON.stringify(patch.metrics, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 review-only Vue Router integration patch: ${absoluteOutDir}`);
+      console.log(`  blocked=${patch.metrics.blocked}，covered=${patch.metrics.responsibilitiesCovered.length}，missing=${patch.metrics.responsibilitiesMissing.length}，applied=${patch.metrics.applied}`);
+      for (const reason of patch.metrics.blockingReasons) console.log(`  [BLOCKED] ${reason}`);
+      return patch.metrics.blocked ? 1 : 0;
     }
     if (command === "spa-shell-patch") {
       const planPath = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");

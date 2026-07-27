@@ -1,0 +1,1849 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "vue-router-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "framework": {
+    "view": "vue",
+    "router": "vue-router",
+    "routerMajor": 3,
+    "state": "vuex"
+  },
+  "files": [
+    "App.vue",
+    "api/article.js",
+    "api/qiniu.js",
+    "api/remote-search.js",
+    "api/role.js",
+    "api/user.js",
+    "components/BackToTop/index.vue",
+    "components/Breadcrumb/index.vue",
+    "components/Charts/Keyboard.vue",
+    "components/Charts/LineMarker.vue",
+    "components/Charts/MixChart.vue",
+    "components/Charts/mixins/resize.js",
+    "components/DndList/index.vue",
+    "components/DragSelect/index.vue",
+    "components/Dropzone/index.vue",
+    "components/ErrorLog/index.vue",
+    "components/GithubCorner/index.vue",
+    "components/Hamburger/index.vue",
+    "components/HeaderSearch/index.vue",
+    "components/ImageCropper/index.vue",
+    "components/ImageCropper/utils/data2blob.js",
+    "components/ImageCropper/utils/effectRipple.js",
+    "components/ImageCropper/utils/language.js",
+    "components/ImageCropper/utils/mimes.js",
+    "components/JsonEditor/index.vue",
+    "components/Kanban/index.vue",
+    "components/MDinput/index.vue",
+    "components/MarkdownEditor/default-options.js",
+    "components/MarkdownEditor/index.vue",
+    "components/Pagination/index.vue",
+    "components/PanThumb/index.vue",
+    "components/RightPanel/index.vue",
+    "components/Screenfull/index.vue",
+    "components/Share/DropdownMenu.vue",
+    "components/SizeSelect/index.vue",
+    "components/Sticky/index.vue",
+    "components/SvgIcon/index.vue",
+    "components/TextHoverEffect/Mallki.vue",
+    "components/ThemePicker/index.vue",
+    "components/Tinymce/components/EditorImage.vue",
+    "components/Tinymce/dynamicLoadScript.js",
+    "components/Tinymce/index.vue",
+    "components/Tinymce/plugins.js",
+    "components/Tinymce/toolbar.js",
+    "components/Upload/SingleImage.vue",
+    "components/Upload/SingleImage2.vue",
+    "components/Upload/SingleImage3.vue",
+    "components/UploadExcel/index.vue",
+    "directive/clipboard/clipboard.js",
+    "directive/clipboard/index.js",
+    "directive/el-drag-dialog/drag.js",
+    "directive/el-drag-dialog/index.js",
+    "directive/el-table/adaptive.js",
+    "directive/el-table/index.js",
+    "directive/permission/index.js",
+    "directive/permission/permission.js",
+    "directive/sticky.js",
+    "directive/waves/index.js",
+    "directive/waves/waves.js",
+    "filters/index.js",
+    "icons/index.js",
+    "layout/components/AppMain.vue",
+    "layout/components/Navbar.vue",
+    "layout/components/Settings/index.vue",
+    "layout/components/Sidebar/FixiOSBug.js",
+    "layout/components/Sidebar/Item.vue",
+    "layout/components/Sidebar/Link.vue",
+    "layout/components/Sidebar/Logo.vue",
+    "layout/components/Sidebar/SidebarItem.vue",
+    "layout/components/Sidebar/index.vue",
+    "layout/components/TagsView/ScrollPane.vue",
+    "layout/components/TagsView/index.vue",
+    "layout/components/index.js",
+    "layout/index.vue",
+    "layout/mixin/ResizeHandler.js",
+    "main.js",
+    "permission.js",
+    "router/index.js",
+    "router/modules/charts.js",
+    "router/modules/components.js",
+    "router/modules/nested.js",
+    "router/modules/table.js",
+    "settings.js",
+    "store/getters.js",
+    "store/index.js",
+    "store/modules/app.js",
+    "store/modules/errorLog.js",
+    "store/modules/permission.js",
+    "store/modules/settings.js",
+    "store/modules/tagsView.js",
+    "store/modules/user.js",
+    "utils/auth.js",
+    "utils/clipboard.js",
+    "utils/error-log.js",
+    "utils/get-page-title.js",
+    "utils/index.js",
+    "utils/open-window.js",
+    "utils/permission.js",
+    "utils/request.js",
+    "utils/scroll-to.js",
+    "utils/validate.js",
+    "vendor/Export2Excel.js",
+    "vendor/Export2Zip.js",
+    "views/charts/keyboard.vue",
+    "views/charts/line.vue",
+    "views/charts/mix-chart.vue",
+    "views/clipboard/index.vue",
+    "views/components-demo/avatar-upload.vue",
+    "views/components-demo/back-to-top.vue",
+    "views/components-demo/count-to.vue",
+    "views/components-demo/dnd-list.vue",
+    "views/components-demo/drag-dialog.vue",
+    "views/components-demo/drag-kanban.vue",
+    "views/components-demo/drag-select.vue",
+    "views/components-demo/dropzone.vue",
+    "views/components-demo/json-editor.vue",
+    "views/components-demo/markdown.vue",
+    "views/components-demo/mixin.vue",
+    "views/components-demo/split-pane.vue",
+    "views/components-demo/sticky.vue",
+    "views/components-demo/tinymce.vue",
+    "views/dashboard/admin/components/BarChart.vue",
+    "views/dashboard/admin/components/BoxCard.vue",
+    "views/dashboard/admin/components/LineChart.vue",
+    "views/dashboard/admin/components/PanelGroup.vue",
+    "views/dashboard/admin/components/PieChart.vue",
+    "views/dashboard/admin/components/RaddarChart.vue",
+    "views/dashboard/admin/components/TodoList/Todo.vue",
+    "views/dashboard/admin/components/TodoList/index.vue",
+    "views/dashboard/admin/components/TransactionTable.vue",
+    "views/dashboard/admin/components/mixins/resize.js",
+    "views/dashboard/admin/index.vue",
+    "views/dashboard/editor/index.vue",
+    "views/dashboard/index.vue",
+    "views/documentation/index.vue",
+    "views/error-log/components/ErrorTestA.vue",
+    "views/error-log/components/ErrorTestB.vue",
+    "views/error-log/index.vue",
+    "views/error-page/401.vue",
+    "views/error-page/404.vue",
+    "views/example/components/ArticleDetail.vue",
+    "views/example/components/Dropdown/Comment.vue",
+    "views/example/components/Dropdown/Platform.vue",
+    "views/example/components/Dropdown/SourceUrl.vue",
+    "views/example/components/Dropdown/index.js",
+    "views/example/components/Warning.vue",
+    "views/example/create.vue",
+    "views/example/edit.vue",
+    "views/example/list.vue",
+    "views/excel/components/AutoWidthOption.vue",
+    "views/excel/components/BookTypeOption.vue",
+    "views/excel/components/FilenameOption.vue",
+    "views/excel/export-excel.vue",
+    "views/excel/merge-header.vue",
+    "views/excel/select-excel.vue",
+    "views/excel/upload-excel.vue",
+    "views/guide/index.vue",
+    "views/guide/steps.js",
+    "views/icons/element-icons.js",
+    "views/icons/index.vue",
+    "views/icons/svg-icons.js",
+    "views/login/auth-redirect.vue",
+    "views/login/components/SocialSignin.vue",
+    "views/login/index.vue",
+    "views/nested/menu1/index.vue",
+    "views/nested/menu1/menu1-1/index.vue",
+    "views/nested/menu1/menu1-2/index.vue",
+    "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+    "views/nested/menu1/menu1-2/menu1-2-2/index.vue",
+    "views/nested/menu1/menu1-3/index.vue",
+    "views/nested/menu2/index.vue",
+    "views/pdf/content.js",
+    "views/pdf/download.vue",
+    "views/pdf/index.vue",
+    "views/permission/components/SwitchRoles.vue",
+    "views/permission/directive.vue",
+    "views/permission/page.vue",
+    "views/permission/role.vue",
+    "views/profile/components/Account.vue",
+    "views/profile/components/Activity.vue",
+    "views/profile/components/Timeline.vue",
+    "views/profile/components/UserCard.vue",
+    "views/profile/index.vue",
+    "views/qiniu/upload.vue",
+    "views/redirect/index.vue",
+    "views/tab/components/TabPane.vue",
+    "views/tab/index.vue",
+    "views/table/complex-table.vue",
+    "views/table/drag-table.vue",
+    "views/table/dynamic-table/components/FixedThead.vue",
+    "views/table/dynamic-table/components/UnfixedThead.vue",
+    "views/table/dynamic-table/index.vue",
+    "views/table/inline-edit-table.vue",
+    "views/theme/index.vue",
+    "views/zip/index.vue"
+  ],
+  "routes": [
+    {
+      "path": "/redirect",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/redirect/:path(.*)",
+      "file": "router/index.js",
+      "dynamic": true,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/login",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/auth-redirect",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/404",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/401",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "dashboard",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/documentation",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/guide",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/profile",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/permission",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin",
+        "editor"
+      ],
+      "module": false
+    },
+    {
+      "path": "page",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin",
+        "editor"
+      ],
+      "module": false
+    },
+    {
+      "path": "directive",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin"
+      ],
+      "module": false
+    },
+    {
+      "path": "role",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin"
+      ],
+      "module": false
+    },
+    {
+      "path": "/icon",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin"
+      ],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [
+        "admin"
+      ],
+      "module": false
+    },
+    {
+      "path": "/example",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "create",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "edit/:id(\\\\d+)",
+      "file": "router/index.js",
+      "dynamic": true,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "list",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/tab",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/error",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "401",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "404",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/error-log",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "log",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/excel",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "export-excel",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "export-selected-excel",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "export-merge-header",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "upload-excel",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/zip",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "download",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/pdf",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/pdf/download",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/theme",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/clipboard",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "index",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "external-link",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/charts",
+      "file": "router/modules/charts.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "keyboard",
+      "file": "router/modules/charts.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "line",
+      "file": "router/modules/charts.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "mix-chart",
+      "file": "router/modules/charts.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "/components",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "tinymce",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "markdown",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "json-editor",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "split-pane",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "avatar-upload",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "dropzone",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "sticky",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "count-to",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "mixin",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "back-to-top",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "drag-dialog",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "drag-select",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "dnd-list",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "drag-kanban",
+      "file": "router/modules/components.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "/nested",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1-1",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1-2",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1-2-1",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1-2-2",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu1-3",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "menu2",
+      "file": "router/modules/nested.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "/table",
+      "file": "router/modules/table.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "dynamic-table",
+      "file": "router/modules/table.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "drag-table",
+      "file": "router/modules/table.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "inline-edit-table",
+      "file": "router/modules/table.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    },
+    {
+      "path": "complex-table",
+      "file": "router/modules/table.js",
+      "dynamic": false,
+      "roles": [],
+      "module": true
+    }
+  ],
+  "responsibilities": [
+    {
+      "id": "router-construction:1",
+      "kind": "router-construction",
+      "owner": "router",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 390,
+          "pattern": "new Router(",
+          "detail": "Vue Router instance construction"
+        }
+      ]
+    },
+    {
+      "id": "route-table:2",
+      "kind": "route-table",
+      "owner": "route-table",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 41,
+          "pattern": "export const constantRoutes = [",
+          "detail": "constant route table"
+        },
+        {
+          "file": "router/index.js",
+          "line": 131,
+          "pattern": "export const asyncRoutes = [",
+          "detail": "role-aware asynchronous route table"
+        }
+      ]
+    },
+    {
+      "id": "route-module:3",
+      "kind": "route-module",
+      "owner": "route-table",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/charts.js",
+          "line": 1,
+          "pattern": "router/modules/charts.js",
+          "detail": "modular route table source"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 1,
+          "pattern": "router/modules/components.js",
+          "detail": "modular route table source"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 1,
+          "pattern": "router/modules/nested.js",
+          "detail": "modular route table source"
+        },
+        {
+          "file": "router/modules/table.js",
+          "line": 1,
+          "pattern": "router/modules/table.js",
+          "detail": "modular route table source"
+        }
+      ]
+    },
+    {
+      "id": "dynamic-route-import:4",
+      "kind": "dynamic-route-import",
+      "owner": "route-table",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 49,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 55,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 60,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 65,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 70,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 80,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 92,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 105,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 119,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 146,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 155,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 164,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 180,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 205,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 211,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 218,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 231,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 250,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 256,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 269,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 288,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 294,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 300,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 306,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 323,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 337,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 345,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 355,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/index.js",
+          "line": 368,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/charts.js",
+          "line": 17,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/charts.js",
+          "line": 23,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/charts.js",
+          "line": 29,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 17,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 23,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 29,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 35,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 41,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 47,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 53,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 59,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 65,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 71,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 77,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 83,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 89,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/components.js",
+          "line": 95,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 17,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 24,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 30,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 37,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 43,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 51,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/nested.js",
+          "line": 60,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/table.js",
+          "line": 17,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/table.js",
+          "line": 23,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/table.js",
+          "line": 29,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        },
+        {
+          "file": "router/modules/table.js",
+          "line": 35,
+          "pattern": "component: () => import(",
+          "detail": "lazy route component import"
+        }
+      ]
+    },
+    {
+      "id": "guard-before-each:5",
+      "kind": "guard-before-each",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 13,
+          "pattern": "router.beforeEach(",
+          "detail": "global authentication and permission guard"
+        }
+      ]
+    },
+    {
+      "id": "guard-after-each:6",
+      "kind": "guard-after-each",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 71,
+          "pattern": "router.afterEach(",
+          "detail": "progress-bar completion hook"
+        }
+      ]
+    },
+    {
+      "id": "guard-whitelist:7",
+      "kind": "guard-whitelist",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 11,
+          "pattern": "whiteList = ['/login', '/auth-redirect']",
+          "detail": "unauthenticated route allow-list"
+        }
+      ]
+    },
+    {
+      "id": "guard-token-check:8",
+      "kind": "guard-token-check",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 21,
+          "pattern": "getToken()",
+          "detail": "authentication token check"
+        }
+      ]
+    },
+    {
+      "id": "guard-role-resolution:9",
+      "kind": "guard-role-resolution",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 29,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 29,
+          "pattern": "getInfo",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 30,
+          "pattern": "hasRoles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 30,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 30,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 31,
+          "pattern": "hasRoles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 36,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 37,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 37,
+          "pattern": "getInfo",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 39,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "permission.js",
+          "line": 40,
+          "pattern": "roles",
+          "detail": "user role resolution in navigation guard"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 8,
+          "pattern": "hasPermission",
+          "detail": "role-based route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 10,
+          "pattern": "roles.includes",
+          "detail": "role-based route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 26,
+          "pattern": "hasPermission",
+          "detail": "role-based route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 53,
+          "pattern": "roles.includes",
+          "detail": "role-based route filtering"
+        }
+      ]
+    },
+    {
+      "id": "guard-dynamic-route-injection:10",
+      "kind": "guard-dynamic-route-injection",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 43,
+          "pattern": "router.addRoutes(",
+          "detail": "dynamic accessible route injection"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 50,
+          "pattern": "generateRoutes(",
+          "detail": "Vuex action generating accessible routes"
+        }
+      ]
+    },
+    {
+      "id": "guard-redirect:11",
+      "kind": "guard-redirect",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "permission.js",
+          "line": 26,
+          "pattern": "next({ path",
+          "detail": "guard redirect via next()"
+        },
+        {
+          "file": "permission.js",
+          "line": 47,
+          "pattern": "next({ ...to, replace",
+          "detail": "guard redirect via next()"
+        },
+        {
+          "file": "permission.js",
+          "line": 52,
+          "pattern": "next(`/login?redirect=${to.path",
+          "detail": "guard redirect via next()"
+        },
+        {
+          "file": "permission.js",
+          "line": 65,
+          "pattern": "next(`/login?redirect=${to.path",
+          "detail": "guard redirect via next()"
+        }
+      ]
+    },
+    {
+      "id": "history-navigation:12",
+      "kind": "history-navigation",
+      "owner": "router",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "file": "components/Breadcrumb/index.vue",
+          "line": 61,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "components/Breadcrumb/index.vue",
+          "line": 64,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "components/HeaderSearch/index.vue",
+          "line": 73,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "components/SizeSelect/index.vue",
+          "line": 49,
+          "pattern": "$router.replace(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/Navbar.vue",
+          "line": 79,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 131,
+          "pattern": "$router.replace(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 145,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 161,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 167,
+          "pattern": "$router.replace(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 169,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/error-page/401.vue",
+          "line": 52,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/error-page/401.vue",
+          "line": 54,
+          "pattern": "$router.go(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/login/index.vue",
+          "line": 161,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/login/index.vue",
+          "line": 192,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/permission/page.vue",
+          "line": 15,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/redirect/index.vue",
+          "line": 6,
+          "pattern": "$router.replace(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/tab/index.vue",
+          "line": 35,
+          "pattern": "$router.push(",
+          "detail": "imperative Vue Router navigation"
+        }
+      ]
+    },
+    {
+      "id": "router-link-navigation:13",
+      "kind": "router-link-navigation",
+      "owner": "component",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "layout/components/Navbar.vue",
+          "line": 27,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Navbar.vue",
+          "line": 27,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Navbar.vue",
+          "line": 30,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Navbar.vue",
+          "line": 30,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Sidebar/Logo.vue",
+          "line": 4,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Sidebar/Logo.vue",
+          "line": 4,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Sidebar/Logo.vue",
+          "line": 8,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Sidebar/Logo.vue",
+          "line": 8,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/Sidebar/SidebarItem.vue",
+          "line": 4,
+          "pattern": ":to=",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 4,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "layout/components/TagsView/index.vue",
+          "line": 9,
+          "pattern": ":to=",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 10,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 10,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 15,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 15,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 20,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 20,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 25,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 25,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 30,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 30,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 35,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/components-demo/mixin.vue",
+          "line": 35,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/error-page/401.vue",
+          "line": 17,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/error-page/401.vue",
+          "line": 17,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/example/list.vue",
+          "line": 38,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/example/list.vue",
+          "line": 38,
+          "pattern": ":to=",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/example/list.vue",
+          "line": 46,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/example/list.vue",
+          "line": 46,
+          "pattern": ":to=",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/pdf/index.vue",
+          "line": 6,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/pdf/index.vue",
+          "line": 6,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        }
+      ]
+    },
+    {
+      "id": "router-view-rendering:14",
+      "kind": "router-view-rendering",
+      "owner": "component",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "App.vue",
+          "line": 3,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        },
+        {
+          "file": "layout/components/AppMain.vue",
+          "line": 5,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        },
+        {
+          "file": "views/nested/menu1/index.vue",
+          "line": 4,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        },
+        {
+          "file": "views/nested/menu1/menu1-1/index.vue",
+          "line": 4,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        },
+        {
+          "file": "views/nested/menu1/menu1-2/index.vue",
+          "line": 4,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        }
+      ]
+    },
+    {
+      "id": "route-meta-roles:15",
+      "kind": "route-meta-roles",
+      "owner": "route-table",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 26,
+          "pattern": "roles: ['admin','editor']",
+          "detail": "role metadata on route"
+        },
+        {
+          "file": "router/index.js",
+          "line": 141,
+          "pattern": "roles: ['admin', 'editor']",
+          "detail": "role metadata on route"
+        },
+        {
+          "file": "router/index.js",
+          "line": 150,
+          "pattern": "roles: ['admin']",
+          "detail": "role metadata on route"
+        },
+        {
+          "file": "router/index.js",
+          "line": 168,
+          "pattern": "roles: ['admin']",
+          "detail": "role metadata on route"
+        }
+      ]
+    },
+    {
+      "id": "reset-router:16",
+      "kind": "reset-router",
+      "owner": "router",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 399,
+          "pattern": "resetRouter(",
+          "detail": "router matcher reset for dynamic route lifecycle"
+        },
+        {
+          "file": "router/index.js",
+          "line": 401,
+          "pattern": "router.matcher =",
+          "detail": "router matcher reset for dynamic route lifecycle"
+        }
+      ]
+    },
+    {
+      "id": "state-route-filtering:17",
+      "kind": "state-route-filtering",
+      "owner": "store",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "store/modules/permission.js",
+          "line": 21,
+          "pattern": "filterAsyncRoutes(",
+          "detail": "recursive permission route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 28,
+          "pattern": "filterAsyncRoutes(",
+          "detail": "recursive permission route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 56,
+          "pattern": "filterAsyncRoutes(",
+          "detail": "recursive permission route filtering"
+        },
+        {
+          "file": "store/modules/permission.js",
+          "line": 45,
+          "pattern": "constantRoutes.concat(",
+          "detail": "constant and accessible route composition"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "hashMode": true,
+    "historyMode": false,
+    "dynamicImports": true,
+    "nestedRoutes": true,
+    "roleMeta": true,
+    "guardRedirects": true,
+    "dynamicRouteInjection": true,
+    "historyNavigation": true,
+    "routerLinks": true,
+    "routerView": true,
+    "resetRouter": true
+  },
+  "blockers": [],
+  "reviewReasons": [
+    "Vue Router owns route matching and history semantics; the analyzer must not replace it with a generic router",
+    "dynamic route injection is role-dependent and requires a reviewed fixture identity",
+    "lazy component imports and router-view boundaries remain source-owned visual responsibilities",
+    "the output is an auditable graph and review-only integration proposal, not an applied source rewrite"
+  ],
+  "metrics": {
+    "filesScanned": 195,
+    "routesDiscovered": 78,
+    "dynamicRoutes": 2,
+    "roleProtectedRoutes": 6,
+    "evidenceCount": 152,
+    "scanMs": 26
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "repository": "https://github.com/PanJiaChen/vue-element-admin.git",
+  "commit": "6858a9ad67483025f6a9432a926beb9327037be3",
+  "commitDate": "2024-10-24T19:25:43+08:00",
+  "sourceMode": "external-read-only-clone",
+  "framework": {
+    "view": "Vue 2.6.10",
+    "router": "Vue Router 3.0.2",
+    "state": "Vuex 3.1.0",
+    "ui": "Element UI 2.13.2"
+  },
+  "reviewRequired": true
+}

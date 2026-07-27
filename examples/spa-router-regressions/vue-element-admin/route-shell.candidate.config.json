@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "1.0",
+  "navigationComparison": "semantic",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "scenarios": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "entryPath": "/#/dashboard",
+      "steps": [
+        {
+          "action": "wait",
+          "ms": 100
+        }
+      ],
+      "assertions": {
+        "path": "/#/login?redirect=/dashboard",
+        "visibleSelector": {
+          "reference": ".login-container",
+          "generated": ".login-container"
+        },
+        "visibleText": "Login"
+      },
+      "visual": {
+        "screenshotAnchor": ".login-container",
+        "screenshotRegion": ".login-container",
+        "styleTargets": [
+          {
+            "id": "login",
+            "selector": ".login-container"
+          },
+          {
+            "id": "login-form",
+            "selector": ".login-form"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nested-route-navigation",
+      "entryPath": "/#/dashboard",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='#/nested/menu1/menu1-1']"
+        }
+      ],
+      "assertions": {
+        "path": "/#/nested/menu1/menu1-1",
+        "visibleSelector": ".app-main"
+      },
+      "visual": {
+        "screenshotAnchor": ".app-main",
+        "screenshotRegion": "#app",
+        "styleTargets": [
+          {
+            "id": "sidebar",
+            "selector": ".sidebar-container"
+          },
+          {
+            "id": "main",
+            "selector": ".app-main"
+          }
+        ]
+      }
+    },
+    {
+      "id": "history-back-dashboard",
+      "entryPath": "/#/dashboard",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='#/documentation/index']"
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "path": "/#/dashboard",
+        "visibleSelector": ".dashboard-container"
+      }
+    },
+    {
+      "id": "dynamic-article-route",
+      "entryPath": "/#/example/list",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='#/example/edit/123']"
+        }
+      ],
+      "assertions": {
+        "path": "/#/example/edit/123",
+        "visibleSelector": ".createPost-container"
+      }
+    },
+    {
+      "id": "deep-link-reload",
+      "entryPath": "/#/permission/directive",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/#/permission/directive",
+        "visibleSelector": ".app-main"
+      },
+      "visual": {
+        "screenshotAnchor": ".app-main",
+        "screenshotRegion": "#app",
+        "styleTargets": [
+          {
+            "id": "sidebar",
+            "selector": ".sidebar-container"
+          },
+          {
+            "id": "main",
+            "selector": ".app-main"
+          }
+        ]
+      }
+    }
+  ],
+  "visualMatrix": {
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  "fixtures": [
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/gif",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+    },
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/png",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    }
+  ]
+}

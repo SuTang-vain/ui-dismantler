@@ -1,0 +1,430 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "passed": false,
+  "scenariosPassed": 1,
+  "scenariosTotal": 1,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9527",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"496.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"496.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9528",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "reference": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"496.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"496.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 2,
+    "totalScenarios": 2,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": false,
+    "scenarios": [
+      {
+        "scenarioId": "admin-login-dashboard",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4154,
+            "preAnchorWaitMs": 3823,
+            "postAnchorWaitMs": 331,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 6271.448,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 876,
+              "referenceWidth": 1230,
+              "referenceHeight": 876,
+              "generatedWidth": 1230,
+              "generatedHeight": 876,
+              "dimensionMismatch": false,
+              "differentPixels": 163577,
+              "totalPixels": 1077480,
+              "diffRate": 0.151814,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.151814,
+        "durationMs": 6271.67
+      }
+    ],
+    "scenarioCount": 1,
+    "viewportRuns": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 1,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 4154,
+    "preAnchorWaitMs": 3823,
+    "postAnchorWaitMs": 331,
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.151814,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 2,
+    "reusedTargetRuns": 0,
+    "freshTargetRuns": 2
+  },
+  "telemetry": {
+    "contractTargetRuns": 2,
+    "visualViewportRuns": 1,
+    "visualTargetRuns": 2,
+    "visualTargetReusedRuns": 0,
+    "visualTargetFreshRuns": 2,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 4154,
+    "visualPreAnchorWaitMs": 3823,
+    "visualPostAnchorWaitMs": 331,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 1,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 5,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 0,
+      "handlesByType": {
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "pipe": 4,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 0,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 0,
+      "handlesByType": {},
+      "resourcesByType": {},
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 358.426,
+      "contractMs": 2326.575,
+      "comparisonMs": 0.5,
+      "visualMatrixMs": 6272.021,
+      "browserCloseMs": 199.112,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 199.085,
+      "reportReadyMs": 8958.387,
+      "totalMs": 9157.504
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=1/1，generated=1/1"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": false,
+      "detail": "0/1 SPA route states 通过，viewportRuns=1，worstComputedStyle=1，worstPixelDiff=0.151814"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=2/2，rate=1，failures=0"
+    }
+  ]
+}

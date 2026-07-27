@@ -68,6 +68,8 @@ export interface SpaRouterVisualStyleTarget {
 }
 
 export interface SpaRouterScenarioVisualState {
+  /** Reviewed viewport ids for this route state. Omit to execute on every configured viewport. */
+  viewports?: string[];
   /** Scroll alignment target; capture remains viewport-wide unless screenshotRegion is also supplied. */
   screenshotAnchor?: SpaRouterRoleSelector;
   /** Reviewed visual responsibility region. When supplied, pixels are captured only inside this element. */
@@ -94,6 +96,8 @@ export interface SpaRouterVisualMatrixConfig {
 export interface SpaRouterExecutionConfig {
   contractConcurrency?: number;
   visualConcurrency?: number;
+  /** Per-action locator timeout. Execution failures are reported on the scenario instead of aborting the full matrix. */
+  actionTimeoutMs?: number;
   browserShutdown?: "graceful" | "fast-kill";
 }
 
@@ -534,8 +538,15 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
   for (const [name, value] of [["contractConcurrency", config.execution?.contractConcurrency], ["visualConcurrency", config.execution?.visualConcurrency]] as const) {
     if (value !== undefined && (!Number.isInteger(value) || value < 1 || value > 4)) throw new TypeError(`execution.${name} 必须是 1..4 的整数`);
   }
+  if (config.execution?.actionTimeoutMs !== undefined && (!Number.isInteger(config.execution.actionTimeoutMs) || config.execution.actionTimeoutMs < 100 || config.execution.actionTimeoutMs > 30_000)) throw new TypeError("execution.actionTimeoutMs 必须是 100..30000 的整数");
   if (config.execution?.browserShutdown && !["graceful", "fast-kill"].includes(config.execution.browserShutdown)) throw new TypeError("execution.browserShutdown 必须是 graceful 或 fast-kill");
   if (config.navigationComparison && !["strict", "semantic"].includes(config.navigationComparison)) throw new TypeError("navigationComparison 必须是 strict 或 semantic");
+  const configuredViewportIds = new Set((config.visualMatrix?.viewports ?? []).map((viewport) => viewport.id));
+  for (const scenario of config.scenarios) {
+    const scopedViewports = scenario.visual?.viewports ?? [];
+    if (scopedViewports.some((id) => !id || (configuredViewportIds.size > 0 && !configuredViewportIds.has(id)))) throw new TypeError(`scenario ${scenario.id} visual.viewports 必须引用 visualMatrix 中已配置的 viewport id`);
+    if (new Set(scopedViewports).size !== scopedViewports.length) throw new TypeError(`scenario ${scenario.id} visual.viewports 不能包含重复 id`);
+  }
   for (const fixture of config.fixtures ?? []) {
     if (!fixture.path && !fixture.hostname) throw new TypeError("SPA Router fixture 必须至少声明 path 或 hostname");
     if (fixture.path && !fixture.path.startsWith("/")) throw new TypeError(`SPA Router fixture path 必须以 / 开头: ${fixture.path}`);
@@ -670,8 +681,22 @@ async function visibleBlockingRequests(page: Page, requestActivity: RequestActiv
   return { blocking, classifications };
 }
 
-async function settleVisual(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig, timeoutMs = 1800): Promise<VisualStabilityResult> {
+async function settleVisual(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig, timeoutMs = 1800, scopeSelector?: string): Promise<VisualStabilityResult> {
   const startedAt = Date.now(), quietWindowMs = 120;
+  await page.evaluate((selector) => {
+    const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number }; disconnect: () => void } };
+    host.__uiDismantlerSpaVisualScope?.disconnect();
+    let scope: Element | null = null;
+    try { scope = selector ? document.querySelector(selector) : document.documentElement; } catch { scope = document.documentElement; }
+    const state = { lastMutationAt: performance.now(), lastResizeAt: performance.now() };
+    const mutationObserver = new MutationObserver(() => { state.lastMutationAt = performance.now(); });
+    const resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(() => { state.lastResizeAt = performance.now(); });
+    if (scope) {
+      mutationObserver.observe(scope, { subtree: true, childList: true, attributes: true, characterData: true });
+      resizeObserver?.observe(scope);
+    }
+    host.__uiDismantlerSpaVisualScope = { selector: selector ?? "", state, disconnect: () => { mutationObserver.disconnect(); resizeObserver?.disconnect(); } };
+  }, scopeSelector ?? "");
   const observedClassifications = new Map<string, SpaRouterRequestClassification>();
   await page.evaluate(async () => {
     if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
@@ -695,13 +720,16 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
   let lastState = { mutationQuiet: false, resizeQuiet: false, layoutStable: false, networkQuiet: false };
   while (Date.now() < deadline) {
     const sample = await page.evaluate((quietMs) => {
-      const host = globalThis as typeof globalThis & { __uiDismantlerSpaStability?: { lastMutationAt: number; lastResizeAt: number } };
-      const now = performance.now(), state = host.__uiDismantlerSpaStability;
-      const signature = JSON.stringify([...document.querySelectorAll("body *")].slice(0, 500).map((element) => {
+      const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number } } };
+      const now = performance.now(), scoped = host.__uiDismantlerSpaVisualScope;
+      let scope: Element = document.documentElement;
+      if (scoped?.selector) { try { scope = document.querySelector(scoped.selector) ?? document.documentElement; } catch { scope = document.documentElement; } }
+      const elements = [scope, ...[...scope.querySelectorAll("*")]];
+      const signature = JSON.stringify(elements.slice(0, 500).map((element) => {
         const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
         return [element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length];
       }));
-      return { signature, mutationQuiet: Boolean(state && now - state.lastMutationAt >= quietMs), resizeQuiet: Boolean(state && now - state.lastResizeAt >= quietMs) };
+      return { signature, mutationQuiet: Boolean(scoped && now - scoped.state.lastMutationAt >= quietMs), resizeQuiet: Boolean(scoped && now - scoped.state.lastResizeAt >= quietMs) };
     }, quietWindowMs);
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
     previousSignature = sample.signature;
@@ -710,7 +738,10 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
     for (const [key, classification] of requestDecision.classifications) observedClassifications.set(key, classification);
     const networkQuiet = lastBlockingRequests.length === 0;
     lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, layoutStable: stableSamples >= 2, networkQuiet };
-    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) {
+      await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
+      return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+    }
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   const stabilityFailures: string[] = [];
@@ -720,6 +751,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
     const pending = lastBlockingRequests.slice(0, 6).map((request) => `${request.resourceType()}:${request.method()} ${request.url()}`).join(" | ");
     stabilityFailures.push(`network quiet window was not reached before visual capture: active=${lastBlockingRequests.length}${pending ? `; pending=${pending}` : ""}`);
   }
+  await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
   return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
 }
 
@@ -793,9 +825,10 @@ async function normalizeScrollAnchor(page: Page, visual: SpaRouterScenarioVisual
 }
 
 async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole, requestActivity: RequestActivity, config: SpaRouterContractConfig, stabilityTimeoutMs?: number): Promise<SpaRouterVisualCapture> {
-  const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs);
+  const stabilityScope = valueForRole(visual.screenshotRegion, role);
+  const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
   const anchor = await normalizeScrollAnchor(page, visual, role);
-  const postAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs);
+  const postAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
   const stability = {
     stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
     adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
@@ -922,6 +955,7 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
       await route.continue();
     });
     const page = await context.newPage();
+    page.setDefaultTimeout(config.execution?.actionTimeoutMs ?? 30_000);
     const requestActivity: RequestActivity = { active: new Set<Request>(), lastActivityAt: Date.now() };
     const requiredNetworkFailures: string[] = [], nonBlockingNetworkFailures: string[] = [];
     const requiredResourceTypes = new Set(["document", "script", "stylesheet", "xhr", "fetch"]);
@@ -946,12 +980,19 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     await settle(page, 500);
     const role = options.role ?? "single";
     const stepRoutes: SpaRouterStepRoute[] = [];
+    const assertionFailures: string[] = [];
     for (let stepIndex = 0; stepIndex < scenario.steps.length; stepIndex += 1) {
       const step = scenario.steps[stepIndex];
-      await executeStep(page, step, role);
-      stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
+      try {
+        await executeStep(page, step, role);
+        stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
+      } catch (error) {
+        const detail = error instanceof Error ? error.message.split("\n")[0] : String(error);
+        assertionFailures.push(`step[${stepIndex}] action=${step.action} failed: ${detail}`);
+        break;
+      }
     }
-    const assertionFailures = await assertScenario(page, scenario.assertions, role);
+    assertionFailures.push(...await assertScenario(page, scenario.assertions, role));
     const transitions = await page.evaluate(() => ([...((globalThis as typeof globalThis & { __uiDismantlerSpaTransitions?: SpaRouterTransition[] }).__uiDismantlerSpaTransitions ?? [])]));
     const uniqueRuntimeErrors = [...new Set(runtimeErrors)], uniqueUnmocked = [...new Set(unmockedApiRequests)];
     const uniqueRequiredNetworkFailures = [...new Set(requiredNetworkFailures)], uniqueNonBlockingNetworkFailures = [...new Set(nonBlockingNetworkFailures)];
@@ -1048,12 +1089,14 @@ function navigationIntegrityForComparisons(comparisons: SpaRouterScenarioCompari
 async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractConfig, referenceBaseUrl: string, generatedBaseUrl: string, referenceEvaluation: SpaRouterTargetEvaluation, generatedEvaluation: SpaRouterTargetEvaluation, reusableViewport?: QualityViewport): Promise<SpaRouterVisualMatrixReport | undefined> {
   const visualConfig = config.visualMatrix;
   if (!visualConfig) return undefined;
-  const viewports = visualConfig.viewports ?? DEFAULT_VISUAL_VIEWPORTS;
+  const configuredViewports = visualConfig.viewports ?? DEFAULT_VISUAL_VIEWPORTS;
   const pixelThreshold = visualConfig.pixelThreshold ?? 0.02, styleThreshold = visualConfig.styleThreshold ?? 0.98;
   let reusedTargetRuns = 0, freshTargetRuns = 0;
   const matrices: SpaRouterScenarioVisualMatrix[] = [];
   for (const scenario of config.scenarios.filter((item) => item.visual)) {
     const scenarioStartedAt = performance.now();
+    const viewports = scenario.visual?.viewports?.length ? configuredViewports.filter((viewport) => scenario.visual?.viewports?.includes(viewport.id)) : configuredViewports;
+    if (!viewports.length) throw new TypeError(`scenario ${scenario.id} visual.viewports 没有匹配的 configured viewport`);
     const viewportResults = await mapWithConcurrency(viewports, config.execution?.visualConcurrency ?? 1, async (viewport): Promise<SpaRouterVisualViewportResult> => {
       const viewportStartedAt = performance.now();
       const canReuse = Boolean(reusableViewport && viewport.width === reusableViewport.width && viewport.height === reusableViewport.height);

@@ -13,7 +13,7 @@ export interface SpaRouteShellRouteNode {
   entry: boolean;
   final: boolean;
   assertions: Array<{ scenarioId: string; visibleText?: string; visibleSelector?: string }>;
-  visualStates: Array<{ scenarioId: string; anchor?: string; region?: string; styleTargets: string[] }>;
+  visualStates: Array<{ scenarioId: string; anchor?: string; region?: string; viewports?: string[]; styleTargets: string[] }>;
 }
 
 export interface SpaRouteShellTransition {
@@ -155,6 +155,7 @@ export function generateSpaRouteShellPlan(config: SpaRouterContractConfig, repor
       scenarioId: scenario.id,
       anchor: roleValue(scenario.visual.screenshotAnchor, "generated"),
       region: roleValue(scenario.visual.screenshotRegion, "generated"),
+      viewports: scenario.visual.viewports,
       styleTargets: (scenario.visual.styleTargets ?? []).map((target) => roleValue(target.selector, "generated")!).filter(Boolean),
     });
 

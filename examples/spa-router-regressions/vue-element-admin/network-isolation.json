@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "deterministic": true,
+  "modelCalls": 0,
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "externalRequestsObserved": [
+    {
+      "url": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+      "resourceType": "image"
+    },
+    {
+      "url": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80",
+      "resourceType": "image"
+    },
+    {
+      "url": "https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png",
+      "resourceType": "image"
+    }
+  ],
+  "fixturePolicy": "exact hostname + exact path + image resource type; query variants share the reviewed path fixture",
+  "networkDependencyAfterFixture": false
+}

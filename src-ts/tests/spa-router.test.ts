@@ -12,6 +12,8 @@ import { runQualityGate } from "../workflow/pipeline.js";
 import { generateSpaRouteShellPlan } from "../planning/spa-route-shell.js";
 import { compareSpaRouteShellFiles, generateSpaRouteShellArtifact } from "../planning/spa-route-shell-generator.js";
 import { generateSpaRouteShellIntegrationPatch, generateSpaRouteShellIntegrationPatchFromFile } from "../planning/spa-route-shell-patch.js";
+import { analyzeVueRouterResponsibility } from "../planning/vue-router-responsibility.js";
+import { generateVueRouterIntegrationPatch } from "../planning/vue-router-patch.js";
 import { PNG } from "pngjs";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -620,5 +622,132 @@ test("post-anchor stability waits for scroll-triggered layout mutations before s
     assert.equal(report.telemetry.visualPreAnchorWaitMs, report.visualMatrix?.preAnchorWaitMs);
   } finally {
     await new Promise<void>((resolve, reject) => anchorServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+
+test("Vue Router responsibility graph ignores commented history mode and maps framework-owned responsibilities", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-vue-router-"));
+  try {
+    await mkdir(join(fixture, "router", "modules"), { recursive: true });
+    await mkdir(join(fixture, "store", "modules"), { recursive: true });
+    await writeFile(join(fixture, "router", "index.js"), `import Vue from 'vue'\nimport Router from 'vue-router'\nexport const constantRoutes=[{path:'/login'},{path:'/',children:[{path:'dashboard'}]}]\nexport const asyncRoutes=[{path:'/permission',meta:{roles:['admin']},component:()=>import('@/views/permission')} ]\nconst createRouter=()=>new Router({\n// mode: 'history',\nroutes:constantRoutes\n})\nconst router=createRouter()\nexport function resetRouter(){const next=createRouter();router.matcher=next.matcher}\nexport default router\n`);
+    await writeFile(join(fixture, "router", "modules", "nested.js"), `export default {path:'/nested',children:[{path:'menu1'}]}\n`);
+    await writeFile(join(fixture, "permission.js"), `import router from './router'\nimport store from './store'\nconst whiteList=['/login']\nrouter.beforeEach(async(to,from,next)=>{const hasToken=getToken();if(!hasToken)return next('/login?redirect='+to.path);const accessRoutes=await store.dispatch('permission/generateRoutes',['admin']);router.addRoutes(accessRoutes);next({...to,replace:true})})\nrouter.afterEach(()=>{})\n`);
+    await writeFile(join(fixture, "store", "modules", "permission.js"), `import {constantRoutes,asyncRoutes} from '@/router'\nfunction hasPermission(roles,route){return !route.meta?.roles||roles.some(role=>route.meta.roles.includes(role))}\nexport function filterAsyncRoutes(routes,roles){return routes.filter(route=>hasPermission(roles,route))}\nconst actions={generateRoutes({commit},roles){const routes=roles.includes('admin')?asyncRoutes:filterAsyncRoutes(asyncRoutes,roles);commit('SET_ROUTES',constantRoutes.concat(routes));return routes}}\n`);
+    await writeFile(join(fixture, "App.vue"), `<template><router-view /></template>\n`);
+    await writeFile(join(fixture, "Nav.vue"), `<template><router-link to="/dashboard">Dashboard</router-link></template><script>export default{methods:{go(){this.$router.push('/nested')}}}</script>\n`);
+    const graph = analyzeVueRouterResponsibility(fixture);
+    assert.equal(graph.framework.router, "vue-router");
+    assert.equal(graph.capabilities.hashMode, true);
+    assert.equal(graph.capabilities.historyMode, false);
+    assert.equal(graph.capabilities.dynamicRouteInjection, true);
+    assert.equal(graph.capabilities.roleMeta, true);
+    assert.equal(graph.capabilities.routerView, true);
+    assert.equal(graph.capabilities.routerLinks, true);
+    assert.equal(graph.capabilities.resetRouter, true);
+    assert.equal(graph.blockers.length, 0, graph.blockers.join("\n"));
+    assert.ok(graph.routes.some((route) => route.path === "/permission" && route.roles.includes("admin")));
+    const kinds = new Set(graph.responsibilities.map((item) => item.kind));
+    for (const required of ["router-construction", "route-table", "guard-before-each", "guard-redirect", "guard-dynamic-route-injection", "router-view-rendering"]) {
+      assert.ok(kinds.has(required as never), `missing ${required}`);
+    }
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test("Vue Router integration patch stays review-only and observes instead of replacing the framework router", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-vue-router-patch-"));
+  try {
+    await mkdir(join(fixture, "router"), { recursive: true });
+    await mkdir(join(fixture, "store", "modules"), { recursive: true });
+    await writeFile(join(fixture, "router", "index.js"), `import Router from 'vue-router'\nexport const constantRoutes=[{path:'/'}]\nexport const asyncRoutes=[{path:'/admin',meta:{roles:['admin']}}]\nconst router=new Router({routes:constantRoutes})\nexport function resetRouter(){router.matcher=(new Router({routes:constantRoutes})).matcher}\nexport default router\n`);
+    const permission = `import router from './router'\nconst whiteList=['/login']\nrouter.beforeEach((to,from,next)=>{router.addRoutes([]);if(to.path==='/private')next('/login?redirect='+to.path);else next()})\nrouter.afterEach(() => {\n  done()\n})\n`;
+    await writeFile(join(fixture, "permission.js"), permission);
+    await writeFile(join(fixture, "store", "modules", "permission.js"), `export function filterAsyncRoutes(routes,roles){return routes.filter(route=>!route.meta?.roles||roles.includes(route.meta.roles[0]))}\nexport const actions={generateRoutes(){return []}}\n`);
+    await writeFile(join(fixture, "App.vue"), `<template><router-view /></template>\n`);
+    const graph = analyzeVueRouterResponsibility(fixture);
+    const patch = generateVueRouterIntegrationPatch(graph, permission, { sourcePath: "permission.js" });
+    assert.equal(patch.metrics.reviewRequired, true);
+    assert.equal(patch.metrics.applied, false);
+    assert.equal(patch.metrics.blocked, false, patch.metrics.blockingReasons.join("\n"));
+    assert.equal(patch.metrics.changedHunks, 2);
+    assert.equal(patch.metrics.changedLines, 9, JSON.stringify(patch.metrics, null, 2));
+    assert.match(patch.adapter, /frameworkOwned: true/);
+    assert.match(patch.adapter, /replacementApplied: false/);
+    assert.doesNotMatch(patch.adapter, /history\.pushState|history\.replaceState/);
+    assert.match(patch.diff, /installVueRouterContractAdapter/);
+    assert.equal(permission.includes("installVueRouterContractAdapter"), false, "source input must remain unchanged");
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test("Vue Router integration patch blocks when route ownership evidence is incomplete", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-vue-router-blocked-"));
+  try {
+    await writeFile(join(fixture, "permission.js"), `router.afterEach(() => {})\n`);
+    const graph = analyzeVueRouterResponsibility(fixture);
+    const patch = generateVueRouterIntegrationPatch(graph, `router.afterEach(() => {})\n`);
+    assert.equal(patch.metrics.blocked, true);
+    assert.ok(patch.metrics.responsibilitiesMissing.includes("router-construction"));
+    assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("router/index.js")));
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test("SPA scenario action failures are reported without aborting the complete contract report", async () => {
+  const report = await evaluateSpaRouterContract({
+    schemaVersion: "1.0",
+    baseUrl,
+    execution: { actionTimeoutMs: 150 },
+    scenarios: [{ id: "missing-action-target", entryPath: "/", steps: [{ action: "click", target: "#missing-target" }], assertions: { path: "/", visibleText: "Home" } }],
+  });
+  assert.equal(report.passed, false);
+  assert.equal(report.scenariosTotal, 1);
+  assert.equal(report.results[0]?.passed, false);
+  assert.ok(report.results[0]?.assertionFailures.some((failure) => failure.includes("step[0] action=click failed")));
+});
+
+test("SPA visual stability scopes DOM and layout quietness to the reviewed screenshot region", async () => {
+  const scopedApp = `<!doctype html><html><head><style>body{margin:0}#owned{width:320px;height:180px;background:#2457d6;color:white}#noise{position:absolute;left:500px;top:20px}</style></head><body><main id="owned">Owned stable region</main><aside id="noise">0</aside><script>let n=0;setInterval(()=>{document.getElementById('noise').textContent=String(++n)},20)</script></body></html>`;
+  const scopedServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(scopedApp); });
+  await new Promise<void>((resolve) => scopedServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = scopedServer.address(); if (!address || typeof address === "string") throw new Error("missing scoped stability server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      visualMatrix: { stabilityTimeoutMs: 350, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+      scenarios: [{ id: "scoped-stability", entryPath: "/", steps: [], assertions: { visibleText: "Owned stable region" }, visual: { screenshotAnchor: "#owned", screenshotRegion: "#owned", styleTargets: [{ id: "owned", selector: "#owned" }] } }],
+    });
+    assert.equal(report.passed, true, JSON.stringify(report.visualMatrix, null, 2));
+    assert.equal(report.visualMatrix?.stabilityFailures, 0);
+    assert.equal(report.visualMatrix?.scenarios[0]?.viewports[0]?.styles.rate, 1);
+    assert.equal(report.visualMatrix?.scenarios[0]?.viewports[0]?.pixels.diffRate, 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => scopedServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("SPA visual matrix honors reviewed per-scenario viewport scope instead of fabricating unsupported mobile interaction coverage", async () => {
+  const viewportApp = `<!doctype html><html><body><main id="view">Viewport scoped</main></body></html>`;
+  const viewportServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(viewportApp); });
+  await new Promise<void>((resolve) => viewportServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = viewportServer.address(); if (!address || typeof address === "string") throw new Error("missing viewport server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      visualMatrix: { viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }, { id: "mobile", label: "Mobile", width: 390, height: 844 }] },
+      scenarios: [{ id: "desktop-only-route", entryPath: "/", steps: [], assertions: { visibleText: "Viewport scoped" }, visual: { viewports: ["desktop"], screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
+    });
+    assert.equal(report.passed, true, JSON.stringify(report.visualMatrix, null, 2));
+    assert.equal(report.visualMatrix?.viewportRuns, 1);
+    assert.deepEqual(report.visualMatrix?.scenarios[0]?.viewports.map((viewport) => viewport.id), ["desktop"]);
+  } finally {
+    await new Promise<void>((resolve, reject) => viewportServer.close((error) => error ? reject(error) : resolve()));
   }
 });

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "vue-router-integration-patch",
+  "deterministic": true,
+  "reviewRequired": true,
+  "applied": false,
+  "blocked": false,
+  "blockingReasons": [],
+  "sourcePath": "permission.js",
+  "sourceLines": 74,
+  "patchedLines": 83,
+  "changedLines": 9,
+  "changedHunks": 2,
+  "edits": [
+    {
+      "id": "adapter-import",
+      "matched": true,
+      "count": 1,
+      "detail": "inserted review-only Vue Router contract observer import"
+    },
+    {
+      "id": "after-hook-installation",
+      "matched": true,
+      "count": 1,
+      "detail": "attached observer after framework-owned router hook"
+    }
+  ],
+  "responsibilitiesCovered": [
+    "router-construction",
+    "route-table",
+    "guard-before-each",
+    "guard-redirect",
+    "guard-dynamic-route-injection",
+    "router-view-rendering"
+  ],
+  "responsibilitiesMissing": [],
+  "modelCalls": 0,
+  "generatedCode": true,
+  "qualityRuns": 0,
+  "reviewReasons": [
+    "the observer is review-only and is never applied automatically",
+    "Vue Router remains responsible for matching, history, guards, and dynamic route injection",
+    "the observer records route state only; it does not generate visual DOM or CSS",
+    "the patched source must pass the same Semantic Gold+ and route-state visual matrix before acceptance"
+  ]
+}

@@ -1,0 +1,582 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "passed": false,
+  "scenariosPassed": 1,
+  "scenariosTotal": 1,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/permission/directive",
+          "state": "{\"route\":\"#/permission/directive\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/permission/directive"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9527",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"479.500\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"479.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2359.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9528",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "reference": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"479.500\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"479.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2359.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 3,
+    "totalScenarios": 3,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": false,
+    "scenarios": [
+      {
+        "scenarioId": "admin-permission-route",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1349,
+            "preAnchorWaitMs": 1028,
+            "postAnchorWaitMs": 321,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 4191.32,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 57,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 816,
+              "referenceWidth": 1230,
+              "referenceHeight": 816,
+              "generatedWidth": 1230,
+              "generatedHeight": 816,
+              "dimensionMismatch": false,
+              "differentPixels": 15869,
+              "totalPixels": 1003680,
+              "diffRate": 0.015811,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/desktop/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/desktop/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1323,
+            "preAnchorWaitMs": 1001,
+            "postAnchorWaitMs": 322,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 60.427,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 57,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 814,
+              "height": 684,
+              "referenceWidth": 814,
+              "referenceHeight": 684,
+              "generatedWidth": 814,
+              "generatedHeight": 684,
+              "dimensionMismatch": false,
+              "differentPixels": 15854,
+              "totalPixels": 556776,
+              "diffRate": 0.028475,
+              "passed": false,
+              "threshold": 0.02,
+              "referenceImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/tablet/reference.png",
+              "generatedImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/tablet/generated.png",
+              "diffImagePath": "examples/spa-router-regressions/vue-element-admin/artifacts/permission-visual-v2/admin-permission-route/tablet/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.028475,
+        "durationMs": 4252.095
+      }
+    ],
+    "scenarioCount": 1,
+    "viewportRuns": 2,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 2,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 2672,
+    "preAnchorWaitMs": 2029,
+    "postAnchorWaitMs": 643,
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.028475,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 4,
+    "reusedTargetRuns": 2,
+    "freshTargetRuns": 2
+  },
+  "telemetry": {
+    "contractTargetRuns": 2,
+    "visualViewportRuns": 2,
+    "visualTargetRuns": 4,
+    "visualTargetReusedRuns": 2,
+    "visualTargetFreshRuns": 2,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 2672,
+    "visualPreAnchorWaitMs": 2029,
+    "visualPostAnchorWaitMs": 643,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 1,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 5,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 0,
+      "handlesByType": {
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 4,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 0,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 0,
+      "handlesByType": {},
+      "resourcesByType": {},
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 363.464,
+      "contractMs": 4141.863,
+      "comparisonMs": 0.557,
+      "visualMatrixMs": 4252.805,
+      "browserCloseMs": 197.618,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 197.591,
+      "reportReadyMs": 8759.644,
+      "totalMs": 8957.27
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=1/1，generated=1/1"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": false,
+      "detail": "0/1 SPA route states 通过，viewportRuns=2，worstComputedStyle=1，worstPixelDiff=0.028475"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=3/3，rate=1，failures=0"
+    }
+  ]
+}

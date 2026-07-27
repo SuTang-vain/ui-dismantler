@@ -1,0 +1,306 @@
+{
+  "schemaVersion": "1.0",
+  "navigationComparison": "strict",
+  "execution": {
+    "contractConcurrency": 1,
+    "browserShutdown": "graceful",
+    "actionTimeoutMs": 5000
+  },
+  "scenarios": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "entryPath": "/#/dashboard",
+      "steps": [
+        {
+          "action": "wait",
+          "ms": 250
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/login?redirect=%2Fdashboard",
+        "visibleSelector": ".login-container",
+        "visibleText": "Login"
+      },
+      "visual": {
+        "screenshotAnchor": ".login-container",
+        "screenshotRegion": ".login-container",
+        "styleTargets": [
+          {
+            "id": "login",
+            "selector": ".login-container"
+          },
+          {
+            "id": "login-form",
+            "selector": ".login-form"
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin-login-dashboard",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/dashboard",
+        "visibleSelector": ".dashboard-container",
+        "visibleText": "Dashboard"
+      },
+      "visual": {
+        "screenshotAnchor": ".dashboard-container",
+        "screenshotRegion": ".app-main",
+        "styleTargets": [
+          {
+            "id": "main",
+            "selector": ".app-main"
+          },
+          {
+            "id": "dashboard",
+            "selector": ".dashboard-container"
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin-nested-route",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        },
+        {
+          "action": "click",
+          "target": ".el-submenu__title:has-text('Nested Routes')"
+        },
+        {
+          "action": "click",
+          "target": ".el-submenu__title:has-text('Menu 1')"
+        },
+        {
+          "action": "click",
+          "target": "a[href='#/nested/menu1/menu1-1']"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/nested/menu1/menu1-1",
+        "visibleSelector": ".app-main",
+        "visibleText": "Menu 1-1"
+      },
+      "visual": {
+        "screenshotAnchor": ".app-main",
+        "screenshotRegion": ".app-main",
+        "styleTargets": [
+          {
+            "id": "main",
+            "selector": ".app-main"
+          }
+        ],
+        "viewports": [
+          "desktop",
+          "tablet"
+        ]
+      }
+    },
+    {
+      "id": "admin-history-back",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        },
+        {
+          "action": "click",
+          "target": "a[href='#/documentation/index']"
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/dashboard",
+        "visibleSelector": ".dashboard-container",
+        "visibleText": "Dashboard"
+      }
+    },
+    {
+      "id": "admin-permission-route",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        },
+        {
+          "action": "click",
+          "target": ".el-submenu__title:has-text('Permission')"
+        },
+        {
+          "action": "click",
+          "target": "a[href='#/permission/directive']"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/permission/directive",
+        "visibleSelector": ".app-main",
+        "visibleText": "Directive Permission"
+      },
+      "visual": {
+        "screenshotAnchor": ".app-main",
+        "screenshotRegion": ".app-main",
+        "styleTargets": [
+          {
+            "id": "main",
+            "selector": ".app-main"
+          }
+        ],
+        "viewports": [
+          "desktop",
+          "tablet"
+        ]
+      }
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "entryPath": "/#/login",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[placeholder='Username']",
+          "value": "admin"
+        },
+        {
+          "action": "input",
+          "target": "input[placeholder='Password']",
+          "value": "123456"
+        },
+        {
+          "action": "click",
+          "target": "button.el-button--primary:not(.thirdparty-button)"
+        },
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "hash": "#/dashboard",
+        "visibleSelector": ".dashboard-container",
+        "visibleText": "Dashboard"
+      },
+      "visual": {
+        "screenshotAnchor": ".dashboard-container",
+        "screenshotRegion": ".app-main",
+        "styleTargets": [
+          {
+            "id": "main",
+            "selector": ".app-main"
+          },
+          {
+            "id": "dashboard",
+            "selector": ".dashboard-container"
+          }
+        ]
+      }
+    }
+  ],
+  "visualMatrix": {
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "stabilityTimeoutMs": 8000
+  },
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "fixtures": [
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/gif",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+    },
+    {
+      "hostname": "wpimg.wallstcn.com",
+      "path": "/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png",
+      "resourceType": "image",
+      "headers": {
+        "content-type": "image/png",
+        "cache-control": "no-store"
+      },
+      "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    }
+  ]
+}

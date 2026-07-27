@@ -1,0 +1,1748 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9528",
+  "passed": false,
+  "scenariosPassed": 0,
+  "scenariosTotal": 6,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 3,
+  "results": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9528/#/login?redirect=%2Fdashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/login?redirect=%2Fdashboard",
+          "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "wait",
+          "route": "/#/login?redirect=%2Fdashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/nested/menu1/menu1-1",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/nested/menu1/menu1-1",
+          "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/#/nested/menu1/menu1-1"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-history-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/documentation/index",
+          "state": "{\"route\":\"#/documentation/index\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "hashchange",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/documentation/index"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/permission/directive",
+          "state": "{\"route\":\"#/permission/directive\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/permission/directive"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9528/#/login",
+      "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "reload",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9527",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 3,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"548.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"577.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"352.900\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"352.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"352.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"352.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"2701.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"1993.500\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"347.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"347.400\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2259.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"245.900\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"245.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "GET image https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif FAILED net::ERR_ABORTED",
+          "GET image https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png FAILED net::ERR_ABORTED",
+          "GET image https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9528",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9528/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": false,
+      "reference": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"548.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"577.400\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9528/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 2,
+          "generated": 1,
+          "detail": "transition 数量 reference=2 generated=1"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/#/dashboard",
+          "generated": "/#/login?redirect=%2Fdashboard",
+          "detail": "transition[0] target reference=/#/dashboard generated=/#/login?redirect=%2Fdashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{\"key\":\"548.500\"}",
+          "generated": "{\"route\":\"#/login?redirect=%2Fdashboard\"}",
+          "detail": "transition[0] state reference={\"key\":\"548.500\"} generated={\"route\":\"#/login?redirect=%2Fdashboard\"}"
+        }
+      ]
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": false,
+      "reference": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"352.900\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"352.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 2,
+          "generated": 1,
+          "detail": "transition 数量 reference=2 generated=1"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/#/login",
+          "generated": "/#/dashboard",
+          "detail": "transition[0] target reference=/#/login generated=/#/dashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{\"key\":\"352.900\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[0] state reference={\"key\":\"352.900\"} generated={\"route\":\"#/dashboard\"}"
+        }
+      ]
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": false,
+      "reference": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"352.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"352.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"2701.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 3,
+          "generated": 2,
+          "detail": "transition 数量 reference=3 generated=2"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/#/login",
+          "generated": "/#/dashboard",
+          "detail": "transition[0] target reference=/#/login generated=/#/dashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{\"key\":\"352.300\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[0] state reference={\"key\":\"352.300\"} generated={\"route\":\"#/dashboard\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 1,
+          "reference": "replaceState",
+          "generated": "pushState",
+          "detail": "transition[1] method reference=replaceState generated=pushState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 1,
+          "reference": "/#/dashboard",
+          "generated": "/#/nested/menu1/menu1-1",
+          "detail": "transition[1] target reference=/#/dashboard generated=/#/nested/menu1/menu1-1"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 1,
+          "reference": "{\"key\":\"352.300\"}",
+          "generated": "{\"route\":\"#/nested/menu1/menu1-1\"}",
+          "detail": "transition[1] state reference={\"key\":\"352.300\"} generated={\"route\":\"#/nested/menu1/menu1-1\"}"
+        }
+      ]
+    },
+    {
+      "id": "admin-history-back",
+      "passed": false,
+      "reference": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"1993.500\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"378.700\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 5,
+          "generated": 4,
+          "detail": "transition 数量 reference=5 generated=4"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/#/login",
+          "generated": "/#/dashboard",
+          "detail": "transition[0] target reference=/#/login generated=/#/dashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{\"key\":\"378.700\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[0] state reference={\"key\":\"378.700\"} generated={\"route\":\"#/dashboard\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 1,
+          "reference": "replaceState",
+          "generated": "pushState",
+          "detail": "transition[1] method reference=replaceState generated=pushState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 1,
+          "reference": "/#/dashboard",
+          "generated": "/#/documentation/index",
+          "detail": "transition[1] target reference=/#/dashboard generated=/#/documentation/index"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 1,
+          "reference": "{\"key\":\"378.700\"}",
+          "generated": "{\"route\":\"#/documentation/index\"}",
+          "detail": "transition[1] state reference={\"key\":\"378.700\"} generated={\"route\":\"#/documentation/index\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 2,
+          "reference": "pushState",
+          "generated": "popstate",
+          "detail": "transition[2] method reference=pushState generated=popstate"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 2,
+          "reference": "/#/documentation/index",
+          "generated": "/#/dashboard",
+          "detail": "transition[2] target reference=/#/documentation/index generated=/#/dashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 2,
+          "reference": "{\"key\":\"1993.500\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[2] state reference={\"key\":\"1993.500\"} generated={\"route\":\"#/dashboard\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 3,
+          "reference": "popstate",
+          "generated": "hashchange",
+          "detail": "transition[3] method reference=popstate generated=hashchange"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 3,
+          "reference": "{\"key\":\"378.700\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[3] state reference={\"key\":\"378.700\"} generated={\"route\":\"#/dashboard\"}"
+        }
+      ]
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": false,
+      "reference": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"347.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"347.400\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2259.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 3,
+          "generated": 2,
+          "detail": "transition 数量 reference=3 generated=2"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 0,
+          "reference": "/#/login",
+          "generated": "/#/dashboard",
+          "detail": "transition[0] target reference=/#/login generated=/#/dashboard"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 0,
+          "reference": "{\"key\":\"347.400\"}",
+          "generated": "{\"route\":\"#/dashboard\"}",
+          "detail": "transition[0] state reference={\"key\":\"347.400\"} generated={\"route\":\"#/dashboard\"}"
+        },
+        {
+          "reason": "transition-method-mismatch",
+          "transitionIndex": 1,
+          "reference": "replaceState",
+          "generated": "pushState",
+          "detail": "transition[1] method reference=replaceState generated=pushState"
+        },
+        {
+          "reason": "transition-target-mismatch",
+          "transitionIndex": 1,
+          "reference": "/#/dashboard",
+          "generated": "/#/permission/directive",
+          "detail": "transition[1] target reference=/#/dashboard generated=/#/permission/directive"
+        },
+        {
+          "reason": "transition-state-mismatch",
+          "transitionIndex": 1,
+          "reference": "{\"key\":\"347.400\"}",
+          "generated": "{\"route\":\"#/permission/directive\"}",
+          "detail": "transition[1] state reference={\"key\":\"347.400\"} generated={\"route\":\"#/permission/directive\"}"
+        }
+      ]
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": false,
+      "reference": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"245.900\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"245.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "GET image https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif FAILED net::ERR_ABORTED",
+          "GET image https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png FAILED net::ERR_ABORTED",
+          "GET image https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9528/#/login",
+        "finalUrl": "http://127.0.0.1:9528/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": [
+        {
+          "reason": "transition-count-mismatch",
+          "reference": 2,
+          "generated": 0,
+          "detail": "transition 数量 reference=2 generated=0"
+        }
+      ]
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": false,
+    "rate": 0,
+    "matchedScenarios": 0,
+    "totalScenarios": 6,
+    "failures": 30
+  },
+  "telemetry": {
+    "contractTargetRuns": 12,
+    "visualViewportRuns": 0,
+    "visualTargetRuns": 0,
+    "visualTargetReusedRuns": 0,
+    "visualTargetFreshRuns": 0,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 0,
+    "visualPreAnchorWaitMs": 0,
+    "visualPostAnchorWaitMs": 0,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 1,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 320.389,
+      "contractMs": 15183.196,
+      "comparisonMs": 1.122,
+      "visualMatrixMs": 0.182,
+      "browserCloseMs": 208.362,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 208.338,
+      "reportReadyMs": 15505.861,
+      "totalMs": 15714.231
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=6/6，generated=6/6"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": false,
+      "detail": "matched=0/6，rate=0，failures=30"
+    }
+  ]
+}

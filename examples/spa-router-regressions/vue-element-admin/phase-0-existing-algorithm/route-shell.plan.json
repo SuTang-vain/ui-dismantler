@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "mode": "reference-generated",
+    "configScenarios": 5,
+    "reportIncluded": false
+  },
+  "routes": [
+    {
+      "route": "/#/dashboard",
+      "pattern": "/#/dashboard",
+      "scenarios": [
+        "unauthenticated-dashboard-guard",
+        "nested-route-navigation",
+        "history-back-dashboard"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "history-back-dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/#/login?redirect=/dashboard",
+      "pattern": "/#/login?redirect=/dashboard",
+      "scenarios": [
+        "unauthenticated-dashboard-guard"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "unauthenticated-dashboard-guard",
+          "visibleText": "Login",
+          "visibleSelector": ".login-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "unauthenticated-dashboard-guard",
+          "anchor": ".login-container",
+          "region": ".login-container",
+          "styleTargets": [
+            ".login-container",
+            ".login-form"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/#/nested/menu1/menu1-1",
+      "pattern": "/#/nested/menu1/menu1-1",
+      "scenarios": [
+        "nested-route-navigation"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "nested-route-navigation",
+          "visibleSelector": ".app-main"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "nested-route-navigation",
+          "anchor": ".app-main",
+          "region": "#app",
+          "styleTargets": [
+            ".sidebar-container",
+            ".app-main"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/#/example/list",
+      "pattern": "/#/example/list",
+      "scenarios": [
+        "dynamic-article-route"
+      ],
+      "entry": true,
+      "final": false,
+      "assertions": [],
+      "visualStates": []
+    },
+    {
+      "route": "/#/example/edit/123",
+      "pattern": "/#/example/edit/123",
+      "scenarios": [
+        "dynamic-article-route"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "dynamic-article-route",
+          "visibleSelector": ".createPost-container"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/#/permission/directive",
+      "pattern": "/#/permission/directive",
+      "scenarios": [
+        "deep-link-reload"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "deep-link-reload",
+          "visibleSelector": ".app-main"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "deep-link-reload",
+          "anchor": ".app-main",
+          "region": "#app",
+          "styleTargets": [
+            ".sidebar-container",
+            ".app-main"
+          ]
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "scenarioId": "unauthenticated-dashboard-guard",
+      "stepIndex": 0,
+      "action": "wait",
+      "from": "/#/dashboard",
+      "to": "/#/login?redirect=/dashboard"
+    },
+    {
+      "scenarioId": "nested-route-navigation",
+      "stepIndex": 0,
+      "action": "click",
+      "from": "/#/dashboard",
+      "to": "/#/nested/menu1/menu1-1",
+      "target": "a[href='#/nested/menu1/menu1-1']"
+    },
+    {
+      "scenarioId": "history-back-dashboard",
+      "stepIndex": 1,
+      "action": "back",
+      "from": "/#/dashboard",
+      "to": "/#/dashboard"
+    },
+    {
+      "scenarioId": "dynamic-article-route",
+      "stepIndex": 0,
+      "action": "click",
+      "from": "/#/example/list",
+      "to": "/#/example/edit/123",
+      "target": "a[href='#/example/edit/123']"
+    },
+    {
+      "scenarioId": "deep-link-reload",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/#/permission/directive",
+      "to": "/#/permission/directive"
+    }
+  ],
+  "selectorMappings": [],
+  "fixtureDependencies": [],
+  "capabilities": {
+    "historyBack": true,
+    "historyForward": false,
+    "reload": true,
+    "dynamicInputRoutes": false,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 3
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "route observations describe behavior, not production component boundaries",
+    "guard and redirect intent must be reviewed before code generation",
+    "visual selectors are acceptance targets and must not be treated as implementation selectors automatically",
+    "fixture bodies may contain sensitive or environment-specific data and are intentionally summarized"
+  ]
+}

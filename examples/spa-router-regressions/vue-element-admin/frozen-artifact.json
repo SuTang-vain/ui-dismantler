@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.1",
+  "scope": "reviewed-behavior-and-visual-generated-target",
+  "reviewRequired": true,
+  "fullGeneratedApplication": false,
+  "modelCalls": 0,
+  "networkIsolated": true,
+  "sourceCommit": "6858a9ad67483025f6a9432a926beb9327037be3",
+  "hashAlgorithm": "sha256",
+  "files": {
+    "source-lock.json": "e392465e8784785cf166e0db51b04f6f3ce6f2dbd0ad86a5fe9a5677f9e0c077",
+    "route-shell.plan.json": "8f6ac9d44ffe516b64ac6e09c992bc69daa3f60b2ee687080e4f1840842a0b9f",
+    "vue-router-responsibility.graph.json": "83561980dcd3e5e032089510b106af12386ebce24e430999fabcd3a2914d54bc",
+    "reference-generated-semantic.config.json": "0476f8527c66416c3ef3dca38d59de9ed22a79199ec6c6f377887416f6efc063",
+    "generated-target/public/index.html": "547226eb7d3c49e8462414b9f55b164f2974e4dcb2121076347d812901524eea",
+    "generated-target/public/app.js": "2f037d9eadca780b7f0b184acf9ae613f59050918bae0c7c26ef6e292a41739e",
+    "generated-target/public/styles.css": "43993532409ebd2431b6f564223da151ba9e996ceb5cb83b472634fc3a99c47c",
+    "generated-target/public/vendor/echarts.min.js": "5cd88124666e12b03e32c6cac31b93a8d3229a86d932c552efd4a44d4ae8473e",
+    "generated-target/public/vendor/macarons.js": "8b6e69bf570680f78a99eb19bc0595677d68719d97cceef30dac71c9264d994e",
+    "generated-target/server.mjs": "47478805b8dcbb8e3869dfaef11b6b6ac48b075ae89d6347445c88d9b7f04edd",
+    "network-isolation.json": "05edba224a345e5d2454d35edf64972a588a6f2514210480ad4a9a42af8804b5",
+    "network-isolated-repeat-summary.json": "7778bfb790ba7f0f548c7e9b92e24d6e2a05c1670725905ed7964b63f29a82d4",
+    "reference-generated-semantic.network-isolated.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d",
+    "full-network-isolated-run-1.results.json": "2b60dae3d776f3bbbc9b159c57dadf24ad889f5cbeaad1f5dba438554f1abea4",
+    "full-network-isolated-run-2.results.json": "b7eb9daf2799e9c8ddaee456f52ec56de1b0d3d1507e45f3f009bf9c8dd97e83",
+    "full-network-isolated-run-3.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d"
+  }
+}

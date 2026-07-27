@@ -1,0 +1,23 @@
+/**
+ * Review-only Vue Router contract observer.
+ * It observes the framework-owned router; it does not replace route matching, guards,
+ * dynamic route injection, router-view rendering, or visual component ownership.
+ */
+export function installVueRouterContractAdapter(router, hooks = {}) {
+  if (!router || typeof router.afterEach !== "function") {
+    throw new TypeError("installVueRouterContractAdapter requires a Vue Router instance");
+  }
+  const onNavigation = typeof hooks.onNavigation === "function" ? hooks.onNavigation : () => {};
+  router.afterEach((to, from) => {
+    onNavigation({
+      type: "afterEach",
+      to: { path: to.path, fullPath: to.fullPath, name: to.name || null },
+      from: { path: from.path, fullPath: from.fullPath, name: from.name || null },
+    });
+  });
+  return {
+    dispose() {},
+    frameworkOwned: true,
+    replacementApplied: false,
+  };
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "pid": 48059,
+  "reportReady": true,
+  "reportWritten": true,
+  "beforeExitObserved": true,
+  "exitObserved": true,
+  "reportReadyMs": 64439.967,
+  "browserCloseMs": 228.836,
+  "activeHandlesAfterClose": {
+    "totalHandles": 0,
+    "totalBlockingHandles": 0,
+    "standardIoHandles": 0,
+    "handlesByType": {},
+    "resourcesByType": {},
+    "requestsByType": {}
+  },
+  "createdAt": "2026-07-27T03:40:14.007Z",
+  "beforeExitAt": "2026-07-27T03:40:14.009Z",
+  "exitCode": 1,
+  "exitAt": "2026-07-27T03:40:14.009Z"
+}
