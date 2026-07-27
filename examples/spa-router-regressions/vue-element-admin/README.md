@@ -155,3 +155,9 @@ The latest formal matrix on July 27, 2026 improved the automatic target from `1/
 - Dashboard/deep-link remain blocked at worst style `0.9474` and pixel diff `0.100789`.
 
 The target is still **not** full Gold+. The next algorithm phase is the ECharts option-slice consumer plus Dashboard data-cardinality and selected child-style materialization; thresholds remain unchanged.
+
+### ECharts option, data-cardinality, and source-layout consumer phase
+
+The automatic generator now parses safe static JavaScript expressions into auditable literal/reference trees, records top-level SFC data bindings and array cardinalities, and consumes the real bounded ECharts option slices at runtime. Vue Element Admin currently contributes 19 static bindings and 47 cardinality records; Dashboard line-series data, Todo cardinality, four chart option objects, chart constants, chart heights, PanelGroup responsive spans/gutters, Dashboard row gutters, local panel SVG geometry, and selected child source styles are consumed without model calls or artifact edits. Unsupported expressions remain explicit review boundaries.
+
+The first combined pass exposed a real regression (`worstPixelDiff=0.141507`) because fallback CSS and source-owned Todo/BoxCard primitives were both active. Boundary-level geometry telemetry then removed the conflicting fallback responsibility and derived responsive row/column gaps from `el-row`/`el-col` evidence. The latest measured matrix is still `3/5`, but Dashboard worst pixel diff improved from the prior `0.100789` baseline to `0.043440`; navigation integrity remains `1.0`, and runtime, required-network, and stability failures remain zero. This is a material automatic-fidelity improvement, but it is **not** Gold+ because Dashboard still exceeds `0.02` and computed style remains below `0.98`. The next blocker is the internal Element UI table/card/progress and API-fixture responsibility boundary, not route or responsive topology.

@@ -41,11 +41,52 @@ function hasOwner(plan: VisualTargetPlan, name: string): boolean {
 }
 
 function ownerByName(plan: VisualTargetPlan, name: string) {
-  return plan.owners.find((owner) => owner.componentName.toLowerCase() === name.toLowerCase());
+  return plan.owners.find((owner) => owner.kind !== "chart" && owner.componentName.toLowerCase() === name.toLowerCase());
+}
+function chartOwnerByName(plan: VisualTargetPlan, name: string) {
+  return plan.owners.find((owner) => owner.kind === "chart" && owner.componentName.toLowerCase() === name.toLowerCase());
 }
 function spanValue(value: string | undefined): number | undefined {
   if (!value) return undefined; const match = value.match(/(?:span\s*:\s*)?(\d+)/); return match ? Number(match[1]) : undefined;
 }
+function numericAttribute(value: string | boolean | undefined): number | undefined {
+  if (typeof value !== "string") return undefined;
+  const match = value.match(/-?\d+(?:\.\d+)?/); return match ? Number(match[0]) : undefined;
+}
+function dashboardEvidenceCss(plan: VisualTargetPlan): string {
+  const rules: string[] = [];
+  const panel = ownerByName(plan, "PanelGroup");
+  const panelRow = panel?.templateStructure.nodes.find((node) => node.primitive?.kind === "layout-row");
+  const panelGutter = numericAttribute(panelRow?.attributes[":gutter"] ?? panelRow?.attributes.gutter);
+  if (panelGutter !== undefined) {
+    const half = panelGutter / 2;
+    const columns = panel?.templateStructure.nodes.filter((node) => node.parentId === panelRow?.id && node.primitive?.kind === "layout-column") ?? [];
+    const columnCount = (viewport: "xs" | "sm" | "lg") => {
+      const spans = columns.map((node) => spanValue(node.primitive?.responsiveSpans?.[viewport]) ?? spanValue(node.primitive?.responsiveSpans?.sm) ?? 24);
+      return Math.max(1, Math.round(24 / Math.min(...spans, 24)));
+    };
+    rules.push(`.card-panel{display:block;padding:0;text-align:initial}.card-panel-description{display:block;text-align:initial}.panel-group{margin-left:-${half}px;margin-right:-${half}px;margin-bottom:0;gap:0;grid-template-columns:repeat(${columnCount("lg")},minmax(0,1fr))}.panel-group>.card-panel-col{padding-left:${half}px;padding-right:${half}px}@media(max-width:1199px){.panel-group{grid-template-columns:repeat(${columnCount("sm")},minmax(0,1fr))}}@media(max-width:767px){.panel-group{grid-template-columns:repeat(${columnCount("xs")},minmax(0,1fr))}}`);
+  }
+  const dashboard = ownerByName(plan, "DashboardAdmin");
+  const nodes = dashboard?.templateStructure.nodes ?? [];
+  const descendants = (parentId: string) => { const ids = new Set([parentId]); for (const node of nodes) if (node.parentId && ids.has(node.parentId)) ids.add(node.id); return nodes.filter((node) => ids.has(node.id) && node.id !== parentId); };
+  const chartRows = nodes.filter((node) => node.primitive?.kind === "layout-row").map((node) => ({ node, charts: descendants(node.id).filter((child) => /Chart$/i.test(child.componentName)).length })).filter((item) => item.charts > 0).sort((a, b) => b.charts - a.charts);
+  const chartRow = chartRows[0]?.node;
+  const chartGutter = numericAttribute(chartRow?.attributes[":gutter"] ?? chartRow?.attributes.gutter);
+  if (chartGutter !== undefined) rules.push(`.chart-row{column-gap:${chartGutter}px;row-gap:0}`);
+  const bottomRow = nodes.find((node) => node.primitive?.kind === "layout-row" && descendants(node.id).some((child) => child.componentName === "TransactionTable"));
+  const bottomGutter = numericAttribute(bottomRow?.attributes[":gutter"] ?? bottomRow?.attributes.gutter);
+  const bottomColumns = bottomRow ? nodes.filter((node) => node.parentId === bottomRow.id && node.primitive?.kind === "layout-column") : [];
+  const bottomMargin = bottomColumns.map((node) => node.inlineStyle["margin-bottom"]).find(Boolean);
+  rules.push(`.chart-row{margin-bottom:0}.dashboard-bottom{align-items:start;gap:0${bottomGutter !== undefined ? `;margin-left:-${bottomGutter / 2}px;margin-right:-${bottomGutter / 2}px` : ""}}`);
+  if (bottomGutter !== undefined) rules.push(`.dashboard-bottom>*{margin-left:${bottomGutter / 2}px;margin-right:${bottomGutter / 2}px${bottomMargin ? `;margin-bottom:${bottomMargin}` : ""}}.dashboard-bottom>.box-card-component{margin-left:${bottomGutter / 2 + 8}px}`);
+  const todo = ownerByName(plan, "TodoList");
+  if (todo?.sourceStyleSheets.some((style) => style.compiledCss)) rules.push(".todoapp{padding:0}.todo-list li{padding:0}");
+  const box = ownerByName(plan, "BoxCard");
+  if (box?.sourceStyleSheets.some((style) => style.compiledCss)) rules.push(".box-card-component{padding:0;min-height:0;border:1px solid #ebeef5;box-shadow:0 2px 12px 0 rgba(0,0,0,.1)}.box-card-component>.el-card__header{padding:0}.box-card-component>.el-card__body{padding:20px}.box-card-component .box-card-header{margin:0}");
+  return rules.join("");
+}
+
 function dashboardGridCss(plan: VisualTargetPlan): string {
   const owner = ownerByName(plan, "DashboardAdmin"); if (!owner) return "";
   const nodes = owner.templateStructure.nodes;
@@ -65,6 +106,27 @@ function dashboardGridCss(plan: VisualTargetPlan): string {
   return `.chart-row{grid-template-columns:repeat(${chartDesktop.count},minmax(0,1fr))}${spans(".chart-row", chartDesktop.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomDesktop.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomDesktop.units)}@media(max-width:1199px){.chart-row{grid-template-columns:repeat(${chartTablet.count},minmax(0,1fr))}${spans(".chart-row", chartTablet.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomTablet.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomTablet.units)}}@media(max-width:767px){.chart-row{grid-template-columns:repeat(${chartMobile.count},minmax(0,1fr))}${spans(".chart-row", chartMobile.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomMobile.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomMobile.units)}}`;
 }
 
+function dashboardPanelDefinitions(plan: VisualTargetPlan): Array<{ type: string; label: string; value: number; icon?: { viewBox: string; markup: string } }> {
+  const owner = ownerByName(plan, "PanelGroup"); if (!owner) return [];
+  const nodes = owner.templateStructure.nodes;
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const descendants = (rootId: string) => { const ids = new Set([rootId]); for (const node of nodes) if (node.parentId && ids.has(node.parentId)) ids.add(node.id); return nodes.filter((node) => ids.has(node.id) && node.id !== rootId); };
+  const root = nodes.find((node) => node.primitive?.kind === "layout-row");
+  return nodes.filter((node) => node.parentId === root?.id && node.primitive?.kind === "layout-column").map((column) => {
+    const owned = descendants(column.id);
+    const panel = owned.find((node) => node.classes.includes("card-panel"));
+    const action = String(panel?.attributes["@click"] ?? "");
+    const type = action.match(/['"]([^'"]+)['"]/)?.[1] ?? "panel";
+    const labelNode = owned.find((node) => node.classes.includes("card-panel-text"));
+    const label = labelNode?.content.filter((token) => token.kind === "text").map((token) => token.kind === "text" ? token.value : "").join(" ").trim() ?? type;
+    const count = owned.find((node) => node.componentName === "CountTo");
+    const value = numericAttribute(count?.attributes[":end-val"] ?? count?.attributes["end-val"]) ?? 0;
+    const iconNode = owned.find((node) => node.componentName === "SvgIcon" && node.embeddedAssets?.length);
+    const asset = iconNode?.embeddedAssets?.[0];
+    return { type, label, value, icon: asset ? { viewBox: asset.viewBox, markup: asset.markup } : undefined };
+  });
+}
+
 function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): string {
   const compiledPages = Object.fromEntries(([
     ["login", ownerByName(plan, "Login")],
@@ -81,9 +143,22 @@ function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): str
     nested: plan.boundaries.some((item) => item.route.includes("/nested/")),
   };
   const guard = routePlan.transitions.find((transition) => transition.action === "guard-redirect");
+  const chartDefinitions = Object.fromEntries(["LineChart", "RaddarChart", "PieChart", "BarChart"].flatMap((name) => {
+    const owner = chartOwnerByName(plan, name); const slice = owner?.chart?.optionSlices[0];
+    return owner?.chart && slice?.option ? [[name, { option: slice.option, height: slice.containerHeight, staticBindings: owner.chart.staticBindings, references: slice.references }]] : [];
+  }));
+  const panelDefinitions = dashboardPanelDefinitions(plan);
+  const dashboardBindings = ownerByName(plan, "DashboardAdmin")?.dataCardinality.staticBindings ?? {};
+  const todoBindings = ownerByName(plan, "TodoList")?.dataCardinality.staticBindings ?? {};
+  const boxImage = ownerByName(plan, "BoxCard")?.templateStructure.nodes.find((node) => node.tag === "img" && typeof node.attributes.src === "string")?.attributes.src ?? "";
   return `(() => {
   const app = document.querySelector('#app');
   const capabilities = ${JSON.stringify(capabilities, null, 2)};
+  const chartDefinitions = ${JSON.stringify(chartDefinitions)};
+  const panelDefinitions = ${JSON.stringify(panelDefinitions)};
+  const dashboardBindings = ${JSON.stringify(dashboardBindings)};
+  const todoBindings = ${JSON.stringify(todoBindings)};
+  const boxImage = ${JSON.stringify(boxImage)};
   const guard = ${JSON.stringify(guard ? { from: guard.from, to: guard.to } : null)};
   const tokenKey = 'auto-v1-vue-admin-token';
   const state = { nested: false, menu1: false, permission: false, role: 'admin', lineType: 'newVisitis', charts: [] };
@@ -106,6 +181,28 @@ function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): str
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
   const primitiveNodeMap = (compilation) => new Map(compilation.nodes.map((node) => [node.sourceNodeId, node]));
   const expressionValue = (expression, context) => expression.split('.').reduce((value, key) => value == null ? undefined : value[key], context);
+  const materializeStatic = (value, context = {}) => {
+    if (Array.isArray(value)) return value.map((item) => materializeStatic(item, context));
+    if (!value || typeof value !== 'object') return value;
+    if ('$reference' in value) {
+      const path = String(value.$reference).replace(/^this\./, '');
+      const resolved = expressionValue(path, context);
+      return resolved === undefined ? null : materializeStatic(resolved, context);
+    }
+    if ('$unsupported' in value) return undefined;
+    const output = {};
+    for (const [key, item] of Object.entries(value)) {
+      const resolved = materializeStatic(item, context);
+      if (key.startsWith('$spread:')) { if (resolved && typeof resolved === 'object') Object.assign(output, resolved); continue; }
+      if (resolved !== undefined) output[key] = resolved;
+    }
+    return output;
+  };
+  const materializedBindings = (bindings) => { const context = { ...bindings }; for (const key of Object.keys(context)) context[key] = materializeStatic(context[key], context); return context; };
+  const dashboardData = materializedBindings(dashboardBindings);
+  const todoData = Object.values(materializedBindings(todoBindings)).find((value) => Array.isArray(value) && value.some((item) => item && typeof item === 'object' && 'text' in item)) || [];
+  const chartHeight = (name, fallback) => chartDefinitions[name]?.height || fallback;
+  const chartOption = (name, context = {}) => { const definition = chartDefinitions[name]; return definition ? materializeStatic(definition.option, { ...materializedBindings(definition.staticBindings), ...context }) : {}; };
   const textValue = (value, context) => escapeHtml(value.replace(/{{\s*([^}]+)\s*}}/g, (_, expression) => expressionValue(expression.trim(), context) ?? ''));
   const roleList = (expression) => [...String(expression || '').matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1]);
   const isVisible = (node, context) => {
@@ -189,25 +286,28 @@ function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): str
     return owner ? html.replace('data-primitive-node=', 'data-visual-owner="' + owner + '" data-primitive-node=') : html;
   };
   const login = () => renderCompilation(primitivePages.login, { loginForm: { username: 'admin', password: '111111' }, passwordType: 'password', role: state.role, showDialog: false }, 'Login');
-  const panel = (kind, label, value, glyph) => '<div class="card-panel-col"><button class="card-panel" data-dashboard-type="' + kind + '"><span class="card-panel-icon-wrapper icon-' + kind + '">' + glyph + '</span><span class="card-panel-description"><span class="card-panel-text">' + label + '</span><strong class="card-panel-num">' + value + '</strong></span></button></div>';
+  const panel = (definition) => '<div class="card-panel-col"><button class="card-panel" data-dashboard-type="' + escapeHtml(definition.type) + '"><span class="card-panel-icon-wrapper icon-' + escapeHtml(definition.type.replace(/s$/, '')) + '">' + (definition.icon ? '<svg class="svg-icon card-panel-icon" viewBox="' + escapeHtml(definition.icon.viewBox) + '" aria-hidden="true">' + definition.icon.markup + '</svg>' : '') + '</span><span class="card-panel-description"><span class="card-panel-text">' + escapeHtml(definition.label) + '</span><strong class="card-panel-num">' + Number(definition.value).toLocaleString('en-US') + '</strong></span></button></div>';
+  const todoItems = () => todoData.map((todo, index) => '<li class="' + (todo.done ? 'completed' : '') + '"><div class="view"><input id="todo-' + index + '" class="toggle" type="checkbox" ' + (todo.done ? 'checked' : '') + '><label for="todo-' + index + '">' + escapeHtml(todo.text) + '</label><button class="destroy"></button></div></li>').join('');
   const dashboard = () => '<section class="dashboard-container" data-visual-owner="DashboardAdmin"><div class="dashboard-editor-container">' +
-    (capabilities.panelGroup ? '<div class="panel-group" data-visual-owner="PanelGroup">' + panel('people','New Visits','102,400','♟') + panel('message','Messages','81,212','✉') + panel('money','Purchases','9,280','¥') + panel('shopping','Shoppings','13,600','🛒') + '</div>' : '') +
-    (capabilities.line ? '<div class="line-chart-wrapper"><div id="auto-line-chart" class="dashboard-chart line-chart" data-visual-owner="LineChart"></div></div>' : '') +
-    '<div class="chart-row">' + (capabilities.radar ? '<div class="chart-card"><div id="auto-radar-chart" class="dashboard-chart" data-visual-owner="RaddarChart"></div></div>' : '') + (capabilities.pie ? '<div class="chart-card"><div id="auto-pie-chart" class="dashboard-chart" data-visual-owner="PieChart"></div></div>' : '') + (capabilities.bar ? '<div class="chart-card"><div id="auto-bar-chart" class="dashboard-chart" data-visual-owner="BarChart"></div></div>' : '') + '</div>' +
-    '<div class="dashboard-bottom">' + (capabilities.table ? '<div class="transaction-table" data-visual-owner="TransactionTable"><table><thead><tr><th>Order_No</th><th>Price</th><th>Status</th></tr></thead><tbody><tr><td>m3ir5qaOZY</td><td>¥ 13,708.44</td><td><span class="status success">success</span></td></tr><tr><td>dCd5bYvZkr</td><td>¥ 4,258.34</td><td><span class="status pending">pending</span></td></tr><tr><td>WUS3sT2H1N</td><td>¥ 12,364.00</td><td><span class="status success">success</span></td></tr><tr><td>6qP0MjsN2e</td><td>¥ 8,236.31</td><td><span class="status pending">pending</span></td></tr><tr><td>Ua9xT7Rk2L</td><td>¥ 6,219.83</td><td><span class="status success">success</span></td></tr><tr><td>Fs4jL9Pq1A</td><td>¥ 9,764.25</td><td><span class="status success">success</span></td></tr><tr><td>Kd3eW8Vm6B</td><td>¥ 3,181.07</td><td><span class="status pending">pending</span></td></tr><tr><td>Yp7nC2Ht5Q</td><td>¥ 7,054.99</td><td><span class="status success">success</span></td></tr></tbody></table></div>' : '') + (capabilities.todo ? '<section class="todoapp" data-visual-owner="TodoList"><header class="header"><input class="new-todo" placeholder="Todo List"></header><section class="main"><ul class="todo-list"><li><span>○</span> star this repository</li><li><span>○</span> fork this repository</li><li><span>○</span> follow author</li><li class="completed"><span>●</span> vue-element-admin</li><li class="completed"><span>●</span> vue</li><li class="completed"><span>●</span> element-ui</li><li class="completed"><span>●</span> axios</li><li class="completed"><span>●</span> webpack</li></ul></section><footer class="footer"><b>3</b> items left</footer></section>' : '') + (capabilities.box ? '<div class="box-card-component" data-visual-owner="BoxCard"><div class="box-card-header"></div><div class="profile-dot">admin</div><h3>vue-element-admin</h3><div class="progress-item">Vue <i style="width:70%"></i></div><div class="progress-item">JavaScript <i style="width:18%"></i></div><div class="progress-item">CSS <i style="width:12%"></i></div></div>' : '') + '</div></div></section>';
+    (capabilities.panelGroup ? '<div class="panel-group" data-visual-owner="PanelGroup">' + panelDefinitions.map(panel).join('') + '</div>' : '') +
+    (capabilities.line ? '<div class="line-chart-wrapper" style="background:#fff;padding:16px 16px 0;margin-bottom:32px"><div id="auto-line-chart" class="dashboard-chart line-chart" style="height:' + chartHeight('LineChart','350px') + ';width:100%" data-visual-owner="LineChart"></div></div>' : '') +
+    '<div class="chart-row">' + (capabilities.radar ? '<div class="chart-wrapper"><div id="auto-radar-chart" class="dashboard-chart" style="height:' + chartHeight('RaddarChart','300px') + ';width:100%" data-visual-owner="RaddarChart"></div></div>' : '') + (capabilities.pie ? '<div class="chart-wrapper"><div id="auto-pie-chart" class="dashboard-chart" style="height:' + chartHeight('PieChart','300px') + ';width:100%" data-visual-owner="PieChart"></div></div>' : '') + (capabilities.bar ? '<div class="chart-wrapper"><div id="auto-bar-chart" class="dashboard-chart" style="height:' + chartHeight('BarChart','300px') + ';width:100%" data-visual-owner="BarChart"></div></div>' : '') + '</div>' +
+    '<div class="dashboard-bottom">' + (capabilities.table ? '<div class="transaction-table" data-visual-owner="TransactionTable"><table><thead><tr><th>Order_No</th><th>Price</th><th>Status</th></tr></thead><tbody><tr><td>m3ir5qaOZY</td><td>¥ 13,708.44</td><td><span class="status success">success</span></td></tr><tr><td>dCd5bYvZkr</td><td>¥ 4,258.34</td><td><span class="status pending">pending</span></td></tr><tr><td>WUS3sT2H1N</td><td>¥ 12,364.00</td><td><span class="status success">success</span></td></tr><tr><td>6qP0MjsN2e</td><td>¥ 8,236.31</td><td><span class="status pending">pending</span></td></tr><tr><td>Ua9xT7Rk2L</td><td>¥ 6,219.83</td><td><span class="status success">success</span></td></tr><tr><td>Fs4jL9Pq1A</td><td>¥ 9,764.25</td><td><span class="status success">success</span></td></tr><tr><td>Kd3eW8Vm6B</td><td>¥ 3,181.07</td><td><span class="status pending">pending</span></td></tr><tr><td>Yp7nC2Ht5Q</td><td>¥ 7,054.99</td><td><span class="status success">success</span></td></tr></tbody></table></div>' : '') + (capabilities.todo ? '<section class="todoapp" data-visual-owner="TodoList"><header class="header"><input class="new-todo" placeholder="Todo List"></header><section class="main"><input id="toggle-all" class="toggle-all" type="checkbox"><label for="toggle-all">Mark all as complete</label><ul class="todo-list">' + todoItems() + '</ul></section><footer class="footer"><span class="todo-count"><strong>3</strong> items left</span><ul class="filters"><li><a class="selected">All</a></li><li><a>Active</a></li><li><a>Completed</a></li></ul></footer></section>' : '') + (capabilities.box ? '<div class="box-card-component" data-visual-owner="BoxCard"><div class="el-card__header"><div class="box-card-header">' + (boxImage ? '<img src="' + escapeHtml(boxImage) + '">' : '') + '</div></div><div class="el-card__body"><div style="position:relative"><div class="profile-dot panThumb">admin</div><h3 class="mallki-text">vue-element-admin</h3><div style="padding-top:35px" class="progress-item"><span>Vue</span><i style="width:70%"></i></div><div class="progress-item"><span>JavaScript</span><i style="width:18%"></i></div><div class="progress-item"><span>CSS</span><i style="width:12%"></i></div><div class="progress-item"><span>ESLint</span><i style="width:100%"></i></div></div></div></div>' : '') + '</div></div></section>';
   const permission = () => renderCompilation(primitivePages.permission, { role: state.role, roles: '[ \"' + state.role + '\" ]', switchRoles: state.role, showDialog: false }, 'DirectivePermission');
   const page = () => { const path = routePath(); if (path === '/dashboard') return dashboard(); if (path === '/permission/directive') return permission(); if (path === '/nested/menu1/menu1-1') return '<section class="nested-page"><h2>Menu 1-1</h2></section>'; if (path === '/documentation/index') return '<section class="documentation-page"><h2>Documentation</h2></section>'; return '<section><h2>Not Found</h2></section>'; };
   const disposeCharts = () => { for (const chart of state.charts) chart.dispose?.(); state.charts = []; };
   const initChart = (id, option) => { const node = document.getElementById(id); if (!node || !window.echarts) return; const chart = window.echarts.init(node, 'macarons'); chart.setOption(option); state.charts.push(chart); };
-  const initCharts = () => { disposeCharts(); if (routePath() !== '/dashboard') return; const axis = { axisLine:{lineStyle:{color:'#8b8b8b'}}, axisLabel:{color:'#666'}, splitLine:{lineStyle:{color:'#eee'}} };
-    initChart('auto-line-chart',{tooltip:{trigger:'axis'},legend:{data:['expected','actual']},grid:{left:35,right:35,bottom:25,top:45,containLabel:true},xAxis:{type:'category',boundaryGap:false,data:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],...axis},yAxis:{type:'value',...axis},series:[{name:'expected',type:'line',smooth:true,data:[100,120,161,134,105,160,165]},{name:'actual',type:'line',smooth:true,data:[120,82,91,154,162,140,145]}]});
-    initChart('auto-radar-chart',{tooltip:{},legend:{data:['Allocated Budget','Expected Spending'],bottom:5},radar:{indicator:[{name:'Sales',max:6500},{name:'Administration',max:16000},{name:'IT',max:30000},{name:'Support',max:38000},{name:'Development',max:52000}]},series:[{type:'radar',data:[{value:[4300,10000,28000,35000,50000],name:'Allocated Budget'},{value:[5000,14000,28000,31000,42000],name:'Expected Spending'}]}]});
-    initChart('auto-pie-chart',{tooltip:{trigger:'item'},legend:{bottom:5,data:['Industries','Technology','Forex','Gold','Forecasts']},series:[{type:'pie',radius:['40%','65%'],data:[{value:320,name:'Industries'},{value:240,name:'Technology'},{value:149,name:'Forex'},{value:100,name:'Gold'},{value:59,name:'Forecasts'}]}]});
-    initChart('auto-bar-chart',{tooltip:{trigger:'axis'},grid:{left:20,right:20,bottom:25,top:25,containLabel:true},xAxis:{type:'category',data:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],...axis},yAxis:{type:'value',...axis},series:[{type:'bar',data:[79,52,200,334,390,330,220],itemStyle:{color:'#34bfa3'}}]});
+  const initCharts = () => { disposeCharts(); if (routePath() !== '/dashboard') return;
+    const lineData = dashboardData.lineChartData?.[state.lineType] || {};
+    initChart('auto-line-chart', chartOption('LineChart', lineData));
+    initChart('auto-radar-chart', chartOption('RaddarChart'));
+    initChart('auto-pie-chart', chartOption('PieChart'));
+    initChart('auto-bar-chart', chartOption('BarChart'));
   };
   const bind = () => {
     app.querySelectorAll('a[href]').forEach((anchor) => anchor.addEventListener('click', (event) => { event.preventDefault(); navigate(anchor.getAttribute('href')); }));
     app.querySelectorAll('[data-submenu]').forEach((node) => node.addEventListener('click', () => { state[node.dataset.submenu] = !state[node.dataset.submenu]; render(); }));
+    app.querySelectorAll('[data-dashboard-type]').forEach((node) => node.addEventListener('click', () => { state.lineType = node.dataset.dashboardType; initCharts(); }));
     app.querySelectorAll('[data-role]').forEach((node) => node.addEventListener('click', () => { state.role = node.dataset.role; render(); }));
     app.querySelector('.show-pwd')?.addEventListener('click', () => { const input = app.querySelector("input[placeholder='Password']"); input.type = input.type === 'password' ? 'text' : 'password'; input.focus(); });
     app.querySelectorAll('[data-action*="showDialog"]').forEach((node) => node.addEventListener('click', () => { state.showDialog = true; render(); }));
@@ -219,7 +319,7 @@ function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): str
 }
 
 function generatedStyles(plan: VisualTargetPlan): string {
-  const selectedOwners = ["Login", "DirectivePermission", "SwitchRoles"].flatMap((name) => {
+  const selectedOwners = ["Login", "DirectivePermission", "SwitchRoles", "DashboardAdmin", "PanelGroup", "TodoList", "BoxCard"].flatMap((name) => {
     const owner = ownerByName(plan, name); return owner ? [owner] : [];
   });
   const primitiveCss = selectedOwners.map((owner) => materializePrimitiveCss(compilePrimitiveDom(owner.templateStructure, owner.componentName))).join("");
@@ -230,7 +330,8 @@ function generatedStyles(plan: VisualTargetPlan): string {
 @media(max-width:600px){.login-form{padding-top:160px}.thirdparty-button{display:none}.sidebar-container{display:none}.sidebar-title{font-size:13px;padding:0 10px}.el-menu-item,.el-submenu__title{padding:0 10px;font-size:13px}.dashboard-editor-container{padding:10px}.panel-group{grid-template-columns:1fr;gap:10px}.card-panel{height:88px}.line-chart{height:280px}.app-container{padding:16px}}
 ${dashboardGridCss(plan)}
 ${primitiveCss}
-${sourceCss}`;
+${sourceCss}
+${dashboardEvidenceCss(plan)}`;
 }
 
 function generatedIndex(): string {
@@ -258,7 +359,7 @@ export function generateVisualTargetArtifact(plan: VisualTargetPlan, routePlan: 
       "the target is a deterministic first-pass visual scaffold generated from responsibility ownership, not copied from the reviewed target",
       "acceptance selectors are preserved only for quality evaluation; data-visual-owner selectors remain the implementation ownership boundary",
       "selected Element UI primitives are compiled from template/style evidence; unsupported primitives remain explicit review boundaries",
-      "Dashboard business data cardinality and ECharts option slices are not yet fully consumed by the generated renderer",
+      "static data and ECharts option slices are consumed when safely representable; unsupported expressions remain explicit review boundaries",
       "the first Semantic Gold+ run must be recorded before any manual repair",
     ],
   };

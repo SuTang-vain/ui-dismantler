@@ -11,11 +11,11 @@
     },
     {
       "path": "public/app.js",
-      "lines": 150
+      "lines": 180
     },
     {
       "path": "public/styles.css",
-      "lines": 9
+      "lines": 15
     },
     {
       "path": "server.mjs",
@@ -24,7 +24,7 @@
   ],
   "metrics": {
     "generatedFiles": 4,
-    "generatedLines": 163,
+    "generatedLines": 199,
     "visualBoundaries": 4,
     "visualOwners": 20,
     "chartOwners": 4,
@@ -44,7 +44,7 @@
     "the target is a deterministic first-pass visual scaffold generated from responsibility ownership, not copied from the reviewed target",
     "acceptance selectors are preserved only for quality evaluation; data-visual-owner selectors remain the implementation ownership boundary",
     "selected Element UI primitives are compiled from template/style evidence; unsupported primitives remain explicit review boundaries",
-    "Dashboard business data cardinality and ECharts option slices are not yet fully consumed by the generated renderer",
+    "static data and ECharts option slices are consumed when safely representable; unsupported expressions remain explicit review boundaries",
     "the first Semantic Gold+ run must be recorded before any manual repair"
   ]
 }

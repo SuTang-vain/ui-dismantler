@@ -3,6 +3,7 @@ import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { createRequire } from "node:module";
 import { analyzeEChartsResponsibilities, type EChartsResponsibilityGraph } from "./echarts-responsibility.js";
 import { analyzeSfcTemplateStructure, type SfcTemplateStructure } from "./sfc-template-structure.js";
+import { analyzeDataCardinality, type DataCardinalityResponsibility } from "./data-cardinality.js";
 
 export interface SfcStyleResponsibility {
   index: number;
@@ -23,6 +24,7 @@ export interface SfcVisualComponentResponsibility {
   imports: Array<{ local: string; source: string; thirdParty: boolean }>;
   childComponents: string[];
   templateStructure: SfcTemplateStructure;
+  dataCardinality: DataCardinalityResponsibility;
   visualRegions: string[];
   bindings: {
     events: string[];
@@ -61,6 +63,8 @@ export interface SfcVisualResponsibilityGraph {
     embeddedSvgAssets: number;
     compiledStyleSheets: number;
     failedStyleSheets: number;
+    staticDataBindings: number;
+    dataCardinalities: number;
     scanMs: number;
   };
 }
@@ -199,6 +203,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     const models = unique(allMatches(parsed.template, /v-model(?::[\w-]+)?\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const conditions = unique(allMatches(parsed.template, /v-(?:if|else-if|show)\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const loops = unique(allMatches(parsed.template, /v-for\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
+    const dataCardinality = analyzeDataCardinality(parsed.script, loops);
     const styles = parsed.styles.map((style, styleIndex): SfcStyleResponsibility => {
       const language = style.attributes.match(/\blang\s*=\s*['"]([^'"]+)['"]/)?.[1] ?? "css";
       return {
@@ -226,6 +231,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       imports,
       childComponents,
       templateStructure: embedSvgIconAssets(root, analyzeSfcTemplateStructure(parsed.template)),
+      dataCardinality,
       visualRegions,
       bindings: { events, models, conditions, loops },
       lifecycle,
@@ -266,6 +272,8 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       embeddedSvgAssets: components.reduce((sum, item) => sum + item.templateStructure.nodes.reduce((nodeSum, node) => nodeSum + (node.embeddedAssets?.length ?? 0), 0), 0),
       compiledStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus !== "failed").length, 0),
       failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
+      staticDataBindings: components.reduce((sum, item) => sum + Object.keys(item.dataCardinality.staticBindings).length, 0),
+      dataCardinalities: components.reduce((sum, item) => sum + item.dataCardinality.cardinalities.length, 0),
       scanMs: Date.now() - started,
     },
   };

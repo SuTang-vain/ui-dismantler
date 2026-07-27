@@ -10,10 +10,10 @@ function fixture(): string {
   const root = mkdtempSync(join(tmpdir(), "ui-dismantler-sfc-"));
   mkdirSync(join(root, "views", "dashboard", "components"), { recursive: true });
   writeFileSync(join(root, "views", "dashboard", "index.vue"), `<template><main class="dashboard-editor-container"><panel-group @change="setData"/><line-chart :chart-data="lineChartData"/></main></template>
-<script>import PanelGroup from './components/PanelGroup'; import LineChart from './components/LineChart'; export default { name:'DashboardAdmin', components:{PanelGroup,LineChart}, data(){return {lineChartData:{}}}, methods:{setData(){}} }</script>
+<script>import PanelGroup from './components/PanelGroup'; import LineChart from './components/LineChart'; const lineChartData={newVisitis:{expectedData:[1,2,3],actualData:[3,2,1]}}; export default { name:'DashboardAdmin', components:{PanelGroup,LineChart}, data(){return {lineChartData}}, methods:{setData(){}} }</script>
 <style scoped lang="scss">.dashboard-editor-container{padding:32px}@media (max-width:1024px){.dashboard-editor-container{padding:16px}}</style>`);
   writeFileSync(join(root, "views", "dashboard", "components", "PanelGroup.vue"), `<template><button class="card-panel" @click="$emit('change','messages')">Messages</button></template><script>export default { name:'PanelGroup' }</script><style scoped>.card-panel{height:108px}</style>`);
-  writeFileSync(join(root, "views", "dashboard", "components", "LineChart.vue"), `<template><div class="chart"/></template><script>import echarts from 'echarts'; require('echarts/theme/macarons'); import resize from './resize'; export default { mixins:[resize], props:{chartData:Object}, watch:{chartData:{handler(v){this.setOptions(v)}}}, mounted(){this.chart=echarts.init(this.$el,'macarons');this.setOptions(this.chartData)}, beforeDestroy(){this.chart.dispose()}, methods:{setOptions({expectedData,actualData}){this.chart.setOption({xAxis:{},yAxis:{},legend:{},series:[{type:'line',data:expectedData},{type:'line',data:actualData}]})}} }</script><style scoped>.chart{height:350px}</style>`);
+  writeFileSync(join(root, "views", "dashboard", "components", "LineChart.vue"), `<template><div class="chart"/></template><script>import echarts from 'echarts'; require('echarts/theme/macarons'); import resize from './resize'; const animationDuration=3000; export default { mixins:[resize], props:{height:{type:String,default:'350px'},chartData:Object}, watch:{chartData:{handler(v){this.setOptions(v)}}}, mounted(){this.chart=echarts.init(this.$el,'macarons');this.setOptions(this.chartData)}, beforeDestroy(){this.chart.dispose()}, methods:{setOptions({expectedData,actualData}){this.chart.setOption({xAxis:{},yAxis:{},legend:{},series:[{type:'line',data:expectedData},{type:'line',data:actualData,animationDuration}]})}} }</script><style scoped>.chart{height:350px}</style>`);
   return root;
 }
 
@@ -32,6 +32,10 @@ test("ECharts responsibility extractor captures type theme data and lifecycle ow
     assert.equal(chart.optionSlices.length, 1);
     assert.equal(chart.optionSlices[0].seriesCount, 2);
     assert.equal(chart.optionSlices[0].literalDataArrays, 0);
+    assert.equal(chart.optionSlices[0].containerHeight, "350px");
+    assert.deepEqual(chart.optionSlices[0].references, ["actualData", "animationDuration", "expectedData"]);
+    assert.equal(chart.staticBindings.animationDuration, 3000);
+    assert.equal(chart.optionSlices[0].option !== undefined, true);
     assert.equal(chart.capabilities.watchesData, true);
     assert.equal(chart.capabilities.resizesChart, true);
     assert.equal(chart.capabilities.disposesChart, true);
@@ -51,6 +55,8 @@ test("SFC visual responsibility graph preserves component style interaction and 
     assert.ok(dashboard);
     assert.deepEqual(dashboard.childComponents, ["LineChart", "PanelGroup"]);
     assert.deepEqual(dashboard.bindings.events, ["change"]);
+    assert.equal(graph.metrics.staticDataBindings > 0, true);
+    assert.deepEqual(dashboard.dataCardinality.cardinalities.find((item) => item.path === "lineChartData.newVisitis.expectedData"), { path: "lineChartData.newVisitis.expectedData", count: 3, source: "module-static-binding" });
     assert.equal(dashboard.styles[0].scoped, true);
     assert.deepEqual(dashboard.styles[0].mediaQueries, ["(max-width:1024px)"]);
     const line = graph.components.find((item) => item.componentName === "LineChart");

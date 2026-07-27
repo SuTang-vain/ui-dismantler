@@ -345,6 +345,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -505,6 +512,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -618,6 +632,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -663,6 +684,15 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 6000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -701,9 +731,112 @@
             "line": 49,
             "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        grid: {\n          top: 10,\n          left: '2%',\n          right: '2%',\n          bottom: '3%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          axisTick: {\n            alignWithLabel: true\n          }\n        }],\n        yAxis: [{\n          type: 'value',\n          axisTick: {\n            show: false\n          }\n        }],\n        series: [{\n          name: 'pageA',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [79, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageB',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [80, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageC',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [30, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }]\n      }",
             "seriesCount": 6,
-            "literalDataArrays": 4
+            "literalDataArrays": 4,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "shadow"
+                }
+              },
+              "grid": {
+                "top": 10,
+                "left": "2%",
+                "right": "2%",
+                "bottom": "3%",
+                "containLabel": true
+              },
+              "xAxis": [
+                {
+                  "type": "category",
+                  "data": [
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat",
+                    "Sun"
+                  ],
+                  "axisTick": {
+                    "alignWithLabel": true
+                  }
+                }
+              ],
+              "yAxis": [
+                {
+                  "type": "value",
+                  "axisTick": {
+                    "show": false
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "name": "pageA",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    79,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                },
+                {
+                  "name": "pageB",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    80,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                },
+                {
+                  "name": "pageC",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    30,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                }
+              ]
+            },
+            "references": [
+              "animationDuration"
+            ]
           }
         ],
+        "staticBindings": {
+          "animationDuration": 6000
+        },
         "dataSources": [],
         "capabilities": {
           "initializesChart": true,
@@ -758,6 +891,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 6000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -1275,6 +1417,13 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -1329,6 +1478,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [
           "watch:chartData"
@@ -1371,9 +1527,103 @@
             "line": 65,
             "source": "{\n        xAxis: {\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          boundaryGap: false,\n          axisTick: {\n            show: false\n          }\n        },\n        grid: {\n          left: 10,\n          right: 10,\n          bottom: 20,\n          top: 30,\n          containLabel: true\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            type: 'cross'\n          },\n          padding: [5, 10]\n        },\n        yAxis: {\n          axisTick: {\n            show: false\n          }\n        },\n        legend: {\n          data: ['expected', 'actual']\n        },\n        series: [{\n          name: 'expected', itemStyle: {\n            normal: {\n              color: '#FF005A',\n              lineStyle: {\n                color: '#FF005A',\n                width: 2\n              }\n            }\n          },\n          smooth: true,\n          type: 'line',\n          data: expectedData,\n          animationDuration: 2800,\n          animationEasing: 'cubicInOut'\n        },\n        {\n          name: 'actual',\n          smooth: true,\n          type: 'line',\n          itemStyle: {\n            normal: {\n              color: '#3888fa',\n              lineStyle: {\n                color: '#3888fa',\n                width: 2\n              },\n              areaStyle: {\n                color: '#f3f8ff'\n              }\n            }\n          },\n          data: actualData,\n          animationDuration: 2800,\n          animationEasing: 'quadraticOut'\n        }]\n      }",
             "seriesCount": 3,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "350px",
+            "option": {
+              "xAxis": {
+                "data": [
+                  "Mon",
+                  "Tue",
+                  "Wed",
+                  "Thu",
+                  "Fri",
+                  "Sat",
+                  "Sun"
+                ],
+                "boundaryGap": false,
+                "axisTick": {
+                  "show": false
+                }
+              },
+              "grid": {
+                "left": 10,
+                "right": 10,
+                "bottom": 20,
+                "top": 30,
+                "containLabel": true
+              },
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "cross"
+                },
+                "padding": [
+                  5,
+                  10
+                ]
+              },
+              "yAxis": {
+                "axisTick": {
+                  "show": false
+                }
+              },
+              "legend": {
+                "data": [
+                  "expected",
+                  "actual"
+                ]
+              },
+              "series": [
+                {
+                  "name": "expected",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "#FF005A",
+                      "lineStyle": {
+                        "color": "#FF005A",
+                        "width": 2
+                      }
+                    }
+                  },
+                  "smooth": true,
+                  "type": "line",
+                  "data": {
+                    "$reference": "expectedData"
+                  },
+                  "animationDuration": 2800,
+                  "animationEasing": "cubicInOut"
+                },
+                {
+                  "name": "actual",
+                  "smooth": true,
+                  "type": "line",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "#3888fa",
+                      "lineStyle": {
+                        "color": "#3888fa",
+                        "width": 2
+                      },
+                      "areaStyle": {
+                        "color": "#f3f8ff"
+                      }
+                    }
+                  },
+                  "data": {
+                    "$reference": "actualData"
+                  },
+                  "animationDuration": 2800,
+                  "animationEasing": "quadraticOut"
+                }
+              ]
+            },
+            "references": [
+              "actualData",
+              "expectedData"
+            ]
           }
         ],
+        "staticBindings": {},
         "dataSources": [
           "actualData",
           "chartData",
@@ -1432,6 +1682,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -2334,6 +2591,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 4
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [
           "click"
@@ -2385,6 +2649,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -2421,9 +2692,68 @@
             "line": 47,
             "source": "{\n        tooltip: {\n          trigger: 'item',\n          formatter: '{a} <br/>{b} : {c} ({d}%)'\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']\n        },\n        series: [\n          {\n            name: 'WEEKLY WRITE ARTICLES',\n            type: 'pie',\n            roseType: 'radius',\n            radius: [15, 95],\n            center: ['50%', '38%'],\n            data: [\n              { value: 320, name: 'Industries' },\n              { value: 240, name: 'Technology' },\n              { value: 149, name: 'Forex' },\n              { value: 100, name: 'Gold' },\n              { value: 59, name: 'Forecasts' }\n            ],\n            animationEasing: 'cubicInOut',\n            animationDuration: 2600\n          }\n        ]\n      }",
             "seriesCount": 1,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "item",
+                "formatter": "{a} <br/>{b} : {c} ({d}%)"
+              },
+              "legend": {
+                "left": "center",
+                "bottom": "10",
+                "data": [
+                  "Industries",
+                  "Technology",
+                  "Forex",
+                  "Gold",
+                  "Forecasts"
+                ]
+              },
+              "series": [
+                {
+                  "name": "WEEKLY WRITE ARTICLES",
+                  "type": "pie",
+                  "roseType": "radius",
+                  "radius": [
+                    15,
+                    95
+                  ],
+                  "center": [
+                    "50%",
+                    "38%"
+                  ],
+                  "data": [
+                    {
+                      "value": 320,
+                      "name": "Industries"
+                    },
+                    {
+                      "value": 240,
+                      "name": "Technology"
+                    },
+                    {
+                      "value": 149,
+                      "name": "Forex"
+                    },
+                    {
+                      "value": 100,
+                      "name": "Gold"
+                    },
+                    {
+                      "value": 59,
+                      "name": "Forecasts"
+                    }
+                  ],
+                  "animationEasing": "cubicInOut",
+                  "animationDuration": 2600
+                }
+              ]
+            },
+            "references": []
           }
         ],
+        "staticBindings": {},
         "dataSources": [],
         "capabilities": {
           "initializesChart": true,
@@ -2479,6 +2809,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -2520,6 +2857,15 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 3000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [],
         "models": [],
@@ -2557,9 +2903,130 @@
             "line": 49,
             "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        radar: {\n          radius: '66%',\n          center: ['50%', '42%'],\n          splitNumber: 8,\n          splitArea: {\n            areaStyle: {\n              color: 'rgba(127,95,132,.3)',\n              opacity: 1,\n              shadowBlur: 45,\n              shadowColor: 'rgba(0,0,0,.5)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 15\n            }\n          },\n          indicator: [\n            { name: 'Sales', max: 10000 },\n            { name: 'Administration', max: 20000 },\n            { name: 'Information Technology', max: 20000 },\n            { name: 'Customer Support', max: 20000 },\n            { name: 'Development', max: 20000 },\n            { name: 'Marketing', max: 20000 }\n          ]\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']\n        },\n        series: [{\n          type: 'radar',\n          symbolSize: 0,\n          areaStyle: {\n            normal: {\n              shadowBlur: 13,\n              shadowColor: 'rgba(0,0,0,.2)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 10,\n              opacity: 1\n            }\n          },\n          data: [\n            {\n              value: [5000, 7000, 12000, 11000, 15000, 14000],\n              name: 'Allocated Budget'\n            },\n            {\n              value: [4000, 9000, 15000, 15000, 13000, 11000],\n              name: 'Expected Spending'\n            },\n            {\n              value: [5500, 11000, 12000, 15000, 12000, 12000],\n              name: 'Actual Spending'\n            }\n          ],\n          animationDuration: animationDuration\n        }]\n      }",
             "seriesCount": 2,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "shadow"
+                }
+              },
+              "radar": {
+                "radius": "66%",
+                "center": [
+                  "50%",
+                  "42%"
+                ],
+                "splitNumber": 8,
+                "splitArea": {
+                  "areaStyle": {
+                    "color": "rgba(127,95,132,.3)",
+                    "opacity": 1,
+                    "shadowBlur": 45,
+                    "shadowColor": "rgba(0,0,0,.5)",
+                    "shadowOffsetX": 0,
+                    "shadowOffsetY": 15
+                  }
+                },
+                "indicator": [
+                  {
+                    "name": "Sales",
+                    "max": 10000
+                  },
+                  {
+                    "name": "Administration",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Information Technology",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Customer Support",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Development",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Marketing",
+                    "max": 20000
+                  }
+                ]
+              },
+              "legend": {
+                "left": "center",
+                "bottom": "10",
+                "data": [
+                  "Allocated Budget",
+                  "Expected Spending",
+                  "Actual Spending"
+                ]
+              },
+              "series": [
+                {
+                  "type": "radar",
+                  "symbolSize": 0,
+                  "areaStyle": {
+                    "normal": {
+                      "shadowBlur": 13,
+                      "shadowColor": "rgba(0,0,0,.2)",
+                      "shadowOffsetX": 0,
+                      "shadowOffsetY": 10,
+                      "opacity": 1
+                    }
+                  },
+                  "data": [
+                    {
+                      "value": [
+                        5000,
+                        7000,
+                        12000,
+                        11000,
+                        15000,
+                        14000
+                      ],
+                      "name": "Allocated Budget"
+                    },
+                    {
+                      "value": [
+                        4000,
+                        9000,
+                        15000,
+                        15000,
+                        13000,
+                        11000
+                      ],
+                      "name": "Expected Spending"
+                    },
+                    {
+                      "value": [
+                        5500,
+                        11000,
+                        12000,
+                        15000,
+                        12000,
+                        12000
+                      ],
+                      "name": "Actual Spending"
+                    }
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                }
+              ]
+            },
+            "references": [
+              "animationDuration"
+            ]
           }
         ],
+        "staticBindings": {
+          "animationDuration": 3000
+        },
         "dataSources": [],
         "capabilities": {
           "initializesChart": true,
@@ -2614,6 +3081,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 3000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -3009,6 +3485,81 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "STORAGE_KEY": "todos",
+          "filters": {
+            "all": {
+              "$unsupported": "todos => todos"
+            },
+            "active": {
+              "$unsupported": "todos => todos.filter(todo => !todo.done)"
+            },
+            "completed": {
+              "$unsupported": "todos => todos.filter(todo => todo.done)"
+            }
+          },
+          "defalutList": [
+            {
+              "text": "star this repository",
+              "done": false
+            },
+            {
+              "text": "fork this repository",
+              "done": false
+            },
+            {
+              "text": "follow author",
+              "done": false
+            },
+            {
+              "text": "vue-element-admin",
+              "done": true
+            },
+            {
+              "text": "vue",
+              "done": true
+            },
+            {
+              "text": "element-ui",
+              "done": true
+            },
+            {
+              "text": "axios",
+              "done": true
+            },
+            {
+              "text": "webpack",
+              "done": true
+            }
+          ]
+        },
+        "cardinalities": [
+          {
+            "path": "defalutList",
+            "count": 8,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "templateRepeat[0]:(todo, index) in filteredTodos",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:(val, key) in filters",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(todo, index) in filteredTodos",
+          "(val, key) in filters"
+        ],
+        "unresolvedReferences": [
+          "filteredTodos"
+        ]
+      },
       "interactions": {
         "events": [
           "change",
@@ -3164,6 +3715,21 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "slice[0]",
+            "count": 8,
+            "source": "slice-limit"
+          }
+        ],
+        "sliceLimits": [
+          8
+        ],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -3866,6 +4432,137 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 6
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "lineChartData": {
+            "newVisitis": {
+              "expectedData": [
+                100,
+                120,
+                161,
+                134,
+                105,
+                160,
+                165
+              ],
+              "actualData": [
+                120,
+                82,
+                91,
+                154,
+                162,
+                140,
+                145
+              ]
+            },
+            "messages": {
+              "expectedData": [
+                200,
+                192,
+                120,
+                144,
+                160,
+                130,
+                140
+              ],
+              "actualData": [
+                180,
+                160,
+                151,
+                106,
+                145,
+                150,
+                130
+              ]
+            },
+            "purchases": {
+              "expectedData": [
+                80,
+                100,
+                121,
+                104,
+                105,
+                90,
+                100
+              ],
+              "actualData": [
+                120,
+                90,
+                100,
+                138,
+                142,
+                130,
+                130
+              ]
+            },
+            "shoppings": {
+              "expectedData": [
+                130,
+                140,
+                141,
+                142,
+                145,
+                150,
+                160
+              ],
+              "actualData": [
+                120,
+                82,
+                91,
+                154,
+                162,
+                140,
+                130
+              ]
+            }
+          }
+        },
+        "cardinalities": [
+          {
+            "path": "lineChartData.newVisitis.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.newVisitis.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.messages.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.messages.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.purchases.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.purchases.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.shoppings.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.shoppings.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [
@@ -4777,6 +5474,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "interactions": {
         "events": [
           "blur",
@@ -4908,6 +5612,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -5091,6 +5802,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [],
@@ -5984,6 +6702,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "interactions": {
         "events": [

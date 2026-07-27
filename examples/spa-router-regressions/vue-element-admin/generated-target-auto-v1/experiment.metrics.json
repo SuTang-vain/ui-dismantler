@@ -7,8 +7,8 @@
   "modelCalls": 0,
   "artifactManualEdits": 0,
   "artifactManualEditedLines": 0,
-  "algorithmRepairIterations": 3,
-  "qualityRuns": 11,
+  "algorithmRepairIterations": 8,
+  "qualityRuns": 16,
   "plan": {
     "boundaries": 4,
     "owners": 20,
@@ -17,7 +17,7 @@
   },
   "generation": {
     "generatedFiles": 4,
-    "generatedLines": 163,
+    "generatedLines": 199,
     "visualBoundaries": 4,
     "visualOwners": 20,
     "chartOwners": 4,
@@ -35,7 +35,7 @@
     "schemaVersion": "1.0",
     "phase": "visual-target-generation",
     "deterministic": true,
-    "generationMs": 11.168,
+    "generationMs": 8.569,
     "reviewMs": null,
     "semanticRuns": 0,
     "visualRuns": 0,
@@ -185,9 +185,24 @@
       "runtimeErrors": 0,
       "requiredNetworkFailures": 0,
       "stabilityFailures": 0
+    },
+    {
+      "id": "echarts-data-layout-v5",
+      "report": "semantic-gold-echarts-data-v5.results.json",
+      "passed": false,
+      "scenarioProtocol": "6/6",
+      "visualStatesPassed": 3,
+      "visualStatesTotal": 5,
+      "viewportRuns": 13,
+      "worstComputedStyle": 0.9474,
+      "worstPixelDiff": 0.04344,
+      "navigationIntegrity": 1,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0
     }
   ],
-  "bestMeasuredIteration": "primitive-source-css-final",
+  "bestMeasuredIteration": "echarts-data-layout-v5",
   "reviewedBaseline": {
     "visualStatesPassed": 5,
     "visualStatesTotal": 5,
@@ -207,13 +222,13 @@
     "visualStatesPassed": 3,
     "visualStatesTotal": 5,
     "nextRepairPriority": [
-      "consume bounded ECharts option slices in the generated Dashboard",
-      "extract data cardinality for transaction and Todo fixtures",
-      "materialize selected Dashboard child-component source styles without copying reviewed target code",
-      "retain Login and Permission as formal Gold+ regression states"
+      "build an API fixture responsibility graph for TransactionTable rows instead of retaining approximate records",
+      "compile Element UI table/card/progress primitives from source ownership evidence",
+      "remove remaining fallback CSS when a source-owned primitive mapper is available",
+      "retain Login, Permission, navigation, runtime, network, and stability gates unchanged"
     ]
   },
-  "algorithmPhase": "primitive-dom-source-style-and-svg-assets",
+  "algorithmPhase": "static-data-echarts-option-and-source-layout-consumer",
   "structureGraph": {
     "templateNodes": 1185,
     "elementUiPrimitives": 225,
@@ -225,7 +240,9 @@
     "failedStyleSheets": 4,
     "primitiveDomNodes": 60,
     "primitiveStyleRules": 7,
-    "primitiveInteractionBindings": 7
+    "primitiveInteractionBindings": 7,
+    "staticDataBindings": 19,
+    "dataCardinalities": 47
   },
   "echartsOptionSlices": {
     "components": 7,

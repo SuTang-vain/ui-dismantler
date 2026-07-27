@@ -63,6 +63,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -193,6 +200,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "Icon",
@@ -395,6 +409,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:(item,index) in levelList",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(item,index) in levelList"
+        ],
+        "unresolvedReferences": [
+          "levelList"
+        ]
+      },
       "visualRegions": [
         "app-breadcrumb",
         "no-redirect"
@@ -489,6 +520,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "className"
       ],
@@ -562,6 +600,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "className"
       ],
@@ -634,6 +679,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "className"
@@ -1033,6 +1085,30 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:element in list1",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:element in list2",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "element in list1",
+          "element in list2"
+        ],
+        "unresolvedReferences": [
+          "list1",
+          "list2"
+        ]
+      },
       "visualRegions": [
         "dndList",
         "dndList-list",
@@ -1159,6 +1235,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "drag-select"
       ],
@@ -1271,6 +1354,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "dropzone"
@@ -1970,6 +2060,13 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "bug",
         "message-title"
@@ -2148,6 +2245,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "github-corner",
         "octo-arm",
@@ -2273,6 +2377,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "hamburger"
@@ -2460,6 +2571,23 @@
         "repeatedRegions": 1,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in options",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in options"
+        ],
+        "unresolvedReferences": [
+          "options"
+        ]
       },
       "visualRegions": [
         "header-search",
@@ -3947,6 +4075,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "vicp-close",
         "vicp-crop",
@@ -4158,6 +4293,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "json-editor"
       ],
@@ -4325,6 +4467,23 @@
         "repeatedRegions": 1,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:element in list",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "element in list"
+        ],
+        "unresolvedReferences": [
+          "list"
+        ]
       },
       "visualRegions": [
         "board-column",
@@ -4744,6 +4903,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "computedClasses",
         "el-input__icon",
@@ -4849,6 +5015,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -4945,6 +5118,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "pagination-container"
@@ -5108,6 +5288,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "pan-info",
@@ -5332,6 +5519,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "handle-button",
         "rightPanel",
@@ -5471,6 +5665,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "isFullscreen"
@@ -5683,6 +5884,21 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:(item,index) of items",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(item,index) of items"
+        ],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "active",
         "isActive",
@@ -5878,6 +6094,21 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item of sizeOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item of sizeOptions"
+        ],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "size"
       ],
@@ -6000,6 +6231,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "className"
       ],
@@ -6107,6 +6345,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "svg-external-icon",
@@ -6229,6 +6474,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "className",
         "link--mallki"
@@ -6305,6 +6557,32 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "version": {
+            "$reference": "require('element-ui/package.json').version"
+          },
+          "ORIGINAL_THEME": "#409EFF"
+        },
+        "cardinalities": [
+          {
+            "path": "slice[0]",
+            "count": 2,
+            "source": "slice-limit"
+          },
+          {
+            "path": "slice[1]",
+            "count": 2,
+            "source": "slice-limit"
+          }
+        ],
+        "sliceLimits": [
+          2,
+          2
+        ],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "theme-picker",
@@ -6611,6 +6889,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "editor-slide-upload",
         "upload-container"
@@ -6780,6 +7065,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "tinymceCDN": "https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js"
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "editor-custom-btn-container",
@@ -7092,6 +7386,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "el-icon-delete",
@@ -7411,6 +7712,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "el-icon-delete",
@@ -7845,6 +8153,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "el-icon-delete",
         "el-icon-upload",
@@ -8042,6 +8357,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "drop",
         "excel-upload-input"
@@ -8190,6 +8512,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-main"
@@ -8546,6 +8875,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "breadcrumb-container",
@@ -8978,6 +9314,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "drawer-container",
         "drawer-item",
@@ -9039,6 +9382,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -9130,6 +9480,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -9372,6 +9729,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "sidebar-logo",
         "sidebar-logo-container",
@@ -9579,6 +9943,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -9763,6 +10134,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:route in permission_routes",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "route in permission_routes"
+        ],
+        "unresolvedReferences": [
+          "permission_routes"
+        ]
+      },
       "visualRegions": [
         "scrollbar-wrapper"
       ],
@@ -9847,6 +10235,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "tagAndTagSpacing": 4
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "scroll-container"
@@ -10162,6 +10559,23 @@
         "repeatedRegions": 1,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:tag in visitedViews",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "tag in visitedViews"
+        ],
+        "unresolvedReferences": [
+          "visitedViews"
+        ]
       },
       "visualRegions": [
         "contextmenu",
@@ -10517,6 +10931,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-wrapper",
         "classObj",
@@ -10634,6 +11055,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "chart-container"
       ],
@@ -10731,6 +11159,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "chart-container"
       ],
@@ -10827,6 +11262,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "chart-container"
@@ -11175,6 +11617,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -11403,6 +11852,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -14129,6 +14585,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "components-container",
         "placeholder-container"
@@ -14756,6 +15219,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "components-container",
         "example",
@@ -14953,6 +15423,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -15289,6 +15766,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in options",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in options"
+        ],
+        "unresolvedReferences": [
+          "options"
+        ]
+      },
       "visualRegions": [
         "components-container"
       ],
@@ -15445,6 +15939,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "board",
@@ -15656,6 +16157,29 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in options",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:item of value",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in options",
+          "item of value"
+        ],
+        "unresolvedReferences": [
+          "options"
+        ]
+      },
       "visualRegions": [
         "components-container"
       ],
@@ -15821,6 +16345,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -16019,6 +16550,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "jsonData": "[{\"items\":[{\"market_type\":\"forexdata\",\"symbol\":\"XAUUSD\"},{\"market_type\":\"forexdata\",\"symbol\":\"UKOIL\"},{\"market_type\":\"forexdata\",\"symbol\":\"CORN\"}],\"name\":\"\"},{\"items\":[{\"market_type\":\"forexdata\",\"symbol\":\"XAUUSD\"},{\"market_type\":\"forexdata\",\"symbol\":\"XAGUSD\"},{\"market_type\":\"forexdata\",\"symbol\":\"AUTD\"},{\"market_type\":\"forexdata\",\"symbol\":\"AGTD\"}],\"name\":\"贵金属\"},{\"items\":[{\"market_type\":\"forexdata\",\"symbol\":\"CORN\"},{\"market_type\":\"forexdata\",\"symbol\":\"WHEAT\"},{\"market_type\":\"forexdata\",\"symbol\":\"SOYBEAN\"},{\"market_type\":\"forexdata\",\"symbol\":\"SUGAR\"}],\"name\":\"农产品\"},{\"items\":[{\"market_type\":\"forexdata\",\"symbol\":\"UKOIL\"},{\"market_type\":\"forexdata\",\"symbol\":\"USOIL\"},{\"market_type\":\"forexdata\",\"symbol\":\"NGAS\"}],\"name\":\"能源化工\"}]"
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -16599,6 +17139,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "content": "\n**This is test**\n\n* vue\n* element\n* webpack\n\n"
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -18213,6 +18762,13 @@
         "slotOwners": 6,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "blue-btn",
         "box-card",
@@ -18504,6 +19060,13 @@
         "repeatedRegions": 0,
         "slotOwners": 1,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "components-container",
@@ -18953,6 +19516,23 @@
         "slotOwners": 3,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in platformsOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in platformsOptions"
+        ],
+        "unresolvedReferences": [
+          "platformsOptions"
+        ]
+      },
       "visualRegions": [
         "el-icon--right",
         "el-icon-caret-bottom",
@@ -19153,6 +19733,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "components-container",
         "editor-content",
@@ -19235,6 +19822,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 6000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "className"
@@ -19761,6 +20357,13 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "box-card-component",
         "box-card-header",
@@ -19866,6 +20469,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "className"
@@ -20757,6 +21367,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 4
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "card-panel",
         "card-panel-col",
@@ -20870,6 +21487,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "className"
       ],
@@ -20941,6 +21565,15 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "animationDuration": 3000
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "className"
@@ -21127,6 +21760,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "completed",
@@ -21524,6 +22164,81 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "STORAGE_KEY": "todos",
+          "filters": {
+            "all": {
+              "$unsupported": "todos => todos"
+            },
+            "active": {
+              "$unsupported": "todos => todos.filter(todo => !todo.done)"
+            },
+            "completed": {
+              "$unsupported": "todos => todos.filter(todo => todo.done)"
+            }
+          },
+          "defalutList": [
+            {
+              "text": "star this repository",
+              "done": false
+            },
+            {
+              "text": "fork this repository",
+              "done": false
+            },
+            {
+              "text": "follow author",
+              "done": false
+            },
+            {
+              "text": "vue-element-admin",
+              "done": true
+            },
+            {
+              "text": "vue",
+              "done": true
+            },
+            {
+              "text": "element-ui",
+              "done": true
+            },
+            {
+              "text": "axios",
+              "done": true
+            },
+            {
+              "text": "webpack",
+              "done": true
+            }
+          ]
+        },
+        "cardinalities": [
+          {
+            "path": "defalutList",
+            "count": 8,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "templateRepeat[0]:(todo, index) in filteredTodos",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:(val, key) in filters",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(todo, index) in filteredTodos",
+          "(val, key) in filters"
+        ],
+        "unresolvedReferences": [
+          "filteredTodos"
+        ]
+      },
       "visualRegions": [
         "clear-completed",
         "filters",
@@ -21703,6 +22418,21 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "slice[0]",
+            "count": 8,
+            "source": "slice-limit"
+          }
+        ],
+        "sliceLimits": [
+          8
+        ],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -22446,6 +23176,137 @@
         "slotOwners": 0,
         "responsiveGridNodes": 6
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "lineChartData": {
+            "newVisitis": {
+              "expectedData": [
+                100,
+                120,
+                161,
+                134,
+                105,
+                160,
+                165
+              ],
+              "actualData": [
+                120,
+                82,
+                91,
+                154,
+                162,
+                140,
+                145
+              ]
+            },
+            "messages": {
+              "expectedData": [
+                200,
+                192,
+                120,
+                144,
+                160,
+                130,
+                140
+              ],
+              "actualData": [
+                180,
+                160,
+                151,
+                106,
+                145,
+                150,
+                130
+              ]
+            },
+            "purchases": {
+              "expectedData": [
+                80,
+                100,
+                121,
+                104,
+                105,
+                90,
+                100
+              ],
+              "actualData": [
+                120,
+                90,
+                100,
+                138,
+                142,
+                130,
+                130
+              ]
+            },
+            "shoppings": {
+              "expectedData": [
+                130,
+                140,
+                141,
+                142,
+                145,
+                150,
+                160
+              ],
+              "actualData": [
+                120,
+                82,
+                91,
+                154,
+                162,
+                140,
+                130
+              ]
+            }
+          }
+        },
+        "cardinalities": [
+          {
+            "path": "lineChartData.newVisitis.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.newVisitis.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.messages.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.messages.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.purchases.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.purchases.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.shoppings.expectedData",
+            "count": 7,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "lineChartData.shoppings.actualData",
+            "count": 7,
+            "source": "module-static-binding"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "chart-wrapper",
         "dashboard-editor-container",
@@ -22776,6 +23637,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in roles",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in roles"
+        ],
+        "unresolvedReferences": [
+          "roles"
+        ]
+      },
       "visualRegions": [
         "clearfix",
         "dashboard-editor-container",
@@ -22894,6 +23772,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "dashboard-container"
@@ -23133,6 +24018,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container",
         "document-btn",
@@ -23206,6 +24098,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -23252,6 +24151,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -23475,6 +24381,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "errPage-container",
@@ -24075,6 +24988,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "errPage-container",
         "link-type",
@@ -24491,6 +25411,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "bullshit",
@@ -25623,6 +26550,44 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "defaultForm": {
+            "status": "draft",
+            "title": "",
+            "content": "",
+            "content_short": "",
+            "source_uri": "",
+            "image_uri": "",
+            "display_time": null,
+            "id": null,
+            "platforms": [
+              "a-platform"
+            ],
+            "comment_disabled": false,
+            "importance": 0
+          }
+        },
+        "cardinalities": [
+          {
+            "path": "defaultForm.platforms",
+            "count": 1,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "templateRepeat[0]:(item,index) in userListOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(item,index) in userListOptions"
+        ],
+        "unresolvedReferences": [
+          "userListOptions"
+        ]
+      },
       "visualRegions": [
         "article-textarea",
         "createPost-container",
@@ -25927,6 +26892,13 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "el-icon--right",
         "el-icon-caret-bottom",
@@ -26134,6 +27106,23 @@
         "repeatedRegions": 1,
         "slotOwners": 1,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in platformsOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in platformsOptions"
+        ],
+        "unresolvedReferences": [
+          "platformsOptions"
+        ]
       },
       "visualRegions": [
         "el-icon--right",
@@ -26392,6 +27381,13 @@
         "slotOwners": 2,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "el-icon--right",
         "el-icon-caret-bottom",
@@ -26477,6 +27473,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -26536,6 +27539,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -26594,6 +27604,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -26788,6 +27805,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -26980,6 +28004,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "radio-label"
       ],
@@ -27118,6 +28149,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in options",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in options"
+        ],
+        "unresolvedReferences": [
+          "options"
+        ]
+      },
       "visualRegions": [
         "radio-label"
       ],
@@ -27248,6 +28296,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "radio-label"
@@ -27635,6 +28690,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -27881,6 +28943,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -28243,6 +29312,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -28421,6 +29497,21 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item of tableHeader",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item of tableHeader"
+        ],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -28580,6 +29671,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -29159,6 +30257,27 @@
         "slotOwners": 2,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item of elementIcons",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:item of svgIcons",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item of elementIcons",
+          "item of svgIcons"
+        ],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "grid",
         "icon-item",
@@ -29219,6 +30338,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -29450,6 +30576,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "icon",
@@ -30374,6 +31507,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "login-container",
         "login-form",
@@ -30539,6 +31679,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -30637,6 +31784,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -30737,6 +31891,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -30814,6 +31975,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -30893,6 +32061,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -30971,6 +32146,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [],
       "bindings": {
         "events": [],
@@ -31047,6 +32229,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -31229,6 +32418,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "article__heading",
         "article__heading__title",
@@ -31399,6 +32595,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -31581,6 +32784,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -32484,6 +33694,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container",
         "permission-alert",
@@ -32594,6 +33811,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -32833,6 +34057,26 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "defaultRole": {
+            "key": "",
+            "name": "",
+            "description": "",
+            "routes": []
+          }
+        },
+        "cardinalities": [
+          {
+            "path": "defaultRole.routes",
+            "count": 0,
+            "source": "module-static-binding"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -33119,6 +34363,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -34176,6 +35427,26 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "avatarPrefix": "?imageView2/1/w/80/h/80",
+          "carouselPrefix": "?imageView2/2/h/440"
+        },
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in carouselImages",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in carouselImages"
+        ],
+        "unresolvedReferences": [
+          "carouselImages"
+        ]
+      },
       "visualRegions": [
         "description",
         "el-icon-share",
@@ -34399,6 +35670,21 @@
         "repeatedRegions": 1,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:(item,index) of timeline",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(item,index) of timeline"
+        ],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "block"
@@ -35312,6 +36598,13 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "box-center",
         "clearfix",
@@ -35817,6 +37110,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 2
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -35963,6 +37263,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "el-icon-upload",
         "el-upload__text"
@@ -35996,6 +37303,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -36165,6 +37479,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [],
       "bindings": {
@@ -36419,6 +37740,23 @@
         "repeatedRegions": 1,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in tabMapOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in tabMapOptions"
+        ],
+        "unresolvedReferences": [
+          "tabMapOptions"
+        ]
       },
       "visualRegions": [
         "tab-container"
@@ -37081,6 +38419,63 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "calendarTypeOptions": [
+            {
+              "key": "CN",
+              "display_name": "China"
+            },
+            {
+              "key": "US",
+              "display_name": "USA"
+            },
+            {
+              "key": "JP",
+              "display_name": "Japan"
+            },
+            {
+              "key": "EU",
+              "display_name": "Eurozone"
+            }
+          ],
+          "calendarTypeKeyValue": {
+            "$unsupported": "calendarTypeOptions.reduce((acc, cur) => {\n  acc[cur.key] = cur.display_name\n  return acc\n}, {})"
+          }
+        },
+        "cardinalities": [
+          {
+            "path": "calendarTypeOptions",
+            "count": 4,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "templateRepeat[0]:item in calendarTypeOptions",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[1]:item in importanceOptions",
+            "count": -1,
+            "source": "template-repeat"
+          },
+          {
+            "path": "templateRepeat[2]:item in sortOptions",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in calendarTypeOptions",
+          "item in importanceOptions",
+          "item in sortOptions"
+        ],
+        "unresolvedReferences": [
+          "importanceOptions",
+          "sortOptions"
+        ]
+      },
       "visualRegions": [
         "app-container",
         "filter-container",
@@ -37300,6 +38695,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -37663,6 +39065,33 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {
+          "defaultFormThead": [
+            "apple",
+            "banana"
+          ]
+        },
+        "cardinalities": [
+          {
+            "path": "defaultFormThead",
+            "count": 2,
+            "source": "module-static-binding"
+          },
+          {
+            "path": "templateRepeat[0]:fruit in formThead",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "fruit in formThead"
+        ],
+        "unresolvedReferences": [
+          "formThead"
+        ]
+      },
       "visualRegions": [
         "app-container",
         "filter-container"
@@ -37993,6 +39422,23 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:fruit in formThead",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "fruit in formThead"
+        ],
+        "unresolvedReferences": [
+          "formThead"
+        ]
+      },
       "visualRegions": [
         "app-container",
         "filter-container"
@@ -38158,6 +39604,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -38348,6 +39801,13 @@
         "repeatedRegions": 0,
         "slotOwners": 0,
         "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
       },
       "visualRegions": [
         "app-container"
@@ -39291,6 +40751,23 @@
         "slotOwners": 1,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:tag in tags",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "tag in tags"
+        ],
+        "unresolvedReferences": [
+          "tags"
+        ]
+      },
       "visualRegions": [
         "app-container",
         "block",
@@ -39581,6 +41058,13 @@
         "slotOwners": 0,
         "responsiveGridNodes": 0
       },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
       "visualRegions": [
         "app-container"
       ],
@@ -39635,9 +41119,136 @@
             "line": 56,
             "source": "{\n        backgroundColor: '#08263a',\n        grid: {\n          left: '5%',\n          right: '5%'\n        },\n        xAxis: [{\n          show: false,\n          data: xAxisData\n        }, {\n          show: false,\n          data: xAxisData\n        }],\n        visualMap: {\n          show: false,\n          min: 0,\n          max: 50,\n          dimension: 0,\n          inRange: {\n            color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055']\n          }\n        },\n        yAxis: {\n          axisLine: {\n            show: false\n          },\n          axisLabel: {\n            textStyle: {\n              color: '#4a657a'\n            }\n          },\n          splitLine: {\n            show: true,\n            lineStyle: {\n              color: '#08263f'\n            }\n          },\n          axisTick: {\n            show: false\n          }\n        },\n        series: [{\n          name: 'back',\n          type: 'bar',\n          data: data2,\n          z: 1,\n          itemStyle: {\n            normal: {\n              opacity: 0.4,\n              barBorderRadius: 5,\n              shadowBlur: 3,\n              shadowColor: '#111'\n            }\n          }\n        }, {\n          name: 'Simulate Shadow',\n          type: 'line',\n          data,\n          z: 2,\n          showSymbol: false,\n          animationDelay: 0,\n          animationEasing: 'linear',\n          animationDuration: 1200,\n          lineStyle: {\n            normal: {\n              color: 'transparent'\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: '#08263a',\n              shadowBlur: 50,\n              shadowColor: '#000'\n            }\n          }\n        }, {\n          name: 'front',\n          type: 'bar',\n          data,\n          xAxisIndex: 1,\n          z: 3,\n          itemStyle: {\n            normal: {\n              barBorderRadius: 5\n            }\n          }\n        }],\n        animationEasing: 'elasticOut',\n        animationEasingUpdate: 'elasticOut',\n        animationDelay(idx) {\n          return idx * 20\n        },\n        animationDelayUpdate(idx) {\n          return idx * 20\n        }\n      }",
             "seriesCount": 3,
-            "literalDataArrays": 0
+            "literalDataArrays": 0,
+            "containerHeight": "200px",
+            "option": {
+              "backgroundColor": "#08263a",
+              "grid": {
+                "left": "5%",
+                "right": "5%"
+              },
+              "xAxis": [
+                {
+                  "show": false,
+                  "data": {
+                    "$reference": "xAxisData"
+                  }
+                },
+                {
+                  "show": false,
+                  "data": {
+                    "$reference": "xAxisData"
+                  }
+                }
+              ],
+              "visualMap": {
+                "show": false,
+                "min": 0,
+                "max": 50,
+                "dimension": 0,
+                "inRange": {
+                  "color": [
+                    "#4a657a",
+                    "#308e92",
+                    "#b1cfa5",
+                    "#f5d69f",
+                    "#f5898b",
+                    "#ef5055"
+                  ]
+                }
+              },
+              "yAxis": {
+                "axisLine": {
+                  "show": false
+                },
+                "axisLabel": {
+                  "textStyle": {
+                    "color": "#4a657a"
+                  }
+                },
+                "splitLine": {
+                  "show": true,
+                  "lineStyle": {
+                    "color": "#08263f"
+                  }
+                },
+                "axisTick": {
+                  "show": false
+                }
+              },
+              "series": [
+                {
+                  "name": "back",
+                  "type": "bar",
+                  "data": {
+                    "$reference": "data2"
+                  },
+                  "z": 1,
+                  "itemStyle": {
+                    "normal": {
+                      "opacity": 0.4,
+                      "barBorderRadius": 5,
+                      "shadowBlur": 3,
+                      "shadowColor": "#111"
+                    }
+                  }
+                },
+                {
+                  "name": "Simulate Shadow",
+                  "type": "line",
+                  "data": {
+                    "$reference": "data"
+                  },
+                  "z": 2,
+                  "showSymbol": false,
+                  "animationDelay": 0,
+                  "animationEasing": "linear",
+                  "animationDuration": 1200,
+                  "lineStyle": {
+                    "normal": {
+                      "color": "transparent"
+                    }
+                  },
+                  "areaStyle": {
+                    "normal": {
+                      "color": "#08263a",
+                      "shadowBlur": 50,
+                      "shadowColor": "#000"
+                    }
+                  }
+                },
+                {
+                  "name": "front",
+                  "type": "bar",
+                  "data": {
+                    "$reference": "data"
+                  },
+                  "xAxisIndex": 1,
+                  "z": 3,
+                  "itemStyle": {
+                    "normal": {
+                      "barBorderRadius": 5
+                    }
+                  }
+                }
+              ],
+              "animationEasing": "elasticOut",
+              "animationEasingUpdate": "elasticOut",
+              "animationDelay": {
+                "$unsupported": "(idx) {\n          return idx * 20\n        }"
+              },
+              "animationDelayUpdate": {
+                "$unsupported": "(idx) {\n          return idx * 20\n        }"
+              }
+            },
+            "references": [
+              "data",
+              "data2",
+              "xAxisData"
+            ]
           }
         ],
+        "staticBindings": {},
         "dataSources": [
           "data2",
           "xAxisData"
@@ -39731,9 +41342,238 @@
             "line": 48,
             "source": "{\n        backgroundColor: '#394056',\n        title: {\n          top: 20,\n          text: 'Requests',\n          textStyle: {\n            fontWeight: 'normal',\n            fontSize: 16,\n            color: '#F1F1F3'\n          },\n          left: '1%'\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          }\n        },\n        legend: {\n          top: 20,\n          icon: 'rect',\n          itemWidth: 14,\n          itemHeight: 5,\n          itemGap: 13,\n          data: ['CMCC', 'CTCC', 'CUCC'],\n          right: '4%',\n          textStyle: {\n            fontSize: 12,\n            color: '#F1F1F3'\n          }\n        },\n        grid: {\n          top: 100,\n          left: '2%',\n          right: '2%',\n          bottom: '2%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          boundaryGap: false,\n          axisLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          },\n          data: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55']\n        }],\n        yAxis: [{\n          type: 'value',\n          name: '(%)',\n          axisTick: {\n            show: false\n          },\n          axisLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          },\n          axisLabel: {\n            margin: 10,\n            textStyle: {\n              fontSize: 14\n            }\n          },\n          splitLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          }\n        }],\n        series: [{\n          name: 'CMCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(137, 189, 27, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(137, 189, 27, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(137,189,27)',\n              borderColor: 'rgba(137,189,2,0.27)',\n              borderWidth: 12\n\n            }\n          },\n          data: [220, 182, 191, 134, 150, 120, 110, 125, 145, 122, 165, 122]\n        }, {\n          name: 'CTCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(0, 136, 212, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(0, 136, 212, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(0,136,212)',\n              borderColor: 'rgba(0,136,212,0.2)',\n              borderWidth: 12\n\n            }\n          },\n          data: [120, 110, 125, 145, 122, 165, 122, 220, 182, 191, 134, 150]\n        }, {\n          name: 'CUCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(219, 50, 51, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(219, 50, 51, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(219,50,51)',\n              borderColor: 'rgba(219,50,51,0.2)',\n              borderWidth: 12\n            }\n          },\n          data: [220, 182, 125, 145, 122, 191, 134, 150, 120, 110, 165, 122]\n        }]\n      }",
             "seriesCount": 5,
-            "literalDataArrays": 5
+            "literalDataArrays": 5,
+            "containerHeight": "200px",
+            "option": {
+              "backgroundColor": "#394056",
+              "title": {
+                "top": 20,
+                "text": "Requests",
+                "textStyle": {
+                  "fontWeight": "normal",
+                  "fontSize": 16,
+                  "color": "#F1F1F3"
+                },
+                "left": "1%"
+              },
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "lineStyle": {
+                    "color": "#57617B"
+                  }
+                }
+              },
+              "legend": {
+                "top": 20,
+                "icon": "rect",
+                "itemWidth": 14,
+                "itemHeight": 5,
+                "itemGap": 13,
+                "data": [
+                  "CMCC",
+                  "CTCC",
+                  "CUCC"
+                ],
+                "right": "4%",
+                "textStyle": {
+                  "fontSize": 12,
+                  "color": "#F1F1F3"
+                }
+              },
+              "grid": {
+                "top": 100,
+                "left": "2%",
+                "right": "2%",
+                "bottom": "2%",
+                "containLabel": true
+              },
+              "xAxis": [
+                {
+                  "type": "category",
+                  "boundaryGap": false,
+                  "axisLine": {
+                    "lineStyle": {
+                      "color": "#57617B"
+                    }
+                  },
+                  "data": [
+                    "13:00",
+                    "13:05",
+                    "13:10",
+                    "13:15",
+                    "13:20",
+                    "13:25",
+                    "13:30",
+                    "13:35",
+                    "13:40",
+                    "13:45",
+                    "13:50",
+                    "13:55"
+                  ]
+                }
+              ],
+              "yAxis": [
+                {
+                  "type": "value",
+                  "name": "(%)",
+                  "axisTick": {
+                    "show": false
+                  },
+                  "axisLine": {
+                    "lineStyle": {
+                      "color": "#57617B"
+                    }
+                  },
+                  "axisLabel": {
+                    "margin": 10,
+                    "textStyle": {
+                      "fontSize": 14
+                    }
+                  },
+                  "splitLine": {
+                    "lineStyle": {
+                      "color": "#57617B"
+                    }
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "name": "CMCC",
+                  "type": "line",
+                  "smooth": true,
+                  "symbol": "circle",
+                  "symbolSize": 5,
+                  "showSymbol": false,
+                  "lineStyle": {
+                    "normal": {
+                      "width": 1
+                    }
+                  },
+                  "areaStyle": {
+                    "normal": {
+                      "color": {
+                        "$unsupported": "new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(137, 189, 27, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(137, 189, 27, 0)'\n              }], f"
+                      },
+                      "shadowColor": "rgba(0, 0, 0, 0.1)",
+                      "shadowBlur": 10
+                    }
+                  },
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgb(137,189,27)",
+                      "borderColor": "rgba(137,189,2,0.27)",
+                      "borderWidth": 12
+                    }
+                  },
+                  "data": [
+                    220,
+                    182,
+                    191,
+                    134,
+                    150,
+                    120,
+                    110,
+                    125,
+                    145,
+                    122,
+                    165,
+                    122
+                  ]
+                },
+                {
+                  "name": "CTCC",
+                  "type": "line",
+                  "smooth": true,
+                  "symbol": "circle",
+                  "symbolSize": 5,
+                  "showSymbol": false,
+                  "lineStyle": {
+                    "normal": {
+                      "width": 1
+                    }
+                  },
+                  "areaStyle": {
+                    "normal": {
+                      "color": {
+                        "$unsupported": "new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(0, 136, 212, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(0, 136, 212, 0)'\n              }], fal"
+                      },
+                      "shadowColor": "rgba(0, 0, 0, 0.1)",
+                      "shadowBlur": 10
+                    }
+                  },
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgb(0,136,212)",
+                      "borderColor": "rgba(0,136,212,0.2)",
+                      "borderWidth": 12
+                    }
+                  },
+                  "data": [
+                    120,
+                    110,
+                    125,
+                    145,
+                    122,
+                    165,
+                    122,
+                    220,
+                    182,
+                    191,
+                    134,
+                    150
+                  ]
+                },
+                {
+                  "name": "CUCC",
+                  "type": "line",
+                  "smooth": true,
+                  "symbol": "circle",
+                  "symbolSize": 5,
+                  "showSymbol": false,
+                  "lineStyle": {
+                    "normal": {
+                      "width": 1
+                    }
+                  },
+                  "areaStyle": {
+                    "normal": {
+                      "color": {
+                        "$unsupported": "new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(219, 50, 51, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(219, 50, 51, 0)'\n              }], fal"
+                      },
+                      "shadowColor": "rgba(0, 0, 0, 0.1)",
+                      "shadowBlur": 10
+                    }
+                  },
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgb(219,50,51)",
+                      "borderColor": "rgba(219,50,51,0.2)",
+                      "borderWidth": 12
+                    }
+                  },
+                  "data": [
+                    220,
+                    182,
+                    125,
+                    145,
+                    122,
+                    191,
+                    134,
+                    150,
+                    120,
+                    110,
+                    165,
+                    122
+                  ]
+                }
+              ]
+            },
+            "references": []
           }
         ],
+        "staticBindings": {},
         "dataSources": [],
         "lifecycle": [
           "beforeDestroy",
@@ -39826,9 +41666,240 @@
             "line": 54,
             "source": "{\n        backgroundColor: '#344b58',\n        title: {\n          text: 'statistics',\n          x: '20',\n          top: '20',\n          textStyle: {\n            color: '#fff',\n            fontSize: '22'\n          },\n          subtextStyle: {\n            color: '#90979c',\n            fontSize: '16'\n          }\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            textStyle: {\n              color: '#fff'\n            }\n          }\n        },\n        grid: {\n          left: '5%',\n          right: '5%',\n          borderWidth: 0,\n          top: 150,\n          bottom: 95,\n          textStyle: {\n            color: '#fff'\n          }\n        },\n        legend: {\n          x: '5%',\n          top: '10%',\n          textStyle: {\n            color: '#90979c'\n          },\n          data: ['female', 'male', 'average']\n        },\n        calculable: true,\n        xAxis: [{\n          type: 'category',\n          axisLine: {\n            lineStyle: {\n              color: '#90979c'\n            }\n          },\n          splitLine: {\n            show: false\n          },\n          axisTick: {\n            show: false\n          },\n          splitArea: {\n            show: false\n          },\n          axisLabel: {\n            interval: 0\n\n          },\n          data: xData\n        }],\n        yAxis: [{\n          type: 'value',\n          splitLine: {\n            show: false\n          },\n          axisLine: {\n            lineStyle: {\n              color: '#90979c'\n            }\n          },\n          axisTick: {\n            show: false\n          },\n          axisLabel: {\n            interval: 0\n          },\n          splitArea: {\n            show: false\n          }\n        }],\n        dataZoom: [{\n          show: true,\n          height: 30,\n          xAxisIndex: [\n            0\n          ],\n          bottom: 30,\n          start: 10,\n          end: 80,\n          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',\n          handleSize: '110%',\n          handleStyle: {\n            color: '#d3dee5'\n\n          },\n          textStyle: {\n            color: '#fff' },\n          borderColor: '#90979c'\n\n        }, {\n          type: 'inside',\n          show: true,\n          height: 15,\n          start: 1,\n          end: 35\n        }],\n        series: [{\n          name: 'female',\n          type: 'bar',\n          stack: 'total',\n          barMaxWidth: 35,\n          barGap: '10%',\n          itemStyle: {\n            normal: {\n              color: 'rgba(255,144,128,1)',\n              label: {\n                show: true,\n                textStyle: {\n                  color: '#fff'\n                },\n                position: 'insideTop',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            709,\n            1917,\n            2455,\n            2610,\n            1719,\n            1433,\n            1544,\n            3285,\n            5208,\n            3372,\n            2484,\n            4078\n          ]\n        },\n\n        {\n          name: 'male',\n          type: 'bar',\n          stack: 'total',\n          itemStyle: {\n            normal: {\n              color: 'rgba(0,191,183,1)',\n              barBorderRadius: 0,\n              label: {\n                show: true,\n                position: 'top',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            327,\n            1776,\n            507,\n            1200,\n            800,\n            482,\n            204,\n            1390,\n            1001,\n            951,\n            381,\n            220\n          ]\n        }, {\n          name: 'average',\n          type: 'line',\n          stack: 'total',\n          symbolSize: 10,\n          symbol: 'circle',\n          itemStyle: {\n            normal: {\n              color: 'rgba(252,230,48,1)',\n              barBorderRadius: 0,\n              label: {\n                show: true,\n                position: 'top',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            1036,\n            3693,\n            2962,\n            3810,\n            2519,\n            1915,\n            1748,\n            4675,\n            6209,\n            4323,\n            2865,\n            4298\n          ]\n        }\n        ]\n      }",
             "seriesCount": 6,
-            "literalDataArrays": 4
+            "literalDataArrays": 4,
+            "containerHeight": "200px",
+            "option": {
+              "backgroundColor": "#344b58",
+              "title": {
+                "text": "statistics",
+                "x": "20",
+                "top": "20",
+                "textStyle": {
+                  "color": "#fff",
+                  "fontSize": "22"
+                },
+                "subtextStyle": {
+                  "color": "#90979c",
+                  "fontSize": "16"
+                }
+              },
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "textStyle": {
+                    "color": "#fff"
+                  }
+                }
+              },
+              "grid": {
+                "left": "5%",
+                "right": "5%",
+                "borderWidth": 0,
+                "top": 150,
+                "bottom": 95,
+                "textStyle": {
+                  "color": "#fff"
+                }
+              },
+              "legend": {
+                "x": "5%",
+                "top": "10%",
+                "textStyle": {
+                  "color": "#90979c"
+                },
+                "data": [
+                  "female",
+                  "male",
+                  "average"
+                ]
+              },
+              "calculable": true,
+              "xAxis": [
+                {
+                  "type": "category",
+                  "axisLine": {
+                    "lineStyle": {
+                      "color": "#90979c"
+                    }
+                  },
+                  "splitLine": {
+                    "show": false
+                  },
+                  "axisTick": {
+                    "show": false
+                  },
+                  "splitArea": {
+                    "show": false
+                  },
+                  "axisLabel": {
+                    "interval": 0
+                  },
+                  "data": {
+                    "$reference": "xData"
+                  }
+                }
+              ],
+              "yAxis": [
+                {
+                  "type": "value",
+                  "splitLine": {
+                    "show": false
+                  },
+                  "axisLine": {
+                    "lineStyle": {
+                      "color": "#90979c"
+                    }
+                  },
+                  "axisTick": {
+                    "show": false
+                  },
+                  "axisLabel": {
+                    "interval": 0
+                  },
+                  "splitArea": {
+                    "show": false
+                  }
+                }
+              ],
+              "dataZoom": [
+                {
+                  "show": true,
+                  "height": 30,
+                  "xAxisIndex": [
+                    0
+                  ],
+                  "bottom": 30,
+                  "start": 10,
+                  "end": 80,
+                  "handleIcon": "path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z",
+                  "handleSize": "110%",
+                  "handleStyle": {
+                    "color": "#d3dee5"
+                  },
+                  "textStyle": {
+                    "color": "#fff"
+                  },
+                  "borderColor": "#90979c"
+                },
+                {
+                  "type": "inside",
+                  "show": true,
+                  "height": 15,
+                  "start": 1,
+                  "end": 35
+                }
+              ],
+              "series": [
+                {
+                  "name": "female",
+                  "type": "bar",
+                  "stack": "total",
+                  "barMaxWidth": 35,
+                  "barGap": "10%",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgba(255,144,128,1)",
+                      "label": {
+                        "show": true,
+                        "textStyle": {
+                          "color": "#fff"
+                        },
+                        "position": "insideTop",
+                        "formatter": {
+                          "$unsupported": "(p) {\n                  return p.value > 0 ? p.value : ''\n                }"
+                        }
+                      }
+                    }
+                  },
+                  "data": [
+                    709,
+                    1917,
+                    2455,
+                    2610,
+                    1719,
+                    1433,
+                    1544,
+                    3285,
+                    5208,
+                    3372,
+                    2484,
+                    4078
+                  ]
+                },
+                {
+                  "name": "male",
+                  "type": "bar",
+                  "stack": "total",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgba(0,191,183,1)",
+                      "barBorderRadius": 0,
+                      "label": {
+                        "show": true,
+                        "position": "top",
+                        "formatter": {
+                          "$unsupported": "(p) {\n                  return p.value > 0 ? p.value : ''\n                }"
+                        }
+                      }
+                    }
+                  },
+                  "data": [
+                    327,
+                    1776,
+                    507,
+                    1200,
+                    800,
+                    482,
+                    204,
+                    1390,
+                    1001,
+                    951,
+                    381,
+                    220
+                  ]
+                },
+                {
+                  "name": "average",
+                  "type": "line",
+                  "stack": "total",
+                  "symbolSize": 10,
+                  "symbol": "circle",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "rgba(252,230,48,1)",
+                      "barBorderRadius": 0,
+                      "label": {
+                        "show": true,
+                        "position": "top",
+                        "formatter": {
+                          "$unsupported": "(p) {\n                  return p.value > 0 ? p.value : ''\n                }"
+                        }
+                      }
+                    }
+                  },
+                  "data": [
+                    1036,
+                    3693,
+                    2962,
+                    3810,
+                    2519,
+                    1915,
+                    1748,
+                    4675,
+                    6209,
+                    4323,
+                    2865,
+                    4298
+                  ]
+                }
+              ]
+            },
+            "references": [
+              "xData"
+            ]
           }
         ],
+        "staticBindings": {},
         "dataSources": [
           "xData"
         ],
@@ -39921,9 +41992,112 @@
             "line": 49,
             "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        grid: {\n          top: 10,\n          left: '2%',\n          right: '2%',\n          bottom: '3%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          axisTick: {\n            alignWithLabel: true\n          }\n        }],\n        yAxis: [{\n          type: 'value',\n          axisTick: {\n            show: false\n          }\n        }],\n        series: [{\n          name: 'pageA',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [79, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageB',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [80, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageC',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [30, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }]\n      }",
             "seriesCount": 6,
-            "literalDataArrays": 4
+            "literalDataArrays": 4,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "shadow"
+                }
+              },
+              "grid": {
+                "top": 10,
+                "left": "2%",
+                "right": "2%",
+                "bottom": "3%",
+                "containLabel": true
+              },
+              "xAxis": [
+                {
+                  "type": "category",
+                  "data": [
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat",
+                    "Sun"
+                  ],
+                  "axisTick": {
+                    "alignWithLabel": true
+                  }
+                }
+              ],
+              "yAxis": [
+                {
+                  "type": "value",
+                  "axisTick": {
+                    "show": false
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "name": "pageA",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    79,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                },
+                {
+                  "name": "pageB",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    80,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                },
+                {
+                  "name": "pageC",
+                  "type": "bar",
+                  "stack": "vistors",
+                  "barWidth": "60%",
+                  "data": [
+                    30,
+                    52,
+                    200,
+                    334,
+                    390,
+                    330,
+                    220
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                }
+              ]
+            },
+            "references": [
+              "animationDuration"
+            ]
           }
         ],
+        "staticBindings": {
+          "animationDuration": 6000
+        },
         "dataSources": [],
         "lifecycle": [
           "beforeDestroy",
@@ -40027,9 +42201,103 @@
             "line": 65,
             "source": "{\n        xAxis: {\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          boundaryGap: false,\n          axisTick: {\n            show: false\n          }\n        },\n        grid: {\n          left: 10,\n          right: 10,\n          bottom: 20,\n          top: 30,\n          containLabel: true\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            type: 'cross'\n          },\n          padding: [5, 10]\n        },\n        yAxis: {\n          axisTick: {\n            show: false\n          }\n        },\n        legend: {\n          data: ['expected', 'actual']\n        },\n        series: [{\n          name: 'expected', itemStyle: {\n            normal: {\n              color: '#FF005A',\n              lineStyle: {\n                color: '#FF005A',\n                width: 2\n              }\n            }\n          },\n          smooth: true,\n          type: 'line',\n          data: expectedData,\n          animationDuration: 2800,\n          animationEasing: 'cubicInOut'\n        },\n        {\n          name: 'actual',\n          smooth: true,\n          type: 'line',\n          itemStyle: {\n            normal: {\n              color: '#3888fa',\n              lineStyle: {\n                color: '#3888fa',\n                width: 2\n              },\n              areaStyle: {\n                color: '#f3f8ff'\n              }\n            }\n          },\n          data: actualData,\n          animationDuration: 2800,\n          animationEasing: 'quadraticOut'\n        }]\n      }",
             "seriesCount": 3,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "350px",
+            "option": {
+              "xAxis": {
+                "data": [
+                  "Mon",
+                  "Tue",
+                  "Wed",
+                  "Thu",
+                  "Fri",
+                  "Sat",
+                  "Sun"
+                ],
+                "boundaryGap": false,
+                "axisTick": {
+                  "show": false
+                }
+              },
+              "grid": {
+                "left": 10,
+                "right": 10,
+                "bottom": 20,
+                "top": 30,
+                "containLabel": true
+              },
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "cross"
+                },
+                "padding": [
+                  5,
+                  10
+                ]
+              },
+              "yAxis": {
+                "axisTick": {
+                  "show": false
+                }
+              },
+              "legend": {
+                "data": [
+                  "expected",
+                  "actual"
+                ]
+              },
+              "series": [
+                {
+                  "name": "expected",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "#FF005A",
+                      "lineStyle": {
+                        "color": "#FF005A",
+                        "width": 2
+                      }
+                    }
+                  },
+                  "smooth": true,
+                  "type": "line",
+                  "data": {
+                    "$reference": "expectedData"
+                  },
+                  "animationDuration": 2800,
+                  "animationEasing": "cubicInOut"
+                },
+                {
+                  "name": "actual",
+                  "smooth": true,
+                  "type": "line",
+                  "itemStyle": {
+                    "normal": {
+                      "color": "#3888fa",
+                      "lineStyle": {
+                        "color": "#3888fa",
+                        "width": 2
+                      },
+                      "areaStyle": {
+                        "color": "#f3f8ff"
+                      }
+                    }
+                  },
+                  "data": {
+                    "$reference": "actualData"
+                  },
+                  "animationDuration": 2800,
+                  "animationEasing": "quadraticOut"
+                }
+              ]
+            },
+            "references": [
+              "actualData",
+              "expectedData"
+            ]
           }
         ],
+        "staticBindings": {},
         "dataSources": [
           "actualData",
           "chartData",
@@ -40143,9 +42411,68 @@
             "line": 47,
             "source": "{\n        tooltip: {\n          trigger: 'item',\n          formatter: '{a} <br/>{b} : {c} ({d}%)'\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']\n        },\n        series: [\n          {\n            name: 'WEEKLY WRITE ARTICLES',\n            type: 'pie',\n            roseType: 'radius',\n            radius: [15, 95],\n            center: ['50%', '38%'],\n            data: [\n              { value: 320, name: 'Industries' },\n              { value: 240, name: 'Technology' },\n              { value: 149, name: 'Forex' },\n              { value: 100, name: 'Gold' },\n              { value: 59, name: 'Forecasts' }\n            ],\n            animationEasing: 'cubicInOut',\n            animationDuration: 2600\n          }\n        ]\n      }",
             "seriesCount": 1,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "item",
+                "formatter": "{a} <br/>{b} : {c} ({d}%)"
+              },
+              "legend": {
+                "left": "center",
+                "bottom": "10",
+                "data": [
+                  "Industries",
+                  "Technology",
+                  "Forex",
+                  "Gold",
+                  "Forecasts"
+                ]
+              },
+              "series": [
+                {
+                  "name": "WEEKLY WRITE ARTICLES",
+                  "type": "pie",
+                  "roseType": "radius",
+                  "radius": [
+                    15,
+                    95
+                  ],
+                  "center": [
+                    "50%",
+                    "38%"
+                  ],
+                  "data": [
+                    {
+                      "value": 320,
+                      "name": "Industries"
+                    },
+                    {
+                      "value": 240,
+                      "name": "Technology"
+                    },
+                    {
+                      "value": 149,
+                      "name": "Forex"
+                    },
+                    {
+                      "value": 100,
+                      "name": "Gold"
+                    },
+                    {
+                      "value": 59,
+                      "name": "Forecasts"
+                    }
+                  ],
+                  "animationEasing": "cubicInOut",
+                  "animationDuration": 2600
+                }
+              ]
+            },
+            "references": []
           }
         ],
+        "staticBindings": {},
         "dataSources": [],
         "lifecycle": [
           "beforeDestroy",
@@ -40247,9 +42574,130 @@
             "line": 49,
             "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        radar: {\n          radius: '66%',\n          center: ['50%', '42%'],\n          splitNumber: 8,\n          splitArea: {\n            areaStyle: {\n              color: 'rgba(127,95,132,.3)',\n              opacity: 1,\n              shadowBlur: 45,\n              shadowColor: 'rgba(0,0,0,.5)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 15\n            }\n          },\n          indicator: [\n            { name: 'Sales', max: 10000 },\n            { name: 'Administration', max: 20000 },\n            { name: 'Information Technology', max: 20000 },\n            { name: 'Customer Support', max: 20000 },\n            { name: 'Development', max: 20000 },\n            { name: 'Marketing', max: 20000 }\n          ]\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']\n        },\n        series: [{\n          type: 'radar',\n          symbolSize: 0,\n          areaStyle: {\n            normal: {\n              shadowBlur: 13,\n              shadowColor: 'rgba(0,0,0,.2)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 10,\n              opacity: 1\n            }\n          },\n          data: [\n            {\n              value: [5000, 7000, 12000, 11000, 15000, 14000],\n              name: 'Allocated Budget'\n            },\n            {\n              value: [4000, 9000, 15000, 15000, 13000, 11000],\n              name: 'Expected Spending'\n            },\n            {\n              value: [5500, 11000, 12000, 15000, 12000, 12000],\n              name: 'Actual Spending'\n            }\n          ],\n          animationDuration: animationDuration\n        }]\n      }",
             "seriesCount": 2,
-            "literalDataArrays": 2
+            "literalDataArrays": 2,
+            "containerHeight": "300px",
+            "option": {
+              "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                  "type": "shadow"
+                }
+              },
+              "radar": {
+                "radius": "66%",
+                "center": [
+                  "50%",
+                  "42%"
+                ],
+                "splitNumber": 8,
+                "splitArea": {
+                  "areaStyle": {
+                    "color": "rgba(127,95,132,.3)",
+                    "opacity": 1,
+                    "shadowBlur": 45,
+                    "shadowColor": "rgba(0,0,0,.5)",
+                    "shadowOffsetX": 0,
+                    "shadowOffsetY": 15
+                  }
+                },
+                "indicator": [
+                  {
+                    "name": "Sales",
+                    "max": 10000
+                  },
+                  {
+                    "name": "Administration",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Information Technology",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Customer Support",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Development",
+                    "max": 20000
+                  },
+                  {
+                    "name": "Marketing",
+                    "max": 20000
+                  }
+                ]
+              },
+              "legend": {
+                "left": "center",
+                "bottom": "10",
+                "data": [
+                  "Allocated Budget",
+                  "Expected Spending",
+                  "Actual Spending"
+                ]
+              },
+              "series": [
+                {
+                  "type": "radar",
+                  "symbolSize": 0,
+                  "areaStyle": {
+                    "normal": {
+                      "shadowBlur": 13,
+                      "shadowColor": "rgba(0,0,0,.2)",
+                      "shadowOffsetX": 0,
+                      "shadowOffsetY": 10,
+                      "opacity": 1
+                    }
+                  },
+                  "data": [
+                    {
+                      "value": [
+                        5000,
+                        7000,
+                        12000,
+                        11000,
+                        15000,
+                        14000
+                      ],
+                      "name": "Allocated Budget"
+                    },
+                    {
+                      "value": [
+                        4000,
+                        9000,
+                        15000,
+                        15000,
+                        13000,
+                        11000
+                      ],
+                      "name": "Expected Spending"
+                    },
+                    {
+                      "value": [
+                        5500,
+                        11000,
+                        12000,
+                        15000,
+                        12000,
+                        12000
+                      ],
+                      "name": "Actual Spending"
+                    }
+                  ],
+                  "animationDuration": {
+                    "$reference": "animationDuration"
+                  }
+                }
+              ]
+            },
+            "references": [
+              "animationDuration"
+            ]
           }
         ],
+        "staticBindings": {
+          "animationDuration": 3000
+        },
         "dataSources": [],
         "lifecycle": [
           "beforeDestroy",
@@ -40350,7 +42798,7 @@
       "chartFiles": 7,
       "components": 7,
       "evidenceCount": 65,
-      "scanMs": 31
+      "scanMs": 39
     }
   },
   "blockers": [],
@@ -40372,6 +42820,8 @@
     "embeddedSvgAssets": 17,
     "compiledStyleSheets": 74,
     "failedStyleSheets": 4,
-    "scanMs": 284
+    "staticDataBindings": 19,
+    "dataCardinalities": 47,
+    "scanMs": 324
   }
 }

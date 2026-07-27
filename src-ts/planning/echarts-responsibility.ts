@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, extname, join, relative, resolve } from "node:path";
+import { collectStaticReferences, extractTopLevelStaticBindings, parseStaticExpression, type StaticExpressionValue } from "./static-expression.js";
 
 export interface EChartsResponsibilityEvidence {
   file: string;
@@ -16,7 +17,8 @@ export interface EChartsComponentResponsibility {
   themes: string[];
   chartTypes: string[];
   optionKeys: string[];
-  optionSlices: Array<{ line: number; source: string; seriesCount: number; literalDataArrays: number; containerHeight?: string }>;
+  optionSlices: Array<{ line: number; source: string; seriesCount: number; literalDataArrays: number; containerHeight?: string; option?: StaticExpressionValue; references: string[] }>;
+  staticBindings: Record<string, StaticExpressionValue>;
   dataSources: string[];
   lifecycle: string[];
   interactions: string[];
@@ -121,12 +123,23 @@ function balancedObjectAfter(source: string, start: number): string | undefined 
   }
   return undefined;
 }
+function chartContainerHeight(source: string): string | undefined {
+  return source.match(/\bheight\s*:\s*\{[\s\S]{0,300}?\bdefault\s*:\s*["']([^"']+)["']/)?.[1]
+    ?? source.match(/(?:height\s*:\s*|height=["'])(\d+(?:px|%|vh|rem)?)/i)?.[1];
+}
 function optionSlices(file: SourceFile): EChartsComponentResponsibility["optionSlices"] {
   return matches(file.source, /\.setOption\s*\(/g).flatMap((match) => {
     const object = balancedObjectAfter(file.source, match.index ?? 0); if (!object) return [];
-    const template = file.source.match(/<template[^>]*>([\s\S]*?)<\/template>/i)?.[1] ?? "";
-    const height = template.match(/(?:height\s*:\s*|height=["'])(\d+(?:px|%|vh|rem)?)/i)?.[1];
-    return [{ line: lineAt(file.source, match.index ?? 0), source: object.slice(0, 12000), seriesCount: matches(object, /\btype\s*:\s*['"][A-Za-z][\w-]*['"]/g).length, literalDataArrays: matches(object, /\bdata\s*:\s*\[/g).length, containerHeight: height }];
+    const option = parseStaticExpression(object);
+    return [{
+      line: lineAt(file.source, match.index ?? 0),
+      source: object.slice(0, 12000),
+      seriesCount: matches(object, /\btype\s*:\s*['"][A-Za-z][\w-]*['"]/g).length,
+      literalDataArrays: matches(object, /\bdata\s*:\s*\[/g).length,
+      containerHeight: chartContainerHeight(file.source),
+      option,
+      references: collectStaticReferences(option),
+    }];
   });
 }
 export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsResponsibilityGraph {
@@ -169,6 +182,7 @@ export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsRespo
       chartTypes: unique(chartTypeMatches.map((match) => match[1]).filter((type) => chartRendererTypes.has(type))),
       optionKeys: knownOptionKeys.filter((key) => new RegExp(`\\b${key}\\s*:`).test(file.source)),
       optionSlices: optionSlices(file),
+      staticBindings: extractTopLevelStaticBindings(file.source.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/i)?.[1] ?? file.source),
       dataSources,
       lifecycle: unique(lifecycle),
       interactions,

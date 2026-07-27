@@ -14,6 +14,7 @@ export interface VisualTargetOwnerPlan {
   acceptanceSelectors: string[];
   childComponents: string[];
   templateStructure: SfcTemplateStructure;
+  dataCardinality: SfcVisualComponentResponsibility["dataCardinality"];
   interactions: { events: string[]; models: string[]; conditions: string[]; loops: string[] };
   lifecycle: string[];
   responsiveMediaQueries: string[];
@@ -25,6 +26,7 @@ export interface VisualTargetOwnerPlan {
     chartTypes: string[];
     optionKeys: string[];
     optionSlices: EChartsComponentResponsibility["optionSlices"];
+    staticBindings: EChartsComponentResponsibility["staticBindings"];
     dataSources: string[];
     capabilities: EChartsComponentResponsibility["capabilities"];
   };
@@ -185,6 +187,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
     acceptanceSelectors: selectorCandidates(component),
     childComponents: component.childComponents,
     templateStructure: component.templateStructure,
+    dataCardinality: component.dataCardinality,
     interactions: component.bindings,
     lifecycle: component.lifecycle,
     responsiveMediaQueries: unique(component.styles.flatMap((style) => style.mediaQueries)),
@@ -207,6 +210,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
       acceptanceSelectors: base.acceptanceSelectors,
       childComponents: [],
       templateStructure: { roots: [], nodes: [], componentOrder: [], primitiveCounts: {}, inlineVisualDeclarations: 0, conditionalRegions: 0, repeatedRegions: 0, slotOwners: 0, responsiveGridNodes: 0 },
+      dataCardinality: component.dataCardinality,
       interactions: { events: chart.interactions, models: [], conditions: [], loops: [] },
       lifecycle: chart.lifecycle,
       responsiveMediaQueries: base.responsiveMediaQueries,
@@ -218,6 +222,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
         chartTypes: chart.chartTypes,
         optionKeys: chart.optionKeys,
         optionSlices: chart.optionSlices,
+        staticBindings: chart.staticBindings,
         dataSources: chart.dataSources,
         capabilities: chart.capabilities,
       },

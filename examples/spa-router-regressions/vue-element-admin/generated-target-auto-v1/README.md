@@ -5,7 +5,7 @@ Deterministic visual target generated from the reviewed route-shell plan and vis
 - model calls: 0
 - artifact manual edits: 0
 - generated files: 4
-- generated lines: 163
+- generated lines: 199
 - selected visual owners: 20
 - primitive DOM nodes: 60
 - primitive style rules: 7
