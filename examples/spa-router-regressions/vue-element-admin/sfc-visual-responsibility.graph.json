@@ -51242,7 +51242,7 @@
       "chartFiles": 7,
       "components": 7,
       "evidenceCount": 65,
-      "scanMs": 38
+      "scanMs": 71
     }
   },
   "blockers": [],
@@ -51266,7 +51266,7 @@
     "failedStyleSheets": 4,
     "staticDataBindings": 19,
     "dataCardinalities": 54,
-    "scanMs": 338
+    "scanMs": 767
   },
   "apiFixtures": {
     "schemaVersion": "1.0",
@@ -51304,7 +51304,28 @@
             "/dev-api/vue-element-admin/transaction/list",
             "/prod-api/vue-element-admin/transaction/list",
             "/stage-api/vue-element-admin/transaction/list"
-          ]
+          ],
+          "runtimeSelections": [
+            {
+              "environment": "development",
+              "variable": "VUE_APP_BASE_API",
+              "value": "/dev-api",
+              "source": ".env.development:VUE_APP_BASE_API"
+            },
+            {
+              "environment": "production",
+              "variable": "VUE_APP_BASE_API",
+              "value": "/prod-api",
+              "source": ".env.production:VUE_APP_BASE_API"
+            },
+            {
+              "environment": "staging",
+              "variable": "VUE_APP_BASE_API",
+              "value": "/stage-api",
+              "source": ".env.staging:VUE_APP_BASE_API"
+            }
+          ],
+          "proxyRoutes": []
         },
         "consumption": {
           "targetBinding": "list",
@@ -51712,12 +51733,17 @@
       "matchedFixtures": 1,
       "materializedBindings": 1,
       "renderedFields": 3,
-      "transportPrefixesInferred": 3
+      "transportPrefixesInferred": 3,
+      "runtimeSelectionsInferred": 3,
+      "proxyRoutesInferred": 0,
+      "proxyTargetsInferred": 0,
+      "proxyRewriteRulesInferred": 0
     },
     "reviewReasons": [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
       "unresolved calls remain explicit and are never replaced with guessed data",
-      "transport prefixes are inferred only from the imported request client and concrete environment assignments"
+      "transport prefixes are inferred only from the imported request client and concrete environment assignments",
+      "dev-server proxy targets and path rewrites are retained as auditable transport evidence and never treated as browser request paths"
     ]
   }
 }

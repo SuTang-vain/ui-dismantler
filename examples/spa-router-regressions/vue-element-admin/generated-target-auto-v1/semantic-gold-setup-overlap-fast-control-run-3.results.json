@@ -1,0 +1,3566 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9529",
+  "passed": true,
+  "scenariosPassed": 6,
+  "scenariosTotal": 6,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/login?redirect=%2Fdashboard",
+          "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "wait",
+          "route": "/#/login?redirect=%2Fdashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1569.692,
+      "timing": {
+        "contextCreateMs": 7.395,
+        "instrumentationMs": 3.788,
+        "routeRegistrationMs": 1.144,
+        "pageCreateMs": 304.331,
+        "navigationMs": 226.635,
+        "initialSettleMs": 513.626,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 254.204,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 20.216,
+        "visualCaptureMs": 236.553,
+        "totalMs": 1569.692,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "durationMs": 254.204,
+            "setupPrefix": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 7992.47,
+      "timing": {
+        "contextCreateMs": 13.765,
+        "instrumentationMs": 0.997,
+        "routeRegistrationMs": 0.352,
+        "pageCreateMs": 132.364,
+        "navigationMs": 125.719,
+        "initialSettleMs": 505.839,
+        "setupPrefixStepsMs": 1001.693,
+        "remainingStepsMs": 0,
+        "checkpointStorageMs": 2.023,
+        "checkpointVerificationMs": 2.78,
+        "assertionMs": 4.32,
+        "visualCaptureMs": 6201.065,
+        "totalMs": 7992.47,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "durationMs": 283.205,
+            "setupPrefix": true
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "durationMs": 301.082,
+            "setupPrefix": true
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "durationMs": 417.406,
+            "setupPrefix": true
+          }
+        ]
+      },
+      "setupStateKey": "authenticated-admin",
+      "setupStateReused": false,
+      "setupStepsSkipped": 0,
+      "setupCheckpointPublished": true
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/#/nested/menu1/menu1-1",
+          "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/#/nested/menu1/menu1-1"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 2455.742,
+      "timing": {
+        "contextCreateMs": 204.706,
+        "instrumentationMs": 1.215,
+        "routeRegistrationMs": 0.429,
+        "pageCreateMs": 115.905,
+        "navigationMs": 192.567,
+        "initialSettleMs": 656.911,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 1059.653,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 4.832,
+        "visualCaptureMs": 217.862,
+        "totalMs": 2455.742,
+        "steps": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "durationMs": 326.903,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "durationMs": 350.223,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "durationMs": 382.527,
+            "setupPrefix": false
+          }
+        ]
+      },
+      "setupStateKey": "authenticated-admin",
+      "setupStateReused": true,
+      "setupStepsSkipped": 3,
+      "setupCheckpointPublished": false
+    },
+    {
+      "id": "admin-history-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/#/documentation/index",
+          "state": "{\"route\":\"#/documentation/index\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/#/dashboard",
+          "state": "null"
+        },
+        {
+          "method": "hashchange",
+          "target": "/#/dashboard",
+          "state": "null"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/documentation/index"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1987.802,
+      "timing": {
+        "contextCreateMs": 185.229,
+        "instrumentationMs": 0.848,
+        "routeRegistrationMs": 0.966,
+        "pageCreateMs": 128.531,
+        "navigationMs": 253.729,
+        "initialSettleMs": 537.956,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 840.809,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 19.575,
+        "visualCaptureMs": 0.001,
+        "totalMs": 1987.802,
+        "steps": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "durationMs": 429.813,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "durationMs": 410.996,
+            "setupPrefix": false
+          }
+        ]
+      },
+      "setupStateKey": "authenticated-admin",
+      "setupStateReused": true,
+      "setupStepsSkipped": 3,
+      "setupCheckpointPublished": false
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+      "transitions": [
+        {
+          "method": "pushState",
+          "target": "/#/permission/directive",
+          "state": "{\"route\":\"#/permission/directive\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/permission/directive"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 2960.67,
+      "timing": {
+        "contextCreateMs": 529.988,
+        "instrumentationMs": 3.571,
+        "routeRegistrationMs": 1.055,
+        "pageCreateMs": 210.78,
+        "navigationMs": 277.123,
+        "initialSettleMs": 533.372,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 714.516,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 6.256,
+        "visualCaptureMs": 680.443,
+        "totalMs": 2960.67,
+        "steps": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "durationMs": 333.433,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "durationMs": 381.083,
+            "setupPrefix": false
+          }
+        ]
+      },
+      "setupStateKey": "authenticated-admin",
+      "setupStateReused": true,
+      "setupStepsSkipped": 3,
+      "setupCheckpointPublished": false
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 3,
+          "action": "reload",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1918.035,
+      "timing": {
+        "contextCreateMs": 458.152,
+        "instrumentationMs": 1.019,
+        "routeRegistrationMs": 0.936,
+        "pageCreateMs": 230.215,
+        "navigationMs": 248.96,
+        "initialSettleMs": 538.105,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 414.828,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 22.302,
+        "visualCaptureMs": 0.001,
+        "totalMs": 1918.035,
+        "steps": [
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "durationMs": 414.828,
+            "setupPrefix": false
+          }
+        ]
+      },
+      "setupStateKey": "authenticated-admin",
+      "setupStateReused": true,
+      "setupStepsSkipped": 3,
+      "setupCheckpointPublished": false
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9527",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 4,
+    "setupStepsSkipped": 12,
+    "setupCheckpointsPublished": 1,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"414.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"443.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2016.899,
+        "timing": {
+          "contextCreateMs": 6.737,
+          "instrumentationMs": 3.206,
+          "routeRegistrationMs": 2.071,
+          "pageCreateMs": 303.283,
+          "navigationMs": 492.009,
+          "initialSettleMs": 516.181,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 250.484,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 215.311,
+          "visualCaptureMs": 222.497,
+          "totalMs": 2016.899,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "wait",
+              "durationMs": 250.484,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"335.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"335.300\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 8348.753,
+        "timing": {
+          "contextCreateMs": 14.45,
+          "instrumentationMs": 1.043,
+          "routeRegistrationMs": 0.365,
+          "pageCreateMs": 142.773,
+          "navigationMs": 407.499,
+          "initialSettleMs": 518.121,
+          "setupPrefixStepsMs": 885.681,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 1.567,
+          "checkpointVerificationMs": 3.047,
+          "assertionMs": 5.531,
+          "visualCaptureMs": 6367.277,
+          "totalMs": 8348.753,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "input",
+              "durationMs": 266.491,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 1,
+              "action": "input",
+              "durationMs": 300.646,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 2,
+              "action": "click",
+              "durationMs": 318.544,
+              "setupPrefix": true
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": false,
+        "setupStepsSkipped": 0,
+        "setupCheckpointPublished": true
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"349.800\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"349.800\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"1701.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 3362.569,
+        "timing": {
+          "contextCreateMs": 204.659,
+          "instrumentationMs": 0.94,
+          "routeRegistrationMs": 0.402,
+          "pageCreateMs": 119.949,
+          "navigationMs": 380.176,
+          "initialSettleMs": 525.93,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 1134.976,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 7.95,
+          "visualCaptureMs": 985.811,
+          "totalMs": 3362.569,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 316.929,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 365.65,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 5,
+              "action": "click",
+              "durationMs": 452.397,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"1340.100\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2736.77,
+        "timing": {
+          "contextCreateMs": 259.862,
+          "instrumentationMs": 1.576,
+          "routeRegistrationMs": 0.567,
+          "pageCreateMs": 286.95,
+          "navigationMs": 854.261,
+          "initialSettleMs": 523.482,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 799.32,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 8.494,
+          "visualCaptureMs": 0,
+          "totalMs": 2736.77,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 450.107,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "back",
+              "durationMs": 349.213,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"436.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"436.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"1412.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 3101.796,
+        "timing": {
+          "contextCreateMs": 231.149,
+          "instrumentationMs": 1.092,
+          "routeRegistrationMs": 0.405,
+          "pageCreateMs": 159.189,
+          "navigationMs": 486.295,
+          "initialSettleMs": 537.147,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 783.357,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 8.073,
+          "visualCaptureMs": 893.121,
+          "totalMs": 3101.796,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 349.953,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 433.404,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"324.000\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"324.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2043.543,
+        "timing": {
+          "contextCreateMs": 252.584,
+          "instrumentationMs": 0.797,
+          "routeRegistrationMs": 0.421,
+          "pageCreateMs": 148.217,
+          "navigationMs": 472.733,
+          "initialSettleMs": 526.445,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 616.677,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.81,
+          "visualCaptureMs": 0.002,
+          "totalMs": 2043.543,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "reload",
+              "durationMs": 616.677,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9529",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 4,
+    "setupStepsSkipped": 12,
+    "setupCheckpointsPublished": 1,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1569.692,
+        "timing": {
+          "contextCreateMs": 7.395,
+          "instrumentationMs": 3.788,
+          "routeRegistrationMs": 1.144,
+          "pageCreateMs": 304.331,
+          "navigationMs": 226.635,
+          "initialSettleMs": 513.626,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 254.204,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 20.216,
+          "visualCaptureMs": 236.553,
+          "totalMs": 1569.692,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "wait",
+              "durationMs": 254.204,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 7992.47,
+        "timing": {
+          "contextCreateMs": 13.765,
+          "instrumentationMs": 0.997,
+          "routeRegistrationMs": 0.352,
+          "pageCreateMs": 132.364,
+          "navigationMs": 125.719,
+          "initialSettleMs": 505.839,
+          "setupPrefixStepsMs": 1001.693,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 2.023,
+          "checkpointVerificationMs": 2.78,
+          "assertionMs": 4.32,
+          "visualCaptureMs": 6201.065,
+          "totalMs": 7992.47,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "input",
+              "durationMs": 283.205,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 1,
+              "action": "input",
+              "durationMs": 301.082,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 2,
+              "action": "click",
+              "durationMs": 417.406,
+              "setupPrefix": true
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": false,
+        "setupStepsSkipped": 0,
+        "setupCheckpointPublished": true
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2455.742,
+        "timing": {
+          "contextCreateMs": 204.706,
+          "instrumentationMs": 1.215,
+          "routeRegistrationMs": 0.429,
+          "pageCreateMs": 115.905,
+          "navigationMs": 192.567,
+          "initialSettleMs": 656.911,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 1059.653,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.832,
+          "visualCaptureMs": 217.862,
+          "totalMs": 2455.742,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 326.903,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 350.223,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 5,
+              "action": "click",
+              "durationMs": 382.527,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1987.802,
+        "timing": {
+          "contextCreateMs": 185.229,
+          "instrumentationMs": 0.848,
+          "routeRegistrationMs": 0.966,
+          "pageCreateMs": 128.531,
+          "navigationMs": 253.729,
+          "initialSettleMs": 537.956,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 840.809,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.575,
+          "visualCaptureMs": 0.001,
+          "totalMs": 1987.802,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 429.813,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "back",
+              "durationMs": 410.996,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2960.67,
+        "timing": {
+          "contextCreateMs": 529.988,
+          "instrumentationMs": 3.571,
+          "routeRegistrationMs": 1.055,
+          "pageCreateMs": 210.78,
+          "navigationMs": 277.123,
+          "initialSettleMs": 533.372,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 714.516,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 6.256,
+          "visualCaptureMs": 680.443,
+          "totalMs": 2960.67,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 333.433,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 381.083,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1918.035,
+        "timing": {
+          "contextCreateMs": 458.152,
+          "instrumentationMs": 1.019,
+          "routeRegistrationMs": 0.936,
+          "pageCreateMs": 230.215,
+          "navigationMs": 248.96,
+          "initialSettleMs": 538.105,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 414.828,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.302,
+          "visualCaptureMs": 0.001,
+          "totalMs": 1918.035,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "reload",
+              "durationMs": 414.828,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": true,
+      "reference": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"414.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"443.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2016.899,
+        "timing": {
+          "contextCreateMs": 6.737,
+          "instrumentationMs": 3.206,
+          "routeRegistrationMs": 2.071,
+          "pageCreateMs": 303.283,
+          "navigationMs": 492.009,
+          "initialSettleMs": 516.181,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 250.484,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 215.311,
+          "visualCaptureMs": 222.497,
+          "totalMs": 2016.899,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "wait",
+              "durationMs": 250.484,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1569.692,
+        "timing": {
+          "contextCreateMs": 7.395,
+          "instrumentationMs": 3.788,
+          "routeRegistrationMs": 1.144,
+          "pageCreateMs": 304.331,
+          "navigationMs": 226.635,
+          "initialSettleMs": 513.626,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 254.204,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 20.216,
+          "visualCaptureMs": 236.553,
+          "totalMs": 1569.692,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "wait",
+              "durationMs": 254.204,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "reference": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"335.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"335.300\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 8348.753,
+        "timing": {
+          "contextCreateMs": 14.45,
+          "instrumentationMs": 1.043,
+          "routeRegistrationMs": 0.365,
+          "pageCreateMs": 142.773,
+          "navigationMs": 407.499,
+          "initialSettleMs": 518.121,
+          "setupPrefixStepsMs": 885.681,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 1.567,
+          "checkpointVerificationMs": 3.047,
+          "assertionMs": 5.531,
+          "visualCaptureMs": 6367.277,
+          "totalMs": 8348.753,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "input",
+              "durationMs": 266.491,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 1,
+              "action": "input",
+              "durationMs": 300.646,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 2,
+              "action": "click",
+              "durationMs": 318.544,
+              "setupPrefix": true
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": false,
+        "setupStepsSkipped": 0,
+        "setupCheckpointPublished": true
+      },
+      "generated": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 7992.47,
+        "timing": {
+          "contextCreateMs": 13.765,
+          "instrumentationMs": 0.997,
+          "routeRegistrationMs": 0.352,
+          "pageCreateMs": 132.364,
+          "navigationMs": 125.719,
+          "initialSettleMs": 505.839,
+          "setupPrefixStepsMs": 1001.693,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 2.023,
+          "checkpointVerificationMs": 2.78,
+          "assertionMs": 4.32,
+          "visualCaptureMs": 6201.065,
+          "totalMs": 7992.47,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "input",
+              "durationMs": 283.205,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 1,
+              "action": "input",
+              "durationMs": 301.082,
+              "setupPrefix": true
+            },
+            {
+              "stepIndex": 2,
+              "action": "click",
+              "durationMs": 417.406,
+              "setupPrefix": true
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": false,
+        "setupStepsSkipped": 0,
+        "setupCheckpointPublished": true
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": true,
+      "reference": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"349.800\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"349.800\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"1701.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 3362.569,
+        "timing": {
+          "contextCreateMs": 204.659,
+          "instrumentationMs": 0.94,
+          "routeRegistrationMs": 0.402,
+          "pageCreateMs": 119.949,
+          "navigationMs": 380.176,
+          "initialSettleMs": 525.93,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 1134.976,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 7.95,
+          "visualCaptureMs": 985.811,
+          "totalMs": 3362.569,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 316.929,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 365.65,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 5,
+              "action": "click",
+              "durationMs": 452.397,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "generated": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2455.742,
+        "timing": {
+          "contextCreateMs": 204.706,
+          "instrumentationMs": 1.215,
+          "routeRegistrationMs": 0.429,
+          "pageCreateMs": 115.905,
+          "navigationMs": 192.567,
+          "initialSettleMs": 656.911,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 1059.653,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.832,
+          "visualCaptureMs": 217.862,
+          "totalMs": 2455.742,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 326.903,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 350.223,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 5,
+              "action": "click",
+              "durationMs": 382.527,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-history-back",
+      "passed": true,
+      "reference": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"1340.100\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"718.500\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2736.77,
+        "timing": {
+          "contextCreateMs": 259.862,
+          "instrumentationMs": 1.576,
+          "routeRegistrationMs": 0.567,
+          "pageCreateMs": 286.95,
+          "navigationMs": 854.261,
+          "initialSettleMs": 523.482,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 799.32,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 8.494,
+          "visualCaptureMs": 0,
+          "totalMs": 2736.77,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 450.107,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "back",
+              "durationMs": 349.213,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "generated": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "null"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1987.802,
+        "timing": {
+          "contextCreateMs": 185.229,
+          "instrumentationMs": 0.848,
+          "routeRegistrationMs": 0.966,
+          "pageCreateMs": 128.531,
+          "navigationMs": 253.729,
+          "initialSettleMs": 537.956,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 840.809,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.575,
+          "visualCaptureMs": 0.001,
+          "totalMs": 1987.802,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 429.813,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "back",
+              "durationMs": 410.996,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "reference": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"436.300\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"436.300\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"1412.900\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 3101.796,
+        "timing": {
+          "contextCreateMs": 231.149,
+          "instrumentationMs": 1.092,
+          "routeRegistrationMs": 0.405,
+          "pageCreateMs": 159.189,
+          "navigationMs": 486.295,
+          "initialSettleMs": 537.147,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 783.357,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 8.073,
+          "visualCaptureMs": 893.121,
+          "totalMs": 3101.796,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 349.953,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 433.404,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "generated": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2960.67,
+        "timing": {
+          "contextCreateMs": 529.988,
+          "instrumentationMs": 3.571,
+          "routeRegistrationMs": 1.055,
+          "pageCreateMs": 210.78,
+          "navigationMs": 277.123,
+          "initialSettleMs": 533.372,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 714.516,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 6.256,
+          "visualCaptureMs": 680.443,
+          "totalMs": 2960.67,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "click",
+              "durationMs": 333.433,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 4,
+              "action": "click",
+              "durationMs": 381.083,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"324.000\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"324.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2043.543,
+        "timing": {
+          "contextCreateMs": 252.584,
+          "instrumentationMs": 0.797,
+          "routeRegistrationMs": 0.421,
+          "pageCreateMs": 148.217,
+          "navigationMs": 472.733,
+          "initialSettleMs": 526.445,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 616.677,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.81,
+          "visualCaptureMs": 0.002,
+          "totalMs": 2043.543,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "reload",
+              "durationMs": 616.677,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "generated": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1918.035,
+        "timing": {
+          "contextCreateMs": 458.152,
+          "instrumentationMs": 1.019,
+          "routeRegistrationMs": 0.936,
+          "pageCreateMs": 230.215,
+          "navigationMs": 248.96,
+          "initialSettleMs": 538.105,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 414.828,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.302,
+          "visualCaptureMs": 0.001,
+          "totalMs": 1918.035,
+          "steps": [
+            {
+              "stepIndex": 3,
+              "action": "reload",
+              "durationMs": 414.828,
+              "setupPrefix": false
+            }
+          ]
+        },
+        "setupStateKey": "authenticated-admin",
+        "setupStateReused": true,
+        "setupStepsSkipped": 3,
+        "setupCheckpointPublished": false
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 19,
+    "totalScenarios": 19,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 350,
+            "preAnchorWaitMs": 350,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2965.086,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1440,
+              "height": 900,
+              "referenceWidth": 1440,
+              "referenceHeight": 900,
+              "generatedWidth": 1440,
+              "generatedHeight": 900,
+              "dimensionMismatch": false,
+              "differentPixels": 1358,
+              "totalPixels": 1296000,
+              "diffRate": 0.001048,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 768
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 768
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 340,
+            "preAnchorWaitMs": 340,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 67.423,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "referenceWidth": 1024,
+              "referenceHeight": 768,
+              "generatedWidth": 1024,
+              "generatedHeight": 768,
+              "dimensionMismatch": false,
+              "differentPixels": 1358,
+              "totalPixels": 786432,
+              "diffRate": 0.001727,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 351,
+            "preAnchorWaitMs": 351,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2883.254,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "referenceWidth": 390,
+              "referenceHeight": 844,
+              "generatedWidth": 390,
+              "generatedHeight": 844,
+              "dimensionMismatch": false,
+              "differentPixels": 867,
+              "totalPixels": 329160,
+              "diffRate": 0.002634,
+              "passed": true,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.002634,
+        "durationMs": 2965.392
+      },
+      {
+        "scenarioId": "admin-login-dashboard",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 11539,
+            "preAnchorWaitMs": 11187,
+            "postAnchorWaitMs": 352,
+            "postAnchorSkipped": false,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 114.8,
+              "canvasSamples": 808,
+              "canvasCacheHits": 383,
+              "canvasSignatureChanges": 8,
+              "canvasInvalidations": 409,
+              "animationTargetSamples": 808,
+              "animationCompletedSamples": 392,
+              "animationPendingSamples": 187,
+              "animationCompletionSignals": 16,
+              "echartsCompletionSignals": 16,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 9485.992,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 876,
+              "referenceWidth": 1230,
+              "referenceHeight": 876,
+              "generatedWidth": 1230,
+              "generatedHeight": 876,
+              "dimensionMismatch": false,
+              "differentPixels": 4880,
+              "totalPixels": 1077480,
+              "diffRate": 0.004529,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 12393,
+            "preAnchorWaitMs": 12049,
+            "postAnchorWaitMs": 344,
+            "postAnchorSkipped": false,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 33,
+              "canvasSamples": 892,
+              "canvasCacheHits": 382,
+              "canvasSignatureChanges": 8,
+              "canvasInvalidations": 494,
+              "animationTargetSamples": 892,
+              "animationCompletedSamples": 387,
+              "animationPendingSamples": 209,
+              "animationCompletionSignals": 12,
+              "echartsCompletionSignals": 12,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 35.554,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 112,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "407px 1389.34px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "407px 1389.34px"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 744,
+              "referenceWidth": 814,
+              "referenceHeight": 744,
+              "generatedWidth": 814,
+              "generatedHeight": 744,
+              "dimensionMismatch": false,
+              "differentPixels": 4630,
+              "totalPixels": 605616,
+              "diffRate": 0.007645,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 11731,
+            "preAnchorWaitMs": 11372,
+            "postAnchorWaitMs": 359,
+            "postAnchorSkipped": false,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 143,
+              "canvasSamples": 816,
+              "canvasCacheHits": 378,
+              "canvasSignatureChanges": 8,
+              "canvasInvalidations": 422,
+              "animationTargetSamples": 816,
+              "animationCompletedSamples": 386,
+              "animationPendingSamples": 191,
+              "animationCompletionSignals": 16,
+              "echartsCompletionSignals": 16,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 9635.202,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 112,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "195px 1635.45px",
+                  "generated": "195px 1634.95px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "195px 1635.45px",
+                  "generated": "195px 1634.95px"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 390,
+              "height": 820,
+              "referenceWidth": 390,
+              "referenceHeight": 820,
+              "generatedWidth": 390,
+              "generatedHeight": 820,
+              "dimensionMismatch": false,
+              "differentPixels": 4619,
+              "totalPixels": 319800,
+              "diffRate": 0.014443,
+              "passed": true,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.014443,
+        "durationMs": 9635.519
+      },
+      {
+        "scenarioId": "admin-nested-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/nested/menu1/menu1-1",
+            "generatedFinalRoute": "/#/nested/menu1/menu1-1",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 948,
+            "preAnchorWaitMs": 948,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 23.1,
+              "canvasSamples": 8,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 8,
+              "animationTargetSamples": 8,
+              "animationCompletedSamples": 4,
+              "animationPendingSamples": 1,
+              "animationCompletionSignals": 4,
+              "echartsCompletionSignals": 4,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 4212.237,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 56,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "background-color",
+                  "reference": "rgba(0, 0, 0, 0)",
+                  "generated": "rgb(255, 255, 255)"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 816,
+              "referenceWidth": 1230,
+              "referenceHeight": 816,
+              "generatedWidth": 1230,
+              "generatedHeight": 816,
+              "dimensionMismatch": false,
+              "differentPixels": 2789,
+              "totalPixels": 1003680,
+              "diffRate": 0.002779,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/#/nested/menu1/menu1-1",
+            "generatedFinalRoute": "/#/nested/menu1/menu1-1",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1060,
+            "preAnchorWaitMs": 1060,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 10,
+              "canvasSamples": 16,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 12,
+              "animationTargetSamples": 16,
+              "animationCompletedSamples": 4,
+              "animationPendingSamples": 3,
+              "animationCompletionSignals": 4,
+              "echartsCompletionSignals": 4,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 42.329,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 56,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "background-color",
+                  "reference": "rgba(0, 0, 0, 0)",
+                  "generated": "rgb(255, 255, 255)"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 684,
+              "referenceWidth": 814,
+              "referenceHeight": 684,
+              "generatedWidth": 814,
+              "generatedHeight": 684,
+              "dimensionMismatch": false,
+              "differentPixels": 2789,
+              "totalPixels": 556776,
+              "diffRate": 0.005009,
+              "passed": true,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.005009,
+        "durationMs": 4212.415
+      },
+      {
+        "scenarioId": "admin-permission-route",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 893,
+            "preAnchorWaitMs": 893,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 13.8,
+              "canvasSamples": 4,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 4,
+              "animationTargetSamples": 4,
+              "animationCompletedSamples": 4,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 4,
+              "echartsCompletionSignals": 4,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 3729.149,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 56,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "background-color",
+                  "reference": "rgba(0, 0, 0, 0)",
+                  "generated": "rgb(255, 255, 255)"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 816,
+              "referenceWidth": 1230,
+              "referenceHeight": 816,
+              "generatedWidth": 1230,
+              "generatedHeight": 816,
+              "dimensionMismatch": false,
+              "differentPixels": 10347,
+              "totalPixels": 1003680,
+              "diffRate": 0.010309,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1137,
+            "preAnchorWaitMs": 1137,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 17.2,
+              "canvasSamples": 8,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 8,
+              "animationTargetSamples": 8,
+              "animationCompletedSamples": 4,
+              "animationPendingSamples": 1,
+              "animationCompletionSignals": 4,
+              "echartsCompletionSignals": 4,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 32.666,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 56,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "background-color",
+                  "reference": "rgba(0, 0, 0, 0)",
+                  "generated": "rgb(255, 255, 255)"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 684,
+              "referenceWidth": 814,
+              "referenceHeight": 684,
+              "generatedWidth": 814,
+              "generatedHeight": 684,
+              "dimensionMismatch": false,
+              "differentPixels": 10139,
+              "totalPixels": 556776,
+              "diffRate": 0.01821,
+              "passed": true,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.01821,
+        "durationMs": 3729.2
+      },
+      {
+        "scenarioId": "admin-deep-link-reload",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 0,
+            "preAnchorWaitMs": 0,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": true,
+            "referenceVisualStateReuseKey": "authenticated-dashboard-default",
+            "generatedVisualStateReuseKey": "authenticated-dashboard-default",
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 4945.535,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 114,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 876,
+              "referenceWidth": 1230,
+              "referenceHeight": 876,
+              "generatedWidth": 1230,
+              "generatedHeight": 876,
+              "dimensionMismatch": false,
+              "differentPixels": 4880,
+              "totalPixels": 1077480,
+              "diffRate": 0.004529,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 0,
+            "preAnchorWaitMs": 0,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": true,
+            "referenceVisualStateReuseKey": "authenticated-dashboard-default",
+            "generatedVisualStateReuseKey": "authenticated-dashboard-default",
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 29.016,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 112,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "407px 1389.34px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "407px 1389.34px"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 744,
+              "referenceWidth": 814,
+              "referenceHeight": 744,
+              "generatedWidth": 814,
+              "generatedHeight": 744,
+              "dimensionMismatch": false,
+              "differentPixels": 4630,
+              "totalPixels": 605616,
+              "diffRate": 0.007645,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 0,
+            "preAnchorWaitMs": 0,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": true,
+            "referenceVisualStateReuseKey": "authenticated-dashboard-default",
+            "generatedVisualStateReuseKey": "authenticated-dashboard-default",
+            "referenceSetupStateReused": true,
+            "generatedSetupStateReused": true,
+            "referenceSetupStepsSkipped": 3,
+            "generatedSetupStepsSkipped": 3,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 5010.723,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 112,
+              "rate": 0.9825,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "195px 1635.45px",
+                  "generated": "195px 1634.95px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "195px 1635.45px",
+                  "generated": "195px 1634.95px"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 390,
+              "height": 820,
+              "referenceWidth": 390,
+              "referenceHeight": 820,
+              "generatedWidth": 390,
+              "generatedHeight": 820,
+              "dimensionMismatch": false,
+              "differentPixels": 4619,
+              "totalPixels": 319800,
+              "diffRate": 0.014443,
+              "passed": true,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.014443,
+        "durationMs": 5010.826
+      }
+    ],
+    "scenarioCount": 5,
+    "viewportRuns": 13,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 13,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 40742,
+    "preAnchorWaitMs": 39687,
+    "postAnchorWaitMs": 1055,
+    "postAnchorSkippedRuns": 10,
+    "visualStateReusedRuns": 3,
+    "setupStateReusedTargetRuns": 18,
+    "setupStepsSkipped": 54,
+    "canvas": {
+      "canvasScanMs": 354.9,
+      "canvasSamples": 2552,
+      "canvasCacheHits": 1143,
+      "canvasSignatureChanges": 24,
+      "canvasInvalidations": 1357,
+      "animationTargetSamples": 2552,
+      "animationCompletedSamples": 1181,
+      "animationPendingSamples": 592,
+      "animationCompletionSignals": 60,
+      "echartsCompletionSignals": 60,
+      "zrenderCompletionSignals": 0
+    },
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 0.9825,
+    "worstPixelDiff": 0.01821,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 26,
+    "reusedTargetRuns": 10,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 12,
+    "visualViewportRuns": 13,
+    "visualTargetRuns": 26,
+    "visualTargetReusedRuns": 10,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 40742,
+    "visualPreAnchorWaitMs": 39687,
+    "visualPostAnchorWaitMs": 1055,
+    "visualPostAnchorSkippedRuns": 10,
+    "visualStateReusedRuns": 3,
+    "contractSetupStateReusedRuns": 8,
+    "contractSetupStepsSkipped": 24,
+    "visualSetupStateReusedRuns": 18,
+    "visualSetupStepsSkipped": 54,
+    "contractSetupOwnerTiming": {
+      "ownerRuns": 2,
+      "totalMs": 16341.223,
+      "contextCreateMs": 28.215,
+      "instrumentationMs": 2.04,
+      "routeRegistrationMs": 0.717,
+      "pageCreateMs": 275.137,
+      "navigationMs": 533.218,
+      "initialSettleMs": 1023.96,
+      "setupPrefixStepsMs": 1887.374,
+      "checkpointStorageMs": 3.59,
+      "checkpointVerificationMs": 5.827,
+      "assertionMs": 9.851,
+      "visualCaptureMs": 12568.342
+    },
+    "visualCanvas": {
+      "canvasScanMs": 354.9,
+      "canvasSamples": 2552,
+      "canvasCacheHits": 1143,
+      "canvasSignatureChanges": 24,
+      "canvasInvalidations": 1357,
+      "animationTargetSamples": 2552,
+      "animationCompletedSamples": 1181,
+      "animationPendingSamples": 592,
+      "animationCompletionSignals": 60,
+      "echartsCompletionSignals": 60,
+      "zrenderCompletionSignals": 0
+    },
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 3,
+    "browserShutdownMode": "fast-kill",
+    "fastShutdownUsed": true,
+    "fastShutdownConfirmed": true,
+    "fastShutdownLockAcquired": true,
+    "fastShutdownLockWaitMs": 6.478,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 9,
+      "totalBlockingHandles": 8,
+      "standardIoHandles": 1,
+      "handlesByType": {
+        "stdio": 1,
+        "socket": 6,
+        "child-process": 1,
+        "server": 1
+      },
+      "resourcesByType": {
+        "pipe": 5,
+        "ProcessWrap": 1,
+        "server": 1,
+        "socket": 2
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 1,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 1,
+      "handlesByType": {
+        "stdio": 1
+      },
+      "resourcesByType": {
+        "filesystem": 1,
+        "pipe": 1,
+        "timer": 2
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "timing": {
+      "browserLaunchMs": 375.922,
+      "contractMs": 21659.931,
+      "comparisonMs": 1.285,
+      "visualMatrixMs": 25554.239,
+      "browserCloseMs": 46.361,
+      "browserDisconnectMs": 2.338,
+      "browserProcessCloseMs": 43.953,
+      "reportReadyMs": 47592.909,
+      "totalMs": 47639.277
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=6/6，generated=6/6"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "5/5 SPA route states 通过，viewportRuns=13，worstComputedStyle=0.9825，worstPixelDiff=0.01821"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=19/19，rate=1，failures=0"
+    }
+  ]
+}

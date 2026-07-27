@@ -3932,7 +3932,28 @@
               "/dev-api/vue-element-admin/transaction/list",
               "/prod-api/vue-element-admin/transaction/list",
               "/stage-api/vue-element-admin/transaction/list"
-            ]
+            ],
+            "runtimeSelections": [
+              {
+                "environment": "development",
+                "variable": "VUE_APP_BASE_API",
+                "value": "/dev-api",
+                "source": ".env.development:VUE_APP_BASE_API"
+              },
+              {
+                "environment": "production",
+                "variable": "VUE_APP_BASE_API",
+                "value": "/prod-api",
+                "source": ".env.production:VUE_APP_BASE_API"
+              },
+              {
+                "environment": "staging",
+                "variable": "VUE_APP_BASE_API",
+                "value": "/stage-api",
+                "source": ".env.staging:VUE_APP_BASE_API"
+              }
+            ],
+            "proxyRoutes": []
           },
           "consumption": {
             "targetBinding": "list",

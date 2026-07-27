@@ -31,6 +31,8 @@ export interface ApiFixtureResponsibility {
     path: string;
     transportPrefixes: Array<{ value: string; source: string }>;
     transportPathCandidates: string[];
+    runtimeSelections: TransportRuntimeSelection[];
+    proxyRoutes: TransportProxyRouteEvidence[];
   };
   consumption: {
     targetBinding: string;
@@ -66,6 +68,10 @@ export interface ApiFixtureResponsibilityGraph {
     materializedBindings: number;
     renderedFields: number;
     transportPrefixesInferred: number;
+    runtimeSelectionsInferred: number;
+    proxyRoutesInferred: number;
+    proxyTargetsInferred: number;
+    proxyRewriteRulesInferred: number;
   };
   reviewReasons: string[];
 }
@@ -75,6 +81,22 @@ interface ImportedApi { localName: string; exportedName: string; source: string 
 interface Endpoint { exportedName: string; method: string; path: string; moduleFile: string }
 interface Consumption { targetBinding: string; responsePath: string; sliceLimit?: number }
 interface TransportPrefixEvidence { value: string; source: string }
+export interface TransportRuntimeSelection {
+  environment: string;
+  variable: string;
+  value: string;
+  source: string;
+}
+export interface TransportProxyRouteEvidence {
+  requestPrefix: string;
+  environment: string;
+  source: string;
+  targetCandidates: string[];
+  rewritePattern?: string;
+  rewriteReplacement?: string;
+  upstreamPathCandidate?: string;
+}
+interface EnvironmentAssignment extends TransportRuntimeSelection {}
 
 function unique<T>(values: T[]): T[] { return [...new Set(values)]; }
 function balancedSection(source: string, tagName: string): string {
@@ -121,31 +143,106 @@ function endpointFromModule(moduleFile: string, exportedName: string): Endpoint 
   const method = declaration.match(/\bmethod\s*:\s*['"]([^'"]+)['"]/)?.[1] ?? "get";
   return { exportedName, method: method.toUpperCase(), path, moduleFile };
 }
-function transportPrefixEvidence(sourceRoot: string, moduleFile: string, exportedName: string): TransportPrefixEvidence[] {
+function environmentAssignments(sourceRoot: string): EnvironmentAssignment[] {
+  const assignments: EnvironmentAssignment[] = [];
+  for (const entry of readdirSync(sourceRoot, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.startsWith(".env")) continue;
+    const environment = entry.name === ".env" ? "default" : entry.name.slice(".env.".length);
+    const source = readFileSync(join(sourceRoot, entry.name), "utf8");
+    for (const match of source.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*=\s*['"]?([^'"\r\n#]+)['"]?\s*$/gm)) {
+      assignments.push({ environment, variable: match[1], value: match[2].trim(), source: `${entry.name}:${match[1]}` });
+    }
+  }
+  return assignments;
+}
+
+function requestClientEvidence(sourceRoot: string, moduleFile: string, exportedName: string): { clientFile?: string; environmentVariable?: string; prefixes: TransportPrefixEvidence[]; runtimeSelections: TransportRuntimeSelection[] } {
   const source = readFileSync(moduleFile, "utf8");
   const declaration = new RegExp(`export\\s+function\\s+${exportedName}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]*?)(?:\\n\\}|$)`).exec(source)?.[1] ?? "";
   const clientName = declaration.match(/\breturn\s+([A-Za-z_$][\w$]*)\s*\(/)?.[1];
-  if (!clientName) return [];
+  if (!clientName) return { prefixes: [], runtimeSelections: [] };
   const importSource = [...source.matchAll(/import\s+([A-Za-z_$][\w$]*)\s+from\s+['"]([^'"]+)['"]/g)].find((entry) => entry[1] === clientName)?.[2];
-  if (!importSource) return [];
+  if (!importSource) return { prefixes: [], runtimeSelections: [] };
   const relativeModule = relative(sourceRoot, moduleFile).replaceAll("\\", "/");
   const clientFile = moduleCandidates(sourceRoot, relativeModule, importSource).find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
-  if (!clientFile) return [];
+  if (!clientFile) return { prefixes: [], runtimeSelections: [] };
   const clientSource = readFileSync(clientFile, "utf8");
+  const clientSourceName = relative(sourceRoot, clientFile).replaceAll("\\", "/");
   const literal = clientSource.match(/\bbaseURL\s*:\s*['"]([^'"]+)['"]/)?.[1];
-  if (literal) return [{ value: literal, source: relative(sourceRoot, clientFile).replaceAll("\\", "/") }];
+  if (literal) return { clientFile, prefixes: [{ value: literal, source: clientSourceName }], runtimeSelections: [] };
   const environmentVariable = clientSource.match(/\bbaseURL\s*:\s*process\.env\.([A-Za-z_$][\w$]*)/)?.[1];
-  if (!environmentVariable) return [];
-  const evidence: TransportPrefixEvidence[] = [];
-  for (const entry of readdirSync(sourceRoot, { withFileTypes: true })) {
-    if (!entry.isFile() || !entry.name.startsWith(".env")) continue;
-    const value = readFileSync(join(sourceRoot, entry.name), "utf8").match(new RegExp(`^\\s*${environmentVariable}\\s*=\\s*['"]?([^'"\\r\\n#]+)`, "m"))?.[1]?.trim();
-    if (value) evidence.push({ value, source: `${entry.name}:${environmentVariable}` });
+  if (environmentVariable) {
+    const runtimeSelections = environmentAssignments(sourceRoot).filter((item) => item.variable === environmentVariable);
+    return {
+      clientFile, environmentVariable,
+      prefixes: runtimeSelections.map((item) => ({ value: item.value, source: item.source })),
+      runtimeSelections,
+    };
   }
-  return unique(evidence.map((item) => `${item.value}\u0000${item.source}`)).map((item) => {
-    const [value, sourceName] = item.split("\u0000");
-    return { value, source: sourceName };
-  });
+  const ternary = clientSource.match(/\bbaseURL\s*:\s*process\.env\.([A-Za-z_$][\w$]*)\s*===?\s*['"]([^'"]+)['"]\s*\?\s*['"]([^'"]+)['"]\s*:\s*['"]([^'"]+)['"]/);
+  if (ternary) {
+    return {
+      clientFile, environmentVariable: ternary[1],
+      prefixes: [
+        { value: ternary[3], source: `${clientSourceName}:${ternary[1]}=${ternary[2]}` },
+        { value: ternary[4], source: `${clientSourceName}:${ternary[1]}!=${ternary[2]}` },
+      ],
+      runtimeSelections: [
+        { environment: ternary[2], variable: ternary[1], value: ternary[3], source: clientSourceName },
+        { environment: `not-${ternary[2]}`, variable: ternary[1], value: ternary[4], source: clientSourceName },
+      ],
+    };
+  }
+  return { clientFile, prefixes: [], runtimeSelections: [] };
+}
+
+function proxyConfigCandidates(sourceRoot: string): string[] {
+  return ["vue.config.js", "vue.config.cjs", "vue.config.mjs", "vue.config.ts", "webpack.config.js", "webpack.config.cjs", join("config", "index.js")]
+    .map((item) => join(sourceRoot, item)).filter((item) => existsSync(item) && statSync(item).isFile());
+}
+
+function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: ReturnType<typeof requestClientEvidence>): TransportProxyRouteEvidence[] {
+  if (!request.prefixes.length) return [];
+  const assignments = environmentAssignments(sourceRoot);
+  const output: TransportProxyRouteEvidence[] = [];
+  for (const configFile of proxyConfigCandidates(sourceRoot)) {
+    const source = readFileSync(configFile, "utf8");
+    if (!/\b(?:devServer\s*:\s*\{|proxy\s*:\s*\{)/.test(source)) continue;
+    const aliases = new Map<string, string>();
+    for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*process\.env\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
+    const referencedVariables = new Set<string>();
+    for (const match of source.matchAll(/process\.env\.([A-Za-z_$][\w$]*)/g)) referencedVariables.add(match[1]);
+    for (const variable of aliases.values()) referencedVariables.add(variable);
+    const requestVariable = request.environmentVariable;
+    if (requestVariable && !referencedVariables.has(requestVariable) && !request.prefixes.some((prefix) => source.includes(prefix.value))) continue;
+    const targetVariables = [...source.matchAll(/\btarget\s*:\s*process\.env\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]);
+    const literalTargets = [...source.matchAll(/\btarget\s*:\s*['"]([^'"]+)['"]/g)].map((match) => match[1]);
+    const dynamicRewriteVariable = [...source.matchAll(/\[\s*['"]\^['"]\s*\+\s*(?:process\.env\.)?([A-Za-z_$][\w$]*)\s*\]\s*:\s*['"]([^'"]*)['"]/g)][0];
+    const literalRewrite = [...source.matchAll(/['"](\^\/[^'"]+)['"]\s*:\s*['"]([^'"]*)['"]/g)][0];
+    for (const prefix of request.prefixes) {
+      const selection = request.runtimeSelections.find((item) => item.value === prefix.value);
+      const environment = selection?.environment ?? "runtime";
+      const targetCandidates = unique([
+        ...literalTargets,
+        ...targetVariables.flatMap((variable) => assignments.filter((item) => item.variable === variable && (item.environment === environment || environment === "runtime")).map((item) => item.value)),
+      ]);
+      let rewritePattern: string | undefined, rewriteReplacement: string | undefined;
+      if (dynamicRewriteVariable) {
+        const variable = aliases.get(dynamicRewriteVariable[1]) ?? dynamicRewriteVariable[1];
+        if (!requestVariable || variable === requestVariable) { rewritePattern = `^${prefix.value}`; rewriteReplacement = dynamicRewriteVariable[2]; }
+      } else if (literalRewrite && new RegExp(literalRewrite[1]).test(prefix.value)) {
+        rewritePattern = literalRewrite[1]; rewriteReplacement = literalRewrite[2];
+      }
+      const upstreamPathCandidate = rewritePattern === undefined
+        ? undefined
+        : joinTransportPath(prefix.value.replace(new RegExp(rewritePattern), rewriteReplacement ?? ""), endpointPath);
+      output.push({
+        requestPrefix: prefix.value, environment, source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
+        targetCandidates, ...(rewritePattern !== undefined ? { rewritePattern, rewriteReplacement, upstreamPathCandidate } : {}),
+      });
+    }
+  }
+  return output;
 }
 
 function joinTransportPath(prefix: string, endpointPath: string): string {
@@ -238,8 +335,11 @@ export function analyzeApiFixtureResponsibilities(
       const endpoint = endpointFromModule(moduleFile, imported.exportedName);
       if (!endpoint) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "request endpoint could not be statically extracted" }); continue; }
       matchedEndpoints += 1;
-      const transportPrefixes = transportPrefixEvidence(sourceRoot, moduleFile, imported.exportedName);
+      const transport = requestClientEvidence(sourceRoot, moduleFile, imported.exportedName);
+      const transportPrefixes = transport.prefixes;
       const transportPathCandidates = unique(transportPrefixes.map((entry) => joinTransportPath(entry.value, endpoint.path)));
+      const runtimeSelections = transport.runtimeSelections;
+      const proxyRoutes = proxyRouteEvidence(sourceRoot, endpoint.path, transport);
       const consumption = consumptionFor(parsed.script, imported.localName);
       if (!consumption) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "response assignment path could not be statically extracted" }); continue; }
       const matched = matchingFixture(config.fixtures ?? [], endpoint, transportPathCandidates);
@@ -256,7 +356,7 @@ export function analyzeApiFixtureResponsibilities(
         apiCall: {
           localName: imported.localName, exportedName: imported.exportedName, importSource: imported.source,
           moduleFile: relative(sourceRoot, moduleFile).replaceAll("\\", "/"), method: endpoint.method, path: endpoint.path,
-          transportPrefixes, transportPathCandidates,
+          transportPrefixes, transportPathCandidates, runtimeSelections, proxyRoutes,
         },
         consumption,
         renderedFields: fields,
@@ -275,11 +375,16 @@ export function analyzeApiFixtureResponsibilities(
       matchedFixtures: responsibilities.length, materializedBindings: responsibilities.length,
       renderedFields: responsibilities.reduce((sum, item) => sum + item.renderedFields.length, 0),
       transportPrefixesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.transportPrefixes.length, 0),
+      runtimeSelectionsInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.runtimeSelections.length, 0),
+      proxyRoutesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.length, 0),
+      proxyTargetsInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.reduce((count, route) => count + route.targetCandidates.length, 0), 0),
+      proxyRewriteRulesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.filter((route) => route.rewritePattern !== undefined).length, 0),
     },
     reviewReasons: [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
       "unresolved calls remain explicit and are never replaced with guessed data",
       "transport prefixes are inferred only from the imported request client and concrete environment assignments",
+      "dev-server proxy targets and path rewrites are retained as auditable transport evidence and never treated as browser request paths",
     ],
   };
 }

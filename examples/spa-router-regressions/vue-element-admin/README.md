@@ -194,3 +194,8 @@ This is the first automatic Vue Element Admin target in this experiment to satis
 ### Reviewed authenticated-session setup reuse
 
 The automatic Gold+ config now marks the common three-step admin login prefix as a reviewed setup equivalence class. The runner publishes storage state only after the complete login scenario passes, restores it only into fresh isolated BrowserContexts, and reports every skipped prefix. A same-environment three-run control showed a `5.06%` median total-time reduction and a `7.69%` contract-phase reduction without changing computed-style, pixel, navigation, runtime, network, stability, or lifecycle gates. ECharts/ZRender frame-drain certificates are also reported as auditable animation-completion evidence; they do not replace the existing quiet-window and settled-frame checks.
+
+
+### Overlapped setup-owner performance phase
+
+Authenticated owner profiling showed that visual capture—not login storage serialization—was the dominant cost (`76.61%`). After the reviewed dashboard checkpoint passes, the runner now releases the storage-state promise early and executes remaining contract scenarios concurrently in fresh BrowserContexts while the owner continues its complete visual gate. A three-run fast-shutdown control reduced median total time from `42.57 s` to `32.04 s` (`24.75%`) and contract time from `21.10 s` to `10.27 s` (`51.34%`) with unchanged Gold+ thresholds and zero blocking handles. Runtime environment, dev-server proxy target, and path-rewrite evidence are now separately represented in the API responsibility graph. Cross-run authentication persistence remains disabled; only its source/fixture/config identity gate has been implemented.

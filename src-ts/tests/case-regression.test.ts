@@ -100,6 +100,9 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   const autoParallelRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json`, "utf8"));
   const autoSetupFinal = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-reuse-final.results.json`, "utf8"));
   const autoSetupRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-reuse-summary.json`, "utf8"));
+  const autoOverlapProfile = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-owner-profile.results.json`, "utf8"));
+  const autoOverlapFinal = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-overlap-fast-final.results.json`, "utf8"));
+  const autoOverlapRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-overlap-fast-summary.json`, "utf8"));
 
   assert.equal(frozen.scope, "reviewed-behavior-and-visual-generated-target");
   assert.equal(frozen.reviewRequired, true);
@@ -128,6 +131,10 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(sfcVisual.blockers.length, 0);
   assert.equal(sfcVisual.apiFixtures.metrics.matchedFixtures, 1);
   assert.equal(sfcVisual.apiFixtures.metrics.transportPrefixesInferred, 3);
+  assert.equal(sfcVisual.apiFixtures.metrics.runtimeSelectionsInferred, 3);
+  assert.equal(sfcVisual.apiFixtures.metrics.proxyRoutesInferred, 0);
+  assert.equal(sfcVisual.apiFixtures.metrics.proxyTargetsInferred, 0);
+  assert.equal(sfcVisual.apiFixtures.metrics.proxyRewriteRulesInferred, 0);
   assert.deepEqual(sfcVisual.apiFixtures.responsibilities[0].apiCall.transportPathCandidates, [
     "/dev-api/vue-element-admin/transaction/list",
     "/prod-api/vue-element-admin/transaction/list",
@@ -146,6 +153,11 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
 
   assert.equal(config.navigationComparison, "semantic");
   assert.deepEqual(config.visualMatrix.viewports.map((viewport: { id: string }) => viewport.id), ["desktop", "tablet", "mobile"]);
+  const automaticConfig = JSON.parse(readFileSync(`${caseDir}/reference-generated-semantic.auto-v1.config.json`, "utf8"));
+  assert.equal(automaticConfig.execution.contractConcurrency, 3);
+  assert.equal(automaticConfig.execution.visualConcurrency, 3);
+  assert.equal(automaticConfig.execution.browserShutdown, "fast-kill");
+  assert.equal(automaticConfig.scenarios.filter((scenario: { setupState?: unknown }) => scenario.setupState).every((scenario: { setupState: { checkpointAssertions: { hash: string; visibleSelector: string } } }) => scenario.setupState.checkpointAssertions.hash === "#/dashboard" && scenario.setupState.checkpointAssertions.visibleSelector === ".dashboard-container"), true);
   assert.equal(report.passed, true);
   assert.equal(report.scenariosPassed, 6);
   assert.equal(report.scenariosTotal, 6);
@@ -217,6 +229,23 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(autoSetupRepeat.setup.totalMs.values.length, 3);
   assert.equal(autoSetupRepeat.delta.totalMs.percent <= -5, true);
   assert.equal(autoSetupRepeat.delta.contractMs.percent <= -7, true);
+  assert.equal(autoOverlapProfile.passed, true);
+  assert.equal(autoOverlapProfile.telemetry.contractSetupOwnerTiming.ownerRuns, 2);
+  assert.equal(autoOverlapProfile.telemetry.contractSetupOwnerTiming.visualCaptureMs / autoOverlapProfile.telemetry.contractSetupOwnerTiming.totalMs > 0.7, true);
+  assert.equal(autoOverlapFinal.passed, true);
+  assert.equal(autoOverlapFinal.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(autoOverlapFinal.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(autoOverlapFinal.telemetry.fastShutdownUsed, true);
+  assert.equal(autoOverlapFinal.telemetry.fastShutdownConfirmed, true);
+  assert.equal(autoOverlapFinal.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  assert.equal(autoOverlapRepeat.variants.control.passed, 3);
+  assert.equal(autoOverlapRepeat.variants.optimized.passed, 3);
+  assert.equal(autoOverlapRepeat.improvement.totalMs.percent <= -20, true);
+  assert.equal(autoOverlapRepeat.improvement.contractMs.percent <= -45, true);
+  assert.equal(autoOverlapRepeat.qualityThresholdsChanged, false);
+  assert.equal(autoOverlapRepeat.browserContextIsolation, true);
+  assert.equal(autoOverlapRepeat.settledFrameRequirementChanged, false);
+  assert.equal(autoOverlapRepeat.networkQuietRequirementChanged, false);
 
   assert.equal(strictReport.passed, false, "Semantic Gold+ must not be relabeled as Vue Router Strict PASS");
 });

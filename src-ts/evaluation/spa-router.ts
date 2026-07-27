@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { open, readFile, stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -104,6 +105,8 @@ export interface SpaRouterReviewedSetupState {
   checkpointStepCount: number;
   /** Route loaded in a fresh isolated BrowserContext after restoring storage state. */
   resumePath: SpaRouterRoleValue;
+  /** Reviewed proof that permits consumers to start before the owner finishes visual capture. */
+  checkpointAssertions?: SpaRouterAssertion;
 }
 
 export interface SpaRouterScenarioVisualState {
@@ -170,6 +173,17 @@ export interface SpaRouterContractConfig {
   execution?: SpaRouterExecutionConfig;
 }
 
+export interface SpaRouterSetupArtifactIdentity {
+  sourceCommit: string;
+  fixtureHash: string;
+  configHash: string;
+}
+
+export interface SpaRouterSetupArtifactCompatibility {
+  compatible: boolean;
+  mismatches: Array<"source-commit" | "fixture-hash" | "config-hash">;
+}
+
 export interface SpaRouterTransition {
   method: "pushState" | "replaceState" | "popstate" | "hashchange";
   target: string;
@@ -180,6 +194,39 @@ export interface SpaRouterStepRoute {
   stepIndex: number;
   action: SpaRouterStep["action"];
   route: string;
+}
+
+export interface SpaRouterScenarioTiming {
+  contextCreateMs: number;
+  instrumentationMs: number;
+  routeRegistrationMs: number;
+  pageCreateMs: number;
+  navigationMs: number;
+  initialSettleMs: number;
+  setupPrefixStepsMs: number;
+  remainingStepsMs: number;
+  checkpointStorageMs: number;
+  checkpointVerificationMs: number;
+  assertionMs: number;
+  visualCaptureMs: number;
+  totalMs: number;
+  steps: Array<{ stepIndex: number; action: SpaRouterStep["action"]; durationMs: number; setupPrefix: boolean }>;
+}
+
+export interface SpaRouterSetupOwnerTiming {
+  ownerRuns: number;
+  totalMs: number;
+  contextCreateMs: number;
+  instrumentationMs: number;
+  routeRegistrationMs: number;
+  pageCreateMs: number;
+  navigationMs: number;
+  initialSettleMs: number;
+  setupPrefixStepsMs: number;
+  checkpointStorageMs: number;
+  checkpointVerificationMs: number;
+  assertionMs: number;
+  visualCaptureMs: number;
 }
 
 export interface SpaRouterScenarioResult {
@@ -195,6 +242,7 @@ export interface SpaRouterScenarioResult {
   nonBlockingNetworkFailures: string[];
   assertionFailures: string[];
   durationMs: number;
+  timing: SpaRouterScenarioTiming;
   setupStateKey?: string;
   setupStateReused?: boolean;
   setupStepsSkipped?: number;
@@ -353,6 +401,7 @@ export interface SpaRouterExecutionTelemetry {
   contractSetupStepsSkipped: number;
   visualSetupStateReusedRuns: number;
   visualSetupStepsSkipped: number;
+  contractSetupOwnerTiming: SpaRouterSetupOwnerTiming;
   visualCanvas: SpaRouterCanvasStabilityTelemetry;
   visualRequestClassifications: SpaRouterRequestClassificationCounts;
   contractConcurrency: number;
@@ -496,6 +545,21 @@ function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemet
   return total;
 }
 
+function emptySetupOwnerTiming(): SpaRouterSetupOwnerTiming {
+  return { ownerRuns: 0, totalMs: 0, contextCreateMs: 0, instrumentationMs: 0, routeRegistrationMs: 0, pageCreateMs: 0, navigationMs: 0, initialSettleMs: 0, setupPrefixStepsMs: 0, checkpointStorageMs: 0, checkpointVerificationMs: 0, assertionMs: 0, visualCaptureMs: 0 };
+}
+
+function summarizeSetupOwnerTiming(...reports: SpaRouterTargetReport[]): SpaRouterSetupOwnerTiming {
+  const total = emptySetupOwnerTiming();
+  for (const result of reports.flatMap((report) => report.results).filter((item) => item.setupCheckpointPublished)) {
+    total.ownerRuns += 1;
+    for (const key of ["totalMs", "contextCreateMs", "instrumentationMs", "routeRegistrationMs", "pageCreateMs", "navigationMs", "initialSettleMs", "setupPrefixStepsMs", "checkpointStorageMs", "checkpointVerificationMs", "assertionMs", "visualCaptureMs"] as const) {
+      total[key] = Number((total[key] + result.timing[key]).toFixed(3));
+    }
+  }
+  return total;
+}
+
 const DEFAULT_VISUAL_VIEWPORTS: QualityViewport[] = [
   { id: "desktop", label: "Desktop", width: 1024, height: 768 },
   { id: "tablet", label: "Tablet", width: 768, height: 1024 },
@@ -634,6 +698,37 @@ function valueForRole(value: SpaRouterRoleValue | undefined, role: SpaRouterTarg
   if (typeof value === "string") return value;
   if (role === "generated") return value.generated ?? value.default ?? value.reference;
   return value.reference ?? value.default ?? value.generated;
+}
+
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") return `{${Object.entries(value as Record<string, unknown>).sort(([left], [right]) => left.localeCompare(right)).map(([key, item]) => `${JSON.stringify(key)}:${canonicalJson(item)}`).join(",")}}`;
+  return JSON.stringify(value) ?? "null";
+}
+
+function sha256Json(value: unknown): string { return createHash("sha256").update(canonicalJson(value)).digest("hex"); }
+
+export function createSpaSetupArtifactIdentity(config: SpaRouterContractConfig, sourceCommit: string, targetRevision: SpaRouterRoleValue): SpaRouterSetupArtifactIdentity {
+  const setupScenarios = config.scenarios.filter((scenario) => scenario.setupState).map((scenario) => ({
+    id: scenario.id, entryPath: scenario.entryPath, steps: scenario.steps, assertions: scenario.assertions, setupState: scenario.setupState,
+  }));
+  return {
+    sourceCommit,
+    fixtureHash: sha256Json(config.fixtures ?? []),
+    configHash: sha256Json({
+      schemaVersion: config.schemaVersion, apiPrefix: config.apiPrefix ?? null, ignoredStateKeys: config.ignoredStateKeys ?? [],
+      navigationComparison: config.navigationComparison ?? "strict", semanticRouteAliases: config.semanticRouteAliases ?? {},
+      setupScenarios, targetRevision,
+    }),
+  };
+}
+
+export function compareSpaSetupArtifactIdentity(expected: SpaRouterSetupArtifactIdentity, actual: SpaRouterSetupArtifactIdentity): SpaRouterSetupArtifactCompatibility {
+  const mismatches: SpaRouterSetupArtifactCompatibility["mismatches"] = [];
+  if (expected.sourceCommit !== actual.sourceCommit) mismatches.push("source-commit");
+  if (expected.fixtureHash !== actual.fixtureHash) mismatches.push("fixture-hash");
+  if (expected.configHash !== actual.configHash) mismatches.push("config-hash");
+  return { compatible: mismatches.length === 0, mismatches };
 }
 
 function resolveMode(config: SpaRouterContractConfig): { mode: "single"; baseUrl: string } | { mode: "reference-generated"; referenceBaseUrl: string; generatedBaseUrl: string } {
@@ -1112,6 +1207,16 @@ async function assertScenario(page: Page, assertion: SpaRouterAssertion, role: S
   return failures;
 }
 
+async function waitForScenarioAssertion(page: Page, assertion: SpaRouterAssertion, role: SpaRouterTargetRole, timeoutMs = 3000): Promise<string[]> {
+  const deadline = Date.now() + timeoutMs;
+  let failures = await assertScenario(page, assertion, role);
+  while (failures.length && Date.now() < deadline) {
+    await page.waitForTimeout(50);
+    failures = await assertScenario(page, assertion, role);
+  }
+  return failures;
+}
+
 async function normalizeScrollAnchor(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole): Promise<string | null> {
   const selector = valueForRole(visual.screenshotAnchor, role);
   if (!selector) return null;
@@ -1258,21 +1363,32 @@ interface ExecuteScenarioOptions {
   setupStateKey?: string;
   setupStateReused?: boolean;
   setupCheckpointStepCount?: number;
+  setupCheckpointAssertions?: SpaRouterAssertion;
   onSetupCheckpoint?: (artifact: Omit<CachedSpaSetupState, "reusable">) => Promise<void> | void;
 }
 
 async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: ExecuteScenarioOptions = {}): Promise<SpaRouterScenarioExecution> {
   const startedAt = performance.now();
+  let phaseStartedAt = performance.now();
+  const phaseElapsed = (): number => Number((performance.now() - phaseStartedAt).toFixed(3));
+  const timing: SpaRouterScenarioTiming = {
+    contextCreateMs: 0, instrumentationMs: 0, routeRegistrationMs: 0, pageCreateMs: 0, navigationMs: 0, initialSettleMs: 0,
+    setupPrefixStepsMs: 0, remainingStepsMs: 0, checkpointStorageMs: 0, checkpointVerificationMs: 0, assertionMs: 0, visualCaptureMs: 0, totalMs: 0, steps: [],
+  };
   const viewport = options.viewport ?? { id: "contract", label: "Contract", width: 1024, height: 768 };
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height }, reducedMotion: "reduce",
     ...(options.storageState ? { storageState: options.storageState } : {}),
   });
+  timing.contextCreateMs = phaseElapsed();
   const runtimeErrors: string[] = [], unmockedApiRequests: string[] = [];
   let setupCheckpointPublished = false;
   try {
+    phaseStartedAt = performance.now();
     await initializeRouterTracking(context, config.ignoredStateKeys ?? []);
     if (options.captureVisual) await initializeVisualStabilityTracking(context);
+    timing.instrumentationMs = phaseElapsed();
+    phaseStartedAt = performance.now();
     await context.route("**/*", async (route) => {
       const request = route.request(), url = new URL(request.url());
       const fixture = findSpaRouterFixture(config, { url: request.url(), method: request.method(), resourceType: request.resourceType(), headers: request.headers() });
@@ -1294,7 +1410,10 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
       }
       await route.continue();
     });
+    timing.routeRegistrationMs = phaseElapsed();
+    phaseStartedAt = performance.now();
     const page = await context.newPage();
+    timing.pageCreateMs = phaseElapsed();
     page.setDefaultTimeout(config.execution?.actionTimeoutMs ?? 30_000);
     const requestActivity: RequestActivity = { active: new Set<Request>(), lastActivityAt: Date.now() };
     const requiredNetworkFailures: string[] = [], nonBlockingNetworkFailures: string[] = [];
@@ -1316,8 +1435,12 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
     page.on("console", (message) => { if (message.type() === "error" && !/^Failed to load resource:/i.test(message.text())) runtimeErrors.push(message.text()); });
     const entryUrl = targetUrl(baseUrl, options.entryPathOverride ?? scenario.entryPath);
+    phaseStartedAt = performance.now();
     await page.goto(entryUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    timing.navigationMs = phaseElapsed();
+    phaseStartedAt = performance.now();
     await settle(page, 500);
+    timing.initialSettleMs = phaseElapsed();
     const role = options.role ?? "single";
     const stepRoutes: SpaRouterStepRoute[] = [];
     const assertionFailures: string[] = [];
@@ -1325,19 +1448,35 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     for (let stepIndex = firstStep; stepIndex < scenario.steps.length; stepIndex += 1) {
       const step = scenario.steps[stepIndex];
       try {
+        phaseStartedAt = performance.now();
         await executeStep(page, step, role);
-        stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
+        const stepDurationMs = phaseElapsed();
+        const setupPrefix = !options.setupStateReused && stepIndex < (options.setupCheckpointStepCount ?? 0);
+        timing.steps.push({ stepIndex, action: step.action, durationMs: stepDurationMs, setupPrefix });
+        if (setupPrefix) timing.setupPrefixStepsMs = Number((timing.setupPrefixStepsMs + stepDurationMs).toFixed(3));
+        else timing.remainingStepsMs = Number((timing.remainingStepsMs + stepDurationMs).toFixed(3));
         if (!setupCheckpointPublished && options.onSetupCheckpoint && stepIndex + 1 === options.setupCheckpointStepCount) {
+          if (options.setupCheckpointAssertions) {
+            phaseStartedAt = performance.now();
+            const checkpointFailures = await waitForScenarioAssertion(page, options.setupCheckpointAssertions, role);
+            timing.checkpointVerificationMs = phaseElapsed();
+            if (checkpointFailures.length) throw new Error(`setup checkpoint assertion failed: ${checkpointFailures.join("; ")}`);
+          }
+          phaseStartedAt = performance.now();
           await options.onSetupCheckpoint({ storageState: await context.storageState(), checkpointRoute: routeOf(page.url()) });
+          timing.checkpointStorageMs = phaseElapsed();
           setupCheckpointPublished = true;
         }
+        stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
       } catch (error) {
         const detail = error instanceof Error ? error.message.split("\n")[0] : String(error);
         assertionFailures.push(`step[${stepIndex}] action=${step.action} failed: ${detail}`);
         break;
       }
     }
-    assertionFailures.push(...await assertScenario(page, scenario.assertions, role));
+    phaseStartedAt = performance.now();
+    assertionFailures.push(...await waitForScenarioAssertion(page, scenario.assertions, role, Math.min(config.execution?.actionTimeoutMs ?? 3000, 5000)));
+    timing.assertionMs = phaseElapsed();
     const transitions = await page.evaluate(() => ([...((globalThis as typeof globalThis & { __uiDismantlerSpaTransitions?: SpaRouterTransition[] }).__uiDismantlerSpaTransitions ?? [])]));
     const uniqueRuntimeErrors = [...new Set(runtimeErrors)], uniqueUnmocked = [...new Set(unmockedApiRequests)];
     const uniqueRequiredNetworkFailures = [...new Set(requiredNetworkFailures)], uniqueNonBlockingNetworkFailures = [...new Set(nonBlockingNetworkFailures)];
@@ -1345,14 +1484,16 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
       id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0 && uniqueRequiredNetworkFailures.length === 0,
       entryUrl, finalUrl: page.url(), transitions, stepRoutes, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked,
       requiredNetworkFailures: uniqueRequiredNetworkFailures, nonBlockingNetworkFailures: uniqueNonBlockingNetworkFailures, assertionFailures,
-      durationMs: Number((performance.now() - startedAt).toFixed(3)),
+      durationMs: Number((performance.now() - startedAt).toFixed(3)), timing,
       ...(options.setupStateKey ? {
         setupStateKey: options.setupStateKey, setupStateReused: options.setupStateReused ?? false,
         setupStepsSkipped: firstStep, setupCheckpointPublished,
       } : {}),
     };
+    phaseStartedAt = performance.now();
     const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config, config.visualMatrix?.stabilityTimeoutMs) : undefined;
-    result.durationMs = Number((performance.now() - startedAt).toFixed(3));
+    timing.visualCaptureMs = phaseElapsed();
+    result.durationMs = timing.totalMs = Number((performance.now() - startedAt).toFixed(3));
     return { result, visual };
   } finally { await context.close(); }
 }
@@ -1380,7 +1521,7 @@ function reviewedSetupStateCacheKey(scenario: SpaRouterScenario, baseUrl: string
   const prefix = scenario.steps.slice(0, checkpointStepCount).map((step) => ({
     action: step.action, target: valueForRole(step.target, role) ?? null, value: step.value ?? null, key: step.key ?? null, ms: step.ms ?? null,
   }));
-  return JSON.stringify({ state: setup.stateKey, baseUrl, role, checkpointStepCount, resumePath, prefix });
+  return JSON.stringify({ state: setup.stateKey, baseUrl, role, checkpointStepCount, resumePath, checkpointAssertions: setup.checkpointAssertions ?? null, prefix });
 }
 
 async function executeScenarioWithSetupStateReuse(
@@ -1409,17 +1550,30 @@ async function executeScenarioWithSetupStateReuse(
     }
     cache.delete(cacheKey);
   }
-  let checkpoint: Omit<CachedSpaSetupState, "reusable"> | undefined;
-  const ownerPromise = executeScenario(browser, baseUrl, config, scenario, {
+  let checkpoint: CachedSpaSetupState | undefined;
+  let resolveCheckpoint!: (artifact: CachedSpaSetupState) => void;
+  let rejectCheckpoint!: (error: unknown) => void;
+  const earlyRelease = Boolean(setup.checkpointAssertions);
+  const checkpointPromise = new Promise<CachedSpaSetupState>((resolve, reject) => { resolveCheckpoint = resolve; rejectCheckpoint = reject; });
+  let ownerPromise: Promise<SpaRouterScenarioExecution>;
+  ownerPromise = executeScenario(browser, baseUrl, config, scenario, {
     ...options, setupStateKey: setup.stateKey, setupStateReused: false,
-    setupCheckpointStepCount: checkpointStepCount,
-    onSetupCheckpoint: (artifact) => { checkpoint = artifact; },
+    setupCheckpointStepCount: checkpointStepCount, setupCheckpointAssertions: setup.checkpointAssertions,
+    onSetupCheckpoint: (artifact) => {
+      checkpoint = { ...artifact, reusable: true };
+      if (earlyRelease) resolveCheckpoint(checkpoint);
+    },
   });
-  const artifactPromise = ownerPromise.then((execution) => {
+  const artifactPromise = earlyRelease ? checkpointPromise : ownerPromise.then((execution) => {
     if (!checkpoint) throw new Error(`reviewed setup state ${setup.stateKey} did not reach checkpoint step ${checkpointStepCount}`);
-    return { ...checkpoint, reusable: execution.result.passed };
+    checkpoint.reusable = execution.result.passed;
+    return checkpoint;
   });
   cache.set(cacheKey, artifactPromise);
+  ownerPromise.then((execution) => {
+    if (!checkpoint) rejectCheckpoint(new Error(`reviewed setup state ${setup.stateKey} did not reach checkpoint step ${checkpointStepCount}`));
+    else checkpoint.reusable = execution.result.passed;
+  }, rejectCheckpoint);
   try { return await ownerPromise; }
   catch (error) { cache.delete(cacheKey); throw error; }
 }
@@ -1707,7 +1861,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
         results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, contractSetupStateReusedRuns: target.setupStateReusedRuns, contractSetupStepsSkipped: target.setupStepsSkipped, visualSetupStateReusedRuns: 0, visualSetupStepsSkipped: 0, visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, contractSetupStateReusedRuns: target.setupStateReusedRuns, contractSetupStepsSkipped: target.setupStepsSkipped, visualSetupStateReusedRuns: 0, visualSetupStepsSkipped: 0, contractSetupOwnerTiming: summarizeSetupOwnerTiming(target), visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
       timing.reportReadyMs = elapsed(totalStartedAt);
       allowFastShutdown = requestedFastShutdown && report.passed;
@@ -1762,6 +1916,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         contractSetupStepsSkipped: reference.setupStepsSkipped + generated.setupStepsSkipped,
         visualSetupStateReusedRuns: visualMatrix?.setupStateReusedTargetRuns ?? 0,
         visualSetupStepsSkipped: visualMatrix?.setupStepsSkipped ?? 0,
+        contractSetupOwnerTiming: summarizeSetupOwnerTiming(reference, generated),
         visualCanvas: visualMatrix?.canvas ?? emptyCanvasStabilityTelemetry(),
         visualRequestClassifications: visualMatrix?.requestClassifications ?? emptyRequestClassificationCounts(),
         contractConcurrency: config.execution?.contractConcurrency ?? 1,

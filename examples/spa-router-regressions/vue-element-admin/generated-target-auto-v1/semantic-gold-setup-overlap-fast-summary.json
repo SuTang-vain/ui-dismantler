@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "1.0",
+  "date": "2026-07-27",
+  "runsPerVariant": 3,
+  "qualityThresholdsChanged": false,
+  "browserContextIsolation": true,
+  "settledFrameRequirementChanged": false,
+  "networkQuietRequirementChanged": false,
+  "variants": {
+    "control": {
+      "passed": 3,
+      "timing": {
+        "totalMs": {
+          "values": [
+            42571.201,
+            42536.733,
+            47639.277
+          ],
+          "median": 42571.201
+        },
+        "reportReadyMs": {
+          "values": [
+            42540.764,
+            42491.7,
+            47592.909
+          ],
+          "median": 42540.764
+        },
+        "contractMs": {
+          "values": [
+            21094.406,
+            21100.615,
+            21659.931
+          ],
+          "median": 21100.615
+        },
+        "visualMatrixMs": {
+          "values": [
+            21027.885,
+            20974.881,
+            25554.239
+          ],
+          "median": 21027.885
+        },
+        "browserCloseMs": {
+          "values": [
+            30.431,
+            45.027,
+            46.361
+          ],
+          "median": 45.027
+        }
+      },
+      "quality": {
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.01821,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0
+      },
+      "fastShutdown": {
+        "confirmedRuns": 3,
+        "usedRuns": 3
+      }
+    },
+    "optimized": {
+      "passed": 3,
+      "timing": {
+        "totalMs": {
+          "values": [
+            32036.505,
+            31440.904,
+            39359.885
+          ],
+          "median": 32036.505
+        },
+        "reportReadyMs": {
+          "values": [
+            32009.346,
+            31414.145,
+            39338.589
+          ],
+          "median": 32009.346
+        },
+        "contractMs": {
+          "values": [
+            10267.967,
+            9954.618,
+            15563.93
+          ],
+          "median": 10267.967
+        },
+        "visualMatrixMs": {
+          "values": [
+            21361.563,
+            21059.527,
+            23211.71
+          ],
+          "median": 21361.563
+        },
+        "browserCloseMs": {
+          "values": [
+            27.153,
+            26.753,
+            21.29
+          ],
+          "median": 26.753
+        }
+      },
+      "quality": {
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.01821,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0
+      },
+      "fastShutdown": {
+        "confirmedRuns": 3,
+        "usedRuns": 3
+      }
+    }
+  },
+  "improvement": {
+    "totalMs": {
+      "absoluteMs": -10534.696,
+      "percent": -24.75
+    },
+    "reportReadyMs": {
+      "absoluteMs": -10531.418,
+      "percent": -24.76
+    },
+    "contractMs": {
+      "absoluteMs": -10832.648,
+      "percent": -51.34
+    },
+    "visualMatrixMs": {
+      "absoluteMs": 333.678,
+      "percent": 1.59
+    },
+    "browserCloseMs": {
+      "absoluteMs": -18.274,
+      "percent": -40.58
+    }
+  },
+  "setupOwnerProfile": {
+    "ownerRuns": 2,
+    "dominantPhase": "visualCaptureMs",
+    "baselineOwnerVisualSharePercent": 76.61,
+    "optimization": "release reviewed setup checkpoint before visual capture and overlap isolated contract consumers",
+    "persistentArtifactDecision": "not enabled; current-run login verification remains mandatory; identity gate requires source commit, fixture hash, and config hash equality"
+  }
+}

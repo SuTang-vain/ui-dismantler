@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
-import { classifySpaRouterNetworkRequest, evaluateSpaRouterContract, findSpaRouterFixture, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
+import { classifySpaRouterNetworkRequest, compareSpaSetupArtifactIdentity, createSpaSetupArtifactIdentity, evaluateSpaRouterContract, findSpaRouterFixture, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
 import { formatSpaRouterVisualDiagnostics } from "../evaluation/spa-router-report.js";
 import { comparePixels } from "../evaluation/browser.js";
 import { runQualityGate } from "../workflow/pipeline.js";
@@ -373,6 +373,21 @@ test("SPA reviewed visual state reuse avoids duplicate stable canvas captures", 
   assert.equal(report.visualMatrix?.scenarios[1].viewports[0].adaptiveWaitMs, 0);
 });
 
+test("SPA persisted setup artifacts require source fixture and config identity equality", () => {
+  const baseConfig: SpaRouterContractConfig = {
+    schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000",
+    fixtures: [{ path: "/api/login", method: "POST", body: { token: "reviewed" } }],
+    scenarios: [{
+      id: "login", entryPath: "/login", steps: [{ action: "click", target: "#login" }], assertions: { path: "/dashboard" },
+      setupState: { stateKey: "admin", checkpointStepCount: 1, resumePath: "/dashboard", checkpointAssertions: { path: "/dashboard" } },
+    }],
+  };
+  const expected = createSpaSetupArtifactIdentity(baseConfig, "source-commit-a", { reference: "source-a", generated: "generated-a" });
+  assert.deepEqual(compareSpaSetupArtifactIdentity(expected, createSpaSetupArtifactIdentity(baseConfig, "source-commit-a", { reference: "source-a", generated: "generated-a" })), { compatible: true, mismatches: [] });
+  const fixtureChanged = structuredClone(baseConfig); fixtureChanged.fixtures![0].body = { token: "changed" };
+  assert.deepEqual(compareSpaSetupArtifactIdentity(expected, createSpaSetupArtifactIdentity(fixtureChanged, "source-commit-b", { reference: "source-a", generated: "generated-b" })).mismatches, ["source-commit", "fixture-hash", "config-hash"]);
+});
+
 test("SPA reviewed setup state reuses authentication in fresh isolated contexts", async () => {
   const setupApp = `<!doctype html><html><body><main id="view"></main><button id="login">Login</button><button id="nested">Nested</button><script>
 const view=document.getElementById('view');
@@ -384,9 +399,9 @@ document.getElementById('nested').onclick=()=>{history.pushState({},'', '/nested
   try {
     const address = setupServer.address(); if (!address || typeof address === "string") throw new Error("missing setup server address");
     const base = `http://127.0.0.1:${address.port}`;
-    const reviewedSetup = { stateKey: "authenticated-admin", checkpointStepCount: 1, resumePath: "/dashboard" };
+    const reviewedSetup = { stateKey: "authenticated-admin", checkpointStepCount: 1, resumePath: "/dashboard", checkpointAssertions: { path: "/dashboard", visibleText: "Dashboard" } };
     const report = await evaluateSpaRouterContract({
-      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base, navigationComparison: "semantic",
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base, navigationComparison: "semantic", execution: { contractConcurrency: 2 },
       scenarios: [
         { id: "login-owner", entryPath: "/login", steps: [{ action: "click", target: "#login" }], assertions: { path: "/dashboard", visibleText: "Dashboard" }, setupState: reviewedSetup },
         { id: "nested-consumer", entryPath: "/login", steps: [{ action: "click", target: "#login" }, { action: "click", target: "#nested" }], assertions: { path: "/nested", visibleText: "Nested" }, setupState: reviewedSetup },
@@ -400,6 +415,12 @@ document.getElementById('nested').onclick=()=>{history.pushState({},'', '/nested
     assert.equal(report.reference?.results[1].setupStateReused, true);
     assert.equal(report.generated?.results[1].setupStateReused, true);
     assert.equal(report.reference?.results[1].stepRoutes[0]?.stepIndex, 1);
+    assert.equal(report.telemetry.contractSetupOwnerTiming.ownerRuns, 2);
+    assert.ok(report.telemetry.contractSetupOwnerTiming.totalMs > 0);
+    assert.ok(report.telemetry.contractSetupOwnerTiming.setupPrefixStepsMs > 0);
+    assert.ok(report.telemetry.contractSetupOwnerTiming.checkpointStorageMs >= 0);
+    assert.equal(report.reference?.results[0].timing.steps[0]?.setupPrefix, true);
+    assert.equal(report.reference?.results[1].timing.steps[0]?.setupPrefix, false);
   } finally {
     await new Promise<void>((resolve, reject) => setupServer.close((error) => error ? reject(error) : resolve()));
   }

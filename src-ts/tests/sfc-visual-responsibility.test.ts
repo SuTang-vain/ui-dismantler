@@ -188,7 +188,9 @@ test("nested Vue templates preserve every Element UI table column and bind revie
     mkdirSync(join(root, "src", "views"), { recursive: true });
     mkdirSync(join(root, "src", "api"), { recursive: true });
     mkdirSync(join(root, "src", "utils"), { recursive: true });
-    writeFileSync(join(root, ".env.development"), `VUE_APP_BASE_API = '/dev-api'\n`);
+    writeFileSync(join(root, ".env.development"), `VUE_APP_BASE_API = '/dev-api'\nVUE_APP_PROXY_TARGET = 'https://dev.example.test'\n`);
+    writeFileSync(join(root, ".env.production"), `VUE_APP_BASE_API = '/prod-api'\nVUE_APP_PROXY_TARGET = 'https://prod.example.test'\n`);
+    writeFileSync(join(root, "vue.config.js"), `const apiPrefix = process.env.VUE_APP_BASE_API; module.exports={devServer:{proxy:{[apiPrefix]:{target:process.env.VUE_APP_PROXY_TARGET,pathRewrite:{['^' + apiPrefix]:''}}}}}`);
     writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: process.env.VUE_APP_BASE_API })`);
     writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'\nexport function fetchOrders(){ return request({ url:'/api/orders', method:'get' }) }`);
     writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><el-table :data="list" style="width:100%;padding-top:15px"><el-table-column label="Order" min-width="200"><template slot-scope="scope">{{ scope.row.order_no | orderNoFilter }}</template></el-table-column><el-table-column label="Price" width="195" align="center"><template slot-scope="scope">¥{{ scope.row.price | toThousandFilter }}</template></el-table-column><el-table-column label="Status" width="100" align="center"><template slot-scope="{row}"><el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag></template></el-table-column></el-table></template><script>import { fetchOrders } from '@/api/orders'; export default { name:'Orders', filters:{ statusFilter(status){ const map={success:'success',pending:'danger'}; return map[status] }, orderNoFilter(value){ return value.substring(0,30) } }, data(){return {list:null}}, created(){this.load()}, methods:{load(){fetchOrders().then(response => { this.list=response.data.items.slice(0,8) })}} }</script>`);
@@ -204,9 +206,21 @@ test("nested Vue templates preserve every Element UI table column and bind revie
     };
     const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
     assert.equal(api.metrics.matchedFixtures, 1);
-    assert.equal(api.metrics.transportPrefixesInferred, 1);
-    assert.deepEqual(api.responsibilities[0].apiCall.transportPrefixes, [{ value: "/dev-api", source: ".env.development:VUE_APP_BASE_API" }]);
-    assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/dev-api/api/orders"]);
+    assert.equal(api.metrics.transportPrefixesInferred, 2);
+    assert.equal(api.metrics.runtimeSelectionsInferred, 2);
+    assert.equal(api.metrics.proxyRoutesInferred, 2);
+    assert.equal(api.metrics.proxyTargetsInferred, 2);
+    assert.equal(api.metrics.proxyRewriteRulesInferred, 2);
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPrefixes, [
+      { value: "/dev-api", source: ".env.development:VUE_APP_BASE_API" },
+      { value: "/prod-api", source: ".env.production:VUE_APP_BASE_API" },
+    ]);
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/dev-api/api/orders", "/prod-api/api/orders"]);
+    assert.deepEqual(api.responsibilities[0].apiCall.runtimeSelections.map((item) => [item.environment, item.value]), [["development", "/dev-api"], ["production", "/prod-api"]]);
+    assert.deepEqual(api.responsibilities[0].apiCall.proxyRoutes.map((item) => ({ environment: item.environment, target: item.targetCandidates[0], rewrite: item.rewritePattern, upstream: item.upstreamPathCandidate })), [
+      { environment: "development", target: "https://dev.example.test", rewrite: "^/dev-api", upstream: "/api/orders" },
+      { environment: "production", target: "https://prod.example.test", rewrite: "^/prod-api", upstream: "/api/orders" },
+    ]);
     assert.equal(api.responsibilities[0].consumption.targetBinding, "list");
     assert.equal(api.responsibilities[0].consumption.responsePath, "data.items");
     assert.equal(api.responsibilities[0].consumption.sliceLimit, 8);

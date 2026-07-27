@@ -2,8 +2,8 @@
   "schemaVersion": "1.0",
   "navigationComparison": "semantic",
   "execution": {
-    "contractConcurrency": 1,
-    "browserShutdown": "graceful",
+    "contractConcurrency": 3,
+    "browserShutdown": "fast-kill",
     "actionTimeoutMs": 5000,
     "visualConcurrency": 3
   },
@@ -81,7 +81,11 @@
       "setupState": {
         "stateKey": "authenticated-admin",
         "checkpointStepCount": 3,
-        "resumePath": "/#/dashboard"
+        "resumePath": "/#/dashboard",
+        "checkpointAssertions": {
+          "hash": "#/dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
       }
     },
     {
@@ -138,7 +142,11 @@
       "setupState": {
         "stateKey": "authenticated-admin",
         "checkpointStepCount": 3,
-        "resumePath": "/#/dashboard"
+        "resumePath": "/#/dashboard",
+        "checkpointAssertions": {
+          "hash": "#/dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
       }
     },
     {
@@ -176,7 +184,11 @@
       "setupState": {
         "stateKey": "authenticated-admin",
         "checkpointStepCount": 3,
-        "resumePath": "/#/dashboard"
+        "resumePath": "/#/dashboard",
+        "checkpointAssertions": {
+          "hash": "#/dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
       }
     },
     {
@@ -229,7 +241,11 @@
       "setupState": {
         "stateKey": "authenticated-admin",
         "checkpointStepCount": 3,
-        "resumePath": "/#/dashboard"
+        "resumePath": "/#/dashboard",
+        "checkpointAssertions": {
+          "hash": "#/dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
       }
     },
     {
@@ -278,7 +294,11 @@
       "setupState": {
         "stateKey": "authenticated-admin",
         "checkpointStepCount": 3,
-        "resumePath": "/#/dashboard"
+        "resumePath": "/#/dashboard",
+        "checkpointAssertions": {
+          "hash": "#/dashboard",
+          "visibleSelector": ".dashboard-container"
+        }
       }
     }
   ],
