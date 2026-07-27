@@ -114,3 +114,44 @@ Current automatic-candidate evidence:
 - visual quality comparison: unavailable by design.
 
 This candidate is not a full generated application and is not a Gold+ result. The next generator phase must materialize reviewed SFC visual owners and ECharts lifecycle boundaries into a separately served target before quality comparison is allowed.
+
+## Automatic visual target v1 experiment
+
+`visual-target.plan.json` is now generated from the SFC/ECharts responsibility graphs plus the reviewed route-shell plan. It records four route-state visual boundaries, 20 implementation owners, four chart owners, five responsive owners, and zero unresolved routes. Acceptance selectors remain separate from generated `data-visual-owner` selectors.
+
+`generated-target-auto-v1/` is a separately served deterministic target. It was generated without copying the reviewed target implementation and records `modelCalls=0`, artifact `manualEdits=0`, and two generator-algorithm repair iterations.
+
+Measured on July 27, 2026:
+
+- Semantic navigation-only: `6/6 PASS`, navigation integrity `1.0`, runtime/network failures `0`;
+- first visual pass: `0/5` route states, worst computed style `0.693`, worst pixel diff `0.105903`;
+- repair 1: `1/5`, worst computed style `0.9474`, worst pixel diff `0.100716`;
+- repair 2: `1/5`, worst computed style `0.9474`, worst pixel diff `0.101232`;
+- best current iteration: repair 1;
+- reviewed baseline remains `5/5`, computed style `0.9912`, pixel diff `0.012977`.
+
+Therefore auto-v1 is a runnable and quantitatively comparable generated application, but **not** a Gold+ target. The remaining work is visual-generation quality, primarily Dashboard source geometry/responsive row reconstruction and Permission Element UI structure; route semantics, lifecycle, runtime, and network isolation are already passing.
+
+### Template structure and primitive generation phase
+
+The automatic visual planner now records SFC template topology, source component order, inline visual declarations, conditions, loops, slots, Element UI primitive ownership, and responsive `el-col` spans. The Vue Element Admin graph now contains 1,185 template nodes, 225 Element UI primitives, and 12 responsive grid nodes; the selected visual target consumes 166 nodes, 47 primitives, and 10 responsive grid nodes. ECharts owners additionally retain bounded `setOption` object slices, series counts, literal data-array counts, and container-height evidence.
+
+The generated Dashboard grid is now derived from source `xs/sm/md/lg/xl` span evidence rather than fixed case-specific breakpoints. The formally correct topology keeps three desktop chart columns, one tablet chart column, a `12/6/6` desktop bottom row, a `24 + 12/12` tablet bottom row, and a stacked mobile row. The latest correct-topology matrix remains `1/5`; worst computed style is `0.9474` and worst pixel diff is `0.100226`. Semantic navigation remains `6/6`, navigation integrity `1.0`, and runtime/network/stability failures remain zero. This is not Gold+ yet, but the remaining gap is now isolated to primitive DOM/style/data materialization rather than route ownership or responsive-grid inference.
+
+
+### Primitive DOM and source-style materialization phase
+
+The automatic target now compiles selected `templateStructure.nodes` into auditable Primitive DOM nodes, style rules, and interaction bindings. Literal text order is preserved around child primitives, primitive identifiers are owner-scoped to prevent cross-component style collisions, local `SvgIcon` files are embedded by source evidence, and available SFC CSS/SCSS is compiled during analysis instead of recreating Login geometry from screenshot calibration.
+
+The Vue graph records 17 embedded SVG assets, 74 compiled/raw style sheets, and four style sheets that remain explicit compile failures. The selected target compiles 60 Primitive DOM nodes, seven source/primitive style rules, and seven interaction bindings with `modelCalls=0` and artifact manual edits `0`.
+
+The latest formal matrix on July 27, 2026 improved the automatic target from `1/5` to `3/5` route states:
+
+- Login: style `1.0`, worst pixel diff `0.002634`, PASS across desktop/tablet/mobile;
+- Permission: style `0.9825`, worst pixel diff `0.018210`, PASS across desktop/tablet;
+- Nested: style `0.9825`, worst pixel diff `0.005009`, PASS;
+- overall navigation integrity: `19/19 = 1.0`;
+- runtime, required network, and stability failures: `0`;
+- Dashboard/deep-link remain blocked at worst style `0.9474` and pixel diff `0.100789`.
+
+The target is still **not** full Gold+. The next algorithm phase is the ECharts option-slice consumer plus Dashboard data-cardinality and selected child-style materialization; thresholds remain unchanged.

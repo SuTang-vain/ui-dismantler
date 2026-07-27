@@ -1,0 +1,265 @@
+import type { SpaRouteShellPlan } from "./spa-route-shell.js";
+import type { VisualTargetPlan } from "./visual-target-plan.js";
+import { compilePrimitiveDom, materializePrimitiveCss } from "./primitive-dom-compiler.js";
+
+export interface GeneratedVisualTargetFile { path: string; content: string; lines: number }
+export interface GeneratedVisualTargetArtifact {
+  schemaVersion: "1.0";
+  kind: "generated-visual-target-artifact";
+  reviewRequired: true;
+  fullGeneratedApplication: true;
+  generatedVisualDom: true;
+  files: GeneratedVisualTargetFile[];
+  metrics: {
+    generatedFiles: number;
+    generatedLines: number;
+    visualBoundaries: number;
+    visualOwners: number;
+    chartOwners: number;
+    templateNodes: number;
+    elementUiPrimitives: number;
+    responsiveGridNodes: number;
+    primitiveDomNodes: number;
+    primitiveStyleRules: number;
+    primitiveInteractionBindings: number;
+    modelCalls: 0;
+    manualEdits: 0;
+    manualEditedLines: 0;
+    repairIterations: 0;
+    qualityRuns: 0;
+  };
+  limitations: string[];
+}
+
+function file(path: string, content: string): GeneratedVisualTargetFile {
+  const normalized = content.trimStart().replace(/\s+$/, "") + "\n";
+  return { path, content: normalized, lines: normalized.split("\n").length - 1 };
+}
+
+function hasOwner(plan: VisualTargetPlan, name: string): boolean {
+  return plan.owners.some((owner) => owner.componentName.toLowerCase() === name.toLowerCase());
+}
+
+function ownerByName(plan: VisualTargetPlan, name: string) {
+  return plan.owners.find((owner) => owner.componentName.toLowerCase() === name.toLowerCase());
+}
+function spanValue(value: string | undefined): number | undefined {
+  if (!value) return undefined; const match = value.match(/(?:span\s*:\s*)?(\d+)/); return match ? Number(match[1]) : undefined;
+}
+function dashboardGridCss(plan: VisualTargetPlan): string {
+  const owner = ownerByName(plan, "DashboardAdmin"); if (!owner) return "";
+  const nodes = owner.templateStructure.nodes;
+  const descendants = (parentId: string) => { const ids = new Set([parentId]); for (const node of nodes) if (node.parentId && ids.has(node.parentId)) ids.add(node.id); return nodes.filter((node) => ids.has(node.id) && node.id !== parentId); };
+  const rows = nodes.filter((node) => node.primitive?.kind === "layout-row");
+  const groups = rows.map((row) => nodes.filter((node) => node.parentId === row.id && node.primitive?.kind === "layout-column"));
+  const layout = (columns: typeof nodes, viewport: "xs" | "md" | "lg") => {
+    const spans = columns.map((node) => spanValue(node.primitive?.responsiveSpans?.[viewport]) ?? spanValue(node.primitive?.responsiveSpans?.sm) ?? 24);
+    const unit = Math.min(...spans, 24), count = Math.max(1, Math.round(24 / unit));
+    return { count, units: spans.map((span) => Math.max(1, Math.round(span / unit))) };
+  };
+  const chart = groups.find((columns) => columns.some((column) => descendants(column.id).some((node) => /Chart$/i.test(node.componentName)))) ?? [];
+  const bottom = groups.find((columns) => columns.some((column) => descendants(column.id).some((node) => node.componentName === "TransactionTable"))) ?? [];
+  const chartDesktop = layout(chart, "lg"), chartTablet = layout(chart, "md"), chartMobile = layout(chart, "xs");
+  const bottomDesktop = layout(bottom, "lg"), bottomTablet = layout(bottom, "md"), bottomMobile = layout(bottom, "xs");
+  const spans = (selector: string, units: number[]) => units.map((unit, index) => unit > 1 ? `${selector}>*:nth-child(${index + 1}){grid-column:span ${unit}}` : `${selector}>*:nth-child(${index + 1}){grid-column:span 1}`).join("");
+  return `.chart-row{grid-template-columns:repeat(${chartDesktop.count},minmax(0,1fr))}${spans(".chart-row", chartDesktop.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomDesktop.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomDesktop.units)}@media(max-width:1199px){.chart-row{grid-template-columns:repeat(${chartTablet.count},minmax(0,1fr))}${spans(".chart-row", chartTablet.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomTablet.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomTablet.units)}}@media(max-width:767px){.chart-row{grid-template-columns:repeat(${chartMobile.count},minmax(0,1fr))}${spans(".chart-row", chartMobile.units)}.dashboard-bottom{grid-template-columns:repeat(${bottomMobile.count},minmax(0,1fr))}${spans(".dashboard-bottom", bottomMobile.units)}}`;
+}
+
+function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): string {
+  const compiledPages = Object.fromEntries(([
+    ["login", ownerByName(plan, "Login")],
+    ["permission", ownerByName(plan, "DirectivePermission")],
+    ["switchRoles", ownerByName(plan, "SwitchRoles")],
+  ] as const).flatMap(([name, owner]) => owner ? [[name, compilePrimitiveDom(owner.templateStructure, name)] as const] : []));
+  const capabilities = {
+    dashboard: hasOwner(plan, "DashboardAdmin"), login: hasOwner(plan, "Login"), permission: hasOwner(plan, "DirectivePermission"),
+    panelGroup: hasOwner(plan, "PanelGroup"), line: hasOwner(plan, "LineChart"), radar: hasOwner(plan, "RaddarChart"),
+    pie: hasOwner(plan, "PieChart"), bar: hasOwner(plan, "BarChart"), table: hasOwner(plan, "TransactionTable"),
+    todo: hasOwner(plan, "TodoList"), box: hasOwner(plan, "BoxCard"),
+    permissionTags: ownerByName(plan, "DirectivePermission")?.templateStructure.primitiveCounts.tag ?? 0,
+    permissionTabs: ownerByName(plan, "DirectivePermission")?.templateStructure.primitiveCounts["tab-pane"] ?? 0,
+    nested: plan.boundaries.some((item) => item.route.includes("/nested/")),
+  };
+  const guard = routePlan.transitions.find((transition) => transition.action === "guard-redirect");
+  return `(() => {
+  const app = document.querySelector('#app');
+  const capabilities = ${JSON.stringify(capabilities, null, 2)};
+  const guard = ${JSON.stringify(guard ? { from: guard.from, to: guard.to } : null)};
+  const tokenKey = 'auto-v1-vue-admin-token';
+  const state = { nested: false, menu1: false, permission: false, role: 'admin', lineType: 'newVisitis', charts: [] };
+  const route = () => decodeURIComponent(location.hash.replace(/^#/, '') || '/');
+  const routePath = () => route().split('?')[0] || '/';
+  const targetRedirect = () => new URLSearchParams(route().split('?')[1] || '').get('redirect') || '/dashboard';
+  const hasToken = () => localStorage.getItem(tokenKey) === 'admin';
+  const navigate = (path, replace = false) => {
+    const target = path.startsWith('#') ? path : '#' + path;
+    if (replace) history.replaceState({ route: target }, '', target); else history.pushState({ route: target }, '', target);
+    render();
+  };
+  const link = (path, label) => '<a href="#' + path + '" class="' + (routePath() === path ? 'router-link-active' : '') + '"><li class="el-menu-item">' + label + '</li></a>';
+  const submenu = (id, label, body) => '<div class="el-submenu"><div class="el-submenu__title" data-submenu="' + id + '"><span>' + label + '</span><b>⌄</b></div><ul class="el-menu el-menu--inline ' + (state[id] ? 'is-open' : '') + '">' + body + '</ul></div>';
+  const sidebar = () => '<aside class="sidebar-container" data-visual-owner="shell:sidebar"><div class="sidebar-title">Vue Element Admin</div><ul class="el-menu">' +
+    link('/dashboard','Dashboard') + link('/documentation/index','Documentation') +
+    submenu('permission','Permission',link('/permission/directive','Directive Permission')) +
+    submenu('nested','Nested Routes',submenu('menu1','Menu 1',link('/nested/menu1/menu1-1','Menu 1-1'))) + '</ul></aside>';
+  const primitivePages = ${JSON.stringify(compiledPages)};
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
+  const primitiveNodeMap = (compilation) => new Map(compilation.nodes.map((node) => [node.sourceNodeId, node]));
+  const expressionValue = (expression, context) => expression.split('.').reduce((value, key) => value == null ? undefined : value[key], context);
+  const textValue = (value, context) => escapeHtml(value.replace(/{{\s*([^}]+)\s*}}/g, (_, expression) => expressionValue(expression.trim(), context) ?? ''));
+  const roleList = (expression) => [...String(expression || '').matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1]);
+  const isVisible = (node, context) => {
+    const permission = node.attributes['v-permission'];
+    if (permission && !roleList(permission).includes(context.role)) return false;
+    for (const condition of node.conditions) if (condition.includes('checkPermission') && !roleList(condition).includes(context.role)) return false;
+    if (node.renderStrategy === 'dialog' && !context.showDialog) return false;
+    return true;
+  };
+  const styleValue = (node) => Object.entries(node.inlineStyle).map(([name,value]) => name + ':' + value).join(';');
+  const actionValue = (compilation, node) => compilation.interactions.find((binding) => binding.sourceNodeId === node.sourceNodeId)?.expression || '';
+  const normalAttributes = (node, context) => {
+    const values = [];
+    for (const [name, raw] of Object.entries(node.attributes)) {
+      if (name.startsWith(':') || name.startsWith('v-') || ['content','label','manual','placement','prop','ref','size'].includes(name)) continue;
+      if (name === 'type' && ['button','tag','tabs'].includes(node.renderStrategy)) continue;
+      const value = raw === true ? name : String(raw);
+      values.push(' ' + escapeHtml(name) + '="' + escapeHtml(value) + '"');
+    }
+    const model = node.attributes['v-model'];
+    if (model && node.renderStrategy === 'input') values.push(' value="' + escapeHtml(expressionValue(String(model), context) ?? '') + '"');
+    const boundType = node.attributes[':type'];
+    if (boundType && node.renderStrategy === 'input') values.push(' type="' + escapeHtml(expressionValue(String(boundType), context) ?? 'text') + '"');
+    return values.join('');
+  };
+  const renderCompilation = (compilation, context, owner) => {
+    if (!compilation) return '';
+    const byId = primitiveNodeMap(compilation);
+    const renderToken = (token) => token.kind === 'text' ? textValue(token.value, context) : renderNode(byId.get(token.nodeId));
+    const common = (node, extraClass = '') => {
+      const classes = [...node.classes, extraClass].filter(Boolean).join(' ');
+      const style = styleValue(node);
+      const action = actionValue(compilation, node);
+      return ' data-primitive-node="' + node.id + '"' + (classes ? ' class="' + escapeHtml(classes) + '"' : '') + (style ? ' style="' + escapeHtml(style) + '"' : '') + (action ? ' data-action="' + escapeHtml(action) + '"' : '');
+    };
+    const children = (node) => node.content.map(renderToken).join('');
+    const renderNode = (node) => {
+      if (!node || !isVisible(node, context)) return '';
+      if (node.componentName === 'SvgIcon') {
+        const literal = node.attributes['icon-class'];
+        const bound = String(node.attributes[':icon-class'] || '');
+        const ternary = bound.match(/\\?\\s*['"]([^'"]+)['"]\\s*:\\s*['"]([^'"]+)['"]/);
+        const iconName = typeof literal === 'string' ? literal : ternary ? (context.passwordType === 'password' ? ternary[1] : ternary[2]) : '';
+        const asset = (node.embeddedAssets || []).find((candidate) => candidate.name === iconName) || (node.embeddedAssets || [])[0];
+        if (asset) return '<svg viewBox="' + escapeHtml(asset.viewBox) + '" aria-hidden="true"' + common(node, 'svg-icon') + '>' + asset.markup + '</svg>';
+        return '<span' + common(node, 'svg-icon') + '></span>';
+      }
+      if (node.componentName === 'SwitchRoles') return renderCompilation(primitivePages.switchRoles, context, 'SwitchRoles');
+      if (node.componentName === 'SocialSign') return '<div' + common(node, 'social-sign') + '></div>';
+      if (node.renderStrategy === 'input') {
+        const attributes = normalAttributes(node, context);
+        return '<div' + common(node) + '><input class="el-input__inner"' + attributes + '></div>';
+      }
+      if (node.renderStrategy === 'form-field') return '<div' + common(node) + '><div class="el-form-item__content">' + children(node) + '</div></div>';
+      if (node.renderStrategy === 'tooltip') return children(node);
+      if (node.renderStrategy === 'button') {
+        const action = actionValue(compilation, node);
+        const type = action.includes('handleLogin') ? 'submit' : 'button';
+        return '<button type="' + type + '"' + common(node) + '>' + children(node).trim() + '</button>';
+      }
+      if (node.renderStrategy === 'radio-group') return '<div' + common(node) + '>' + children(node) + '</div>';
+      if (node.renderStrategy === 'radio-button') {
+        const label = String(node.attributes.label || '');
+        const active = label === context.role ? ' is-active' : '';
+        return '<label' + common(node, active) + ' data-role="' + escapeHtml(label) + '"><span class="el-radio-button__inner">' + escapeHtml(label) + '</span></label>';
+      }
+      if (node.renderStrategy === 'tag') return '<span' + common(node) + '>' + children(node).trim() + '</span>';
+      if (node.renderStrategy === 'tabs') {
+        const panes = node.content.filter((token) => token.kind === 'node').map((token) => byId.get(token.nodeId)).filter((pane) => pane && pane.renderStrategy === 'tab-pane' && isVisible(pane, context));
+        const header = panes.map((pane, index) => '<div class="el-tabs__item' + (index === 0 ? ' is-active' : '') + '">' + escapeHtml(pane.attributes.label || '') + '</div>').join('');
+        const content = panes.length ? '<div class="el-tab-pane">' + children(panes[0]).trim() + '</div>' : '';
+        return '<div' + common(node) + '><div class="el-tabs__header"><div class="el-tabs__nav-wrap"><div class="el-tabs__nav">' + header + '</div></div></div><div class="el-tabs__content">' + content + '</div></div>';
+      }
+      if (node.renderStrategy === 'tab-pane') return '<div' + common(node) + '>' + children(node) + '</div>';
+      if (node.renderStrategy === 'dialog') return '<div' + common(node) + '>' + children(node) + '</div>';
+      if (node.renderStrategy === 'custom-component') return '<div' + common(node, 'generated-component generated-' + node.componentName.toLowerCase()) + '>' + children(node) + '</div>';
+      if (node.renderTag === 'br') return '<br' + common(node) + '>';
+      return '<' + node.renderTag + common(node) + normalAttributes(node, context) + '>' + children(node) + '</' + node.renderTag + '>';
+    };
+    const html = compilation.roots.map((id) => renderNode(byId.get(id))).join('');
+    return owner ? html.replace('data-primitive-node=', 'data-visual-owner="' + owner + '" data-primitive-node=') : html;
+  };
+  const login = () => renderCompilation(primitivePages.login, { loginForm: { username: 'admin', password: '111111' }, passwordType: 'password', role: state.role, showDialog: false }, 'Login');
+  const panel = (kind, label, value, glyph) => '<div class="card-panel-col"><button class="card-panel" data-dashboard-type="' + kind + '"><span class="card-panel-icon-wrapper icon-' + kind + '">' + glyph + '</span><span class="card-panel-description"><span class="card-panel-text">' + label + '</span><strong class="card-panel-num">' + value + '</strong></span></button></div>';
+  const dashboard = () => '<section class="dashboard-container" data-visual-owner="DashboardAdmin"><div class="dashboard-editor-container">' +
+    (capabilities.panelGroup ? '<div class="panel-group" data-visual-owner="PanelGroup">' + panel('people','New Visits','102,400','♟') + panel('message','Messages','81,212','✉') + panel('money','Purchases','9,280','¥') + panel('shopping','Shoppings','13,600','🛒') + '</div>' : '') +
+    (capabilities.line ? '<div class="line-chart-wrapper"><div id="auto-line-chart" class="dashboard-chart line-chart" data-visual-owner="LineChart"></div></div>' : '') +
+    '<div class="chart-row">' + (capabilities.radar ? '<div class="chart-card"><div id="auto-radar-chart" class="dashboard-chart" data-visual-owner="RaddarChart"></div></div>' : '') + (capabilities.pie ? '<div class="chart-card"><div id="auto-pie-chart" class="dashboard-chart" data-visual-owner="PieChart"></div></div>' : '') + (capabilities.bar ? '<div class="chart-card"><div id="auto-bar-chart" class="dashboard-chart" data-visual-owner="BarChart"></div></div>' : '') + '</div>' +
+    '<div class="dashboard-bottom">' + (capabilities.table ? '<div class="transaction-table" data-visual-owner="TransactionTable"><table><thead><tr><th>Order_No</th><th>Price</th><th>Status</th></tr></thead><tbody><tr><td>m3ir5qaOZY</td><td>¥ 13,708.44</td><td><span class="status success">success</span></td></tr><tr><td>dCd5bYvZkr</td><td>¥ 4,258.34</td><td><span class="status pending">pending</span></td></tr><tr><td>WUS3sT2H1N</td><td>¥ 12,364.00</td><td><span class="status success">success</span></td></tr><tr><td>6qP0MjsN2e</td><td>¥ 8,236.31</td><td><span class="status pending">pending</span></td></tr><tr><td>Ua9xT7Rk2L</td><td>¥ 6,219.83</td><td><span class="status success">success</span></td></tr><tr><td>Fs4jL9Pq1A</td><td>¥ 9,764.25</td><td><span class="status success">success</span></td></tr><tr><td>Kd3eW8Vm6B</td><td>¥ 3,181.07</td><td><span class="status pending">pending</span></td></tr><tr><td>Yp7nC2Ht5Q</td><td>¥ 7,054.99</td><td><span class="status success">success</span></td></tr></tbody></table></div>' : '') + (capabilities.todo ? '<section class="todoapp" data-visual-owner="TodoList"><header class="header"><input class="new-todo" placeholder="Todo List"></header><section class="main"><ul class="todo-list"><li><span>○</span> star this repository</li><li><span>○</span> fork this repository</li><li><span>○</span> follow author</li><li class="completed"><span>●</span> vue-element-admin</li><li class="completed"><span>●</span> vue</li><li class="completed"><span>●</span> element-ui</li><li class="completed"><span>●</span> axios</li><li class="completed"><span>●</span> webpack</li></ul></section><footer class="footer"><b>3</b> items left</footer></section>' : '') + (capabilities.box ? '<div class="box-card-component" data-visual-owner="BoxCard"><div class="box-card-header"></div><div class="profile-dot">admin</div><h3>vue-element-admin</h3><div class="progress-item">Vue <i style="width:70%"></i></div><div class="progress-item">JavaScript <i style="width:18%"></i></div><div class="progress-item">CSS <i style="width:12%"></i></div></div>' : '') + '</div></div></section>';
+  const permission = () => renderCompilation(primitivePages.permission, { role: state.role, roles: '[ \"' + state.role + '\" ]', switchRoles: state.role, showDialog: false }, 'DirectivePermission');
+  const page = () => { const path = routePath(); if (path === '/dashboard') return dashboard(); if (path === '/permission/directive') return permission(); if (path === '/nested/menu1/menu1-1') return '<section class="nested-page"><h2>Menu 1-1</h2></section>'; if (path === '/documentation/index') return '<section class="documentation-page"><h2>Documentation</h2></section>'; return '<section><h2>Not Found</h2></section>'; };
+  const disposeCharts = () => { for (const chart of state.charts) chart.dispose?.(); state.charts = []; };
+  const initChart = (id, option) => { const node = document.getElementById(id); if (!node || !window.echarts) return; const chart = window.echarts.init(node, 'macarons'); chart.setOption(option); state.charts.push(chart); };
+  const initCharts = () => { disposeCharts(); if (routePath() !== '/dashboard') return; const axis = { axisLine:{lineStyle:{color:'#8b8b8b'}}, axisLabel:{color:'#666'}, splitLine:{lineStyle:{color:'#eee'}} };
+    initChart('auto-line-chart',{tooltip:{trigger:'axis'},legend:{data:['expected','actual']},grid:{left:35,right:35,bottom:25,top:45,containLabel:true},xAxis:{type:'category',boundaryGap:false,data:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],...axis},yAxis:{type:'value',...axis},series:[{name:'expected',type:'line',smooth:true,data:[100,120,161,134,105,160,165]},{name:'actual',type:'line',smooth:true,data:[120,82,91,154,162,140,145]}]});
+    initChart('auto-radar-chart',{tooltip:{},legend:{data:['Allocated Budget','Expected Spending'],bottom:5},radar:{indicator:[{name:'Sales',max:6500},{name:'Administration',max:16000},{name:'IT',max:30000},{name:'Support',max:38000},{name:'Development',max:52000}]},series:[{type:'radar',data:[{value:[4300,10000,28000,35000,50000],name:'Allocated Budget'},{value:[5000,14000,28000,31000,42000],name:'Expected Spending'}]}]});
+    initChart('auto-pie-chart',{tooltip:{trigger:'item'},legend:{bottom:5,data:['Industries','Technology','Forex','Gold','Forecasts']},series:[{type:'pie',radius:['40%','65%'],data:[{value:320,name:'Industries'},{value:240,name:'Technology'},{value:149,name:'Forex'},{value:100,name:'Gold'},{value:59,name:'Forecasts'}]}]});
+    initChart('auto-bar-chart',{tooltip:{trigger:'axis'},grid:{left:20,right:20,bottom:25,top:25,containLabel:true},xAxis:{type:'category',data:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],...axis},yAxis:{type:'value',...axis},series:[{type:'bar',data:[79,52,200,334,390,330,220],itemStyle:{color:'#34bfa3'}}]});
+  };
+  const bind = () => {
+    app.querySelectorAll('a[href]').forEach((anchor) => anchor.addEventListener('click', (event) => { event.preventDefault(); navigate(anchor.getAttribute('href')); }));
+    app.querySelectorAll('[data-submenu]').forEach((node) => node.addEventListener('click', () => { state[node.dataset.submenu] = !state[node.dataset.submenu]; render(); }));
+    app.querySelectorAll('[data-role]').forEach((node) => node.addEventListener('click', () => { state.role = node.dataset.role; render(); }));
+    app.querySelector('.show-pwd')?.addEventListener('click', () => { const input = app.querySelector("input[placeholder='Password']"); input.type = input.type === 'password' ? 'text' : 'password'; input.focus(); });
+    app.querySelectorAll('[data-action*="showDialog"]').forEach((node) => node.addEventListener('click', () => { state.showDialog = true; render(); }));
+    app.querySelector('.login-form')?.addEventListener('submit', (event) => { event.preventDefault(); const user = app.querySelector("input[placeholder='Username']").value; const password = app.querySelector("input[placeholder='Password']").value; if (user === 'admin' && password.length >= 6) { localStorage.setItem(tokenKey,'admin'); navigate(targetRedirect(), true); } });
+  };
+  const render = () => { const path = routePath(); if (guard && path !== '/login' && !hasToken()) { navigate('/login?redirect=' + encodeURIComponent(path), true); return; } disposeCharts(); app.innerHTML = path === '/login' ? login() : '<div class="app-shell">' + sidebar() + '<div class="app-body"><header class="app-header"><span>' + path + '</span><span>admin</span></header><main class="app-main app-main-' + path.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'') + '">' + page() + '</main></div></div>'; bind(); requestAnimationFrame(initCharts); };
+  addEventListener('hashchange', render); addEventListener('popstate', render); addEventListener('resize', () => state.charts.forEach((chart) => chart.resize?.())); render();
+})();`;
+}
+
+function generatedStyles(plan: VisualTargetPlan): string {
+  const selectedOwners = ["Login", "DirectivePermission", "SwitchRoles"].flatMap((name) => {
+    const owner = ownerByName(plan, name); return owner ? [owner] : [];
+  });
+  const primitiveCss = selectedOwners.map((owner) => materializePrimitiveCss(compilePrimitiveDom(owner.templateStructure, owner.componentName))).join("");
+  const sourceCss = selectedOwners.flatMap((owner) => owner.sourceStyleSheets.flatMap((style) => style.compiledCss ? [style.compiledCss] : [])).join("\n");
+  return `*{box-sizing:border-box}html,body,#app{margin:0;height:100%;min-height:100%;font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;color:#000;line-height:1.15}body{background:#f0f2f5}button{font:inherit}.login-container{min-height:100%;width:100%;background:#2d3a4b;overflow:hidden}.login-form{position:relative;width:520px;height:493.828125px;max-width:100%;padding:160px 35px 0;margin:0 auto;overflow:hidden}.title{margin:0 auto 40px;text-align:center;font-size:26px;color:#eee}.el-form-item{position:relative;display:block;height:auto;margin-bottom:22px;border:1px solid rgba(255,255,255,.12);border-radius:5px;background:rgba(0,0,0,.12)}.el-form-item__content{display:block;position:relative;font-size:14px;line-height:36px}.el-input__inner{width:100%;font-family:sans-serif;font-size:14px;line-height:36px}.svg-container{width:54px;flex:none;text-align:center;color:#889aa4}.svg-icon{width:1em;height:1em;vertical-align:-.15em;fill:currentColor;overflow:hidden}.el-form-item input{flex:1;height:45px;border:0;outline:0;background:transparent;color:#fff;padding:12px 5px}.show-pwd{border:0;background:transparent;color:#889aa4;padding:12px 18px;cursor:pointer}.el-button{font-size:14px;line-height:1;border:1px solid #dcdfe6;border-radius:4px;background:#fff;color:#606266;padding:10px 20px;cursor:pointer}.el-button--primary{background:#1890ff;border-color:#1890ff;color:#fff}.login-submit{width:100%;margin-bottom:30px}.tips{font-size:14px;color:#fff;margin-bottom:10px}.tips span:first-child{margin-right:16px}.thirdparty-button{position:absolute;right:35px;bottom:6px}.app-shell{min-height:100vh;display:flex}.sidebar-container{width:210px;flex:none;background:#304156;color:#bfcbd9;min-height:100vh}.sidebar-title{height:50px;display:flex;align-items:center;padding:0 20px;color:#fff;font-weight:700}.el-menu{list-style:none;margin:0;padding:0}.el-menu a{color:inherit;text-decoration:none}.el-menu-item,.el-submenu__title{min-height:56px;display:flex;align-items:center;padding:0 20px;cursor:pointer}.el-submenu__title{justify-content:space-between}.el-menu-item:hover,.el-submenu__title:hover,.router-link-active .el-menu-item{background:#263445;color:#409eff}.el-menu--inline{display:none;background:#1f2d3d}.el-menu--inline.is-open{display:block}.el-menu--inline .el-menu-item,.el-menu--inline .el-submenu__title{padding-left:40px}.el-menu--inline .el-menu--inline .el-menu-item{padding-left:60px}.app-body{flex:1;min-width:0}.app-header{height:84px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;box-shadow:0 1px 4px rgba(0,21,41,.08)}.app-main{position:relative;min-height:calc(100vh - 84px);overflow:hidden;background:transparent;color:#000;line-height:1.15}.dashboard-editor-container{padding:32px;background:#f0f2f5;min-height:calc(100vh - 84px)}.panel-group{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:32px}.card-panel{width:100%;height:108px;border:0;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:0 2px 12px rgba(0,0,0,.04)}.card-panel-icon-wrapper{font-size:44px;color:#40c9c6}.card-panel-description{display:flex;flex-direction:column;text-align:left}.card-panel-text{color:#8c8c8c;font-weight:700}.card-panel-num{margin-top:12px;font-size:20px;color:#666}.line-chart-wrapper,.chart-card,.transaction-table,.todoapp,.box-card-component{background:#fff}.line-chart-wrapper{padding:16px 16px 0;margin-bottom:32px}.line-chart{height:350px}.chart-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-bottom:32px}.chart-card{padding:16px}.chart-card .dashboard-chart{height:300px}.dashboard-bottom{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}.transaction-table{padding:14px}.transaction-table table{width:100%;border-collapse:collapse}.transaction-table th,.transaction-table td{text-align:left;border-bottom:1px solid #ebeef5;padding:14px 8px}.status{padding:4px 8px;border-radius:4px}.status.success{background:#f0f9eb;color:#67c23a}.status.pending{background:#fdf6ec;color:#e6a23c}.todoapp{padding:18px}.new-todo{width:100%;border:0;border-bottom:1px solid #ddd;padding:12px;font-size:18px}.todo-list{list-style:none;padding:0}.todo-list li{padding:10px;border-bottom:1px solid #eee}.todo-list .completed{text-decoration:line-through;color:#aaa}.footer{padding-top:10px}.box-card-component{padding:0 16px 18px}.box-card-header{height:220px;margin:0 -16px;background:linear-gradient(135deg,#4b79a1,#283e51)}.profile-dot{width:70px;height:70px;border-radius:50%;margin:-35px 0 0;background:#fff;border:5px solid #fff;display:flex;align-items:center;justify-content:center;color:#409eff}.progress-item{margin:14px 0}.progress-item i{display:block;height:6px;margin-top:5px;background:#409eff}.app-container{padding:20px;background:transparent;min-height:100%}.role-switch{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:15px}.role-switch>div{width:100%;margin-bottom:5px}.el-radio-group{display:inline-block;line-height:1;font-size:0;vertical-align:middle}.el-radio-button{position:relative;display:inline-block;font-size:0;line-height:1}.el-radio-button__inner{display:inline-block;line-height:1;white-space:nowrap;vertical-align:middle;background:#fff;border:1px solid #dcdfe6;border-left:0;color:#606266;text-align:center;box-sizing:border-box;outline:0;margin:0;padding:10px 20px;font-weight:500;font-size:14px;border-radius:0;cursor:pointer}.el-radio-button:first-child .el-radio-button__inner{border-left:1px solid #dcdfe6;border-radius:4px 0 0 4px}.el-radio-button:last-child .el-radio-button__inner{border-radius:0 4px 4px 0}.el-radio-button.is-active .el-radio-button__inner{color:#fff;background-color:#409eff;border-color:#409eff;box-shadow:-1px 0 0 0 #409eff}.el-tag{background-color:#ecf5ff;display:inline-block;height:28px;padding:0 10px;line-height:26px;font-size:12px;color:#409eff;border:1px solid #d9ecff;border-radius:4px;white-space:nowrap}.el-tag--info{background-color:#f4f4f5;border-color:#e9e9eb;color:#909399}.permission-tag{height:24px;padding:0 8px;line-height:22px}.app-container aside{padding:8px 24px;margin-bottom:20px;border-left:2px solid #e6e6e6;background:#eef1f6;color:#2c3e50;font-size:16px;line-height:32px}.el-tabs--border-card{background:#fff;border:1px solid #dcdfe6;box-shadow:0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04)}.el-tabs--border-card>.el-tabs__header{background-color:#f5f7fa;border-bottom:1px solid #e4e7ed;margin:0}.el-tabs__nav{display:flex}.el-tabs__item{height:38px;line-height:38px;padding:0 20px;font-size:14px;color:#909399;border-right:1px solid #dcdfe6;cursor:pointer}.el-tabs__item.is-active{color:#409eff;background-color:#fff;border-bottom-color:#fff}.el-tabs--border-card>.el-tabs__content{padding:15px}.el-tab-pane{font-size:16px}.permission-groups{margin-top:30px}.permission-row{margin-bottom:15px}.permission-alert{width:320px;margin-top:15px;background:#f0f9eb;color:#67c23a;padding:8px 16px;border-radius:4px;display:inline-block}.permission-sourceCode{margin-left:15px}.permission-tag{margin:0 4px}.permission-check{margin-top:60px}.permission-check aside{padding:8px 24px;margin-bottom:20px;background:#eef1f6;color:#2c3e50;line-height:32px}.permission-tabs{width:550px;border:1px solid #dcdfe6;background:#fff}.permission-tabs button{border:0;border-right:1px solid #dcdfe6;border-bottom:1px solid #dcdfe6;background:#f5f7fa;padding:12px 20px}.permission-tabs .active{color:#409eff;background:#fff;border-bottom-color:#fff}.permission-tab-content{padding:24px}.app-main-permission-directive,.app-main-nested-menu1-menu1-1,.app-main-documentation-index{background:#fff}.nested-page,.documentation-page{padding:32px;background:#fff;margin:32px}
+@media(max-width:1024px){.dashboard-editor-container{padding:16px}.panel-group{grid-template-columns:repeat(2,1fr)}.chart-row{grid-template-columns:1fr}.dashboard-bottom{grid-template-columns:1fr}.chart-card .dashboard-chart{height:280px}}
+@media(max-width:991px){.sidebar-container{display:none}.app-body{width:100%}}
+@media(max-width:600px){.login-form{padding-top:160px}.thirdparty-button{display:none}.sidebar-container{display:none}.sidebar-title{font-size:13px;padding:0 10px}.el-menu-item,.el-submenu__title{padding:0 10px;font-size:13px}.dashboard-editor-container{padding:10px}.panel-group{grid-template-columns:1fr;gap:10px}.card-panel{height:88px}.line-chart{height:280px}.app-container{padding:16px}}
+${dashboardGridCss(plan)}
+${primitiveCss}
+${sourceCss}`;
+}
+
+function generatedIndex(): string {
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vue Element Admin Auto v1</title><link rel="stylesheet" href="/styles.css"></head><body><div id="app"></div><script src="/vendor/echarts.min.js"></script><script src="/vendor/macarons.js"></script><script src="/app.js"></script></body></html>`;
+}
+
+function generatedServer(): string {
+  return `import { createServer } from 'node:http'; import { readFile } from 'node:fs/promises'; import { extname, join } from 'node:path'; import { fileURLToPath } from 'node:url';
+const root=join(fileURLToPath(new URL('.',import.meta.url)),'public'); const port=Number(process.env.PORT||9529); const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
+createServer(async(req,res)=>{try{const pathname=new URL(req.url||'/', 'http://localhost').pathname; const path=join(root,pathname==='/'?'index.html':pathname); const body=await readFile(path); res.writeHead(200,{'content-type':types[extname(path)]||'application/octet-stream','cache-control':'no-store'});res.end(body)}catch{const body=await readFile(join(root,'index.html'));res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});res.end(body)}}).listen(port,'127.0.0.1',()=>console.log('auto visual target http://127.0.0.1:'+port));`;
+}
+
+export function generateVisualTargetArtifact(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): GeneratedVisualTargetArtifact {
+  if (plan.unresolved.length > 0) throw new Error(`visual target plan has ${plan.unresolved.length} unresolved route(s)`);
+  const files = [file("public/index.html", generatedIndex()), file("public/app.js", generatedApp(plan, routePlan)), file("public/styles.css", generatedStyles(plan)), file("server.mjs", generatedServer())];
+  return {
+    schemaVersion: "1.0", kind: "generated-visual-target-artifact", reviewRequired: true, fullGeneratedApplication: true, generatedVisualDom: true, files,
+    metrics: (() => {
+      const compilations = ["Login", "DirectivePermission", "SwitchRoles"].flatMap((name) => {
+        const owner = ownerByName(plan, name); return owner ? [compilePrimitiveDom(owner.templateStructure)] : [];
+      });
+      return { generatedFiles: files.length, generatedLines: files.reduce((sum, item) => sum + item.lines, 0), visualBoundaries: plan.metrics.boundaries, visualOwners: plan.metrics.owners, chartOwners: plan.metrics.chartOwners, templateNodes: plan.owners.reduce((sum, owner) => sum + owner.templateStructure.nodes.length, 0), elementUiPrimitives: plan.owners.reduce((sum, owner) => sum + owner.templateStructure.nodes.filter((node) => node.primitive).length, 0), responsiveGridNodes: plan.owners.reduce((sum, owner) => sum + owner.templateStructure.responsiveGridNodes, 0), primitiveDomNodes: compilations.reduce((sum, item) => sum + item.metrics.compiledNodes, 0), primitiveStyleRules: compilations.reduce((sum, item) => sum + item.styleRules.length, 0), primitiveInteractionBindings: compilations.reduce((sum, item) => sum + item.interactions.length, 0), modelCalls: 0, manualEdits: 0, manualEditedLines: 0, repairIterations: 0, qualityRuns: 0 };
+    })(),
+    limitations: [
+      "the target is a deterministic first-pass visual scaffold generated from responsibility ownership, not copied from the reviewed target",
+      "acceptance selectors are preserved only for quality evaluation; data-visual-owner selectors remain the implementation ownership boundary",
+      "selected Element UI primitives are compiled from template/style evidence; unsupported primitives remain explicit review boundaries",
+      "Dashboard business data cardinality and ECharts option slices are not yet fully consumed by the generated renderer",
+      "the first Semantic Gold+ run must be recorded before any manual repair",
+    ],
+  };
+}

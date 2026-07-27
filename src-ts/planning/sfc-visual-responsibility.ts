@@ -1,6 +1,8 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { basename, extname, join, relative, resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, dirname, extname, join, relative, resolve } from "node:path";
+import { createRequire } from "node:module";
 import { analyzeEChartsResponsibilities, type EChartsResponsibilityGraph } from "./echarts-responsibility.js";
+import { analyzeSfcTemplateStructure, type SfcTemplateStructure } from "./sfc-template-structure.js";
 
 export interface SfcStyleResponsibility {
   index: number;
@@ -10,6 +12,8 @@ export interface SfcStyleResponsibility {
   mediaQueries: string[];
   classSelectors: string[];
   customProperties: string[];
+  compiledCss?: string;
+  compileStatus: "compiled" | "raw-css" | "failed";
 }
 
 export interface SfcVisualComponentResponsibility {
@@ -18,6 +22,7 @@ export interface SfcVisualComponentResponsibility {
   componentName: string;
   imports: Array<{ local: string; source: string; thirdParty: boolean }>;
   childComponents: string[];
+  templateStructure: SfcTemplateStructure;
   visualRegions: string[];
   bindings: {
     events: string[];
@@ -50,6 +55,12 @@ export interface SfcVisualResponsibilityGraph {
     interactiveComponents: number;
     chartComponents: number;
     mediaQueries: number;
+    templateNodes: number;
+    elementUiPrimitives: number;
+    responsiveGridNodes: number;
+    embeddedSvgAssets: number;
+    compiledStyleSheets: number;
+    failedStyleSheets: number;
     scanMs: number;
   };
 }
@@ -112,6 +123,63 @@ function importResponsibilities(script: string): Array<{ local: string; source: 
   return imports;
 }
 
+
+
+interface SassCompiler { compileString?: (source: string, options: Record<string, unknown>) => { css: string }; renderSync?: (options: Record<string, unknown>) => { css: Uint8Array | string } }
+const sassCompilerByRoot = new Map<string, SassCompiler | null>();
+function sassCompiler(root: string): SassCompiler | null {
+  if (sassCompilerByRoot.has(root)) return sassCompilerByRoot.get(root) ?? null;
+  try {
+    const loaded = createRequire(join(root, "package.json"))("sass") as SassCompiler;
+    sassCompilerByRoot.set(root, loaded); return loaded;
+  } catch { sassCompilerByRoot.set(root, null); return null; }
+}
+function compileVisualStyle(root: string, absolutePath: string, language: string, source: string): { compiledCss?: string; compileStatus: SfcStyleResponsibility["compileStatus"] } {
+  if (language === "css") return { compiledCss: source.trim(), compileStatus: "raw-css" };
+  if (!["scss", "sass"].includes(language)) return { compileStatus: "failed" };
+  const compiler = sassCompiler(root); if (!compiler) return { compileStatus: "failed" };
+  try {
+    const includePaths = [dirname(absolutePath), join(root, "src"), join(root, "src", "styles")];
+    if (compiler.compileString) {
+      const result = compiler.compileString(source, { syntax: language === "sass" ? "indented" : "scss", style: "compressed", loadPaths: includePaths, logger: { warn() {}, debug() {} } });
+      return { compiledCss: String(result.css).trim(), compileStatus: "compiled" };
+    }
+    if (compiler.renderSync) {
+      const result = compiler.renderSync({ data: source, outputStyle: "compressed", includePaths, indentedSyntax: language === "sass", file: absolutePath });
+      return { compiledCss: Buffer.from(result.css).toString("utf8").trim(), compileStatus: "compiled" };
+    }
+    return { compileStatus: "failed" };
+  } catch { return { compileStatus: "failed" }; }
+}
+
+function svgIconCandidates(attributes: Record<string, string | true>): string[] {
+  const literal = attributes["icon-class"];
+  const bound = attributes[":icon-class"];
+  if (typeof literal === "string") return [literal];
+  if (typeof bound !== "string") return [];
+  const ternary = bound.match(/\?\s*['"]([^'"]+)['"]\s*:\s*['"]([^'"]+)['"]/);
+  if (ternary) return unique([ternary[1], ternary[2]]);
+  return unique([...bound.matchAll(/['"]([A-Za-z0-9_-]+)['"]/g)].map((match) => match[1]));
+}
+
+function embedSvgIconAssets(root: string, structure: SfcTemplateStructure): SfcTemplateStructure {
+  for (const node of structure.nodes) {
+    if (node.componentName !== "SvgIcon") continue;
+    node.embeddedAssets = svgIconCandidates(node.attributes).flatMap((name) => {
+      const absolute = join(root, "src", "icons", "svg", `${name}.svg`);
+      if (!existsSync(absolute)) return [];
+      const source = readFileSync(absolute, "utf8");
+      const opening = source.match(/<svg\b([^>]*)>/i)?.[1] ?? "";
+      const width = opening.match(/\bwidth=['"]([^'"]+)['"]/i)?.[1];
+      const height = opening.match(/\bheight=['"]([^'"]+)['"]/i)?.[1];
+      const viewBox = opening.match(/\bviewBox=['"]([^'"]+)['"]/i)?.[1] ?? (width && height ? `0 0 ${width} ${height}` : "0 0 24 24");
+      const markup = source.match(/<svg\b[^>]*>([\s\S]*?)<\/svg>/i)?.[1]?.trim() ?? "";
+      return [{ kind: "svg" as const, name, sourcePath: relative(root, absolute).replaceAll("\\", "/"), viewBox, markup }];
+    });
+  }
+  return structure;
+}
+
 const lifecycleNames = ["beforeCreate", "created", "beforeMount", "mounted", "beforeUpdate", "updated", "beforeDestroy", "destroyed", "beforeUnmount", "unmounted"];
 
 export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualResponsibilityGraph {
@@ -131,15 +199,18 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     const models = unique(allMatches(parsed.template, /v-model(?::[\w-]+)?\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const conditions = unique(allMatches(parsed.template, /v-(?:if|else-if|show)\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const loops = unique(allMatches(parsed.template, /v-for\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
-    const styles = parsed.styles.map((style, styleIndex): SfcStyleResponsibility => ({
-      index: styleIndex,
-      language: style.attributes.match(/\blang\s*=\s*['"]([^'"]+)['"]/)?.[1] ?? "css",
-      scoped: /\bscoped\b/.test(style.attributes),
-      module: /\bmodule\b/.test(style.attributes),
-      mediaQueries: unique(allMatches(style.source, /@media\s*([^\{]+)/g).map((match) => match[1].trim())),
-      classSelectors: unique(allMatches(style.source, /\.([A-Za-z_][\w-]*)/g).map((match) => match[1])),
-      customProperties: unique(allMatches(style.source, /(--[A-Za-z_][\w-]*)\s*:/g).map((match) => match[1])),
-    }));
+    const styles = parsed.styles.map((style, styleIndex): SfcStyleResponsibility => {
+      const language = style.attributes.match(/\blang\s*=\s*['"]([^'"]+)['"]/)?.[1] ?? "css";
+      return {
+        index: styleIndex, language,
+        scoped: /\bscoped\b/.test(style.attributes),
+        module: /\bmodule\b/.test(style.attributes),
+        mediaQueries: unique(allMatches(style.source, /@media\s*([^\{]+)/g).map((match) => match[1].trim())),
+        classSelectors: unique(allMatches(style.source, /\.([A-Za-z_][\w-]*)/g).map((match) => match[1])),
+        customProperties: unique(allMatches(style.source, /(--[A-Za-z_][\w-]*)\s*:/g).map((match) => match[1])),
+        ...compileVisualStyle(root, absolutePath, language, style.source),
+      };
+    });
     const lifecycle = lifecycleNames.filter((name) => new RegExp(`\\b${name}\\s*\\(`).test(parsed.script));
     const runtimeDependencies = unique(imports.filter((item) => item.thirdParty).map((item) => item.source.split("/")[0].startsWith("@") ? item.source.split("/").slice(0, 2).join("/") : item.source.split("/")[0]));
     const chartResponsibilityIds = echarts.components.filter((item) => item.file === relativePath).map((item) => item.id);
@@ -154,6 +225,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       componentName: componentName(relativePath, parsed.script),
       imports,
       childComponents,
+      templateStructure: embedSvgIconAssets(root, analyzeSfcTemplateStructure(parsed.template)),
       visualRegions,
       bindings: { events, models, conditions, loops },
       lifecycle,
@@ -188,6 +260,12 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       interactiveComponents: components.filter((item) => item.bindings.events.length + item.bindings.models.length > 0).length,
       chartComponents: components.filter((item) => item.chartResponsibilityIds.length > 0).length,
       mediaQueries: components.reduce((sum, item) => sum + item.styles.reduce((styleSum, style) => styleSum + style.mediaQueries.length, 0), 0),
+      templateNodes: components.reduce((sum, item) => sum + item.templateStructure.nodes.length, 0),
+      elementUiPrimitives: components.reduce((sum, item) => sum + item.templateStructure.nodes.filter((node) => node.primitive).length, 0),
+      responsiveGridNodes: components.reduce((sum, item) => sum + item.templateStructure.responsiveGridNodes, 0),
+      embeddedSvgAssets: components.reduce((sum, item) => sum + item.templateStructure.nodes.reduce((nodeSum, node) => nodeSum + (node.embeddedAssets?.length ?? 0), 0), 0),
+      compiledStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus !== "failed").length, 0),
+      failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
       scanMs: Date.now() - started,
     },
   };

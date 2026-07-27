@@ -1,0 +1,6042 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "visual-target-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "sfcGraphKind": "sfc-visual-responsibility-graph",
+    "routePlanKind": "spa-route-shell-plan",
+    "sourceRoot": "<external-source>",
+    "graphComponents": 131,
+    "graphChartComponents": 7
+  },
+  "selectorPolicy": {
+    "implementationSelectorsIndependent": true,
+    "acceptanceSelectorsPreserved": true,
+    "implementationAttribute": "data-visual-owner"
+  },
+  "boundaries": [
+    {
+      "id": "boundary:dashboard",
+      "route": "/#/dashboard",
+      "scenarioIds": [
+        "admin-deep-link-reload",
+        "admin-history-back",
+        "admin-login-dashboard",
+        "admin-nested-route",
+        "admin-permission-route",
+        "unauthenticated-dashboard-guard"
+      ],
+      "rootOwnerId": "visual:sfc:73",
+      "acceptance": {
+        "visibleSelectors": [
+          ".dashboard-container"
+        ],
+        "visibleText": [
+          "Dashboard"
+        ],
+        "screenshotAnchors": [
+          ".dashboard-container"
+        ],
+        "screenshotRegions": [
+          ".app-main"
+        ],
+        "styleTargets": [
+          ".app-main",
+          ".dashboard-container"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:echarts:4",
+        "visual:echarts:5",
+        "visual:echarts:6",
+        "visual:echarts:7",
+        "visual:sfc:11",
+        "visual:sfc:20",
+        "visual:sfc:26",
+        "visual:sfc:64",
+        "visual:sfc:65",
+        "visual:sfc:66",
+        "visual:sfc:67",
+        "visual:sfc:68",
+        "visual:sfc:69",
+        "visual:sfc:71",
+        "visual:sfc:72",
+        "visual:sfc:73"
+      ],
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "responsive style responsibilities require multi-viewport validation",
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "boundary:login",
+      "route": "/#/login?redirect=%2Fdashboard",
+      "scenarioIds": [
+        "unauthenticated-dashboard-guard"
+      ],
+      "rootOwnerId": "visual:sfc:101",
+      "acceptance": {
+        "visibleSelectors": [
+          ".login-container"
+        ],
+        "visibleText": [
+          "Login"
+        ],
+        "screenshotAnchors": [
+          ".login-container"
+        ],
+        "screenshotRegions": [
+          ".login-container"
+        ],
+        "styleTargets": [
+          ".login-container",
+          ".login-form"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:sfc:101",
+        "visual:sfc:26"
+      ],
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "responsive style responsibilities require multi-viewport validation",
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "boundary:nested:menu1:menu1-1",
+      "route": "/#/nested/menu1/menu1-1",
+      "scenarioIds": [
+        "admin-nested-route"
+      ],
+      "rootOwnerId": "visual:sfc:103",
+      "acceptance": {
+        "visibleSelectors": [
+          ".app-main"
+        ],
+        "visibleText": [
+          "Menu 1-1"
+        ],
+        "screenshotAnchors": [
+          ".app-main"
+        ],
+        "screenshotRegions": [
+          ".app-main"
+        ],
+        "styleTargets": [
+          ".app-main"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:sfc:103"
+      ],
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors"
+      ]
+    },
+    {
+      "id": "boundary:permission:directive",
+      "route": "/#/permission/directive",
+      "scenarioIds": [
+        "admin-permission-route"
+      ],
+      "rootOwnerId": "visual:sfc:112",
+      "acceptance": {
+        "visibleSelectors": [
+          ".app-main"
+        ],
+        "visibleText": [
+          "Directive Permission"
+        ],
+        "screenshotAnchors": [
+          ".app-main"
+        ],
+        "screenshotRegions": [
+          ".app-main"
+        ],
+        "styleTargets": [
+          ".app-main"
+        ],
+        "viewports": [
+          "desktop",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:sfc:111",
+        "visual:sfc:112"
+      ],
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    }
+  ],
+  "owners": [
+    {
+      "id": "visual:sfc:11",
+      "componentId": "sfc:11",
+      "componentName": "GithubCorner",
+      "sourceFile": "src/components/GithubCorner/index.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:11\"]",
+      "acceptanceSelectors": [
+        ".github-corner",
+        ".octo-arm",
+        ".octo-body"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "a",
+            "componentName": "a",
+            "classes": [
+              "github-corner"
+            ],
+            "attributes": {
+              "href": "https://github.com/PanJiaChen/vue-element-admin",
+              "target": "_blank",
+              "class": "github-corner",
+              "aria-label": "View source on Github"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "svg",
+            "componentName": "svg",
+            "classes": [],
+            "attributes": {
+              "width": "80",
+              "height": "80",
+              "viewBox": "0 0 250 250",
+              "style": "fill:#40c9c6; color:#fff;",
+              "aria-hidden": "true"
+            },
+            "inlineStyle": {
+              "fill": "#40c9c6",
+              "color": "#fff"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "path",
+            "componentName": "path",
+            "classes": [],
+            "attributes": {
+              "d": "M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "path",
+            "componentName": "path",
+            "classes": [
+              "octo-arm"
+            ],
+            "attributes": {
+              "d": "M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2",
+              "fill": "currentColor",
+              "style": "transform-origin: 130px 106px;",
+              "class": "octo-arm"
+            },
+            "inlineStyle": {
+              "transform-origin": "130px 106px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "path",
+            "componentName": "path",
+            "classes": [
+              "octo-body"
+            ],
+            "attributes": {
+              "d": "M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z",
+              "fill": "currentColor",
+              "class": "octo-body"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 3,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [
+        "(max-width:500px)"
+      ],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".github-corner:hover .octo-arm {\n  animation: octocat-wave 560ms ease-in-out\n}\n\n@keyframes octocat-wave {\n  0%,\n  100% {\n    transform: rotate(0)\n  }\n  20%,\n  60% {\n    transform: rotate(-25deg)\n  }\n  40%,\n  80% {\n    transform: rotate(10deg)\n  }\n}\n\n@media (max-width:500px) {\n  .github-corner:hover .octo-arm {\n    animation: none\n  }\n  .github-corner .octo-arm {\n    animation: octocat-wave 560ms ease-in-out\n  }\n}",
+          "compileStatus": "raw-css"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:20",
+      "componentId": "sfc:20",
+      "componentName": "PanThumb",
+      "sourceFile": "src/components/PanThumb/index.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:65",
+      "implementationSelector": "[data-visual-owner=\"sfc:20\"]",
+      "acceptanceSelectors": [
+        ".pan-info",
+        ".pan-info-roles-container",
+        ".pan-item",
+        ".pan-thumb"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "pan-item"
+            ],
+            "attributes": {
+              ":style": "{zIndex:zIndex,height:height,width:width}",
+              "class": "pan-item"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "pan-info"
+            ],
+            "attributes": {
+              "class": "pan-info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "pan-info-roles-container"
+            ],
+            "attributes": {
+              "class": "pan-info-roles-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "slot",
+            "componentName": "slot",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "pan-thumb"
+            ],
+            "attributes": {
+              ":style": "{backgroundImage: `url(${image})`}",
+              "class": "pan-thumb"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".pan-item {\n  width: 200px;\n  height: 200px;\n  border-radius: 50%;\n  display: inline-block;\n  position: relative;\n  cursor: default;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);\n}\n\n.pan-info-roles-container {\n  padding: 20px;\n  text-align: center;\n}\n\n.pan-thumb {\n  width: 100%;\n  height: 100%;\n  background-position: center center;\n  background-size: cover;\n  border-radius: 50%;\n  overflow: hidden;\n  position: absolute;\n  transform-origin: 95% 40%;\n  transition: all 0.3s ease-in-out;\n}\n\n/* .pan-thumb:after {\n  content: '';\n  width: 8px;\n  height: 8px;\n  position: absolute;\n  border-radius: 50%;\n  top: 40%;\n  left: 95%;\n  margin: -4px 0 0 -4px;\n  background: radial-gradient(ellipse at center, rgba(14, 14, 14, 1) 0%, rgba(125, 126, 125, 1) 100%);\n  box-shadow: 0 0 1px rgba(255, 255, 255, 0.9);\n} */\n\n.pan-info {\n  position: absolute;\n  width: inherit;\n  height: inherit;\n  border-radius: 50%;\n  overflow: hidden;\n  box-shadow: inset 0 0 0 5px rgba(0, 0, 0, 0.05);\n}\n\n.pan-info h3 {\n  color: #fff;\n  text-transform: uppercase;\n  position: relative;\n  letter-spacing: 2px;\n  font-size: 18px;\n  margin: 0 60px;\n  padding: 22px 0 0 0;\n  height: 85px;\n  font-family: 'Open Sans', Arial, sans-serif;\n  text-shadow: 0 0 1px #fff, 0 1px 2px rgba(0, 0, 0, 0.3);\n}\n\n.pan-info p {\n  color: #fff;\n  padding: 10px 5px;\n  font-style: italic;\n  margin: 0 30px;\n  font-size: 12px;\n  border-top: 1px solid rgba(255, 255, 255, 0.5);\n}\n\n.pan-info p a {\n  display: block;\n  color: #333;\n  width: 80px;\n  height: 80px;\n  background: rgba(255, 255, 255, 0.3);\n  border-radius: 50%;\n  color: #fff;\n  font-style: normal;\n  font-weight: 700;\n  text-transform: uppercase;\n  font-size: 9px;\n  letter-spacing: 1px;\n  padding-top: 24px;\n  margin: 7px auto 0;\n  font-family: 'Open Sans', Arial, sans-serif;\n  opacity: 0;\n  transition: transform 0.3s ease-in-out 0.2s, opacity 0.3s ease-in-out 0.2s, background 0.2s linear 0s;\n  transform: translateX(60px) rotate(90deg);\n}\n\n.pan-info p a:hover {\n  background: rgba(255, 255, 255, 0.5);\n}\n\n.pan-item:hover .pan-thumb {\n  transform: rotate(-110deg);\n}\n\n.pan-item:hover .pan-info p a {\n  opacity: 1;\n  transform: translateX(0px) rotate(0deg);\n}",
+          "compileStatus": "raw-css"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:sfc:26",
+      "componentId": "sfc:26",
+      "componentName": "SvgIcon",
+      "sourceFile": "src/components/SvgIcon/index.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:101",
+      "implementationSelector": "[data-visual-owner=\"sfc:26\"]",
+      "acceptanceSelectors": [
+        ".svg-external-icon",
+        ".svg-icon",
+        ".svgClass"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1",
+          "template:2"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "svg-external-icon",
+              "svg-icon"
+            ],
+            "attributes": {
+              "v-if": "isExternal",
+              ":style": "styleExternalIcon",
+              "class": "svg-external-icon svg-icon",
+              "v-on": "$listeners"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "isExternal"
+            ],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "depth": 0,
+            "tag": "svg",
+            "componentName": "svg",
+            "classes": [],
+            "attributes": {
+              "v-else": true,
+              ":class": "svgClass",
+              "aria-hidden": "true",
+              "v-on": "$listeners"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 1,
+            "tag": "use",
+            "componentName": "use",
+            "classes": [],
+            "attributes": {
+              ":xlink:href": "iconName"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 1,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "isExternal"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".svg-icon {\n  width: 1em;\n  height: 1em;\n  vertical-align: -0.15em;\n  fill: currentColor;\n  overflow: hidden;\n}\n\n.svg-external-icon {\n  background-color: currentColor;\n  mask-size: cover!important;\n  display: inline-block;\n}",
+          "compileStatus": "raw-css"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:echarts:4",
+      "componentId": "echarts:4",
+      "componentName": "BarChart",
+      "sourceFile": "src/views/dashboard/admin/components/BarChart.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:64",
+      "implementationSelector": "[data-visual-owner=\"echarts:4\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts",
+        "echarts-theme:macarons"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:4",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "bar"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "series"
+        ],
+        "optionSlices": [
+          {
+            "line": 49,
+            "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        grid: {\n          top: 10,\n          left: '2%',\n          right: '2%',\n          bottom: '3%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          axisTick: {\n            alignWithLabel: true\n          }\n        }],\n        yAxis: [{\n          type: 'value',\n          axisTick: {\n            show: false\n          }\n        }],\n        series: [{\n          name: 'pageA',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [79, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageB',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [80, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageC',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [30, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }]\n      }",
+            "seriesCount": 6,
+            "literalDataArrays": 4
+          }
+        ],
+        "dataSources": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        }
+      },
+      "confidence": "high",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:64",
+      "componentId": "sfc:64",
+      "componentName": "BarChart",
+      "sourceFile": "src/views/dashboard/admin/components/BarChart.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:64\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":class": "className",
+              ":style": "{height:height,width:width}"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:65",
+      "componentId": "sfc:65",
+      "componentName": "BoxCard",
+      "sourceFile": "src/views/dashboard/admin/components/BoxCard.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:65\"]",
+      "acceptanceSelectors": [
+        ".box-card-component",
+        ".box-card-header",
+        ".el-card__header",
+        ".mallki-text",
+        ".pan-info",
+        ".panThumb",
+        ".progress-item"
+      ],
+      "childComponents": [
+        "ElCard",
+        "ElProgress",
+        "PanThumb"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card-component"
+            ],
+            "attributes": {
+              "class": "box-card-component",
+              "style": "margin-left:8px;"
+            },
+            "inlineStyle": {
+              "margin-left": "8px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "box-card-header"
+            ],
+            "attributes": {
+              "slot": "header",
+              "class": "box-card-header"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "slot": "header",
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "img",
+            "componentName": "img",
+            "classes": [],
+            "attributes": {
+              "src": "https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              "style": "position:relative;"
+            },
+            "inlineStyle": {
+              "position": "relative"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "pan-thumb",
+            "componentName": "PanThumb",
+            "classes": [
+              "panThumb"
+            ],
+            "attributes": {
+              ":image": "avatar",
+              "class": "panThumb"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "mallki",
+            "componentName": "mallki",
+            "classes": [],
+            "attributes": {
+              "class-name": "mallki-text",
+              "text": "vue-element-admin"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "progress-item"
+            ],
+            "attributes": {
+              "style": "padding-top:35px;",
+              "class": "progress-item"
+            },
+            "inlineStyle": {
+              "padding-top": "35px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Vue"
+              }
+            ]
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "el-progress",
+            "componentName": "ElProgress",
+            "classes": [],
+            "attributes": {
+              ":percentage": "70"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "progress",
+              "sourceTag": "el-progress",
+              "props": {
+                ":percentage": "70"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "progress-item"
+            ],
+            "attributes": {
+              "class": "progress-item"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "JavaScript"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "el-progress",
+            "componentName": "ElProgress",
+            "classes": [],
+            "attributes": {
+              ":percentage": "18"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "progress",
+              "sourceTag": "el-progress",
+              "props": {
+                ":percentage": "18"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "progress-item"
+            ],
+            "attributes": {
+              "class": "progress-item"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              }
+            ]
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:13",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "CSS"
+              }
+            ]
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:13",
+            "depth": 3,
+            "tag": "el-progress",
+            "componentName": "ElProgress",
+            "classes": [],
+            "attributes": {
+              ":percentage": "12"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "progress",
+              "sourceTag": "el-progress",
+              "props": {
+                ":percentage": "12"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "progress-item"
+            ],
+            "attributes": {
+              "class": "progress-item"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              }
+            ]
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:16",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "ESLint"
+              }
+            ]
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:16",
+            "depth": 3,
+            "tag": "el-progress",
+            "componentName": "ElProgress",
+            "classes": [],
+            "attributes": {
+              ":percentage": "100",
+              "status": "success"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "progress",
+              "sourceTag": "el-progress",
+              "props": {
+                ":percentage": "100",
+                "status": "success"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          }
+        ],
+        "componentOrder": [
+          "ElCard",
+          "PanThumb",
+          "ElProgress",
+          "ElProgress",
+          "ElProgress",
+          "ElProgress"
+        ],
+        "primitiveCounts": {
+          "card": 1,
+          "progress": 4
+        },
+        "inlineVisualDeclarations": 3,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 1,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [
+        "only screen and (max-width: 1510px)"
+      ],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": false,
+          "compiledCss": ".box-card-component .el-card__header{padding:0px !important}",
+          "compileStatus": "compiled"
+        },
+        {
+          "index": 1,
+          "scoped": true,
+          "compiledCss": ".box-card-component .box-card-header{position:relative;height:220px}.box-card-component .box-card-header img{width:100%;height:100%;transition:all .2s linear}.box-card-component .box-card-header img:hover{transform:scale(1.1, 1.1);filter:contrast(130%)}.box-card-component .mallki-text{position:absolute;top:0px;right:0px;font-size:20px;font-weight:bold}.box-card-component .panThumb{z-index:100;height:70px !important;width:70px !important;position:absolute !important;top:-45px;left:0px;border:5px solid #fff;background-color:#fff;margin:auto;box-shadow:none !important}.box-card-component .panThumb ::v-deep .pan-info{box-shadow:none !important}.box-card-component .progress-item{margin-bottom:10px;font-size:14px}@media only screen and (max-width: 1510px){.box-card-component .mallki-text{display:none}}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "visual:echarts:5",
+      "componentId": "echarts:5",
+      "componentName": "LineChart",
+      "sourceFile": "src/views/dashboard/admin/components/LineChart.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:66",
+      "implementationSelector": "[data-visual-owner=\"echarts:5\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [
+          "watch:chartData"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize",
+        "watch"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts",
+        "echarts-theme:macarons"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:5",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "line"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "legend",
+          "series"
+        ],
+        "optionSlices": [
+          {
+            "line": 65,
+            "source": "{\n        xAxis: {\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          boundaryGap: false,\n          axisTick: {\n            show: false\n          }\n        },\n        grid: {\n          left: 10,\n          right: 10,\n          bottom: 20,\n          top: 30,\n          containLabel: true\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            type: 'cross'\n          },\n          padding: [5, 10]\n        },\n        yAxis: {\n          axisTick: {\n            show: false\n          }\n        },\n        legend: {\n          data: ['expected', 'actual']\n        },\n        series: [{\n          name: 'expected', itemStyle: {\n            normal: {\n              color: '#FF005A',\n              lineStyle: {\n                color: '#FF005A',\n                width: 2\n              }\n            }\n          },\n          smooth: true,\n          type: 'line',\n          data: expectedData,\n          animationDuration: 2800,\n          animationEasing: 'cubicInOut'\n        },\n        {\n          name: 'actual',\n          smooth: true,\n          type: 'line',\n          itemStyle: {\n            normal: {\n              color: '#3888fa',\n              lineStyle: {\n                color: '#3888fa',\n                width: 2\n              },\n              areaStyle: {\n                color: '#f3f8ff'\n              }\n            }\n          },\n          data: actualData,\n          animationDuration: 2800,\n          animationEasing: 'quadraticOut'\n        }]\n      }",
+            "seriesCount": 3,
+            "literalDataArrays": 2
+          }
+        ],
+        "dataSources": [
+          "actualData",
+          "chartData",
+          "expectedData"
+        ],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": true,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        }
+      },
+      "confidence": "high",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:66",
+      "componentId": "sfc:66",
+      "componentName": "LineChart",
+      "sourceFile": "src/views/dashboard/admin/components/LineChart.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:66\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":class": "className",
+              ":style": "{height:height,width:width}"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:67",
+      "componentId": "sfc:67",
+      "componentName": "PanelGroup",
+      "sourceFile": "src/views/dashboard/admin/components/PanelGroup.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:67\"]",
+      "acceptanceSelectors": [
+        ".card-panel",
+        ".card-panel-col",
+        ".card-panel-description",
+        ".card-panel-icon",
+        ".card-panel-icon-wrapper",
+        ".card-panel-num",
+        ".card-panel-text",
+        ".icon-message",
+        ".icon-money",
+        ".icon-people",
+        ".icon-shopping",
+        ".message",
+        ".money",
+        ".panel-group",
+        ".peoples",
+        ".shopping",
+        ".svg-icon"
+      ],
+      "childComponents": [
+        "CountTo",
+        "ElCol",
+        "ElRow",
+        "SvgIcon"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [
+              "panel-group"
+            ],
+            "attributes": {
+              ":gutter": "40",
+              "class": "panel-group"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:23"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "40"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [
+              "card-panel-col"
+            ],
+            "attributes": {
+              ":xs": "12",
+              ":sm": "12",
+              ":lg": "6",
+              "class": "card-panel-col"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "12",
+                ":sm": "12",
+                ":lg": "6"
+              },
+              "responsiveSpans": {
+                "xs": "12",
+                "sm": "12",
+                "lg": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel"
+            ],
+            "attributes": {
+              "class": "card-panel",
+              "@click": "handleSetLineChartData('newVisitis')"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-icon-wrapper",
+              "icon-people"
+            ],
+            "attributes": {
+              "class": "card-panel-icon-wrapper icon-people"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "peoples",
+              "class-name": "card-panel-icon"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "peoples",
+                "sourcePath": "src/icons/svg/peoples.svg",
+                "viewBox": "0 0 128 128",
+                "markup": "<path d=\"M95.648 118.762c0 5.035-3.563 9.121-7.979 9.121H7.98c-4.416 0-7.979-4.086-7.979-9.121C0 100.519 15.408 83.47 31.152 76.75c-9.099-6.43-15.216-17.863-15.216-30.987v-9.128c0-20.16 14.293-36.518 31.893-36.518s31.894 16.358 31.894 36.518v9.122c0 13.137-6.123 24.556-15.216 30.993 15.738 6.726 31.141 23.769 31.141 42.012z\"/><path d=\"M106.032 118.252h15.867c3.376 0 6.101-3.125 6.101-6.972 0-13.957-11.787-26.984-23.819-32.123 6.955-4.919 11.638-13.66 11.638-23.704v-6.985c0-15.416-10.928-27.926-24.39-27.926-1.674 0-3.306.193-4.89.561 1.936 4.713 3.018 9.974 3.018 15.526v9.121c0 13.137-3.056 23.111-11.066 30.993 14.842 4.41 27.312 23.42 27.541 41.509z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-description"
+            ],
+            "attributes": {
+              "class": "card-panel-description"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ]
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-text"
+            ],
+            "attributes": {
+              "class": "card-panel-text"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " New Visits "
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:6",
+            "depth": 4,
+            "tag": "count-to",
+            "componentName": "CountTo",
+            "classes": [
+              "card-panel-num"
+            ],
+            "attributes": {
+              ":start-val": "0",
+              ":end-val": "102400",
+              ":duration": "2600",
+              "class": "card-panel-num"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [
+              "card-panel-col"
+            ],
+            "attributes": {
+              ":xs": "12",
+              ":sm": "12",
+              ":lg": "6",
+              "class": "card-panel-col"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "12",
+                ":sm": "12",
+                ":lg": "6"
+              },
+              "responsiveSpans": {
+                "xs": "12",
+                "sm": "12",
+                "lg": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:9",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel"
+            ],
+            "attributes": {
+              "class": "card-panel",
+              "@click": "handleSetLineChartData('messages')"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              }
+            ]
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-icon-wrapper",
+              "icon-message"
+            ],
+            "attributes": {
+              "class": "card-panel-icon-wrapper icon-message"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:11",
+            "depth": 4,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "message",
+              "class-name": "card-panel-icon"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "message",
+                "sourcePath": "src/icons/svg/message.svg",
+                "viewBox": "0 0 128 128",
+                "markup": "<path d=\"M0 20.967v59.59c0 11.59 8.537 20.966 19.075 20.966h28.613l1 26.477L76.8 101.523h32.125c10.538 0 19.075-9.377 19.075-20.966v-59.59C128 9.377 119.463 0 108.925 0h-89.85C8.538 0 0 9.377 0 20.967zm82.325 33.1c0-5.524 4.013-9.935 9.037-9.935 5.026 0 9.038 4.41 9.038 9.934 0 5.524-4.025 9.934-9.038 9.934-5.024 0-9.037-4.41-9.037-9.934zm-27.613 0c0-5.524 4.013-9.935 9.038-9.935s9.037 4.41 9.037 9.934c0 5.524-4.025 9.934-9.037 9.934-5.025 0-9.038-4.41-9.038-9.934zm-27.1 0c0-5.524 4.013-9.935 9.038-9.935s9.038 4.41 9.038 9.934c0 5.524-4.026 9.934-9.05 9.934-5.013 0-9.025-4.41-9.025-9.934z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-description"
+            ],
+            "attributes": {
+              "class": "card-panel-description"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              }
+            ]
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:13",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-text"
+            ],
+            "attributes": {
+              "class": "card-panel-text"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Messages "
+              }
+            ]
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:13",
+            "depth": 4,
+            "tag": "count-to",
+            "componentName": "CountTo",
+            "classes": [
+              "card-panel-num"
+            ],
+            "attributes": {
+              ":start-val": "0",
+              ":end-val": "81212",
+              ":duration": "3000",
+              "class": "card-panel-num"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [
+              "card-panel-col"
+            ],
+            "attributes": {
+              ":xs": "12",
+              ":sm": "12",
+              ":lg": "6",
+              "class": "card-panel-col"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "12",
+                ":sm": "12",
+                ":lg": "6"
+              },
+              "responsiveSpans": {
+                "xs": "12",
+                "sm": "12",
+                "lg": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:16",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel"
+            ],
+            "attributes": {
+              "class": "card-panel",
+              "@click": "handleSetLineChartData('purchases')"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:20"
+              }
+            ]
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-icon-wrapper",
+              "icon-money"
+            ],
+            "attributes": {
+              "class": "card-panel-icon-wrapper icon-money"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:19"
+              }
+            ]
+          },
+          {
+            "id": "template:19",
+            "order": 18,
+            "parentId": "template:18",
+            "depth": 4,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "money",
+              "class-name": "card-panel-icon"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "money",
+                "sourcePath": "src/icons/svg/money.svg",
+                "viewBox": "0 0 128 128",
+                "markup": "<path d=\"M54.122 127.892v-28.68H7.513V87.274h46.609v-12.4H7.513v-12.86h38.003L.099 0h22.6l32.556 45.07c3.617 5.144 6.44 9.611 8.487 13.385 1.788-3.05 4.89-7.779 9.301-14.186L103.93 0h24.01L82.385 62.013h38.34v12.862h-46.41v12.4h46.41v11.937h-46.41v28.68H54.123z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:20",
+            "order": 19,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-description"
+            ],
+            "attributes": {
+              "class": "card-panel-description"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:21"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:22"
+              }
+            ]
+          },
+          {
+            "id": "template:21",
+            "order": 20,
+            "parentId": "template:20",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-text"
+            ],
+            "attributes": {
+              "class": "card-panel-text"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Purchases "
+              }
+            ]
+          },
+          {
+            "id": "template:22",
+            "order": 21,
+            "parentId": "template:20",
+            "depth": 4,
+            "tag": "count-to",
+            "componentName": "CountTo",
+            "classes": [
+              "card-panel-num"
+            ],
+            "attributes": {
+              ":start-val": "0",
+              ":end-val": "9280",
+              ":duration": "3200",
+              "class": "card-panel-num"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:23",
+            "order": 22,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [
+              "card-panel-col"
+            ],
+            "attributes": {
+              ":xs": "12",
+              ":sm": "12",
+              ":lg": "6",
+              "class": "card-panel-col"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:24"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "12",
+                ":sm": "12",
+                ":lg": "6"
+              },
+              "responsiveSpans": {
+                "xs": "12",
+                "sm": "12",
+                "lg": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:24",
+            "order": 23,
+            "parentId": "template:23",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel"
+            ],
+            "attributes": {
+              "class": "card-panel",
+              "@click": "handleSetLineChartData('shoppings')"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:25"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:27"
+              }
+            ]
+          },
+          {
+            "id": "template:25",
+            "order": 24,
+            "parentId": "template:24",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-icon-wrapper",
+              "icon-shopping"
+            ],
+            "attributes": {
+              "class": "card-panel-icon-wrapper icon-shopping"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:26"
+              }
+            ]
+          },
+          {
+            "id": "template:26",
+            "order": 25,
+            "parentId": "template:25",
+            "depth": 4,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "shopping",
+              "class-name": "card-panel-icon"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "shopping",
+                "sourcePath": "src/icons/svg/shopping.svg",
+                "viewBox": "0 0 128 128",
+                "markup": "<path d=\"M42.913 101.36c1.642 0 3.198.332 4.667.996a12.28 12.28 0 0 1 3.89 2.772c1.123 1.184 1.987 2.582 2.592 4.193.605 1.612.908 3.318.908 5.118 0 1.8-.303 3.507-.908 5.118-.605 1.611-1.469 3.01-2.593 4.194a13.3 13.3 0 0 1-3.889 2.843 10.582 10.582 0 0 1-4.667 1.066c-1.729 0-3.306-.355-4.732-1.066a13.604 13.604 0 0 1-3.825-2.843c-1.123-1.185-1.988-2.583-2.593-4.194a14.437 14.437 0 0 1-.907-5.118c0-1.8.302-3.506.907-5.118.605-1.61 1.47-3.009 2.593-4.193a12.515 12.515 0 0 1 3.825-2.772c1.426-.664 3.003-.996 4.732-.996zm53.932.285c1.643 0 3.22.331 4.733.995a11.386 11.386 0 0 1 3.889 2.772c1.08 1.185 1.945 2.583 2.593 4.194.648 1.61.972 3.317.972 5.118 0 1.8-.324 3.506-.972 5.117-.648 1.611-1.513 3.01-2.593 4.194a12.253 12.253 0 0 1-3.89 2.843 11 11 0 0 1-4.732 1.066 10.58 10.58 0 0 1-4.667-1.066 12.478 12.478 0 0 1-3.824-2.843c-1.08-1.185-1.945-2.583-2.593-4.194a13.581 13.581 0 0 1-.973-5.117c0-1.801.325-3.507.973-5.118.648-1.611 1.512-3.01 2.593-4.194a11.559 11.559 0 0 1 3.824-2.772 11.212 11.212 0 0 1 4.667-.995zm21.781-80.747c2.42 0 4.3.355 5.64 1.066 1.34.71 2.29 1.587 2.852 2.63a6.427 6.427 0 0 1 .778 3.34c-.044 1.185-.195 2.204-.454 3.057-.26.853-.8 2.606-1.62 5.26a589.268 589.268 0 0 1-2.788 8.743 1236.373 1236.373 0 0 0-3.047 9.453c-.994 3.128-1.75 5.592-2.269 7.393-1.123 3.79-2.55 6.42-4.278 7.89-1.728 1.469-3.846 2.203-6.352 2.203H39.023l1.945 12.795h65.342c4.148 0 6.223 1.943 6.223 5.828 0 1.896-.41 3.53-1.232 4.905-.821 1.374-2.442 2.061-4.862 2.061H38.505c-1.729 0-3.176-.426-4.343-1.28-1.167-.852-2.14-1.966-2.917-3.34a21.277 21.277 0 0 1-1.88-4.478 44.128 44.128 0 0 1-1.102-4.55c-.087-.568-.324-1.942-.713-4.122-.39-2.18-.865-4.904-1.426-8.174l-1.88-10.947c-.692-4.027-1.383-8.079-2.075-12.154-1.642-9.572-3.5-20.234-5.574-31.986H6.87c-1.296 0-2.377-.356-3.24-1.067a9.024 9.024 0 0 1-2.14-2.558 10.416 10.416 0 0 1-1.167-3.2C.108 8.53 0 7.488 0 6.54c0-1.896.583-3.46 1.75-4.69C2.917.615 4.494 0 6.482 0h13.095c1.728 0 3.111.284 4.148.853 1.037.569 1.858 1.28 2.463 2.132a8.548 8.548 0 0 1 1.297 2.701c.26.948.475 1.754.648 2.417.173.758.346 1.825.519 3.199.173 1.374.345 2.772.518 4.193.26 1.706.519 3.507.778 5.403h88.678z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:27",
+            "order": 26,
+            "parentId": "template:24",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-description"
+            ],
+            "attributes": {
+              "class": "card-panel-description"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:28"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:29"
+              }
+            ]
+          },
+          {
+            "id": "template:28",
+            "order": 27,
+            "parentId": "template:27",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-panel-text"
+            ],
+            "attributes": {
+              "class": "card-panel-text"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Shoppings "
+              }
+            ]
+          },
+          {
+            "id": "template:29",
+            "order": 28,
+            "parentId": "template:27",
+            "depth": 4,
+            "tag": "count-to",
+            "componentName": "CountTo",
+            "classes": [
+              "card-panel-num"
+            ],
+            "attributes": {
+              ":start-val": "0",
+              ":end-val": "13600",
+              ":duration": "3600",
+              "class": "card-panel-num"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElRow",
+          "ElCol",
+          "SvgIcon",
+          "CountTo",
+          "ElCol",
+          "SvgIcon",
+          "CountTo",
+          "ElCol",
+          "SvgIcon",
+          "CountTo",
+          "ElCol",
+          "SvgIcon",
+          "CountTo"
+        ],
+        "primitiveCounts": {
+          "layout-row": 1,
+          "layout-column": 4
+        },
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 4
+      },
+      "interactions": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [
+        "(max-width:550px)"
+      ],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".panel-group{margin-top:18px}.panel-group .card-panel-col{margin-bottom:32px}.panel-group .card-panel{height:108px;cursor:pointer;font-size:12px;position:relative;overflow:hidden;color:#666;background:#fff;box-shadow:4px 4px 40px rgba(0,0,0,.05);border-color:rgba(0,0,0,.05)}.panel-group .card-panel:hover .card-panel-icon-wrapper{color:#fff}.panel-group .card-panel:hover .icon-people{background:#40c9c6}.panel-group .card-panel:hover .icon-message{background:#36a3f7}.panel-group .card-panel:hover .icon-money{background:#f4516c}.panel-group .card-panel:hover .icon-shopping{background:#34bfa3}.panel-group .card-panel .icon-people{color:#40c9c6}.panel-group .card-panel .icon-message{color:#36a3f7}.panel-group .card-panel .icon-money{color:#f4516c}.panel-group .card-panel .icon-shopping{color:#34bfa3}.panel-group .card-panel .card-panel-icon-wrapper{float:left;margin:14px 0 0 14px;padding:16px;transition:all .38s ease-out;border-radius:6px}.panel-group .card-panel .card-panel-icon{float:left;font-size:48px}.panel-group .card-panel .card-panel-description{float:right;font-weight:bold;margin:26px;margin-left:0px}.panel-group .card-panel .card-panel-description .card-panel-text{line-height:18px;color:rgba(0,0,0,.45);font-size:16px;margin-bottom:12px}.panel-group .card-panel .card-panel-description .card-panel-num{font-size:20px}@media(max-width: 550px){.card-panel-description{display:none}.card-panel-icon-wrapper{float:none !important;width:100%;height:100%;margin:0 !important}.card-panel-icon-wrapper .svg-icon{display:block;margin:14px auto !important;float:none !important}}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [
+        "vue-count-to"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "visual:echarts:6",
+      "componentId": "echarts:6",
+      "componentName": "PieChart",
+      "sourceFile": "src/views/dashboard/admin/components/PieChart.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:68",
+      "implementationSelector": "[data-visual-owner=\"echarts:6\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts",
+        "echarts-theme:macarons"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:6",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "pie"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "legend",
+          "series"
+        ],
+        "optionSlices": [
+          {
+            "line": 47,
+            "source": "{\n        tooltip: {\n          trigger: 'item',\n          formatter: '{a} <br/>{b} : {c} ({d}%)'\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']\n        },\n        series: [\n          {\n            name: 'WEEKLY WRITE ARTICLES',\n            type: 'pie',\n            roseType: 'radius',\n            radius: [15, 95],\n            center: ['50%', '38%'],\n            data: [\n              { value: 320, name: 'Industries' },\n              { value: 240, name: 'Technology' },\n              { value: 149, name: 'Forex' },\n              { value: 100, name: 'Gold' },\n              { value: 59, name: 'Forecasts' }\n            ],\n            animationEasing: 'cubicInOut',\n            animationDuration: 2600\n          }\n        ]\n      }",
+            "seriesCount": 1,
+            "literalDataArrays": 2
+          }
+        ],
+        "dataSources": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        }
+      },
+      "confidence": "high",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:68",
+      "componentId": "sfc:68",
+      "componentName": "PieChart",
+      "sourceFile": "src/views/dashboard/admin/components/PieChart.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:68\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":class": "className",
+              ":style": "{height:height,width:width}"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:echarts:7",
+      "componentId": "echarts:7",
+      "componentName": "RaddarChart",
+      "sourceFile": "src/views/dashboard/admin/components/RaddarChart.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:69",
+      "implementationSelector": "[data-visual-owner=\"echarts:7\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts",
+        "echarts-theme:macarons"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:7",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "radar"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "legend",
+          "series",
+          "radar"
+        ],
+        "optionSlices": [
+          {
+            "line": 49,
+            "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        radar: {\n          radius: '66%',\n          center: ['50%', '42%'],\n          splitNumber: 8,\n          splitArea: {\n            areaStyle: {\n              color: 'rgba(127,95,132,.3)',\n              opacity: 1,\n              shadowBlur: 45,\n              shadowColor: 'rgba(0,0,0,.5)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 15\n            }\n          },\n          indicator: [\n            { name: 'Sales', max: 10000 },\n            { name: 'Administration', max: 20000 },\n            { name: 'Information Technology', max: 20000 },\n            { name: 'Customer Support', max: 20000 },\n            { name: 'Development', max: 20000 },\n            { name: 'Marketing', max: 20000 }\n          ]\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']\n        },\n        series: [{\n          type: 'radar',\n          symbolSize: 0,\n          areaStyle: {\n            normal: {\n              shadowBlur: 13,\n              shadowColor: 'rgba(0,0,0,.2)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 10,\n              opacity: 1\n            }\n          },\n          data: [\n            {\n              value: [5000, 7000, 12000, 11000, 15000, 14000],\n              name: 'Allocated Budget'\n            },\n            {\n              value: [4000, 9000, 15000, 15000, 13000, 11000],\n              name: 'Expected Spending'\n            },\n            {\n              value: [5500, 11000, 12000, 15000, 12000, 12000],\n              name: 'Actual Spending'\n            }\n          ],\n          animationDuration: animationDuration\n        }]\n      }",
+            "seriesCount": 2,
+            "literalDataArrays": 2
+          }
+        ],
+        "dataSources": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        }
+      },
+      "confidence": "high",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:69",
+      "componentId": "sfc:69",
+      "componentName": "RaddarChart",
+      "sourceFile": "src/views/dashboard/admin/components/RaddarChart.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:69\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":class": "className",
+              ":style": "{height:height,width:width}"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:71",
+      "componentId": "sfc:71",
+      "componentName": "TodoList",
+      "sourceFile": "src/views/dashboard/admin/components/TodoList/index.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:71\"]",
+      "acceptanceSelectors": [
+        ".clear-completed",
+        ".filters",
+        ".footer",
+        ".header",
+        ".main",
+        ".new-todo",
+        ".scss",
+        ".selected",
+        ".todo-count",
+        ".todo-list",
+        ".todoapp",
+        ".toggle-all"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "section",
+            "componentName": "section",
+            "classes": [
+              "todoapp"
+            ],
+            "attributes": {
+              "class": "todoapp"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "header",
+            "componentName": "header",
+            "classes": [
+              "header"
+            ],
+            "attributes": {
+              "class": "header"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "input",
+            "componentName": "input",
+            "classes": [
+              "new-todo"
+            ],
+            "attributes": {
+              "class": "new-todo",
+              "autocomplete": "off",
+              "placeholder": "Todo List",
+              "@keyup.enter": "addTodo"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "section",
+            "componentName": "section",
+            "classes": [
+              "main"
+            ],
+            "attributes": {
+              "v-show": "todos.length",
+              "class": "main"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "todos.length"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "input",
+            "componentName": "input",
+            "classes": [
+              "toggle-all"
+            ],
+            "attributes": {
+              "id": "toggle-all",
+              ":checked": "allChecked",
+              "class": "toggle-all",
+              "type": "checkbox",
+              "@change": "toggleAll({ done: !allChecked })"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "label",
+            "componentName": "label",
+            "classes": [],
+            "attributes": {
+              "for": "toggle-all"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "ul",
+            "componentName": "ul",
+            "classes": [
+              "todo-list"
+            ],
+            "attributes": {
+              "class": "todo-list"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "todo",
+            "componentName": "todo",
+            "classes": [],
+            "attributes": {
+              "v-for": "(todo, index) in filteredTodos",
+              ":key": "index",
+              ":todo": "todo",
+              "@toggleTodo": "toggleTodo",
+              "@editTodo": "editTodo",
+              "@deleteTodo": "deleteTodo"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [
+              "(todo, index) in filteredTodos"
+            ],
+            "content": []
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "footer",
+            "componentName": "footer",
+            "classes": [
+              "footer"
+            ],
+            "attributes": {
+              "v-show": "todos.length",
+              "class": "footer"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "todos.length"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:9",
+            "depth": 2,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "todo-count"
+            ],
+            "attributes": {
+              "class": "todo-count"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              },
+              {
+                "kind": "text",
+                "value": " {{ remaining | pluralize('item') }} left "
+              }
+            ]
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "strong",
+            "componentName": "strong",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "{{ remaining }}"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:9",
+            "depth": 2,
+            "tag": "ul",
+            "componentName": "ul",
+            "classes": [
+              "filters"
+            ],
+            "attributes": {
+              "class": "filters"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              }
+            ]
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:12",
+            "depth": 3,
+            "tag": "li",
+            "componentName": "li",
+            "classes": [],
+            "attributes": {
+              "v-for": "(val, key) in filters",
+              ":key": "key"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [
+              "(val, key) in filters"
+            ],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              }
+            ]
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:13",
+            "depth": 4,
+            "tag": "a",
+            "componentName": "a",
+            "classes": [],
+            "attributes": {
+              ":class": "{ selected: visibility === key }",
+              "@click.prevent": "visibility = key"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "{{ key | capitalize }}"
+              }
+            ]
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 2,
+        "repeatedRegions": 2,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [
+          "change",
+          "click",
+          "deleteTodo",
+          "editTodo",
+          "keyup",
+          "toggleTodo"
+        ],
+        "models": [],
+        "conditions": [
+          "todos.length",
+          "todos.length > remaining"
+        ],
+        "loops": [
+          "(todo, index) in filteredTodos",
+          "(val, key) in filters"
+        ]
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": false,
+          "compiledCss": ".todoapp{font:14px \"Helvetica Neue\",Helvetica,Arial,sans-serif;line-height:1.4em;color:#4d4d4d;min-width:230px;max-width:550px;margin:0 auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-weight:300;background:#fff;z-index:1;position:relative}.todoapp button{margin:0;padding:0;border:0;background:none;font-size:100%;vertical-align:baseline;font-family:inherit;font-weight:inherit;color:inherit;-webkit-appearance:none;appearance:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.todoapp :focus{outline:0}.todoapp .hidden{display:none}.todoapp .todoapp{background:#fff;margin:130px 0 40px 0;position:relative;box-shadow:0 2px 4px 0 rgba(0,0,0,.2),0 25px 50px 0 rgba(0,0,0,.1)}.todoapp .todoapp input::-webkit-input-placeholder{font-style:italic;font-weight:300;color:#e6e6e6}.todoapp .todoapp input::-moz-placeholder{font-style:italic;font-weight:300;color:#e6e6e6}.todoapp .todoapp input::input-placeholder{font-style:italic;font-weight:300;color:#e6e6e6}.todoapp .todoapp h1{position:absolute;top:-155px;width:100%;font-size:100px;font-weight:100;text-align:center;color:rgba(175,47,47,.15);-webkit-text-rendering:optimizeLegibility;-moz-text-rendering:optimizeLegibility;text-rendering:optimizeLegibility}.todoapp .new-todo,.todoapp .edit{position:relative;margin:0;width:100%;font-size:18px;font-family:inherit;font-weight:inherit;line-height:1.4em;border:0;color:inherit;padding:6px;border:1px solid #999;box-shadow:inset 0 -1px 5px 0 rgba(0,0,0,.2);box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.todoapp .new-todo{padding:10px 16px 16px 60px;border:none;background:rgba(0,0,0,.003);box-shadow:inset 0 -2px 1px rgba(0,0,0,.03)}.todoapp .main{position:relative;z-index:2;border-top:1px solid #e6e6e6}.todoapp .toggle-all{text-align:center;border:none;opacity:0;position:absolute}.todoapp .toggle-all+label{width:60px;height:34px;font-size:0;position:absolute;top:-52px;left:-13px;-webkit-transform:rotate(90deg);transform:rotate(90deg)}.todoapp .toggle-all+label:before{content:\"❯\";font-size:22px;color:#e6e6e6;padding:10px 27px 10px 27px}.todoapp .toggle-all:checked+label:before{color:#737373}.todoapp .todo-list{margin:0;padding:0;list-style:none}.todoapp .todo-list li{position:relative;font-size:24px;border-bottom:1px solid #ededed}.todoapp .todo-list li:last-child{border-bottom:none}.todoapp .todo-list li.editing{border-bottom:none;padding:0}.todoapp .todo-list li.editing .edit{display:block;width:506px;padding:12px 16px;margin:0 0 0 43px}.todoapp .todo-list li.editing .view{display:none}.todoapp .todo-list li .toggle{text-align:center;width:40px;height:auto;position:absolute;top:0;bottom:0;margin:auto 0;border:none;-webkit-appearance:none;appearance:none}.todoapp .todo-list li .toggle{opacity:0}.todoapp .todo-list li .toggle+label{background-image:url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:center left;background-size:36px}.todoapp .todo-list li .toggle:checked+label{background-size:36px;background-image:url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E\")}.todoapp .todo-list li label{word-break:break-all;padding:15px 15px 15px 50px;display:block;line-height:1;font-size:14px;transition:color .4s}.todoapp .todo-list li.completed label{color:#d9d9d9;text-decoration:line-through}.todoapp .todo-list li .destroy{display:none;position:absolute;top:0;right:10px;bottom:0;width:40px;height:40px;margin:auto 0;font-size:30px;color:#cc9a9a;transition:color .2s ease-out;cursor:pointer}.todoapp .todo-list li .destroy:hover{color:#af5b5e}.todoapp .todo-list li .destroy:after{content:\"×\"}.todoapp .todo-list li:hover .destroy{display:block}.todoapp .todo-list li .edit{display:none}.todoapp .todo-list li.editing:last-child{margin-bottom:-1px}.todoapp .footer{color:#777;position:relative;padding:10px 15px;height:40px;text-align:center;border-top:1px solid #e6e6e6}.todoapp .footer:before{content:\"\";position:absolute;right:0;bottom:0;left:0;height:40px;overflow:hidden;box-shadow:0 1px 1px rgba(0,0,0,.2),0 8px 0 -3px #f6f6f6,0 9px 1px -3px rgba(0,0,0,.2),0 16px 0 -6px #f6f6f6,0 17px 2px -6px rgba(0,0,0,.2)}.todoapp .todo-count{float:left;text-align:left}.todoapp .todo-count strong{font-weight:300}.todoapp .filters{margin:0;padding:0;position:relative;z-index:1;list-style:none}.todoapp .filters li{display:inline}.todoapp .filters li a{color:inherit;font-size:12px;padding:3px 7px;text-decoration:none;border:1px solid transparent;border-radius:3px}.todoapp .filters li a:hover{border-color:rgba(175,47,47,.1)}.todoapp .filters li a.selected{border-color:rgba(175,47,47,.2)}.todoapp .clear-completed,.todoapp html .clear-completed:active{float:right;position:relative;line-height:20px;text-decoration:none;cursor:pointer}.todoapp .clear-completed:hover{text-decoration:underline}.todoapp .info{margin:65px auto 0;color:#bfbfbf;font-size:10px;text-shadow:0 1px 0 rgba(255,255,255,.5);text-align:center}.todoapp .info p{line-height:1}.todoapp .info a{color:inherit;text-decoration:none;font-weight:400}.todoapp .info a:hover{text-decoration:underline}@media screen and (-webkit-min-device-pixel-ratio: 0){.todoapp .toggle-all,.todoapp .todo-list li .toggle{background:none}.todoapp .todo-list li .toggle{height:40px}}@media(max-width: 430px){.todoapp .footer{height:50px}.todoapp .filters{bottom:10px}}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "visual:sfc:72",
+      "componentId": "sfc:72",
+      "componentName": "TransactionTable",
+      "sourceFile": "src/views/dashboard/admin/components/TransactionTable.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:73",
+      "implementationSelector": "[data-visual-owner=\"sfc:72\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-table",
+            "componentName": "ElTable",
+            "classes": [],
+            "attributes": {
+              ":data": "list",
+              "style": "width: 100%;padding-top: 15px;"
+            },
+            "inlineStyle": {
+              "width": "100%",
+              "padding-top": "15px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ],
+            "primitive": {
+              "kind": "table",
+              "sourceTag": "el-table",
+              "props": {
+                ":data": "list"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-table-column",
+            "componentName": "ElTableColumn",
+            "classes": [],
+            "attributes": {
+              "label": "Order_No",
+              "min-width": "200"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ],
+            "primitive": {
+              "kind": "table-column",
+              "sourceTag": "el-table-column",
+              "props": {
+                "label": "Order_No",
+                "min-width": "200"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "slot-scope": "scope"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " {{ scope.row.order_no | orderNoFilter }} "
+              }
+            ]
+          }
+        ],
+        "componentOrder": [
+          "ElTable",
+          "ElTableColumn"
+        ],
+        "primitiveCounts": {
+          "table": 1,
+          "table-column": 1
+        },
+        "inlineVisualDeclarations": 2,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "visual:sfc:73",
+      "componentId": "sfc:73",
+      "componentName": "DashboardAdmin",
+      "sourceFile": "src/views/dashboard/admin/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:73\"]",
+      "acceptanceSelectors": [
+        ".chart-wrapper",
+        ".dashboard-editor-container",
+        ".github-corner"
+      ],
+      "childComponents": [
+        "BarChart",
+        "BoxCard",
+        "ElCol",
+        "ElRow",
+        "GithubCorner",
+        "LineChart",
+        "PanelGroup",
+        "PieChart",
+        "RaddarChart",
+        "TodoList",
+        "TransactionTable"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "dashboard-editor-container"
+            ],
+            "attributes": {
+              "class": "dashboard-editor-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "github-corner",
+            "componentName": "GithubCorner",
+            "classes": [
+              "github-corner"
+            ],
+            "attributes": {
+              "class": "github-corner"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "panel-group",
+            "componentName": "PanelGroup",
+            "classes": [],
+            "attributes": {
+              "@handleSetLineChartData": "handleSetLineChartData"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [],
+            "attributes": {
+              "style": "background:#fff;padding:16px 16px 0;margin-bottom:32px;"
+            },
+            "inlineStyle": {
+              "background": "#fff",
+              "padding": "16px 16px 0",
+              "margin-bottom": "32px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "line-chart",
+            "componentName": "LineChart",
+            "classes": [],
+            "attributes": {
+              ":chart-data": "lineChartData"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [],
+            "attributes": {
+              ":gutter": "32"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "32"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":lg": "8"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":lg": "8"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "lg": "8"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-wrapper"
+            ],
+            "attributes": {
+              "class": "chart-wrapper"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ]
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:8",
+            "depth": 4,
+            "tag": "raddar-chart",
+            "componentName": "RaddarChart",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:6",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":lg": "8"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":lg": "8"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "lg": "8"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-wrapper"
+            ],
+            "attributes": {
+              "class": "chart-wrapper"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:11",
+            "depth": 4,
+            "tag": "pie-chart",
+            "componentName": "PieChart",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:6",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":lg": "8"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":lg": "8"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "lg": "8"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:13",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-wrapper"
+            ],
+            "attributes": {
+              "class": "chart-wrapper"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              }
+            ]
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:14",
+            "depth": 4,
+            "tag": "bar-chart",
+            "componentName": "BarChart",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [],
+            "attributes": {
+              ":gutter": "8"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:19"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:21"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "8"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:16",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "{span: 24}",
+              ":sm": "{span: 24}",
+              ":md": "{span: 24}",
+              ":lg": "{span: 12}",
+              ":xl": "{span: 12}",
+              "style": "padding-right:8px;margin-bottom:30px;"
+            },
+            "inlineStyle": {
+              "padding-right": "8px",
+              "margin-bottom": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "{span: 24}",
+                ":sm": "{span: 24}",
+                ":md": "{span: 24}",
+                ":lg": "{span: 12}",
+                ":xl": "{span: 12}"
+              },
+              "responsiveSpans": {
+                "xs": "{span: 24}",
+                "sm": "{span: 24}",
+                "md": "{span: 24}",
+                "lg": "{span: 12}",
+                "xl": "{span: 12}"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "transaction-table",
+            "componentName": "TransactionTable",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:19",
+            "order": 18,
+            "parentId": "template:16",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "{span: 24}",
+              ":sm": "{span: 12}",
+              ":md": "{span: 12}",
+              ":lg": "{span: 6}",
+              ":xl": "{span: 6}",
+              "style": "margin-bottom:30px;"
+            },
+            "inlineStyle": {
+              "margin-bottom": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:20"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "{span: 24}",
+                ":sm": "{span: 12}",
+                ":md": "{span: 12}",
+                ":lg": "{span: 6}",
+                ":xl": "{span: 6}"
+              },
+              "responsiveSpans": {
+                "xs": "{span: 24}",
+                "sm": "{span: 12}",
+                "md": "{span: 12}",
+                "lg": "{span: 6}",
+                "xl": "{span: 6}"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:20",
+            "order": 19,
+            "parentId": "template:19",
+            "depth": 3,
+            "tag": "todo-list",
+            "componentName": "TodoList",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:21",
+            "order": 20,
+            "parentId": "template:16",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "{span: 24}",
+              ":sm": "{span: 12}",
+              ":md": "{span: 12}",
+              ":lg": "{span: 6}",
+              ":xl": "{span: 6}",
+              "style": "margin-bottom:30px;"
+            },
+            "inlineStyle": {
+              "margin-bottom": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:22"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "{span: 24}",
+                ":sm": "{span: 12}",
+                ":md": "{span: 12}",
+                ":lg": "{span: 6}",
+                ":xl": "{span: 6}"
+              },
+              "responsiveSpans": {
+                "xs": "{span: 24}",
+                "sm": "{span: 12}",
+                "md": "{span: 12}",
+                "lg": "{span: 6}",
+                "xl": "{span: 6}"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:22",
+            "order": 21,
+            "parentId": "template:21",
+            "depth": 3,
+            "tag": "box-card",
+            "componentName": "BoxCard",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "GithubCorner",
+          "PanelGroup",
+          "ElRow",
+          "LineChart",
+          "ElRow",
+          "ElCol",
+          "RaddarChart",
+          "ElCol",
+          "PieChart",
+          "ElCol",
+          "BarChart",
+          "ElRow",
+          "ElCol",
+          "TransactionTable",
+          "ElCol",
+          "TodoList",
+          "ElCol",
+          "BoxCard"
+        ],
+        "primitiveCounts": {
+          "layout-row": 3,
+          "layout-column": 6
+        },
+        "inlineVisualDeclarations": 7,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 6
+      },
+      "interactions": {
+        "events": [
+          "handleSetLineChartData"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [
+        "(max-width:1024px)"
+      ],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".dashboard-editor-container{padding:32px;background-color:#f0f2f5;position:relative}.dashboard-editor-container .github-corner{position:absolute;top:0px;border:0;right:0}.dashboard-editor-container .chart-wrapper{background:#fff;padding:16px 16px 0;margin-bottom:32px}@media(max-width: 1024px){.chart-wrapper{padding:8px}}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:101",
+      "componentId": "sfc:101",
+      "componentName": "Login",
+      "sourceFile": "src/views/login/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:101\"]",
+      "acceptanceSelectors": [
+        ".com",
+        ".el-form-item",
+        ".el-input",
+        ".login-container",
+        ".login-form",
+        ".show-pwd",
+        ".svg-container",
+        ".thirdparty-button",
+        ".tips",
+        ".title",
+        ".title-container"
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElDialog",
+        "ElForm",
+        "ElFormItem",
+        "ElInput",
+        "ElTooltip",
+        "SocialSign",
+        "SvgIcon"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "login-container"
+            ],
+            "attributes": {
+              "class": "login-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:25"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-form",
+            "componentName": "ElForm",
+            "classes": [
+              "login-form"
+            ],
+            "attributes": {
+              "ref": "loginForm",
+              ":model": "loginForm",
+              ":rules": "loginRules",
+              "class": "login-form",
+              "autocomplete": "on",
+              "label-position": "left"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              }
+            ],
+            "primitive": {
+              "kind": "form",
+              "sourceTag": "el-form",
+              "props": {
+                "ref": "loginForm",
+                ":model": "loginForm",
+                ":rules": "loginRules",
+                "autocomplete": "on",
+                "label-position": "left"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "title-container"
+            ],
+            "attributes": {
+              "class": "title-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "h3",
+            "componentName": "h3",
+            "classes": [
+              "title"
+            ],
+            "attributes": {
+              "class": "title"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Login Form"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [],
+            "attributes": {
+              "prop": "username"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {
+                "prop": "username"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:5",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "svg-container"
+            ],
+            "attributes": {
+              "class": "svg-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ]
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 4,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "user"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "user",
+                "sourcePath": "src/icons/svg/user.svg",
+                "viewBox": "0 0 130 130",
+                "markup": "<path d=\"M63.444 64.996c20.633 0 37.359-14.308 37.359-31.953 0-17.649-16.726-31.952-37.359-31.952-20.631 0-37.36 14.303-37.358 31.952 0 17.645 16.727 31.953 37.359 31.953zM80.57 75.65H49.434c-26.652 0-48.26 18.477-48.26 41.27v2.664c0 9.316 21.608 9.325 48.26 9.325H80.57c26.649 0 48.256-.344 48.256-9.325v-2.663c0-22.794-21.605-41.271-48.256-41.271z\" stroke=\"#979797\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:5",
+            "depth": 3,
+            "tag": "el-input",
+            "componentName": "ElInput",
+            "classes": [],
+            "attributes": {
+              "ref": "username",
+              "v-model": "loginForm.username",
+              "placeholder": "Username",
+              "name": "username",
+              "type": "text",
+              "tabindex": "1",
+              "autocomplete": "on"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "input",
+              "sourceTag": "el-input",
+              "props": {
+                "ref": "username",
+                "v-model": "loginForm.username",
+                "placeholder": "Username",
+                "name": "username",
+                "type": "text",
+                "tabindex": "1",
+                "autocomplete": "on"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "el-tooltip",
+            "componentName": "ElTooltip",
+            "classes": [],
+            "attributes": {
+              "v-model": "capsTooltip",
+              "content": "Caps lock is On",
+              "placement": "right",
+              "manual": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              }
+            ],
+            "primitive": {
+              "kind": "tooltip",
+              "sourceTag": "el-tooltip",
+              "props": {
+                "v-model": "capsTooltip",
+                "content": "Caps lock is On",
+                "placement": "right",
+                "manual": true
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:9",
+            "depth": 3,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [],
+            "attributes": {
+              "prop": "password"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {
+                "prop": "password"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "svg-container"
+            ],
+            "attributes": {
+              "class": "svg-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:11",
+            "depth": 5,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "icon-class": "password"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "password",
+                "sourcePath": "src/icons/svg/password.svg",
+                "viewBox": "0 0 128 128",
+                "markup": "<path d=\"M108.8 44.322H89.6v-5.36c0-9.04-3.308-24.163-25.6-24.163-23.145 0-25.6 16.881-25.6 24.162v5.361H19.2v-5.36C19.2 15.281 36.798 0 64 0c27.202 0 44.8 15.281 44.8 38.961v5.361zm-32 39.356c0-5.44-5.763-9.832-12.8-9.832-7.037 0-12.8 4.392-12.8 9.832 0 3.682 2.567 6.808 6.407 8.477v11.205c0 2.718 2.875 4.962 6.4 4.962 3.524 0 6.4-2.244 6.4-4.962V92.155c3.833-1.669 6.393-4.795 6.393-8.477zM128 64v49.201c0 8.158-8.645 14.799-19.2 14.799H19.2C8.651 128 0 121.359 0 113.201V64c0-8.153 8.645-14.799 19.2-14.799h89.6c10.555 0 19.2 6.646 19.2 14.799z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:10",
+            "depth": 4,
+            "tag": "el-input",
+            "componentName": "ElInput",
+            "classes": [],
+            "attributes": {
+              ":key": "passwordType",
+              "ref": "password",
+              "v-model": "loginForm.password",
+              ":type": "passwordType",
+              "placeholder": "Password",
+              "name": "password",
+              "tabindex": "2",
+              "autocomplete": "on",
+              "@keyup.native": "checkCapslock",
+              "@blur": "capsTooltip = false",
+              "@keyup.enter.native": "handleLogin"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "input",
+              "sourceTag": "el-input",
+              "props": {
+                ":key": "passwordType",
+                "ref": "password",
+                "v-model": "loginForm.password",
+                ":type": "passwordType",
+                "placeholder": "Password",
+                "name": "password",
+                "tabindex": "2",
+                "autocomplete": "on"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:10",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "show-pwd"
+            ],
+            "attributes": {
+              "class": "show-pwd",
+              "@click": "showPwd"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              }
+            ]
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:14",
+            "depth": 5,
+            "tag": "svg-icon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              ":icon-class": "passwordType === 'password' ? 'eye' : 'eye-open'"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": [
+              {
+                "kind": "svg",
+                "name": "eye",
+                "sourcePath": "src/icons/svg/eye.svg",
+                "viewBox": "0 0 128 64",
+                "markup": "<path d=\"M127.072 7.994c1.37-2.208.914-5.152-.914-6.87-2.056-1.717-4.797-1.226-6.396.982-.229.245-25.586 32.382-55.74 32.382-29.24 0-55.74-32.382-55.968-32.627-1.6-1.963-4.57-2.208-6.397-.49C-.17 3.086-.399 6.275 1.2 8.238c.457.736 5.94 7.36 14.62 14.72L4.17 35.96c-1.828 1.963-1.6 5.152.228 6.87.457.98 1.6 1.471 2.742 1.471s2.284-.49 3.198-1.472l12.564-13.983c5.94 4.416 13.021 8.587 20.788 11.53l-4.797 17.418c-.685 2.699.686 5.397 3.198 6.133h1.37c2.057 0 3.884-1.472 4.341-3.68L52.6 42.83c3.655.736 7.538 1.227 11.422 1.227 3.883 0 7.767-.49 11.422-1.227l4.797 17.173c.457 2.208 2.513 3.68 4.34 3.68.457 0 .914 0 1.143-.246 2.513-.736 3.883-3.434 3.198-6.133l-4.797-17.172c7.767-2.944 14.848-7.114 20.788-11.53l12.336 13.738c.913.981 2.056 1.472 3.198 1.472s2.284-.49 3.198-1.472c1.828-1.963 1.828-4.906.228-6.87l-11.65-13.001c9.366-7.36 14.849-14.474 14.849-14.474z\"/>"
+              },
+              {
+                "kind": "svg",
+                "name": "eye-open",
+                "sourcePath": "src/icons/svg/eye-open.svg",
+                "viewBox": "0 0 1024 1024",
+                "markup": "<defs><style/></defs><path d=\"M512 128q69.675 0 135.51 21.163t115.498 54.997 93.483 74.837 73.685 82.006 51.67 74.837 32.17 54.827L1024 512q-2.347 4.992-6.315 13.483T998.87 560.17t-31.658 51.669-44.331 59.99-56.832 64.34-69.504 60.16-82.347 51.5-94.848 34.687T512 896q-69.675 0-135.51-21.163t-115.498-54.826-93.483-74.326-73.685-81.493-51.67-74.496-32.17-54.997L0 513.707q2.347-4.992 6.315-13.483t18.816-34.816 31.658-51.84 44.331-60.33 56.832-64.683 69.504-60.331 82.347-51.84 94.848-34.816T512 128.085zm0 85.333q-46.677 0-91.648 12.331t-81.152 31.83-70.656 47.146-59.648 54.485-48.853 57.686-37.675 52.821-26.325 43.99q12.33 21.674 26.325 43.52t37.675 52.351 48.853 57.003 59.648 53.845T339.2 767.02t81.152 31.488T512 810.667t91.648-12.331 81.152-31.659 70.656-46.848 59.648-54.186 48.853-57.344 37.675-52.651T927.957 512q-12.33-21.675-26.325-43.648t-37.675-52.65-48.853-57.345-59.648-54.186-70.656-46.848-81.152-31.659T512 213.334zm0 128q70.656 0 120.661 50.006T682.667 512 632.66 632.661 512 682.667 391.339 632.66 341.333 512t50.006-120.661T512 341.333zm0 85.334q-35.328 0-60.33 25.002T426.666 512t25.002 60.33T512 597.334t60.33-25.002T597.334 512t-25.002-60.33T512 426.666z\"/>"
+              }
+            ]
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "el-button",
+            "componentName": "ElButton",
+            "classes": [],
+            "attributes": {
+              ":loading": "loading",
+              "type": "primary",
+              "style": "width:100%;margin-bottom:30px;",
+              "@click.native.prevent": "handleLogin"
+            },
+            "inlineStyle": {
+              "width": "100%",
+              "margin-bottom": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Login"
+              }
+            ],
+            "primitive": {
+              "kind": "button",
+              "sourceTag": "el-button",
+              "props": {
+                ":loading": "loading",
+                "type": "primary"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              "style": "position:relative"
+            },
+            "inlineStyle": {
+              "position": "relative"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:21"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:24"
+              }
+            ]
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "tips"
+            ],
+            "attributes": {
+              "class": "tips"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:19"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:20"
+              }
+            ]
+          },
+          {
+            "id": "template:19",
+            "order": 18,
+            "parentId": "template:18",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Username : admin"
+              }
+            ]
+          },
+          {
+            "id": "template:20",
+            "order": 19,
+            "parentId": "template:18",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Password : any"
+              }
+            ]
+          },
+          {
+            "id": "template:21",
+            "order": 20,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "tips"
+            ],
+            "attributes": {
+              "class": "tips"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:22"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:23"
+              }
+            ]
+          },
+          {
+            "id": "template:22",
+            "order": 21,
+            "parentId": "template:21",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {
+              "style": "margin-right:18px;"
+            },
+            "inlineStyle": {
+              "margin-right": "18px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Username : editor"
+              }
+            ]
+          },
+          {
+            "id": "template:23",
+            "order": 22,
+            "parentId": "template:21",
+            "depth": 4,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Password : any"
+              }
+            ]
+          },
+          {
+            "id": "template:24",
+            "order": 23,
+            "parentId": "template:17",
+            "depth": 3,
+            "tag": "el-button",
+            "componentName": "ElButton",
+            "classes": [
+              "thirdparty-button"
+            ],
+            "attributes": {
+              "class": "thirdparty-button",
+              "type": "primary",
+              "@click": "showDialog=true"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Or connect with "
+              }
+            ],
+            "primitive": {
+              "kind": "button",
+              "sourceTag": "el-button",
+              "props": {
+                "type": "primary"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:25",
+            "order": 24,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-dialog",
+            "componentName": "ElDialog",
+            "classes": [],
+            "attributes": {
+              "title": "Or connect with",
+              ":visible.sync": "showDialog"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Can not be simulated on local, so please combine you own business simulation! ! ! "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:26"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:27"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:28"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:29"
+              }
+            ],
+            "primitive": {
+              "kind": "dialog",
+              "sourceTag": "el-dialog",
+              "props": {
+                "title": "Or connect with",
+                ":visible.sync": "showDialog"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:26",
+            "order": 25,
+            "parentId": "template:25",
+            "depth": 2,
+            "tag": "br",
+            "componentName": "br",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:27",
+            "order": 26,
+            "parentId": "template:25",
+            "depth": 2,
+            "tag": "br",
+            "componentName": "br",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:28",
+            "order": 27,
+            "parentId": "template:25",
+            "depth": 2,
+            "tag": "br",
+            "componentName": "br",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:29",
+            "order": 28,
+            "parentId": "template:25",
+            "depth": 2,
+            "tag": "social-sign",
+            "componentName": "SocialSign",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElForm",
+          "ElFormItem",
+          "SvgIcon",
+          "ElInput",
+          "ElTooltip",
+          "ElFormItem",
+          "SvgIcon",
+          "ElInput",
+          "SvgIcon",
+          "ElButton",
+          "ElButton",
+          "ElDialog",
+          "SocialSign"
+        ],
+        "primitiveCounts": {
+          "form": 1,
+          "form-field": 2,
+          "input": 2,
+          "tooltip": 1,
+          "button": 2,
+          "dialog": 1
+        },
+        "inlineVisualDeclarations": 4,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [
+          "blur",
+          "click",
+          "keyup"
+        ],
+        "models": [
+          "capsTooltip",
+          "loginForm.password",
+          "loginForm.username"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created",
+        "mounted",
+        "destroyed"
+      ],
+      "responsiveMediaQueries": [
+        "only screen and (max-width: 470px)"
+      ],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": false,
+          "compiledCss": "@supports(-webkit-mask: none) and (not (cater-color: #fff)){.login-container .el-input input{color:#fff}}.login-container .el-input{display:inline-block;height:47px;width:85%}.login-container .el-input input{background:transparent;border:0px;-webkit-appearance:none;border-radius:0px;padding:12px 5px 12px 15px;color:#fff;height:47px;caret-color:#fff}.login-container .el-input input:-webkit-autofill{box-shadow:0 0 0px 1000px #283443 inset !important;-webkit-text-fill-color:#fff !important}.login-container .el-form-item{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.1);border-radius:5px;color:#454545}",
+          "compileStatus": "compiled"
+        },
+        {
+          "index": 1,
+          "scoped": true,
+          "compiledCss": ".login-container{min-height:100%;width:100%;background-color:#2d3a4b;overflow:hidden}.login-container .login-form{position:relative;width:520px;max-width:100%;padding:160px 35px 0;margin:0 auto;overflow:hidden}.login-container .tips{font-size:14px;color:#fff;margin-bottom:10px}.login-container .tips span:first-of-type{margin-right:16px}.login-container .svg-container{padding:6px 5px 6px 15px;color:#889aa4;vertical-align:middle;width:30px;display:inline-block}.login-container .title-container{position:relative}.login-container .title-container .title{font-size:26px;color:#eee;margin:0px auto 40px auto;text-align:center;font-weight:bold}.login-container .show-pwd{position:absolute;right:10px;top:7px;font-size:16px;color:#889aa4;cursor:pointer;user-select:none}.login-container .thirdparty-button{position:absolute;right:0;bottom:6px}@media only screen and (max-width: 470px){.login-container .thirdparty-button{display:none}}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:103",
+      "componentId": "sfc:103",
+      "componentName": "menu1-1",
+      "sourceFile": "src/views/nested/menu1/menu1-1/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:103\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [
+        "ElAlert",
+        "RouterView"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              "style": "padding:30px;"
+            },
+            "inlineStyle": {
+              "padding": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-alert",
+            "componentName": "ElAlert",
+            "classes": [],
+            "attributes": {
+              ":closable": "false",
+              "title": "menu 1-1",
+              "type": "success"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "router-view",
+            "componentName": "RouterView",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElAlert",
+          "RouterView"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 1,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "visual:sfc:111",
+      "componentId": "sfc:111",
+      "componentName": "SwitchRoles",
+      "sourceFile": "src/views/permission/components/SwitchRoles.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:112",
+      "implementationSelector": "[data-visual-owner=\"sfc:111\"]",
+      "acceptanceSelectors": [],
+      "childComponents": [
+        "ElRadioButton",
+        "ElRadioGroup"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "text",
+                "value": " Switch roles: "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              "style": "margin-bottom:15px;"
+            },
+            "inlineStyle": {
+              "margin-bottom": "15px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Your roles: {{ roles }} "
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-radio-group",
+            "componentName": "ElRadioGroup",
+            "classes": [],
+            "attributes": {
+              "v-model": "switchRoles"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ],
+            "primitive": {
+              "kind": "radio-group",
+              "sourceTag": "el-radio-group",
+              "props": {
+                "v-model": "switchRoles"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "el-radio-button",
+            "componentName": "ElRadioButton",
+            "classes": [],
+            "attributes": {
+              "label": "editor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "radio-button",
+              "sourceTag": "el-radio-button",
+              "props": {
+                "label": "editor"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "el-radio-button",
+            "componentName": "ElRadioButton",
+            "classes": [],
+            "attributes": {
+              "label": "admin"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "radio-button",
+              "sourceTag": "el-radio-button",
+              "props": {
+                "label": "admin"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          }
+        ],
+        "componentOrder": [
+          "ElRadioGroup",
+          "ElRadioButton",
+          "ElRadioButton"
+        ],
+        "primitiveCounts": {
+          "radio-group": 1,
+          "radio-button": 2
+        },
+        "inlineVisualDeclarations": 1,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [],
+        "models": [
+          "switchRoles"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "visual:sfc:112",
+      "componentId": "sfc:112",
+      "componentName": "DirectivePermission",
+      "sourceFile": "src/views/permission/directive.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:112\"]",
+      "acceptanceSelectors": [
+        ".app-container",
+        ".permission-alert",
+        ".permission-sourceCode",
+        ".permission-tag"
+      ],
+      "childComponents": [
+        "ElTabPane",
+        "ElTabs",
+        "ElTag",
+        "SwitchRoles"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "app-container"
+            ],
+            "attributes": {
+              "class": "app-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "switch-roles",
+            "componentName": "SwitchRoles",
+            "classes": [],
+            "attributes": {
+              "@change": "handleRolesChange"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":key": "key",
+              "style": "margin-top:30px;"
+            },
+            "inlineStyle": {
+              "margin-top": "30px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "permission-alert"
+            ],
+            "attributes": {
+              "v-permission": "['admin']",
+              "class": "permission-alert"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Only "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "text",
+                "value": " can see this "
+              }
+            ]
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:5",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-tag"
+            ],
+            "attributes": {
+              "class": "permission-tag",
+              "size": "small"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "admin"
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "size": "small"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:4",
+            "depth": 3,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "v-permission": "['admin']",
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-permission=\"['admin']\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "v-permission": "['admin']",
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              }
+            ]
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:8",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "permission-alert"
+            ],
+            "attributes": {
+              "v-permission": "['editor']",
+              "class": "permission-alert"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Only "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              },
+              {
+                "kind": "text",
+                "value": " can see this "
+              }
+            ]
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:9",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-tag"
+            ],
+            "attributes": {
+              "class": "permission-tag",
+              "size": "small"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "editor"
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "size": "small"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:8",
+            "depth": 3,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "v-permission": "['editor']",
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-permission=\"['editor']\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "v-permission": "['editor']",
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              }
+            ]
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:12",
+            "depth": 3,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "permission-alert"
+            ],
+            "attributes": {
+              "v-permission": "['admin','editor']",
+              "class": "permission-alert"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Both "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              },
+              {
+                "kind": "text",
+                "value": " and "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              },
+              {
+                "kind": "text",
+                "value": " can see this "
+              }
+            ]
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:13",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-tag"
+            ],
+            "attributes": {
+              "class": "permission-tag",
+              "size": "small"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "admin"
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "size": "small"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:13",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-tag"
+            ],
+            "attributes": {
+              "class": "permission-tag",
+              "size": "small"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "editor"
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "size": "small"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:12",
+            "depth": 3,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "v-permission": "['admin','editor']",
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-permission=\"['admin','editor']\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "v-permission": "['admin','editor']",
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {
+              ":key": "'checkPermission'+key",
+              "style": "margin-top:60px;"
+            },
+            "inlineStyle": {
+              "margin-top": "60px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:20"
+              }
+            ]
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:17",
+            "depth": 2,
+            "tag": "aside",
+            "componentName": "aside",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " In some cases, using v-permission will have no effect. For example: Element-UI's Tab component or el-table-column and other scenes that dynamically render dom. You can only do this with v-if. "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:19"
+              },
+              {
+                "kind": "text",
+                "value": " e.g. "
+              }
+            ]
+          },
+          {
+            "id": "template:19",
+            "order": 18,
+            "parentId": "template:18",
+            "depth": 3,
+            "tag": "br",
+            "componentName": "br",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:20",
+            "order": 19,
+            "parentId": "template:17",
+            "depth": 2,
+            "tag": "el-tabs",
+            "componentName": "ElTabs",
+            "classes": [],
+            "attributes": {
+              "type": "border-card",
+              "style": "width:550px;"
+            },
+            "inlineStyle": {
+              "width": "550px"
+            },
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:21"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:23"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:25"
+              }
+            ],
+            "primitive": {
+              "kind": "tabs",
+              "sourceTag": "el-tabs",
+              "props": {
+                "type": "border-card"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:21",
+            "order": 20,
+            "parentId": "template:20",
+            "depth": 3,
+            "tag": "el-tab-pane",
+            "componentName": "ElTabPane",
+            "classes": [],
+            "attributes": {
+              "v-if": "checkPermission(['admin'])",
+              "label": "Admin"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "checkPermission(['admin'])"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Admin can see this "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:22"
+              }
+            ],
+            "primitive": {
+              "kind": "tab-pane",
+              "sourceTag": "el-tab-pane",
+              "props": {
+                "v-if": "checkPermission(['admin'])",
+                "label": "Admin"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:22",
+            "order": 21,
+            "parentId": "template:21",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-if=\"checkPermission(['admin'])\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:23",
+            "order": 22,
+            "parentId": "template:20",
+            "depth": 3,
+            "tag": "el-tab-pane",
+            "componentName": "ElTabPane",
+            "classes": [],
+            "attributes": {
+              "v-if": "checkPermission(['editor'])",
+              "label": "Editor"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "checkPermission(['editor'])"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Editor can see this "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:24"
+              }
+            ],
+            "primitive": {
+              "kind": "tab-pane",
+              "sourceTag": "el-tab-pane",
+              "props": {
+                "v-if": "checkPermission(['editor'])",
+                "label": "Editor"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:24",
+            "order": 23,
+            "parentId": "template:23",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-if=\"checkPermission(['editor'])\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:25",
+            "order": 24,
+            "parentId": "template:20",
+            "depth": 3,
+            "tag": "el-tab-pane",
+            "componentName": "ElTabPane",
+            "classes": [],
+            "attributes": {
+              "v-if": "checkPermission(['admin','editor'])",
+              "label": "Admin-OR-Editor"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "checkPermission(['admin','editor'])"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " Both admin or editor can see this "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:26"
+              }
+            ],
+            "primitive": {
+              "kind": "tab-pane",
+              "sourceTag": "el-tab-pane",
+              "props": {
+                "v-if": "checkPermission(['admin','editor'])",
+                "label": "Admin-OR-Editor"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:26",
+            "order": 25,
+            "parentId": "template:25",
+            "depth": 4,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [
+              "permission-sourceCode"
+            ],
+            "attributes": {
+              "class": "permission-sourceCode",
+              "type": "info"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " v-if=\"checkPermission(['admin','editor'])\" "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                "type": "info"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          }
+        ],
+        "componentOrder": [
+          "SwitchRoles",
+          "ElTag",
+          "ElTag",
+          "ElTag",
+          "ElTag",
+          "ElTag",
+          "ElTag",
+          "ElTag",
+          "ElTabs",
+          "ElTabPane",
+          "ElTag",
+          "ElTabPane",
+          "ElTag",
+          "ElTabPane",
+          "ElTag"
+        ],
+        "primitiveCounts": {
+          "tag": 10,
+          "tabs": 1,
+          "tab-pane": 3
+        },
+        "inlineVisualDeclarations": 3,
+        "conditionalRegions": 3,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "interactions": {
+        "events": [
+          "change"
+        ],
+        "models": [],
+        "conditions": [
+          "checkPermission(["
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".app-container ::v-deep .permission-alert{width:320px;margin-top:15px;background-color:#f0f9eb;color:#67c23a;padding:8px 16px;border-radius:4px;display:inline-block}.app-container ::v-deep .permission-sourceCode{margin-left:15px}.app-container ::v-deep .permission-tag{background-color:#ecf5ff}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    }
+  ],
+  "unresolved": [],
+  "metrics": {
+    "visualRoutes": 4,
+    "boundaries": 4,
+    "owners": 20,
+    "chartOwners": 4,
+    "responsiveOwners": 5,
+    "interactiveOwners": 7,
+    "unresolvedRoutes": 0
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "reviewMs": null,
+    "generatedLines": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "semanticRuns": null,
+    "visualRuns": null
+  },
+  "reviewReasons": [
+    "the plan proves visual ownership but does not authorize copying the reviewed target implementation",
+    "acceptance selectors remain external quality-gate inputs and must not be used as implementation ownership evidence",
+    "chart and responsive responsibilities require the same Semantic Gold+ matrix after generation"
+  ]
+}

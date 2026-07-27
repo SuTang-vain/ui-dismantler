@@ -1,0 +1,4265 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9527",
+  "generatedBaseUrl": "http://127.0.0.1:9529",
+  "passed": false,
+  "scenariosPassed": 6,
+  "scenariosTotal": 6,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+      "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/login?redirect=%2Fdashboard",
+          "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "wait",
+          "route": "/#/login?redirect=%2Fdashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/nested/menu1/menu1-1",
+          "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 5,
+          "action": "click",
+          "route": "/#/nested/menu1/menu1-1"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-history-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/documentation/index",
+          "state": "{\"route\":\"#/documentation/index\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "hashchange",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/documentation/index"
+        },
+        {
+          "stepIndex": 4,
+          "action": "back",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/#/dashboard",
+          "state": "{\"route\":\"#/dashboard\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/#/permission/directive",
+          "state": "{\"route\":\"#/permission/directive\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 4,
+          "action": "click",
+          "route": "/#/permission/directive"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9529/#/login",
+      "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+      "transitions": [],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 1,
+          "action": "input",
+          "route": "/#/login"
+        },
+        {
+          "stepIndex": 2,
+          "action": "click",
+          "route": "/#/dashboard"
+        },
+        {
+          "stepIndex": 3,
+          "action": "reload",
+          "route": "/#/dashboard"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9527",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"539.800\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"573.600\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"371.600\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"371.600\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"946.700\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"946.700\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"3356.100\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"2009.500\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"399.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"399.400\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2272.100\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"238.200\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"238.200\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9529",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "unauthenticated-dashboard-guard",
+      "passed": true,
+      "reference": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9527/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"539.800\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"key\":\"573.600\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "unauthenticated-dashboard-guard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/dashboard",
+        "finalUrl": "http://127.0.0.1:9529/#/login?redirect=%2Fdashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login?redirect=%2Fdashboard",
+            "state": "{\"route\":\"#/login?redirect=%2Fdashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "wait",
+            "route": "/#/login?redirect=%2Fdashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-login-dashboard",
+      "passed": true,
+      "reference": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"371.600\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"371.600\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-login-dashboard",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-nested-route",
+      "passed": true,
+      "reference": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"946.700\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"946.700\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"key\":\"3356.100\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-nested-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/nested/menu1/menu1-1",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/nested/menu1/menu1-1",
+            "state": "{\"route\":\"#/nested/menu1/menu1-1\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 5,
+            "action": "click",
+            "route": "/#/nested/menu1/menu1-1"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-history-back",
+      "passed": true,
+      "reference": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"key\":\"2009.500\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"438.000\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-history-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/documentation/index",
+            "state": "{\"route\":\"#/documentation/index\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "hashchange",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/documentation/index"
+          },
+          {
+            "stepIndex": 4,
+            "action": "back",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-permission-route",
+      "passed": true,
+      "reference": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/login",
+            "state": "{\"key\":\"399.400\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"399.400\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"key\":\"2272.100\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-permission-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/permission/directive",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"route\":\"#/dashboard\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/#/permission/directive",
+            "state": "{\"route\":\"#/permission/directive\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 4,
+            "action": "click",
+            "route": "/#/permission/directive"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "admin-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9527/#/login",
+        "finalUrl": "http://127.0.0.1:9527/#/dashboard",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"238.200\"}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/#/dashboard",
+            "state": "{\"key\":\"238.200\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "admin-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9529/#/login",
+        "finalUrl": "http://127.0.0.1:9529/#/dashboard",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 1,
+            "action": "input",
+            "route": "/#/login"
+          },
+          {
+            "stepIndex": 2,
+            "action": "click",
+            "route": "/#/dashboard"
+          },
+          {
+            "stepIndex": 3,
+            "action": "reload",
+            "route": "/#/dashboard"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 19,
+    "totalScenarios": 19,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": false,
+    "scenarios": [
+      {
+        "scenarioId": "unauthenticated-dashboard-guard",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 677,
+            "preAnchorWaitMs": 354,
+            "postAnchorWaitMs": 323,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2105.212,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 85,
+              "rate": 0.7456,
+              "mismatches": [
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "position",
+                  "reference": "static",
+                  "generated": "fixed"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "min-height",
+                  "reference": "100%",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "top",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "right",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "bottom",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "left",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "inset",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "height",
+                  "reference": "493.828px",
+                  "generated": "497px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "max-width",
+                  "reference": "100%",
+                  "generated": "1408px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "transform-origin",
+                  "reference": "260px 246.914px",
+                  "generated": "260px 248.5px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "rect.height",
+                  "reference": "493.828125",
+                  "generated": "497"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1440,
+              "height": 900,
+              "referenceWidth": 1440,
+              "referenceHeight": 900,
+              "generatedWidth": 1440,
+              "generatedHeight": 900,
+              "dimensionMismatch": false,
+              "differentPixels": 14682,
+              "totalPixels": 1296000,
+              "diffRate": 0.011329,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 768
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 768
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 772,
+            "preAnchorWaitMs": 447,
+            "postAnchorWaitMs": 325,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 36.104,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 85,
+              "rate": 0.7456,
+              "mismatches": [
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "position",
+                  "reference": "static",
+                  "generated": "fixed"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "min-height",
+                  "reference": "100%",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "top",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "right",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "bottom",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "left",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "inset",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "height",
+                  "reference": "493.828px",
+                  "generated": "497px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "max-width",
+                  "reference": "100%",
+                  "generated": "992px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "transform-origin",
+                  "reference": "260px 246.914px",
+                  "generated": "260px 248.5px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "rect.height",
+                  "reference": "493.828125",
+                  "generated": "497"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1024,
+              "height": 768,
+              "referenceWidth": 1024,
+              "referenceHeight": 768,
+              "generatedWidth": 1024,
+              "generatedHeight": 768,
+              "dimensionMismatch": false,
+              "differentPixels": 14682,
+              "totalPixels": 786432,
+              "diffRate": 0.018669,
+              "passed": true,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "generatedFinalRoute": "/#/login?redirect=%2Fdashboard",
+            "referenceAnchor": ".login-container",
+            "generatedAnchor": ".login-container",
+            "referenceRegion": ".login-container",
+            "generatedRegion": ".login-container",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 651,
+            "preAnchorWaitMs": 325,
+            "postAnchorWaitMs": 326,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 1935.434,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 79,
+              "rate": 0.693,
+              "mismatches": [
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "position",
+                  "reference": "static",
+                  "generated": "fixed"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "min-height",
+                  "reference": "100%",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "top",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "right",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "bottom",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "left",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "inset",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-container ↔ .login-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "width",
+                  "reference": "390px",
+                  "generated": "358px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "height",
+                  "reference": "493.828px",
+                  "generated": "485px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "max-width",
+                  "reference": "100%",
+                  "generated": "358px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "transform-origin",
+                  "reference": "195px 246.914px",
+                  "generated": "179px 242.5px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-x",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "overflow-y",
+                  "reference": "hidden",
+                  "generated": "visible"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "margin-right",
+                  "reference": "0px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "margin-left",
+                  "reference": "0px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "padding-top",
+                  "reference": "160px",
+                  "generated": "110px"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(238, 238, 238)"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "rect.x",
+                  "reference": "0",
+                  "generated": "16"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "rect.width",
+                  "reference": "390",
+                  "generated": "358"
+                },
+                {
+                  "key": ".login-form ↔ .login-form",
+                  "property": "rect.height",
+                  "reference": "493.828125",
+                  "generated": "485"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 390,
+              "height": 844,
+              "referenceWidth": 390,
+              "referenceHeight": 844,
+              "generatedWidth": 390,
+              "generatedHeight": 844,
+              "dimensionMismatch": false,
+              "differentPixels": 34859,
+              "totalPixels": 329160,
+              "diffRate": 0.105903,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.693,
+        "worstPixelDiff": 0.105903,
+        "durationMs": 4076.999
+      },
+      {
+        "scenarioId": "admin-login-dashboard",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4141,
+            "preAnchorWaitMs": 3808,
+            "postAnchorWaitMs": 333,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 6212.934,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 95,
+              "rate": 0.8333,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "1462.69px",
+                  "generated": "1357.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "615px 731.344px",
+                  "generated": "615px 678.719px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "1462.6875",
+                  "generated": "1357.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "1462.69px",
+                  "generated": "1357.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "615px 731.344px",
+                  "generated": "615px 678.719px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "1462.6875",
+                  "generated": "1357.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 876,
+              "referenceWidth": 1230,
+              "referenceHeight": 876,
+              "generatedWidth": 1230,
+              "generatedHeight": 876,
+              "dimensionMismatch": false,
+              "differentPixels": 108163,
+              "totalPixels": 1077480,
+              "diffRate": 0.100385,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "generatedRegionRect": {
+              "x": 180,
+              "y": 24,
+              "width": 844,
+              "height": 744
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4199,
+            "preAnchorWaitMs": 3858,
+            "postAnchorWaitMs": 341,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 48.012,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 89,
+              "rate": 0.7807,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "2779.69px",
+                  "generated": "2697.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "422px 1348.72px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "2779.6875",
+                  "generated": "2697.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "2779.69px",
+                  "generated": "2697.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "422px 1348.72px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "2779.6875",
+                  "generated": "2697.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 744,
+              "referenceWidth": 814,
+              "referenceHeight": 744,
+              "generatedWidth": 844,
+              "generatedHeight": 744,
+              "dimensionMismatch": true,
+              "differentPixels": 21712,
+              "totalPixels": 605616,
+              "diffRate": 0.035851,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "generatedRegionRect": {
+              "x": 132,
+              "y": 24,
+              "width": 258,
+              "height": 820
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4335,
+            "preAnchorWaitMs": 4003,
+            "postAnchorWaitMs": 332,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 6520.774,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 89,
+              "rate": 0.7807,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "390px",
+                  "generated": "258px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "3414.89px",
+                  "generated": "2817.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "760px",
+                  "generated": "794px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "195px 1707.45px",
+                  "generated": "129px 1408.72px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "0",
+                  "generated": "132"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "390",
+                  "generated": "258"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "3414.890625",
+                  "generated": "2817.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "width",
+                  "reference": "390px",
+                  "generated": "258px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "3414.89px",
+                  "generated": "2817.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "195px 1707.45px",
+                  "generated": "129px 1408.72px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.x",
+                  "reference": "0",
+                  "generated": "132"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.width",
+                  "reference": "390",
+                  "generated": "258"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "3414.890625",
+                  "generated": "2817.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 258,
+              "height": 820,
+              "referenceWidth": 390,
+              "referenceHeight": 820,
+              "generatedWidth": 258,
+              "generatedHeight": 820,
+              "dimensionMismatch": true,
+              "differentPixels": 12680,
+              "totalPixels": 211560,
+              "diffRate": 0.059936,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.7807,
+        "worstPixelDiff": 0.100385,
+        "durationMs": 12781.755
+      },
+      {
+        "scenarioId": "admin-nested-route",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/nested/menu1/menu1-1",
+            "generatedFinalRoute": "/#/nested/menu1/menu1-1",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 50,
+              "width": 1230,
+              "height": 850
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1333,
+            "preAnchorWaitMs": 1016,
+            "postAnchorWaitMs": 317,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 4413.893,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 43,
+              "rate": 0.7544,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "615px 408px",
+                  "generated": "615px 425px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.y",
+                  "reference": "84",
+                  "generated": "50"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "816",
+                  "generated": "850"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 816,
+              "referenceWidth": 1230,
+              "referenceHeight": 816,
+              "generatedWidth": 1230,
+              "generatedHeight": 850,
+              "dimensionMismatch": true,
+              "differentPixels": 2762,
+              "totalPixels": 1003680,
+              "diffRate": 0.002752,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/nested/menu1/menu1-1",
+            "generatedFinalRoute": "/#/nested/menu1/menu1-1",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "generatedRegionRect": {
+              "x": 180,
+              "y": 50,
+              "width": 844,
+              "height": 718
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1348,
+            "preAnchorWaitMs": 1031,
+            "postAnchorWaitMs": 317,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 27.108,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 40,
+              "rate": 0.7018,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 342px",
+                  "generated": "422px 359px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.y",
+                  "reference": "84",
+                  "generated": "50"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "684",
+                  "generated": "718"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 684,
+              "referenceWidth": 814,
+              "referenceHeight": 684,
+              "generatedWidth": 844,
+              "generatedHeight": 718,
+              "dimensionMismatch": true,
+              "differentPixels": 2762,
+              "totalPixels": 556776,
+              "diffRate": 0.004961,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.7018,
+        "worstPixelDiff": 0.004961,
+        "durationMs": 4441.081
+      },
+      {
+        "scenarioId": "admin-permission-route",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 1230,
+              "height": 816
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 50,
+              "width": 1230,
+              "height": 850
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1301,
+            "preAnchorWaitMs": 983,
+            "postAnchorWaitMs": 318,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 4228.655,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 43,
+              "rate": 0.7544,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "615px 408px",
+                  "generated": "615px 425px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.y",
+                  "reference": "84",
+                  "generated": "50"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "816",
+                  "generated": "850"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 816,
+              "referenceWidth": 1230,
+              "referenceHeight": 816,
+              "generatedWidth": 1230,
+              "generatedHeight": 850,
+              "dimensionMismatch": true,
+              "differentPixels": 21940,
+              "totalPixels": 1003680,
+              "diffRate": 0.02186,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/permission/directive",
+            "generatedFinalRoute": "/#/permission/directive",
+            "referenceAnchor": ".app-main",
+            "generatedAnchor": ".app-main",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 84,
+              "width": 814,
+              "height": 684
+            },
+            "generatedRegionRect": {
+              "x": 180,
+              "y": 50,
+              "width": 844,
+              "height": 718
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1324,
+            "preAnchorWaitMs": 1008,
+            "postAnchorWaitMs": 316,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 33.088,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 1,
+              "referenceCount": 1,
+              "generatedCount": 1,
+              "propertyCount": 57,
+              "matchingProperties": 40,
+              "rate": 0.7018,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 342px",
+                  "generated": "422px 359px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.y",
+                  "reference": "84",
+                  "generated": "50"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "684",
+                  "generated": "718"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 684,
+              "referenceWidth": 814,
+              "referenceHeight": 684,
+              "generatedWidth": 844,
+              "generatedHeight": 718,
+              "dimensionMismatch": true,
+              "differentPixels": 21153,
+              "totalPixels": 556776,
+              "diffRate": 0.037992,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.7018,
+        "worstPixelDiff": 0.037992,
+        "durationMs": 4261.788
+      },
+      {
+        "scenarioId": "admin-deep-link-reload",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "generatedRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 1230,
+              "height": 876
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4070,
+            "preAnchorWaitMs": 3742,
+            "postAnchorWaitMs": 328,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 6582.3,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 95,
+              "rate": 0.8333,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "1462.69px",
+                  "generated": "1357.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "816px",
+                  "generated": "850px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "615px 731.344px",
+                  "generated": "615px 678.719px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "1462.6875",
+                  "generated": "1357.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "1462.69px",
+                  "generated": "1357.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "615px 731.344px",
+                  "generated": "615px 678.719px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "1462.6875",
+                  "generated": "1357.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 1230,
+              "height": 876,
+              "referenceWidth": 1230,
+              "referenceHeight": 876,
+              "generatedWidth": 1230,
+              "generatedHeight": 876,
+              "dimensionMismatch": false,
+              "differentPixels": 108305,
+              "totalPixels": 1077480,
+              "diffRate": 0.100517,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 210,
+              "y": 24,
+              "width": 814,
+              "height": 744
+            },
+            "generatedRegionRect": {
+              "x": 180,
+              "y": 24,
+              "width": 844,
+              "height": 744
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4029,
+            "preAnchorWaitMs": 3699,
+            "postAnchorWaitMs": 330,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 28.442,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 89,
+              "rate": 0.7807,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "2779.69px",
+                  "generated": "2697.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "684px",
+                  "generated": "718px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "422px 1348.72px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "2779.6875",
+                  "generated": "2697.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "width",
+                  "reference": "814px",
+                  "generated": "844px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "2779.69px",
+                  "generated": "2697.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "407px 1389.84px",
+                  "generated": "422px 1348.72px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.x",
+                  "reference": "210",
+                  "generated": "180"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.width",
+                  "reference": "814",
+                  "generated": "844"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "2779.6875",
+                  "generated": "2697.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 814,
+              "height": 744,
+              "referenceWidth": 814,
+              "referenceHeight": 744,
+              "generatedWidth": 844,
+              "generatedHeight": 744,
+              "dimensionMismatch": true,
+              "differentPixels": 22027,
+              "totalPixels": 605616,
+              "diffRate": 0.036371,
+              "passed": false,
+              "threshold": 0.02
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/#/dashboard",
+            "generatedFinalRoute": "/#/dashboard",
+            "referenceAnchor": ".dashboard-container",
+            "generatedAnchor": ".dashboard-container",
+            "referenceRegion": ".app-main",
+            "generatedRegion": ".app-main",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 24,
+              "width": 390,
+              "height": 820
+            },
+            "generatedRegionRect": {
+              "x": 132,
+              "y": 24,
+              "width": 258,
+              "height": 820
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 4225,
+            "preAnchorWaitMs": 3875,
+            "postAnchorWaitMs": 350,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 7327.205,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 2,
+              "referenceCount": 2,
+              "generatedCount": 2,
+              "propertyCount": 114,
+              "matchingProperties": 89,
+              "rate": 0.7807,
+              "mismatches": [
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "position",
+                  "reference": "relative",
+                  "generated": "static"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "width",
+                  "reference": "390px",
+                  "generated": "258px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "height",
+                  "reference": "3414.89px",
+                  "generated": "2817.44px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "min-height",
+                  "reference": "760px",
+                  "generated": "794px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "top",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "right",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "bottom",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "left",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "inset",
+                  "reference": "0px",
+                  "generated": "auto"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "transform-origin",
+                  "reference": "195px 1707.45px",
+                  "generated": "129px 1408.72px"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.x",
+                  "reference": "0",
+                  "generated": "132"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.width",
+                  "reference": "390",
+                  "generated": "258"
+                },
+                {
+                  "key": ".app-main ↔ .app-main",
+                  "property": "rect.height",
+                  "reference": "3414.890625",
+                  "generated": "2817.4375"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "width",
+                  "reference": "390px",
+                  "generated": "258px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "height",
+                  "reference": "3414.89px",
+                  "generated": "2817.44px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "transform-origin",
+                  "reference": "195px 1707.45px",
+                  "generated": "129px 1408.72px"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "border-top-color",
+                  "reference": "rgb(0, 0, 0)",
+                  "generated": "rgb(96, 98, 102)"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "line-height",
+                  "reference": "18.4px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.x",
+                  "reference": "0",
+                  "generated": "132"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.width",
+                  "reference": "390",
+                  "generated": "258"
+                },
+                {
+                  "key": ".dashboard-container ↔ .dashboard-container",
+                  "property": "rect.height",
+                  "reference": "3414.890625",
+                  "generated": "2817.4375"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 258,
+              "height": 820,
+              "referenceWidth": 390,
+              "referenceHeight": 820,
+              "generatedWidth": 258,
+              "generatedHeight": 820,
+              "dimensionMismatch": true,
+              "differentPixels": 12680,
+              "totalPixels": 211560,
+              "diffRate": 0.059936,
+              "passed": false,
+              "threshold": 0.02
+            }
+          }
+        ],
+        "worstComputedStyle": 0.7807,
+        "worstPixelDiff": 0.100517,
+        "durationMs": 13938.008
+      }
+    ],
+    "scenarioCount": 5,
+    "viewportRuns": 13,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 13,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 32405,
+    "preAnchorWaitMs": 28149,
+    "postAnchorWaitMs": 4256,
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 0.693,
+    "worstPixelDiff": 0.105903,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 26,
+    "reusedTargetRuns": 10,
+    "freshTargetRuns": 16
+  },
+  "telemetry": {
+    "contractTargetRuns": 12,
+    "visualViewportRuns": 13,
+    "visualTargetRuns": 26,
+    "visualTargetReusedRuns": 10,
+    "visualTargetFreshRuns": 16,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 32405,
+    "visualPreAnchorWaitMs": 28149,
+    "visualPostAnchorWaitMs": 4256,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 1,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 549.345,
+      "contractMs": 27083.04,
+      "comparisonMs": 1.099,
+      "visualMatrixMs": 39500.33,
+      "browserCloseMs": 214.18,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 214.156,
+      "reportReadyMs": 67135.387,
+      "totalMs": 67349.573
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=6/6，generated=6/6"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": false,
+      "detail": "0/5 SPA route states 通过，viewportRuns=13，worstComputedStyle=0.693，worstPixelDiff=0.105903"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=19/19，rate=1，failures=0"
+    }
+  ]
+}

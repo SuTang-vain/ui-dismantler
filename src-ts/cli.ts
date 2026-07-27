@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
@@ -17,7 +17,10 @@ import { generateSpaRouteShellIntegrationPatch } from "./planning/spa-route-shel
 import { analyzeVueRouterResponsibility } from "./planning/vue-router-responsibility.js";
 import { generateVueRouterIntegrationPatch } from "./planning/vue-router-patch.js";
 import { analyzeEChartsResponsibilities } from "./planning/echarts-responsibility.js";
-import { analyzeSfcVisualResponsibilities } from "./planning/sfc-visual-responsibility.js";
+import { analyzeSfcVisualResponsibilities, type SfcVisualResponsibilityGraph } from "./planning/sfc-visual-responsibility.js";
+import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visual-target-plan.js";
+import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
+import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
@@ -38,7 +41,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -162,6 +165,72 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
       for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
       return graph.blockers.length > 0 ? 1 : 0;
+    }
+    if (command === "visual-target-generate") {
+      const planPath = args[0], routeShellPath = flag(args, "--route-shell"), outDir = flag(args, "--out-dir");
+      if (!planPath || !routeShellPath || !outDir) throw new Error("visual-target-generate 需要 <visual-target.plan.json>、--route-shell 和 --out-dir");
+      const plan = JSON.parse(await readFile(resolve(planPath), "utf8")) as VisualTargetPlan;
+      const routePlan = JSON.parse(await readFile(resolve(routeShellPath), "utf8")) as SpaRouteShellPlan;
+      const startedAt = performance.now();
+      const artifact = generateVisualTargetArtifact(plan, routePlan);
+      const absoluteOutDir = resolve(outDir);
+      for (const generated of artifact.files) {
+        const destination = resolve(absoluteOutDir, generated.path);
+        await mkdir(resolve(destination, ".."), { recursive: true });
+        await writeFile(destination, generated.content, "utf8");
+      }
+      const vendorRoot = flag(args, "--vendor-root");
+      if (vendorRoot) {
+        const vendorOut = resolve(absoluteOutDir, "public/vendor");
+        await mkdir(vendorOut, { recursive: true });
+        await copyFile(resolve(vendorRoot, "dist/echarts.min.js"), resolve(vendorOut, "echarts.min.js"));
+        await copyFile(resolve(vendorRoot, "theme/macarons.js"), resolve(vendorOut, "macarons.js"));
+      }
+      const generationMs = Number((performance.now() - startedAt).toFixed(3));
+      const metrics = { ...artifact.metrics, schemaVersion: "1.0", phase: "visual-target-generation", deterministic: true, generationMs, reviewMs: null, semanticRuns: 0, visualRuns: 0, qualityComparable: true };
+      await writeFile(resolve(absoluteOutDir, "generation.metrics.json"), `${JSON.stringify(metrics, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "artifact.manifest.json"), `${JSON.stringify({ ...artifact, files: artifact.files.map(({ path, lines }) => ({ path, lines })) }, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "README.md"), `# Generated visual target auto-v1
+
+Deterministic visual target generated from the reviewed route-shell plan and visual responsibility evidence.
+
+- model calls: 0
+- artifact manual edits: 0
+- generated files: ${artifact.metrics.generatedFiles}
+- generated lines: ${artifact.metrics.generatedLines}
+- selected visual owners: ${artifact.metrics.visualOwners}
+- primitive DOM nodes: ${artifact.metrics.primitiveDomNodes}
+- primitive style rules: ${artifact.metrics.primitiveStyleRules}
+- primitive interaction bindings: ${artifact.metrics.primitiveInteractionBindings}
+- review required: true
+- reviewed target source copied: no
+
+Run Semantic navigation before visual Gold+. Formal measured iterations and remaining blockers are recorded in experiment.metrics.json and the parent case README.
+`, "utf8");
+      console.log(`✓ 已生成独立 auto-v1 visual target: ${absoluteOutDir}`);
+      console.log(`  files=${artifact.metrics.generatedFiles}，lines=${artifact.metrics.generatedLines}，owners=${artifact.metrics.visualOwners}，charts=${artifact.metrics.chartOwners}，modelCalls=0，manualEdits=0，generationMs=${generationMs}`);
+      if (!vendorRoot && artifact.metrics.chartOwners > 0) console.log("  [REVIEW] 未提供 --vendor-root；图表运行时需人工补齐后再执行视觉门禁");
+      return 0;
+    }
+    if (command === "visual-target-plan") {
+      const graphPath = args[0], routeShellPath = flag(args, "--route-shell"), out = flag(args, "--out");
+      if (!graphPath || !routeShellPath || !out) throw new Error("visual-target-plan 需要 <sfc-visual.graph.json>、--route-shell 和 --out");
+      const graph = JSON.parse(await readFile(resolve(graphPath), "utf8")) as SfcVisualResponsibilityGraph;
+      const routePlan = JSON.parse(await readFile(resolve(routeShellPath), "utf8")) as SpaRouteShellPlan;
+      const startedAt = performance.now();
+      const plan = generateVisualTargetPlan(graph, routePlan);
+      const generationMs = Number((performance.now() - startedAt).toFixed(3));
+      await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      const metricsOut = flag(args, "--metrics-out");
+      if (metricsOut) await writeFile(resolve(metricsOut), `${JSON.stringify({
+        schemaVersion: "1.0", phase: "visual-target-planning", deterministic: true, modelCalls: 0, generationMs,
+        manualEdits: 0, manualEditedLines: 0, repairIterations: 0, semanticRuns: 0, visualRuns: 0,
+        ...plan.metrics, requiresHumanReview: plan.reviewRequired,
+      }, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 review-only visual target 计划: ${resolve(out)}`);
+      console.log(`  boundaries=${plan.metrics.boundaries}，owners=${plan.metrics.owners}，charts=${plan.metrics.chartOwners}，responsive=${plan.metrics.responsiveOwners}，unresolved=${plan.metrics.unresolvedRoutes}，generationMs=${generationMs}`);
+      for (const item of plan.unresolved) console.log(`  [UNRESOLVED] ${item.route}: ${item.reason}`);
+      return plan.metrics.unresolvedRoutes > 0 ? 1 : 0;
     }
     if (command === "echarts-responsibility-analyze") {
       const sourceRoot = args[0], out = flag(args, "--out");

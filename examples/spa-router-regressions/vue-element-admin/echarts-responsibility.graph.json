@@ -7,7 +7,7 @@
   "components": [
     {
       "id": "echarts:1",
-      "file": "components/Charts/Keyboard.vue",
+      "file": "src/components/Charts/Keyboard.vue",
       "componentName": "Keyboard",
       "confidence": "high",
       "themes": [],
@@ -21,6 +21,14 @@
         "grid",
         "series",
         "visualMap"
+      ],
+      "optionSlices": [
+        {
+          "line": 56,
+          "source": "{\n        backgroundColor: '#08263a',\n        grid: {\n          left: '5%',\n          right: '5%'\n        },\n        xAxis: [{\n          show: false,\n          data: xAxisData\n        }, {\n          show: false,\n          data: xAxisData\n        }],\n        visualMap: {\n          show: false,\n          min: 0,\n          max: 50,\n          dimension: 0,\n          inRange: {\n            color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055']\n          }\n        },\n        yAxis: {\n          axisLine: {\n            show: false\n          },\n          axisLabel: {\n            textStyle: {\n              color: '#4a657a'\n            }\n          },\n          splitLine: {\n            show: true,\n            lineStyle: {\n              color: '#08263f'\n            }\n          },\n          axisTick: {\n            show: false\n          }\n        },\n        series: [{\n          name: 'back',\n          type: 'bar',\n          data: data2,\n          z: 1,\n          itemStyle: {\n            normal: {\n              opacity: 0.4,\n              barBorderRadius: 5,\n              shadowBlur: 3,\n              shadowColor: '#111'\n            }\n          }\n        }, {\n          name: 'Simulate Shadow',\n          type: 'line',\n          data,\n          z: 2,\n          showSymbol: false,\n          animationDelay: 0,\n          animationEasing: 'linear',\n          animationDuration: 1200,\n          lineStyle: {\n            normal: {\n              color: 'transparent'\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: '#08263a',\n              shadowBlur: 50,\n              shadowColor: '#000'\n            }\n          }\n        }, {\n          name: 'front',\n          type: 'bar',\n          data,\n          xAxisIndex: 1,\n          z: 3,\n          itemStyle: {\n            normal: {\n              barBorderRadius: 5\n            }\n          }\n        }],\n        animationEasing: 'elasticOut',\n        animationEasingUpdate: 'elasticOut',\n        animationDelay(idx) {\n          return idx * 20\n        },\n        animationDelayUpdate(idx) {\n          return idx * 20\n        }\n      }",
+          "seriesCount": 3,
+          "literalDataArrays": 0
+        }
       ],
       "dataSources": [
         "data2",
@@ -43,49 +51,49 @@
       },
       "evidence": [
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 46,
           "pattern": "echarts.init(document.getElementById(this.id",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 56,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 34,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 37,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 41,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/Keyboard.vue",
+          "file": "src/components/Charts/Keyboard.vue",
           "line": 10,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -94,7 +102,7 @@
     },
     {
       "id": "echarts:2",
-      "file": "components/Charts/LineMarker.vue",
+      "file": "src/components/Charts/LineMarker.vue",
       "componentName": "LineMarker",
       "confidence": "high",
       "themes": [],
@@ -109,6 +117,14 @@
         "legend",
         "series",
         "title"
+      ],
+      "optionSlices": [
+        {
+          "line": 48,
+          "source": "{\n        backgroundColor: '#394056',\n        title: {\n          top: 20,\n          text: 'Requests',\n          textStyle: {\n            fontWeight: 'normal',\n            fontSize: 16,\n            color: '#F1F1F3'\n          },\n          left: '1%'\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          }\n        },\n        legend: {\n          top: 20,\n          icon: 'rect',\n          itemWidth: 14,\n          itemHeight: 5,\n          itemGap: 13,\n          data: ['CMCC', 'CTCC', 'CUCC'],\n          right: '4%',\n          textStyle: {\n            fontSize: 12,\n            color: '#F1F1F3'\n          }\n        },\n        grid: {\n          top: 100,\n          left: '2%',\n          right: '2%',\n          bottom: '2%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          boundaryGap: false,\n          axisLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          },\n          data: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55']\n        }],\n        yAxis: [{\n          type: 'value',\n          name: '(%)',\n          axisTick: {\n            show: false\n          },\n          axisLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          },\n          axisLabel: {\n            margin: 10,\n            textStyle: {\n              fontSize: 14\n            }\n          },\n          splitLine: {\n            lineStyle: {\n              color: '#57617B'\n            }\n          }\n        }],\n        series: [{\n          name: 'CMCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(137, 189, 27, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(137, 189, 27, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(137,189,27)',\n              borderColor: 'rgba(137,189,2,0.27)',\n              borderWidth: 12\n\n            }\n          },\n          data: [220, 182, 191, 134, 150, 120, 110, 125, 145, 122, 165, 122]\n        }, {\n          name: 'CTCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(0, 136, 212, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(0, 136, 212, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(0,136,212)',\n              borderColor: 'rgba(0,136,212,0.2)',\n              borderWidth: 12\n\n            }\n          },\n          data: [120, 110, 125, 145, 122, 165, 122, 220, 182, 191, 134, 150]\n        }, {\n          name: 'CUCC',\n          type: 'line',\n          smooth: true,\n          symbol: 'circle',\n          symbolSize: 5,\n          showSymbol: false,\n          lineStyle: {\n            normal: {\n              width: 1\n            }\n          },\n          areaStyle: {\n            normal: {\n              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                offset: 0,\n                color: 'rgba(219, 50, 51, 0.3)'\n              }, {\n                offset: 0.8,\n                color: 'rgba(219, 50, 51, 0)'\n              }], false),\n              shadowColor: 'rgba(0, 0, 0, 0.1)',\n              shadowBlur: 10\n            }\n          },\n          itemStyle: {\n            normal: {\n              color: 'rgb(219,50,51)',\n              borderColor: 'rgba(219,50,51,0.2)',\n              borderWidth: 12\n            }\n          },\n          data: [220, 182, 125, 145, 122, 191, 134, 150, 120, 110, 165, 122]\n        }]\n      }",
+          "seriesCount": 5,
+          "literalDataArrays": 5
+        }
       ],
       "dataSources": [],
       "lifecycle": [
@@ -128,49 +144,49 @@
       },
       "evidence": [
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 46,
           "pattern": "echarts.init(document.getElementById(this.id",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 48,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 34,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 37,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 41,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/LineMarker.vue",
+          "file": "src/components/Charts/LineMarker.vue",
           "line": 10,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -179,7 +195,7 @@
     },
     {
       "id": "echarts:3",
-      "file": "components/Charts/MixChart.vue",
+      "file": "src/components/Charts/MixChart.vue",
       "componentName": "MixChart",
       "confidence": "high",
       "themes": [],
@@ -196,6 +212,14 @@
         "series",
         "dataZoom",
         "title"
+      ],
+      "optionSlices": [
+        {
+          "line": 54,
+          "source": "{\n        backgroundColor: '#344b58',\n        title: {\n          text: 'statistics',\n          x: '20',\n          top: '20',\n          textStyle: {\n            color: '#fff',\n            fontSize: '22'\n          },\n          subtextStyle: {\n            color: '#90979c',\n            fontSize: '16'\n          }\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            textStyle: {\n              color: '#fff'\n            }\n          }\n        },\n        grid: {\n          left: '5%',\n          right: '5%',\n          borderWidth: 0,\n          top: 150,\n          bottom: 95,\n          textStyle: {\n            color: '#fff'\n          }\n        },\n        legend: {\n          x: '5%',\n          top: '10%',\n          textStyle: {\n            color: '#90979c'\n          },\n          data: ['female', 'male', 'average']\n        },\n        calculable: true,\n        xAxis: [{\n          type: 'category',\n          axisLine: {\n            lineStyle: {\n              color: '#90979c'\n            }\n          },\n          splitLine: {\n            show: false\n          },\n          axisTick: {\n            show: false\n          },\n          splitArea: {\n            show: false\n          },\n          axisLabel: {\n            interval: 0\n\n          },\n          data: xData\n        }],\n        yAxis: [{\n          type: 'value',\n          splitLine: {\n            show: false\n          },\n          axisLine: {\n            lineStyle: {\n              color: '#90979c'\n            }\n          },\n          axisTick: {\n            show: false\n          },\n          axisLabel: {\n            interval: 0\n          },\n          splitArea: {\n            show: false\n          }\n        }],\n        dataZoom: [{\n          show: true,\n          height: 30,\n          xAxisIndex: [\n            0\n          ],\n          bottom: 30,\n          start: 10,\n          end: 80,\n          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',\n          handleSize: '110%',\n          handleStyle: {\n            color: '#d3dee5'\n\n          },\n          textStyle: {\n            color: '#fff' },\n          borderColor: '#90979c'\n\n        }, {\n          type: 'inside',\n          show: true,\n          height: 15,\n          start: 1,\n          end: 35\n        }],\n        series: [{\n          name: 'female',\n          type: 'bar',\n          stack: 'total',\n          barMaxWidth: 35,\n          barGap: '10%',\n          itemStyle: {\n            normal: {\n              color: 'rgba(255,144,128,1)',\n              label: {\n                show: true,\n                textStyle: {\n                  color: '#fff'\n                },\n                position: 'insideTop',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            709,\n            1917,\n            2455,\n            2610,\n            1719,\n            1433,\n            1544,\n            3285,\n            5208,\n            3372,\n            2484,\n            4078\n          ]\n        },\n\n        {\n          name: 'male',\n          type: 'bar',\n          stack: 'total',\n          itemStyle: {\n            normal: {\n              color: 'rgba(0,191,183,1)',\n              barBorderRadius: 0,\n              label: {\n                show: true,\n                position: 'top',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            327,\n            1776,\n            507,\n            1200,\n            800,\n            482,\n            204,\n            1390,\n            1001,\n            951,\n            381,\n            220\n          ]\n        }, {\n          name: 'average',\n          type: 'line',\n          stack: 'total',\n          symbolSize: 10,\n          symbol: 'circle',\n          itemStyle: {\n            normal: {\n              color: 'rgba(252,230,48,1)',\n              barBorderRadius: 0,\n              label: {\n                show: true,\n                position: 'top',\n                formatter(p) {\n                  return p.value > 0 ? p.value : ''\n                }\n              }\n            }\n          },\n          data: [\n            1036,\n            3693,\n            2962,\n            3810,\n            2519,\n            1915,\n            1748,\n            4675,\n            6209,\n            4323,\n            2865,\n            4298\n          ]\n        }\n        ]\n      }",
+          "seriesCount": 6,
+          "literalDataArrays": 4
+        }
       ],
       "dataSources": [
         "xData"
@@ -217,49 +241,49 @@
       },
       "evidence": [
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 46,
           "pattern": "echarts.init(document.getElementById(this.id",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 54,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 34,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 37,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 41,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 7,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "components/Charts/MixChart.vue",
+          "file": "src/components/Charts/MixChart.vue",
           "line": 10,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -268,7 +292,7 @@
     },
     {
       "id": "echarts:4",
-      "file": "views/dashboard/admin/components/BarChart.vue",
+      "file": "src/views/dashboard/admin/components/BarChart.vue",
       "componentName": "BarChart",
       "confidence": "high",
       "themes": [
@@ -283,6 +307,14 @@
         "grid",
         "tooltip",
         "series"
+      ],
+      "optionSlices": [
+        {
+          "line": 49,
+          "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        grid: {\n          top: 10,\n          left: '2%',\n          right: '2%',\n          bottom: '3%',\n          containLabel: true\n        },\n        xAxis: [{\n          type: 'category',\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          axisTick: {\n            alignWithLabel: true\n          }\n        }],\n        yAxis: [{\n          type: 'value',\n          axisTick: {\n            show: false\n          }\n        }],\n        series: [{\n          name: 'pageA',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [79, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageB',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [80, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }, {\n          name: 'pageC',\n          type: 'bar',\n          stack: 'vistors',\n          barWidth: '60%',\n          data: [30, 52, 200, 334, 390, 330, 220],\n          animationDuration\n        }]\n      }",
+          "seriesCount": 6,
+          "literalDataArrays": 4
+        }
       ],
       "dataSources": [],
       "lifecycle": [
@@ -302,61 +334,61 @@
       },
       "evidence": [
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 47,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 49,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 7,
           "pattern": "echarts/theme/macarons",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 47,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 33,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 38,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 42,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/BarChart.vue",
+          "file": "src/views/dashboard/admin/components/BarChart.vue",
           "line": 13,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -365,7 +397,7 @@
     },
     {
       "id": "echarts:5",
-      "file": "views/dashboard/admin/components/LineChart.vue",
+      "file": "src/views/dashboard/admin/components/LineChart.vue",
       "componentName": "LineChart",
       "confidence": "high",
       "themes": [
@@ -381,6 +413,14 @@
         "tooltip",
         "legend",
         "series"
+      ],
+      "optionSlices": [
+        {
+          "line": 65,
+          "source": "{\n        xAxis: {\n          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],\n          boundaryGap: false,\n          axisTick: {\n            show: false\n          }\n        },\n        grid: {\n          left: 10,\n          right: 10,\n          bottom: 20,\n          top: 30,\n          containLabel: true\n        },\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: {\n            type: 'cross'\n          },\n          padding: [5, 10]\n        },\n        yAxis: {\n          axisTick: {\n            show: false\n          }\n        },\n        legend: {\n          data: ['expected', 'actual']\n        },\n        series: [{\n          name: 'expected', itemStyle: {\n            normal: {\n              color: '#FF005A',\n              lineStyle: {\n                color: '#FF005A',\n                width: 2\n              }\n            }\n          },\n          smooth: true,\n          type: 'line',\n          data: expectedData,\n          animationDuration: 2800,\n          animationEasing: 'cubicInOut'\n        },\n        {\n          name: 'actual',\n          smooth: true,\n          type: 'line',\n          itemStyle: {\n            normal: {\n              color: '#3888fa',\n              lineStyle: {\n                color: '#3888fa',\n                width: 2\n              },\n              areaStyle: {\n                color: '#f3f8ff'\n              }\n            }\n          },\n          data: actualData,\n          animationDuration: 2800,\n          animationEasing: 'quadraticOut'\n        }]\n      }",
+          "seriesCount": 3,
+          "literalDataArrays": 2
+        }
       ],
       "dataSources": [
         "actualData",
@@ -407,67 +447,67 @@
       },
       "evidence": [
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 61,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 65,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 7,
           "pattern": "echarts/theme/macarons",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 61,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 47,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 52,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 56,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 11,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/LineChart.vue",
+          "file": "src/views/dashboard/admin/components/LineChart.vue",
           "line": 39,
           "pattern": "watch:",
           "detail": "chart lifecycle: watch"
@@ -476,7 +516,7 @@
     },
     {
       "id": "echarts:6",
-      "file": "views/dashboard/admin/components/PieChart.vue",
+      "file": "src/views/dashboard/admin/components/PieChart.vue",
       "componentName": "PieChart",
       "confidence": "high",
       "themes": [
@@ -489,6 +529,14 @@
         "tooltip",
         "legend",
         "series"
+      ],
+      "optionSlices": [
+        {
+          "line": 47,
+          "source": "{\n        tooltip: {\n          trigger: 'item',\n          formatter: '{a} <br/>{b} : {c} ({d}%)'\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']\n        },\n        series: [\n          {\n            name: 'WEEKLY WRITE ARTICLES',\n            type: 'pie',\n            roseType: 'radius',\n            radius: [15, 95],\n            center: ['50%', '38%'],\n            data: [\n              { value: 320, name: 'Industries' },\n              { value: 240, name: 'Technology' },\n              { value: 149, name: 'Forex' },\n              { value: 100, name: 'Gold' },\n              { value: 59, name: 'Forecasts' }\n            ],\n            animationEasing: 'cubicInOut',\n            animationDuration: 2600\n          }\n        ]\n      }",
+          "seriesCount": 1,
+          "literalDataArrays": 2
+        }
       ],
       "dataSources": [],
       "lifecycle": [
@@ -508,61 +556,61 @@
       },
       "evidence": [
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 45,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 47,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 7,
           "pattern": "echarts/theme/macarons",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 45,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 31,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 36,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 40,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/PieChart.vue",
+          "file": "src/views/dashboard/admin/components/PieChart.vue",
           "line": 11,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -571,7 +619,7 @@
     },
     {
       "id": "echarts:7",
-      "file": "views/dashboard/admin/components/RaddarChart.vue",
+      "file": "src/views/dashboard/admin/components/RaddarChart.vue",
       "componentName": "RaddarChart",
       "confidence": "high",
       "themes": [
@@ -586,6 +634,14 @@
         "series",
         "radar"
       ],
+      "optionSlices": [
+        {
+          "line": 49,
+          "source": "{\n        tooltip: {\n          trigger: 'axis',\n          axisPointer: { // 坐标轴指示器，坐标轴触发有效\n            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'\n          }\n        },\n        radar: {\n          radius: '66%',\n          center: ['50%', '42%'],\n          splitNumber: 8,\n          splitArea: {\n            areaStyle: {\n              color: 'rgba(127,95,132,.3)',\n              opacity: 1,\n              shadowBlur: 45,\n              shadowColor: 'rgba(0,0,0,.5)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 15\n            }\n          },\n          indicator: [\n            { name: 'Sales', max: 10000 },\n            { name: 'Administration', max: 20000 },\n            { name: 'Information Technology', max: 20000 },\n            { name: 'Customer Support', max: 20000 },\n            { name: 'Development', max: 20000 },\n            { name: 'Marketing', max: 20000 }\n          ]\n        },\n        legend: {\n          left: 'center',\n          bottom: '10',\n          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']\n        },\n        series: [{\n          type: 'radar',\n          symbolSize: 0,\n          areaStyle: {\n            normal: {\n              shadowBlur: 13,\n              shadowColor: 'rgba(0,0,0,.2)',\n              shadowOffsetX: 0,\n              shadowOffsetY: 10,\n              opacity: 1\n            }\n          },\n          data: [\n            {\n              value: [5000, 7000, 12000, 11000, 15000, 14000],\n              name: 'Allocated Budget'\n            },\n            {\n              value: [4000, 9000, 15000, 15000, 13000, 11000],\n              name: 'Expected Spending'\n            },\n            {\n              value: [5500, 11000, 12000, 15000, 12000, 12000],\n              name: 'Actual Spending'\n            }\n          ],\n          animationDuration: animationDuration\n        }]\n      }",
+          "seriesCount": 2,
+          "literalDataArrays": 2
+        }
+      ],
       "dataSources": [],
       "lifecycle": [
         "beforeDestroy",
@@ -604,61 +660,61 @@
       },
       "evidence": [
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 47,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts instance initialization"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 49,
           "pattern": ".setOption(",
           "detail": "chart option application"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 7,
           "pattern": "echarts/theme/macarons",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 47,
           "pattern": "echarts.init(this.$el, 'macarons'",
           "detail": "ECharts theme dependency"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 33,
           "pattern": "mounted(",
           "detail": "chart lifecycle: mounted"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 38,
           "pattern": "beforeDestroy(",
           "detail": "chart lifecycle: beforeDestroy"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 42,
           "pattern": ".dispose(",
           "detail": "chart lifecycle: dispose"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 8,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
         },
         {
-          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "file": "src/views/dashboard/admin/components/RaddarChart.vue",
           "line": 13,
           "pattern": "resize",
           "detail": "chart lifecycle: resize"
@@ -682,10 +738,10 @@
     "visual acceptance still requires computed-style and pixel matrices at the reviewed route states"
   ],
   "metrics": {
-    "filesScanned": 195,
+    "filesScanned": 221,
     "chartFiles": 7,
     "components": 7,
     "evidenceCount": 65,
-    "scanMs": 22
+    "scanMs": 13
   }
 }

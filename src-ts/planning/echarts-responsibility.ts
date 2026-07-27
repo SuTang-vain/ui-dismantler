@@ -16,6 +16,7 @@ export interface EChartsComponentResponsibility {
   themes: string[];
   chartTypes: string[];
   optionKeys: string[];
+  optionSlices: Array<{ line: number; source: string; seriesCount: number; literalDataArrays: number; containerHeight?: string }>;
   dataSources: string[];
   lifecycle: string[];
   interactions: string[];
@@ -108,6 +109,26 @@ const lifecyclePatterns: Array<[string, RegExp]> = [
   ["dispose", /\.dispose\s*\(/], ["resize", /\.resize\s*\(|\bresize\b/], ["watch", /\bwatch\s*:/],
 ];
 
+
+function balancedObjectAfter(source: string, start: number): string | undefined {
+  const open = source.indexOf("{", start); if (open < 0) return undefined;
+  let depth = 0, quote = "", escaped = false;
+  for (let index = open; index < source.length; index++) {
+    const char = source[index];
+    if (quote) { if (escaped) escaped = false; else if (char === "\\") escaped = true; else if (char === quote) quote = ""; continue; }
+    if (char === "'" || char === '"' || char === "`") { quote = char; continue; }
+    if (char === "{") depth++; else if (char === "}" && --depth === 0) return source.slice(open, index + 1);
+  }
+  return undefined;
+}
+function optionSlices(file: SourceFile): EChartsComponentResponsibility["optionSlices"] {
+  return matches(file.source, /\.setOption\s*\(/g).flatMap((match) => {
+    const object = balancedObjectAfter(file.source, match.index ?? 0); if (!object) return [];
+    const template = file.source.match(/<template[^>]*>([\s\S]*?)<\/template>/i)?.[1] ?? "";
+    const height = template.match(/(?:height\s*:\s*|height=["'])(\d+(?:px|%|vh|rem)?)/i)?.[1];
+    return [{ line: lineAt(file.source, match.index ?? 0), source: object.slice(0, 12000), seriesCount: matches(object, /\btype\s*:\s*['"][A-Za-z][\w-]*['"]/g).length, literalDataArrays: matches(object, /\bdata\s*:\s*\[/g).length, containerHeight: height }];
+  });
+}
 export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsResponsibilityGraph {
   const started = Date.now();
   const root = resolve(sourceRoot);
@@ -147,6 +168,7 @@ export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsRespo
       themes,
       chartTypes: unique(chartTypeMatches.map((match) => match[1]).filter((type) => chartRendererTypes.has(type))),
       optionKeys: knownOptionKeys.filter((key) => new RegExp(`\\b${key}\\s*:`).test(file.source)),
+      optionSlices: optionSlices(file),
       dataSources,
       lifecycle: unique(lifecycle),
       interactions,
