@@ -39,6 +39,8 @@ test("YesPlayMusic frozen Semantic Gold+ regression preserves reviewed route fid
   const config = JSON.parse(readFileSync(`${caseDir}/semantic-gold.config.json`, "utf8"));
   const report = JSON.parse(readFileSync(`${caseDir}/semantic-results.json`, "utf8"));
   const frozen = JSON.parse(readFileSync(`${caseDir}/frozen-artifact.json`, "utf8"));
+  const routeShellPlan = JSON.parse(readFileSync(`${caseDir}/route-shell.plan.json`, "utf8"));
+  const routeShellMetrics = JSON.parse(readFileSync(`${caseDir}/route-shell.metrics.json`, "utf8"));
 
   assert.equal(frozen.scope, "reviewed-partial-route-shell", "the generated route shell must not be represented as the full application");
   assert.equal(frozen.modelCallsDuringQualityRun, 0, "quality evidence must remain isolated from model API availability");
@@ -46,6 +48,15 @@ test("YesPlayMusic frozen Semantic Gold+ regression preserves reviewed route fid
     const actualHash = createHash("sha256").update(readFileSync(`${caseDir}/${relativePath}`)).digest("hex");
     assert.equal(actualHash, expectedHash, `${relativePath}: frozen artifact hash changed without review`);
   }
+
+  assert.equal(routeShellPlan.reviewRequired, true);
+  assert.equal(routeShellPlan.generatedCode, false);
+  assert.equal(routeShellPlan.routes.length, 5);
+  assert.equal(routeShellPlan.transitions.some((transition: { action: string; from: string; to: string }) => transition.action === "guard-redirect" && transition.from === "/library" && transition.to === "/login"), true);
+  assert.equal(routeShellMetrics.modelCalls, 0);
+  assert.equal(routeShellMetrics.manualEdits, 0);
+  assert.equal(routeShellMetrics.repairIterations, 0);
+  assert.equal(routeShellMetrics.requiresHumanReview, true);
 
   assert.equal(config.navigationComparison, "semantic");
   assert.deepEqual(config.visualMatrix.viewports.map((viewport: { id: string }) => viewport.id), ["desktop", "tablet", "mobile"]);

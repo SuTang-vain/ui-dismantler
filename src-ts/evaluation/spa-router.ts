@@ -15,9 +15,17 @@ export interface SpaRouterFixture {
   method?: string;
   /** Optional Playwright resource type guard, for example `image`, `stylesheet`, or `fetch`. */
   resourceType?: string;
+  /** Case-insensitive exact request-header constraints. */
+  requestHeaders?: Record<string, string>;
+  /** Query constraints. `subset` permits unrelated query keys; `exact` requires the complete query multimap. */
+  query?: Record<string, string | string[]>;
+  queryMode?: "subset" | "exact";
   status?: number;
   headers?: Record<string, string>;
-  body: JsonValue;
+  /** JSON or raw text response body. Mutually exclusive with bodyBase64. */
+  body?: JsonValue;
+  /** Base64-encoded binary response body. Mutually exclusive with body. */
+  bodyBase64?: string;
 }
 
 export type SpaRouterRequestClassification =
@@ -532,6 +540,12 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
     if (!fixture.path && !fixture.hostname) throw new TypeError("SPA Router fixture 必须至少声明 path 或 hostname");
     if (fixture.path && !fixture.path.startsWith("/")) throw new TypeError(`SPA Router fixture path 必须以 / 开头: ${fixture.path}`);
     if (fixture.hostname && /[:/]/.test(fixture.hostname)) throw new TypeError(`SPA Router fixture hostname 只能包含主机名: ${fixture.hostname}`);
+    if (fixture.queryMode && !["subset", "exact"].includes(fixture.queryMode)) throw new TypeError(`SPA Router fixture queryMode 无效: ${fixture.queryMode}`);
+    if (fixture.queryMode && !fixture.query) throw new TypeError("SPA Router fixture 声明 queryMode 时必须同时声明 query");
+    const hasBody = fixture.body !== undefined, hasBinaryBody = fixture.bodyBase64 !== undefined;
+    if (hasBody === hasBinaryBody) throw new TypeError("SPA Router fixture 必须且只能声明 body 或 bodyBase64");
+    if (fixture.bodyBase64 !== undefined && (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(fixture.bodyBase64))) throw new TypeError("SPA Router fixture bodyBase64 不是合法 Base64");
+    if (fixture.requestHeaders && Object.entries(fixture.requestHeaders).some(([name, value]) => !name.trim() || typeof value !== "string")) throw new TypeError("SPA Router fixture requestHeaders 必须是非空 header 名到字符串值的映射");
   }
   if (config.visualMatrix) {
     if (mode.mode !== "reference-generated") throw new TypeError("SPA route-state visualMatrix 需要 referenceBaseUrl/generatedBaseUrl 双端配置");
@@ -836,7 +850,31 @@ function fixtureHostnameMatches(actual: string, expected: string): boolean {
   return normalized.startsWith("*.") ? actual.endsWith(normalized.slice(1)) : actual === normalized;
 }
 
-export function findSpaRouterFixture(config: Pick<SpaRouterContractConfig, "fixtures">, input: { url: string; method: string; resourceType: string }): SpaRouterFixture | undefined {
+function fixtureQueryMatches(url: URL, fixture: SpaRouterFixture): boolean {
+  if (!fixture.query) return true;
+  const expectedKeys = Object.keys(fixture.query);
+  for (const key of expectedKeys) {
+    const expected = Array.isArray(fixture.query[key]) ? fixture.query[key] : [fixture.query[key]];
+    const actual = url.searchParams.getAll(key);
+    if (actual.length !== expected.length || actual.some((value, index) => value !== expected[index])) return false;
+  }
+  if ((fixture.queryMode ?? "subset") === "exact") {
+    const actualKeys = [...new Set(url.searchParams.keys())];
+    if (actualKeys.length !== expectedKeys.length || actualKeys.some((key) => !expectedKeys.includes(key))) return false;
+  }
+  return true;
+}
+
+function fixtureRequestHeadersMatch(actual: Record<string, string>, expected: Record<string, string> | undefined): boolean {
+  if (!expected) return true;
+  const normalized = Object.fromEntries(Object.entries(actual).map(([name, value]) => [name.toLowerCase(), value]));
+  return Object.entries(expected).every(([name, value]) => normalized[name.toLowerCase()] === value);
+}
+
+export function findSpaRouterFixture(
+  config: Pick<SpaRouterContractConfig, "fixtures">,
+  input: { url: string; method: string; resourceType: string; headers?: Record<string, string> },
+): SpaRouterFixture | undefined {
   let url: URL;
   try { url = new URL(input.url); } catch { return undefined; }
   return (config.fixtures ?? []).find((fixture) => {
@@ -844,6 +882,8 @@ export function findSpaRouterFixture(config: Pick<SpaRouterContractConfig, "fixt
     if (fixture.hostname && !fixtureHostnameMatches(url.hostname.toLowerCase(), fixture.hostname)) return false;
     if (fixture.path && url.pathname !== fixture.path) return false;
     if (fixture.resourceType && fixture.resourceType !== input.resourceType) return false;
+    if (!fixtureQueryMatches(url, fixture)) return false;
+    if (!fixtureRequestHeadersMatch(input.headers ?? {}, fixture.requestHeaders)) return false;
     return true;
   });
 }
@@ -862,13 +902,15 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     if (options.captureVisual) await initializeVisualStabilityTracking(context);
     await context.route("**/*", async (route) => {
       const request = route.request(), url = new URL(request.url());
-      const fixture = findSpaRouterFixture(config, { url: request.url(), method: request.method(), resourceType: request.resourceType() });
+      const fixture = findSpaRouterFixture(config, { url: request.url(), method: request.method(), resourceType: request.resourceType(), headers: request.headers() });
       if (fixture) {
         const headers: Record<string, string> = { ...(fixture.headers ?? {}) };
         const contentTypeHeader = Object.keys(headers).find((key) => key.toLowerCase() === "content-type");
         if (!contentTypeHeader) headers["content-type"] = "application/json; charset=utf-8";
         const contentType = contentTypeHeader ? headers[contentTypeHeader] : headers["content-type"];
-        const body = typeof fixture.body === "string" && !/json/i.test(contentType) ? fixture.body : JSON.stringify(fixture.body);
+        const body = fixture.bodyBase64 !== undefined
+          ? Buffer.from(fixture.bodyBase64, "base64")
+          : typeof fixture.body === "string" && !/json/i.test(contentType) ? fixture.body : JSON.stringify(fixture.body);
         await route.fulfill({ status: fixture.status ?? 200, headers, body });
         return;
       }

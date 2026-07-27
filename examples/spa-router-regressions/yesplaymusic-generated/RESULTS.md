@@ -87,9 +87,25 @@ Strict 模式按预期失败（0/5），并保留 20 条导航完整性差异：
 
 新增请求分类遥测会记录稳定窗口内观察到的 telemetry、required、current-DOM image 与 stale image 决策；它是诊断计数，不等同于最终资源失败计数。
 
+
+## Deterministic route shell planning
+
+当前工具已从 Semantic 合同与真实 generated report 自动生成 review-only route shell 计划：
+
+- 自动识别 5 个 route：`/settings`、`/explore`、`/search/:value`、`/library`、`/login`；
+- 自动识别 7 条 route transition；
+- 从 `a[href='/library'] → /login` 的观察差异推导出一条待审查的 `guard-redirect`；
+- 汇总 3 个 reviewed visual state 与 4 个 fixture dependency；
+- 不复制 fixture body，也不会自动把视觉验收 selector 当作实现 selector；
+- 输出 `reviewRequired=true`、`generatedCode=false`，因此当前产物是生成计划，不是未经审核的应用代码。
+
+`route-shell.metrics.json` 记录本次确定性 planning：`modelCalls=0`、`manualEdits=0`、`repairIterations=0`，并为下一阶段真实代码生成保留人工编辑量、修复轮数和 quality run 计量边界。
+
 ## Artifacts
 
 - `semantic-results.json` / `semantic.lifecycle.json`：最终 semantic Gold+ 结果；
 - `strict-results.json` / `strict.lifecycle.json`：严格合同预期失败证据；
 - `performance-baseline.json`：三轮性能摘要；
+- `route-shell.plan.json`：从合同和观察结果确定性生成的 review-only route shell 计划；
+- `route-shell.metrics.json`：planning 模型调用、耗时、人工编辑和修复轮数遥测；
 - `visual-artifacts/`：三个 route state、三个 viewport 的 reference/generated/diff 截图。

@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
 import { classifySpaRouterNetworkRequest, evaluateSpaRouterContract, findSpaRouterFixture, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
+import { formatSpaRouterVisualDiagnostics } from "../evaluation/spa-router-report.js";
 import { comparePixels } from "../evaluation/browser.js";
 import { runQualityGate } from "../workflow/pipeline.js";
+import { generateSpaRouteShellPlan } from "../planning/spa-route-shell.js";
+import { compareSpaRouteShellFiles, generateSpaRouteShellArtifact } from "../planning/spa-route-shell-generator.js";
 import { PNG } from "pngjs";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -32,6 +35,88 @@ before(async () => {
   baseUrl = `http://127.0.0.1:${address.port}`;
 });
 after(async () => { await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve())); });
+
+test("SPA route shell planner emits review-only routes, transitions, selector mappings and measurement fields", () => {
+  const config: SpaRouterContractConfig = {
+    schemaVersion: "1.0", referenceBaseUrl: "https://reference.test/app/", generatedBaseUrl: "https://generated.test/",
+    fixtures: [{ hostname: "assets.test", path: "/cover.bin", resourceType: "fetch", query: { size: "large" }, requestHeaders: { "x-token": "reviewed" }, headers: { "content-type": "application/octet-stream" }, bodyBase64: "AAE=" }],
+    scenarios: [
+      { id: "explore", entryPath: "/", steps: [{ action: "click", target: { reference: "#reference-explore", generated: "#generated-explore" } }], assertions: { path: "/explore", visibleText: "Explore" }, visual: { screenshotAnchor: { reference: ".reference-page", generated: ".generated-page" }, styleTargets: [{ id: "page", selector: { reference: ".reference-page", generated: ".generated-page" } }] } },
+      { id: "search", entryPath: "/", steps: [{ action: "input", target: "#search", value: "周杰伦" }, { action: "key", target: "#search", key: "Enter" }], assertions: { path: "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6", visibleText: "Search" } },
+      { id: "guard", entryPath: "/", steps: [{ action: "click", target: "a[href='/library']" }], assertions: { path: "/login", visibleText: "Login" } },
+      { id: "reload", entryPath: "/settings", steps: [{ action: "reload" }], assertions: { path: "/settings", visibleText: "Settings" } },
+    ],
+  };
+  const plan = generateSpaRouteShellPlan(config);
+  assert.equal(plan.reviewRequired, true);
+  assert.equal(plan.generatedCode, false);
+  assert.equal(plan.source.reportIncluded, false);
+  assert.ok(plan.routes.some((route) => route.route === "/explore"));
+  assert.ok(plan.routes.some((route) => route.pattern === "/search/:value"));
+  assert.ok(plan.transitions.some((transition) => transition.action === "click" && transition.to === "/explore"));
+  assert.ok(plan.transitions.some((transition) => transition.action === "guard-redirect" && transition.from === "/library" && transition.to === "/login"));
+  assert.ok(plan.routes.some((route) => route.route === "/library"));
+  assert.ok(plan.transitions.some((transition) => transition.action === "reload" && transition.from === "/settings" && transition.to === "/settings"));
+  assert.equal(plan.selectorMappings.length, 3);
+  assert.equal(plan.fixtureDependencies[0]?.binary, true);
+  assert.deepEqual(plan.fixtureDependencies[0]?.requestHeaders, ["x-token"]);
+  assert.equal(plan.capabilities.dynamicInputRoutes, true);
+  assert.equal(plan.capabilities.reload, true);
+  assert.equal(plan.measurementTemplate.modelCalls, null);
+});
+
+test("SPA route shell generator emits behavior-only files and explicit review metrics", async () => {
+  const config: SpaRouterContractConfig = {
+    schemaVersion: "1.0", referenceBaseUrl: "https://reference.test/", generatedBaseUrl: "https://generated.test/",
+    fixtures: [{ path: "/api/bootstrap", method: "POST", query: { mode: "test" }, requestHeaders: { "x-fixture": "yes" }, headers: { "content-type": "application/json" }, body: { ready: true } }],
+    scenarios: [
+      { id: "explore", entryPath: "/settings", steps: [{ action: "click", target: "a[href='/explore']" }], assertions: { path: "/explore", visibleText: "Explore" } },
+      { id: "search", entryPath: "/settings", steps: [{ action: "input", target: "input[type='search']", value: "周杰伦" }, { action: "key", target: "input[type='search']", key: "Enter" }], assertions: { path: "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6" } },
+      { id: "guard", entryPath: "/settings", steps: [{ action: "click", target: "a[href='/library']" }], assertions: { path: "/login" } },
+    ],
+  };
+  const plan = generateSpaRouteShellPlan(config);
+  const temp = await mkdtemp(join(tmpdir(), "ui-dismantler-shell-"));
+  const baseline = join(temp, "baseline");
+  await mkdir(baseline, { recursive: true });
+  await writeFile(join(baseline, "routes.js"), "manual routes\n", "utf8");
+  try {
+    const artifact = generateSpaRouteShellArtifact(plan, { baselinePath: baseline, manualEdits: 2, manualEditedLines: 7, repairIterations: 1 });
+    assert.deepEqual(artifact.files.map((file) => file.path), ["routes.js", "guards.js", "router.js", "fixtures.js", "README.md"]);
+    assert.equal(artifact.metrics.reviewRequired, true);
+    assert.equal(artifact.metrics.generatedCode, true);
+    assert.equal(artifact.metrics.modelCalls, 0);
+    assert.equal(artifact.metrics.manualEdits, 2);
+    assert.equal(artifact.metrics.manualEditedLines, 7);
+    assert.equal(artifact.metrics.repairIterations, 1);
+    assert.equal(artifact.metrics.diff.comparable, true);
+    assert.equal(artifact.metrics.diff.comparableFiles, 1);
+    assert.equal(artifact.metrics.diff.changedFiles, 1);
+    assert.equal(artifact.metrics.qualityComparison.comparable, false);
+    const routes = artifact.files.find((file) => file.path === "routes.js")?.content ?? "";
+    const guards = artifact.files.find((file) => file.path === "guards.js")?.content ?? "";
+    const router = artifact.files.find((file) => file.path === "router.js")?.content ?? "";
+    const fixtures = artifact.files.find((file) => file.path === "fixtures.js")?.content ?? "";
+    assert.match(routes, /\/search\/:value/);
+    assert.match(routes, /\(\?<value>\[\^\/\]\+\)/);
+    assert.match(guards, /\"from\": \"\/library\"/);
+    assert.match(router, /pushState/);
+    assert.match(router, /history\.back/);
+    assert.match(fixtures, /registerFixtures/);
+    assert.doesNotMatch(fixtures, /ready/);
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});
+
+test("SPA route shell file diff reports missing boundaries instead of pretending app.js is comparable", () => {
+  const files = [{ path: "router.js", content: "router\n", lines: 1 }];
+  const diff = compareSpaRouteShellFiles(files, "/tmp/nonexistent-manual-route-shell");
+  assert.equal(diff.comparable, false);
+  assert.equal(diff.comparableFiles, 0);
+  assert.equal(diff.missingBaselineFiles.length, 1);
+  assert.match(diff.note ?? "", /baseline/);
+});
 
 test("SPA router contract captures push, replace, popstate, deep reload and deterministic API fixtures", async () => {
   const config: SpaRouterContractConfig = {
@@ -388,7 +473,7 @@ test("pixel comparison reports dimension mismatch without throwing or masking th
 });
 
 test("SPA fixtures match hostname, path and resource type while preserving raw CSS and SVG bodies", async () => {
-  const fixtureApp = `<!doctype html><html><head><link rel="stylesheet" href="https://assets.fixture.test/theme.css"></head><body><main id="view">Loading</main><img id="logo" src="https://assets.fixture.test/logo.svg"><script>addEventListener('load',()=>{const css=getComputedStyle(document.getElementById('view')).color==='rgb(1, 2, 3)';const svg=document.getElementById('logo').naturalWidth===24;document.getElementById('view').textContent=(css?'CSS OK':'CSS BAD')+' '+(svg?'SVG OK':'SVG BAD')})</script></body></html>`;
+  const fixtureApp = `<!doctype html><html><head><link rel="stylesheet" href="https://assets.fixture.test/theme.css"></head><body><main id="view">Loading</main><img id="logo" src="https://assets.fixture.test/logo.svg"><script>addEventListener('load',async()=>{const css=getComputedStyle(document.getElementById('view')).color==='rgb(1, 2, 3)';const svg=document.getElementById('logo').naturalWidth===24;const response=await fetch('https://assets.fixture.test/blob.bin?variant=dark&v=1',{headers:{'x-fixture-token':'reviewed'}});const bytes=[...new Uint8Array(await response.arrayBuffer())];const binary=bytes.join(',')==='0,255,1,2';document.getElementById('view').textContent=(css?'CSS OK':'CSS BAD')+' '+(svg?'SVG OK':'SVG BAD')+' '+(binary?'BINARY OK':'BINARY BAD')})</script></body></html>`;
   const fixtureServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(fixtureApp); });
   await new Promise<void>((resolve) => fixtureServer.listen(0, "127.0.0.1", resolve));
   try {
@@ -398,17 +483,32 @@ test("SPA fixtures match hostname, path and resource type while preserving raw C
       fixtures: [
         { hostname: "assets.fixture.test", path: "/theme.css", resourceType: "stylesheet", headers: { "Content-Type": "text/css; charset=utf-8" }, body: "#view{color:rgb(1,2,3)}" },
         { hostname: "assets.fixture.test", path: "/logo.svg", resourceType: "image", headers: { "content-type": "image/svg+xml" }, body: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="12"><rect width="24" height="12" fill="#123456"/></svg>' },
+        { hostname: "assets.fixture.test", path: "/blob.bin", resourceType: "fetch", query: { variant: "dark" }, requestHeaders: { "x-fixture-token": "reviewed" }, headers: { "content-type": "application/octet-stream" }, bodyBase64: "AP8BAg==" },
       ],
-      scenarios: [{ id: "raw-assets", entryPath: "/", steps: [{ action: "wait", ms: 100 }], assertions: { visibleText: "CSS OK SVG OK" } }],
+      scenarios: [{ id: "raw-assets", entryPath: "/", steps: [{ action: "wait", ms: 100 }], assertions: { visibleText: "CSS OK SVG OK BINARY OK" } }],
     };
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css?cache=1", method: "GET", resourceType: "stylesheet" })?.path, "/theme.css");
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css", method: "GET", resourceType: "image" }), undefined);
+    assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/blob.bin?variant=dark&v=1", method: "GET", resourceType: "fetch", headers: { "X-Fixture-Token": "reviewed" } })?.bodyBase64, "AP8BAg==");
+    assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/blob.bin?variant=light", method: "GET", resourceType: "fetch", headers: { "x-fixture-token": "reviewed" } }), undefined);
+    assert.equal(findSpaRouterFixture({ fixtures: [{ hostname: "assets.fixture.test", path: "/blob.bin", query: { variant: "dark" }, queryMode: "exact", bodyBase64: "AA==" }] }, { url: "https://assets.fixture.test/blob.bin?variant=dark&v=1", method: "GET", resourceType: "fetch" }), undefined);
     const report = await evaluateSpaRouterContract(config);
     assert.equal(report.passed, true, JSON.stringify(report, null, 2));
     assert.equal(report.requiredNetworkFailures, 0);
   } finally {
     await new Promise<void>((resolve, reject) => fixtureServer.close((error) => error ? reject(error) : resolve()));
   }
+});
+
+test("SPA fixture validation rejects ambiguous or malformed binary response bodies", async () => {
+  await assert.rejects(() => evaluateSpaRouterContract({
+    schemaVersion: "1.0", baseUrl, fixtures: [{ path: "/asset", body: "text", bodyBase64: "dGV4dA==" }],
+    scenarios: [{ id: "invalid-fixture", entryPath: "/", steps: [], assertions: { visibleText: "Home" } }],
+  }), /必须且只能声明 body 或 bodyBase64/);
+  await assert.rejects(() => evaluateSpaRouterContract({
+    schemaVersion: "1.0", baseUrl, fixtures: [{ path: "/asset", bodyBase64: "not-base64" }],
+    scenarios: [{ id: "invalid-base64", entryPath: "/", steps: [], assertions: { visibleText: "Home" } }],
+  }), /bodyBase64 不是合法 Base64/);
 });
 
 test("network classification ignores only the exact Google collect endpoint, not the Google domain", () => {
@@ -459,6 +559,10 @@ test("an image request still referenced by the current DOM remains a blocking st
   assert.equal(report.passed, false, JSON.stringify(report.visualMatrix, null, 2));
   assert.ok((report.visualMatrix?.stabilityFailures ?? 0) > 0, JSON.stringify(report.visualMatrix, null, 2));
   assert.ok((report.telemetry.visualRequestClassifications["blocking-current-dom-image"] ?? 0) >= 2, JSON.stringify(report.telemetry, null, 2));
+  const diagnostics = formatSpaRouterVisualDiagnostics(report);
+  assert.ok(diagnostics.some((line) => line.includes("[STABILITY]") && line.includes("/slow.png")), diagnostics.join("\n"));
+  assert.ok(diagnostics.some((line) => line.includes("preAnchorWaitMs=")));
+  assert.ok(diagnostics.some((line) => line.includes("currentDomImage=")));
   assert.equal(report.qualityGates.find((gate) => gate.id === "visual-runtime")?.passed, false);
 });
 

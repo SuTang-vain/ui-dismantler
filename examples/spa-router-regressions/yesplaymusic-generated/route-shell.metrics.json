@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-planning",
+  "deterministic": true,
+  "modelCalls": 0,
+  "generationMs": 0.783,
+  "manualEdits": 0,
+  "manualEditedLines": 0,
+  "repairIterations": 0,
+  "qualityRuns": 0,
+  "routes": 5,
+  "transitions": 7,
+  "reviewedVisualStates": 3,
+  "reportIncluded": true,
+  "reportPassed": true,
+  "requiresHumanReview": true
+}

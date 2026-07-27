@@ -1,18 +1,29 @@
 #!/usr/bin/env node
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { performance } from "node:perf_hooks";
 import { analyzeHtml } from "./analysis/analyzer.js";
 import { generateScenarios } from "./evaluation/scenarios.js";
 import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
 import { evaluateRoundtrip } from "./evaluation/roundtrip.js";
 import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "./evaluation/spa-router.js";
+import { formatSpaRouterVisualDiagnostics } from "./evaluation/spa-router-report.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/library.js";
 import { planComponents, writeComponentPlanningReport, writeComponentSpecs } from "./planning/components.js";
+import { generateSpaRouteShellPlan } from "./planning/spa-route-shell.js";
+import { generateSpaRouteShellArtifact } from "./planning/spa-route-shell-generator.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
 function has(args: string[], name: string): boolean { return args.includes(name); }
+function parseNonNegativeInt(args: string[], name: string): number | undefined {
+  const raw = flag(args, name);
+  if (raw === undefined) return undefined;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0) throw new Error(`${name} 必须是非负整数`);
+  return value;
+}
 function optionalThreshold(args: string[], name: string): number | null | undefined {
   const raw = flag(args, name);
   if (raw === undefined) return undefined;
@@ -22,7 +33,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -83,6 +94,55 @@ async function main(argv: string[]): Promise<number> {
       if (out) await writeFile(resolve(out), serialized, "utf8"); console.log(serialized);
       return report.score && report.score.overall >= 0.85 && (!browser || browser.passed === true) ? 0 : 1;
     }
+    if (command === "spa-shell-plan") {
+      const configPath = args[0], out = flag(args, "--out");
+      if (!configPath || !out) throw new Error("spa-shell-plan 需要 <config.json> 和 --out");
+      const config = JSON.parse(await readFile(resolve(configPath), "utf8")) as SpaRouterContractConfig;
+      const reportPath = flag(args, "--report");
+      const report = reportPath ? JSON.parse(await readFile(resolve(reportPath), "utf8")) : undefined;
+      const planningStartedAt = performance.now();
+      const plan = generateSpaRouteShellPlan(config, report);
+      const generationMs = Number((performance.now() - planningStartedAt).toFixed(3));
+      await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      const metricsOut = flag(args, "--metrics-out");
+      if (metricsOut) {
+        const metrics = {
+          schemaVersion: "1.0", phase: "route-shell-planning", deterministic: true, modelCalls: 0, generationMs,
+          manualEdits: 0, manualEditedLines: 0, repairIterations: 0, qualityRuns: 0,
+          routes: plan.routes.length, transitions: plan.transitions.length, reviewedVisualStates: plan.capabilities.reviewedVisualStates,
+          reportIncluded: plan.source.reportIncluded, reportPassed: plan.source.reportPassed, requiresHumanReview: plan.reviewRequired,
+        };
+        await writeFile(resolve(metricsOut), `${JSON.stringify(metrics, null, 2)}\n`, "utf8");
+      }
+      console.log(`✓ 已生成 SPA route shell 计划: ${resolve(out)}`);
+      console.log(`  routes=${plan.routes.length}，transitions=${plan.transitions.length}，visualStates=${plan.capabilities.reviewedVisualStates}，reviewRequired=${plan.reviewRequired}，generationMs=${generationMs}`);
+      return 0;
+    }
+    if (command === "spa-shell-generate") {
+      const planPath = args[0], outDir = flag(args, "--out-dir");
+      if (!planPath || !outDir) throw new Error("spa-shell-generate 需要 <route-shell.plan.json> 和 --out-dir");
+      const plan = JSON.parse(await readFile(resolve(planPath), "utf8"));
+      const generationStartedAt = performance.now();
+      const artifact = generateSpaRouteShellArtifact(plan, {
+        baselinePath: flag(args, "--baseline-dir"),
+        manualReportPath: flag(args, "--manual-report"),
+        generatedReportPath: flag(args, "--generated-report"),
+        generationMs: Number((performance.now() - generationStartedAt).toFixed(3)),
+        manualEdits: parseNonNegativeInt(args, "--manual-edits"),
+        manualEditedLines: parseNonNegativeInt(args, "--manual-edited-lines"),
+        repairIterations: parseNonNegativeInt(args, "--repair-iterations"),
+      });
+      const absoluteOutDir = resolve(outDir);
+      await mkdir(absoluteOutDir, { recursive: true });
+      for (const file of artifact.files) await writeFile(resolve(absoluteOutDir, file.path), file.content, "utf8");
+      const metricsOut = flag(args, "--metrics-out") ?? resolve(absoluteOutDir, "generation.metrics.json");
+      await writeFile(resolve(metricsOut), `${JSON.stringify(artifact.metrics, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 SPA route shell 骨架: ${absoluteOutDir}`);
+      console.log(`  files=${artifact.files.length}，lines=${artifact.metrics.generatedLines}，generationMs=${artifact.metrics.generationMs}`);
+      console.log(`  diffComparable=${artifact.metrics.diff.comparable}，changedFiles=${artifact.metrics.diff.changedFiles}，changedLines=${artifact.metrics.diff.changedLines}`);
+      console.log(`  qualityComparable=${artifact.metrics.qualityComparison.comparable}，reviewRequired=${artifact.metrics.reviewRequired}`);
+      return 0;
+    }
     if (command === "spa-router") {
       const configPath = args[0]; if (!configPath) throw new Error("spa-router 需要 <config.json>");
       const config = JSON.parse(await readFile(resolve(configPath), "utf8")) as SpaRouterContractConfig;
@@ -110,6 +170,7 @@ async function main(argv: string[]): Promise<number> {
       if (report.telemetry.visualTargetRuns > 0) {
         console.log(`[INFO] visual reuse: targetRuns=${report.telemetry.visualTargetRuns}，reused=${report.telemetry.visualTargetReusedRuns}，fresh=${report.telemetry.visualTargetFreshRuns}`);
         console.log(`[INFO] visual stability: adaptiveWaitMs=${report.telemetry.visualAdaptiveWaitMs}，failures=${report.telemetry.visualStabilityFailures}`);
+        for (const line of formatSpaRouterVisualDiagnostics(report)) console.log(line);
         console.log(`[INFO] browser shutdown: disconnectMs=${report.telemetry.timing.browserDisconnectMs}，processCloseMs=${report.telemetry.timing.browserProcessCloseMs}，totalCloseMs=${report.telemetry.timing.browserCloseMs}`);
       }
       console.log(`\nSPA Router 合同: ${report.passed ? "PASS" : "FAIL"} (${report.scenariosPassed}/${report.scenariosTotal})`);

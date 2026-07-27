@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "mode": "reference-generated",
+    "configScenarios": 5,
+    "reportIncluded": true,
+    "reportPassed": true
+  },
+  "routes": [
+    {
+      "route": "/settings",
+      "pattern": "/settings",
+      "scenarios": [
+        "router-link-explore",
+        "router-go-back",
+        "dynamic-search-route",
+        "login-guard-redirect",
+        "history-deep-link-reload"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "router-go-back",
+          "visibleText": "语言"
+        },
+        {
+          "scenarioId": "history-deep-link-reload",
+          "visibleText": "语言"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "history-deep-link-reload",
+          "anchor": ".settings-page",
+          "region": ".settings-page",
+          "styleTargets": [
+            "nav",
+            "main",
+            ".settings-page"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/explore",
+      "pattern": "/explore",
+      "scenarios": [
+        "router-link-explore",
+        "router-go-back"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "router-link-explore",
+          "visibleText": "发现",
+          "visibleSelector": "a[href='/explore'].active"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "router-link-explore",
+          "anchor": ".explore-page",
+          "region": ".explore-page",
+          "styleTargets": [
+            "nav",
+            "main",
+            ".explore-page"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "pattern": "/search/:value",
+      "scenarios": [
+        "dynamic-search-route"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "dynamic-search-route"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/login",
+      "pattern": "/login",
+      "scenarios": [
+        "login-guard-redirect"
+      ],
+      "entry": false,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "login-guard-redirect",
+          "visibleText": "登录网易云账号"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "login-guard-redirect",
+          "anchor": ".login",
+          "region": ".login",
+          "styleTargets": [
+            "nav",
+            "main",
+            ".login"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/library",
+      "pattern": "/library",
+      "scenarios": [
+        "login-guard-redirect"
+      ],
+      "entry": false,
+      "final": false,
+      "assertions": [],
+      "visualStates": []
+    }
+  ],
+  "transitions": [
+    {
+      "scenarioId": "router-link-explore",
+      "stepIndex": 0,
+      "action": "click",
+      "from": "/settings",
+      "to": "/explore",
+      "target": "a[href='/explore']"
+    },
+    {
+      "scenarioId": "router-go-back",
+      "stepIndex": 0,
+      "action": "click",
+      "from": "/settings",
+      "to": "/explore",
+      "target": "a[href='/explore']"
+    },
+    {
+      "scenarioId": "router-go-back",
+      "stepIndex": 1,
+      "action": "back",
+      "from": "/explore",
+      "to": "/settings"
+    },
+    {
+      "scenarioId": "dynamic-search-route",
+      "stepIndex": 1,
+      "action": "key",
+      "from": "/settings",
+      "to": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "target": "input[type='search']"
+    },
+    {
+      "scenarioId": "login-guard-redirect",
+      "stepIndex": 0,
+      "action": "click",
+      "from": "/settings",
+      "to": "/library",
+      "target": "a[href='/library']"
+    },
+    {
+      "scenarioId": "login-guard-redirect",
+      "stepIndex": 0,
+      "action": "guard-redirect",
+      "from": "/library",
+      "to": "/login"
+    },
+    {
+      "scenarioId": "history-deep-link-reload",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/settings",
+      "to": "/settings"
+    }
+  ],
+  "selectorMappings": [],
+  "fixtureDependencies": [
+    {
+      "method": "GET",
+      "path": "/api/personal_fm",
+      "binary": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/top/playlist",
+      "binary": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/search",
+      "binary": false
+    },
+    {
+      "method": "GET",
+      "path": "/31049/1618983297-powered-by-vercel.svg",
+      "responseContentType": "image/svg+xml",
+      "binary": false
+    }
+  ],
+  "capabilities": {
+    "historyBack": true,
+    "historyForward": false,
+    "reload": true,
+    "dynamicInputRoutes": true,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 3
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "route observations describe behavior, not production component boundaries",
+    "guard and redirect intent must be reviewed before code generation",
+    "visual selectors are acceptance targets and must not be treated as implementation selectors automatically",
+    "fixture bodies may contain sensitive or environment-specific data and are intentionally summarized"
+  ]
+}
