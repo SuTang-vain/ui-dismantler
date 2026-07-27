@@ -17,7 +17,7 @@ Run Semantic navigation before visual Gold+. Formal measured iterations and rema
 
 ## Final measured status
 
-The API-fixture + Element UI primitive + canvas-stability phase passes the formal Semantic Gold+ matrix:
+The API-fixture + Element UI primitive + canvas-stability phase continues to pass the formal Semantic Gold+ matrix after the Canvas efficiency work:
 
 - scenario protocol: 6/6
 - visual states: 5/5
@@ -29,4 +29,8 @@ The API-fixture + Element UI primitive + canvas-stability phase passes the forma
 - model calls: 0
 - generated artifact manual edits: 0
 
-Evidence: `semantic-navigation-final.results.json` and `semantic-gold-api-fixture-primitives-final.results.json`.
+The reviewed `authenticated-dashboard-default` visual equivalence class reuses the stable Dashboard capture for `admin-deep-link-reload` only after matching role, viewport, capture selectors, final route, successful scenario assertions, and a failure-free source capture. Three repeated Gold+ runs retained the same quality result. Reviewed Dashboard state reuse reduced median total runtime to 60.91 s; isolated `visualConcurrency=3` viewport execution then reduced it to 47.67 s. Relative to the 77.99 s baseline, total runtime fell 38.88%, visual-matrix wall time fell 51.21%, and aggregate adaptive wait fell from 79.25 s to 42.28 s.
+
+Canvas telemetry now reports pixel-scan time, candidate samples, cache hits, signature changes, coalesced invalidation batches, post-anchor skips, and reviewed state reuse. API fixtures use reviewed `transport-suffix` matching; the planner records `/dev-api`, `/prod-api`, and `/stage-api` from the imported request client plus concrete `.env` assignments instead of depending on one handwritten transport path.
+
+Evidence: `semantic-navigation-reviewed-state-reuse-final.results.json`, `semantic-gold-reviewed-state-reuse-final.results.json`, `semantic-gold-reviewed-state-reuse-summary.json`, and `semantic-gold-parallel-viewports-summary.json`.

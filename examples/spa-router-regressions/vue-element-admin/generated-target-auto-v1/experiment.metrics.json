@@ -217,9 +217,51 @@
       "requiredNetworkFailures": 0,
       "stabilityFailures": 0,
       "adaptiveWaitMs": 79248
+    },
+    {
+      "id": "canvas-cache-reviewed-state-reuse-final",
+      "report": "semantic-gold-reviewed-state-reuse-coalesced.results.json",
+      "summary": "semantic-gold-reviewed-state-reuse-summary.json",
+      "passed": true,
+      "scenarioProtocol": "6/6",
+      "visualStatesPassed": 5,
+      "visualStatesTotal": 5,
+      "viewportRuns": 13,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821,
+      "navigationIntegrity": 1,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "adaptiveWaitMs": 42410,
+      "medianTotalMs": 60914.415,
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10
+    },
+    {
+      "id": "parallel-isolated-viewport-matrix-final",
+      "report": "semantic-gold-reviewed-state-reuse-final.results.json",
+      "summary": "semantic-gold-parallel-viewports-summary.json",
+      "passed": true,
+      "scenarioProtocol": "6/6",
+      "visualStatesPassed": 5,
+      "visualStatesTotal": 5,
+      "viewportRuns": 13,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821,
+      "navigationIntegrity": 1,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "visualConcurrency": 3,
+      "adaptiveWaitMs": 42280,
+      "medianTotalMs": 47666.55,
+      "medianVisualMatrixMs": 23213.65,
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10
     }
   ],
-  "bestMeasuredIteration": "api-fixture-element-ui-canvas-final",
+  "bestMeasuredIteration": "parallel-isolated-viewport-matrix-final",
   "reviewedBaseline": {
     "visualStatesPassed": 5,
     "visualStatesTotal": 5,
@@ -239,12 +281,12 @@
     "visualStatesPassed": 5,
     "visualStatesTotal": 5,
     "nextRepairPriority": [
-      "reduce canvas stability scan cost without weakening settled-frame detection",
-      "generalize API transport-prefix inference beyond the reviewed /dev-api fixture",
-      "add reviewed GitHub-corner and settings-affordance ownership only if full-page Dashboard fidelity becomes a target"
+      "detect auditable ECharts/zrender animation completion to reduce aggregate adaptive work without changing final pixels",
+      "profile contract-phase login repetition and consider reviewed authenticated-session setup reuse",
+      "extend transport-prefix evidence to dev-server proxy rewrite and runtime-selected environment rules"
     ]
   },
-  "algorithmPhase": "api-fixture-element-ui-primitive-and-canvas-stability-consumer",
+  "algorithmPhase": "canvas-cache-reviewed-state-reuse-parallel-isolated-viewports-and-transport-prefix",
   "structureGraph": {
     "templateNodes": 1481,
     "elementUiPrimitives": 334,
@@ -271,13 +313,47 @@
     "renderedFields": 3,
     "sourceEndpoint": "/vue-element-admin/transaction/list",
     "transportPath": "/dev-api/vue-element-admin/transaction/list",
-    "materializedRows": 8
+    "materializedRows": 8,
+    "transportCandidates": [
+      "/dev-api/vue-element-admin/transaction/list",
+      "/prod-api/vue-element-admin/transaction/list",
+      "/stage-api/vue-element-admin/transaction/list"
+    ],
+    "fixturePath": "/vue-element-admin/transaction/list",
+    "fixturePathMode": "transport-suffix",
+    "transportPrefixesInferred": 3
   },
   "canvasStability": {
     "enabled": true,
     "probe": "32x32 downsampled canvas hash",
     "settledFrameRequirement": 2,
+    "incrementalCache": true,
+    "drawInvalidation": "coalesced per canvas between samples",
+    "reviewedStateReuseKey": "authenticated-dashboard-default",
+    "reviewedStateReusedRuns": 3,
+    "postAnchorSkippedRuns": 10,
     "stabilityFailures": 0,
-    "adaptiveWaitMs": 79248
+    "medianAdaptiveWaitMs": 42280,
+    "medianCanvasScanMs": 170.2,
+    "medianCanvasInvalidations": 1524,
+    "medianTotalMs": 47666.55,
+    "baselineTotalMs": 77991.26,
+    "totalRuntimeReductionPercent": 38.88,
+    "adaptiveWaitReductionPercent": 46.65,
+    "visualConcurrency": 3,
+    "parallelViewportIsolation": true,
+    "medianVisualMatrixMs": 23213.65,
+    "visualMatrixReductionPercent": 51.21
+  },
+  "parallelViewportMatrix": {
+    "enabled": true,
+    "visualConcurrency": 3,
+    "browserContextIsolation": true,
+    "medianTotalMs": 47666.55,
+    "medianVisualMatrixMs": 23213.65,
+    "totalRuntimeReductionPercent": 38.88,
+    "visualMatrixReductionPercent": 51.21,
+    "overSerialReuseTotalReductionPercent": 21.75,
+    "qualityThresholdsChanged": false
   }
 }

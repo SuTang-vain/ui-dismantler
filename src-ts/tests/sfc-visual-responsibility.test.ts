@@ -187,6 +187,9 @@ test("nested Vue templates preserve every Element UI table column and bind revie
   try {
     mkdirSync(join(root, "src", "views"), { recursive: true });
     mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `VUE_APP_BASE_API = '/dev-api'\n`);
+    writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: process.env.VUE_APP_BASE_API })`);
     writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'\nexport function fetchOrders(){ return request({ url:'/api/orders', method:'get' }) }`);
     writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><el-table :data="list" style="width:100%;padding-top:15px"><el-table-column label="Order" min-width="200"><template slot-scope="scope">{{ scope.row.order_no | orderNoFilter }}</template></el-table-column><el-table-column label="Price" width="195" align="center"><template slot-scope="scope">¥{{ scope.row.price | toThousandFilter }}</template></el-table-column><el-table-column label="Status" width="100" align="center"><template slot-scope="{row}"><el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag></template></el-table-column></el-table></template><script>import { fetchOrders } from '@/api/orders'; export default { name:'Orders', filters:{ statusFilter(status){ const map={success:'success',pending:'danger'}; return map[status] }, orderNoFilter(value){ return value.substring(0,30) } }, data(){return {list:null}}, created(){this.load()}, methods:{load(){fetchOrders().then(response => { this.list=response.data.items.slice(0,8) })}} }</script>`);
     const graph = analyzeSfcVisualResponsibilities(root);
@@ -195,12 +198,15 @@ test("nested Vue templates preserve every Element UI table column and bind revie
     assert.equal(orders.templateStructure.primitiveCounts["table-column"], 3);
     const config: SpaRouterContractConfig = {
       schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [],
-      fixtures: [{ path: "/api/orders", method: "GET", resourceType: "xhr", body: { data: { items: [
+      fixtures: [{ path: "/api/orders", pathMode: "transport-suffix", method: "GET", resourceType: "xhr", body: { data: { items: [
         { order_no: "A", price: 1234, status: "success" }, { order_no: "B", price: 5678, status: "pending" },
       ] } } }],
     };
     const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
     assert.equal(api.metrics.matchedFixtures, 1);
+    assert.equal(api.metrics.transportPrefixesInferred, 1);
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPrefixes, [{ value: "/dev-api", source: ".env.development:VUE_APP_BASE_API" }]);
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/dev-api/api/orders"]);
     assert.equal(api.responsibilities[0].consumption.targetBinding, "list");
     assert.equal(api.responsibilities[0].consumption.responsePath, "data.items");
     assert.equal(api.responsibilities[0].consumption.sliceLimit, 8);

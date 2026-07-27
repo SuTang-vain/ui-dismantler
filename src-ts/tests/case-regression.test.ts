@@ -95,6 +95,9 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   const strictReport = JSON.parse(readFileSync(`${caseDir}/reference-generated-strict-navigation-only.results.json`, "utf8"));
   const autoGeneration = JSON.parse(readFileSync(`${caseDir}/generated-target-auto/generation.metrics.json`, "utf8"));
   const autoExperiment = JSON.parse(readFileSync(`${caseDir}/generated-target-auto/experiment.metrics.json`, "utf8"));
+  const autoVisualFinal = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-reviewed-state-reuse-final.results.json`, "utf8"));
+  const autoVisualRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-reviewed-state-reuse-summary.json`, "utf8"));
+  const autoParallelRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json`, "utf8"));
 
   assert.equal(frozen.scope, "reviewed-behavior-and-visual-generated-target");
   assert.equal(frozen.reviewRequired, true);
@@ -122,6 +125,12 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(sfcVisual.metrics.chartComponents, 7);
   assert.equal(sfcVisual.blockers.length, 0);
   assert.equal(sfcVisual.apiFixtures.metrics.matchedFixtures, 1);
+  assert.equal(sfcVisual.apiFixtures.metrics.transportPrefixesInferred, 3);
+  assert.deepEqual(sfcVisual.apiFixtures.responsibilities[0].apiCall.transportPathCandidates, [
+    "/dev-api/vue-element-admin/transaction/list",
+    "/prod-api/vue-element-admin/transaction/list",
+    "/stage-api/vue-element-admin/transaction/list",
+  ]);
   assert.equal(sfcVisual.apiFixtures.responsibilities.some((item: { componentName: string; consumption: { sliceLimit?: number }; renderedFields: Array<{ field: string }> }) => item.componentName === "TransactionTable" && item.consumption.sliceLimit === 8 && item.renderedFields.map((field) => field.field).join(",") === "order_no,price,status"), true);
   assert.equal(sfcVisual.components.some((component: { componentName: string; childComponents: string[] }) => component.componentName === "DashboardAdmin" && component.childComponents.includes("LineChart") && component.childComponents.includes("PanelGroup")), true);
 
@@ -171,6 +180,26 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(autoExperiment.automaticCandidate.routeResponsibilities.matched, 6);
   assert.equal(autoExperiment.automaticCandidate.guardResponsibilities.matched, 1);
   assert.equal(autoExperiment.automaticCandidate.visualQualityAvailable, false);
+
+  assert.equal(autoVisualFinal.passed, true);
+  assert.equal(autoVisualFinal.visualMatrix.scenarioCount, 5);
+  assert.equal(autoVisualFinal.visualMatrix.viewportRuns, 13);
+  assert.equal(autoVisualFinal.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(autoVisualFinal.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(autoVisualFinal.telemetry.visualStateReusedRuns, 3);
+  assert.equal(autoVisualFinal.telemetry.visualConcurrency, 3);
+  assert.equal(autoVisualFinal.telemetry.visualPostAnchorSkippedRuns, 10);
+  assert.equal(autoVisualFinal.telemetry.visualCanvas.canvasInvalidations < 5_000, true);
+  assert.equal(autoVisualFinal.visualMatrix.scenarios.find((scenario: { scenarioId: string }) => scenario.scenarioId === "admin-deep-link-reload").viewports.every((viewport: { visualStateReused: boolean; referenceVisualStateReuseKey: string; generatedVisualStateReuseKey: string }) => viewport.visualStateReused && viewport.referenceVisualStateReuseKey === "authenticated-dashboard-default" && viewport.generatedVisualStateReuseKey === "authenticated-dashboard-default"), true);
+  assert.equal(autoVisualRepeat.quality.runsPassed, 3);
+  assert.equal(autoVisualRepeat.quality.runsTotal, 3);
+  assert.equal(autoVisualRepeat.improvement.totalMsPercent > 20, true);
+  assert.equal(autoVisualRepeat.improvement.adaptiveWaitMsPercent > 40, true);
+  assert.equal(autoParallelRepeat.quality.runsPassed, 3);
+  assert.equal(autoParallelRepeat.quality.runsTotal, 3);
+  assert.equal(autoParallelRepeat.improvement.totalMsPercent > 35, true);
+  assert.equal(autoParallelRepeat.improvement.visualMatrixMsPercent > 50, true);
+  assert.equal(autoParallelRepeat.isolation.qualityThresholdsChanged, false);
 
   assert.equal(strictReport.passed, false, "Semantic Gold+ must not be relabeled as Vue Router Strict PASS");
 });

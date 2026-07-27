@@ -164,7 +164,7 @@ The first combined pass exposed a real regression (`worstPixelDiff=0.141507`) be
 
 ### API fixture, Element UI primitive, and canvas-stability Gold+ phase
 
-The automatic target now links `TransactionTable.vue` to `transactionList()` through a reviewed API Fixture Responsibility Graph: source endpoint `/vue-element-admin/transaction/list`, actual transport path `/dev-api/vue-element-admin/transaction/list`, response path `data.items`, slice limit `8`, and rendered fields `order_no`, `price`, and `status`. The source is not executed during extraction; unresolved API calls remain explicit instead of receiving guessed data.
+The automatic target now links `TransactionTable.vue` to `transactionList()` through a reviewed API Fixture Responsibility Graph: source endpoint `/vue-element-admin/transaction/list`, response path `data.items`, slice limit `8`, and rendered fields `order_no`, `price`, and `status`. The runtime fixture uses explicit `transport-suffix` matching, while the planner derives `/dev-api`, `/prod-api`, and `/stage-api` candidates from the imported request client and concrete `.env` assignments. The source is not executed during extraction; unresolved API calls remain explicit instead of receiving guessed data.
 
 Nested `<template>` extraction now preserves all three `el-table-column` nodes. The Primitive DOM consumer now owns `el-table`, `el-table-column`, `el-card`, `el-progress`, and table `el-tag` output, while responsive bottom-row wrappers consume source gutter, span, padding, margin, card, and progress evidence. Source-owned mappings disable the conflicting table/card/progress fallback rules.
 
@@ -178,6 +178,14 @@ Final automatic-target result:
 - worst computed style: `0.9825`;
 - worst pixel diff: `0.018210`;
 - runtime, required-network, and stability failures: `0`;
+
+### Canvas efficiency and reviewed state-reuse phase
+
+Canvas stability now instruments 2D/WebGL drawing boundaries, coalesces repeated draw calls into one invalidation batch per Canvas between samples, hashes pixels only after a stable version is observed, and reuses unchanged hashes. A second post-anchor stability pass is skipped only when scroll, DOM mutation, resize, Canvas invalidation, and active-request state are unchanged.
+
+The two Dashboard scenarios declare the reviewed visual equivalence key `authenticated-dashboard-default`. Reuse requires identical role, viewport, screenshot anchor/region, style targets, and final route; the source capture must be stable and the current scenario must pass assertions, runtime, resource, and navigation checks. Reports expose every reused viewport instead of hiding the optimization.
+
+Three repeated Semantic Gold+ runs on July 27, 2026 retained `5/5` visual states, `19/19` navigation integrity, worst computed style `0.9825`, worst pixel diff `0.018210`, and zero runtime/network/stability failures. Reviewed state reuse first reduced median total runtime from `77.99 s` to `60.91 s`. Running independent viewport targets with `visualConcurrency=3` then reduced the final median to `47.67 s` (`38.88%` below baseline); median visual-matrix wall time fell `51.21%` to `23.21 s`, while aggregate adaptive work remained fully measured at `42.28 s` and all BrowserContexts stayed isolated.
 - model calls and generated-artifact manual edits: `0`.
 
 This is the first automatic Vue Element Admin target in this experiment to satisfy the unchanged Gold+ thresholds. The reviewed target remains the stronger fidelity baseline (`0.9912 / 0.012977`), but the automatic target is now formally Gold+ rather than a non-passing approximation.

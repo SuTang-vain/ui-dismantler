@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve } from "node:path";
-import type { SpaRouterContractConfig, SpaRouterFixture } from "../evaluation/spa-router.js";
+import { spaRouterFixturePathMatches, type SpaRouterContractConfig, type SpaRouterFixture } from "../evaluation/spa-router.js";
 import type { JsonValue } from "../types.js";
 import type { SfcVisualComponentResponsibility } from "./sfc-visual-responsibility.js";
 
@@ -29,6 +29,8 @@ export interface ApiFixtureResponsibility {
     moduleFile: string;
     method: string;
     path: string;
+    transportPrefixes: Array<{ value: string; source: string }>;
+    transportPathCandidates: string[];
   };
   consumption: {
     targetBinding: string;
@@ -63,6 +65,7 @@ export interface ApiFixtureResponsibilityGraph {
     matchedFixtures: number;
     materializedBindings: number;
     renderedFields: number;
+    transportPrefixesInferred: number;
   };
   reviewReasons: string[];
 }
@@ -71,6 +74,7 @@ interface SfcSections { template: string; script: string }
 interface ImportedApi { localName: string; exportedName: string; source: string }
 interface Endpoint { exportedName: string; method: string; path: string; moduleFile: string }
 interface Consumption { targetBinding: string; responsePath: string; sliceLimit?: number }
+interface TransportPrefixEvidence { value: string; source: string }
 
 function unique<T>(values: T[]): T[] { return [...new Set(values)]; }
 function balancedSection(source: string, tagName: string): string {
@@ -117,6 +121,37 @@ function endpointFromModule(moduleFile: string, exportedName: string): Endpoint 
   const method = declaration.match(/\bmethod\s*:\s*['"]([^'"]+)['"]/)?.[1] ?? "get";
   return { exportedName, method: method.toUpperCase(), path, moduleFile };
 }
+function transportPrefixEvidence(sourceRoot: string, moduleFile: string, exportedName: string): TransportPrefixEvidence[] {
+  const source = readFileSync(moduleFile, "utf8");
+  const declaration = new RegExp(`export\\s+function\\s+${exportedName}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]*?)(?:\\n\\}|$)`).exec(source)?.[1] ?? "";
+  const clientName = declaration.match(/\breturn\s+([A-Za-z_$][\w$]*)\s*\(/)?.[1];
+  if (!clientName) return [];
+  const importSource = [...source.matchAll(/import\s+([A-Za-z_$][\w$]*)\s+from\s+['"]([^'"]+)['"]/g)].find((entry) => entry[1] === clientName)?.[2];
+  if (!importSource) return [];
+  const relativeModule = relative(sourceRoot, moduleFile).replaceAll("\\", "/");
+  const clientFile = moduleCandidates(sourceRoot, relativeModule, importSource).find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
+  if (!clientFile) return [];
+  const clientSource = readFileSync(clientFile, "utf8");
+  const literal = clientSource.match(/\bbaseURL\s*:\s*['"]([^'"]+)['"]/)?.[1];
+  if (literal) return [{ value: literal, source: relative(sourceRoot, clientFile).replaceAll("\\", "/") }];
+  const environmentVariable = clientSource.match(/\bbaseURL\s*:\s*process\.env\.([A-Za-z_$][\w$]*)/)?.[1];
+  if (!environmentVariable) return [];
+  const evidence: TransportPrefixEvidence[] = [];
+  for (const entry of readdirSync(sourceRoot, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.startsWith(".env")) continue;
+    const value = readFileSync(join(sourceRoot, entry.name), "utf8").match(new RegExp(`^\\s*${environmentVariable}\\s*=\\s*['"]?([^'"\\r\\n#]+)`, "m"))?.[1]?.trim();
+    if (value) evidence.push({ value, source: `${entry.name}:${environmentVariable}` });
+  }
+  return unique(evidence.map((item) => `${item.value}\u0000${item.source}`)).map((item) => {
+    const [value, sourceName] = item.split("\u0000");
+    return { value, source: sourceName };
+  });
+}
+
+function joinTransportPath(prefix: string, endpointPath: string): string {
+  if (!prefix || prefix === "/") return endpointPath.startsWith("/") ? endpointPath : `/${endpointPath}`;
+  return `${prefix.replace(/\/$/, "")}/${endpointPath.replace(/^\//, "")}`;
+}
 function consumptionFor(script: string, localName: string): Consumption | undefined {
   const call = new RegExp(`${localName}\\s*\\([^)]*\\)\\s*\\.then\\s*\\(\\s*([A-Za-z_$][\\w$]*)\\s*=>\\s*\\{([\\s\\S]*?)\\}\\s*\\)`).exec(script);
   if (!call) return undefined;
@@ -133,9 +168,9 @@ function valueAtPath(value: JsonValue, path: string): JsonValue | undefined {
   }
   return current;
 }
-function matchingFixture(fixtures: SpaRouterFixture[], endpoint: Endpoint): { fixture: SpaRouterFixture; index: number } | undefined {
+function matchingFixture(fixtures: SpaRouterFixture[], endpoint: Endpoint, transportPaths: string[]): { fixture: SpaRouterFixture; index: number } | undefined {
   const index = fixtures.findIndex((fixture) => {
-    const pathMatches = fixture.path === endpoint.path || Boolean(fixture.path?.endsWith(endpoint.path));
+    const pathMatches = [endpoint.path, ...transportPaths].some((candidate) => spaRouterFixturePathMatches(candidate, fixture));
     return (fixture.method ?? "GET").toUpperCase() === endpoint.method && pathMatches && fixture.body !== undefined;
   });
   return index < 0 ? undefined : { fixture: fixtures[index], index };
@@ -203,9 +238,11 @@ export function analyzeApiFixtureResponsibilities(
       const endpoint = endpointFromModule(moduleFile, imported.exportedName);
       if (!endpoint) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "request endpoint could not be statically extracted" }); continue; }
       matchedEndpoints += 1;
+      const transportPrefixes = transportPrefixEvidence(sourceRoot, moduleFile, imported.exportedName);
+      const transportPathCandidates = unique(transportPrefixes.map((entry) => joinTransportPath(entry.value, endpoint.path)));
       const consumption = consumptionFor(parsed.script, imported.localName);
       if (!consumption) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "response assignment path could not be statically extracted" }); continue; }
-      const matched = matchingFixture(config.fixtures ?? [], endpoint);
+      const matched = matchingFixture(config.fixtures ?? [], endpoint, transportPathCandidates);
       if (!matched || matched.fixture.body === undefined) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: `reviewed deterministic fixture is missing for ${endpoint.method} ${endpoint.path}` }); continue; }
       const responseValue = valueAtPath(matched.fixture.body, consumption.responsePath);
       if (responseValue === undefined) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: `fixture does not contain response path ${consumption.responsePath}` }); continue; }
@@ -219,6 +256,7 @@ export function analyzeApiFixtureResponsibilities(
         apiCall: {
           localName: imported.localName, exportedName: imported.exportedName, importSource: imported.source,
           moduleFile: relative(sourceRoot, moduleFile).replaceAll("\\", "/"), method: endpoint.method, path: endpoint.path,
+          transportPrefixes, transportPathCandidates,
         },
         consumption,
         renderedFields: fields,
@@ -236,10 +274,12 @@ export function analyzeApiFixtureResponsibilities(
       componentsScanned: components.length, importedApiCalls, matchedEndpoints,
       matchedFixtures: responsibilities.length, materializedBindings: responsibilities.length,
       renderedFields: responsibilities.reduce((sum, item) => sum + item.renderedFields.length, 0),
+      transportPrefixesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.transportPrefixes.length, 0),
     },
     reviewReasons: [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
       "unresolved calls remain explicit and are never replaced with guessed data",
+      "transport prefixes are inferred only from the imported request client and concrete environment assignments",
     ],
   };
 }

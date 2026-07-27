@@ -51242,7 +51242,7 @@
       "chartFiles": 7,
       "components": 7,
       "evidenceCount": 65,
-      "scanMs": 44
+      "scanMs": 38
     }
   },
   "blockers": [],
@@ -51266,7 +51266,7 @@
     "failedStyleSheets": 4,
     "staticDataBindings": 19,
     "dataCardinalities": 54,
-    "scanMs": 313
+    "scanMs": 338
   },
   "apiFixtures": {
     "schemaVersion": "1.0",
@@ -51285,7 +51285,26 @@
           "importSource": "@/api/remote-search",
           "moduleFile": "src/api/remote-search.js",
           "method": "GET",
-          "path": "/vue-element-admin/transaction/list"
+          "path": "/vue-element-admin/transaction/list",
+          "transportPrefixes": [
+            {
+              "value": "/dev-api",
+              "source": ".env.development:VUE_APP_BASE_API"
+            },
+            {
+              "value": "/prod-api",
+              "source": ".env.production:VUE_APP_BASE_API"
+            },
+            {
+              "value": "/stage-api",
+              "source": ".env.staging:VUE_APP_BASE_API"
+            }
+          ],
+          "transportPathCandidates": [
+            "/dev-api/vue-element-admin/transaction/list",
+            "/prod-api/vue-element-admin/transaction/list",
+            "/stage-api/vue-element-admin/transaction/list"
+          ]
         },
         "consumption": {
           "targetBinding": "list",
@@ -51332,7 +51351,7 @@
         },
         "fixture": {
           "index": 2,
-          "requestPath": "/dev-api/vue-element-admin/transaction/list",
+          "requestPath": "/vue-element-admin/transaction/list",
           "reviewed": true,
           "bodyHash": "956cd174eadfc7c31b360625443e1ce95647524620915701653c1117d90d49f1",
           "responseValue": [
@@ -51692,11 +51711,13 @@
       "matchedEndpoints": 23,
       "matchedFixtures": 1,
       "materializedBindings": 1,
-      "renderedFields": 3
+      "renderedFields": 3,
+      "transportPrefixesInferred": 3
     },
     "reviewReasons": [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
-      "unresolved calls remain explicit and are never replaced with guessed data"
+      "unresolved calls remain explicit and are never replaced with guessed data",
+      "transport prefixes are inferred only from the imported request client and concrete environment assignments"
     ]
   }
 }

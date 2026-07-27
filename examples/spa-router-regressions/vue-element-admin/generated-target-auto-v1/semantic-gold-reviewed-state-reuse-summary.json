@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "canvas-incremental-cache-reviewed-state-reuse-and-transport-prefix",
+  "createdAt": "2026-07-27T10:43:58.834Z",
+  "runs": [
+    {
+      "file": "semantic-gold-reviewed-state-reuse-coalesced.results.json",
+      "sha256": "655ed35962bac812542c2df53bc5d3c0cf3feb7c9abc0c3d2458f1fd97092ec4",
+      "passed": true,
+      "totalMs": 61176.81,
+      "contractMs": 24383.86,
+      "visualMatrixMs": 36063.862,
+      "adaptiveWaitMs": 42410,
+      "canvas": {
+        "canvasScanMs": 481.9,
+        "canvasSamples": 2732,
+        "canvasCacheHits": 1160,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1524
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    },
+    {
+      "file": "semantic-gold-reviewed-state-reuse-coalesced-run-2.results.json",
+      "sha256": "4f18a57938aec27614aff516d67a3110ff26d373ac00b22f51c3d53557698d52",
+      "passed": true,
+      "totalMs": 60914.415,
+      "contractMs": 24312.804,
+      "visualMatrixMs": 35765.073,
+      "adaptiveWaitMs": 42429,
+      "canvas": {
+        "canvasScanMs": 420,
+        "canvasSamples": 2744,
+        "canvasCacheHits": 1168,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1528
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    },
+    {
+      "file": "semantic-gold-reviewed-state-reuse-coalesced-run-3.results.json",
+      "sha256": "cea1feb680b4e09af36db4bfbf78a484776c0e1509d447caf639175ef4f42022",
+      "passed": true,
+      "totalMs": 60408.267,
+      "contractMs": 24128.827,
+      "visualMatrixMs": 35528.112,
+      "adaptiveWaitMs": 42409,
+      "canvas": {
+        "canvasScanMs": 460.5,
+        "canvasSamples": 2736,
+        "canvasCacheHits": 1164,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1524
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    }
+  ],
+  "statistics": {
+    "totalMs": {
+      "values": [
+        61176.81,
+        60914.415,
+        60408.267
+      ],
+      "median": 60914.415,
+      "sampleVariance": 152615.879,
+      "min": 60408.267,
+      "max": 61176.81
+    },
+    "contractMs": {
+      "values": [
+        24383.86,
+        24312.804,
+        24128.827
+      ],
+      "median": 24312.804,
+      "sampleVariance": 17323.054,
+      "min": 24128.827,
+      "max": 24383.86
+    },
+    "visualMatrixMs": {
+      "values": [
+        36063.862,
+        35765.073,
+        35528.112
+      ],
+      "median": 35765.073,
+      "sampleVariance": 72075.574,
+      "min": 35528.112,
+      "max": 36063.862
+    },
+    "adaptiveWaitMs": {
+      "values": [
+        42410,
+        42429,
+        42409
+      ],
+      "median": 42410,
+      "sampleVariance": 127,
+      "min": 42409,
+      "max": 42429
+    },
+    "canvasScanMs": {
+      "values": [
+        481.9,
+        420,
+        460.5
+      ],
+      "median": 460.5,
+      "sampleVariance": 988.303,
+      "min": 420,
+      "max": 481.9
+    },
+    "canvasInvalidations": {
+      "values": [
+        1524,
+        1528,
+        1524
+      ],
+      "median": 1524,
+      "sampleVariance": 5.333,
+      "min": 1524,
+      "max": 1528
+    }
+  },
+  "baseline": {
+    "file": "semantic-gold-api-fixture-primitives-final.results.json",
+    "totalMs": 77991.26,
+    "contractMs": 29849.123,
+    "visualMatrixMs": 47576.279,
+    "adaptiveWaitMs": 79248
+  },
+  "improvement": {
+    "totalMsPercent": 21.9,
+    "contractMsPercent": 18.55,
+    "visualMatrixMsPercent": 24.83,
+    "adaptiveWaitMsPercent": 46.48
+  },
+  "quality": {
+    "runsPassed": 3,
+    "runsTotal": 3,
+    "visualStates": "5/5",
+    "viewportRuns": 13,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 0.9825,
+    "worstPixelDiff": 0.01821,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0
+  },
+  "review": {
+    "reuseStateKey": "authenticated-dashboard-default",
+    "reusedScenario": "admin-deep-link-reload",
+    "sourceScenario": "admin-login-dashboard",
+    "guards": [
+      "same reviewed state key",
+      "same role and viewport",
+      "same capture anchor/region/style targets",
+      "same final route",
+      "source capture stable",
+      "current scenario protocol and runtime passed"
+    ]
+  }
+}

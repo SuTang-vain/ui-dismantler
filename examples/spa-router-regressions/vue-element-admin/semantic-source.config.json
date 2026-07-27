@@ -75,7 +75,8 @@
             "id": "dashboard",
             "selector": ".dashboard-container"
           }
-        ]
+        ],
+        "reuseStateKey": "authenticated-dashboard-default"
       }
     },
     {
@@ -251,7 +252,8 @@
             "id": "dashboard",
             "selector": ".dashboard-container"
           }
-        ]
+        ],
+        "reuseStateKey": "authenticated-dashboard-default"
       }
     }
   ],
@@ -302,7 +304,7 @@
       "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     },
     {
-      "path": "/dev-api/vue-element-admin/transaction/list",
+      "path": "/vue-element-admin/transaction/list",
       "method": "GET",
       "resourceType": "xhr",
       "status": 200,
@@ -373,7 +375,8 @@
             }
           ]
         }
-      }
+      },
+      "pathMode": "transport-suffix"
     }
   ]
 }

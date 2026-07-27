@@ -10,6 +10,11 @@ import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport
 export interface SpaRouterFixture {
   /** Exact URL pathname. Kept optional so host-wide fixtures can be expressed explicitly. */
   path?: string;
+  /**
+   * `transport-suffix` matches a reviewed source endpoint after a runtime transport prefix
+   * such as `/dev-api`. Segment boundaries are enforced; arbitrary substring matching is not.
+   */
+  pathMode?: "exact" | "transport-suffix";
   /** Exact hostname, or a leading-wildcard hostname such as `*.example.com`. */
   hostname?: string;
   method?: string;
@@ -36,6 +41,19 @@ export type SpaRouterRequestClassification =
   | "ignored-stale-image";
 
 export type SpaRouterRequestClassificationCounts = Record<SpaRouterRequestClassification, number>;
+
+export interface SpaRouterCanvasStabilityTelemetry {
+  /** Time spent reading and hashing raster pixels inside the browser. */
+  canvasScanMs: number;
+  /** Canvas candidates inspected across stability samples. */
+  canvasSamples: number;
+  /** Cached signatures reused because no drawing invalidation occurred. */
+  canvasCacheHits: number;
+  /** Stable raster hashes that changed after a drawing invalidation. */
+  canvasSignatureChanges: number;
+  /** Coalesced 2D/WebGL drawing batches that invalidated a canvas between samples. */
+  canvasInvalidations: number;
+}
 
 export type SpaRouterRoleValue = string | { default?: string; reference?: string; generated?: string };
 
@@ -75,6 +93,12 @@ export interface SpaRouterScenarioVisualState {
   /** Reviewed visual responsibility region. When supplied, pixels are captured only inside this element. */
   screenshotRegion?: SpaRouterRoleSelector;
   styleTargets?: SpaRouterVisualStyleTarget[];
+  /**
+   * Reviewed declaration that multiple scenarios end in the same visual state.
+   * Reuse still requires identical capture selectors, viewport, role, final route,
+   * successful assertions, and a previously stable capture.
+   */
+  reuseStateKey?: string;
 }
 
 export interface SpaRouterScenario {
@@ -217,6 +241,11 @@ export interface SpaRouterVisualViewportResult extends QualityViewport {
   adaptiveWaitMs: number;
   preAnchorWaitMs: number;
   postAnchorWaitMs: number;
+  postAnchorSkipped: boolean;
+  visualStateReused: boolean;
+  referenceVisualStateReuseKey: string | null;
+  generatedVisualStateReuseKey: string | null;
+  canvas: SpaRouterCanvasStabilityTelemetry;
   requestClassifications: SpaRouterRequestClassificationCounts;
   durationMs: number;
   navigationPassed: boolean;
@@ -256,6 +285,9 @@ export interface SpaRouterVisualMatrixReport {
   adaptiveWaitMs: number;
   preAnchorWaitMs: number;
   postAnchorWaitMs: number;
+  postAnchorSkippedRuns: number;
+  visualStateReusedRuns: number;
+  canvas: SpaRouterCanvasStabilityTelemetry;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
 
@@ -278,6 +310,9 @@ export interface SpaRouterExecutionTelemetry {
   visualAdaptiveWaitMs: number;
   visualPreAnchorWaitMs: number;
   visualPostAnchorWaitMs: number;
+  visualPostAnchorSkippedRuns: number;
+  visualStateReusedRuns: number;
+  visualCanvas: SpaRouterCanvasStabilityTelemetry;
   visualRequestClassifications: SpaRouterRequestClassificationCounts;
   contractConcurrency: number;
   visualConcurrency: number;
@@ -346,11 +381,15 @@ interface SpaRouterVisualCapture {
   adaptiveWaitMs: number;
   preAnchorWaitMs: number;
   postAnchorWaitMs: number;
+  postAnchorSkipped: boolean;
+  canvas: SpaRouterCanvasStabilityTelemetry;
+  reusedStateKey?: string;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
 interface SpaRouterScenarioExecution {
   result: SpaRouterScenarioResult;
   visual?: SpaRouterVisualCapture;
+  visualStateReused?: boolean;
 }
 interface SpaRouterTargetEvaluation {
   report: SpaRouterTargetReport;
@@ -379,6 +418,22 @@ function addRequestClassificationCounts(...entries: SpaRouterRequestClassificati
   const totals = emptyRequestClassificationCounts();
   for (const entry of entries) for (const classification of REQUEST_CLASSIFICATIONS) totals[classification] += entry[classification] ?? 0;
   return totals;
+}
+
+function emptyCanvasStabilityTelemetry(): SpaRouterCanvasStabilityTelemetry {
+  return { canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0, canvasInvalidations: 0 };
+}
+
+function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemetry[]): SpaRouterCanvasStabilityTelemetry {
+  const total = emptyCanvasStabilityTelemetry();
+  for (const entry of entries) {
+    total.canvasScanMs = Number((total.canvasScanMs + entry.canvasScanMs).toFixed(3));
+    total.canvasSamples += entry.canvasSamples;
+    total.canvasCacheHits += entry.canvasCacheHits;
+    total.canvasSignatureChanges += entry.canvasSignatureChanges;
+    total.canvasInvalidations += entry.canvasInvalidations;
+  }
+  return total;
 }
 
 const DEFAULT_VISUAL_VIEWPORTS: QualityViewport[] = [
@@ -546,10 +601,13 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
     const scopedViewports = scenario.visual?.viewports ?? [];
     if (scopedViewports.some((id) => !id || (configuredViewportIds.size > 0 && !configuredViewportIds.has(id)))) throw new TypeError(`scenario ${scenario.id} visual.viewports 必须引用 visualMatrix 中已配置的 viewport id`);
     if (new Set(scopedViewports).size !== scopedViewports.length) throw new TypeError(`scenario ${scenario.id} visual.viewports 不能包含重复 id`);
+    if (scenario.visual?.reuseStateKey !== undefined && !scenario.visual.reuseStateKey.trim()) throw new TypeError(`scenario ${scenario.id} visual.reuseStateKey 不能为空`);
   }
   for (const fixture of config.fixtures ?? []) {
     if (!fixture.path && !fixture.hostname) throw new TypeError("SPA Router fixture 必须至少声明 path 或 hostname");
     if (fixture.path && !fixture.path.startsWith("/")) throw new TypeError(`SPA Router fixture path 必须以 / 开头: ${fixture.path}`);
+    if (fixture.pathMode && !["exact", "transport-suffix"].includes(fixture.pathMode)) throw new TypeError(`SPA Router fixture pathMode 无效: ${fixture.pathMode}`);
+    if (fixture.pathMode && !fixture.path) throw new TypeError("SPA Router fixture 声明 pathMode 时必须同时声明 path");
     if (fixture.hostname && /[:/]/.test(fixture.hostname)) throw new TypeError(`SPA Router fixture hostname 只能包含主机名: ${fixture.hostname}`);
     if (fixture.queryMode && !["subset", "exact"].includes(fixture.queryMode)) throw new TypeError(`SPA Router fixture queryMode 无效: ${fixture.queryMode}`);
     if (fixture.queryMode && !fixture.query) throw new TypeError("SPA Router fixture 声明 queryMode 时必须同时声明 query");
@@ -614,19 +672,107 @@ async function settle(page: Page, ms = 250): Promise<void> {
 interface VisualStabilityResult {
   stabilityFailures: string[];
   adaptiveWaitMs: number;
+  canvas: SpaRouterCanvasStabilityTelemetry;
+  token: VisualStabilityToken;
   requestClassifications: SpaRouterRequestClassificationCounts;
+}
+interface VisualStabilityToken {
+  mutationCount: number;
+  resizeCount: number;
+  canvasInvalidations: number;
+  scrollX: number;
+  scrollY: number;
 }
 interface RequestActivity {
   active: Set<Request>;
   lastActivityAt: number;
 }
 
+async function readVisualStabilityToken(page: Page): Promise<VisualStabilityToken> {
+  return page.evaluate(() => {
+    const host = globalThis as typeof globalThis & {
+      __uiDismantlerSpaStability?: { mutationCount: number; resizeCount: number };
+      __uiDismantlerSpaCanvas?: { invalidations: number };
+    };
+    return {
+      mutationCount: host.__uiDismantlerSpaStability?.mutationCount ?? 0,
+      resizeCount: host.__uiDismantlerSpaStability?.resizeCount ?? 0,
+      canvasInvalidations: host.__uiDismantlerSpaCanvas?.invalidations ?? 0,
+      scrollX,
+      scrollY,
+    };
+  });
+}
+
+function sameVisualStabilityToken(left: VisualStabilityToken, right: VisualStabilityToken): boolean {
+  return left.mutationCount === right.mutationCount
+    && left.resizeCount === right.resizeCount
+    && left.canvasInvalidations === right.canvasInvalidations
+    && left.scrollX === right.scrollX
+    && left.scrollY === right.scrollY;
+}
+
 async function initializeVisualStabilityTracking(context: BrowserContext): Promise<void> {
   await context.addInitScript(() => {
     type StabilityState = { lastMutationAt: number; lastResizeAt: number; mutationCount: number; resizeCount: number };
-    const host = globalThis as typeof globalThis & { __uiDismantlerSpaStability?: StabilityState };
+    type CanvasCacheEntry = { version: number; width: number; height: number; hash: number | string };
+    type CanvasState = {
+      versions: WeakMap<HTMLCanvasElement, number>;
+      dirty: WeakSet<HTMLCanvasElement>;
+      observedVersions: WeakMap<HTMLCanvasElement, number>;
+      cache: WeakMap<HTMLCanvasElement, CanvasCacheEntry>;
+      invalidations: number;
+      lastInvalidationAt: number;
+    };
+    const host = globalThis as typeof globalThis & { __uiDismantlerSpaStability?: StabilityState; __uiDismantlerSpaCanvas?: CanvasState };
     const state: StabilityState = { lastMutationAt: performance.now(), lastResizeAt: performance.now(), mutationCount: 0, resizeCount: 0 };
+    const canvasState: CanvasState = {
+      versions: new WeakMap(), dirty: new WeakSet(), observedVersions: new WeakMap(), cache: new WeakMap(), invalidations: 0, lastInvalidationAt: performance.now(),
+    };
     host.__uiDismantlerSpaStability = state;
+    host.__uiDismantlerSpaCanvas = canvasState;
+    const invalidateCanvas = (candidate: unknown): void => {
+      const canvas = (candidate as { canvas?: unknown } | null)?.canvas;
+      if (!(canvas instanceof HTMLCanvasElement)) return;
+      // Probe/offscreen canvases created by the quality runner must not keep the
+      // reviewed page in a permanently dirty state.
+      if (!canvas.isConnected) return;
+      if (canvasState.dirty.has(canvas)) return;
+      canvasState.dirty.add(canvas);
+      canvasState.versions.set(canvas, (canvasState.versions.get(canvas) ?? 0) + 1);
+      canvasState.invalidations += 1;
+      canvasState.lastInvalidationAt = performance.now();
+    };
+    const patchDrawingMethods = (prototype: object | undefined, methods: string[]): void => {
+      if (!prototype) return;
+      for (const method of methods) {
+        const descriptor = Object.getOwnPropertyDescriptor(prototype, method);
+        const native = descriptor?.value;
+        if (typeof native !== "function" || (native as { __uiDismantlerCanvasPatched?: boolean }).__uiDismantlerCanvasPatched) continue;
+        const wrapped = function(this: unknown, ...args: unknown[]): unknown {
+          const result = native.apply(this, args);
+          invalidateCanvas(this);
+          return result;
+        };
+        Object.defineProperty(wrapped, "__uiDismantlerCanvasPatched", { value: true });
+        Object.defineProperty(prototype, method, { ...descriptor, value: wrapped });
+      }
+    };
+    patchDrawingMethods(globalThis.CanvasRenderingContext2D?.prototype, [
+      "clearRect", "fillRect", "strokeRect", "fill", "stroke", "drawImage", "putImageData", "fillText", "strokeText", "reset",
+    ]);
+    patchDrawingMethods(globalThis.WebGLRenderingContext?.prototype, ["clear", "drawArrays", "drawElements"]);
+    patchDrawingMethods(globalThis.WebGL2RenderingContext?.prototype, ["clear", "drawArrays", "drawElements", "blitFramebuffer"]);
+    for (const property of ["width", "height"] as const) {
+      const descriptor = Object.getOwnPropertyDescriptor(HTMLCanvasElement.prototype, property);
+      if (!descriptor?.set || !descriptor.get) continue;
+      const nativeSet = descriptor.set, nativeGet = descriptor.get;
+      Object.defineProperty(HTMLCanvasElement.prototype, property, {
+        ...descriptor,
+        get: nativeGet,
+        set(this: HTMLCanvasElement, value: number) { nativeSet.call(this, value); invalidateCanvas({ canvas: this }); },
+      });
+    }
     const observe = (): void => {
       if (!document.documentElement) return;
       const mutationObserver = new MutationObserver(() => { state.lastMutationAt = performance.now(); state.mutationCount += 1; });
@@ -714,13 +860,25 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
       ]);
     }));
   });
+  const baselineToken = await readVisualStabilityToken(page);
+  let canvasTelemetry = emptyCanvasStabilityTelemetry();
   const deadline = Date.now() + timeoutMs;
   let previousSignature = "", stableSamples = 0;
   let lastBlockingRequests: Request[] = [];
-  let lastState = { mutationQuiet: false, resizeQuiet: false, layoutStable: false, networkQuiet: false };
+  let lastState = { mutationQuiet: false, resizeQuiet: false, canvasQuiet: false, layoutStable: false, networkQuiet: false };
   while (Date.now() < deadline) {
     const sample = await page.evaluate((quietMs) => {
-      const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number } } };
+      type CanvasCacheEntry = { version: number; width: number; height: number; hash: number | string };
+      const host = globalThis as typeof globalThis & {
+        __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number } };
+        __uiDismantlerSpaCanvas?: {
+          versions: WeakMap<HTMLCanvasElement, number>;
+          dirty: WeakSet<HTMLCanvasElement>;
+          observedVersions: WeakMap<HTMLCanvasElement, number>;
+          cache: WeakMap<HTMLCanvasElement, CanvasCacheEntry>;
+          lastInvalidationAt: number;
+        };
+      };
       const now = performance.now(), scoped = host.__uiDismantlerSpaVisualScope;
       let scope: Element = document.documentElement;
       if (scoped?.selector) { try { scope = document.querySelector(scoped.selector) ?? document.documentElement; } catch { scope = document.documentElement; } }
@@ -729,43 +887,78 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
         const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
         return [element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length];
       });
+      const canvasState = host.__uiDismantlerSpaCanvas;
+      const canvasMetrics = { canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0 };
       const canvasSignature = [...scope.querySelectorAll("canvas")].slice(0, 16).map((canvas) => {
+        canvasMetrics.canvasSamples += 1;
+        const version = canvasState?.versions.get(canvas) ?? 0;
+        const priorObservedVersion = canvasState?.observedVersions.get(canvas);
+        canvasState?.observedVersions.set(canvas, version);
+        canvasState?.dirty.delete(canvas);
+        if (priorObservedVersion !== undefined && priorObservedVersion !== version) return [canvas.width, canvas.height, "dirty", version];
+        const cached = canvasState?.cache.get(canvas);
+        if (cached && cached.version === version && cached.width === canvas.width && cached.height === canvas.height) {
+          canvasMetrics.canvasCacheHits += 1;
+          return [canvas.width, canvas.height, cached.hash];
+        }
+        const scanStartedAt = performance.now();
         try {
           const probe = document.createElement("canvas"); probe.width = 32; probe.height = 32;
           const context = probe.getContext("2d", { willReadFrequently: true });
-          if (!context || canvas.width === 0 || canvas.height === 0) return [canvas.width, canvas.height, 0];
-          context.drawImage(canvas, 0, 0, probe.width, probe.height);
-          const pixels = context.getImageData(0, 0, probe.width, probe.height).data;
-          let hash = 2166136261;
-          for (let index = 0; index < pixels.length; index += 1) hash = Math.imul(hash ^ pixels[index], 16777619);
-          return [canvas.width, canvas.height, hash >>> 0];
-        } catch { return [canvas.width, canvas.height, "unreadable"]; }
+          let hash: number | string = 0;
+          if (context && canvas.width > 0 && canvas.height > 0) {
+            context.drawImage(canvas, 0, 0, probe.width, probe.height);
+            const pixels = context.getImageData(0, 0, probe.width, probe.height).data;
+            let value = 2166136261;
+            for (let index = 0; index < pixels.length; index += 1) value = Math.imul(value ^ pixels[index], 16777619);
+            hash = value >>> 0;
+          }
+          if (cached && cached.hash !== hash) canvasMetrics.canvasSignatureChanges += 1;
+          canvasState?.cache.set(canvas, { version, width: canvas.width, height: canvas.height, hash });
+          return [canvas.width, canvas.height, hash];
+        } catch {
+          const hash = "unreadable";
+          if (cached && cached.hash !== hash) canvasMetrics.canvasSignatureChanges += 1;
+          canvasState?.cache.set(canvas, { version, width: canvas.width, height: canvas.height, hash });
+          return [canvas.width, canvas.height, hash];
+        } finally { canvasMetrics.canvasScanMs += performance.now() - scanStartedAt; }
       });
       const signature = JSON.stringify({ elements: elementSignature, canvases: canvasSignature });
-      return { signature, mutationQuiet: Boolean(scoped && now - scoped.state.lastMutationAt >= quietMs), resizeQuiet: Boolean(scoped && now - scoped.state.lastResizeAt >= quietMs) };
+      return {
+        signature,
+        mutationQuiet: Boolean(scoped && now - scoped.state.lastMutationAt >= quietMs),
+        resizeQuiet: Boolean(scoped && now - scoped.state.lastResizeAt >= quietMs),
+        canvasQuiet: !canvasState || now - canvasState.lastInvalidationAt >= quietMs,
+        canvasMetrics,
+      };
     }, quietWindowMs);
+    canvasTelemetry = addCanvasStabilityTelemetry(canvasTelemetry, { ...sample.canvasMetrics, canvasInvalidations: 0 });
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
     previousSignature = sample.signature;
     const requestDecision = await visibleBlockingRequests(page, requestActivity, config);
     lastBlockingRequests = requestDecision.blocking;
     for (const [key, classification] of requestDecision.classifications) observedClassifications.set(key, classification);
     const networkQuiet = lastBlockingRequests.length === 0;
-    lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, layoutStable: stableSamples >= 2, networkQuiet };
-    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.layoutStable && lastState.networkQuiet) {
+    lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, canvasQuiet: sample.canvasQuiet, layoutStable: stableSamples >= 2, networkQuiet };
+    if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.canvasQuiet && lastState.layoutStable && lastState.networkQuiet) {
       await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
-      return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+      const token = await readVisualStabilityToken(page);
+      canvasTelemetry.canvasInvalidations = Math.max(0, token.canvasInvalidations - baselineToken.canvasInvalidations);
+      return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
     }
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   const stabilityFailures: string[] = [];
   if (!lastState.mutationQuiet) stabilityFailures.push("DOM mutation quiet window was not reached before visual capture");
-  if (!lastState.resizeQuiet || !lastState.layoutStable) stabilityFailures.push("DOM/layout/canvas signature did not remain stable for two consecutive samples before visual capture");
+  if (!lastState.resizeQuiet || !lastState.canvasQuiet || !lastState.layoutStable) stabilityFailures.push("DOM/layout/canvas signature did not remain stable for two consecutive samples before visual capture");
   if (!lastState.networkQuiet) {
     const pending = lastBlockingRequests.slice(0, 6).map((request) => `${request.resourceType()}:${request.method()} ${request.url()}`).join(" | ");
     stabilityFailures.push(`network quiet window was not reached before visual capture: active=${lastBlockingRequests.length}${pending ? `; pending=${pending}` : ""}`);
   }
   await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
-  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+  const token = await readVisualStabilityToken(page);
+  canvasTelemetry.canvasInvalidations = Math.max(0, token.canvasInvalidations - baselineToken.canvasInvalidations);
+  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
 }
 
 async function executeStep(page: Page, step: SpaRouterStep, role: SpaRouterTargetRole): Promise<void> {
@@ -849,12 +1042,18 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
   const stabilityScope = valueForRole(visual.screenshotRegion, role);
   const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
   const anchor = await normalizeScrollAnchor(page, visual, role);
-  const postAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
+  const postAnchorToken = await readVisualStabilityToken(page);
+  const postAnchorSkipped = sameVisualStabilityToken(preAnchorStability.token, postAnchorToken) && requestActivity.active.size === 0;
+  const postAnchorStability = postAnchorSkipped
+    ? { stabilityFailures: [], adaptiveWaitMs: 0, canvas: emptyCanvasStabilityTelemetry(), token: postAnchorToken, requestClassifications: emptyRequestClassificationCounts() }
+    : await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
   const stability = {
     stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
     adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
     preAnchorWaitMs: preAnchorStability.adaptiveWaitMs,
     postAnchorWaitMs: postAnchorStability.adaptiveWaitMs,
+    postAnchorSkipped,
+    canvas: addCanvasStabilityTelemetry(preAnchorStability.canvas, postAnchorStability.canvas),
     requestClassifications: addRequestClassificationCounts(preAnchorStability.requestClassifications, postAnchorStability.requestClassifications),
   };
   const targets = visual.styleTargets?.length ? visual.styleTargets : [{ id: "document-body", selector: "body" }];
@@ -895,6 +1094,7 @@ async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualSta
     screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures],
     stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs,
     preAnchorWaitMs: stability.preAnchorWaitMs, postAnchorWaitMs: stability.postAnchorWaitMs,
+    postAnchorSkipped: stability.postAnchorSkipped, canvas: stability.canvas,
     requestClassifications: stability.requestClassifications,
   };
 }
@@ -925,6 +1125,13 @@ function fixtureRequestHeadersMatch(actual: Record<string, string>, expected: Re
   return Object.entries(expected).every(([name, value]) => normalized[name.toLowerCase()] === value);
 }
 
+export function spaRouterFixturePathMatches(actualPath: string, fixture: Pick<SpaRouterFixture, "path" | "pathMode">): boolean {
+  if (!fixture.path) return true;
+  if ((fixture.pathMode ?? "exact") === "exact") return actualPath === fixture.path;
+  const reviewedSuffix = fixture.path.startsWith("/") ? fixture.path : `/${fixture.path}`;
+  return actualPath === reviewedSuffix || actualPath.endsWith(reviewedSuffix);
+}
+
 export function findSpaRouterFixture(
   config: Pick<SpaRouterContractConfig, "fixtures">,
   input: { url: string; method: string; resourceType: string; headers?: Record<string, string> },
@@ -934,7 +1141,7 @@ export function findSpaRouterFixture(
   return (config.fixtures ?? []).find((fixture) => {
     if ((fixture.method ?? "GET").toUpperCase() !== input.method.toUpperCase()) return false;
     if (fixture.hostname && !fixtureHostnameMatches(url.hostname.toLowerCase(), fixture.hostname)) return false;
-    if (fixture.path && url.pathname !== fixture.path) return false;
+    if (!spaRouterFixturePathMatches(url.pathname, fixture)) return false;
     if (fixture.resourceType && fixture.resourceType !== input.resourceType) return false;
     if (!fixtureQueryMatches(url, fixture)) return false;
     if (!fixtureRequestHeadersMatch(input.headers ?? {}, fixture.requestHeaders)) return false;
@@ -1037,11 +1244,80 @@ async function mapWithConcurrency<T, R>(items: T[], concurrency: number, worker:
   return results;
 }
 
+interface CachedSpaVisualState {
+  finalRoute: string;
+  reusable: boolean;
+  visual: SpaRouterVisualCapture;
+}
+type SpaVisualStateCache = Map<string, Promise<CachedSpaVisualState>>;
+
+function reviewedVisualStateCacheKey(scenario: SpaRouterScenario, viewport: QualityViewport, role: SpaRouterTargetRole): string | undefined {
+  const visual = scenario.visual;
+  if (!visual?.reuseStateKey) return undefined;
+  const captureIdentity = {
+    state: visual.reuseStateKey,
+    role,
+    width: viewport.width,
+    height: viewport.height,
+    anchor: valueForRole(visual.screenshotAnchor, role) ?? null,
+    region: valueForRole(visual.screenshotRegion, role) ?? null,
+    styles: (visual.styleTargets ?? []).map((target) => [target.id, valueForRole(target.selector, role) ?? null]),
+  };
+  return JSON.stringify(captureIdentity);
+}
+
+async function executeScenarioWithVisualStateReuse(
+  browser: Browser,
+  baseUrl: string,
+  config: SpaRouterContractConfig,
+  scenario: SpaRouterScenario,
+  options: { viewport: QualityViewport; role: SpaRouterTargetRole; captureVisual: boolean },
+  cache: SpaVisualStateCache,
+): Promise<SpaRouterScenarioExecution> {
+  const cacheKey = options.captureVisual ? reviewedVisualStateCacheKey(scenario, options.viewport, options.role) : undefined;
+  if (!cacheKey) return executeScenario(browser, baseUrl, config, scenario, options);
+  const cachedPromise = cache.get(cacheKey);
+  if (!cachedPromise) {
+    const ownerPromise = executeScenario(browser, baseUrl, config, scenario, options);
+    cache.set(cacheKey, ownerPromise.then((execution) => {
+      if (!execution.visual) throw new Error(`reviewed visual state ${scenario.visual?.reuseStateKey} did not produce a capture`);
+      return {
+        finalRoute: routeOf(execution.result.finalUrl),
+        reusable: execution.result.passed && execution.visual.failures.length === 0 && execution.visual.stabilityFailures.length === 0,
+        visual: execution.visual,
+      };
+    }));
+    try { return await ownerPromise; }
+    catch (error) { cache.delete(cacheKey); throw error; }
+  }
+  const execution = await executeScenario(browser, baseUrl, config, scenario, { ...options, captureVisual: false });
+  const cached = await cachedPromise.catch(() => undefined);
+  if (!cached?.reusable || !execution.result.passed || cached.finalRoute !== routeOf(execution.result.finalUrl)) {
+    return executeScenario(browser, baseUrl, config, scenario, options);
+  }
+  return {
+    ...execution,
+    visualStateReused: true,
+    visual: {
+      ...cached.visual,
+      adaptiveWaitMs: 0,
+      preAnchorWaitMs: 0,
+      postAnchorWaitMs: 0,
+      postAnchorSkipped: true,
+      canvas: emptyCanvasStabilityTelemetry(),
+      requestClassifications: emptyRequestClassificationCounts(),
+      reusedStateKey: scenario.visual?.reuseStateKey,
+    },
+  };
+}
+
 async function evaluateTarget(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, options: { role?: SpaRouterTargetRole; visualViewport?: QualityViewport } = {}): Promise<SpaRouterTargetEvaluation> {
   const concurrency = config.execution?.contractConcurrency ?? 1;
+  const visualStateCache: SpaVisualStateCache = new Map();
   const orderedExecutions = await mapWithConcurrency(config.scenarios, concurrency, async (scenario) => {
     const captureVisual = Boolean(options.visualViewport && scenario.visual);
-    return executeScenario(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role, captureVisual });
+    if (!options.visualViewport) return executeScenario(browser, baseUrl, config, scenario, { role: options.role, captureVisual });
+    return executeScenarioWithVisualStateReuse(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role ?? "single", captureVisual }, visualStateCache);
   });
   const executions = new Map(config.scenarios.map((scenario, index) => [scenario.id, orderedExecutions[index]]));
   const results = [...executions.values()].map((execution) => execution.result);
@@ -1114,6 +1390,7 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
   const pixelThreshold = visualConfig.pixelThreshold ?? 0.02, styleThreshold = visualConfig.styleThreshold ?? 0.98;
   let reusedTargetRuns = 0, freshTargetRuns = 0;
   const matrices: SpaRouterScenarioVisualMatrix[] = [];
+  const visualStateCache: SpaVisualStateCache = new Map();
   for (const scenario of config.scenarios.filter((item) => item.visual)) {
     const scenarioStartedAt = performance.now();
     const viewports = scenario.visual?.viewports?.length ? configuredViewports.filter((viewport) => scenario.visual?.viewports?.includes(viewport.id)) : configuredViewports;
@@ -1124,8 +1401,8 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       const referenceReuse = canReuse ? referenceEvaluation.executions.get(scenario.id) : undefined;
       const generatedReuse = canReuse ? generatedEvaluation.executions.get(scenario.id) : undefined;
       const [reference, generated] = await Promise.all([
-        referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenario(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true }),
-        generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenario(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true }),
+        referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenarioWithVisualStateReuse(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true }, visualStateCache),
+        generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenarioWithVisualStateReuse(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true }, visualStateCache),
       ]);
       reusedTargetRuns += Number(Boolean(referenceReuse?.visual)) + Number(Boolean(generatedReuse?.visual));
       freshTargetRuns += Number(!referenceReuse?.visual) + Number(!generatedReuse?.visual);
@@ -1161,6 +1438,11 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
         referenceRegion: reference.visual.region, generatedRegion: generated.visual.region, referenceRegionRect: reference.visual.regionRect, generatedRegionRect: generated.visual.regionRect,
         runtimeErrors, unmockedApiRequests, requiredNetworkFailures, requiredNetworkFailureDetails, nonBlockingNetworkFailureDetails, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs,
         preAnchorWaitMs: reference.visual.preAnchorWaitMs + generated.visual.preAnchorWaitMs, postAnchorWaitMs: reference.visual.postAnchorWaitMs + generated.visual.postAnchorWaitMs,
+        postAnchorSkipped: reference.visual.postAnchorSkipped && generated.visual.postAnchorSkipped,
+        visualStateReused: Boolean(reference.visualStateReused && generated.visualStateReused),
+        referenceVisualStateReuseKey: reference.visual.reusedStateKey ?? null,
+        generatedVisualStateReuseKey: generated.visual.reusedStateKey ?? null,
+        canvas: addCanvasStabilityTelemetry(reference.visual.canvas, generated.visual.canvas),
         requestClassifications: addRequestClassificationCounts(reference.visual.requestClassifications, generated.visual.requestClassifications), durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
       };
     });
@@ -1173,6 +1455,9 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
     navigationFailures: entries.reduce((sum, entry) => sum + entry.navigationFailures.length, 0), navigationMatchedRuns: entries.filter((entry) => entry.navigationPassed).length,
     stabilityFailures: entries.reduce((sum, entry) => sum + entry.stabilityFailures.length, 0), adaptiveWaitMs: entries.reduce((sum, entry) => sum + entry.adaptiveWaitMs, 0),
     preAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.preAnchorWaitMs, 0), postAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.postAnchorWaitMs, 0),
+    postAnchorSkippedRuns: entries.filter((entry) => entry.postAnchorSkipped).length,
+    visualStateReusedRuns: entries.filter((entry) => entry.visualStateReused).length,
+    canvas: addCanvasStabilityTelemetry(...entries.map((entry) => entry.canvas)),
     requestClassifications: addRequestClassificationCounts(...entries.map((entry) => entry.requestClassifications)),
     worstComputedStyle: entries.length ? Math.min(...entries.map((entry) => entry.styles.rate)) : 0, worstPixelDiff: entries.length ? Math.max(...entries.map((entry) => entry.pixels.diffRate)) : 1,
     styleThreshold, pixelThreshold,
@@ -1227,7 +1512,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
         results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
       timing.reportReadyMs = elapsed(totalStartedAt);
       allowFastShutdown = requestedFastShutdown && report.passed;
@@ -1276,6 +1561,9 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         visualAdaptiveWaitMs: visualMatrix?.adaptiveWaitMs ?? 0,
         visualPreAnchorWaitMs: visualMatrix?.preAnchorWaitMs ?? 0,
         visualPostAnchorWaitMs: visualMatrix?.postAnchorWaitMs ?? 0,
+        visualPostAnchorSkippedRuns: visualMatrix?.postAnchorSkippedRuns ?? 0,
+        visualStateReusedRuns: visualMatrix?.visualStateReusedRuns ?? 0,
+        visualCanvas: visualMatrix?.canvas ?? emptyCanvasStabilityTelemetry(),
         visualRequestClassifications: visualMatrix?.requestClassifications ?? emptyRequestClassificationCounts(),
         contractConcurrency: config.execution?.contractConcurrency ?? 1,
         visualConcurrency: config.execution?.visualConcurrency ?? 1,

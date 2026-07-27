@@ -3913,7 +3913,26 @@
             "importSource": "@/api/remote-search",
             "moduleFile": "src/api/remote-search.js",
             "method": "GET",
-            "path": "/vue-element-admin/transaction/list"
+            "path": "/vue-element-admin/transaction/list",
+            "transportPrefixes": [
+              {
+                "value": "/dev-api",
+                "source": ".env.development:VUE_APP_BASE_API"
+              },
+              {
+                "value": "/prod-api",
+                "source": ".env.production:VUE_APP_BASE_API"
+              },
+              {
+                "value": "/stage-api",
+                "source": ".env.staging:VUE_APP_BASE_API"
+              }
+            ],
+            "transportPathCandidates": [
+              "/dev-api/vue-element-admin/transaction/list",
+              "/prod-api/vue-element-admin/transaction/list",
+              "/stage-api/vue-element-admin/transaction/list"
+            ]
           },
           "consumption": {
             "targetBinding": "list",
@@ -3960,7 +3979,7 @@
           },
           "fixture": {
             "index": 2,
-            "requestPath": "/dev-api/vue-element-admin/transaction/list",
+            "requestPath": "/vue-element-admin/transaction/list",
             "reviewed": true,
             "bodyHash": "956cd174eadfc7c31b360625443e1ce95647524620915701653c1117d90d49f1",
             "responseValue": [

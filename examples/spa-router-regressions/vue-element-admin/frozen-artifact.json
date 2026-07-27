@@ -9,7 +9,7 @@
   "hashAlgorithm": "sha256",
   "files": {
     "source-lock.json": "e392465e8784785cf166e0db51b04f6f3ce6f2dbd0ad86a5fe9a5677f9e0c077",
-    "route-shell.plan.json": "d6f2ded34707bcbf637f5ee4995d747a6242247a770a0834098f90c84c87a931",
+    "route-shell.plan.json": "106160977fc4a7117476dfa2bda779421e1f7ea42f35f078f5735aa934463749",
     "vue-router-responsibility.graph.json": "83561980dcd3e5e032089510b106af12386ebce24e430999fabcd3a2914d54bc",
     "reference-generated-semantic.config.json": "0476f8527c66416c3ef3dca38d59de9ed22a79199ec6c6f377887416f6efc063",
     "generated-target/public/index.html": "547226eb7d3c49e8462414b9f55b164f2974e4dcb2121076347d812901524eea",
@@ -24,7 +24,7 @@
     "full-network-isolated-run-1.results.json": "2b60dae3d776f3bbbc9b159c57dadf24ad889f5cbeaad1f5dba438554f1abea4",
     "full-network-isolated-run-2.results.json": "b7eb9daf2799e9c8ddaee456f52ec56de1b0d3d1507e45f3f009bf9c8dd97e83",
     "full-network-isolated-run-3.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d",
-    "sfc-visual-responsibility.graph.json": "7e6737d459bb5a5ebde00ad244fae55f7c0087c4c8744afe95cce02cb30fcd50",
+    "sfc-visual-responsibility.graph.json": "6932f228a63123139ace2a57b318bc9062c85cdafee74b5782a9c816525ddc1f",
     "echarts-responsibility.graph.json": "ba37aa3b7102a3904885409e13cf677148f1bb7918a1f7c2feb36f6208c643db",
     "generated-target-auto/routes.js": "a225216272d891ed8b6d4375bd85fad9e03d88a025899e1757555800f0a5d8d0",
     "generated-target-auto/guards.js": "62829df7cd22874aefd3dce86d0d9ecfb9ee7d6e71de0e1dcbe18e64f291d3b0",
@@ -32,6 +32,21 @@
     "generated-target-auto/fixtures.js": "52a73343aed9d182433e81f14703e96506b0c2e5195c0d706aae460284c8de2d",
     "generated-target-auto/README.md": "bcbe3852b4957acf9fd9094ffdf6133eeb010fca9158b81dc6048ff5ea10d466",
     "generated-target-auto/generation.metrics.json": "cf611315c754c6687e236be3f2dd45615adcbb529a9b2a388ff01c762bbedecc",
-    "generated-target-auto/experiment.metrics.json": "7b2acb361f50b8aa84b439d5d8f6c27dc04ae79f1a741352dd5e5f8a78cbb934"
+    "generated-target-auto/experiment.metrics.json": "7b2acb361f50b8aa84b439d5d8f6c27dc04ae79f1a741352dd5e5f8a78cbb934",
+    "visual-target.plan.json": "2f42330bcfc0245dcfc89a0a68369e8ae38c1f2390022554b9784b71e299f3e4",
+    "reference-generated-semantic.auto-v1.config.json": "336a2fb97c30478d961b6ecc9d1ce002294ceeab8563aa0c5e4abea673f37004",
+    "generated-target-auto-v1/public/app.js": "1b87cb2f64f9115295a617e188b037f806909fd063133a816a7d89f01d1a9f20",
+    "generated-target-auto-v1/public/styles.css": "fc7d73e0b8fdc6efdc2d3dd2eedff9a487037ae029afa05e1e104310bdbd2683",
+    "generated-target-auto-v1/experiment.metrics.json": "2c9fa22d7f52baf130cd72d0dcedb7d708bd2addb6aa88b6c3f609aaa707ae31",
+    "generated-target-auto-v1/semantic-navigation-reviewed-state-reuse-final.results.json": "ebbd1ea7618e83e292b1f9a668b439b4f87d6534219eb42212f2a56b869d80c8",
+    "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-final.results.json": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
+    "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-coalesced.results.json": "655ed35962bac812542c2df53bc5d3c0cf3feb7c9abc0c3d2458f1fd97092ec4",
+    "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-coalesced-run-2.results.json": "4f18a57938aec27614aff516d67a3110ff26d373ac00b22f51c3d53557698d52",
+    "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-coalesced-run-3.results.json": "cea1feb680b4e09af36db4bfbf78a484776c0e1509d447caf639175ef4f42022",
+    "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-summary.json": "3749108f45ef1ea75226e5baab5bb954ab4b14bd6c9b64361130877c6dcaf27d",
+    "generated-target-auto-v1/semantic-gold-parallel-viewports-run-1.results.json": "f8cd24911fe0e013d6b479968fb7ee365500e8169cdcd6c44fc5375d5a787bbe",
+    "generated-target-auto-v1/semantic-gold-parallel-viewports-run-2.results.json": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
+    "generated-target-auto-v1/semantic-gold-parallel-viewports-run-3.results.json": "29977871bbbd5e982c1ef29da4a9591ad459b3be03cdf5258999dd1791f33e37",
+    "generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json": "d203378e99ff19633f2df83f9e7e83ba9e1a8924c6a4036e7d1f480532fbe708"
   }
 }

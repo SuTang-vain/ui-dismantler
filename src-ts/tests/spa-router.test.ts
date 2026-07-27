@@ -354,6 +354,25 @@ test("SPA route-state visual matrix compares reviewed styles and pixels across v
   assert.equal(report.qualityGates.find((gate) => gate.id === "scenario-viewport-matrix")?.passed, true);
 });
 
+test("SPA reviewed visual state reuse avoids duplicate stable canvas captures", async () => {
+  const sharedVisual = { reuseStateKey: "explore-default", screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "route-view", selector: "#view" }] };
+  const report = await evaluateSpaRouterContract({
+    schemaVersion: "1.0", referenceBaseUrl: baseUrl, generatedBaseUrl: baseUrl, apiPrefix: "/api/", ignoredStateKeys: ["key"],
+    fixtures: [{ path: "/api/bootstrap", body: { ready: true } }],
+    visualMatrix: { viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+    scenarios: [
+      { id: "explore-click", entryPath: "/", steps: [{ action: "click", target: "#explore" }], assertions: { path: "/explore", visibleText: "Explore" }, visual: sharedVisual },
+      { id: "explore-deep-link", entryPath: "/explore", steps: [], assertions: { path: "/explore", visibleText: "Explore" }, visual: sharedVisual },
+    ],
+  });
+  assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+  assert.equal(report.telemetry.visualStateReusedRuns, 1);
+  assert.equal(report.visualMatrix?.visualStateReusedRuns, 1);
+  assert.equal(report.visualMatrix?.scenarios[0].viewports[0].visualStateReused, false);
+  assert.equal(report.visualMatrix?.scenarios[1].viewports[0].visualStateReused, true);
+  assert.equal(report.visualMatrix?.scenarios[1].viewports[0].adaptiveWaitMs, 0);
+});
+
 test("SPA reviewed screenshot region excludes non-owned shell differences while preserving region evidence", async () => {
   const shellMismatchApp = app.replace("</head>", "<style>body{background:#e11d48}#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
   const referenceRegionApp = app.replace("</head>", "<style>#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
@@ -494,7 +513,15 @@ test("SPA adaptive visual stability waits for canvas animation frames to settle"
       scenarios: [{ id: "canvas-animation", entryPath: "/", steps: [], assertions: { visibleSelector: "#chart" }, visual: { screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
     });
     assert.equal(report.passed, true, JSON.stringify(report, null, 2));
-    assert.ok((report.telemetry.visualAdaptiveWaitMs ?? 0) >= 700, JSON.stringify(report.telemetry, null, 2));
+    // The initial page settle overlaps the animation. The quality contract is
+    // now proven by draw invalidations, a changed final raster signature and a
+    // subsequent cache hit rather than by preserving an arbitrary fixed delay.
+    assert.ok((report.telemetry.visualAdaptiveWaitMs ?? 0) >= 200, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.canvasSamples > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.canvasCacheHits > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.canvasInvalidations > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.canvasSignatureChanges > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.telemetry.visualPostAnchorSkippedRuns, 1);
     assert.equal(report.visualMatrix?.stabilityFailures, 0);
   } finally {
     await new Promise<void>((resolve, reject) => canvasServer.close((error) => error ? reject(error) : resolve()));
@@ -567,6 +594,8 @@ test("SPA fixtures match hostname, path and resource type while preserving raw C
       scenarios: [{ id: "raw-assets", entryPath: "/", steps: [{ action: "wait", ms: 100 }], assertions: { visibleText: "CSS OK SVG OK BINARY OK" } }],
     };
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css?cache=1", method: "GET", resourceType: "stylesheet" })?.path, "/theme.css");
+    assert.equal(findSpaRouterFixture({ fixtures: [{ path: "/api/orders", pathMode: "transport-suffix", body: { ok: true } }] }, { url: "https://assets.fixture.test/dev-api/api/orders", method: "GET", resourceType: "fetch" })?.path, "/api/orders");
+    assert.equal(findSpaRouterFixture({ fixtures: [{ path: "/api/orders", pathMode: "transport-suffix", body: { ok: true } }] }, { url: "https://assets.fixture.test/dev-api/not-api/orders", method: "GET", resourceType: "fetch" }), undefined);
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/theme.css", method: "GET", resourceType: "image" }), undefined);
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/blob.bin?variant=dark&v=1", method: "GET", resourceType: "fetch", headers: { "X-Fixture-Token": "reviewed" } })?.bodyBase64, "AP8BAg==");
     assert.equal(findSpaRouterFixture(config, { url: "https://assets.fixture.test/blob.bin?variant=light", method: "GET", resourceType: "fetch", headers: { "x-fixture-token": "reviewed" } }), undefined);

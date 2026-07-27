@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "parallel-isolated-viewport-matrix",
+  "createdAt": "2026-07-27T10:55:28.237Z",
+  "visualConcurrency": 3,
+  "runs": [
+    {
+      "file": "semantic-gold-parallel-viewports-run-1.results.json",
+      "sha256": "f8cd24911fe0e013d6b479968fb7ee365500e8169cdcd6c44fc5375d5a787bbe",
+      "passed": true,
+      "totalMs": 47484.2,
+      "contractMs": 23548.953,
+      "visualMatrixMs": 23166.069,
+      "adaptiveWaitMs": 42280,
+      "canvas": {
+        "canvasScanMs": 165.9,
+        "canvasSamples": 2740,
+        "canvasCacheHits": 1160,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1524
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    },
+    {
+      "file": "semantic-gold-parallel-viewports-run-2.results.json",
+      "sha256": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
+      "passed": true,
+      "totalMs": 47666.55,
+      "contractMs": 23650.336,
+      "visualMatrixMs": 23229.062,
+      "adaptiveWaitMs": 42242,
+      "canvas": {
+        "canvasScanMs": 170.2,
+        "canvasSamples": 2728,
+        "canvasCacheHits": 1153,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1523
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    },
+    {
+      "file": "semantic-gold-parallel-viewports-run-3.results.json",
+      "sha256": "29977871bbbd5e982c1ef29da4a9591ad459b3be03cdf5258999dd1791f33e37",
+      "passed": true,
+      "totalMs": 48308.9,
+      "contractMs": 24459.028,
+      "visualMatrixMs": 23213.65,
+      "adaptiveWaitMs": 42381,
+      "canvas": {
+        "canvasScanMs": 175.2,
+        "canvasSamples": 2728,
+        "canvasCacheHits": 1158,
+        "canvasSignatureChanges": 24,
+        "canvasInvalidations": 1510
+      },
+      "reviewedStateReusedRuns": 3,
+      "postAnchorSkippedRuns": 10,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821
+    }
+  ],
+  "statistics": {
+    "totalMs": {
+      "values": [
+        47484.2,
+        47666.55,
+        48308.9
+      ],
+      "median": 47666.55,
+      "sampleVariance": 187665.856,
+      "min": 47484.2,
+      "max": 48308.9
+    },
+    "contractMs": {
+      "values": [
+        23548.953,
+        23650.336,
+        24459.028
+      ],
+      "median": 23650.336,
+      "sampleVariance": 248749.628,
+      "min": 23548.953,
+      "max": 24459.028
+    },
+    "visualMatrixMs": {
+      "values": [
+        23166.069,
+        23229.062,
+        23213.65
+      ],
+      "median": 23213.65,
+      "sampleVariance": 1078.267,
+      "min": 23166.069,
+      "max": 23229.062
+    },
+    "adaptiveWaitMs": {
+      "values": [
+        42280,
+        42242,
+        42381
+      ],
+      "median": 42280,
+      "sampleVariance": 5161,
+      "min": 42242,
+      "max": 42381
+    },
+    "canvasScanMs": {
+      "values": [
+        165.9,
+        170.2,
+        175.2
+      ],
+      "median": 170.2,
+      "sampleVariance": 21.663,
+      "min": 165.9,
+      "max": 175.2
+    }
+  },
+  "baseline": {
+    "file": "semantic-gold-api-fixture-primitives-final.results.json",
+    "totalMs": 77991.26,
+    "visualMatrixMs": 47576.279,
+    "adaptiveWaitMs": 79248
+  },
+  "serialReuseBaseline": {
+    "file": "semantic-gold-reviewed-state-reuse-summary.json",
+    "medianTotalMs": 60914.415,
+    "medianVisualMatrixMs": 35765.073
+  },
+  "improvement": {
+    "totalMsPercent": 38.88,
+    "visualMatrixMsPercent": 51.21,
+    "adaptiveWaitMsPercent": 46.65,
+    "overSerialReuseTotalMsPercent": 21.75,
+    "overSerialReuseVisualMatrixMsPercent": 35.09
+  },
+  "quality": {
+    "runsPassed": 3,
+    "runsTotal": 3,
+    "visualStates": "5/5",
+    "viewportRuns": 13,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 0.9825,
+    "worstPixelDiff": 0.01821,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0
+  },
+  "isolation": {
+    "browserContexts": "one isolated BrowserContext per target and viewport",
+    "sharedPageState": false,
+    "sharedNetworkState": false,
+    "qualityThresholdsChanged": false
+  }
+}
