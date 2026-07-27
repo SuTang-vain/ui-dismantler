@@ -118,9 +118,11 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(sfcVisual.kind, "sfc-visual-responsibility-graph");
   assert.equal(sfcVisual.reviewRequired, true);
   assert.equal(sfcVisual.metrics.components, 131);
-  assert.equal(sfcVisual.metrics.interactiveComponents, 69);
+  assert.equal(sfcVisual.metrics.interactiveComponents, 71);
   assert.equal(sfcVisual.metrics.chartComponents, 7);
   assert.equal(sfcVisual.blockers.length, 0);
+  assert.equal(sfcVisual.apiFixtures.metrics.matchedFixtures, 1);
+  assert.equal(sfcVisual.apiFixtures.responsibilities.some((item: { componentName: string; consumption: { sliceLimit?: number }; renderedFields: Array<{ field: string }> }) => item.componentName === "TransactionTable" && item.consumption.sliceLimit === 8 && item.renderedFields.map((field) => field.field).join(",") === "order_no,price,status"), true);
   assert.equal(sfcVisual.components.some((component: { componentName: string; childComponents: string[] }) => component.componentName === "DashboardAdmin" && component.childComponents.includes("LineChart") && component.childComponents.includes("PanelGroup")), true);
 
   assert.equal(echarts.kind, "echarts-responsibility-graph");

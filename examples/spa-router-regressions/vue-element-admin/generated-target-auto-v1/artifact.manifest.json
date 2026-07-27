@@ -11,11 +11,11 @@
     },
     {
       "path": "public/app.js",
-      "lines": 180
+      "lines": 239
     },
     {
       "path": "public/styles.css",
-      "lines": 15
+      "lines": 120
     },
     {
       "path": "server.mjs",
@@ -24,15 +24,15 @@
   ],
   "metrics": {
     "generatedFiles": 4,
-    "generatedLines": 199,
+    "generatedLines": 363,
     "visualBoundaries": 4,
     "visualOwners": 20,
     "chartOwners": 4,
-    "templateNodes": 166,
-    "elementUiPrimitives": 47,
+    "templateNodes": 171,
+    "elementUiPrimitives": 50,
     "responsiveGridNodes": 10,
-    "primitiveDomNodes": 60,
-    "primitiveStyleRules": 7,
+    "primitiveDomNodes": 86,
+    "primitiveStyleRules": 11,
     "primitiveInteractionBindings": 7,
     "modelCalls": 0,
     "manualEdits": 0,

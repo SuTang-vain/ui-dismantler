@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { analyzeEChartsResponsibilities, type EChartsResponsibilityGraph } from "./echarts-responsibility.js";
 import { analyzeSfcTemplateStructure, type SfcTemplateStructure } from "./sfc-template-structure.js";
 import { analyzeDataCardinality, type DataCardinalityResponsibility } from "./data-cardinality.js";
+import type { ApiFixtureResponsibilityGraph } from "./api-fixture-responsibility.js";
 
 export interface SfcStyleResponsibility {
   index: number;
@@ -48,6 +49,7 @@ export interface SfcVisualResponsibilityGraph {
   framework: "vue-sfc";
   components: SfcVisualComponentResponsibility[];
   echarts: EChartsResponsibilityGraph;
+  apiFixtures?: ApiFixtureResponsibilityGraph;
   blockers: string[];
   reviewReasons: string[];
   metrics: {
@@ -95,9 +97,24 @@ function allMatches(source: string, regex: RegExp): RegExpMatchArray[] {
   return [...source.matchAll(new RegExp(regex.source, flags))];
 }
 
+function balancedSection(source: string, tagName: string): string {
+  const opening = new RegExp(`<${tagName}(?:\\s[^>]*)?>`, "i").exec(source);
+  if (!opening || opening.index === undefined) return "";
+  const bodyStart = opening.index + opening[0].length;
+  const tags = new RegExp(`<\\/?${tagName}(?:\\s[^>]*)?>`, "gi");
+  tags.lastIndex = bodyStart;
+  let depth = 1;
+  for (let match = tags.exec(source); match; match = tags.exec(source)) {
+    if (/^<\//.test(match[0])) depth -= 1;
+    else depth += 1;
+    if (depth === 0) return source.slice(bodyStart, match.index);
+  }
+  return source.slice(bodyStart);
+}
+
 function sections(source: string): SfcSections {
-  const template = source.match(/<template(?:\s[^>]*)?>([\s\S]*?)<\/template>/i)?.[1] ?? "";
-  const script = source.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/i)?.[1] ?? "";
+  const template = balancedSection(source, "template");
+  const script = balancedSection(source, "script");
   const styles = allMatches(source, /<style([^>]*)>([\s\S]*?)<\/style>/gi).map((match) => ({ attributes: match[1], source: match[2] }));
   return { template, script, styles };
 }

@@ -1,6 +1,7 @@
 import type { EChartsComponentResponsibility } from "./echarts-responsibility.js";
 import type { SfcVisualComponentResponsibility, SfcVisualResponsibilityGraph } from "./sfc-visual-responsibility.js";
 import type { SfcTemplateStructure } from "./sfc-template-structure.js";
+import type { ApiFixtureResponsibility } from "./api-fixture-responsibility.js";
 import type { SpaRouteShellPlan, SpaRouteShellRouteNode } from "./spa-route-shell.js";
 
 export interface VisualTargetOwnerPlan {
@@ -15,6 +16,7 @@ export interface VisualTargetOwnerPlan {
   childComponents: string[];
   templateStructure: SfcTemplateStructure;
   dataCardinality: SfcVisualComponentResponsibility["dataCardinality"];
+  apiFixtures: ApiFixtureResponsibility[];
   interactions: { events: string[]; models: string[]; conditions: string[]; loops: string[] };
   lifecycle: string[];
   responsiveMediaQueries: string[];
@@ -79,6 +81,7 @@ export interface VisualTargetPlan {
     chartOwners: number;
     responsiveOwners: number;
     interactiveOwners: number;
+    apiFixtureOwners: number;
     unresolvedRoutes: number;
   };
   measurementTemplate: {
@@ -188,6 +191,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
     childComponents: component.childComponents,
     templateStructure: component.templateStructure,
     dataCardinality: component.dataCardinality,
+    apiFixtures: graph.apiFixtures?.responsibilities.filter((item) => item.componentId === component.id) ?? [],
     interactions: component.bindings,
     lifecycle: component.lifecycle,
     responsiveMediaQueries: unique(component.styles.flatMap((style) => style.mediaQueries)),
@@ -211,6 +215,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
       childComponents: [],
       templateStructure: { roots: [], nodes: [], componentOrder: [], primitiveCounts: {}, inlineVisualDeclarations: 0, conditionalRegions: 0, repeatedRegions: 0, slotOwners: 0, responsiveGridNodes: 0 },
       dataCardinality: component.dataCardinality,
+      apiFixtures: [],
       interactions: { events: chart.interactions, models: [], conditions: [], loops: [] },
       lifecycle: chart.lifecycle,
       responsiveMediaQueries: base.responsiveMediaQueries,
@@ -304,6 +309,7 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
       chartOwners: owners.filter((owner) => owner.kind === "chart").length,
       responsiveOwners: owners.filter((owner) => owner.responsiveMediaQueries.length > 0).length,
       interactiveOwners: owners.filter((owner) => owner.interactions.events.length + owner.interactions.models.length > 0).length,
+      apiFixtureOwners: owners.filter((owner) => owner.apiFixtures.length > 0).length,
       unresolvedRoutes: unresolved.length,
     },
     measurementTemplate: {

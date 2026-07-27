@@ -481,6 +481,26 @@ test("SPA adaptive visual stability fails continuous DOM mutations instead of ca
   }
 });
 
+test("SPA adaptive visual stability waits for canvas animation frames to settle", async () => {
+  const canvasApp = `<!doctype html><html><body><main id="view"><canvas id="chart" width="320" height="180"></canvas></main><script>const canvas=document.getElementById('chart'),context=canvas.getContext('2d'),started=performance.now();function frame(now){const progress=Math.min(1,(now-started)/650);context.clearRect(0,0,320,180);context.fillStyle='#2563eb';context.fillRect(0,20,Math.round(300*progress),120);if(progress<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)</script></body></html>`;
+  const canvasServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(canvasApp); });
+  await new Promise<void>((resolve) => canvasServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = canvasServer.address(); if (!address || typeof address === "string") throw new Error("missing canvas server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
+      visualMatrix: { stabilityTimeoutMs: 1800, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
+      scenarios: [{ id: "canvas-animation", entryPath: "/", steps: [], assertions: { visibleSelector: "#chart" }, visual: { screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
+    });
+    assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+    assert.ok((report.telemetry.visualAdaptiveWaitMs ?? 0) >= 700, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.visualMatrix?.stabilityFailures, 0);
+  } finally {
+    await new Promise<void>((resolve, reject) => canvasServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
 test("SPA resource readiness separates required document assets from non-blocking image failures", async () => {
   const resourceApp = `<!doctype html><html><head><link rel="stylesheet" href="/missing.css"></head><body><script src="/missing.js"></script><img src="/missing.png"><main>Ready</main></body></html>`;
   const resourceServer = createServer((_request, response) => { response.writeHead(404, { "content-type": "text/plain" }); response.end("missing"); });

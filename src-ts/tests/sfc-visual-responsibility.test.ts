@@ -178,3 +178,34 @@ test("SFC visual analysis embeds local SvgIcon geometry without filename-specifi
     assert.deepEqual(icon?.embeddedAssets?.[0], { kind: "svg", name: "user", sourcePath: "src/icons/svg/user.svg", viewBox: "0 0 130 130", markup: '<path d="M1 2h3z"/>' });
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+import { analyzeApiFixtureResponsibilities } from "../planning/api-fixture-responsibility.js";
+import type { SpaRouterContractConfig } from "../evaluation/spa-router.js";
+
+test("nested Vue templates preserve every Element UI table column and bind reviewed API fixtures", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-api-fixture-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'\nexport function fetchOrders(){ return request({ url:'/api/orders', method:'get' }) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><el-table :data="list" style="width:100%;padding-top:15px"><el-table-column label="Order" min-width="200"><template slot-scope="scope">{{ scope.row.order_no | orderNoFilter }}</template></el-table-column><el-table-column label="Price" width="195" align="center"><template slot-scope="scope">¥{{ scope.row.price | toThousandFilter }}</template></el-table-column><el-table-column label="Status" width="100" align="center"><template slot-scope="{row}"><el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag></template></el-table-column></el-table></template><script>import { fetchOrders } from '@/api/orders'; export default { name:'Orders', filters:{ statusFilter(status){ const map={success:'success',pending:'danger'}; return map[status] }, orderNoFilter(value){ return value.substring(0,30) } }, data(){return {list:null}}, created(){this.load()}, methods:{load(){fetchOrders().then(response => { this.list=response.data.items.slice(0,8) })}} }</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const orders = graph.components.find((item) => item.componentName === "Orders");
+    assert.ok(orders);
+    assert.equal(orders.templateStructure.primitiveCounts["table-column"], 3);
+    const config: SpaRouterContractConfig = {
+      schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [],
+      fixtures: [{ path: "/api/orders", method: "GET", resourceType: "xhr", body: { data: { items: [
+        { order_no: "A", price: 1234, status: "success" }, { order_no: "B", price: 5678, status: "pending" },
+      ] } } }],
+    };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.matchedFixtures, 1);
+    assert.equal(api.responsibilities[0].consumption.targetBinding, "list");
+    assert.equal(api.responsibilities[0].consumption.responsePath, "data.items");
+    assert.equal(api.responsibilities[0].consumption.sliceLimit, 8);
+    assert.deepEqual(api.responsibilities[0].renderedFields.map((field) => field.field), ["order_no", "price", "status"]);
+    assert.deepEqual(api.responsibilities[0].filterValueMaps.statusFilter, { success: "success", pending: "danger" });
+    assert.equal(Array.isArray(api.responsibilities[0].fixture.materializedValue), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});

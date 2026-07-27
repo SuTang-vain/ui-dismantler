@@ -7,7 +7,8 @@ import type {
 
 export type PrimitiveRenderStrategy =
   | "native" | "form" | "form-field" | "input" | "button" | "tag" | "tabs" | "tab-pane"
-  | "layout-row" | "layout-column" | "radio-group" | "radio-button" | "dialog" | "tooltip" | "custom-component";
+  | "layout-row" | "layout-column" | "radio-group" | "radio-button" | "table" | "table-column"
+  | "card" | "progress" | "dialog" | "tooltip" | "custom-component";
 
 export interface PrimitiveDomNode {
   id: string;
@@ -73,12 +74,15 @@ const nativeTags = new Set([
 
 const strategyByPrimitive: Partial<Record<ElementUiPrimitiveKind, PrimitiveRenderStrategy>> = {
   "layout-row": "layout-row", "layout-column": "layout-column", form: "form", "form-field": "form-field", input: "input",
-  button: "button", "radio-group": "radio-group", "radio-button": "radio-button", tag: "tag", tabs: "tabs", "tab-pane": "tab-pane", dialog: "dialog", tooltip: "tooltip",
+  button: "button", "radio-group": "radio-group", "radio-button": "radio-button", tag: "tag", tabs: "tabs", "tab-pane": "tab-pane",
+  table: "table", "table-column": "table-column", card: "card", progress: "progress", dialog: "dialog", tooltip: "tooltip",
 };
 
 const primitiveClasses: Partial<Record<ElementUiPrimitiveKind, string[]>> = {
   "layout-row": ["el-row"], "layout-column": ["el-col"], form: ["el-form"], "form-field": ["el-form-item"], input: ["el-input"],
-  button: ["el-button"], "radio-group": ["el-radio-group"], "radio-button": ["el-radio-button"], tag: ["el-tag"], tabs: ["el-tabs"], "tab-pane": ["el-tab-pane"], dialog: ["el-dialog"], tooltip: ["el-tooltip"],
+  button: ["el-button"], "radio-group": ["el-radio-group"], "radio-button": ["el-radio-button"], tag: ["el-tag"], tabs: ["el-tabs"], "tab-pane": ["el-tab-pane"],
+  table: ["el-table", "el-table--fit", "el-table--enable-row-hover", "el-table--enable-row-transition"], "table-column": [],
+  card: ["el-card", "is-always-shadow"], progress: ["el-progress", "el-progress--line"], dialog: ["el-dialog"], tooltip: ["el-tooltip"],
 };
 
 function unique(values: string[]): string[] { return [...new Set(values.filter(Boolean))]; }
@@ -93,7 +97,7 @@ function eventBinding(node: SfcTemplateNode): PrimitiveInteractionBinding[] {
   });
 }
 function mappedAttributes(node: SfcTemplateNode): Record<string, string | true> {
-  const allowed = new Set(["autocomplete", "content", "label", "manual", "name", "placeholder", "placement", "prop", "ref", "size", "tabindex", "title", "type", "value"]);
+  const allowed = new Set(["autocomplete", "content", "label", "manual", "name", "placeholder", "placement", "prop", "ref", "size", "src", "alt", "class-name", "tabindex", "title", "type", "value"]);
   return Object.fromEntries(Object.entries(node.attributes).filter(([name]) => allowed.has(name) || name.startsWith(":") || name === "v-model" || name === "v-permission"));
 }
 function nodeStrategy(node: SfcTemplateNode): PrimitiveRenderStrategy {
@@ -106,7 +110,7 @@ function renderTag(node: SfcTemplateNode, strategy: PrimitiveRenderStrategy): st
   if (strategy === "input") return "input";
   if (strategy === "button") return "button";
   if (strategy === "tag") return "span";
-  if (["layout-row", "layout-column", "form-field", "radio-group", "tabs", "tab-pane", "dialog", "tooltip", "custom-component"].includes(strategy)) return "div";
+  if (["layout-row", "layout-column", "form-field", "radio-group", "tabs", "tab-pane", "table", "table-column", "card", "progress", "dialog", "tooltip", "custom-component"].includes(strategy)) return "div";
   if (strategy === "radio-button") return "label";
   return nativeTags.has(node.tag.toLowerCase()) ? node.tag.toLowerCase() : "div";
 }
@@ -117,6 +121,8 @@ function classesFor(node: SfcTemplateNode): string[] {
   if (kind === "button" && typeof type === "string") classes.push(`el-button--${type}`);
   if (kind === "tag" && typeof type === "string") classes.push(`el-tag--${type}`);
   if (kind === "tabs" && type === "border-card") classes.push("el-tabs--border-card");
+  const status = node.attributes.status;
+  if (kind === "progress" && typeof status === "string") classes.push(`is-${status}`);
   return unique(classes);
 }
 function primitiveRules(node: PrimitiveDomNode): PrimitiveStyleRule[] {
@@ -169,4 +175,13 @@ export function compilePrimitiveDom(structure: SfcTemplateStructure, scope = "co
 export function materializePrimitiveCss(compilation: PrimitiveDomCompilation): string {
   const declarations = (values: Record<string, string>) => Object.entries(values).map(([name, value]) => `${name}:${value}`).join(";");
   return compilation.styleRules.map((rule) => `${rule.media ? `@media ${rule.media}{` : ""}${rule.selector}{${declarations(rule.declarations)}}${rule.media ? "}" : ""}`).join("");
+}
+
+export function materializeElementUiPrimitiveCss(compilation: PrimitiveDomCompilation): string {
+  const kinds = new Set(compilation.nodes.map((node) => node.primitiveKind).filter(Boolean));
+  const rules: string[] = [];
+  if (kinds.has("table")) rules.push(`.el-table{position:relative;overflow:hidden;box-sizing:border-box;flex:1;width:100%;max-width:100%;background-color:#fff;font-size:14px;color:#606266}.el-table:before{content:"";position:absolute;background-color:#ebeef5;z-index:1;left:0;bottom:0;width:100%;height:1px}.el-table__header-wrapper,.el-table__body-wrapper{width:100%}.el-table__body-wrapper{overflow:hidden;position:relative}.el-table table{table-layout:fixed;border-collapse:separate;border-spacing:0;width:100%}.el-table th,.el-table td{padding:10px 0;min-width:0;box-sizing:border-box;text-overflow:ellipsis;vertical-align:middle;position:relative;text-align:left}.el-table th{overflow:hidden;user-select:none;background-color:#fff;color:#909399;font-weight:500}.el-table td,.el-table th.is-leaf{border-bottom:1px solid #ebeef5}.el-table .cell{box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;white-space:normal;word-break:break-all;line-height:23px;padding-left:10px;padding-right:10px}.el-table th.is-center,.el-table td.is-center{text-align:center}.el-table__row:hover>td{background-color:#f5f7fa}`);
+  if (kinds.has("card")) rules.push(`.el-card{border:1px solid #ebeef5;background-color:#fff;color:#303133;transition:.3s}.el-card.is-always-shadow{box-shadow:0 2px 12px 0 rgba(0,0,0,.1)}.el-card__header{padding:18px 20px;border-bottom:1px solid #ebeef5;box-sizing:border-box}.el-card__body{padding:20px}`);
+  if (kinds.has("progress")) rules.push(`.el-progress{position:relative;line-height:1}.el-progress-bar{display:inline-block;vertical-align:middle;padding-right:50px;margin-right:-55px;width:100%;box-sizing:border-box}.el-progress-bar__outer{height:6px;border-radius:100px;background-color:#ebeef5;overflow:hidden;position:relative;vertical-align:middle}.el-progress-bar__inner{position:absolute;left:0;top:0;height:100%;background-color:#409eff;text-align:right;border-radius:100px;line-height:1;white-space:nowrap;transition:width .6s ease}.el-progress__text{font-size:14.4px;color:#606266;display:inline-block;vertical-align:middle;margin-left:10px;line-height:1}.el-progress.is-success .el-progress-bar__inner{background-color:#67c23a}.el-progress.is-success .el-progress__text{color:#67c23a}`);
+  return rules.join("");
 }

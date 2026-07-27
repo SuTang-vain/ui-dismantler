@@ -279,6 +279,13 @@
       "resourceType": "image",
       "responseContentType": "image/png",
       "binary": true
+    },
+    {
+      "method": "GET",
+      "path": "/dev-api/vue-element-admin/transaction/list",
+      "resourceType": "xhr",
+      "responseContentType": "application/json; charset=utf-8",
+      "binary": false
     }
   ],
   "capabilities": {

@@ -161,3 +161,23 @@ The target is still **not** full Gold+. The next algorithm phase is the ECharts 
 The automatic generator now parses safe static JavaScript expressions into auditable literal/reference trees, records top-level SFC data bindings and array cardinalities, and consumes the real bounded ECharts option slices at runtime. Vue Element Admin currently contributes 19 static bindings and 47 cardinality records; Dashboard line-series data, Todo cardinality, four chart option objects, chart constants, chart heights, PanelGroup responsive spans/gutters, Dashboard row gutters, local panel SVG geometry, and selected child source styles are consumed without model calls or artifact edits. Unsupported expressions remain explicit review boundaries.
 
 The first combined pass exposed a real regression (`worstPixelDiff=0.141507`) because fallback CSS and source-owned Todo/BoxCard primitives were both active. Boundary-level geometry telemetry then removed the conflicting fallback responsibility and derived responsive row/column gaps from `el-row`/`el-col` evidence. The latest measured matrix is still `3/5`, but Dashboard worst pixel diff improved from the prior `0.100789` baseline to `0.043440`; navigation integrity remains `1.0`, and runtime, required-network, and stability failures remain zero. This is a material automatic-fidelity improvement, but it is **not** Gold+ because Dashboard still exceeds `0.02` and computed style remains below `0.98`. The next blocker is the internal Element UI table/card/progress and API-fixture responsibility boundary, not route or responsive topology.
+
+### API fixture, Element UI primitive, and canvas-stability Gold+ phase
+
+The automatic target now links `TransactionTable.vue` to `transactionList()` through a reviewed API Fixture Responsibility Graph: source endpoint `/vue-element-admin/transaction/list`, actual transport path `/dev-api/vue-element-admin/transaction/list`, response path `data.items`, slice limit `8`, and rendered fields `order_no`, `price`, and `status`. The source is not executed during extraction; unresolved API calls remain explicit instead of receiving guessed data.
+
+Nested `<template>` extraction now preserves all three `el-table-column` nodes. The Primitive DOM consumer now owns `el-table`, `el-table-column`, `el-card`, `el-progress`, and table `el-tag` output, while responsive bottom-row wrappers consume source gutter, span, padding, margin, card, and progress evidence. Source-owned mappings disable the conflicting table/card/progress fallback rules.
+
+The visual stability gate now includes a downsampled canvas-content signature. This prevents DOM/layout stability from capturing ECharts midway through animation, which previously produced a misleading desktop pixel failure even when chart options and geometry were correct. Visible-text assertions also examine every matching locator rather than failing when the first duplicate match is hidden at a responsive breakpoint.
+
+Final automatic-target result:
+
+- Semantic scenario protocol: `6/6 PASS`;
+- visual states: `5/5 PASS` across `13` viewport runs;
+- navigation integrity: `19/19 = 1.0`;
+- worst computed style: `0.9825`;
+- worst pixel diff: `0.018210`;
+- runtime, required-network, and stability failures: `0`;
+- model calls and generated-artifact manual edits: `0`.
+
+This is the first automatic Vue Element Admin target in this experiment to satisfy the unchanged Gold+ thresholds. The reviewed target remains the stronger fidelity baseline (`0.9912 / 0.012977`), but the automatic target is now formally Gold+ rather than a non-passing approximation.

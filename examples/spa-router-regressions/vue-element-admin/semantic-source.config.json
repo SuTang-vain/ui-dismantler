@@ -300,6 +300,80 @@
         "cache-control": "no-store"
       },
       "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    },
+    {
+      "path": "/dev-api/vue-element-admin/transaction/list",
+      "method": "GET",
+      "resourceType": "xhr",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "code": 20000,
+        "data": {
+          "total": 8,
+          "items": [
+            {
+              "order_no": "m3ir5qaOZY",
+              "timestamp": 1721000000000,
+              "username": "Alex",
+              "price": 13708.44,
+              "status": "success"
+            },
+            {
+              "order_no": "dCd5bYvZkr",
+              "timestamp": 1721000001000,
+              "username": "Jamie",
+              "price": 4258.34,
+              "status": "pending"
+            },
+            {
+              "order_no": "WUS3sT2H1N",
+              "timestamp": 1721000002000,
+              "username": "Taylor",
+              "price": 12364,
+              "status": "success"
+            },
+            {
+              "order_no": "6qP0MjsN2e",
+              "timestamp": 1721000003000,
+              "username": "Morgan",
+              "price": 8236.31,
+              "status": "pending"
+            },
+            {
+              "order_no": "Ua9xT7Rk2L",
+              "timestamp": 1721000004000,
+              "username": "Jordan",
+              "price": 6219.83,
+              "status": "success"
+            },
+            {
+              "order_no": "Fs4jL9Pq1A",
+              "timestamp": 1721000005000,
+              "username": "Casey",
+              "price": 9764.25,
+              "status": "success"
+            },
+            {
+              "order_no": "Kd3eW8Vm6B",
+              "timestamp": 1721000006000,
+              "username": "Riley",
+              "price": 3181.07,
+              "status": "pending"
+            },
+            {
+              "order_no": "Yp7nC2Ht5Q",
+              "timestamp": 1721000007000,
+              "username": "Avery",
+              "price": 7054.99,
+              "status": "success"
+            }
+          ]
+        }
+      }
     }
   ]
 }

@@ -352,6 +352,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -519,6 +520,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -639,6 +641,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -693,6 +696,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -901,6 +905,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -1424,6 +1429,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -1485,6 +1491,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "watch:chartData"
@@ -1690,6 +1697,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -2598,6 +2606,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "click"
@@ -2656,6 +2665,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -2816,6 +2826,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -2866,6 +2877,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -3091,6 +3103,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -3560,6 +3573,7 @@
           "filteredTodos"
         ]
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "change",
@@ -3606,7 +3620,8 @@
       "acceptanceSelectors": [],
       "childComponents": [
         "ElTable",
-        "ElTableColumn"
+        "ElTableColumn",
+        "ElTag"
       ],
       "templateStructure": {
         "roots": [
@@ -3634,6 +3649,14 @@
               {
                 "kind": "node",
                 "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
               }
             ],
             "primitive": {
@@ -3700,15 +3723,162 @@
                 "value": " {{ scope.row.order_no | orderNoFilter }} "
               }
             ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-table-column",
+            "componentName": "ElTableColumn",
+            "classes": [],
+            "attributes": {
+              "label": "Price",
+              "width": "195",
+              "align": "center"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ],
+            "primitive": {
+              "kind": "table-column",
+              "sourceTag": "el-table-column",
+              "props": {
+                "label": "Price",
+                "width": "195",
+                "align": "center"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "slot-scope": "scope"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " ¥{{ scope.row.price | toThousandFilter }} "
+              }
+            ]
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-table-column",
+            "componentName": "ElTableColumn",
+            "classes": [],
+            "attributes": {
+              "label": "Status",
+              "width": "100",
+              "align": "center"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ],
+            "primitive": {
+              "kind": "table-column",
+              "sourceTag": "el-table-column",
+              "props": {
+                "label": "Status",
+                "width": "100",
+                "align": "center"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 2,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "slot-scope": "{row}"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "el-tag",
+            "componentName": "ElTag",
+            "classes": [],
+            "attributes": {
+              ":type": "row.status | statusFilter"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " {{ row.status }} "
+              }
+            ],
+            "primitive": {
+              "kind": "tag",
+              "sourceTag": "el-tag",
+              "props": {
+                ":type": "row.status | statusFilter"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
           }
         ],
         "componentOrder": [
           "ElTable",
-          "ElTableColumn"
+          "ElTableColumn",
+          "ElTableColumn",
+          "ElTableColumn",
+          "ElTag"
         ],
         "primitiveCounts": {
           "table": 1,
-          "table-column": 1
+          "table-column": 3,
+          "tag": 1
         },
         "inlineVisualDeclarations": 2,
         "conditionalRegions": 0,
@@ -3731,6 +3901,192 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [
+        {
+          "id": "api-fixture:sfc:72:transactionList",
+          "componentId": "sfc:72",
+          "componentName": "TransactionTable",
+          "componentFile": "src/views/dashboard/admin/components/TransactionTable.vue",
+          "apiCall": {
+            "localName": "transactionList",
+            "exportedName": "transactionList",
+            "importSource": "@/api/remote-search",
+            "moduleFile": "src/api/remote-search.js",
+            "method": "GET",
+            "path": "/vue-element-admin/transaction/list"
+          },
+          "consumption": {
+            "targetBinding": "list",
+            "responsePath": "data.items",
+            "sliceLimit": 8
+          },
+          "renderedFields": [
+            {
+              "field": "order_no",
+              "label": "Order_No",
+              "minWidth": 200,
+              "filters": [
+                "orderNoFilter"
+              ],
+              "tagged": false
+            },
+            {
+              "field": "price",
+              "label": "Price",
+              "width": 195,
+              "align": "center",
+              "filters": [
+                "toThousandFilter"
+              ],
+              "prefix": "¥",
+              "tagged": false
+            },
+            {
+              "field": "status",
+              "label": "Status",
+              "width": 100,
+              "align": "center",
+              "filters": [
+                "statusFilter"
+              ],
+              "tagged": true
+            }
+          ],
+          "filterValueMaps": {
+            "statusFilter": {
+              "success": "success",
+              "pending": "danger"
+            }
+          },
+          "fixture": {
+            "index": 2,
+            "requestPath": "/dev-api/vue-element-admin/transaction/list",
+            "reviewed": true,
+            "bodyHash": "956cd174eadfc7c31b360625443e1ce95647524620915701653c1117d90d49f1",
+            "responseValue": [
+              {
+                "order_no": "m3ir5qaOZY",
+                "timestamp": 1721000000000,
+                "username": "Alex",
+                "price": 13708.44,
+                "status": "success"
+              },
+              {
+                "order_no": "dCd5bYvZkr",
+                "timestamp": 1721000001000,
+                "username": "Jamie",
+                "price": 4258.34,
+                "status": "pending"
+              },
+              {
+                "order_no": "WUS3sT2H1N",
+                "timestamp": 1721000002000,
+                "username": "Taylor",
+                "price": 12364,
+                "status": "success"
+              },
+              {
+                "order_no": "6qP0MjsN2e",
+                "timestamp": 1721000003000,
+                "username": "Morgan",
+                "price": 8236.31,
+                "status": "pending"
+              },
+              {
+                "order_no": "Ua9xT7Rk2L",
+                "timestamp": 1721000004000,
+                "username": "Jordan",
+                "price": 6219.83,
+                "status": "success"
+              },
+              {
+                "order_no": "Fs4jL9Pq1A",
+                "timestamp": 1721000005000,
+                "username": "Casey",
+                "price": 9764.25,
+                "status": "success"
+              },
+              {
+                "order_no": "Kd3eW8Vm6B",
+                "timestamp": 1721000006000,
+                "username": "Riley",
+                "price": 3181.07,
+                "status": "pending"
+              },
+              {
+                "order_no": "Yp7nC2Ht5Q",
+                "timestamp": 1721000007000,
+                "username": "Avery",
+                "price": 7054.99,
+                "status": "success"
+              }
+            ],
+            "materializedValue": [
+              {
+                "order_no": "m3ir5qaOZY",
+                "timestamp": 1721000000000,
+                "username": "Alex",
+                "price": 13708.44,
+                "status": "success"
+              },
+              {
+                "order_no": "dCd5bYvZkr",
+                "timestamp": 1721000001000,
+                "username": "Jamie",
+                "price": 4258.34,
+                "status": "pending"
+              },
+              {
+                "order_no": "WUS3sT2H1N",
+                "timestamp": 1721000002000,
+                "username": "Taylor",
+                "price": 12364,
+                "status": "success"
+              },
+              {
+                "order_no": "6qP0MjsN2e",
+                "timestamp": 1721000003000,
+                "username": "Morgan",
+                "price": 8236.31,
+                "status": "pending"
+              },
+              {
+                "order_no": "Ua9xT7Rk2L",
+                "timestamp": 1721000004000,
+                "username": "Jordan",
+                "price": 6219.83,
+                "status": "success"
+              },
+              {
+                "order_no": "Fs4jL9Pq1A",
+                "timestamp": 1721000005000,
+                "username": "Casey",
+                "price": 9764.25,
+                "status": "success"
+              },
+              {
+                "order_no": "Kd3eW8Vm6B",
+                "timestamp": 1721000006000,
+                "username": "Riley",
+                "price": 3181.07,
+                "status": "pending"
+              },
+              {
+                "order_no": "Yp7nC2Ht5Q",
+                "timestamp": 1721000007000,
+                "username": "Avery",
+                "price": 7054.99,
+                "status": "success"
+              }
+            ]
+          },
+          "confidence": "high",
+          "reviewReasons": [
+            "fixture response body is consumed only after explicit reviewed-config matching",
+            "runtime source code is not executed during extraction"
+          ]
+        }
+      ],
       "interactions": {
         "events": [],
         "models": [],
@@ -4564,6 +4920,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "handleSetLineChartData"
@@ -5481,6 +5838,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "blur",
@@ -5620,6 +5978,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [],
@@ -5810,6 +6169,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [],
         "models": [
@@ -6710,6 +7070,7 @@
         "templateRepeats": [],
         "unresolvedReferences": []
       },
+      "apiFixtures": [],
       "interactions": {
         "events": [
           "change"
@@ -6746,6 +7107,7 @@
     "chartOwners": 4,
     "responsiveOwners": 5,
     "interactiveOwners": 7,
+    "apiFixtureOwners": 1,
     "unresolvedRoutes": 0
   },
   "measurementTemplate": {

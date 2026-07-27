@@ -3,7 +3,7 @@ import { open, readFile, stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
-import { chromium, type Browser, type BrowserContext, type BrowserServer, type Page, type Request } from "playwright-core";
+import { chromium, type Browser, type BrowserContext, type BrowserServer, type Locator, type Page, type Request } from "playwright-core";
 import { compareComputedStyles, comparePixels, COMPUTED_STYLE_PROPERTIES } from "./browser.js";
 import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport, StyleComparisonReport } from "../types.js";
 
@@ -725,10 +725,23 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
       let scope: Element = document.documentElement;
       if (scoped?.selector) { try { scope = document.querySelector(scoped.selector) ?? document.documentElement; } catch { scope = document.documentElement; } }
       const elements = [scope, ...[...scope.querySelectorAll("*")]];
-      const signature = JSON.stringify(elements.slice(0, 500).map((element) => {
+      const elementSignature = elements.slice(0, 500).map((element) => {
         const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
         return [element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length];
-      }));
+      });
+      const canvasSignature = [...scope.querySelectorAll("canvas")].slice(0, 16).map((canvas) => {
+        try {
+          const probe = document.createElement("canvas"); probe.width = 32; probe.height = 32;
+          const context = probe.getContext("2d", { willReadFrequently: true });
+          if (!context || canvas.width === 0 || canvas.height === 0) return [canvas.width, canvas.height, 0];
+          context.drawImage(canvas, 0, 0, probe.width, probe.height);
+          const pixels = context.getImageData(0, 0, probe.width, probe.height).data;
+          let hash = 2166136261;
+          for (let index = 0; index < pixels.length; index += 1) hash = Math.imul(hash ^ pixels[index], 16777619);
+          return [canvas.width, canvas.height, hash >>> 0];
+        } catch { return [canvas.width, canvas.height, "unreadable"]; }
+      });
+      const signature = JSON.stringify({ elements: elementSignature, canvases: canvasSignature });
       return { signature, mutationQuiet: Boolean(scoped && now - scoped.state.lastMutationAt >= quietMs), resizeQuiet: Boolean(scoped && now - scoped.state.lastResizeAt >= quietMs) };
     }, quietWindowMs);
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
@@ -746,7 +759,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
   }
   const stabilityFailures: string[] = [];
   if (!lastState.mutationQuiet) stabilityFailures.push("DOM mutation quiet window was not reached before visual capture");
-  if (!lastState.resizeQuiet || !lastState.layoutStable) stabilityFailures.push("layout rect did not remain stable for two consecutive samples before visual capture");
+  if (!lastState.resizeQuiet || !lastState.layoutStable) stabilityFailures.push("DOM/layout/canvas signature did not remain stable for two consecutive samples before visual capture");
   if (!lastState.networkQuiet) {
     const pending = lastBlockingRequests.slice(0, 6).map((request) => `${request.resourceType()}:${request.method()} ${request.url()}`).join(" | ");
     stabilityFailures.push(`network quiet window was not reached before visual capture: active=${lastBlockingRequests.length}${pending ? `; pending=${pending}` : ""}`);
@@ -771,6 +784,14 @@ async function executeStep(page: Page, step: SpaRouterStep, role: SpaRouterTarge
   await settle(page);
 }
 
+async function locatorHasVisibleMatch(locator: Locator): Promise<boolean> {
+  const count = await locator.count().catch(() => 0);
+  for (let index = 0; index < Math.min(count, 100); index += 1) {
+    if (await locator.nth(index).isVisible().catch(() => false)) return true;
+  }
+  return false;
+}
+
 async function assertScenario(page: Page, assertion: SpaRouterAssertion, role: SpaRouterTargetRole): Promise<string[]> {
   const failures: string[] = [];
   const url = new URL(page.url());
@@ -778,13 +799,13 @@ async function assertScenario(page: Page, assertion: SpaRouterAssertion, role: S
   if (expectedPath !== undefined && url.pathname !== expectedPath) failures.push(`path expected=${expectedPath} actual=${url.pathname}`);
   if (expectedSearch !== undefined && url.search !== expectedSearch) failures.push(`search expected=${expectedSearch} actual=${url.search}`);
   if (expectedHash !== undefined && url.hash !== expectedHash) failures.push(`hash expected=${expectedHash} actual=${url.hash}`);
-  if (assertion.visibleText !== undefined && !(await page.getByText(assertion.visibleText, { exact: false }).first().isVisible().catch(() => false))) failures.push(`visibleText missing=${assertion.visibleText}`);
+  if (assertion.visibleText !== undefined && !(await locatorHasVisibleMatch(page.getByText(assertion.visibleText, { exact: false })))) failures.push(`visibleText missing=${assertion.visibleText}`);
   const visibleSelector = valueForRole(assertion.visibleSelector, role);
-  if (visibleSelector !== undefined && !(await page.locator(visibleSelector).first().isVisible().catch(() => false))) failures.push(`visibleSelector missing=${visibleSelector}`);
-  if (assertion.absentText !== undefined && await page.getByText(assertion.absentText, { exact: false }).first().isVisible().catch(() => false)) failures.push(`absentText still visible=${assertion.absentText}`);
-  if (assertion.absentExactText !== undefined && await page.getByText(assertion.absentExactText, { exact: true }).first().isVisible().catch(() => false)) failures.push(`absentExactText still visible=${assertion.absentExactText}`);
+  if (visibleSelector !== undefined && !(await locatorHasVisibleMatch(page.locator(visibleSelector)))) failures.push(`visibleSelector missing=${visibleSelector}`);
+  if (assertion.absentText !== undefined && await locatorHasVisibleMatch(page.getByText(assertion.absentText, { exact: false }))) failures.push(`absentText still visible=${assertion.absentText}`);
+  if (assertion.absentExactText !== undefined && await locatorHasVisibleMatch(page.getByText(assertion.absentExactText, { exact: true }))) failures.push(`absentExactText still visible=${assertion.absentExactText}`);
   const absentSelector = valueForRole(assertion.absentSelector, role);
-  if (absentSelector !== undefined && await page.locator(absentSelector).first().isVisible().catch(() => false)) failures.push(`absentSelector still visible=${absentSelector}`);
+  if (absentSelector !== undefined && await locatorHasVisibleMatch(page.locator(absentSelector))) failures.push(`absentSelector still visible=${absentSelector}`);
   if (assertion.selectorCount !== undefined) {
     const target = valueForRole(assertion.selectorCount.target, role);
     if (!target) failures.push(`selectorCount missing ${role} target`);
@@ -1114,7 +1135,14 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       const styles = compareComputedStyles(reference.visual.styles, generated.visual.styles);
       const artifactDir = visualConfig.artifactDir ? resolve(visualConfig.artifactDir, scenario.id, viewport.id) : undefined;
       const pixels = await comparePixels(reference.visual.screenshot, generated.visual.screenshot, pixelThreshold, artifactDir);
-      const captureFailures = [...reference.visual.failures.map((failure) => `reference: ${failure}`), ...generated.visual.failures.map((failure) => `generated: ${failure}`)];
+      const nonNavigationComparisonFailures = comparison.failures.filter((failure) => !NAVIGATION_FAILURE_REASONS.has(failure.reason));
+      const captureFailures = [
+        ...reference.visual.failures.map((failure) => `reference visual: ${failure}`),
+        ...generated.visual.failures.map((failure) => `generated visual: ${failure}`),
+        ...reference.result.assertionFailures.map((failure) => `reference assertion: ${failure}`),
+        ...generated.result.assertionFailures.map((failure) => `generated assertion: ${failure}`),
+        ...nonNavigationComparisonFailures.map((failure) => `comparison ${failure.reason}: ${failure.detail}`),
+      ];
       const runtimeErrors = reference.result.runtimeErrors.length + generated.result.runtimeErrors.length;
       const unmockedApiRequests = reference.result.unmockedApiRequests.length + generated.result.unmockedApiRequests.length;
       const requiredNetworkFailureDetails = [

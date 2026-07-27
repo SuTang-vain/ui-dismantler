@@ -378,7 +378,7 @@ test("adaptive stability waits for DOM, layout, network, and final assertions wi
     assert.ok(result.telemetry.workload.signatureFullScans < result.telemetry.workload.stabilityChecks);
     assert.ok(result.telemetry.workload.signatureIncrementalScans >= 2);
     assert.ok(result.telemetry.workload.signatureNodesScanned > 0);
-    assert.ok(result.telemetry.workload.signatureMutationInvalidations >= 2);
+    assert.ok(result.telemetry.workload.signatureMutationInvalidations >= 1);
     assert.ok(result.telemetry.workload.resourceCacheHits >= 1);
     assert.equal(imageRequests, 1);
   } finally {

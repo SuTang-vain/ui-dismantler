@@ -7,25 +7,26 @@
   "modelCalls": 0,
   "artifactManualEdits": 0,
   "artifactManualEditedLines": 0,
-  "algorithmRepairIterations": 8,
-  "qualityRuns": 16,
+  "algorithmRepairIterations": 14,
+  "qualityRuns": 22,
   "plan": {
     "boundaries": 4,
     "owners": 20,
     "chartOwners": 4,
+    "apiFixtureOwners": 1,
     "unresolvedRoutes": 0
   },
   "generation": {
     "generatedFiles": 4,
-    "generatedLines": 199,
+    "generatedLines": 363,
     "visualBoundaries": 4,
     "visualOwners": 20,
     "chartOwners": 4,
-    "templateNodes": 166,
-    "elementUiPrimitives": 47,
+    "templateNodes": 171,
+    "elementUiPrimitives": 50,
     "responsiveGridNodes": 10,
-    "primitiveDomNodes": 60,
-    "primitiveStyleRules": 7,
+    "primitiveDomNodes": 86,
+    "primitiveStyleRules": 11,
     "primitiveInteractionBindings": 7,
     "modelCalls": 0,
     "manualEdits": 0,
@@ -35,7 +36,7 @@
     "schemaVersion": "1.0",
     "phase": "visual-target-generation",
     "deterministic": true,
-    "generationMs": 8.569,
+    "generationMs": 17.775,
     "reviewMs": null,
     "semanticRuns": 0,
     "visualRuns": 0,
@@ -200,9 +201,25 @@
       "runtimeErrors": 0,
       "requiredNetworkFailures": 0,
       "stabilityFailures": 0
+    },
+    {
+      "id": "api-fixture-element-ui-canvas-final",
+      "report": "semantic-gold-api-fixture-primitives-final.results.json",
+      "passed": true,
+      "scenarioProtocol": "6/6",
+      "visualStatesPassed": 5,
+      "visualStatesTotal": 5,
+      "viewportRuns": 13,
+      "worstComputedStyle": 0.9825,
+      "worstPixelDiff": 0.01821,
+      "navigationIntegrity": 1,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "adaptiveWaitMs": 79248
     }
   ],
-  "bestMeasuredIteration": "echarts-data-layout-v5",
+  "bestMeasuredIteration": "api-fixture-element-ui-canvas-final",
   "reviewedBaseline": {
     "visualStatesPassed": 5,
     "visualStatesTotal": 5,
@@ -217,36 +234,50 @@
   },
   "conclusion": {
     "semanticReady": true,
-    "goldPlusReady": false,
+    "goldPlusReady": true,
     "qualityComparable": true,
-    "visualStatesPassed": 3,
+    "visualStatesPassed": 5,
     "visualStatesTotal": 5,
     "nextRepairPriority": [
-      "build an API fixture responsibility graph for TransactionTable rows instead of retaining approximate records",
-      "compile Element UI table/card/progress primitives from source ownership evidence",
-      "remove remaining fallback CSS when a source-owned primitive mapper is available",
-      "retain Login, Permission, navigation, runtime, network, and stability gates unchanged"
+      "reduce canvas stability scan cost without weakening settled-frame detection",
+      "generalize API transport-prefix inference beyond the reviewed /dev-api fixture",
+      "add reviewed GitHub-corner and settings-affordance ownership only if full-page Dashboard fidelity becomes a target"
     ]
   },
-  "algorithmPhase": "static-data-echarts-option-and-source-layout-consumer",
+  "algorithmPhase": "api-fixture-element-ui-primitive-and-canvas-stability-consumer",
   "structureGraph": {
-    "templateNodes": 1185,
-    "elementUiPrimitives": 225,
+    "templateNodes": 1481,
+    "elementUiPrimitives": 334,
     "responsiveGridNodes": 12,
-    "selectedOwnerNodes": 166,
-    "selectedOwnerPrimitives": 47,
-    "embeddedSvgAssets": 17,
+    "selectedOwnerNodes": 171,
+    "selectedOwnerPrimitives": 50,
+    "embeddedSvgAssets": 23,
     "compiledStyleSheets": 74,
     "failedStyleSheets": 4,
-    "primitiveDomNodes": 60,
-    "primitiveStyleRules": 7,
+    "primitiveDomNodes": 86,
+    "primitiveStyleRules": 11,
     "primitiveInteractionBindings": 7,
     "staticDataBindings": 19,
-    "dataCardinalities": 47
+    "dataCardinalities": 54
   },
   "echartsOptionSlices": {
     "components": 7,
     "slices": 7,
     "seriesResolved": 26
+  },
+  "apiFixtureGraph": {
+    "matchedFixtures": 1,
+    "materializedBindings": 1,
+    "renderedFields": 3,
+    "sourceEndpoint": "/vue-element-admin/transaction/list",
+    "transportPath": "/dev-api/vue-element-admin/transaction/list",
+    "materializedRows": 8
+  },
+  "canvasStability": {
+    "enabled": true,
+    "probe": "32x32 downsampled canvas hash",
+    "settledFrameRequirement": 2,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 79248
   }
 }
