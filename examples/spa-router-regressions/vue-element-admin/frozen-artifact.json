@@ -34,10 +34,10 @@
     "generated-target-auto/generation.metrics.json": "cf611315c754c6687e236be3f2dd45615adcbb529a9b2a388ff01c762bbedecc",
     "generated-target-auto/experiment.metrics.json": "7b2acb361f50b8aa84b439d5d8f6c27dc04ae79f1a741352dd5e5f8a78cbb934",
     "visual-target.plan.json": "2f42330bcfc0245dcfc89a0a68369e8ae38c1f2390022554b9784b71e299f3e4",
-    "reference-generated-semantic.auto-v1.config.json": "336a2fb97c30478d961b6ecc9d1ce002294ceeab8563aa0c5e4abea673f37004",
+    "reference-generated-semantic.auto-v1.config.json": "c4ec612e37aa161be35f1dc4e91a2288ad7cfb93a4be1c9591bee900e67d7fe5",
     "generated-target-auto-v1/public/app.js": "1b87cb2f64f9115295a617e188b037f806909fd063133a816a7d89f01d1a9f20",
     "generated-target-auto-v1/public/styles.css": "fc7d73e0b8fdc6efdc2d3dd2eedff9a487037ae029afa05e1e104310bdbd2683",
-    "generated-target-auto-v1/experiment.metrics.json": "2c9fa22d7f52baf130cd72d0dcedb7d708bd2addb6aa88b6c3f609aaa707ae31",
+    "generated-target-auto-v1/experiment.metrics.json": "12fa02010201428884e2618503ccadb320badbaa4695aa9a8f16b14177119c7a",
     "generated-target-auto-v1/semantic-navigation-reviewed-state-reuse-final.results.json": "ebbd1ea7618e83e292b1f9a668b439b4f87d6534219eb42212f2a56b869d80c8",
     "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-final.results.json": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
     "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-coalesced.results.json": "655ed35962bac812542c2df53bc5d3c0cf3feb7c9abc0c3d2458f1fd97092ec4",
@@ -47,6 +47,11 @@
     "generated-target-auto-v1/semantic-gold-parallel-viewports-run-1.results.json": "f8cd24911fe0e013d6b479968fb7ee365500e8169cdcd6c44fc5375d5a787bbe",
     "generated-target-auto-v1/semantic-gold-parallel-viewports-run-2.results.json": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
     "generated-target-auto-v1/semantic-gold-parallel-viewports-run-3.results.json": "29977871bbbd5e982c1ef29da4a9591ad459b3be03cdf5258999dd1791f33e37",
-    "generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json": "d203378e99ff19633f2df83f9e7e83ba9e1a8924c6a4036e7d1f480532fbe708"
+    "generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json": "d203378e99ff19633f2df83f9e7e83ba9e1a8924c6a4036e7d1f480532fbe708",
+    "generated-target-auto-v1/semantic-gold-setup-reuse-run-1.results.json": "7bf1645af89c79d8c8fc8871cc4ff825252062e079193e796e7d4eb830c0978d",
+    "generated-target-auto-v1/semantic-gold-setup-reuse-run-2.results.json": "d5ac6062fc1cb11cb66db4f7bde65481f8375a2b9469e9dfad4a41a94bc96e26",
+    "generated-target-auto-v1/semantic-gold-setup-reuse-run-3.results.json": "c25077ce6f6f4d7328116a21603f6e8a9bfcfc3a6a606d1e99c90296ee193091",
+    "generated-target-auto-v1/semantic-gold-setup-reuse-final.results.json": "d5ac6062fc1cb11cb66db4f7bde65481f8375a2b9469e9dfad4a41a94bc96e26",
+    "generated-target-auto-v1/semantic-gold-setup-reuse-summary.json": "1563084b58de28de4b0e4a4fc4ef0efff8d94f095fdbb1ec463202be76618c6a"
   }
 }

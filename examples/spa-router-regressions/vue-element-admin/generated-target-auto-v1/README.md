@@ -34,3 +34,12 @@ The reviewed `authenticated-dashboard-default` visual equivalence class reuses t
 Canvas telemetry now reports pixel-scan time, candidate samples, cache hits, signature changes, coalesced invalidation batches, post-anchor skips, and reviewed state reuse. API fixtures use reviewed `transport-suffix` matching; the planner records `/dev-api`, `/prod-api`, and `/stage-api` from the imported request client plus concrete `.env` assignments instead of depending on one handwritten transport path.
 
 Evidence: `semantic-navigation-reviewed-state-reuse-final.results.json`, `semantic-gold-reviewed-state-reuse-final.results.json`, `semantic-gold-reviewed-state-reuse-summary.json`, and `semantic-gold-parallel-viewports-summary.json`.
+
+
+### Auditable animation completion and reviewed setup reuse
+
+The visual runner now recognizes ZRender canvases through `data-zr-dom-id` and attributes them to ECharts only when an `_echarts_instance_` host is present. A completion signal is emitted only for a specific Canvas version after its draw invalidations drain through the existing quiet window; the global DOM/layout/network checks and settled-frame requirement remain unchanged. The three formal setup-reuse runs observed `57..62` ECharts completion signals and zero standalone ZRender signals.
+
+Authenticated scenarios explicitly declare the reviewed setup class `authenticated-admin`, a three-step login checkpoint, and resume route `/#/dashboard`. One full login is still executed per reference/generated target. Later scenarios restore the captured cookies/local storage into a **new isolated BrowserContext**, skip only the reviewed three-step prefix, and execute their remaining route contract normally. No Page, BrowserContext, DOM, network activity, or runtime object is shared.
+
+A controlled three-run A/B comparison on July 27, 2026 retained all unchanged Gold+ gates in both variants. Setup reuse skipped `24` contract steps and `54` visual steps, reducing median total runtime from `51.63 s` to `49.02 s` (`5.06%`), contract time from `24.96 s` to `23.04 s` (`7.69%`), and visual-matrix time from `25.91 s` to `25.06 s` (`3.27%`). Evidence: `semantic-gold-setup-reuse-final.results.json`, the three `semantic-gold-setup-reuse-run-*.results.json` files, and `semantic-gold-setup-reuse-summary.json`.

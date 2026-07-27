@@ -7,8 +7,8 @@
   "modelCalls": 0,
   "artifactManualEdits": 0,
   "artifactManualEditedLines": 0,
-  "algorithmRepairIterations": 14,
-  "qualityRuns": 22,
+  "algorithmRepairIterations": 16,
+  "qualityRuns": 30,
   "plan": {
     "boundaries": 4,
     "owners": 20,
@@ -281,12 +281,12 @@
     "visualStatesPassed": 5,
     "visualStatesTotal": 5,
     "nextRepairPriority": [
-      "detect auditable ECharts/zrender animation completion to reduce aggregate adaptive work without changing final pixels",
-      "profile contract-phase login repetition and consider reviewed authenticated-session setup reuse",
-      "extend transport-prefix evidence to dev-server proxy rewrite and runtime-selected environment rules"
+      "extend transport-prefix evidence to dev-server proxy rewrite and runtime-selected environment rules",
+      "profile why authenticated dashboard boot still dominates setup-owner cost",
+      "consider role-scoped setup artifact persistence only when frozen source and fixture hashes match"
     ]
   },
-  "algorithmPhase": "canvas-cache-reviewed-state-reuse-parallel-isolated-viewports-and-transport-prefix",
+  "algorithmPhase": "canvas-animation-certificates-reviewed-authenticated-setup-reuse",
   "structureGraph": {
     "templateNodes": 1481,
     "elementUiPrimitives": 334,
@@ -354,6 +354,44 @@
     "totalRuntimeReductionPercent": 38.88,
     "visualMatrixReductionPercent": 51.21,
     "overSerialReuseTotalReductionPercent": 21.75,
+    "qualityThresholdsChanged": false
+  },
+  "animationCompletion": {
+    "enabled": true,
+    "frameworkEvidence": [
+      "canvas[data-zr-dom-id]",
+      "ancestor[_echarts_instance_]"
+    ],
+    "signal": "version-specific frame-drain certificate after canvas quiet window",
+    "settledFrameRequirementChanged": false,
+    "qualityThresholdsChanged": false,
+    "realRunEchartsCompletionSignalsRange": [
+      57,
+      62
+    ],
+    "realRunZrenderCompletionSignals": 0
+  },
+  "reviewedSetupReuse": {
+    "enabled": true,
+    "stateKey": "authenticated-admin",
+    "checkpointStepCount": 3,
+    "resumePath": "/#/dashboard",
+    "freshBrowserContextPerScenario": true,
+    "sharedPageOrContext": false,
+    "contractSetupStateReusedRuns": 8,
+    "contractStepsSkipped": 24,
+    "visualSetupStateReusedRuns": 18,
+    "visualStepsSkipped": 54,
+    "controlledRunsPerVariant": 3,
+    "controlMedianTotalMs": 51634.31,
+    "reuseMedianTotalMs": 49019.409,
+    "totalReductionPercent": 5.06,
+    "controlMedianContractMs": 24956.811,
+    "reuseMedianContractMs": 23038.502,
+    "contractReductionPercent": 7.69,
+    "controlMedianVisualMatrixMs": 25912.386,
+    "reuseMedianVisualMatrixMs": 25064.221,
+    "visualMatrixReductionPercent": 3.27,
     "qualityThresholdsChanged": false
   }
 }

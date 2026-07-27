@@ -53,6 +53,18 @@ export interface SpaRouterCanvasStabilityTelemetry {
   canvasSignatureChanges: number;
   /** Coalesced 2D/WebGL drawing batches that invalidated a canvas between samples. */
   canvasInvalidations: number;
+  /** Reviewed ZRender canvas targets discovered in the capture scope. */
+  animationTargetSamples: number;
+  /** ZRender targets with a completed frame-drain certificate at capture time. */
+  animationCompletedSamples: number;
+  /** Samples that still observed at least one active ZRender target. */
+  animationPendingSamples: number;
+  /** Version-specific completion transitions observed by the runner. */
+  animationCompletionSignals: number;
+  /** Completion signals attributable to an ECharts host (`_echarts_instance_`). */
+  echartsCompletionSignals: number;
+  /** Completion signals attributable to standalone ZRender canvases. */
+  zrenderCompletionSignals: number;
 }
 
 export type SpaRouterRoleValue = string | { default?: string; reference?: string; generated?: string };
@@ -85,6 +97,15 @@ export interface SpaRouterVisualStyleTarget {
   selector: SpaRouterRoleSelector;
 }
 
+export interface SpaRouterReviewedSetupState {
+  /** Reviewed setup equivalence class, for example an authenticated admin session. */
+  stateKey: string;
+  /** Number of leading scenario steps that construct the reusable state. */
+  checkpointStepCount: number;
+  /** Route loaded in a fresh isolated BrowserContext after restoring storage state. */
+  resumePath: SpaRouterRoleValue;
+}
+
 export interface SpaRouterScenarioVisualState {
   /** Reviewed viewport ids for this route state. Omit to execute on every configured viewport. */
   viewports?: string[];
@@ -106,6 +127,8 @@ export interface SpaRouterScenario {
   entryPath: string;
   steps: SpaRouterStep[];
   assertions: SpaRouterAssertion;
+  /** Explicit, reviewed permission to reuse a storage-state checkpoint in a fresh BrowserContext. */
+  setupState?: SpaRouterReviewedSetupState;
   visual?: SpaRouterScenarioVisualState;
 }
 
@@ -171,6 +194,11 @@ export interface SpaRouterScenarioResult {
   requiredNetworkFailures: string[];
   nonBlockingNetworkFailures: string[];
   assertionFailures: string[];
+  durationMs: number;
+  setupStateKey?: string;
+  setupStateReused?: boolean;
+  setupStepsSkipped?: number;
+  setupCheckpointPublished?: boolean;
 }
 
 export interface SpaRouterTargetReport {
@@ -182,6 +210,9 @@ export interface SpaRouterTargetReport {
   unmockedApiRequests: number;
   requiredNetworkFailures: number;
   nonBlockingNetworkFailures: number;
+  setupStateReusedRuns: number;
+  setupStepsSkipped: number;
+  setupCheckpointsPublished: number;
   results: SpaRouterScenarioResult[];
 }
 
@@ -245,6 +276,10 @@ export interface SpaRouterVisualViewportResult extends QualityViewport {
   visualStateReused: boolean;
   referenceVisualStateReuseKey: string | null;
   generatedVisualStateReuseKey: string | null;
+  referenceSetupStateReused: boolean;
+  generatedSetupStateReused: boolean;
+  referenceSetupStepsSkipped: number;
+  generatedSetupStepsSkipped: number;
   canvas: SpaRouterCanvasStabilityTelemetry;
   requestClassifications: SpaRouterRequestClassificationCounts;
   durationMs: number;
@@ -287,6 +322,8 @@ export interface SpaRouterVisualMatrixReport {
   postAnchorWaitMs: number;
   postAnchorSkippedRuns: number;
   visualStateReusedRuns: number;
+  setupStateReusedTargetRuns: number;
+  setupStepsSkipped: number;
   canvas: SpaRouterCanvasStabilityTelemetry;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
@@ -312,6 +349,10 @@ export interface SpaRouterExecutionTelemetry {
   visualPostAnchorWaitMs: number;
   visualPostAnchorSkippedRuns: number;
   visualStateReusedRuns: number;
+  contractSetupStateReusedRuns: number;
+  contractSetupStepsSkipped: number;
+  visualSetupStateReusedRuns: number;
+  visualSetupStepsSkipped: number;
   visualCanvas: SpaRouterCanvasStabilityTelemetry;
   visualRequestClassifications: SpaRouterRequestClassificationCounts;
   contractConcurrency: number;
@@ -391,9 +432,18 @@ interface SpaRouterScenarioExecution {
   visual?: SpaRouterVisualCapture;
   visualStateReused?: boolean;
 }
+type SpaRouterStorageState = Awaited<ReturnType<BrowserContext["storageState"]>>;
+interface CachedSpaSetupState {
+  storageState: SpaRouterStorageState;
+  checkpointRoute: string;
+  reusable: boolean;
+}
+type SpaSetupStateCache = Map<string, Promise<CachedSpaSetupState>>;
+
 interface SpaRouterTargetEvaluation {
   report: SpaRouterTargetReport;
   executions: Map<string, SpaRouterScenarioExecution>;
+  setupStateCache: SpaSetupStateCache;
 }
 
 const REQUEST_CLASSIFICATIONS: SpaRouterRequestClassification[] = [
@@ -421,7 +471,11 @@ function addRequestClassificationCounts(...entries: SpaRouterRequestClassificati
 }
 
 function emptyCanvasStabilityTelemetry(): SpaRouterCanvasStabilityTelemetry {
-  return { canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0, canvasInvalidations: 0 };
+  return {
+    canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0, canvasInvalidations: 0,
+    animationTargetSamples: 0, animationCompletedSamples: 0, animationPendingSamples: 0,
+    animationCompletionSignals: 0, echartsCompletionSignals: 0, zrenderCompletionSignals: 0,
+  };
 }
 
 function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemetry[]): SpaRouterCanvasStabilityTelemetry {
@@ -432,6 +486,12 @@ function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemet
     total.canvasCacheHits += entry.canvasCacheHits;
     total.canvasSignatureChanges += entry.canvasSignatureChanges;
     total.canvasInvalidations += entry.canvasInvalidations;
+    total.animationTargetSamples += entry.animationTargetSamples;
+    total.animationCompletedSamples += entry.animationCompletedSamples;
+    total.animationPendingSamples += entry.animationPendingSamples;
+    total.animationCompletionSignals += entry.animationCompletionSignals;
+    total.echartsCompletionSignals += entry.echartsCompletionSignals;
+    total.zrenderCompletionSignals += entry.zrenderCompletionSignals;
   }
   return total;
 }
@@ -602,6 +662,11 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
     if (scopedViewports.some((id) => !id || (configuredViewportIds.size > 0 && !configuredViewportIds.has(id)))) throw new TypeError(`scenario ${scenario.id} visual.viewports 必须引用 visualMatrix 中已配置的 viewport id`);
     if (new Set(scopedViewports).size !== scopedViewports.length) throw new TypeError(`scenario ${scenario.id} visual.viewports 不能包含重复 id`);
     if (scenario.visual?.reuseStateKey !== undefined && !scenario.visual.reuseStateKey.trim()) throw new TypeError(`scenario ${scenario.id} visual.reuseStateKey 不能为空`);
+    if (scenario.setupState) {
+      if (!scenario.setupState.stateKey.trim()) throw new TypeError(`scenario ${scenario.id} setupState.stateKey 不能为空`);
+      if (!Number.isInteger(scenario.setupState.checkpointStepCount) || scenario.setupState.checkpointStepCount < 1 || scenario.setupState.checkpointStepCount > scenario.steps.length) throw new TypeError(`scenario ${scenario.id} setupState.checkpointStepCount 必须落在 1..steps.length`);
+      if (!valueForRole(scenario.setupState.resumePath, mode.mode === "single" ? "single" : "reference") || (mode.mode === "reference-generated" && !valueForRole(scenario.setupState.resumePath, "generated"))) throw new TypeError(`scenario ${scenario.id} setupState.resumePath 必须为双端提供可解析路由`);
+    }
   }
   for (const fixture of config.fixtures ?? []) {
     if (!fixture.path && !fixture.hostname) throw new TypeError("SPA Router fixture 必须至少声明 path 或 hostname");
@@ -721,13 +786,15 @@ async function initializeVisualStabilityTracking(context: BrowserContext): Promi
       dirty: WeakSet<HTMLCanvasElement>;
       observedVersions: WeakMap<HTMLCanvasElement, number>;
       cache: WeakMap<HTMLCanvasElement, CanvasCacheEntry>;
+      lastInvalidatedAt: WeakMap<HTMLCanvasElement, number>;
+      completedVersions: WeakMap<HTMLCanvasElement, number>;
       invalidations: number;
       lastInvalidationAt: number;
     };
     const host = globalThis as typeof globalThis & { __uiDismantlerSpaStability?: StabilityState; __uiDismantlerSpaCanvas?: CanvasState };
     const state: StabilityState = { lastMutationAt: performance.now(), lastResizeAt: performance.now(), mutationCount: 0, resizeCount: 0 };
     const canvasState: CanvasState = {
-      versions: new WeakMap(), dirty: new WeakSet(), observedVersions: new WeakMap(), cache: new WeakMap(), invalidations: 0, lastInvalidationAt: performance.now(),
+      versions: new WeakMap(), dirty: new WeakSet(), observedVersions: new WeakMap(), cache: new WeakMap(), lastInvalidatedAt: new WeakMap(), completedVersions: new WeakMap(), invalidations: 0, lastInvalidationAt: performance.now(),
     };
     host.__uiDismantlerSpaStability = state;
     host.__uiDismantlerSpaCanvas = canvasState;
@@ -742,6 +809,7 @@ async function initializeVisualStabilityTracking(context: BrowserContext): Promi
       canvasState.versions.set(canvas, (canvasState.versions.get(canvas) ?? 0) + 1);
       canvasState.invalidations += 1;
       canvasState.lastInvalidationAt = performance.now();
+      canvasState.lastInvalidatedAt.set(canvas, canvasState.lastInvalidationAt);
     };
     const patchDrawingMethods = (prototype: object | undefined, methods: string[]): void => {
       if (!prototype) return;
@@ -876,6 +944,8 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
           dirty: WeakSet<HTMLCanvasElement>;
           observedVersions: WeakMap<HTMLCanvasElement, number>;
           cache: WeakMap<HTMLCanvasElement, CanvasCacheEntry>;
+          lastInvalidatedAt: WeakMap<HTMLCanvasElement, number>;
+          completedVersions: WeakMap<HTMLCanvasElement, number>;
           lastInvalidationAt: number;
         };
       };
@@ -888,14 +958,37 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
         return [element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length];
       });
       const canvasState = host.__uiDismantlerSpaCanvas;
-      const canvasMetrics = { canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0 };
+      const canvasMetrics = {
+        canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0,
+        animationTargetSamples: 0, animationCompletedSamples: 0, animationPendingSamples: 0,
+        animationCompletionSignals: 0, echartsCompletionSignals: 0, zrenderCompletionSignals: 0,
+      };
+      let animationTargetsPending = 0;
       const canvasSignature = [...scope.querySelectorAll("canvas")].slice(0, 16).map((canvas) => {
         canvasMetrics.canvasSamples += 1;
         const version = canvasState?.versions.get(canvas) ?? 0;
         const priorObservedVersion = canvasState?.observedVersions.get(canvas);
+        const isZrender = canvas.hasAttribute("data-zr-dom-id");
+        const isEcharts = isZrender && Boolean(canvas.closest("[_echarts_instance_]"));
+        const lastInvalidatedAt = canvasState?.lastInvalidatedAt.get(canvas) ?? canvasState?.lastInvalidationAt ?? now;
+        const animationCompleted = isZrender && version > 0 && now - lastInvalidatedAt >= quietMs;
+        if (isZrender) {
+          canvasMetrics.animationTargetSamples += 1;
+          if (animationCompleted) {
+            canvasMetrics.animationCompletedSamples += 1;
+            if (canvasState?.completedVersions.get(canvas) !== version) {
+              canvasState?.completedVersions.set(canvas, version);
+              canvasMetrics.animationCompletionSignals += 1;
+              if (isEcharts) canvasMetrics.echartsCompletionSignals += 1; else canvasMetrics.zrenderCompletionSignals += 1;
+            }
+          } else animationTargetsPending += 1;
+        }
         canvasState?.observedVersions.set(canvas, version);
         canvasState?.dirty.delete(canvas);
-        if (priorObservedVersion !== undefined && priorObservedVersion !== version) return [canvas.width, canvas.height, "dirty", version];
+        // A reviewed ZRender frame-drain certificate proves that the changed
+        // version is no longer being animated, so it is safe to hash now. A
+        // generic Canvas still keeps the conservative one-sample dirty marker.
+        if (priorObservedVersion !== undefined && priorObservedVersion !== version && !animationCompleted) return [canvas.width, canvas.height, "dirty", version];
         const cached = canvasState?.cache.get(canvas);
         if (cached && cached.version === version && cached.width === canvas.width && cached.height === canvas.height) {
           canvasMetrics.canvasCacheHits += 1;
@@ -923,6 +1016,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
           return [canvas.width, canvas.height, hash];
         } finally { canvasMetrics.canvasScanMs += performance.now() - scanStartedAt; }
       });
+      if (animationTargetsPending > 0) canvasMetrics.animationPendingSamples += 1;
       const signature = JSON.stringify({ elements: elementSignature, canvases: canvasSignature });
       return {
         signature,
@@ -1154,10 +1248,28 @@ function isNonBlockingNetworkRequest(request: Request, config: SpaRouterContract
   return classification === "non-blocking-telemetry" || classification === "non-blocking-configured-host";
 }
 
-async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: { viewport?: QualityViewport; role?: SpaRouterTargetRole; captureVisual?: boolean } = {}): Promise<SpaRouterScenarioExecution> {
+interface ExecuteScenarioOptions {
+  viewport?: QualityViewport;
+  role?: SpaRouterTargetRole;
+  captureVisual?: boolean;
+  storageState?: SpaRouterStorageState;
+  entryPathOverride?: string;
+  skipStepCount?: number;
+  setupStateKey?: string;
+  setupStateReused?: boolean;
+  setupCheckpointStepCount?: number;
+  onSetupCheckpoint?: (artifact: Omit<CachedSpaSetupState, "reusable">) => Promise<void> | void;
+}
+
+async function executeScenario(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, scenario: SpaRouterScenario, options: ExecuteScenarioOptions = {}): Promise<SpaRouterScenarioExecution> {
+  const startedAt = performance.now();
   const viewport = options.viewport ?? { id: "contract", label: "Contract", width: 1024, height: 768 };
-  const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, reducedMotion: "reduce" });
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height }, reducedMotion: "reduce",
+    ...(options.storageState ? { storageState: options.storageState } : {}),
+  });
   const runtimeErrors: string[] = [], unmockedApiRequests: string[] = [];
+  let setupCheckpointPublished = false;
   try {
     await initializeRouterTracking(context, config.ignoredStateKeys ?? []);
     if (options.captureVisual) await initializeVisualStabilityTracking(context);
@@ -1203,17 +1315,22 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     page.on("requestfailed", (request) => { requestActivity.active.delete(request); requestActivity.lastActivityAt = Date.now(); recordNetworkFailure(request, `FAILED ${request.failure()?.errorText ?? "unknown"}`); });
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
     page.on("console", (message) => { if (message.type() === "error" && !/^Failed to load resource:/i.test(message.text())) runtimeErrors.push(message.text()); });
-    const entryUrl = targetUrl(baseUrl, scenario.entryPath);
+    const entryUrl = targetUrl(baseUrl, options.entryPathOverride ?? scenario.entryPath);
     await page.goto(entryUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await settle(page, 500);
     const role = options.role ?? "single";
     const stepRoutes: SpaRouterStepRoute[] = [];
     const assertionFailures: string[] = [];
-    for (let stepIndex = 0; stepIndex < scenario.steps.length; stepIndex += 1) {
+    const firstStep = Math.max(0, options.skipStepCount ?? 0);
+    for (let stepIndex = firstStep; stepIndex < scenario.steps.length; stepIndex += 1) {
       const step = scenario.steps[stepIndex];
       try {
         await executeStep(page, step, role);
         stepRoutes.push({ stepIndex, action: step.action, route: routeOf(page.url()) });
+        if (!setupCheckpointPublished && options.onSetupCheckpoint && stepIndex + 1 === options.setupCheckpointStepCount) {
+          await options.onSetupCheckpoint({ storageState: await context.storageState(), checkpointRoute: routeOf(page.url()) });
+          setupCheckpointPublished = true;
+        }
       } catch (error) {
         const detail = error instanceof Error ? error.message.split("\n")[0] : String(error);
         assertionFailures.push(`step[${stepIndex}] action=${step.action} failed: ${detail}`);
@@ -1224,8 +1341,18 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     const transitions = await page.evaluate(() => ([...((globalThis as typeof globalThis & { __uiDismantlerSpaTransitions?: SpaRouterTransition[] }).__uiDismantlerSpaTransitions ?? [])]));
     const uniqueRuntimeErrors = [...new Set(runtimeErrors)], uniqueUnmocked = [...new Set(unmockedApiRequests)];
     const uniqueRequiredNetworkFailures = [...new Set(requiredNetworkFailures)], uniqueNonBlockingNetworkFailures = [...new Set(nonBlockingNetworkFailures)];
-    const result: SpaRouterScenarioResult = { id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0 && uniqueRequiredNetworkFailures.length === 0, entryUrl, finalUrl: page.url(), transitions, stepRoutes, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked, requiredNetworkFailures: uniqueRequiredNetworkFailures, nonBlockingNetworkFailures: uniqueNonBlockingNetworkFailures, assertionFailures };
+    const result: SpaRouterScenarioResult = {
+      id: scenario.id, passed: assertionFailures.length === 0 && uniqueRuntimeErrors.length === 0 && uniqueUnmocked.length === 0 && uniqueRequiredNetworkFailures.length === 0,
+      entryUrl, finalUrl: page.url(), transitions, stepRoutes, runtimeErrors: uniqueRuntimeErrors, unmockedApiRequests: uniqueUnmocked,
+      requiredNetworkFailures: uniqueRequiredNetworkFailures, nonBlockingNetworkFailures: uniqueNonBlockingNetworkFailures, assertionFailures,
+      durationMs: Number((performance.now() - startedAt).toFixed(3)),
+      ...(options.setupStateKey ? {
+        setupStateKey: options.setupStateKey, setupStateReused: options.setupStateReused ?? false,
+        setupStepsSkipped: firstStep, setupCheckpointPublished,
+      } : {}),
+    };
     const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config, config.visualMatrix?.stabilityTimeoutMs) : undefined;
+    result.durationMs = Number((performance.now() - startedAt).toFixed(3));
     return { result, visual };
   } finally { await context.close(); }
 }
@@ -1242,6 +1369,59 @@ async function mapWithConcurrency<T, R>(items: T[], concurrency: number, worker:
   });
   await Promise.all(runners);
   return results;
+}
+
+function reviewedSetupStateCacheKey(scenario: SpaRouterScenario, baseUrl: string, role: SpaRouterTargetRole): string | undefined {
+  const setup = scenario.setupState;
+  if (!setup) return undefined;
+  const checkpointStepCount = Math.max(0, Math.min(setup.checkpointStepCount, scenario.steps.length));
+  const resumePath = valueForRole(setup.resumePath, role);
+  if (!resumePath || checkpointStepCount === 0) return undefined;
+  const prefix = scenario.steps.slice(0, checkpointStepCount).map((step) => ({
+    action: step.action, target: valueForRole(step.target, role) ?? null, value: step.value ?? null, key: step.key ?? null, ms: step.ms ?? null,
+  }));
+  return JSON.stringify({ state: setup.stateKey, baseUrl, role, checkpointStepCount, resumePath, prefix });
+}
+
+async function executeScenarioWithSetupStateReuse(
+  browser: Browser,
+  baseUrl: string,
+  config: SpaRouterContractConfig,
+  scenario: SpaRouterScenario,
+  options: ExecuteScenarioOptions,
+  cache: SpaSetupStateCache,
+): Promise<SpaRouterScenarioExecution> {
+  const role = options.role ?? "single";
+  const setup = scenario.setupState;
+  const cacheKey = reviewedSetupStateCacheKey(scenario, baseUrl, role);
+  if (!setup || !cacheKey) return executeScenario(browser, baseUrl, config, scenario, options);
+  const checkpointStepCount = Math.max(0, Math.min(setup.checkpointStepCount, scenario.steps.length));
+  const resumePath = valueForRole(setup.resumePath, role);
+  if (!resumePath) return executeScenario(browser, baseUrl, config, scenario, options);
+  const existing = cache.get(cacheKey);
+  if (existing) {
+    const artifact = await existing.catch(() => undefined);
+    if (artifact?.reusable) {
+      return executeScenario(browser, baseUrl, config, scenario, {
+        ...options, storageState: artifact.storageState, entryPathOverride: resumePath, skipStepCount: checkpointStepCount,
+        setupStateKey: setup.stateKey, setupStateReused: true,
+      });
+    }
+    cache.delete(cacheKey);
+  }
+  let checkpoint: Omit<CachedSpaSetupState, "reusable"> | undefined;
+  const ownerPromise = executeScenario(browser, baseUrl, config, scenario, {
+    ...options, setupStateKey: setup.stateKey, setupStateReused: false,
+    setupCheckpointStepCount: checkpointStepCount,
+    onSetupCheckpoint: (artifact) => { checkpoint = artifact; },
+  });
+  const artifactPromise = ownerPromise.then((execution) => {
+    if (!checkpoint) throw new Error(`reviewed setup state ${setup.stateKey} did not reach checkpoint step ${checkpointStepCount}`);
+    return { ...checkpoint, reusable: execution.result.passed };
+  });
+  cache.set(cacheKey, artifactPromise);
+  try { return await ownerPromise; }
+  catch (error) { cache.delete(cacheKey); throw error; }
 }
 
 interface CachedSpaVisualState {
@@ -1273,12 +1453,13 @@ async function executeScenarioWithVisualStateReuse(
   scenario: SpaRouterScenario,
   options: { viewport: QualityViewport; role: SpaRouterTargetRole; captureVisual: boolean },
   cache: SpaVisualStateCache,
+  setupCache: SpaSetupStateCache,
 ): Promise<SpaRouterScenarioExecution> {
   const cacheKey = options.captureVisual ? reviewedVisualStateCacheKey(scenario, options.viewport, options.role) : undefined;
-  if (!cacheKey) return executeScenario(browser, baseUrl, config, scenario, options);
+  if (!cacheKey) return executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, options, setupCache);
   const cachedPromise = cache.get(cacheKey);
   if (!cachedPromise) {
-    const ownerPromise = executeScenario(browser, baseUrl, config, scenario, options);
+    const ownerPromise = executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, options, setupCache);
     cache.set(cacheKey, ownerPromise.then((execution) => {
       if (!execution.visual) throw new Error(`reviewed visual state ${scenario.visual?.reuseStateKey} did not produce a capture`);
       return {
@@ -1290,10 +1471,10 @@ async function executeScenarioWithVisualStateReuse(
     try { return await ownerPromise; }
     catch (error) { cache.delete(cacheKey); throw error; }
   }
-  const execution = await executeScenario(browser, baseUrl, config, scenario, { ...options, captureVisual: false });
+  const execution = await executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, { ...options, captureVisual: false }, setupCache);
   const cached = await cachedPromise.catch(() => undefined);
   if (!cached?.reusable || !execution.result.passed || cached.finalRoute !== routeOf(execution.result.finalUrl)) {
-    return executeScenario(browser, baseUrl, config, scenario, options);
+    return executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, options, setupCache);
   }
   return {
     ...execution,
@@ -1314,10 +1495,11 @@ async function executeScenarioWithVisualStateReuse(
 async function evaluateTarget(browser: Browser, baseUrl: string, config: SpaRouterContractConfig, options: { role?: SpaRouterTargetRole; visualViewport?: QualityViewport } = {}): Promise<SpaRouterTargetEvaluation> {
   const concurrency = config.execution?.contractConcurrency ?? 1;
   const visualStateCache: SpaVisualStateCache = new Map();
+  const setupStateCache: SpaSetupStateCache = new Map();
   const orderedExecutions = await mapWithConcurrency(config.scenarios, concurrency, async (scenario) => {
     const captureVisual = Boolean(options.visualViewport && scenario.visual);
-    if (!options.visualViewport) return executeScenario(browser, baseUrl, config, scenario, { role: options.role, captureVisual });
-    return executeScenarioWithVisualStateReuse(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role ?? "single", captureVisual }, visualStateCache);
+    if (!options.visualViewport) return executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, { role: options.role, captureVisual }, setupStateCache);
+    return executeScenarioWithVisualStateReuse(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role ?? "single", captureVisual }, visualStateCache, setupStateCache);
   });
   const executions = new Map(config.scenarios.map((scenario, index) => [scenario.id, orderedExecutions[index]]));
   const results = [...executions.values()].map((execution) => execution.result);
@@ -1328,9 +1510,13 @@ async function evaluateTarget(browser: Browser, baseUrl: string, config: SpaRout
       runtimeErrors: results.reduce((sum, result) => sum + result.runtimeErrors.length, 0),
       unmockedApiRequests: results.reduce((sum, result) => sum + result.unmockedApiRequests.length, 0),
       requiredNetworkFailures: results.reduce((sum, result) => sum + result.requiredNetworkFailures.length, 0),
-      nonBlockingNetworkFailures: results.reduce((sum, result) => sum + result.nonBlockingNetworkFailures.length, 0), results,
+      nonBlockingNetworkFailures: results.reduce((sum, result) => sum + result.nonBlockingNetworkFailures.length, 0),
+      setupStateReusedRuns: results.filter((result) => result.setupStateReused).length,
+      setupStepsSkipped: results.reduce((sum, result) => sum + (result.setupStepsSkipped ?? 0), 0),
+      setupCheckpointsPublished: results.filter((result) => result.setupCheckpointPublished).length,
+      results,
     },
-    executions,
+    executions, setupStateCache,
   };
 }
 
@@ -1391,6 +1577,9 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
   let reusedTargetRuns = 0, freshTargetRuns = 0;
   const matrices: SpaRouterScenarioVisualMatrix[] = [];
   const visualStateCache: SpaVisualStateCache = new Map();
+  const setupStateCache: SpaSetupStateCache = new Map([
+    ...referenceEvaluation.setupStateCache.entries(), ...generatedEvaluation.setupStateCache.entries(),
+  ]);
   for (const scenario of config.scenarios.filter((item) => item.visual)) {
     const scenarioStartedAt = performance.now();
     const viewports = scenario.visual?.viewports?.length ? configuredViewports.filter((viewport) => scenario.visual?.viewports?.includes(viewport.id)) : configuredViewports;
@@ -1401,8 +1590,8 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
       const referenceReuse = canReuse ? referenceEvaluation.executions.get(scenario.id) : undefined;
       const generatedReuse = canReuse ? generatedEvaluation.executions.get(scenario.id) : undefined;
       const [reference, generated] = await Promise.all([
-        referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenarioWithVisualStateReuse(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true }, visualStateCache),
-        generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenarioWithVisualStateReuse(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true }, visualStateCache),
+        referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenarioWithVisualStateReuse(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true }, visualStateCache, setupStateCache),
+        generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenarioWithVisualStateReuse(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true }, visualStateCache, setupStateCache),
       ]);
       reusedTargetRuns += Number(Boolean(referenceReuse?.visual)) + Number(Boolean(generatedReuse?.visual));
       freshTargetRuns += Number(!referenceReuse?.visual) + Number(!generatedReuse?.visual);
@@ -1442,6 +1631,10 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
         visualStateReused: Boolean(reference.visualStateReused && generated.visualStateReused),
         referenceVisualStateReuseKey: reference.visual.reusedStateKey ?? null,
         generatedVisualStateReuseKey: generated.visual.reusedStateKey ?? null,
+        referenceSetupStateReused: reference.result.setupStateReused ?? false,
+        generatedSetupStateReused: generated.result.setupStateReused ?? false,
+        referenceSetupStepsSkipped: reference.result.setupStepsSkipped ?? 0,
+        generatedSetupStepsSkipped: generated.result.setupStepsSkipped ?? 0,
         canvas: addCanvasStabilityTelemetry(reference.visual.canvas, generated.visual.canvas),
         requestClassifications: addRequestClassificationCounts(reference.visual.requestClassifications, generated.visual.requestClassifications), durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
       };
@@ -1457,6 +1650,8 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
     preAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.preAnchorWaitMs, 0), postAnchorWaitMs: entries.reduce((sum, entry) => sum + entry.postAnchorWaitMs, 0),
     postAnchorSkippedRuns: entries.filter((entry) => entry.postAnchorSkipped).length,
     visualStateReusedRuns: entries.filter((entry) => entry.visualStateReused).length,
+    setupStateReusedTargetRuns: entries.reduce((sum, entry) => sum + Number(entry.referenceSetupStateReused) + Number(entry.generatedSetupStateReused), 0),
+    setupStepsSkipped: entries.reduce((sum, entry) => sum + entry.referenceSetupStepsSkipped + entry.generatedSetupStepsSkipped, 0),
     canvas: addCanvasStabilityTelemetry(...entries.map((entry) => entry.canvas)),
     requestClassifications: addRequestClassificationCounts(...entries.map((entry) => entry.requestClassifications)),
     worstComputedStyle: entries.length ? Math.min(...entries.map((entry) => entry.styles.rate)) : 0, worstPixelDiff: entries.length ? Math.max(...entries.map((entry) => entry.pixels.diffRate)) : 1,
@@ -1512,7 +1707,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
         results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, contractSetupStateReusedRuns: target.setupStateReusedRuns, contractSetupStepsSkipped: target.setupStepsSkipped, visualSetupStateReusedRuns: 0, visualSetupStepsSkipped: 0, visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
       timing.reportReadyMs = elapsed(totalStartedAt);
       allowFastShutdown = requestedFastShutdown && report.passed;
@@ -1563,6 +1758,10 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         visualPostAnchorWaitMs: visualMatrix?.postAnchorWaitMs ?? 0,
         visualPostAnchorSkippedRuns: visualMatrix?.postAnchorSkippedRuns ?? 0,
         visualStateReusedRuns: visualMatrix?.visualStateReusedRuns ?? 0,
+        contractSetupStateReusedRuns: reference.setupStateReusedRuns + generated.setupStateReusedRuns,
+        contractSetupStepsSkipped: reference.setupStepsSkipped + generated.setupStepsSkipped,
+        visualSetupStateReusedRuns: visualMatrix?.setupStateReusedTargetRuns ?? 0,
+        visualSetupStepsSkipped: visualMatrix?.setupStepsSkipped ?? 0,
         visualCanvas: visualMatrix?.canvas ?? emptyCanvasStabilityTelemetry(),
         visualRequestClassifications: visualMatrix?.requestClassifications ?? emptyRequestClassificationCounts(),
         contractConcurrency: config.execution?.contractConcurrency ?? 1,

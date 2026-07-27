@@ -77,6 +77,11 @@
           }
         ],
         "reuseStateKey": "authenticated-dashboard-default"
+      },
+      "setupState": {
+        "stateKey": "authenticated-admin",
+        "checkpointStepCount": 3,
+        "resumePath": "/#/dashboard"
       }
     },
     {
@@ -129,6 +134,11 @@
           "desktop",
           "tablet"
         ]
+      },
+      "setupState": {
+        "stateKey": "authenticated-admin",
+        "checkpointStepCount": 3,
+        "resumePath": "/#/dashboard"
       }
     },
     {
@@ -162,6 +172,11 @@
         "hash": "#/dashboard",
         "visibleSelector": ".dashboard-container",
         "visibleText": "Dashboard"
+      },
+      "setupState": {
+        "stateKey": "authenticated-admin",
+        "checkpointStepCount": 3,
+        "resumePath": "/#/dashboard"
       }
     },
     {
@@ -210,6 +225,11 @@
           "desktop",
           "tablet"
         ]
+      },
+      "setupState": {
+        "stateKey": "authenticated-admin",
+        "checkpointStepCount": 3,
+        "resumePath": "/#/dashboard"
       }
     },
     {
@@ -254,6 +274,11 @@
           }
         ],
         "reuseStateKey": "authenticated-dashboard-default"
+      },
+      "setupState": {
+        "stateKey": "authenticated-admin",
+        "checkpointStepCount": 3,
+        "resumePath": "/#/dashboard"
       }
     }
   ],

@@ -98,6 +98,8 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   const autoVisualFinal = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-reviewed-state-reuse-final.results.json`, "utf8"));
   const autoVisualRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-reviewed-state-reuse-summary.json`, "utf8"));
   const autoParallelRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-parallel-viewports-summary.json`, "utf8"));
+  const autoSetupFinal = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-reuse-final.results.json`, "utf8"));
+  const autoSetupRepeat = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v1/semantic-gold-setup-reuse-summary.json`, "utf8"));
 
   assert.equal(frozen.scope, "reviewed-behavior-and-visual-generated-target");
   assert.equal(frozen.reviewRequired, true);
@@ -200,6 +202,21 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(autoParallelRepeat.improvement.totalMsPercent > 35, true);
   assert.equal(autoParallelRepeat.improvement.visualMatrixMsPercent > 50, true);
   assert.equal(autoParallelRepeat.isolation.qualityThresholdsChanged, false);
+  assert.equal(autoSetupFinal.passed, true);
+  assert.equal(autoSetupFinal.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(autoSetupFinal.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(autoSetupFinal.telemetry.contractSetupStateReusedRuns, 8);
+  assert.equal(autoSetupFinal.telemetry.contractSetupStepsSkipped, 24);
+  assert.equal(autoSetupFinal.telemetry.visualSetupStateReusedRuns, 18);
+  assert.equal(autoSetupFinal.telemetry.visualSetupStepsSkipped, 54);
+  assert.equal(autoSetupFinal.telemetry.visualCanvas.echartsCompletionSignals > 0, true);
+  assert.equal(autoSetupFinal.telemetry.visualCanvas.zrenderCompletionSignals, 0);
+  assert.equal(autoSetupFinal.reference.results.filter((result: { setupCheckpointPublished?: boolean }) => result.setupCheckpointPublished).length, 1);
+  assert.equal(autoSetupFinal.generated.results.filter((result: { setupCheckpointPublished?: boolean }) => result.setupCheckpointPublished).length, 1);
+  assert.equal(autoSetupRepeat.control.totalMs.values.length, 3);
+  assert.equal(autoSetupRepeat.setup.totalMs.values.length, 3);
+  assert.equal(autoSetupRepeat.delta.totalMs.percent <= -5, true);
+  assert.equal(autoSetupRepeat.delta.contractMs.percent <= -7, true);
 
   assert.equal(strictReport.passed, false, "Semantic Gold+ must not be relabeled as Vue Router Strict PASS");
 });

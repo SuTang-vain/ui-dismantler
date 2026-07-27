@@ -1,0 +1,163 @@
+{
+  "control": {
+    "totalMs": {
+      "values": [
+        52486.645,
+        51573.98,
+        51634.31
+      ],
+      "median": 51634.31
+    },
+    "contractMs": {
+      "values": [
+        25572.887,
+        24952.463,
+        24956.811
+      ],
+      "median": 24956.811
+    },
+    "visualMatrixMs": {
+      "values": [
+        26008.538,
+        25912.386,
+        25902.632
+      ],
+      "median": 25912.386
+    },
+    "browserCloseMs": {
+      "values": [
+        241.57,
+        238.712,
+        292.317
+      ],
+      "median": 241.57
+    },
+    "adaptiveWaitMs": {
+      "values": [
+        41873,
+        42008,
+        41862
+      ],
+      "median": 41873
+    },
+    "canvasScanMs": {
+      "values": [
+        583.5,
+        501.3,
+        511.1
+      ],
+      "median": 511.1
+    }
+  },
+  "setup": {
+    "totalMs": {
+      "values": [
+        49019.409,
+        48450.989,
+        49052.482
+      ],
+      "median": 49019.409
+    },
+    "contractMs": {
+      "values": [
+        23225.567,
+        22637.852,
+        23038.502
+      ],
+      "median": 23038.502
+    },
+    "visualMatrixMs": {
+      "values": [
+        25064.221,
+        25013.495,
+        25263.138
+      ],
+      "median": 25064.221
+    },
+    "browserCloseMs": {
+      "values": [
+        281.865,
+        293.879,
+        269.12
+      ],
+      "median": 281.865
+    },
+    "adaptiveWaitMs": {
+      "values": [
+        40050,
+        40241,
+        40293
+      ],
+      "median": 40241
+    },
+    "canvasScanMs": {
+      "values": [
+        387.6,
+        386.5,
+        442.4
+      ],
+      "median": 387.6
+    }
+  },
+  "delta": {
+    "totalMs": {
+      "absolute": -2614.901,
+      "percent": -5.06
+    },
+    "contractMs": {
+      "absolute": -1918.309,
+      "percent": -7.69
+    },
+    "visualMatrixMs": {
+      "absolute": -848.165,
+      "percent": -3.27
+    },
+    "browserCloseMs": {
+      "absolute": 40.295,
+      "percent": 16.68
+    },
+    "adaptiveWaitMs": {
+      "absolute": -1632,
+      "percent": -3.9
+    },
+    "canvasScanMs": {
+      "absolute": -123.5,
+      "percent": -24.16
+    }
+  },
+  "experiment": {
+    "date": "2026-07-27",
+    "variants": [
+      "animation-certificates-without-setup-reuse",
+      "animation-certificates-with-reviewed-setup-reuse"
+    ],
+    "runsPerVariant": 3,
+    "sameSourceServer": true,
+    "sameGeneratedServer": true,
+    "sameGoldPlusThresholds": true,
+    "freshBrowserContextPerScenario": true
+  },
+  "quality": {
+    "controlRunsPassed": 3,
+    "setupRunsPassed": 3,
+    "scenarioProtocol": "6/6",
+    "visualStates": "5/5",
+    "viewportRuns": 13,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 0.9825,
+    "worstPixelDiff": 0.01821,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "reuse": {
+    "stateKey": "authenticated-admin",
+    "checkpointStepCount": 3,
+    "resumePath": "/#/dashboard",
+    "contractRuns": 8,
+    "contractStepsSkipped": 24,
+    "visualRuns": 18,
+    "visualStepsSkipped": 54
+  }
+}

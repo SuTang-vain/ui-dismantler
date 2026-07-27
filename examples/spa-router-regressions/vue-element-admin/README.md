@@ -189,3 +189,8 @@ Three repeated Semantic Gold+ runs on July 27, 2026 retained `5/5` visual states
 - model calls and generated-artifact manual edits: `0`.
 
 This is the first automatic Vue Element Admin target in this experiment to satisfy the unchanged Gold+ thresholds. The reviewed target remains the stronger fidelity baseline (`0.9912 / 0.012977`), but the automatic target is now formally Gold+ rather than a non-passing approximation.
+
+
+### Reviewed authenticated-session setup reuse
+
+The automatic Gold+ config now marks the common three-step admin login prefix as a reviewed setup equivalence class. The runner publishes storage state only after the complete login scenario passes, restores it only into fresh isolated BrowserContexts, and reports every skipped prefix. A same-environment three-run control showed a `5.06%` median total-time reduction and a `7.69%` contract-phase reduction without changing computed-style, pixel, navigation, runtime, network, stability, or lifecycle gates. ECharts/ZRender frame-drain certificates are also reported as auditable animation-completion evidence; they do not replace the existing quiet-window and settled-frame checks.

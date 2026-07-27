@@ -373,6 +373,38 @@ test("SPA reviewed visual state reuse avoids duplicate stable canvas captures", 
   assert.equal(report.visualMatrix?.scenarios[1].viewports[0].adaptiveWaitMs, 0);
 });
 
+test("SPA reviewed setup state reuses authentication in fresh isolated contexts", async () => {
+  const setupApp = `<!doctype html><html><body><main id="view"></main><button id="login">Login</button><button id="nested">Nested</button><script>
+const view=document.getElementById('view');
+function render(){view.textContent=localStorage.token?(location.pathname==='/nested'?'Nested':'Dashboard'):'Login'}
+document.getElementById('login').onclick=()=>{localStorage.token='admin';history.pushState({},'', '/dashboard');render()};
+document.getElementById('nested').onclick=()=>{history.pushState({},'', '/nested');render()};addEventListener('popstate',render);render();</script></body></html>`;
+  const setupServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(setupApp); });
+  await new Promise<void>((resolve) => setupServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const address = setupServer.address(); if (!address || typeof address === "string") throw new Error("missing setup server address");
+    const base = `http://127.0.0.1:${address.port}`;
+    const reviewedSetup = { stateKey: "authenticated-admin", checkpointStepCount: 1, resumePath: "/dashboard" };
+    const report = await evaluateSpaRouterContract({
+      schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base, navigationComparison: "semantic",
+      scenarios: [
+        { id: "login-owner", entryPath: "/login", steps: [{ action: "click", target: "#login" }], assertions: { path: "/dashboard", visibleText: "Dashboard" }, setupState: reviewedSetup },
+        { id: "nested-consumer", entryPath: "/login", steps: [{ action: "click", target: "#login" }, { action: "click", target: "#nested" }], assertions: { path: "/nested", visibleText: "Nested" }, setupState: reviewedSetup },
+      ],
+    });
+    assert.equal(report.passed, true, JSON.stringify(report, null, 2));
+    assert.equal(report.telemetry.contractSetupStateReusedRuns, 2);
+    assert.equal(report.telemetry.contractSetupStepsSkipped, 2);
+    assert.equal(report.reference?.setupCheckpointsPublished, 1);
+    assert.equal(report.generated?.setupCheckpointsPublished, 1);
+    assert.equal(report.reference?.results[1].setupStateReused, true);
+    assert.equal(report.generated?.results[1].setupStateReused, true);
+    assert.equal(report.reference?.results[1].stepRoutes[0]?.stepIndex, 1);
+  } finally {
+    await new Promise<void>((resolve, reject) => setupServer.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
 test("SPA reviewed screenshot region excludes non-owned shell differences while preserving region evidence", async () => {
   const shellMismatchApp = app.replace("</head>", "<style>body{background:#e11d48}#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
   const referenceRegionApp = app.replace("</head>", "<style>#view{display:inline-block;background:#fff;color:#111;padding:8px}</style></head>");
@@ -501,7 +533,7 @@ test("SPA adaptive visual stability fails continuous DOM mutations instead of ca
 });
 
 test("SPA adaptive visual stability waits for canvas animation frames to settle", async () => {
-  const canvasApp = `<!doctype html><html><body><main id="view"><canvas id="chart" width="320" height="180"></canvas></main><script>const canvas=document.getElementById('chart'),context=canvas.getContext('2d'),started=performance.now();function frame(now){const progress=Math.min(1,(now-started)/650);context.clearRect(0,0,320,180);context.fillStyle='#2563eb';context.fillRect(0,20,Math.round(300*progress),120);if(progress<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)</script></body></html>`;
+  const canvasApp = `<!doctype html><html><body><main id="view"><div id="chart-host" _echarts_instance_="ec_test"><canvas id="chart" data-zr-dom-id="zr_test" width="320" height="180"></canvas></div></main><script>const canvas=document.getElementById('chart'),context=canvas.getContext('2d'),started=performance.now();function frame(now){const progress=Math.min(1,(now-started)/650);context.clearRect(0,0,320,180);context.fillStyle='#2563eb';context.fillRect(0,20,Math.round(300*progress),120);if(progress<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)</script></body></html>`;
   const canvasServer = createServer((_request, response) => { response.writeHead(200, { "content-type": "text/html; charset=utf-8" }); response.end(canvasApp); });
   await new Promise<void>((resolve) => canvasServer.listen(0, "127.0.0.1", resolve));
   try {
@@ -521,6 +553,11 @@ test("SPA adaptive visual stability waits for canvas animation frames to settle"
     assert.ok(report.telemetry.visualCanvas.canvasCacheHits > 0, JSON.stringify(report.telemetry, null, 2));
     assert.ok(report.telemetry.visualCanvas.canvasInvalidations > 0, JSON.stringify(report.telemetry, null, 2));
     assert.ok(report.telemetry.visualCanvas.canvasSignatureChanges > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.animationTargetSamples > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.animationCompletedSamples > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.animationCompletionSignals > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualCanvas.echartsCompletionSignals > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.telemetry.visualCanvas.zrenderCompletionSignals, 0);
     assert.equal(report.telemetry.visualPostAnchorSkippedRuns, 1);
     assert.equal(report.visualMatrix?.stabilityFailures, 0);
   } finally {

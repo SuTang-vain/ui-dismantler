@@ -321,8 +321,10 @@ Run Semantic navigation before visual Gold+. Formal measured iterations and rema
       for (const gate of report.qualityGates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`);
       if (report.telemetry.visualTargetRuns > 0) {
         console.log(`[INFO] visual reuse: targetRuns=${report.telemetry.visualTargetRuns}，reused=${report.telemetry.visualTargetReusedRuns}，fresh=${report.telemetry.visualTargetFreshRuns}，reviewedStateReused=${report.telemetry.visualStateReusedRuns}`);
+        console.log(`[INFO] setup reuse: contractRuns=${report.telemetry.contractSetupStateReusedRuns}，contractStepsSkipped=${report.telemetry.contractSetupStepsSkipped}，visualRuns=${report.telemetry.visualSetupStateReusedRuns}，visualStepsSkipped=${report.telemetry.visualSetupStepsSkipped}`);
         console.log(`[INFO] visual stability: adaptiveWaitMs=${report.telemetry.visualAdaptiveWaitMs}，failures=${report.telemetry.visualStabilityFailures}`);
         console.log(`[INFO] canvas stability: scanMs=${report.telemetry.visualCanvas.canvasScanMs}，samples=${report.telemetry.visualCanvas.canvasSamples}，cacheHits=${report.telemetry.visualCanvas.canvasCacheHits}，signatureChanges=${report.telemetry.visualCanvas.canvasSignatureChanges}，invalidations=${report.telemetry.visualCanvas.canvasInvalidations}，postAnchorSkipped=${report.telemetry.visualPostAnchorSkippedRuns}`);
+        console.log(`[INFO] animation completion: targets=${report.telemetry.visualCanvas.animationTargetSamples}，completed=${report.telemetry.visualCanvas.animationCompletedSamples}，pendingSamples=${report.telemetry.visualCanvas.animationPendingSamples}，signals=${report.telemetry.visualCanvas.animationCompletionSignals}，echarts=${report.telemetry.visualCanvas.echartsCompletionSignals}，zrender=${report.telemetry.visualCanvas.zrenderCompletionSignals}`);
         for (const line of formatSpaRouterVisualDiagnostics(report)) console.log(line);
         console.log(`[INFO] browser shutdown: disconnectMs=${report.telemetry.timing.browserDisconnectMs}，processCloseMs=${report.telemetry.timing.browserProcessCloseMs}，totalCloseMs=${report.telemetry.timing.browserCloseMs}`);
       }
