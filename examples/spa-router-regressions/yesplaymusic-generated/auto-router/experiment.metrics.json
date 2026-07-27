@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "auto-route-shell-control-experiment",
+  "deterministicGeneration": true,
+  "modelCalls": 0,
+  "manualVisualImplementationReused": true,
+  "generatedVisualDom": false,
+  "generation": {
+    "generationMs": 0.01,
+    "generatedLines": 165,
+    "integrationEditHunks": 3,
+    "integrationEditedLines": 22,
+    "repairIterations": 0,
+    "qualityRuns": 2
+  },
+  "manualControl": {
+    "passed": true,
+    "totalMs": 13392.238,
+    "visualMatrixMs": 6950.918,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0,
+    "stabilityFailures": 0,
+    "requiredNetworkFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "automaticRouterControl": {
+    "passed": true,
+    "totalMs": 13235.398,
+    "visualMatrixMs": 6960.353,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0,
+    "stabilityFailures": 0,
+    "requiredNetworkFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "delta": {
+    "totalMs": -156.84,
+    "visualMatrixMs": 9.435,
+    "navigationIntegrity": 0,
+    "worstComputedStyle": 0,
+    "worstPixelDiff": 0
+  },
+  "upstreamDiagnostic": {
+    "passed": false,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.00615,
+    "referenceRuntimeErrors": 7,
+    "generatedRuntimeErrors": 0,
+    "visualRuntimeErrors": 12,
+    "requiredNetworkFailures": 0,
+    "diagnosis": "upstream Vue reference threw API response-shape errors; the generated automatic router remained runtime-error free"
+  },
+  "conclusion": {
+    "qualityEquivalent": true,
+    "routerResponsibilitiesMatched": true,
+    "singleRunPerformanceConclusionAllowed": false,
+    "reason": "three-run control baseline shows equivalent quality and no greater than 10% median total-time regression",
+    "threeRunPerformanceBaselineAvailable": true,
+    "performanceRegression": false
+  },
+  "performanceBaseline": {
+    "runsPerVariant": 3,
+    "manualMedianTotalMs": 13462.096,
+    "automaticMedianTotalMs": 13355.836,
+    "medianTotalMsDelta": -106.26,
+    "manualCoefficientOfVariation": 0.01,
+    "automaticCoefficientOfVariation": 0.015,
+    "performanceRegression": false
+  }
+}

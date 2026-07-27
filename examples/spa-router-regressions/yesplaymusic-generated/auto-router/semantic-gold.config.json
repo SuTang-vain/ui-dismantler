@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0",
+  "apiPrefix": "/api/",
+  "ignoredStateKeys": [
+    "key"
+  ],
+  "fixtures": [
+    {
+      "path": "/api/personal_fm",
+      "body": {
+        "data": [
+          {
+            "id": 1,
+            "name": "Fixture Track A",
+            "album": {
+              "id": 1,
+              "name": "Fixture Album",
+              "picUrl": ""
+            },
+            "artists": [
+              {
+                "id": 1,
+                "name": "Fixture Artist"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Fixture Track B",
+            "album": {
+              "id": 2,
+              "name": "Fixture Album",
+              "picUrl": ""
+            },
+            "artists": [
+              {
+                "id": 1,
+                "name": "Fixture Artist"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/top/playlist",
+      "body": {
+        "playlists": [],
+        "more": false
+      }
+    },
+    {
+      "path": "/api/search",
+      "body": {
+        "result": {
+          "artists": [],
+          "albums": [],
+          "songs": [],
+          "mvs": [],
+          "playlists": []
+        }
+      }
+    },
+    {
+      "path": "/31049/1618983297-powered-by-vercel.svg",
+      "headers": {
+        "content-type": "image/svg+xml"
+      },
+      "body": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"212\" height=\"44\" viewBox=\"0 0 212 44\"><rect width=\"212\" height=\"44\" fill=\"white\"/><path d=\"M20 32L32 12l12 20H20z\" fill=\"black\"/><text x=\"56\" y=\"29\" font-family=\"Arial,sans-serif\" font-size=\"18\" fill=\"black\">Powered by Vercel</text></svg>"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "router-link-explore",
+      "entryPath": "/settings",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='/explore']"
+        }
+      ],
+      "assertions": {
+        "path": "/explore",
+        "visibleText": "发现",
+        "visibleSelector": "a[href='/explore'].active"
+      },
+      "visual": {
+        "screenshotAnchor": ".explore-page",
+        "styleTargets": [
+          {
+            "id": "app-nav",
+            "selector": "nav"
+          },
+          {
+            "id": "route-main",
+            "selector": "main"
+          },
+          {
+            "id": "explore-page",
+            "selector": ".explore-page"
+          }
+        ],
+        "screenshotRegion": ".explore-page"
+      }
+    },
+    {
+      "id": "router-go-back",
+      "entryPath": "/settings",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='/explore']"
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "path": "/settings",
+        "visibleText": "语言"
+      }
+    },
+    {
+      "id": "dynamic-search-route",
+      "entryPath": "/settings",
+      "steps": [
+        {
+          "action": "input",
+          "target": "input[type='search']",
+          "value": "周杰伦"
+        },
+        {
+          "action": "key",
+          "target": "input[type='search']",
+          "key": "Enter"
+        }
+      ],
+      "assertions": {
+        "path": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "inputValue": {
+          "target": "input[type='search']",
+          "value": "周杰伦"
+        }
+      }
+    },
+    {
+      "id": "login-guard-redirect",
+      "entryPath": "/settings",
+      "steps": [
+        {
+          "action": "click",
+          "target": "a[href='/library']"
+        }
+      ],
+      "assertions": {
+        "path": "/login",
+        "visibleText": "登录网易云账号"
+      },
+      "visual": {
+        "screenshotAnchor": ".login",
+        "styleTargets": [
+          {
+            "id": "app-nav",
+            "selector": "nav"
+          },
+          {
+            "id": "route-main",
+            "selector": "main"
+          },
+          {
+            "id": "login-page",
+            "selector": ".login"
+          }
+        ],
+        "screenshotRegion": ".login"
+      }
+    },
+    {
+      "id": "history-deep-link-reload",
+      "entryPath": "/settings",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/settings",
+        "visibleText": "语言"
+      },
+      "visual": {
+        "screenshotAnchor": ".settings-page",
+        "styleTargets": [
+          {
+            "id": "app-nav",
+            "selector": "nav"
+          },
+          {
+            "id": "route-main",
+            "selector": "main"
+          },
+          {
+            "id": "settings-page",
+            "selector": ".settings-page"
+          }
+        ],
+        "screenshotRegion": ".settings-page"
+      }
+    }
+  ],
+  "referenceBaseUrl": "http://127.0.0.1:4196",
+  "generatedBaseUrl": "http://127.0.0.1:4197",
+  "visualMatrix": {
+    "viewports": [
+      {
+        "id": "desktop",
+        "label": "Desktop",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "id": "tablet",
+        "label": "Tablet",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "id": "mobile",
+        "label": "Mobile",
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "artifactDir": "/tmp/yesplaymusic-auto-router-visual"
+  },
+  "navigationComparison": "semantic",
+  "execution": {
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdown": "fast-kill"
+  }
+}

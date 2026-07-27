@@ -1,0 +1,1669 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4196",
+  "generatedBaseUrl": "http://127.0.0.1:4197",
+  "passed": true,
+  "scenariosPassed": 5,
+  "scenariosTotal": 5,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/explore",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        },
+        {
+          "stepIndex": 1,
+          "action": "back",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/settings"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/login",
+          "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4196",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4197",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "reference": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "reference": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "reference": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "reference": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4196/settings",
+        "finalUrl": "http://127.0.0.1:4196/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"generated\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 14,
+    "totalScenarios": 14,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "router-link-explore",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 101.515625,
+              "width": 921.625,
+              "height": 285.515625
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 101.515625,
+              "width": 921.625,
+              "height": 285.515625
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 578,
+            "preAnchorWaitMs": 286,
+            "postAnchorWaitMs": 292,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 59.83,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 285,
+              "referenceWidth": 921,
+              "referenceHeight": 285,
+              "generatedWidth": 921,
+              "generatedHeight": 285,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 262485,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 101.515625,
+              "width": 691.21875,
+              "height": 285.515625
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 101.515625,
+              "width": 691.21875,
+              "height": 285.515625
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 427,
+            "preAnchorWaitMs": 209,
+            "postAnchorWaitMs": 218,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2158.62,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 285,
+              "referenceWidth": 691,
+              "referenceHeight": 285,
+              "generatedWidth": 691,
+              "generatedHeight": 285,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 196935,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 101.515625,
+              "width": 351,
+              "height": 398.515625
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 101.515625,
+              "width": 351,
+              "height": 398.515625
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 436,
+            "preAnchorWaitMs": 223,
+            "postAnchorWaitMs": 213,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2180.138,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 398,
+              "referenceWidth": 351,
+              "referenceHeight": 398,
+              "generatedWidth": 351,
+              "generatedHeight": 398,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 139698,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/router-link-explore/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 2240.207
+      },
+      {
+        "scenarioId": "login-guard-redirect",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 64,
+              "width": 921.625,
+              "height": 576
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 64,
+              "width": 921.625,
+              "height": 576
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 531,
+            "preAnchorWaitMs": 305,
+            "postAnchorWaitMs": 226,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 51.349,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 576,
+              "referenceWidth": 921,
+              "referenceHeight": 576,
+              "generatedWidth": 921,
+              "generatedHeight": 576,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 530496,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 64,
+              "width": 691.21875,
+              "height": 832
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 64,
+              "width": 691.21875,
+              "height": 832
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 434,
+            "preAnchorWaitMs": 217,
+            "postAnchorWaitMs": 217,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2221.461,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 832,
+              "referenceWidth": 691,
+              "referenceHeight": 832,
+              "generatedWidth": 691,
+              "generatedHeight": 832,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 574912,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 64,
+              "width": 351,
+              "height": 652
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 64,
+              "width": 351,
+              "height": 652
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 442,
+            "preAnchorWaitMs": 217,
+            "postAnchorWaitMs": 225,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2169.89,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 652,
+              "referenceWidth": 351,
+              "referenceHeight": 652,
+              "generatedWidth": 351,
+              "generatedHeight": 652,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 228852,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/login-guard-redirect/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 2221.488
+      },
+      {
+        "scenarioId": "history-deep-link-reload",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 0,
+              "width": 921.625,
+              "height": 768
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 0,
+              "width": 921.625,
+              "height": 768
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 452,
+            "preAnchorWaitMs": 220,
+            "postAnchorWaitMs": 232,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 79.95,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 768,
+              "referenceWidth": 921,
+              "referenceHeight": 768,
+              "generatedWidth": 921,
+              "generatedHeight": 768,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 707328,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 0,
+              "width": 691.21875,
+              "height": 1024
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 0,
+              "width": 691.21875,
+              "height": 1024
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 444,
+            "preAnchorWaitMs": 227,
+            "postAnchorWaitMs": 217,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2497.426,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 1024,
+              "referenceWidth": 691,
+              "referenceHeight": 1024,
+              "generatedWidth": 691,
+              "generatedHeight": 1024,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 707584,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 0,
+              "width": 351,
+              "height": 844
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 0,
+              "width": 351,
+              "height": 844
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 446,
+            "preAnchorWaitMs": 219,
+            "postAnchorWaitMs": 227,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2414.706,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 844,
+              "referenceWidth": 351,
+              "referenceHeight": 844,
+              "generatedWidth": 351,
+              "generatedHeight": 844,
+              "dimensionMismatch": false,
+              "differentPixels": 0,
+              "totalPixels": 296244,
+              "diffRate": 0,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-visual/history-deep-link-reload/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0,
+        "durationMs": 2497.62
+      }
+    ],
+    "scenarioCount": 3,
+    "viewportRuns": 9,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 9,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 4190,
+    "preAnchorWaitMs": 2123,
+    "postAnchorWaitMs": 2067,
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 18,
+    "reusedTargetRuns": 6,
+    "freshTargetRuns": 12
+  },
+  "telemetry": {
+    "contractTargetRuns": 10,
+    "visualViewportRuns": 9,
+    "visualTargetRuns": 18,
+    "visualTargetReusedRuns": 6,
+    "visualTargetFreshRuns": 12,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 4190,
+    "visualPreAnchorWaitMs": 2123,
+    "visualPostAnchorWaitMs": 2067,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "fast-kill",
+    "fastShutdownUsed": true,
+    "fastShutdownConfirmed": true,
+    "fastShutdownLockAcquired": true,
+    "fastShutdownLockWaitMs": 1.663,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 10,
+      "totalBlockingHandles": 8,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 6,
+        "child-process": 1,
+        "server": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 6,
+        "ProcessWrap": 1,
+        "server": 1,
+        "socket": 2
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "filesystem": 3,
+        "pipe": 2,
+        "timer": 2
+      },
+      "requestsByType": {
+        "filesystem": 3
+      }
+    },
+    "timing": {
+      "browserLaunchMs": 637.26,
+      "contractMs": 5621.908,
+      "comparisonMs": 0.929,
+      "visualMatrixMs": 6960.353,
+      "browserCloseMs": 13.544,
+      "browserDisconnectMs": 1.193,
+      "browserProcessCloseMs": 12.316,
+      "reportReadyMs": 13221.842,
+      "totalMs": 13235.398
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=5/5，generated=5/5"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "3/3 SPA route states 通过，viewportRuns=9，worstComputedStyle=1，worstPixelDiff=0"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=14/14，rate=1，failures=0"
+    }
+  ]
+}

@@ -1,0 +1,1687 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4195",
+  "generatedBaseUrl": "http://127.0.0.1:4197",
+  "passed": false,
+  "scenariosPassed": 0,
+  "scenariosTotal": 5,
+  "runtimeErrors": 19,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 8,
+  "results": [
+    {
+      "id": "router-link-explore",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/explore",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/explore",
+          "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "popstate",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/explore"
+        },
+        {
+          "stepIndex": 1,
+          "action": "back",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+          "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "input",
+          "route": "/settings"
+        },
+        {
+          "stepIndex": 1,
+          "action": "key",
+          "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        },
+        {
+          "method": "pushState",
+          "target": "/login",
+          "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4197/settings",
+      "finalUrl": "http://127.0.0.1:4197/settings",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/settings",
+          "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/settings"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": []
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4195",
+    "passed": false,
+    "scenariosPassed": 0,
+    "scenariosTotal": 5,
+    "runtimeErrors": 7,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 8,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')",
+          "Cannot read properties of undefined (reading 'playlists')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')",
+          "Cannot read properties of undefined (reading 'playlists')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115410565&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1591517125.1785115411&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938465~115938468~118897920~118897930~119896803&sid=1785115411&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=1161 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115410565&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1591517125.1785115411&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938468~118897920~118897930~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115411&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1079 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115412773&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1870265430.1785115413&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118395335~118897920~118897930~119527020~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115413&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=936 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115412773&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1870265430.1785115413&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938465~115938469~118395335~118897920~118897930~119527020~119896802&sid=1785115413&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=1222 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&sid=1785115413&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=961 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115413&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=813 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115415&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=804 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&sid=1785115415&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=4&tfd=873 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4197",
+    "passed": true,
+    "scenariosPassed": 5,
+    "scenariosTotal": 5,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "results": [
+      {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "router-link-explore",
+      "passed": false,
+      "reference": {
+        "id": "router-link-explore",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/explore",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')",
+          "Cannot read properties of undefined (reading 'playlists')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-link-explore",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/explore",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "router-go-back",
+      "passed": false,
+      "reference": {
+        "id": "router-go-back",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "null"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')",
+          "Cannot read properties of undefined (reading 'playlists')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115410565&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1591517125.1785115411&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938465~115938468~118897920~118897930~119896803&sid=1785115411&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=1161 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115410565&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1591517125.1785115411&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938468~118897920~118897930~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115411&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1079 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "router-go-back",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/explore",
+            "state": "{\"route\":\"/explore\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "popstate",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/explore"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "dynamic-search-route",
+      "passed": false,
+      "reference": {
+        "id": "dynamic-search-route",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115412773&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1870265430.1785115413&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938469~118395335~118897920~118897930~119527020~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115413&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=936 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115412773&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1870265430.1785115413&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938465~115938469~118395335~118897920~118897930~119527020~119896802&sid=1785115413&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=1222 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "dynamic-search-route",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+            "state": "{\"route\":\"/search/%E5%91%A8%E6%9D%B0%E4%BC%A6\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "input",
+            "route": "/settings"
+          },
+          {
+            "stepIndex": 1,
+            "action": "key",
+            "route": "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "login-guard-redirect",
+      "passed": false,
+      "reference": {
+        "id": "login-guard-redirect",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/login",
+        "transitions": [
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&sid=1785115413&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=961 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115413&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=813 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "login-guard-redirect",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          },
+          {
+            "method": "pushState",
+            "target": "/login",
+            "state": "{\"route\":\"/login\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    },
+    {
+      "id": "history-deep-link-reload",
+      "passed": false,
+      "reference": {
+        "id": "history-deep-link-reload",
+        "passed": false,
+        "entryUrl": "http://127.0.0.1:4195/settings",
+        "finalUrl": "http://127.0.0.1:4195/settings",
+        "transitions": [],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [
+          "Cannot read properties of undefined (reading 'data')"
+        ],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115415&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=804 FAILED net::ERR_ABORTED",
+          "POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&sid=1785115415&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=4&tfd=873 FAILED net::ERR_ABORTED"
+        ],
+        "assertionFailures": []
+      },
+      "generated": {
+        "id": "history-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4197/settings",
+        "finalUrl": "http://127.0.0.1:4197/settings",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/settings",
+            "state": "{\"route\":\"/settings\",\"source\":\"auto-router\"}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/settings"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": []
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 14,
+    "totalScenarios": 14,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": false,
+    "scenarios": [
+      {
+        "scenarioId": "router-link-explore",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 101.515625,
+              "width": 921.625,
+              "height": 285.515625
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 101.515625,
+              "width": 921.625,
+              "height": 285.515625
+            },
+            "runtimeErrors": 2,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 540,
+            "preAnchorWaitMs": 248,
+            "postAnchorWaitMs": 292,
+            "requestClassifications": {
+              "non-blocking-telemetry": 2,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 73.761,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 285,
+              "referenceWidth": 921,
+              "referenceHeight": 285,
+              "generatedWidth": 921,
+              "generatedHeight": 285,
+              "dimensionMismatch": false,
+              "differentPixels": 54,
+              "totalPixels": 262485,
+              "diffRate": 0.000206,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": false,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 101.515625,
+              "width": 691.21875,
+              "height": 285.515625
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 101.515625,
+              "width": 691.21875,
+              "height": 285.515625
+            },
+            "runtimeErrors": 2,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115416682&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1104547964.1785115417&frm=0&ngs=1&pscdl=noapi&rcb=17&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938468~118897920~118897930~119527020~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115417&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1029 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115416682&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1104547964.1785115417&frm=0&ngs=1&pscdl=noapi&rcb=17&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938468~118897920~118897930~119527020~119896802&sid=1785115417&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=1099 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 438,
+            "preAnchorWaitMs": 220,
+            "postAnchorWaitMs": 218,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2331.294,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 285,
+              "referenceWidth": 691,
+              "referenceHeight": 285,
+              "generatedWidth": 691,
+              "generatedHeight": 285,
+              "dimensionMismatch": false,
+              "differentPixels": 55,
+              "totalPixels": 196935,
+              "diffRate": 0.000279,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/explore",
+            "generatedFinalRoute": "/explore",
+            "referenceAnchor": ".explore-page",
+            "generatedAnchor": ".explore-page",
+            "referenceRegion": ".explore-page",
+            "generatedRegion": ".explore-page",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 101.515625,
+              "width": 351,
+              "height": 398.515625
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 101.515625,
+              "width": 351,
+              "height": 398.515625
+            },
+            "runtimeErrors": 2,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115416696&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1330133941.1785115417&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=390x844&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938465~115938468~118897920~118897930~119724321~119793974~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115417&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=816 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115416696&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1330133941.1785115417&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=390x844&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938465~115938468~118897920~118897930~119724321~119793974~119896803&sid=1785115417&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=5&tfd=999 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 437,
+            "preAnchorWaitMs": 218,
+            "postAnchorWaitMs": 219,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2254.597,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 398,
+              "referenceWidth": 351,
+              "referenceHeight": 398,
+              "generatedWidth": 351,
+              "generatedHeight": 398,
+              "dimensionMismatch": false,
+              "differentPixels": 55,
+              "totalPixels": 139698,
+              "diffRate": 0.000394,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/router-link-explore/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000394,
+        "durationMs": 2331.503
+      },
+      {
+        "scenarioId": "login-guard-redirect",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 64,
+              "width": 921.625,
+              "height": 576
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 64,
+              "width": 921.625,
+              "height": 576
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&sid=1785115413&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=3&tfd=961 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m1h2v883509220za200zd883509220&_p=1785115413233&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1321087968.1785115414&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115413&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=813 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 715,
+            "preAnchorWaitMs": 312,
+            "postAnchorWaitMs": 403,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 61.692,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 576,
+              "referenceWidth": 921,
+              "referenceHeight": 576,
+              "generatedWidth": 921,
+              "generatedHeight": 576,
+              "dimensionMismatch": false,
+              "differentPixels": 20,
+              "totalPixels": 530496,
+              "diffRate": 0.000038,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 64,
+              "width": 691.21875,
+              "height": 832
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 64,
+              "width": 691.21875,
+              "height": 832
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0h1v883509220za200zd883509220&_p=1785115418989&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1438446512.1785115420&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&sid=1785115419&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=5&tfd=1107 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0h1v883509220za200zd883509220&_p=1785115418989&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1438446512.1785115420&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115419&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1023 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 435,
+            "preAnchorWaitMs": 217,
+            "postAnchorWaitMs": 218,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2276.932,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 832,
+              "referenceWidth": 691,
+              "referenceHeight": 832,
+              "generatedWidth": 691,
+              "generatedHeight": 832,
+              "dimensionMismatch": false,
+              "differentPixels": 20,
+              "totalPixels": 574912,
+              "diffRate": 0.000035,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login",
+            "generatedAnchor": ".login",
+            "referenceRegion": ".login",
+            "generatedRegion": ".login",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 64,
+              "width": 351,
+              "height": 652
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 64,
+              "width": 351,
+              "height": 652
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0h1v883509220za200zd883509220&_p=1785115419015&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1122147761.1785115420&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=390x844&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115938466~115938468~118897920~118897930~119896802&sid=1785115419&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=5&tfd=1089 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0h1v883509220za200zd883509220&_p=1785115419015&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1122147761.1785115420&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=390x844&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115419&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1001 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 499,
+            "preAnchorWaitMs": 219,
+            "postAnchorWaitMs": 280,
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2309.838,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 652,
+              "referenceWidth": 351,
+              "referenceHeight": 652,
+              "generatedWidth": 351,
+              "generatedHeight": 652,
+              "dimensionMismatch": false,
+              "differentPixels": 24,
+              "totalPixels": 228852,
+              "diffRate": 0.000105,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/login-guard-redirect/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.000105,
+        "durationMs": 2371.566
+      },
+      {
+        "scenarioId": "history-deep-link-reload",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "label": "Desktop",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 51.1875,
+              "y": 0,
+              "width": 921.625,
+              "height": 768
+            },
+            "generatedRegionRect": {
+              "x": 51.1875,
+              "y": 0,
+              "width": 921.625,
+              "height": 768
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115415&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=804 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115414519&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=548210748.1785115415&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1024x768&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119724321~119896802&sid=1785115415&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=4&tfd=873 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 546,
+            "preAnchorWaitMs": 258,
+            "postAnchorWaitMs": 288,
+            "requestClassifications": {
+              "non-blocking-telemetry": 5,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 67.325,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 921,
+              "height": 768,
+              "referenceWidth": 921,
+              "referenceHeight": 768,
+              "generatedWidth": 921,
+              "generatedHeight": 768,
+              "dimensionMismatch": false,
+              "differentPixels": 178,
+              "totalPixels": 707328,
+              "diffRate": 0.000252,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/desktop/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/desktop/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "label": "Tablet",
+            "width": 768,
+            "height": 1024,
+            "passed": false,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 38.390625,
+              "y": 0,
+              "width": 691.21875,
+              "height": 1024
+            },
+            "generatedRegionRect": {
+              "x": 38.390625,
+              "y": 0,
+              "width": 691.21875,
+              "height": 1024
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115421376&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=440100775.1785115422&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=2&tag_exp=115616986~115938466~115938468~118897920~118897930~119724322~119896802&sid=1785115422&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2Fsettings&dt=YesPlayMusic&en=scroll&epn.percent_scrolled=90&_et=5&tfd=1220 FAILED net::ERR_ABORTED",
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115421376&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=440100775.1785115422&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=768x1024&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115616986~115938466~115938468~118897920~118897930~119724322~119896802&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115422&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1203 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 462,
+            "preAnchorWaitMs": 220,
+            "postAnchorWaitMs": 242,
+            "requestClassifications": {
+              "non-blocking-telemetry": 5,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2589.033,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 691,
+              "height": 1024,
+              "referenceWidth": 691,
+              "referenceHeight": 1024,
+              "generatedWidth": 691,
+              "generatedHeight": 1024,
+              "dimensionMismatch": false,
+              "differentPixels": 1635,
+              "totalPixels": 707584,
+              "diffRate": 0.002311,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/tablet/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/tablet/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "label": "Mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/settings",
+            "generatedFinalRoute": "/settings",
+            "referenceAnchor": ".settings-page",
+            "generatedAnchor": ".settings-page",
+            "referenceRegion": ".settings-page",
+            "generatedRegion": ".settings-page",
+            "referenceRegionRect": {
+              "x": 19.5,
+              "y": 0,
+              "width": 351,
+              "height": 844
+            },
+            "generatedRegionRect": {
+              "x": 19.5,
+              "y": 0,
+              "width": 351,
+              "height": 844
+            },
+            "runtimeErrors": 1,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [
+              "reference: POST fetch https://www.google-analytics.com/g/collect?v=2&tid=G-KMJJCFZDKF&gtm=45je67m0v883509220za200zd883509220&_p=1785115421391&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1237357033.1785115422&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=390x844&uaa=arm&uab=64&uafvl=Not%253BA%253DBrand%3B8.0.0.0%7CChromium%3B150.0.7871.186%7CGoogle%2520Chrome%3B150.0.7871.186&uam=&uamb=0&uap=macOS&uapv=15.7.7&uaw=0&ul=zh-cn&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724322~119896803&dt=settings&dp=%2Fsettings&dl=http%3A%2F%2F127.0.0.1%3A4195%2Fsettings&sid=1785115422&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1153 FAILED net::ERR_ABORTED"
+            ],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 433,
+            "preAnchorWaitMs": 219,
+            "postAnchorWaitMs": 214,
+            "requestClassifications": {
+              "non-blocking-telemetry": 4,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 1,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 2354.621,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 351,
+              "height": 844,
+              "referenceWidth": 351,
+              "referenceHeight": 844,
+              "generatedWidth": 351,
+              "generatedHeight": 844,
+              "dimensionMismatch": false,
+              "differentPixels": 1822,
+              "totalPixels": 296244,
+              "diffRate": 0.00615,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/mobile/reference.png",
+              "generatedImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/mobile/generated.png",
+              "diffImagePath": "/tmp/yesplaymusic-auto-router-upstream-visual/history-deep-link-reload/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.00615,
+        "durationMs": 2589.067
+      }
+    ],
+    "scenarioCount": 3,
+    "viewportRuns": 9,
+    "runtimeErrors": 12,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 9,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 4505,
+    "preAnchorWaitMs": 2131,
+    "postAnchorWaitMs": 2374,
+    "requestClassifications": {
+      "non-blocking-telemetry": 16,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 1,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.00615,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 18,
+    "reusedTargetRuns": 6,
+    "freshTargetRuns": 12
+  },
+  "telemetry": {
+    "contractTargetRuns": 10,
+    "visualViewportRuns": 9,
+    "visualTargetRuns": 18,
+    "visualTargetReusedRuns": 6,
+    "visualTargetFreshRuns": 12,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 4505,
+    "visualPreAnchorWaitMs": 2131,
+    "visualPostAnchorWaitMs": 2374,
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 16,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 1,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 2,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "graceful-fallback",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 10,
+      "totalBlockingHandles": 8,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 6,
+        "child-process": 1,
+        "server": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 6,
+        "ProcessWrap": 1,
+        "server": 1,
+        "socket": 2
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "filesystem": 1,
+        "pipe": 2
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "timing": {
+      "browserLaunchMs": 494.424,
+      "contractMs": 6181.088,
+      "comparisonMs": 0.592,
+      "visualMatrixMs": 7292.479,
+      "browserCloseMs": 196.51,
+      "browserDisconnectMs": 1.458,
+      "browserProcessCloseMs": 195.014,
+      "reportReadyMs": 13969.472,
+      "totalMs": 14165.989
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=5/5，generated=5/5"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": false,
+      "detail": "0/3 SPA route states 通过，viewportRuns=9，worstComputedStyle=1，worstPixelDiff=0.00615"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": false,
+      "detail": "referenceRuntimeErrors=7，generatedRuntimeErrors=0，visualRuntimeErrors=12，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=14/14，rate=1，failures=0"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "auto-router-adapter-experiment",
+  "modelCalls": 0,
+  "generatedVisualDom": false,
+  "reviewRequired": true,
+  "files": {
+    "app.js": "46c731fb65f3af0660640bdb7ddc9a863d11e7dfa8ad434ed97f2bfce2e5714e",
+    "index.html": "9e22c564641d3472575981df396411a767d297ab6402b3a988fa271d2fcf753c",
+    "server.mjs": "8e90a0ca173082be62849bee0302d393009bbcc00aceb1b75f43447a16d5f8f5",
+    "semantic-gold.config.json": "ae54041d1d37b25b438723db3f11681d272119cd73738173b114a383630499c1",
+    "manual-control.config.json": "9894918087480c86fc3177623dfb8ec57e5e4f6b9a7008e332be49ea92c2d989",
+    "generated/routes.js": "0da487175f3dcb07d3f66d9dee56c234657ec69513aa5f3368b45fb0d059fc08",
+    "generated/guards.js": "67c612f9b37819319ef0f468570aca1d2fc031d0b8ff7c8db3de4597dca6d4cf",
+    "generated/router.js": "2b145ec98c871fa42f4c63bd476c7b4ea399e59d17f27a597e7677f29e3aaa3c",
+    "generated/fixtures.js": "800d8e91557c48cc84123ab027e1beba52f7f6ab6d54b50a6ad637eb8bf77505",
+    "generated/README.md": "239a1ffe187789042670f75c5da39e3c04b40e65c4be34e0c8f77cd823fd6c64",
+    "generation.metrics.json": "c8a7d211027014fa01f1f7e2534f8886c73500ad6555c51c408e3a054d2c7884",
+    "experiment.metrics.json": "988b5c656600b63c7ef33117bceccbb1ad5def400207f7ca28044f9969b9d939",
+    "performance-baseline.json": "c226ffdb0a43e76fd58c2b55ac9e23b6e13c2f632b3517dee1bd815cd734a119",
+    "RESULTS.md": "05232b8b4e99082b01d435891f81b67b87e8280b3f11d316304b9c9fd60ebaef"
+  }
+}

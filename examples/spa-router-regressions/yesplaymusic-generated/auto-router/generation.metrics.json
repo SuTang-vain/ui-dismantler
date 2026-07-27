@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-generation",
+  "deterministic": true,
+  "reviewRequired": true,
+  "generatedCode": true,
+  "modelCalls": 0,
+  "generationMs": 0.01,
+  "manualEdits": 3,
+  "manualEditedLines": 22,
+  "repairIterations": 0,
+  "qualityRuns": 2,
+  "generatedFiles": [
+    {
+      "path": "routes.js",
+      "lines": 62
+    },
+    {
+      "path": "guards.js",
+      "lines": 15
+    },
+    {
+      "path": "router.js",
+      "lines": 42
+    },
+    {
+      "path": "fixtures.js",
+      "lines": 30
+    },
+    {
+      "path": "README.md",
+      "lines": 16
+    }
+  ],
+  "generatedLines": 165,
+  "diff": {
+    "baselinePath": "examples/spa-router-regressions/yesplaymusic-generated/public",
+    "generatedFiles": 5,
+    "baselineFiles": 12,
+    "generatedLines": 165,
+    "baselineLines": 1382,
+    "missingBaselineFiles": [
+      "README.md",
+      "fixtures.js",
+      "guards.js",
+      "router.js",
+      "routes.js"
+    ],
+    "baselineOnlyFiles": [
+      "app.js",
+      "assets/fonts/Barlow-Black.woff2",
+      "assets/fonts/Barlow-Bold.woff2",
+      "assets/fonts/Barlow-ExtraBold.woff2",
+      "assets/fonts/Barlow-Medium.woff2",
+      "assets/fonts/Barlow-Regular.woff2",
+      "assets/fonts/Barlow-SemiBold.woff2",
+      "img/default-avatar.jpg",
+      "img/logos/netease-music.png",
+      "img/logos/yesplaymusic.png",
+      "index.html",
+      "styles.css"
+    ],
+    "comparableFiles": 1,
+    "changedFiles": 0,
+    "changedLines": 0,
+    "comparable": true,
+    "responsibility": {
+      "sourceFiles": [
+        "app.js"
+      ],
+      "manualResponsibilityLines": 23,
+      "generatedResponsibilityLines": 66,
+      "matchedRoutes": [
+        "/explore",
+        "/library",
+        "/login",
+        "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6",
+        "/settings"
+      ],
+      "missingRoutes": [],
+      "matchedGuards": [
+        "/library"
+      ],
+      "missingGuards": [],
+      "matchedCapabilities": [
+        "historyBack",
+        "historyForward"
+      ],
+      "missingCapabilities": []
+    },
+    "note": "semantic responsibility comparison against manual app.js; not a same-file textual diff"
+  },
+  "manualQuality": {
+    "reportPath": "examples/spa-router-regressions/yesplaymusic-generated/auto-router/manual-control-results.json",
+    "available": true,
+    "passed": true,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "generatedQuality": {
+    "reportPath": "examples/spa-router-regressions/yesplaymusic-generated/auto-router/semantic-results.json",
+    "available": true,
+    "passed": true,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "qualityComparison": {
+    "comparable": true,
+    "passed": true,
+    "navigationIntegrityDelta": 0,
+    "computedStyleDelta": 0,
+    "pixelDiffDelta": 0,
+    "detail": "comparison is a report-level summary; it does not replace the formal quality gates"
+  },
+  "reviewReasons": [
+    "the scaffold contains router/history/guard/fixture behavior only",
+    "visual DOM and CSS are intentionally excluded",
+    "observed redirects require human approval before production use",
+    "Semantic Gold+ comparison is valid only when both report paths are supplied for the actual applications"
+  ]
+}

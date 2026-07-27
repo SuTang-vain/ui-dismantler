@@ -1,0 +1,267 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "auto-route-shell-three-run-baseline",
+  "runsPerVariant": 3,
+  "order": "manual-1/auto-1, manual-2/auto-2, manual-3/auto-3",
+  "manual": {
+    "runs": 3,
+    "passRate": 1,
+    "stablePassRate": 1,
+    "totalMs": {
+      "count": 3,
+      "min": 13392.238,
+      "max": 13658.46,
+      "mean": 13504.265,
+      "median": 13462.096,
+      "variance": 19052.186,
+      "standardDeviation": 138.03,
+      "coefficientOfVariation": 0.01
+    },
+    "visualMatrixMs": {
+      "count": 3,
+      "min": 6950.918,
+      "max": 7277.4,
+      "mean": 7149.017,
+      "median": 7218.733,
+      "variance": 30292.865,
+      "standardDeviation": 174.048,
+      "coefficientOfVariation": 0.024
+    },
+    "adaptiveWaitMs": {
+      "count": 3,
+      "min": 4198,
+      "max": 4761,
+      "mean": 4437,
+      "median": 4352,
+      "variance": 84661,
+      "standardDeviation": 290.966,
+      "coefficientOfVariation": 0.066
+    },
+    "preAnchorWaitMs": {
+      "count": 3,
+      "min": 2009,
+      "max": 2275,
+      "mean": 2152.667,
+      "median": 2174,
+      "variance": 18030.333,
+      "standardDeviation": 134.277,
+      "coefficientOfVariation": 0.062
+    },
+    "postAnchorWaitMs": {
+      "count": 3,
+      "min": 2178,
+      "max": 2486,
+      "mean": 2284.333,
+      "median": 2189,
+      "variance": 30532.333,
+      "standardDeviation": 174.735,
+      "coefficientOfVariation": 0.076
+    },
+    "browserCloseMs": {
+      "count": 3,
+      "min": 11.615,
+      "max": 19.651,
+      "mean": 15.074,
+      "median": 13.956,
+      "variance": 17.082,
+      "standardDeviation": 4.133,
+      "coefficientOfVariation": 0.274
+    },
+    "navigationIntegrity": {
+      "count": 3,
+      "min": 1,
+      "max": 1,
+      "mean": 1,
+      "median": 1,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "worstComputedStyle": {
+      "count": 3,
+      "min": 1,
+      "max": 1,
+      "mean": 1,
+      "median": 1,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "worstPixelDiff": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "runtimeErrors": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "stabilityFailures": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "blockingHandlesAfterClose": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    }
+  },
+  "automatic": {
+    "runs": 3,
+    "passRate": 1,
+    "stablePassRate": 1,
+    "totalMs": {
+      "count": 3,
+      "min": 13235.398,
+      "max": 13622.701,
+      "mean": 13404.645,
+      "median": 13355.836,
+      "variance": 39287.642,
+      "standardDeviation": 198.211,
+      "coefficientOfVariation": 0.015
+    },
+    "visualMatrixMs": {
+      "count": 3,
+      "min": 6960.353,
+      "max": 7645.74,
+      "mean": 7304.69,
+      "median": 7307.976,
+      "variance": 117446.935,
+      "standardDeviation": 342.705,
+      "coefficientOfVariation": 0.047
+    },
+    "adaptiveWaitMs": {
+      "count": 3,
+      "min": 4190,
+      "max": 4781,
+      "mean": 4422.667,
+      "median": 4297,
+      "variance": 99164.333,
+      "standardDeviation": 314.904,
+      "coefficientOfVariation": 0.071
+    },
+    "preAnchorWaitMs": {
+      "count": 3,
+      "min": 2123,
+      "max": 2318,
+      "mean": 2194,
+      "median": 2141,
+      "variance": 11613,
+      "standardDeviation": 107.764,
+      "coefficientOfVariation": 0.049
+    },
+    "postAnchorWaitMs": {
+      "count": 3,
+      "min": 2067,
+      "max": 2463,
+      "mean": 2228.667,
+      "median": 2156,
+      "variance": 43164.333,
+      "standardDeviation": 207.76,
+      "coefficientOfVariation": 0.093
+    },
+    "browserCloseMs": {
+      "count": 3,
+      "min": 12.501,
+      "max": 13.544,
+      "mean": 12.948,
+      "median": 12.798,
+      "variance": 0.289,
+      "standardDeviation": 0.537,
+      "coefficientOfVariation": 0.042
+    },
+    "navigationIntegrity": {
+      "count": 3,
+      "min": 1,
+      "max": 1,
+      "mean": 1,
+      "median": 1,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "worstComputedStyle": {
+      "count": 3,
+      "min": 1,
+      "max": 1,
+      "mean": 1,
+      "median": 1,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "worstPixelDiff": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "runtimeErrors": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "stabilityFailures": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    },
+    "blockingHandlesAfterClose": {
+      "count": 3,
+      "min": 0,
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "variance": 0,
+      "standardDeviation": 0,
+      "coefficientOfVariation": 0
+    }
+  },
+  "medianDelta": {
+    "totalMs": -106.26,
+    "visualMatrixMs": 89.243,
+    "adaptiveWaitMs": -55,
+    "browserCloseMs": -1.158
+  },
+  "conclusion": {
+    "qualityEquivalent": true,
+    "performanceRegression": false,
+    "notes": "Three runs reduce single-run noise but remain an experiment-scale baseline, not a general SPA benchmark."
+  }
+}

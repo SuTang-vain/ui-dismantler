@@ -80,6 +80,73 @@ test("YesPlayMusic frozen Semantic Gold+ regression preserves reviewed route fid
 
 const runGoldRegression = process.env.UI_DISMANTLER_GOLD_REGRESSION === "1";
 
+
+test("YesPlayMusic automatic router adapter preserves the manual route shell quality contract", () => {
+  const caseDir = `${root}examples/spa-router-regressions/yesplaymusic-generated/auto-router`;
+  const frozen = JSON.parse(readFileSync(`${caseDir}/frozen-artifact.json`, "utf8"));
+  const generation = JSON.parse(readFileSync(`${caseDir}/generation.metrics.json`, "utf8"));
+  const experiment = JSON.parse(readFileSync(`${caseDir}/experiment.metrics.json`, "utf8"));
+  const manual = JSON.parse(readFileSync(`${caseDir}/manual-control-results.json`, "utf8"));
+  const automatic = JSON.parse(readFileSync(`${caseDir}/semantic-results.json`, "utf8"));
+  const upstream = JSON.parse(readFileSync(`${caseDir}/semantic-upstream-results.json`, "utf8"));
+  const performance = JSON.parse(readFileSync(`${caseDir}/performance-baseline.json`, "utf8"));
+
+  assert.equal(frozen.scope, "auto-router-adapter-experiment");
+  assert.equal(frozen.generatedVisualDom, false);
+  assert.equal(frozen.modelCalls, 0);
+  for (const [relativePath, expectedHash] of Object.entries(frozen.files as Record<string, string>)) {
+    const actualHash = createHash("sha256").update(readFileSync(`${caseDir}/${relativePath}`)).digest("hex");
+    assert.equal(actualHash, expectedHash, `${relativePath}: automatic route-shell artifact changed without review`);
+  }
+
+  assert.equal(generation.generatedCode, true);
+  assert.equal(generation.reviewRequired, true);
+  assert.equal(generation.generatedLines, 165);
+  assert.equal(generation.manualEdits, 3);
+  assert.equal(generation.manualEditedLines, 22);
+  assert.equal(generation.repairIterations, 0);
+  assert.equal(generation.diff.responsibility.missingRoutes.length, 0);
+  assert.equal(generation.diff.responsibility.missingGuards.length, 0);
+  assert.equal(generation.diff.responsibility.missingCapabilities.length, 0);
+  assert.equal(generation.qualityComparison.comparable, true);
+  assert.equal(generation.qualityComparison.passed, true);
+
+  for (const report of [manual, automatic]) {
+    assert.equal(report.passed, true);
+    assert.equal(report.scenariosPassed, 5);
+    assert.equal(report.navigationIntegrity.rate, 1);
+    assert.equal(report.visualMatrix.viewportRuns, 9);
+    assert.equal(report.visualMatrix.worstComputedStyle, 1);
+    assert.equal(report.visualMatrix.worstPixelDiff, 0);
+    assert.equal(report.runtimeErrors, 0);
+    assert.equal(report.visualMatrix.stabilityFailures, 0);
+    assert.equal(report.requiredNetworkFailures, 0);
+    assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  }
+  assert.equal(experiment.conclusion.qualityEquivalent, true);
+  assert.equal(experiment.conclusion.singleRunPerformanceConclusionAllowed, false);
+  assert.equal(experiment.conclusion.threeRunPerformanceBaselineAvailable, true);
+  assert.equal(experiment.conclusion.performanceRegression, false);
+  assert.equal(performance.runsPerVariant, 3);
+  assert.equal(performance.manual.passRate, 1);
+  assert.equal(performance.automatic.passRate, 1);
+  assert.equal(performance.manual.stablePassRate, 1);
+  assert.equal(performance.automatic.stablePassRate, 1);
+  assert.equal(performance.conclusion.qualityEquivalent, true);
+  assert.equal(performance.conclusion.performanceRegression, false);
+  assert.ok(performance.automatic.totalMs.median <= performance.manual.totalMs.median * 1.1);
+  assert.equal(experiment.delta.navigationIntegrity, 0);
+  assert.equal(experiment.delta.worstComputedStyle, 0);
+  assert.equal(experiment.delta.worstPixelDiff, 0);
+
+  assert.equal(upstream.passed, false, "the diagnostic must remain visibly distinct from the passing control experiment");
+  assert.equal(upstream.navigationIntegrity.rate, 1);
+  assert.equal(upstream.generated.runtimeErrors, 0);
+  assert.ok(upstream.reference.runtimeErrors > 0);
+  assert.ok(upstream.visualMatrix.runtimeErrors > 0);
+  assert.equal(upstream.requiredNetworkFailures, 0);
+});
+
 test("BLACKPINK Gold+ regression preserves initial and critical interaction matrices", { skip: !runGoldRegression, timeout: 600_000 }, async () => {
   const caseDir = `${root}examples/cases/blackpink-star-group-ts`;
   const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
