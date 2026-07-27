@@ -4,7 +4,7 @@
   "reviewRequired": true,
   "generatedCode": false,
   "source": {
-    "mode": "single",
+    "mode": "reference-generated",
     "configScenarios": 6,
     "reportIncluded": true,
     "reportPassed": true
@@ -179,7 +179,7 @@
     {
       "scenarioId": "unauthenticated-dashboard-guard",
       "stepIndex": 0,
-      "action": "wait",
+      "action": "guard-redirect",
       "from": "/#/dashboard",
       "to": "/#/login?redirect=%2Fdashboard"
     },

@@ -1,0 +1,7245 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "sfc-visual-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "framework": "vue-sfc",
+  "components": [
+    {
+      "id": "sfc:1",
+      "file": "App.vue",
+      "componentName": "App",
+      "imports": [],
+      "childComponents": [
+        "RouterView"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:2",
+      "file": "components/BackToTop/index.vue",
+      "componentName": "BackToTop",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "Icon",
+        "Icon--backToTopArrow",
+        "back-to-ceiling"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "visible"
+        ],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "Icon",
+            "back-to-ceiling",
+            "fade-enter",
+            "fade-enter-active",
+            "fade-leave-active",
+            "fade-leave-to"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:3",
+      "file": "components/Breadcrumb/index.vue",
+      "componentName": "Breadcrumb",
+      "imports": [
+        {
+          "local": "pathToRegexp",
+          "source": "path-to-regexp",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElBreadcrumb",
+        "ElBreadcrumbItem",
+        "TransitionGroup"
+      ],
+      "visualRegions": [
+        "app-breadcrumb",
+        "no-redirect"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "item.redirect==="
+        ],
+        "loops": [
+          "(item,index) in levelList"
+        ]
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-breadcrumb",
+            "el-breadcrumb",
+            "no-redirect"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "path-to-regexp"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:4",
+      "file": "components/Charts/Keyboard.vue",
+      "componentName": "Keyboard",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:1"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:5",
+      "file": "components/Charts/LineMarker.vue",
+      "componentName": "LineMarker",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:2"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:6",
+      "file": "components/Charts/MixChart.vue",
+      "componentName": "MixChart",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:3"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:7",
+      "file": "components/DndList/index.vue",
+      "componentName": "DndList",
+      "imports": [
+        {
+          "local": "draggable",
+          "source": "vuedraggable",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "dndList",
+        "dndList-list",
+        "dragArea",
+        "el-icon-delete",
+        "list-complete-item",
+        "list-complete-item-handle",
+        "list-complete-item-handle2"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "element in list1",
+          "element in list2"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "dndList",
+            "dndList-list",
+            "dragArea",
+            "list-complete-enter",
+            "list-complete-item",
+            "list-complete-item-handle",
+            "list-complete-item-handle2",
+            "list-complete-leave-active",
+            "sortable-chosen",
+            "sortable-ghost"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuedraggable"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:8",
+      "file": "components/DragSelect/index.vue",
+      "componentName": "DragSelect",
+      "imports": [
+        {
+          "local": "Sortable",
+          "source": "sortablejs",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElSelect"
+      ],
+      "visualRegions": [
+        "drag-select"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "selectVal"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "drag-select",
+            "el-tag",
+            "sortable-ghost"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "sortablejs"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:9",
+      "file": "components/Dropzone/index.vue",
+      "componentName": "Dropzone",
+      "imports": [
+        {
+          "local": "Dropzone",
+          "source": "dropzone",
+          "thirdParty": true
+        },
+        {
+          "local": "getToken",
+          "source": "api/qiniu",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "dropzone"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "destroyed"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "dropzone",
+            "dz-details",
+            "dz-error-mark",
+            "dz-filename",
+            "dz-image",
+            "dz-preview",
+            "dz-remove",
+            "dz-size",
+            "dz-success-mark"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "api",
+        "dropzone"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:10",
+      "file": "components/ErrorLog/index.vue",
+      "componentName": "ErrorLog",
+      "imports": [],
+      "childComponents": [
+        "ElBadge",
+        "ElButton",
+        "ElDialog",
+        "ElTable",
+        "ElTableColumn",
+        "ElTag",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "bug",
+        "message-title"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "errorLogs.length>0"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "message-title"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:11",
+      "file": "components/GithubCorner/index.vue",
+      "componentName": "GithubCorner",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "github-corner",
+        "octo-arm",
+        "octo-body"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [
+            "(max-width:500px)"
+          ],
+          "classSelectors": [
+            "github-corner",
+            "octo-arm"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "sfc:12",
+      "file": "components/Hamburger/index.vue",
+      "componentName": "Hamburger",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "hamburger"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "hamburger",
+            "is-active"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:13",
+      "file": "components/HeaderSearch/index.vue",
+      "componentName": "HeaderSearch",
+      "imports": [
+        {
+          "local": "Fuse",
+          "source": "fuse.js",
+          "thirdParty": true
+        },
+        {
+          "local": "path",
+          "source": "path",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElOption",
+        "ElSelect",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "header-search",
+        "header-search-select",
+        "search"
+      ],
+      "bindings": {
+        "events": [
+          "change",
+          "click"
+        ],
+        "models": [
+          "search"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in options"
+        ]
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-input__inner",
+            "header-search",
+            "header-search-select",
+            "search-icon",
+            "show"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "fuse.js",
+        "path"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:14",
+      "file": "components/ImageCropper/index.vue",
+      "componentName": "ImageCropper",
+      "imports": [
+        {
+          "local": "request",
+          "source": "@/utils/request",
+          "thirdParty": false
+        },
+        {
+          "local": "language",
+          "source": "./utils/language.js",
+          "thirdParty": false
+        },
+        {
+          "local": "mimes",
+          "source": "./utils/mimes.js",
+          "thirdParty": false
+        },
+        {
+          "local": "data2blob",
+          "source": "./utils/data2blob.js",
+          "thirdParty": false
+        },
+        {
+          "local": "effectRipple",
+          "source": "./utils/effectRipple.js",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "vicp-close",
+        "vicp-crop",
+        "vicp-crop-left",
+        "vicp-crop-right",
+        "vicp-drop-area",
+        "vicp-error",
+        "vicp-hint",
+        "vicp-icon1",
+        "vicp-icon1-arrow",
+        "vicp-icon1-body",
+        "vicp-icon1-bottom",
+        "vicp-icon2",
+        "vicp-icon3",
+        "vicp-icon4",
+        "vicp-icon5",
+        "vicp-icon6",
+        "vicp-img",
+        "vicp-img-container",
+        "vicp-img-shade",
+        "vicp-img-shade-1",
+        "vicp-img-shade-2",
+        "vicp-loading",
+        "vicp-no-supported-hint",
+        "vicp-operate",
+        "vicp-operate-btn",
+        "vicp-preview",
+        "vicp-preview-item",
+        "vicp-preview-item-circle",
+        "vicp-progress",
+        "vicp-progress-wrap",
+        "vicp-range",
+        "vicp-rotate",
+        "vicp-step1",
+        "vicp-step2",
+        "vicp-step3",
+        "vicp-success",
+        "vicp-upload",
+        "vicp-wrap",
+        "vue-image-crop-upload"
+      ],
+      "bindings": {
+        "events": [
+          "change",
+          "click",
+          "drag",
+          "dragend",
+          "dragenter",
+          "dragleave",
+          "dragover",
+          "dragstart",
+          "drop",
+          "input",
+          "mousedown",
+          "mousemove",
+          "mouseout",
+          "mouseup",
+          "touchcancel",
+          "touchend",
+          "touchmove",
+          "touchstart"
+        ],
+        "models": [],
+        "conditions": [
+          "!isSupported",
+          "!noCircle",
+          "!noRotate",
+          "!noSquare",
+          "false",
+          "hasError",
+          "loading != 1",
+          "loading !== 1",
+          "loading === 1",
+          "loading === 2",
+          "step == 1",
+          "step == 2",
+          "step == 3",
+          "true",
+          "value"
+        ],
+        "loops": []
+      },
+      "lifecycle": [
+        "created",
+        "destroyed"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "e-ripple",
+            "vicp-close",
+            "vicp-crop",
+            "vicp-crop-left",
+            "vicp-crop-right",
+            "vicp-drop-area",
+            "vicp-error",
+            "vicp-hint",
+            "vicp-icon1",
+            "vicp-icon1-arrow",
+            "vicp-icon1-body",
+            "vicp-icon1-bottom",
+            "vicp-icon2",
+            "vicp-icon3",
+            "vicp-icon4",
+            "vicp-icon5",
+            "vicp-icon6",
+            "vicp-img",
+            "vicp-img-container",
+            "vicp-img-shade",
+            "vicp-img-shade-1",
+            "vicp-img-shade-2",
+            "vicp-loading",
+            "vicp-no-supported-hint",
+            "vicp-operate",
+            "vicp-preview",
+            "vicp-preview-item",
+            "vicp-preview-item-circle",
+            "vicp-progress",
+            "vicp-progress-wrap",
+            "vicp-range",
+            "vicp-rotate",
+            "vicp-step1",
+            "vicp-step2",
+            "vicp-step3",
+            "vicp-success",
+            "vicp-upload",
+            "vicp-wrap",
+            "vue-image-crop-upload",
+            "z-active"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:15",
+      "file": "components/JsonEditor/index.vue",
+      "componentName": "JsonEditor",
+      "imports": [
+        {
+          "local": "CodeMirror",
+          "source": "codemirror",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "json-editor"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "CodeMirror",
+            "CodeMirror-scroll",
+            "cm-s-rubyblue",
+            "cm-string",
+            "json-editor"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "codemirror"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:16",
+      "file": "components/Kanban/index.vue",
+      "componentName": "DragKanbanDemo",
+      "imports": [
+        {
+          "local": "draggable",
+          "source": "vuedraggable",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "board-column",
+        "board-column-content",
+        "board-column-header",
+        "board-item"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "element in list"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "board-column",
+            "board-column-content",
+            "board-column-header",
+            "board-item"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuedraggable"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:17",
+      "file": "components/MDinput/index.vue",
+      "componentName": "MdInput",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "computedClasses",
+        "el-input__icon",
+        "icon",
+        "iconClass",
+        "material-input",
+        "material-input-bar",
+        "material-input__component",
+        "material-input__icon",
+        "material-label"
+      ],
+      "bindings": {
+        "events": [
+          "blur",
+          "focus",
+          "input"
+        ],
+        "models": [
+          "currentValue"
+        ],
+        "conditions": [
+          "icon",
+          "type === "
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "iconClass",
+            "material--active",
+            "material--disabled",
+            "material--has-errors",
+            "material--raised",
+            "material-input",
+            "material-input-bar",
+            "material-input__component",
+            "material-input__icon",
+            "material-label"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:18",
+      "file": "components/MarkdownEditor/index.vue",
+      "componentName": "MarkdownEditor",
+      "imports": [
+        {
+          "local": "Editor",
+          "source": "tui-editor",
+          "thirdParty": true
+        },
+        {
+          "local": "defaultOptions",
+          "source": "./default-options",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "destroyed"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "tui-editor"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:19",
+      "file": "components/Pagination/index.vue",
+      "componentName": "Pagination",
+      "imports": [
+        {
+          "local": "scrollTo",
+          "source": "@/utils/scroll-to",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElPagination"
+      ],
+      "visualRegions": [
+        "pagination-container"
+      ],
+      "bindings": {
+        "events": [
+          "current-change",
+          "size-change"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "hidden",
+            "pagination-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:20",
+      "file": "components/PanThumb/index.vue",
+      "componentName": "PanThumb",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "pan-info",
+        "pan-info-roles-container",
+        "pan-item",
+        "pan-thumb"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "pan-info",
+            "pan-info-roles-container",
+            "pan-item",
+            "pan-thumb"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:21",
+      "file": "components/RightPanel/index.vue",
+      "componentName": "RightPanel",
+      "imports": [
+        {
+          "local": "addClass",
+          "source": "@/utils",
+          "thirdParty": false
+        },
+        {
+          "local": "removeClass",
+          "source": "@/utils",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "handle-button",
+        "rightPanel",
+        "rightPanel-background",
+        "rightPanel-container",
+        "rightPanel-items",
+        "show"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "showRightPanel"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "handle-button",
+            "rightPanel",
+            "rightPanel-background",
+            "show"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:22",
+      "file": "components/Screenfull/index.vue",
+      "componentName": "Screenfull",
+      "imports": [
+        {
+          "local": "screenfull",
+          "source": "screenfull",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "isFullscreen"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "screenfull-svg"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "screenfull"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:23",
+      "file": "components/Share/DropdownMenu.vue",
+      "componentName": "DropdownMenu",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "active",
+        "isActive",
+        "share-dropdown-menu",
+        "share-dropdown-menu-item",
+        "share-dropdown-menu-title",
+        "share-dropdown-menu-wrapper"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "item.href"
+        ],
+        "loops": [
+          "(item,index) of items"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "active",
+            "length",
+            "share-dropdown-menu",
+            "share-dropdown-menu-item",
+            "share-dropdown-menu-wrapper"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:24",
+      "file": "components/SizeSelect/index.vue",
+      "componentName": "SizeSelect",
+      "imports": [],
+      "childComponents": [
+        "ElDropdown",
+        "ElDropdownItem",
+        "ElDropdownMenu",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "size"
+      ],
+      "bindings": {
+        "events": [
+          "command"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item of sizeOptions"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:25",
+      "file": "components/Sticky/index.vue",
+      "componentName": "Sticky",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "destroyed"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:26",
+      "file": "components/SvgIcon/index.vue",
+      "componentName": "SvgIcon",
+      "imports": [
+        {
+          "local": "isExternal",
+          "source": "@/utils/validate",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "svg-external-icon",
+        "svg-icon",
+        "svgClass"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "isExternal"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "svg-external-icon",
+            "svg-icon"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:27",
+      "file": "components/TextHoverEffect/Mallki.vue",
+      "componentName": "Mallki",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "className",
+        "link--mallki"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "link--mallki"
+          ],
+          "customProperties": [
+            "--mallki"
+          ]
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:28",
+      "file": "components/ThemePicker/index.vue",
+      "componentName": "ThemePicker",
+      "imports": [],
+      "childComponents": [
+        "ElColorPicker"
+      ],
+      "visualRegions": [
+        "theme-picker",
+        "theme-picker-dropdown"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "theme"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-color-dropdown__link-btn",
+            "el-color-picker__trigger",
+            "theme-message",
+            "theme-picker",
+            "theme-picker-dropdown"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:29",
+      "file": "components/Tinymce/components/EditorImage.vue",
+      "componentName": "EditorSlideUpload",
+      "imports": [
+        {
+          "local": "getToken",
+          "source": "api/qiniu",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElDialog",
+        "ElUpload"
+      ],
+      "visualRegions": [
+        "editor-slide-upload",
+        "upload-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "editor-slide-upload",
+            "el-upload--picture-card"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "api"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:30",
+      "file": "components/Tinymce/index.vue",
+      "componentName": "Tinymce",
+      "imports": [
+        {
+          "local": "editorImage",
+          "source": "./components/EditorImage",
+          "thirdParty": false
+        },
+        {
+          "local": "plugins",
+          "source": "./plugins",
+          "thirdParty": false
+        },
+        {
+          "local": "toolbar",
+          "source": "./toolbar",
+          "thirdParty": false
+        },
+        {
+          "local": "load",
+          "source": "./dynamicLoadScript",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "editor-custom-btn-container",
+        "editor-upload-btn",
+        "fullscreen",
+        "tinymce-container",
+        "tinymce-textarea"
+      ],
+      "bindings": {
+        "events": [
+          "successCBK"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "destroyed"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "editor-custom-btn-container",
+            "editor-upload-btn",
+            "fullscreen",
+            "mce-fullscreen",
+            "tinymce-container",
+            "tinymce-textarea"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:31",
+      "file": "components/Upload/SingleImage.vue",
+      "componentName": "SingleImageUpload",
+      "imports": [
+        {
+          "local": "getToken",
+          "source": "@/api/qiniu",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElUpload"
+      ],
+      "visualRegions": [
+        "el-icon-delete",
+        "el-icon-upload",
+        "el-upload__text",
+        "image-preview",
+        "image-preview-action",
+        "image-preview-wrapper",
+        "image-uploader",
+        "upload-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "imageUrl.length>1"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-icon-delete",
+            "image-preview",
+            "image-preview-action",
+            "image-preview-wrapper",
+            "image-uploader",
+            "scss",
+            "upload-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:32",
+      "file": "components/Upload/SingleImage2.vue",
+      "componentName": "SingleImageUpload2",
+      "imports": [
+        {
+          "local": "getToken",
+          "source": "@/api/qiniu",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElUpload"
+      ],
+      "visualRegions": [
+        "el-icon-delete",
+        "el-icon-upload",
+        "el-upload__text",
+        "image-preview",
+        "image-preview-action",
+        "image-preview-wrapper",
+        "image-uploader",
+        "singleImageUpload2",
+        "upload-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "imageUrl.length>0",
+          "imageUrl.length>1"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-icon-delete",
+            "image-preview",
+            "image-preview-action",
+            "image-preview-wrapper",
+            "image-uploader",
+            "upload-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:33",
+      "file": "components/Upload/SingleImage3.vue",
+      "componentName": "SingleImageUpload3",
+      "imports": [
+        {
+          "local": "getToken",
+          "source": "@/api/qiniu",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElUpload"
+      ],
+      "visualRegions": [
+        "el-icon-delete",
+        "el-icon-upload",
+        "el-upload__text",
+        "image-app-preview",
+        "image-preview",
+        "image-preview-action",
+        "image-preview-wrapper",
+        "image-uploader",
+        "upload-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "imageUrl.length>1"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-fake-conver",
+            "el-icon-delete",
+            "image-app-preview",
+            "image-preview",
+            "image-preview-action",
+            "image-preview-wrapper",
+            "image-uploader",
+            "scss",
+            "upload-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:34",
+      "file": "components/UploadExcel/index.vue",
+      "componentName": "UploadExcel",
+      "imports": [
+        {
+          "local": "XLSX",
+          "source": "xlsx",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElButton"
+      ],
+      "visualRegions": [
+        "drop",
+        "excel-upload-input"
+      ],
+      "bindings": {
+        "events": [
+          "change",
+          "click",
+          "dragenter",
+          "dragover",
+          "drop"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "drop",
+            "excel-upload-input"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "xlsx"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:35",
+      "file": "layout/components/AppMain.vue",
+      "componentName": "AppMain",
+      "imports": [],
+      "childComponents": [
+        "RouterView"
+      ],
+      "visualRegions": [
+        "app-main"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-main",
+            "fixed-header",
+            "hasTagsView"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-popup-parent--hidden",
+            "fixed-header"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:36",
+      "file": "layout/components/Navbar.vue",
+      "componentName": "Navbar",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "Breadcrumb",
+          "source": "@/components/Breadcrumb",
+          "thirdParty": false
+        },
+        {
+          "local": "Hamburger",
+          "source": "@/components/Hamburger",
+          "thirdParty": false
+        },
+        {
+          "local": "ErrorLog",
+          "source": "@/components/ErrorLog",
+          "thirdParty": false
+        },
+        {
+          "local": "Screenfull",
+          "source": "@/components/Screenfull",
+          "thirdParty": false
+        },
+        {
+          "local": "SizeSelect",
+          "source": "@/components/SizeSelect",
+          "thirdParty": false
+        },
+        {
+          "local": "Search",
+          "source": "@/components/HeaderSearch",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTooltip",
+        "ErrorLog",
+        "SizeSelect"
+      ],
+      "visualRegions": [
+        "breadcrumb-container",
+        "errLog-container",
+        "hamburger-container",
+        "hover-effect",
+        "navbar",
+        "right-menu",
+        "right-menu-item"
+      ],
+      "bindings": {
+        "events": [
+          "toggleClick"
+        ],
+        "models": [],
+        "conditions": [
+          "device!=="
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "avatar-container",
+            "avatar-wrapper",
+            "breadcrumb-container",
+            "el-icon-caret-bottom",
+            "errLog-container",
+            "hamburger-container",
+            "hover-effect",
+            "navbar",
+            "right-menu",
+            "right-menu-item",
+            "user-avatar"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:37",
+      "file": "layout/components/Settings/index.vue",
+      "componentName": "Settings",
+      "imports": [
+        {
+          "local": "ThemePicker",
+          "source": "@/components/ThemePicker",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElSwitch",
+        "ThemePicker"
+      ],
+      "visualRegions": [
+        "drawer-container",
+        "drawer-item",
+        "drawer-switch",
+        "drawer-title"
+      ],
+      "bindings": {
+        "events": [
+          "change"
+        ],
+        "models": [
+          "fixedHeader",
+          "sidebarLogo",
+          "tagsView"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "drawer-container",
+            "drawer-item",
+            "drawer-switch",
+            "drawer-title"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:38",
+      "file": "layout/components/Sidebar/Item.vue",
+      "componentName": "MenuItem",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "sub-el-icon"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:39",
+      "file": "layout/components/Sidebar/Link.vue",
+      "componentName": "Link",
+      "imports": [
+        {
+          "local": "isExternal",
+          "source": "@/utils/validate",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:40",
+      "file": "layout/components/Sidebar/Logo.vue",
+      "componentName": "SidebarLogo",
+      "imports": [],
+      "childComponents": [
+        "RouterLink"
+      ],
+      "visualRegions": [
+        "sidebar-logo",
+        "sidebar-logo-container",
+        "sidebar-logo-link",
+        "sidebar-title"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "collapse",
+          "logo"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "collapse",
+            "sidebar-logo",
+            "sidebar-logo-container",
+            "sidebar-logo-link",
+            "sidebar-title",
+            "sidebarLogoFade-enter",
+            "sidebarLogoFade-enter-active",
+            "sidebarLogoFade-leave-to"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:41",
+      "file": "layout/components/Sidebar/SidebarItem.vue",
+      "componentName": "SidebarItem",
+      "imports": [
+        {
+          "local": "path",
+          "source": "path",
+          "thirdParty": true
+        },
+        {
+          "local": "isExternal",
+          "source": "@/utils/validate",
+          "thirdParty": false
+        },
+        {
+          "local": "Item",
+          "source": "./Item",
+          "thirdParty": false
+        },
+        {
+          "local": "AppLink",
+          "source": "./Link",
+          "thirdParty": false
+        },
+        {
+          "local": "FixiOSBug",
+          "source": "./FixiOSBug",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "AppLink",
+        "ElMenuItem"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "!item.hidden",
+          "hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow",
+          "onlyOneChild.meta"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [
+        "path"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:42",
+      "file": "layout/components/Sidebar/index.vue",
+      "componentName": "Sidebar",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "Logo",
+          "source": "./Logo",
+          "thirdParty": false
+        },
+        {
+          "local": "SidebarItem",
+          "source": "./SidebarItem",
+          "thirdParty": false
+        },
+        {
+          "local": "variables",
+          "source": "@/styles/variables.scss",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElMenu",
+        "ElScrollbar",
+        "SidebarItem"
+      ],
+      "visualRegions": [
+        "scrollbar-wrapper"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "showLogo"
+        ],
+        "loops": [
+          "route in permission_routes"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:43",
+      "file": "layout/components/TagsView/ScrollPane.vue",
+      "componentName": "ScrollPane",
+      "imports": [],
+      "childComponents": [
+        "ElScrollbar"
+      ],
+      "visualRegions": [
+        "scroll-container"
+      ],
+      "bindings": {
+        "events": [
+          "wheel"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-scrollbar__bar",
+            "el-scrollbar__wrap",
+            "scroll-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:44",
+      "file": "layout/components/TagsView/index.vue",
+      "componentName": "TagsView",
+      "imports": [
+        {
+          "local": "ScrollPane",
+          "source": "./ScrollPane",
+          "thirdParty": false
+        },
+        {
+          "local": "path",
+          "source": "path",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "RouterLink",
+        "ScrollPane"
+      ],
+      "visualRegions": [
+        "contextmenu",
+        "el-icon-close",
+        "isActive",
+        "tag",
+        "tags-view-container",
+        "tags-view-item",
+        "tags-view-wrapper"
+      ],
+      "bindings": {
+        "events": [
+          "click",
+          "contextmenu",
+          "scroll"
+        ],
+        "models": [],
+        "conditions": [
+          "!isAffix(selectedTag)",
+          "!isAffix(tag)",
+          "visible"
+        ],
+        "loops": [
+          "tag in visitedViews"
+        ]
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "active",
+            "contextmenu",
+            "tags-view-container",
+            "tags-view-item",
+            "tags-view-wrapper"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "el-icon-close",
+            "tags-view-item",
+            "tags-view-wrapper"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "path"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:45",
+      "file": "layout/index.vue",
+      "componentName": "Layout",
+      "imports": [
+        {
+          "local": "RightPanel",
+          "source": "@/components/RightPanel",
+          "thirdParty": false
+        },
+        {
+          "local": "AppMain",
+          "source": "./components",
+          "thirdParty": false
+        },
+        {
+          "local": "Navbar",
+          "source": "./components",
+          "thirdParty": false
+        },
+        {
+          "local": "Settings",
+          "source": "./components",
+          "thirdParty": false
+        },
+        {
+          "local": "Sidebar",
+          "source": "./components",
+          "thirdParty": false
+        },
+        {
+          "local": "TagsView",
+          "source": "./components",
+          "thirdParty": false
+        },
+        {
+          "local": "ResizeMixin",
+          "source": "./mixin/ResizeHandler",
+          "thirdParty": false
+        },
+        {
+          "local": "mapState",
+          "source": "vuex",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "AppMain",
+        "RightPanel",
+        "TagsView"
+      ],
+      "visualRegions": [
+        "app-wrapper",
+        "classObj",
+        "drawer-bg",
+        "hasTagsView",
+        "main-container",
+        "needTagsView",
+        "sidebar-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [
+          "device===",
+          "needTagsView",
+          "showSettings"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-wrapper",
+            "drawer-bg",
+            "fixed-header",
+            "hideSidebar",
+            "mobile",
+            "openSidebar",
+            "scss"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:46",
+      "file": "views/charts/keyboard.vue",
+      "componentName": "KeyboardChart",
+      "imports": [
+        {
+          "local": "Chart",
+          "source": "@/components/Charts/Keyboard",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "chart-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "chart-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:47",
+      "file": "views/charts/line.vue",
+      "componentName": "LineChart",
+      "imports": [
+        {
+          "local": "Chart",
+          "source": "@/components/Charts/LineMarker",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "chart-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "chart-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:48",
+      "file": "views/charts/mix-chart.vue",
+      "componentName": "MixChart",
+      "imports": [
+        {
+          "local": "Chart",
+          "source": "@/components/Charts/MixChart",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "chart-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "chart-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:49",
+      "file": "views/clipboard/index.vue",
+      "componentName": "ClipboardDemo",
+      "imports": [
+        {
+          "local": "clip",
+          "source": "@/utils/clipboard",
+          "thirdParty": false
+        },
+        {
+          "local": "clipboard",
+          "source": "@/directive/clipboard/index.js",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElInput",
+        "ElTabPane",
+        "ElTabs"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "activeName",
+          "inputData"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:50",
+      "file": "views/components-demo/avatar-upload.vue",
+      "componentName": "AvatarUploadDemo",
+      "imports": [
+        {
+          "local": "ImageCropper",
+          "source": "@/components/ImageCropper",
+          "thirdParty": false
+        },
+        {
+          "local": "PanThumb",
+          "source": "@/components/PanThumb",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ImageCropper",
+        "PanThumb"
+      ],
+      "visualRegions": [
+        "components-container",
+        "link-type"
+      ],
+      "bindings": {
+        "events": [
+          "1",
+          "click",
+          "close",
+          "crop-upload-success"
+        ],
+        "models": [],
+        "conditions": [
+          "imagecropperShow"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "avatar"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:51",
+      "file": "views/components-demo/back-to-top.vue",
+      "componentName": "BackToTopDemo",
+      "imports": [
+        {
+          "local": "BackToTop",
+          "source": "@/components/BackToTop",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "BackToTop",
+        "ElTooltip"
+      ],
+      "visualRegions": [
+        "components-container",
+        "placeholder-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "placeholder-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:52",
+      "file": "views/components-demo/count-to.vue",
+      "componentName": "CountToDemo",
+      "imports": [
+        {
+          "local": "countTo",
+          "source": "vue-count-to",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "CountTo"
+      ],
+      "visualRegions": [
+        "components-container",
+        "example",
+        "example-btn",
+        "label",
+        "pause-resume-btn",
+        "startBtn"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "setPrefix",
+          "setSeparator",
+          "setSuffix"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "example",
+            "example-btn",
+            "label",
+            "pause-resume-btn",
+            "startBtn"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vue-count-to"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:53",
+      "file": "views/components-demo/dnd-list.vue",
+      "componentName": "DndListDemo",
+      "imports": [
+        {
+          "local": "DndList",
+          "source": "@/components/DndList",
+          "thirdParty": false
+        },
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "DndList"
+      ],
+      "visualRegions": [
+        "components-container",
+        "editor-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:54",
+      "file": "views/components-demo/drag-dialog.vue",
+      "componentName": "DragDialogDemo",
+      "imports": [
+        {
+          "local": "elDragDialog",
+          "source": "@/directive/el-drag-dialog",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElDialog",
+        "ElOption",
+        "ElSelect",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "components-container"
+      ],
+      "bindings": {
+        "events": [
+          "click",
+          "dragDialog"
+        ],
+        "models": [
+          "value"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in options"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:55",
+      "file": "views/components-demo/drag-kanban.vue",
+      "componentName": "DragKanbanDemo",
+      "imports": [
+        {
+          "local": "Kanban",
+          "source": "@/components/Kanban",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "Kanban"
+      ],
+      "visualRegions": [
+        "board",
+        "components-container",
+        "done",
+        "kanban",
+        "todo",
+        "working"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "board",
+            "board-column-header",
+            "done",
+            "kanban",
+            "todo",
+            "working"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:56",
+      "file": "views/components-demo/drag-select.vue",
+      "componentName": "DragSelectDemo",
+      "imports": [
+        {
+          "local": "ElDragSelect",
+          "source": "@/components/DragSelect",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElDragSelect",
+        "ElOption",
+        "ElTag"
+      ],
+      "visualRegions": [
+        "components-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "value"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in options",
+          "item of value"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:57",
+      "file": "views/components-demo/dropzone.vue",
+      "componentName": "DropzoneDemo",
+      "imports": [
+        {
+          "local": "Dropzone",
+          "source": "@/components/Dropzone",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "components-container",
+        "editor-container",
+        "link-type"
+      ],
+      "bindings": {
+        "events": [
+          "dropzone-removedFile",
+          "dropzone-success"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:58",
+      "file": "views/components-demo/json-editor.vue",
+      "componentName": "JsonEditorDemo",
+      "imports": [
+        {
+          "local": "JsonEditor",
+          "source": "@/components/JsonEditor",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "JsonEditor"
+      ],
+      "visualRegions": [
+        "components-container",
+        "editor-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "value"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "editor-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:59",
+      "file": "views/components-demo/markdown.vue",
+      "componentName": "MarkdownDemo",
+      "imports": [
+        {
+          "local": "MarkdownEditor",
+          "source": "@/components/MarkdownEditor",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElAlert",
+        "ElButton",
+        "ElTag",
+        "MarkdownEditor"
+      ],
+      "visualRegions": [
+        "components-container",
+        "editor-container",
+        "tag-title"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "content1",
+          "content2",
+          "content3",
+          "content4"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "editor-container",
+            "tag-title"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:60",
+      "file": "views/components-demo/mixin.vue",
+      "componentName": "ComponentMixinDemo",
+      "imports": [
+        {
+          "local": "PanThumb",
+          "source": "@/components/PanThumb",
+          "thirdParty": false
+        },
+        {
+          "local": "MdInput",
+          "source": "@/components/MDinput",
+          "thirdParty": false
+        },
+        {
+          "local": "Mallki",
+          "source": "@/components/TextHoverEffect/Mallki",
+          "thirdParty": false
+        },
+        {
+          "local": "DropdownMenu",
+          "source": "@/components/Share/DropdownMenu",
+          "thirdParty": false
+        },
+        {
+          "local": "waves",
+          "source": "@/directive/waves/index.js",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "DropdownMenu",
+        "ElButton",
+        "ElCard",
+        "ElCol",
+        "ElForm",
+        "ElFormItem",
+        "ElRow",
+        "MdInput",
+        "PanThumb",
+        "RouterLink"
+      ],
+      "visualRegions": [
+        "blue-btn",
+        "box-card",
+        "clearfix",
+        "component-item",
+        "green-btn",
+        "light-blue-btn",
+        "mixin-components-container",
+        "pan-btn",
+        "pink-btn",
+        "text-center",
+        "tiffany-btn",
+        "yellow-btn"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "demo.title"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "component-item",
+            "mixin-components-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:61",
+      "file": "views/components-demo/split-pane.vue",
+      "componentName": "SplitpaneDemo",
+      "imports": [
+        {
+          "local": "splitPane",
+          "source": "vue-splitpane",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "SplitPane"
+      ],
+      "visualRegions": [
+        "components-container",
+        "left-container"
+      ],
+      "bindings": {
+        "events": [
+          "resize"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "bottom-container",
+            "components-container",
+            "left-container",
+            "right-container",
+            "top-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vue-splitpane"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:62",
+      "file": "views/components-demo/sticky.vue",
+      "componentName": "StickyDemo",
+      "imports": [
+        {
+          "local": "Sticky",
+          "source": "@/components/Sticky",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElCheckbox",
+        "ElCheckboxGroup",
+        "ElDropdown",
+        "ElDropdownMenu",
+        "ElInput"
+      ],
+      "visualRegions": [
+        "el-icon--right",
+        "el-icon-caret-bottom",
+        "no-border",
+        "no-padding"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "platforms",
+          "url"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in platformsOptions"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "components-container",
+            "time-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:63",
+      "file": "views/components-demo/tinymce.vue",
+      "componentName": "TinymceDemo",
+      "imports": [
+        {
+          "local": "Tinymce",
+          "source": "@/components/Tinymce",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "components-container",
+        "editor-content",
+        "link-type"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "content"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "editor-content"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:64",
+      "file": "views/dashboard/admin/components/BarChart.vue",
+      "componentName": "BarChart",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:4"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:65",
+      "file": "views/dashboard/admin/components/BoxCard.vue",
+      "componentName": "BoxCard",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "PanThumb",
+          "source": "@/components/PanThumb",
+          "thirdParty": false
+        },
+        {
+          "local": "Mallki",
+          "source": "@/components/TextHoverEffect/Mallki",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElCard",
+        "ElProgress",
+        "PanThumb"
+      ],
+      "visualRegions": [
+        "box-card-component",
+        "box-card-header",
+        "panThumb",
+        "progress-item"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "box-card-component",
+            "el-card__header"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [
+            "only screen and (max-width: 1510px)"
+          ],
+          "classSelectors": [
+            "box-card-component",
+            "box-card-header",
+            "mallki-text",
+            "pan-info",
+            "panThumb",
+            "progress-item"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "sfc:66",
+      "file": "views/dashboard/admin/components/LineChart.vue",
+      "componentName": "LineChart",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:5"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:67",
+      "file": "views/dashboard/admin/components/PanelGroup.vue",
+      "componentName": "PanelGroup",
+      "imports": [
+        {
+          "local": "CountTo",
+          "source": "vue-count-to",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "CountTo",
+        "ElCol",
+        "ElRow",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "card-panel",
+        "card-panel-col",
+        "card-panel-description",
+        "card-panel-icon-wrapper",
+        "card-panel-num",
+        "card-panel-text",
+        "icon-message",
+        "icon-money",
+        "icon-people",
+        "icon-shopping",
+        "message",
+        "money",
+        "panel-group",
+        "peoples",
+        "shopping"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [
+            "(max-width:550px)"
+          ],
+          "classSelectors": [
+            "card-panel",
+            "card-panel-col",
+            "card-panel-description",
+            "card-panel-icon",
+            "card-panel-icon-wrapper",
+            "card-panel-num",
+            "card-panel-text",
+            "icon-message",
+            "icon-money",
+            "icon-people",
+            "icon-shopping",
+            "panel-group",
+            "svg-icon"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vue-count-to"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "sfc:68",
+      "file": "views/dashboard/admin/components/PieChart.vue",
+      "componentName": "PieChart",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:6"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:69",
+      "file": "views/dashboard/admin/components/RaddarChart.vue",
+      "componentName": "RaddarChart",
+      "imports": [
+        {
+          "local": "echarts",
+          "source": "echarts",
+          "thirdParty": true
+        },
+        {
+          "local": "resize",
+          "source": "./mixins/resize",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "className"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted",
+        "beforeDestroy"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chartResponsibilityIds": [
+        "echarts:7"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "sfc:70",
+      "file": "views/dashboard/admin/components/TodoList/Todo.vue",
+      "componentName": "Todo",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "completed",
+        "destroy",
+        "done",
+        "edit",
+        "editing",
+        "todo",
+        "toggle",
+        "view"
+      ],
+      "bindings": {
+        "events": [
+          "blur",
+          "change",
+          "click",
+          "dblclick",
+          "keyup"
+        ],
+        "models": [],
+        "conditions": [
+          "editing"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:71",
+      "file": "views/dashboard/admin/components/TodoList/index.vue",
+      "componentName": "TodoList",
+      "imports": [
+        {
+          "local": "Todo",
+          "source": "./Todo.vue",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "clear-completed",
+        "filters",
+        "footer",
+        "header",
+        "key",
+        "main",
+        "new-todo",
+        "selected",
+        "todo-count",
+        "todo-list",
+        "todoapp",
+        "toggle-all",
+        "visibility"
+      ],
+      "bindings": {
+        "events": [
+          "change",
+          "click",
+          "deleteTodo",
+          "editTodo",
+          "keyup",
+          "toggleTodo"
+        ],
+        "models": [],
+        "conditions": [
+          "todos.length",
+          "todos.length > remaining"
+        ],
+        "loops": [
+          "(todo, index) in filteredTodos",
+          "(val, key) in filters"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "scss"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:72",
+      "file": "views/dashboard/admin/components/TransactionTable.vue",
+      "componentName": "TransactionTable",
+      "imports": [
+        {
+          "local": "transactionList",
+          "source": "@/api/remote-search",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:73",
+      "file": "views/dashboard/admin/index.vue",
+      "componentName": "DashboardAdmin",
+      "imports": [
+        {
+          "local": "GithubCorner",
+          "source": "@/components/GithubCorner",
+          "thirdParty": false
+        },
+        {
+          "local": "PanelGroup",
+          "source": "./components/PanelGroup",
+          "thirdParty": false
+        },
+        {
+          "local": "LineChart",
+          "source": "./components/LineChart",
+          "thirdParty": false
+        },
+        {
+          "local": "RaddarChart",
+          "source": "./components/RaddarChart",
+          "thirdParty": false
+        },
+        {
+          "local": "PieChart",
+          "source": "./components/PieChart",
+          "thirdParty": false
+        },
+        {
+          "local": "BarChart",
+          "source": "./components/BarChart",
+          "thirdParty": false
+        },
+        {
+          "local": "TransactionTable",
+          "source": "./components/TransactionTable",
+          "thirdParty": false
+        },
+        {
+          "local": "TodoList",
+          "source": "./components/TodoList",
+          "thirdParty": false
+        },
+        {
+          "local": "BoxCard",
+          "source": "./components/BoxCard",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "BarChart",
+        "BoxCard",
+        "ElCol",
+        "ElRow",
+        "GithubCorner",
+        "LineChart",
+        "PanelGroup",
+        "PieChart",
+        "RaddarChart",
+        "TodoList",
+        "TransactionTable"
+      ],
+      "visualRegions": [
+        "chart-wrapper",
+        "dashboard-editor-container",
+        "github-corner"
+      ],
+      "bindings": {
+        "events": [
+          "handleSetLineChartData"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [
+            "(max-width:1024px)"
+          ],
+          "classSelectors": [
+            "chart-wrapper",
+            "dashboard-editor-container",
+            "github-corner"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "sfc:74",
+      "file": "views/dashboard/editor/index.vue",
+      "componentName": "DashboardEditor",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "PanThumb",
+          "source": "@/components/PanThumb",
+          "thirdParty": false
+        },
+        {
+          "local": "GithubCorner",
+          "source": "@/components/GithubCorner",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "GithubCorner",
+        "PanThumb"
+      ],
+      "visualRegions": [
+        "clearfix",
+        "dashboard-editor-container",
+        "display_name",
+        "emptyGif",
+        "info-container",
+        "pan-info-roles"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item in roles"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "dashboard-editor-container",
+            "display_name",
+            "emptyGif",
+            "info-container",
+            "pan-info-roles"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:75",
+      "file": "views/dashboard/index.vue",
+      "componentName": "Dashboard",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "adminDashboard",
+          "source": "./admin",
+          "thirdParty": false
+        },
+        {
+          "local": "editorDashboard",
+          "source": "./editor",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [],
+      "visualRegions": [
+        "dashboard-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:76",
+      "file": "views/documentation/index.vue",
+      "componentName": "Documentation",
+      "imports": [
+        {
+          "local": "DropdownMenu",
+          "source": "@/components/Share/DropdownMenu",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "DropdownMenu"
+      ],
+      "visualRegions": [
+        "app-container",
+        "document-btn",
+        "documentation-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "document-btn",
+            "documentation-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:77",
+      "file": "views/error-log/components/ErrorTestA.vue",
+      "componentName": "ErrorTestA",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:78",
+      "file": "views/error-log/components/ErrorTestB.vue",
+      "componentName": "ErrorTestB",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:79",
+      "file": "views/error-log/index.vue",
+      "componentName": "ErrorLog",
+      "imports": [
+        {
+          "local": "ErrorA",
+          "source": "./components/ErrorTestA",
+          "thirdParty": false
+        },
+        {
+          "local": "ErrorB",
+          "source": "./components/ErrorTestB",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ErrorA",
+        "ErrorB"
+      ],
+      "visualRegions": [
+        "errPage-container",
+        "link-type"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "errPage-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:80",
+      "file": "views/error-page/401.vue",
+      "componentName": "Page401",
+      "imports": [
+        {
+          "local": "errGif",
+          "source": "@/assets/401_images/401.gif",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElCol",
+        "ElDialog",
+        "ElRow",
+        "RouterLink"
+      ],
+      "visualRegions": [
+        "errPage-container",
+        "link-type",
+        "list-unstyled",
+        "pan-back-btn",
+        "pan-img",
+        "text-ginormous",
+        "text-jumbo"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "errPage-container",
+            "list-unstyled",
+            "pan-back-btn",
+            "pan-gif",
+            "pan-img",
+            "text-jumbo"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:81",
+      "file": "views/error-page/404.vue",
+      "componentName": "Page404",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "bullshit",
+        "bullshit__headline",
+        "bullshit__info",
+        "bullshit__oops",
+        "bullshit__return-home",
+        "left",
+        "mid",
+        "pic-404",
+        "pic-404__child",
+        "pic-404__parent",
+        "right",
+        "wscn-http404",
+        "wscn-http404-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "bullshit",
+            "left",
+            "mid",
+            "pic-404",
+            "right",
+            "wscn-http404",
+            "wscn-http404-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:82",
+      "file": "views/example/components/ArticleDetail.vue",
+      "componentName": "ArticleDetail",
+      "imports": [
+        {
+          "local": "Tinymce",
+          "source": "@/components/Tinymce",
+          "thirdParty": false
+        },
+        {
+          "local": "Upload",
+          "source": "@/components/Upload/SingleImage3",
+          "thirdParty": false
+        },
+        {
+          "local": "MDinput",
+          "source": "@/components/MDinput",
+          "thirdParty": false
+        },
+        {
+          "local": "Sticky",
+          "source": "@/components/Sticky",
+          "thirdParty": false
+        },
+        {
+          "local": "validURL",
+          "source": "@/utils/validate",
+          "thirdParty": false
+        },
+        {
+          "local": "fetchArticle",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "searchUser",
+          "source": "@/api/remote-search",
+          "thirdParty": false
+        },
+        {
+          "local": "Warning",
+          "source": "./Warning",
+          "thirdParty": false
+        },
+        {
+          "local": "CommentDropdown",
+          "source": "./Dropdown",
+          "thirdParty": false
+        },
+        {
+          "local": "PlatformDropdown",
+          "source": "./Dropdown",
+          "thirdParty": false
+        },
+        {
+          "local": "SourceUrlDropdown",
+          "source": "./Dropdown",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "CommentDropdown",
+        "ElButton",
+        "ElCol",
+        "ElDatePicker",
+        "ElForm",
+        "ElFormItem",
+        "ElInput",
+        "ElOption",
+        "ElRate",
+        "ElRow",
+        "ElSelect",
+        "MDinput",
+        "PlatformDropdown",
+        "SourceUrlDropdown",
+        "Tinymce",
+        "Upload",
+        "Warning"
+      ],
+      "visualRegions": [
+        "article-textarea",
+        "createPost-container",
+        "createPost-main-container",
+        "form-container",
+        "postInfo-container",
+        "postInfo-container-item",
+        "word-counter"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "displayTime",
+          "postForm.author",
+          "postForm.comment_disabled",
+          "postForm.content",
+          "postForm.content_short",
+          "postForm.image_uri",
+          "postForm.importance",
+          "postForm.platforms",
+          "postForm.source_uri",
+          "postForm.title"
+        ],
+        "conditions": [
+          "contentShortLength"
+        ],
+        "loops": [
+          "(item,index) in userListOptions"
+        ]
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "article-textarea",
+            "createPost-container",
+            "createPost-main-container",
+            "postInfo-container",
+            "postInfo-container-item",
+            "scss",
+            "word-counter"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:83",
+      "file": "views/example/components/Dropdown/Comment.vue",
+      "componentName": "Comment",
+      "imports": [],
+      "childComponents": [
+        "ElButton",
+        "ElDropdown",
+        "ElDropdownItem",
+        "ElDropdownMenu",
+        "ElRadio",
+        "ElRadioGroup"
+      ],
+      "visualRegions": [
+        "el-icon--right",
+        "el-icon-caret-bottom",
+        "no-padding"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "comment_disabled"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:84",
+      "file": "views/example/components/Dropdown/Platform.vue",
+      "componentName": "Platform",
+      "imports": [],
+      "childComponents": [
+        "ElButton",
+        "ElCheckbox",
+        "ElCheckboxGroup",
+        "ElDropdown",
+        "ElDropdownMenu"
+      ],
+      "visualRegions": [
+        "el-icon--right",
+        "el-icon-caret-bottom",
+        "no-border"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "platforms"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in platformsOptions"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:85",
+      "file": "views/example/components/Dropdown/SourceUrl.vue",
+      "componentName": "SourceUrl",
+      "imports": [],
+      "childComponents": [
+        "ElButton",
+        "ElDropdown",
+        "ElDropdownMenu",
+        "ElFormItem",
+        "ElInput"
+      ],
+      "visualRegions": [
+        "el-icon--right",
+        "el-icon-caret-bottom",
+        "no-border",
+        "no-padding"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "source_uri"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:86",
+      "file": "views/example/components/Warning.vue",
+      "componentName": "Warning",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:87",
+      "file": "views/example/create.vue",
+      "componentName": "CreateArticle",
+      "imports": [
+        {
+          "local": "ArticleDetail",
+          "source": "./components/ArticleDetail",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ArticleDetail"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:88",
+      "file": "views/example/edit.vue",
+      "componentName": "EditForm",
+      "imports": [
+        {
+          "local": "ArticleDetail",
+          "source": "./components/ArticleDetail",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ArticleDetail"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:89",
+      "file": "views/example/list.vue",
+      "componentName": "ArticleList",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "Pagination",
+          "source": "@/components/Pagination",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "cancel-btn",
+            "edit-input"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:90",
+      "file": "views/excel/components/AutoWidthOption.vue",
+      "componentName": "AutoWidthOption",
+      "imports": [],
+      "childComponents": [
+        "ElRadio",
+        "ElRadioGroup"
+      ],
+      "visualRegions": [
+        "radio-label"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "autoWidth"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:91",
+      "file": "views/excel/components/BookTypeOption.vue",
+      "componentName": "BookTypeOption",
+      "imports": [],
+      "childComponents": [
+        "ElOption",
+        "ElSelect"
+      ],
+      "visualRegions": [
+        "radio-label"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "bookType"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in options"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:92",
+      "file": "views/excel/components/FilenameOption.vue",
+      "componentName": "FilenameOption",
+      "imports": [],
+      "childComponents": [
+        "ElInput"
+      ],
+      "visualRegions": [
+        "radio-label"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "filename"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:93",
+      "file": "views/excel/export-excel.vue",
+      "componentName": "ExportExcel",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "parseTime",
+          "source": "@/utils",
+          "thirdParty": false
+        },
+        {
+          "local": "FilenameOption",
+          "source": "./components/FilenameOption",
+          "thirdParty": false
+        },
+        {
+          "local": "AutoWidthOption",
+          "source": "./components/AutoWidthOption",
+          "thirdParty": false
+        },
+        {
+          "local": "BookTypeOption",
+          "source": "./components/BookTypeOption",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "AutoWidthOption",
+        "BookTypeOption",
+        "ElButton",
+        "ElTable",
+        "ElTableColumn",
+        "ElTag",
+        "FilenameOption"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "autoWidth",
+          "bookType",
+          "filename"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "radio-label"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:94",
+      "file": "views/excel/merge-header.vue",
+      "componentName": "MergeHeader",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "parseTime",
+          "source": "@/utils",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:95",
+      "file": "views/excel/select-excel.vue",
+      "componentName": "SelectExcel",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElInput",
+        "ElTable",
+        "ElTableColumn",
+        "ElTag"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click",
+          "selection-change"
+        ],
+        "models": [
+          "filename"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:96",
+      "file": "views/excel/upload-excel.vue",
+      "componentName": "UploadExcel",
+      "imports": [
+        {
+          "local": "UploadExcelComponent",
+          "source": "@/components/UploadExcel/index.vue",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn",
+        "UploadExcelComponent"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item of tableHeader"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:97",
+      "file": "views/guide/index.vue",
+      "componentName": "Guide",
+      "imports": [
+        {
+          "local": "Driver",
+          "source": "driver.js",
+          "thirdParty": true
+        },
+        {
+          "local": "steps",
+          "source": "./steps",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "driver.js"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:98",
+      "file": "views/icons/index.vue",
+      "componentName": "Icons",
+      "imports": [
+        {
+          "local": "clipboard",
+          "source": "@/utils/clipboard",
+          "thirdParty": false
+        },
+        {
+          "local": "svgIcons",
+          "source": "./svg-icons",
+          "thirdParty": false
+        },
+        {
+          "local": "elementIcons",
+          "source": "./element-icons",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTabPane",
+        "ElTabs",
+        "ElTooltip",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "grid",
+        "icon-item",
+        "icons-container",
+        "item"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item of elementIcons",
+          "item of svgIcons"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "disabled",
+            "grid",
+            "icon-item",
+            "icons-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:99",
+      "file": "views/login/auth-redirect.vue",
+      "componentName": "AuthRedirect",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:100",
+      "file": "views/login/components/SocialSignin.vue",
+      "componentName": "SocialSignin",
+      "imports": [
+        {
+          "local": "openWindow",
+          "source": "@/utils/open-window",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "icon",
+        "qq",
+        "qq-svg-container",
+        "sign-btn",
+        "social-signup-container",
+        "wechat",
+        "wx-svg-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "icon",
+            "qq-svg-container",
+            "sign-btn",
+            "social-signup-container",
+            "wx-svg-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:101",
+      "file": "views/login/index.vue",
+      "componentName": "Login",
+      "imports": [
+        {
+          "local": "validUsername",
+          "source": "@/utils/validate",
+          "thirdParty": false
+        },
+        {
+          "local": "SocialSign",
+          "source": "./components/SocialSignin",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElDialog",
+        "ElForm",
+        "ElFormItem",
+        "ElInput",
+        "ElTooltip",
+        "SocialSign",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "login-container",
+        "login-form",
+        "password",
+        "passwordType",
+        "show-pwd",
+        "svg-container",
+        "thirdparty-button",
+        "tips",
+        "title",
+        "title-container",
+        "user"
+      ],
+      "bindings": {
+        "events": [
+          "blur",
+          "click",
+          "keyup"
+        ],
+        "models": [
+          "capsTooltip",
+          "loginForm.password",
+          "loginForm.username"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created",
+        "mounted",
+        "destroyed"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "com",
+            "el-form-item",
+            "el-input",
+            "login-container"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [
+            "only screen and (max-width: 470px)"
+          ],
+          "classSelectors": [
+            "login-container",
+            "login-form",
+            "show-pwd",
+            "svg-container",
+            "thirdparty-button",
+            "tips",
+            "title",
+            "title-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios",
+        "responsive style responsibilities require multi-viewport validation"
+      ]
+    },
+    {
+      "id": "sfc:102",
+      "file": "views/nested/menu1/index.vue",
+      "componentName": "menu1",
+      "imports": [],
+      "childComponents": [
+        "ElAlert",
+        "RouterView"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:103",
+      "file": "views/nested/menu1/menu1-1/index.vue",
+      "componentName": "menu1-1",
+      "imports": [],
+      "childComponents": [
+        "ElAlert",
+        "RouterView"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:104",
+      "file": "views/nested/menu1/menu1-2/index.vue",
+      "componentName": "menu1-2",
+      "imports": [],
+      "childComponents": [
+        "ElAlert",
+        "RouterView"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:105",
+      "file": "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+      "componentName": "menu1-2-1",
+      "imports": [],
+      "childComponents": [
+        "ElAlert"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:106",
+      "file": "views/nested/menu1/menu1-2/menu1-2-2/index.vue",
+      "componentName": "menu1-2-2",
+      "imports": [],
+      "childComponents": [
+        "ElAlert"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:107",
+      "file": "views/nested/menu1/menu1-3/index.vue",
+      "componentName": "menu1-3",
+      "imports": [],
+      "childComponents": [
+        "ElAlert"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:108",
+      "file": "views/nested/menu2/index.vue",
+      "componentName": "menu2",
+      "imports": [],
+      "childComponents": [
+        "ElAlert"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:109",
+      "file": "views/pdf/download.vue",
+      "componentName": "download",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [
+        "article__heading",
+        "article__heading__title",
+        "main-article",
+        "node-article-content"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "mounted"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "article__heading",
+            "article__heading__title",
+            "main-article",
+            "node-article-content"
+          ],
+          "customProperties": [
+            "--baseline-multiplier",
+            "--x-height-multiplier"
+          ]
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:110",
+      "file": "views/pdf/index.vue",
+      "componentName": "pdf",
+      "imports": [],
+      "childComponents": [
+        "ElButton",
+        "RouterLink"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:111",
+      "file": "views/permission/components/SwitchRoles.vue",
+      "componentName": "SwitchRoles",
+      "imports": [],
+      "childComponents": [
+        "ElRadioButton",
+        "ElRadioGroup"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [
+          "switchRoles"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:112",
+      "file": "views/permission/directive.vue",
+      "componentName": "DirectivePermission",
+      "imports": [
+        {
+          "local": "permission",
+          "source": "@/directive/permission/index.js",
+          "thirdParty": false
+        },
+        {
+          "local": "checkPermission",
+          "source": "@/utils/permission",
+          "thirdParty": false
+        },
+        {
+          "local": "SwitchRoles",
+          "source": "./components/SwitchRoles",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTabPane",
+        "ElTabs",
+        "ElTag",
+        "SwitchRoles"
+      ],
+      "visualRegions": [
+        "app-container",
+        "permission-alert",
+        "permission-sourceCode",
+        "permission-tag"
+      ],
+      "bindings": {
+        "events": [
+          "change"
+        ],
+        "models": [],
+        "conditions": [
+          "checkPermission(["
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-container",
+            "permission-alert",
+            "permission-sourceCode",
+            "permission-tag"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:113",
+      "file": "views/permission/page.vue",
+      "componentName": "PagePermission",
+      "imports": [
+        {
+          "local": "SwitchRoles",
+          "source": "./components/SwitchRoles",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "SwitchRoles"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "change"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:114",
+      "file": "views/permission/role.vue",
+      "componentName": "role",
+      "imports": [
+        {
+          "local": "path",
+          "source": "path",
+          "thirdParty": true
+        },
+        {
+          "local": "deepClone",
+          "source": "@/utils",
+          "thirdParty": false
+        },
+        {
+          "local": "getRoutes",
+          "source": "@/api/role",
+          "thirdParty": false
+        },
+        {
+          "local": "getRoles",
+          "source": "@/api/role",
+          "thirdParty": false
+        },
+        {
+          "local": "addRole",
+          "source": "@/api/role",
+          "thirdParty": false
+        },
+        {
+          "local": "deleteRole",
+          "source": "@/api/role",
+          "thirdParty": false
+        },
+        {
+          "local": "updateRole",
+          "source": "@/api/role",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "app-container",
+            "permission-tree",
+            "roles-table"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "path"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:115",
+      "file": "views/profile/components/Account.vue",
+      "componentName": "Account",
+      "imports": [],
+      "childComponents": [
+        "ElButton",
+        "ElForm",
+        "ElFormItem",
+        "ElInput"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:116",
+      "file": "views/profile/components/Activity.vue",
+      "componentName": "Activity",
+      "imports": [],
+      "childComponents": [
+        "ElCarousel",
+        "ElCarouselItem",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "description",
+        "el-icon-share",
+        "image",
+        "img-circle",
+        "like",
+        "link-black",
+        "list-inline",
+        "post",
+        "text-muted",
+        "text-sm",
+        "user-activity",
+        "user-block",
+        "user-images",
+        "username"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item in carouselImages"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "box-center",
+            "description",
+            "image",
+            "img-circle",
+            "link-black",
+            "list-inline",
+            "post",
+            "text-muted",
+            "user-activity",
+            "user-block",
+            "user-images",
+            "username"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:117",
+      "file": "views/profile/components/Timeline.vue",
+      "componentName": "Timeline",
+      "imports": [],
+      "childComponents": [
+        "ElCard",
+        "ElTimeline",
+        "ElTimelineItem"
+      ],
+      "visualRegions": [
+        "block"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "(item,index) of timeline"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:118",
+      "file": "views/profile/components/UserCard.vue",
+      "componentName": "UserCard",
+      "imports": [
+        {
+          "local": "PanThumb",
+          "source": "@/components/PanThumb",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElCard",
+        "ElProgress",
+        "PanThumb",
+        "SvgIcon"
+      ],
+      "visualRegions": [
+        "box-center",
+        "clearfix",
+        "education",
+        "progress-item",
+        "skill",
+        "text-center",
+        "text-muted",
+        "user-bio",
+        "user-bio-section",
+        "user-bio-section-body",
+        "user-bio-section-header",
+        "user-education",
+        "user-name",
+        "user-profile",
+        "user-role",
+        "user-skills"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "scss",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "box-center",
+            "box-social",
+            "el-table",
+            "text-muted",
+            "user-bio",
+            "user-bio-section",
+            "user-bio-section-header",
+            "user-follow",
+            "user-name",
+            "user-profile",
+            "user-role"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:119",
+      "file": "views/profile/index.vue",
+      "componentName": "Profile",
+      "imports": [
+        {
+          "local": "mapGetters",
+          "source": "vuex",
+          "thirdParty": true
+        },
+        {
+          "local": "UserCard",
+          "source": "./components/UserCard",
+          "thirdParty": false
+        },
+        {
+          "local": "Activity",
+          "source": "./components/Activity",
+          "thirdParty": false
+        },
+        {
+          "local": "Timeline",
+          "source": "./components/Timeline",
+          "thirdParty": false
+        },
+        {
+          "local": "Account",
+          "source": "./components/Account",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElCard",
+        "ElCol",
+        "ElRow",
+        "ElTabPane",
+        "ElTabs",
+        "UserCard"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "activeTab"
+        ],
+        "conditions": [
+          "user"
+        ],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [
+        "vuex"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:120",
+      "file": "views/qiniu/upload.vue",
+      "componentName": "upload",
+      "imports": [
+        {
+          "local": "getToken",
+          "source": "@/api/qiniu",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElUpload"
+      ],
+      "visualRegions": [
+        "el-icon-upload",
+        "el-upload__text"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:121",
+      "file": "views/redirect/index.vue",
+      "componentName": "redirect",
+      "imports": [],
+      "childComponents": [],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:122",
+      "file": "views/tab/components/TabPane.vue",
+      "componentName": "TabPane",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:123",
+      "file": "views/tab/index.vue",
+      "componentName": "Tab",
+      "imports": [
+        {
+          "local": "TabPane",
+          "source": "./components/TabPane",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElAlert",
+        "ElTabPane",
+        "ElTabs",
+        "ElTag",
+        "TabPane"
+      ],
+      "visualRegions": [
+        "tab-container"
+      ],
+      "bindings": {
+        "events": [
+          "create"
+        ],
+        "models": [
+          "activeName"
+        ],
+        "conditions": [
+          "activeName==item.key"
+        ],
+        "loops": [
+          "item in tabMapOptions"
+        ]
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "tab-container"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:124",
+      "file": "views/table/complex-table.vue",
+      "componentName": "ComplexTable",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "fetchPv",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "createArticle",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "updateArticle",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "waves",
+          "source": "@/directive/waves",
+          "thirdParty": false
+        },
+        {
+          "local": "parseTime",
+          "source": "@/utils",
+          "thirdParty": false
+        },
+        {
+          "local": "Pagination",
+          "source": "@/components/Pagination",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElCheckbox",
+        "ElInput",
+        "ElOption",
+        "ElSelect",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container",
+        "filter-container",
+        "filter-item"
+      ],
+      "bindings": {
+        "events": [
+          "change",
+          "click",
+          "keyup",
+          "sort-change"
+        ],
+        "models": [
+          "listQuery.importance",
+          "listQuery.sort",
+          "listQuery.title",
+          "listQuery.type",
+          "showReviewer"
+        ],
+        "conditions": [],
+        "loops": [
+          "item in calendarTypeOptions",
+          "item in importanceOptions",
+          "item in sortOptions"
+        ]
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "sfc:125",
+      "file": "views/table/drag-table.vue",
+      "componentName": "DragTable",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        },
+        {
+          "local": "Sortable",
+          "source": "sortablejs",
+          "thirdParty": true
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": false,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "sortable-ghost"
+          ],
+          "customProperties": []
+        },
+        {
+          "index": 1,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "drag-handler",
+            "icon-star",
+            "show-d"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [
+        "sortablejs"
+      ],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:126",
+      "file": "views/table/dynamic-table/components/FixedThead.vue",
+      "componentName": "FixedThead",
+      "imports": [],
+      "childComponents": [
+        "ElCheckbox",
+        "ElCheckboxGroup",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container",
+        "filter-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "checkboxVal"
+        ],
+        "conditions": [],
+        "loops": [
+          "fruit in formThead"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:127",
+      "file": "views/table/dynamic-table/components/UnfixedThead.vue",
+      "componentName": "UnfixedThead",
+      "imports": [],
+      "childComponents": [
+        "ElCheckbox",
+        "ElCheckboxGroup",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container",
+        "filter-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "formThead"
+        ],
+        "conditions": [],
+        "loops": [
+          "fruit in formThead"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:128",
+      "file": "views/table/dynamic-table/index.vue",
+      "componentName": "DynamicTable",
+      "imports": [
+        {
+          "local": "FixedThead",
+          "source": "./components/FixedThead",
+          "thirdParty": false
+        },
+        {
+          "local": "UnfixedThead",
+          "source": "./components/UnfixedThead",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "FixedThead",
+        "UnfixedThead"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": []
+    },
+    {
+      "id": "sfc:129",
+      "file": "views/table/inline-edit-table.vue",
+      "componentName": "InlineEditTable",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "cancel-btn",
+            "edit-input"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:130",
+      "file": "views/theme/index.vue",
+      "componentName": "Theme",
+      "imports": [
+        {
+          "local": "toggleClass",
+          "source": "@/utils",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElCard",
+        "ElRadio",
+        "ElRadioGroup",
+        "ElSlider",
+        "ElSwitch",
+        "ElTag"
+      ],
+      "visualRegions": [
+        "app-container",
+        "block",
+        "box-card",
+        "box-item",
+        "el-icon-right",
+        "el-icon-upload",
+        "field-label",
+        "link-title",
+        "link-type",
+        "tag-item"
+      ],
+      "bindings": {
+        "events": [],
+        "models": [
+          "radio",
+          "slideValue",
+          "theme"
+        ],
+        "conditions": [],
+        "loops": [
+          "tag in tags"
+        ]
+      },
+      "lifecycle": [],
+      "styles": [
+        {
+          "index": 0,
+          "language": "css",
+          "scoped": true,
+          "module": false,
+          "mediaQueries": [],
+          "classSelectors": [
+            "block",
+            "box-card",
+            "field-label",
+            "tag-item"
+          ],
+          "customProperties": []
+        }
+      ],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "sfc:131",
+      "file": "views/zip/index.vue",
+      "componentName": "ExportZip",
+      "imports": [
+        {
+          "local": "fetchList",
+          "source": "@/api/article",
+          "thirdParty": false
+        }
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElInput",
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "visualRegions": [
+        "app-container"
+      ],
+      "bindings": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "filename"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [
+        "created"
+      ],
+      "styles": [],
+      "runtimeDependencies": [],
+      "chartResponsibilityIds": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "template events require reviewed state-transition scenarios"
+      ]
+    }
+  ],
+  "echarts": {
+    "schemaVersion": "1.0",
+    "kind": "echarts-responsibility-graph",
+    "reviewRequired": true,
+    "sourceRoot": "<external-source>",
+    "runtime": "echarts",
+    "components": [
+      {
+        "id": "echarts:1",
+        "file": "components/Charts/Keyboard.vue",
+        "componentName": "Keyboard",
+        "confidence": "high",
+        "themes": [],
+        "chartTypes": [
+          "bar",
+          "line"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "series",
+          "visualMap"
+        ],
+        "dataSources": [
+          "data2",
+          "xAxisData"
+        ],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": false
+        },
+        "evidence": [
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 46,
+            "pattern": "echarts.init(document.getElementById(this.id",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 56,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 34,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 37,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 41,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/Keyboard.vue",
+            "line": 10,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      },
+      {
+        "id": "echarts:2",
+        "file": "components/Charts/LineMarker.vue",
+        "componentName": "LineMarker",
+        "confidence": "high",
+        "themes": [],
+        "chartTypes": [
+          "line"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "legend",
+          "series",
+          "title"
+        ],
+        "dataSources": [],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": false
+        },
+        "evidence": [
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 46,
+            "pattern": "echarts.init(document.getElementById(this.id",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 48,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 34,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 37,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 41,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/LineMarker.vue",
+            "line": 10,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      },
+      {
+        "id": "echarts:3",
+        "file": "components/Charts/MixChart.vue",
+        "componentName": "MixChart",
+        "confidence": "high",
+        "themes": [],
+        "chartTypes": [
+          "bar",
+          "line"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "legend",
+          "series",
+          "dataZoom",
+          "title"
+        ],
+        "dataSources": [
+          "xData"
+        ],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": false
+        },
+        "evidence": [
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 46,
+            "pattern": "echarts.init(document.getElementById(this.id",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 54,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 34,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 37,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 41,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 7,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "components/Charts/MixChart.vue",
+            "line": 10,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      },
+      {
+        "id": "echarts:4",
+        "file": "views/dashboard/admin/components/BarChart.vue",
+        "componentName": "BarChart",
+        "confidence": "high",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "bar"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "series"
+        ],
+        "dataSources": [],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        },
+        "evidence": [
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 47,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 49,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 7,
+            "pattern": "echarts/theme/macarons",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 47,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 33,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 38,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 42,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/BarChart.vue",
+            "line": 13,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      },
+      {
+        "id": "echarts:5",
+        "file": "views/dashboard/admin/components/LineChart.vue",
+        "componentName": "LineChart",
+        "confidence": "high",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "line"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "tooltip",
+          "legend",
+          "series"
+        ],
+        "dataSources": [
+          "actualData",
+          "chartData",
+          "expectedData"
+        ],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize",
+          "watch"
+        ],
+        "interactions": [
+          "watch:chartData"
+        ],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": true,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        },
+        "evidence": [
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 61,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 65,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 7,
+            "pattern": "echarts/theme/macarons",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 61,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 47,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 52,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 56,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 11,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/LineChart.vue",
+            "line": 39,
+            "pattern": "watch:",
+            "detail": "chart lifecycle: watch"
+          }
+        ]
+      },
+      {
+        "id": "echarts:6",
+        "file": "views/dashboard/admin/components/PieChart.vue",
+        "componentName": "PieChart",
+        "confidence": "high",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "pie"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "legend",
+          "series"
+        ],
+        "dataSources": [],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        },
+        "evidence": [
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 45,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 47,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 7,
+            "pattern": "echarts/theme/macarons",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 45,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 31,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 36,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 40,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/PieChart.vue",
+            "line": 11,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      },
+      {
+        "id": "echarts:7",
+        "file": "views/dashboard/admin/components/RaddarChart.vue",
+        "componentName": "RaddarChart",
+        "confidence": "high",
+        "themes": [
+          "macarons"
+        ],
+        "chartTypes": [
+          "radar"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "legend",
+          "series",
+          "radar"
+        ],
+        "dataSources": [],
+        "lifecycle": [
+          "beforeDestroy",
+          "dispose",
+          "mounted",
+          "resize"
+        ],
+        "interactions": [],
+        "capabilities": {
+          "initializesChart": true,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": true,
+          "disposesChart": true,
+          "usesTheme": true
+        },
+        "evidence": [
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 47,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts instance initialization"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 49,
+            "pattern": ".setOption(",
+            "detail": "chart option application"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 7,
+            "pattern": "echarts/theme/macarons",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 47,
+            "pattern": "echarts.init(this.$el, 'macarons'",
+            "detail": "ECharts theme dependency"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 33,
+            "pattern": "mounted(",
+            "detail": "chart lifecycle: mounted"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 38,
+            "pattern": "beforeDestroy(",
+            "detail": "chart lifecycle: beforeDestroy"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 42,
+            "pattern": ".dispose(",
+            "detail": "chart lifecycle: dispose"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 8,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          },
+          {
+            "file": "views/dashboard/admin/components/RaddarChart.vue",
+            "line": 13,
+            "pattern": "resize",
+            "detail": "chart lifecycle: resize"
+          }
+        ]
+      }
+    ],
+    "themes": [
+      "macarons"
+    ],
+    "chartTypes": [
+      "bar",
+      "line",
+      "pie",
+      "radar"
+    ],
+    "blockers": [],
+    "reviewReasons": [
+      "chart configuration and data ownership are extracted for review; runtime code is not copied or applied automatically",
+      "third-party chart lifecycle, theme, resize, and dispose responsibilities must remain explicit",
+      "visual acceptance still requires computed-style and pixel matrices at the reviewed route states"
+    ],
+    "metrics": {
+      "filesScanned": 195,
+      "chartFiles": 7,
+      "components": 7,
+      "evidenceCount": 65,
+      "scanMs": 11
+    }
+  },
+  "blockers": [],
+  "reviewReasons": [
+    "the graph describes component, style, interaction, lifecycle, and runtime ownership; it does not rewrite source files",
+    "generated targets remain review-only until route-state Semantic Gold+ and responsive visual matrices pass",
+    "scoped styles, third-party renderers, and framework lifecycle hooks must retain explicit ownership"
+  ],
+  "metrics": {
+    "filesScanned": 131,
+    "components": 131,
+    "styledComponents": 72,
+    "interactiveComponents": 69,
+    "chartComponents": 7,
+    "mediaQueries": 5,
+    "scanMs": 30
+  }
+}

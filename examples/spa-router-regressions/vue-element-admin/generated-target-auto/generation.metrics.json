@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-generation",
+  "deterministic": true,
+  "reviewRequired": true,
+  "generatedCode": true,
+  "modelCalls": 0,
+  "generationMs": 0.013,
+  "manualEdits": 0,
+  "manualEditedLines": 0,
+  "repairIterations": 0,
+  "qualityRuns": 1,
+  "generatedFiles": [
+    {
+      "path": "routes.js",
+      "lines": 76
+    },
+    {
+      "path": "guards.js",
+      "lines": 15
+    },
+    {
+      "path": "router.js",
+      "lines": 42
+    },
+    {
+      "path": "fixtures.js",
+      "lines": 25
+    },
+    {
+      "path": "README.md",
+      "lines": 16
+    }
+  ],
+  "generatedLines": 174,
+  "diff": {
+    "baselinePath": "examples/spa-router-regressions/vue-element-admin/generated-target",
+    "generatedFiles": 5,
+    "baselineFiles": 6,
+    "generatedLines": 174,
+    "baselineLines": 746,
+    "missingBaselineFiles": [
+      "README.md",
+      "fixtures.js",
+      "guards.js",
+      "router.js",
+      "routes.js"
+    ],
+    "baselineOnlyFiles": [
+      "public/app.js",
+      "public/index.html",
+      "public/styles.css",
+      "public/vendor/echarts.min.js",
+      "public/vendor/macarons.js",
+      "server.mjs"
+    ],
+    "comparableFiles": 1,
+    "changedFiles": 0,
+    "changedLines": 0,
+    "comparable": true,
+    "responsibility": {
+      "sourceFiles": [
+        "public/app.js"
+      ],
+      "manualResponsibilityLines": 19,
+      "generatedResponsibilityLines": 62,
+      "matchedRoutes": [
+        "/#/dashboard",
+        "/#/documentation/index",
+        "/#/login",
+        "/#/login?redirect=%2Fdashboard",
+        "/#/nested/menu1/menu1-1",
+        "/#/permission/directive"
+      ],
+      "missingRoutes": [],
+      "matchedGuards": [
+        "/#/dashboard"
+      ],
+      "missingGuards": [],
+      "matchedCapabilities": [
+        "historyBack"
+      ],
+      "missingCapabilities": []
+    },
+    "note": "semantic responsibility comparison against manual app.js; not a same-file textual diff"
+  },
+  "manualQuality": {
+    "reportPath": "examples/spa-router-regressions/vue-element-admin/reference-generated-semantic.network-isolated.results.json",
+    "available": true,
+    "passed": true,
+    "navigationIntegrity": 1,
+    "worstComputedStyle": 0.9912,
+    "worstPixelDiff": 0.012977,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "generatedQuality": {
+    "reportPath": null,
+    "available": false
+  },
+  "qualityComparison": {
+    "comparable": false,
+    "passed": null,
+    "navigationIntegrityDelta": null,
+    "computedStyleDelta": null,
+    "pixelDiffDelta": null,
+    "detail": "quality reports not supplied; scaffold generation does not claim visual equivalence"
+  },
+  "reviewReasons": [
+    "the scaffold contains router/history/guard/fixture behavior only",
+    "visual DOM and CSS are intentionally excluded",
+    "observed redirects require human approval before production use",
+    "Semantic Gold+ comparison is valid only when both report paths are supplied for the actual applications"
+  ]
+}

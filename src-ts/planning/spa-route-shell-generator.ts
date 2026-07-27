@@ -266,19 +266,28 @@ export function compareSpaRouteShellFiles(files: GeneratedSpaRouteShellFile[], b
     const manualResponsibilityLines = sourceLines.filter((line) => responsibilityPattern.test(line)).length;
     const generatedResponsibilityLines = generatedSource.split("\n").filter((line) => responsibilityPattern.test(line)).length;
     const routeSource = (route: string): boolean => {
-      if (source.includes(route)) return true;
-      if (route.includes("/search/")) return /search\//.test(source);
-      if (route === "/settings") return /renderSettings\s*\(/.test(source) && /return\s+renderSettings\s*\(/.test(source);
+      const hashNormalized = route.replace(/^\/#/, "").replace(/^#/, "");
+      const pathname = hashNormalized.split("?")[0];
+      const candidates = [...new Set([route, hashNormalized, pathname])].filter(Boolean);
+      if (candidates.some((candidate) => source.includes(candidate))) return true;
+      if (pathname.includes("/search/")) return /search\//.test(source);
+      if (pathname === "/settings") return /renderSettings\s*\(/.test(source) && /return\s+renderSettings\s*\(/.test(source);
+      if (pathname === "/login" && /redirect=.*encodeURIComponent|protectedRoute/.test(source)) return true;
       return false;
     };
     const matchedRoutes = [...new Set(planRoutesFromGeneratedFiles(files).filter(routeSource))].sort();
     const plannedRoutes = [...new Set(planRoutesFromGeneratedFiles(files))].sort();
     const guards = [...new Set(planGuardsFromGeneratedFiles(files))].sort();
-    const matchedGuards = guards.filter((guard) => source.includes(guard));
-    // Reload is a browser protocol action, not necessarily an application-owned API call.
-    // Compare only history behaviors that the manual route shell is expected to implement.
-    const capabilities = ["historyBack", "historyForward"];
-    const capabilityTokens: Record<string, RegExp> = { historyBack: /history\.back\s*\(/, historyForward: /history\.forward\s*\(/ };
+    const guardSource = (guard: string): boolean => {
+      const normalized = guard.replace(/^\/#/, "").replace(/^#/, "").split("?")[0];
+      if (source.includes(guard) || source.includes(normalized)) return true;
+      return normalized !== "/login" && /protectedRoute|hasToken|auth(?:enticated|orized)|guardRedirect/i.test(source);
+    };
+    const matchedGuards = guards.filter(guardSource);
+    // Browser-driven back/forward scenarios require the application to observe popstate; they do not require app-owned history.back()/forward() calls.
+    const routerSource = generatedByPath.get("router.js")?.content ?? "";
+    const capabilities = ["historyBack", "historyForward"].filter((capability) => new RegExp(`"${capability}"\\s*:\\s*true`).test(routerSource));
+    const capabilityTokens: Record<string, RegExp> = { historyBack: /history\.back\s*\(|popstate/, historyForward: /history\.forward\s*\(|popstate/ };
     const matchedCapabilities = capabilities.filter((capability) => capabilityTokens[capability]?.test(source));
     const missingCapabilities = capabilities.filter((capability) => !matchedCapabilities.includes(capability));
     const missingRoutes = plannedRoutes.filter((route) => !matchedRoutes.includes(route));

@@ -48,6 +48,7 @@ test("SPA route shell planner emits review-only routes, transitions, selector ma
       { id: "explore", entryPath: "/", steps: [{ action: "click", target: { reference: "#reference-explore", generated: "#generated-explore" } }], assertions: { path: "/explore", visibleText: "Explore" }, visual: { screenshotAnchor: { reference: ".reference-page", generated: ".generated-page" }, styleTargets: [{ id: "page", selector: { reference: ".reference-page", generated: ".generated-page" } }] } },
       { id: "search", entryPath: "/", steps: [{ action: "input", target: "#search", value: "周杰伦" }, { action: "key", target: "#search", key: "Enter" }], assertions: { path: "/search/%E5%91%A8%E6%9D%B0%E4%BC%A6", visibleText: "Search" } },
       { id: "guard", entryPath: "/", steps: [{ action: "click", target: "a[href='/library']" }], assertions: { path: "/login", visibleText: "Login" } },
+      { id: "entry-guard", entryPath: "/dashboard", steps: [{ action: "wait", ms: 100 }], assertions: { path: "/login?redirect=%2Fdashboard", visibleText: "Login" } },
       { id: "reload", entryPath: "/settings", steps: [{ action: "reload" }], assertions: { path: "/settings", visibleText: "Settings" } },
     ],
   };
@@ -59,6 +60,7 @@ test("SPA route shell planner emits review-only routes, transitions, selector ma
   assert.ok(plan.routes.some((route) => route.pattern === "/search/:value"));
   assert.ok(plan.transitions.some((transition) => transition.action === "click" && transition.to === "/explore"));
   assert.ok(plan.transitions.some((transition) => transition.action === "guard-redirect" && transition.from === "/library" && transition.to === "/login"));
+  assert.ok(plan.transitions.some((transition) => transition.action === "guard-redirect" && transition.from === "/dashboard" && transition.to === "/login?redirect=%2Fdashboard"));
   assert.ok(plan.routes.some((route) => route.route === "/library"));
   assert.ok(plan.transitions.some((transition) => transition.action === "reload" && transition.from === "/settings" && transition.to === "/settings"));
   assert.equal(plan.selectorMappings.length, 3);
@@ -142,6 +144,28 @@ test("SPA route shell integration patch blocks when reviewed responsibilities ca
   assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("dynamic input routes")));
   assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("guard redirect")));
   assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("lifecycle")));
+});
+
+test("SPA route shell semantic diff normalizes hash routes guards and browser-driven history", async () => {
+  const config: SpaRouterContractConfig = {
+    schemaVersion: "1.0", generatedBaseUrl: "https://generated.test/",
+    scenarios: [
+      { id: "guard", entryPath: "/#/dashboard", steps: [{ action: "wait", ms: 10 }], assertions: { path: "/#/login?redirect=%2Fdashboard", visibleText: "Login" } },
+      { id: "back", entryPath: "/#/dashboard", steps: [{ action: "click", target: "a[href='#/documentation/index']" }, { action: "back" }], assertions: { path: "/#/dashboard", visibleText: "Dashboard" } },
+    ],
+  };
+  const plan = generateSpaRouteShellPlan(config);
+  const temp = await mkdtemp(join(tmpdir(), "ui-dismantler-shell-hash-"));
+  const baseline = join(temp, "manual");
+  await mkdir(join(baseline, "public"), { recursive: true });
+  await writeFile(join(baseline, "public", "app.js"), `const protectedRoute = path => path !== '/login'; const routes=['/dashboard','/login','/documentation/index']; addEventListener('popstate', render);`, "utf8");
+  try {
+    const artifact = generateSpaRouteShellArtifact(plan, { baselinePath: baseline });
+    assert.equal(artifact.metrics.diff.responsibility?.missingRoutes.length, 0);
+    assert.equal(artifact.metrics.diff.responsibility?.missingGuards.length, 0);
+    assert.deepEqual(artifact.metrics.diff.responsibility?.matchedCapabilities, ["historyBack"]);
+    assert.equal(artifact.metrics.diff.changedLines, 0);
+  } finally { await rm(temp, { recursive: true, force: true }); }
 });
 
 test("SPA route shell file diff reports missing boundaries instead of pretending app.js is comparable", () => {

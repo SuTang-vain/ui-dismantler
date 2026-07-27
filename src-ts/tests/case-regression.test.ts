@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { once } from "node:events";
+import { execFileSync, spawn, type ChildProcess } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { planComponents } from "../planning/components.js";
+import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
 import { runQualityGate } from "../workflow/pipeline.js";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -78,7 +83,127 @@ test("YesPlayMusic frozen Semantic Gold+ regression preserves reviewed route fid
   assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
 });
 
+test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA fidelity", () => {
+  const caseDir = `${root}examples/spa-router-regressions/vue-element-admin`;
+  const config = JSON.parse(readFileSync(`${caseDir}/reference-generated-semantic.config.json`, "utf8"));
+  const report = JSON.parse(readFileSync(`${caseDir}/reference-generated-semantic.network-isolated.results.json`, "utf8"));
+  const repeat = JSON.parse(readFileSync(`${caseDir}/network-isolated-repeat-summary.json`, "utf8"));
+  const frozen = JSON.parse(readFileSync(`${caseDir}/frozen-artifact.json`, "utf8"));
+  const responsibility = JSON.parse(readFileSync(`${caseDir}/vue-router-responsibility.graph.json`, "utf8"));
+  const sfcVisual = JSON.parse(readFileSync(`${caseDir}/sfc-visual-responsibility.graph.json`, "utf8"));
+  const echarts = JSON.parse(readFileSync(`${caseDir}/echarts-responsibility.graph.json`, "utf8"));
+  const strictReport = JSON.parse(readFileSync(`${caseDir}/reference-generated-strict-navigation-only.results.json`, "utf8"));
+  const autoGeneration = JSON.parse(readFileSync(`${caseDir}/generated-target-auto/generation.metrics.json`, "utf8"));
+  const autoExperiment = JSON.parse(readFileSync(`${caseDir}/generated-target-auto/experiment.metrics.json`, "utf8"));
+
+  assert.equal(frozen.scope, "reviewed-behavior-and-visual-generated-target");
+  assert.equal(frozen.reviewRequired, true);
+  assert.equal(frozen.fullGeneratedApplication, false, "the reviewed route target must not be represented as a complete generated Vue application");
+  assert.equal(frozen.modelCalls, 0, "frozen quality evidence must remain independent of model API availability");
+  assert.equal(frozen.networkIsolated, true);
+  assert.equal(frozen.sourceCommit, "6858a9ad67483025f6a9432a926beb9327037be3");
+  for (const [relativePath, expectedHash] of Object.entries(frozen.files as Record<string, string>)) {
+    const actualHash = createHash("sha256").update(readFileSync(`${caseDir}/${relativePath}`)).digest("hex");
+    assert.equal(actualHash, expectedHash, `${relativePath}: frozen Vue Element Admin artifact changed without review`);
+  }
+
+  assert.equal(responsibility.metrics.filesScanned, 195);
+  assert.equal(responsibility.metrics.routesDiscovered, 78);
+  assert.equal(responsibility.metrics.dynamicRoutes, 2);
+  assert.equal(responsibility.metrics.roleProtectedRoutes, 6);
+  assert.equal(responsibility.metrics.evidenceCount, 152);
+  assert.equal(responsibility.capabilities.hashMode, true);
+  assert.equal(responsibility.capabilities.historyMode, false);
+
+  assert.equal(sfcVisual.kind, "sfc-visual-responsibility-graph");
+  assert.equal(sfcVisual.reviewRequired, true);
+  assert.equal(sfcVisual.metrics.components, 131);
+  assert.equal(sfcVisual.metrics.interactiveComponents, 69);
+  assert.equal(sfcVisual.metrics.chartComponents, 7);
+  assert.equal(sfcVisual.blockers.length, 0);
+  assert.equal(sfcVisual.components.some((component: { componentName: string; childComponents: string[] }) => component.componentName === "DashboardAdmin" && component.childComponents.includes("LineChart") && component.childComponents.includes("PanelGroup")), true);
+
+  assert.equal(echarts.kind, "echarts-responsibility-graph");
+  assert.equal(echarts.reviewRequired, true);
+  assert.equal(echarts.metrics.chartFiles, 7);
+  assert.deepEqual(echarts.chartTypes, ["bar", "line", "pie", "radar"]);
+  assert.deepEqual(echarts.themes, ["macarons"]);
+  assert.equal(echarts.blockers.length, 0);
+  assert.equal(echarts.components.every((component: { capabilities: { initializesChart: boolean; disposesChart: boolean; resizesChart: boolean } }) => component.capabilities.initializesChart && component.capabilities.disposesChart && component.capabilities.resizesChart), true);
+
+  assert.equal(config.navigationComparison, "semantic");
+  assert.deepEqual(config.visualMatrix.viewports.map((viewport: { id: string }) => viewport.id), ["desktop", "tablet", "mobile"]);
+  assert.equal(report.passed, true);
+  assert.equal(report.scenariosPassed, 6);
+  assert.equal(report.scenariosTotal, 6);
+  assert.equal(report.navigationIntegrity.rate, 1);
+  assert.equal(report.navigationIntegrity.failures, 0);
+  assert.equal(report.visualMatrix.scenarioCount, 5);
+  assert.equal(report.visualMatrix.viewportRuns, 13);
+  assert.equal(report.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(report.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(report.visualMatrix.stabilityFailures, 0);
+  assert.equal(report.runtimeErrors, 0);
+  assert.equal(report.requiredNetworkFailures, 0);
+  assert.equal(report.nonBlockingNetworkFailures, 0);
+  assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+
+  assert.equal(repeat.networkIsolated, true);
+  assert.equal(repeat.modelCalls, 0);
+  assert.equal(repeat.suite.stable, true);
+  assert.equal(repeat.suite.runs.length, 3);
+  assert.equal(repeat.suite.runs.every((run: { passed: boolean; worstComputedStyle: number; worstPixelDiff: number; blockingHandlesAfterClose: number }) => run.passed && run.worstComputedStyle >= 0.98 && run.worstPixelDiff <= 0.02 && run.blockingHandlesAfterClose === 0), true);
+  assert.deepEqual(repeat.beforeAfter.formalMatrixPassingStates, ["1/5", "5/5"]);
+
+  assert.equal(autoGeneration.reviewRequired, true);
+  assert.equal(autoGeneration.generatedCode, true);
+  assert.equal(autoGeneration.modelCalls, 0);
+  assert.equal(autoGeneration.manualEditedLines, 0);
+  assert.equal(autoGeneration.repairIterations, 0);
+  assert.equal(autoGeneration.diff.changedLines, 0);
+  assert.equal(autoGeneration.diff.responsibility.missingRoutes.length, 0);
+  assert.equal(autoGeneration.diff.responsibility.missingGuards.length, 0);
+  assert.equal(autoGeneration.qualityComparison.comparable, false);
+  assert.equal(autoExperiment.fullGeneratedApplication, false);
+  assert.equal(autoExperiment.generatedVisualDom, false);
+  assert.equal(autoExperiment.automaticCandidate.routeResponsibilities.matched, 6);
+  assert.equal(autoExperiment.automaticCandidate.guardResponsibilities.matched, 1);
+  assert.equal(autoExperiment.automaticCandidate.visualQualityAvailable, false);
+
+  assert.equal(strictReport.passed, false, "Semantic Gold+ must not be relabeled as Vue Router Strict PASS");
+});
+
 const runGoldRegression = process.env.UI_DISMANTLER_GOLD_REGRESSION === "1";
+const vueElementAdminSource = process.env.UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE;
+const runVueElementAdminGold = runGoldRegression && Boolean(vueElementAdminSource);
+
+async function waitForHttp(url: string, timeoutMs = 90_000): Promise<void> {
+  const started = Date.now();
+  let lastError: unknown = null;
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const response = await fetch(url, { redirect: "manual" });
+      if (response.status >= 200 && response.status < 500) return;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) { lastError = error; }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`Timed out waiting for ${url}: ${String(lastError)}`);
+}
+
+async function stopDetachedProcess(child: ChildProcess): Promise<void> {
+  if (child.exitCode !== null || child.signalCode !== null) return;
+  const signal = (name: NodeJS.Signals): void => {
+    try {
+      if (process.platform !== "win32" && child.pid) process.kill(-child.pid, name);
+      else child.kill(name);
+    } catch {}
+  };
+  signal("SIGTERM");
+  const exited = once(child, "exit");
+  const graceful = await Promise.race([exited.then(() => true), new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 5_000))]);
+  if (!graceful) { signal("SIGKILL"); await Promise.race([once(child, "exit"), new Promise((resolve) => setTimeout(resolve, 2_000))]); }
+}
 
 
 test("YesPlayMusic automatic router adapter preserves the manual route shell quality contract", () => {
@@ -157,6 +282,54 @@ test("YesPlayMusic automatic router adapter preserves the manual route shell qua
   assert.ok(upstream.reference.runtimeErrors > 0);
   assert.ok(upstream.visualMatrix.runtimeErrors > 0);
   assert.equal(upstream.requiredNetworkFailures, 0);
+});
+
+test("Vue Element Admin live Semantic Gold+ regression preserves the frozen route-state matrix", { skip: !runVueElementAdminGold, timeout: 240_000 }, async () => {
+  const caseDir = `${root}examples/spa-router-regressions/vue-element-admin`;
+  const sourceDir = vueElementAdminSource as string;
+  const lockedCommit = JSON.parse(readFileSync(`${caseDir}/source-lock.json`, "utf8")).commit as string;
+  const actualCommit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: sourceDir, encoding: "utf8" }).trim();
+  assert.equal(actualCommit, lockedCommit, "Vue Element Admin live regression must use the locked source commit");
+
+  const offset = process.pid % 1000;
+  const referencePort = 19000 + offset * 2;
+  const generatedPort = referencePort + 1;
+  const referenceBaseUrl = `http://127.0.0.1:${referencePort}`;
+  const generatedBaseUrl = `http://127.0.0.1:${generatedPort}`;
+  const artifacts = mkdtempSync(join(tmpdir(), "ui-dismantler-vue-admin-gold-"));
+  const reference = spawn("npm", ["run", "dev", "--", "--host", "127.0.0.1", "--port", String(referencePort)], {
+    cwd: sourceDir, detached: true, stdio: "ignore", env: { ...process.env, NODE_OPTIONS: "--openssl-legacy-provider" },
+  });
+  const generated = spawn(process.execPath, ["server.mjs"], {
+    cwd: `${caseDir}/generated-target`, detached: true, stdio: "ignore", env: { ...process.env, PORT: String(generatedPort) },
+  });
+  reference.unref();
+  generated.unref();
+
+  try {
+    await Promise.all([waitForHttp(`${referenceBaseUrl}/#/login`), waitForHttp(`${generatedBaseUrl}/#/login`)]);
+    const config = JSON.parse(readFileSync(`${caseDir}/reference-generated-semantic.config.json`, "utf8")) as SpaRouterContractConfig;
+    config.referenceBaseUrl = referenceBaseUrl;
+    config.generatedBaseUrl = generatedBaseUrl;
+    if (config.visualMatrix) config.visualMatrix.artifactDir = artifacts;
+    const report = await evaluateSpaRouterContract(config);
+    assert.equal(report.passed, true, JSON.stringify(report.qualityGates.filter((gate) => !gate.passed), null, 2));
+    assert.equal(report.scenariosPassed, 6);
+    assert.equal(report.scenariosTotal, 6);
+    assert.equal(report.navigationIntegrity.rate, 1);
+    assert.equal(report.visualMatrix?.scenarioCount, 5);
+    assert.equal(report.visualMatrix?.viewportRuns, 13);
+    assert.ok((report.visualMatrix?.worstComputedStyle ?? 0) >= 0.98);
+    assert.ok((report.visualMatrix?.worstPixelDiff ?? 1) <= 0.02);
+    assert.equal(report.visualMatrix?.stabilityFailures, 0);
+    assert.equal(report.runtimeErrors, 0);
+    assert.equal(report.requiredNetworkFailures, 0);
+    assert.equal(report.nonBlockingNetworkFailures, 0);
+    assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  } finally {
+    await Promise.all([stopDetachedProcess(reference), stopDetachedProcess(generated)]);
+    rmSync(artifacts, { recursive: true, force: true });
+  }
 });
 
 test("BLACKPINK Gold+ regression preserves initial and critical interaction matrices", { skip: !runGoldRegression, timeout: 600_000 }, async () => {

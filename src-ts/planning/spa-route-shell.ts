@@ -172,7 +172,9 @@ export function generateSpaRouteShellPlan(config: SpaRouterContractConfig, repor
         transitions.push({ scenarioId: scenario.id, stepIndex, action: step.action, from: previousRoute, to: requestedRoute, target });
         transitions.push({ scenarioId: scenario.id, stepIndex, action: "guard-redirect", from: requestedRoute, to: nextRoute });
       } else if (nextRoute !== previousRoute || ["back", "forward", "reload"].includes(step.action)) transitions.push({
-        scenarioId: scenario.id, stepIndex, action: step.action, from: previousRoute, to: nextRoute, target,
+        scenarioId: scenario.id, stepIndex,
+        action: step.action === "wait" && nextRoute !== previousRoute && !target ? "guard-redirect" : step.action,
+        from: previousRoute, to: nextRoute, target,
       });
       previousRoute = nextRoute;
     });

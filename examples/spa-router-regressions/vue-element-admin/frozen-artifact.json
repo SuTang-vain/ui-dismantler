@@ -9,7 +9,7 @@
   "hashAlgorithm": "sha256",
   "files": {
     "source-lock.json": "e392465e8784785cf166e0db51b04f6f3ce6f2dbd0ad86a5fe9a5677f9e0c077",
-    "route-shell.plan.json": "8f6ac9d44ffe516b64ac6e09c992bc69daa3f60b2ee687080e4f1840842a0b9f",
+    "route-shell.plan.json": "a49bf5409724f3e18d84efcacbd38370ab029b55ac7612d9f3cc676bc63b5269",
     "vue-router-responsibility.graph.json": "83561980dcd3e5e032089510b106af12386ebce24e430999fabcd3a2914d54bc",
     "reference-generated-semantic.config.json": "0476f8527c66416c3ef3dca38d59de9ed22a79199ec6c6f377887416f6efc063",
     "generated-target/public/index.html": "547226eb7d3c49e8462414b9f55b164f2974e4dcb2121076347d812901524eea",
@@ -23,6 +23,15 @@
     "reference-generated-semantic.network-isolated.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d",
     "full-network-isolated-run-1.results.json": "2b60dae3d776f3bbbc9b159c57dadf24ad889f5cbeaad1f5dba438554f1abea4",
     "full-network-isolated-run-2.results.json": "b7eb9daf2799e9c8ddaee456f52ec56de1b0d3d1507e45f3f009bf9c8dd97e83",
-    "full-network-isolated-run-3.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d"
+    "full-network-isolated-run-3.results.json": "5dd25b3878a52ad2827677b06418e5588f739f5a653a324a592b834d5ad9ef8d",
+    "sfc-visual-responsibility.graph.json": "a2523f04cbda346d0f7ea6ca66839046e097962189db1ece62fb66487ba7d3e0",
+    "echarts-responsibility.graph.json": "eab788f7a2266f429bee098182ddeafd50bc2f003f2230d1ba0922f38d58b796",
+    "generated-target-auto/routes.js": "a225216272d891ed8b6d4375bd85fad9e03d88a025899e1757555800f0a5d8d0",
+    "generated-target-auto/guards.js": "62829df7cd22874aefd3dce86d0d9ecfb9ee7d6e71de0e1dcbe18e64f291d3b0",
+    "generated-target-auto/router.js": "9984737aaeb51caf3ed39fd94b8fc07c9f97e9a83542ed38b9b95846b7854468",
+    "generated-target-auto/fixtures.js": "52a73343aed9d182433e81f14703e96506b0c2e5195c0d706aae460284c8de2d",
+    "generated-target-auto/README.md": "bcbe3852b4957acf9fd9094ffdf6133eeb010fca9158b81dc6048ff5ea10d466",
+    "generated-target-auto/generation.metrics.json": "cf611315c754c6687e236be3f2dd45615adcbb529a9b2a388ff01c762bbedecc",
+    "generated-target-auto/experiment.metrics.json": "7b2acb361f50b8aa84b439d5d8f6c27dc04ae79f1a741352dd5e5f8a78cbb934"
   }
 }

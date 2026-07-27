@@ -1,0 +1,691 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "echarts-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "runtime": "echarts",
+  "components": [
+    {
+      "id": "echarts:1",
+      "file": "components/Charts/Keyboard.vue",
+      "componentName": "Keyboard",
+      "confidence": "high",
+      "themes": [],
+      "chartTypes": [
+        "bar",
+        "line"
+      ],
+      "optionKeys": [
+        "xAxis",
+        "yAxis",
+        "grid",
+        "series",
+        "visualMap"
+      ],
+      "dataSources": [
+        "data2",
+        "xAxisData"
+      ],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": false
+      },
+      "evidence": [
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 46,
+          "pattern": "echarts.init(document.getElementById(this.id",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 56,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 34,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 37,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 41,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/Keyboard.vue",
+          "line": 10,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    },
+    {
+      "id": "echarts:2",
+      "file": "components/Charts/LineMarker.vue",
+      "componentName": "LineMarker",
+      "confidence": "high",
+      "themes": [],
+      "chartTypes": [
+        "line"
+      ],
+      "optionKeys": [
+        "xAxis",
+        "yAxis",
+        "grid",
+        "tooltip",
+        "legend",
+        "series",
+        "title"
+      ],
+      "dataSources": [],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": false
+      },
+      "evidence": [
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 46,
+          "pattern": "echarts.init(document.getElementById(this.id",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 48,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 34,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 37,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 41,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/LineMarker.vue",
+          "line": 10,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    },
+    {
+      "id": "echarts:3",
+      "file": "components/Charts/MixChart.vue",
+      "componentName": "MixChart",
+      "confidence": "high",
+      "themes": [],
+      "chartTypes": [
+        "bar",
+        "line"
+      ],
+      "optionKeys": [
+        "xAxis",
+        "yAxis",
+        "grid",
+        "tooltip",
+        "legend",
+        "series",
+        "dataZoom",
+        "title"
+      ],
+      "dataSources": [
+        "xData"
+      ],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": false
+      },
+      "evidence": [
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 46,
+          "pattern": "echarts.init(document.getElementById(this.id",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 54,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 34,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 37,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 41,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 7,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "components/Charts/MixChart.vue",
+          "line": 10,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    },
+    {
+      "id": "echarts:4",
+      "file": "views/dashboard/admin/components/BarChart.vue",
+      "componentName": "BarChart",
+      "confidence": "high",
+      "themes": [
+        "macarons"
+      ],
+      "chartTypes": [
+        "bar"
+      ],
+      "optionKeys": [
+        "xAxis",
+        "yAxis",
+        "grid",
+        "tooltip",
+        "series"
+      ],
+      "dataSources": [],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": true
+      },
+      "evidence": [
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 47,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 49,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 7,
+          "pattern": "echarts/theme/macarons",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 47,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 33,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 38,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 42,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/BarChart.vue",
+          "line": 13,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    },
+    {
+      "id": "echarts:5",
+      "file": "views/dashboard/admin/components/LineChart.vue",
+      "componentName": "LineChart",
+      "confidence": "high",
+      "themes": [
+        "macarons"
+      ],
+      "chartTypes": [
+        "line"
+      ],
+      "optionKeys": [
+        "xAxis",
+        "yAxis",
+        "grid",
+        "tooltip",
+        "legend",
+        "series"
+      ],
+      "dataSources": [
+        "actualData",
+        "chartData",
+        "expectedData"
+      ],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize",
+        "watch"
+      ],
+      "interactions": [
+        "watch:chartData"
+      ],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": true,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": true
+      },
+      "evidence": [
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 61,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 65,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 7,
+          "pattern": "echarts/theme/macarons",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 61,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 47,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 52,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 56,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 11,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/LineChart.vue",
+          "line": 39,
+          "pattern": "watch:",
+          "detail": "chart lifecycle: watch"
+        }
+      ]
+    },
+    {
+      "id": "echarts:6",
+      "file": "views/dashboard/admin/components/PieChart.vue",
+      "componentName": "PieChart",
+      "confidence": "high",
+      "themes": [
+        "macarons"
+      ],
+      "chartTypes": [
+        "pie"
+      ],
+      "optionKeys": [
+        "tooltip",
+        "legend",
+        "series"
+      ],
+      "dataSources": [],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": true
+      },
+      "evidence": [
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 45,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 47,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 7,
+          "pattern": "echarts/theme/macarons",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 45,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 31,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 36,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 40,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/PieChart.vue",
+          "line": 11,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    },
+    {
+      "id": "echarts:7",
+      "file": "views/dashboard/admin/components/RaddarChart.vue",
+      "componentName": "RaddarChart",
+      "confidence": "high",
+      "themes": [
+        "macarons"
+      ],
+      "chartTypes": [
+        "radar"
+      ],
+      "optionKeys": [
+        "tooltip",
+        "legend",
+        "series",
+        "radar"
+      ],
+      "dataSources": [],
+      "lifecycle": [
+        "beforeDestroy",
+        "dispose",
+        "mounted",
+        "resize"
+      ],
+      "interactions": [],
+      "capabilities": {
+        "initializesChart": true,
+        "updatesOptions": true,
+        "watchesData": false,
+        "resizesChart": true,
+        "disposesChart": true,
+        "usesTheme": true
+      },
+      "evidence": [
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 47,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts instance initialization"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 49,
+          "pattern": ".setOption(",
+          "detail": "chart option application"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 7,
+          "pattern": "echarts/theme/macarons",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 47,
+          "pattern": "echarts.init(this.$el, 'macarons'",
+          "detail": "ECharts theme dependency"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 33,
+          "pattern": "mounted(",
+          "detail": "chart lifecycle: mounted"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 38,
+          "pattern": "beforeDestroy(",
+          "detail": "chart lifecycle: beforeDestroy"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 42,
+          "pattern": ".dispose(",
+          "detail": "chart lifecycle: dispose"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 8,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        },
+        {
+          "file": "views/dashboard/admin/components/RaddarChart.vue",
+          "line": 13,
+          "pattern": "resize",
+          "detail": "chart lifecycle: resize"
+        }
+      ]
+    }
+  ],
+  "themes": [
+    "macarons"
+  ],
+  "chartTypes": [
+    "bar",
+    "line",
+    "pie",
+    "radar"
+  ],
+  "blockers": [],
+  "reviewReasons": [
+    "chart configuration and data ownership are extracted for review; runtime code is not copied or applied automatically",
+    "third-party chart lifecycle, theme, resize, and dispose responsibilities must remain explicit",
+    "visual acceptance still requires computed-style and pixel matrices at the reviewed route states"
+  ],
+  "metrics": {
+    "filesScanned": 195,
+    "chartFiles": 7,
+    "components": 7,
+    "evidenceCount": 65,
+    "scanMs": 22
+  }
+}

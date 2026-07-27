@@ -16,6 +16,8 @@ import { generateSpaRouteShellArtifact } from "./planning/spa-route-shell-genera
 import { generateSpaRouteShellIntegrationPatch } from "./planning/spa-route-shell-patch.js";
 import { analyzeVueRouterResponsibility } from "./planning/vue-router-responsibility.js";
 import { generateVueRouterIntegrationPatch } from "./planning/vue-router-patch.js";
+import { analyzeEChartsResponsibilities } from "./planning/echarts-responsibility.js";
+import { analyzeSfcVisualResponsibilities } from "./planning/sfc-visual-responsibility.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
@@ -36,7 +38,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -149,6 +151,27 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  blocked=${patch.metrics.blocked}，covered=${patch.metrics.responsibilitiesCovered.length}，missing=${patch.metrics.responsibilitiesMissing.length}，applied=${patch.metrics.applied}`);
       for (const reason of patch.metrics.blockingReasons) console.log(`  [BLOCKED] ${reason}`);
       return patch.metrics.blocked ? 1 : 0;
+    }
+    if (command === "sfc-visual-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("sfc-visual-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeSfcVisualResponsibilities(resolve(sourceRoot));
+      const serializable = { ...graph, sourceRoot: "<external-source>", echarts: { ...graph.echarts, sourceRoot: "<external-source>" } };
+      await writeFile(resolve(out), `${JSON.stringify(serializable, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 SFC visual responsibility graph: ${resolve(out)}`);
+      console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
+      for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
+      return graph.blockers.length > 0 ? 1 : 0;
+    }
+    if (command === "echarts-responsibility-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("echarts-responsibility-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeEChartsResponsibilities(resolve(sourceRoot));
+      await writeFile(resolve(out), `${JSON.stringify({ ...graph, sourceRoot: "<external-source>" }, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 ECharts responsibility graph: ${resolve(out)}`);
+      console.log(`  chartFiles=${graph.metrics.chartFiles}，components=${graph.metrics.components}，types=${graph.chartTypes.join(",") || "unknown"}，themes=${graph.themes.join(",") || "default"}，blocked=${graph.blockers.length > 0}`);
+      for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
+      return graph.blockers.length > 0 ? 1 : 0;
     }
     if (command === "spa-shell-patch") {
       const planPath = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");

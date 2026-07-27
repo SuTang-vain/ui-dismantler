@@ -86,3 +86,31 @@ Before/after changes:
 - formal visual states: `1/5 → 5/5`.
 
 The public-network and model-API disturbance variables are isolated: only exact `hostname + path + resourceType=image` fixtures are used, the upstream source is locked to commit `6858a9ad67483025f6a9432a926beb9327037be3`, and this generation/repair phase records `modelCalls=0`.
+
+## SFC and ECharts responsibility graphs
+
+The post-Gold+ generalization phase records the visual reconstruction responsibilities without applying source rewrites:
+
+- `sfc-visual-responsibility.graph.json` covers 131 Vue SFC components, 69 interactive components, 7 direct chart components, scoped styles, media queries, template events, lifecycle hooks, child-component topology, and third-party dependencies.
+- `echarts-responsibility.graph.json` covers 7 ECharts owners, the `macarons` theme, line/bar/pie/radar renderer types, option/data ownership, resize, watch, initialization, and dispose lifecycles.
+
+Both graphs are review-only. They describe ownership needed by a future automatic target generator; they do not copy or apply upstream component code, and they do not change the requirement to pass the same Semantic Gold+ visual matrix.
+
+## Automatic target candidate baseline
+
+`generated-target-auto/` is a deterministic, review-only route/history/guard/fixture candidate generated from `route-shell.plan.json`. It intentionally contains no complex visual DOM or CSS.
+
+Current automatic-candidate evidence:
+
+- generated files: 5;
+- generated lines: 174;
+- model calls: 0;
+- manual edits: 0;
+- repair iterations: 0;
+- matched routes: 6/6;
+- matched guard responsibilities: 1/1;
+- matched history responsibilities: `historyBack`;
+- semantic responsibility delta against the reviewed target: 0;
+- visual quality comparison: unavailable by design.
+
+This candidate is not a full generated application and is not a Gold+ result. The next generator phase must materialize reviewed SFC visual owners and ECharts lifecycle boundaries into a separately served target before quality comparison is allowed.

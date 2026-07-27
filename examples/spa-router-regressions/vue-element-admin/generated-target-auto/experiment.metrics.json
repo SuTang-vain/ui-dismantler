@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "vue-sfc-auto-target-candidate",
+  "deterministic": true,
+  "reviewRequired": true,
+  "fullGeneratedApplication": false,
+  "generatedVisualDom": false,
+  "modelCalls": 0,
+  "status": "behavior-responsibility-complete-visual-generation-pending",
+  "manualBaseline": {
+    "generatedLines": 746,
+    "quality": {
+      "passed": true,
+      "navigationIntegrity": 1,
+      "worstComputedStyle": 0.9912,
+      "worstPixelDiff": 0.012977
+    },
+    "repeatMedianMs": 64310.977
+  },
+  "automaticCandidate": {
+    "generatedFiles": 5,
+    "generatedLines": 174,
+    "generationMs": 0.013,
+    "manualEdits": 0,
+    "manualEditedLines": 0,
+    "repairIterations": 0,
+    "routeResponsibilities": {
+      "matched": 6,
+      "total": 6,
+      "missing": []
+    },
+    "guardResponsibilities": {
+      "matched": 1,
+      "total": 1,
+      "missing": []
+    },
+    "historyResponsibilities": {
+      "matched": [
+        "historyBack"
+      ],
+      "missing": []
+    },
+    "visualQualityAvailable": false
+  },
+  "comparison": {
+    "responsibilityComparable": true,
+    "behaviorResponsibilityDelta": 0,
+    "qualityComparable": false,
+    "qualityPassed": null,
+    "detail": "The automatic candidate owns router/history/guard/fixture skeleton responsibilities only. It is not runnable as a visual application and cannot claim Semantic Gold+."
+  },
+  "nextRequired": [
+    "generate reviewed Login, Permission, and Dashboard visual boundaries from SFC responsibility owners",
+    "materialize ECharts runtime/theme/config ownership without copying upstream application code blindly",
+    "serve the automatic candidate as a separate generated target",
+    "run the same Semantic Gold+ matrix and record manual edit lines and repair iterations"
+  ]
+}
