@@ -90,6 +90,7 @@ test("YesPlayMusic automatic router adapter preserves the manual route shell qua
   const automatic = JSON.parse(readFileSync(`${caseDir}/semantic-results.json`, "utf8"));
   const upstream = JSON.parse(readFileSync(`${caseDir}/semantic-upstream-results.json`, "utf8"));
   const performance = JSON.parse(readFileSync(`${caseDir}/performance-baseline.json`, "utf8"));
+  const patch = JSON.parse(readFileSync(`${caseDir}/integration-patch/integration.metrics.json`, "utf8"));
 
   assert.equal(frozen.scope, "auto-router-adapter-experiment");
   assert.equal(frozen.generatedVisualDom, false);
@@ -127,6 +128,17 @@ test("YesPlayMusic automatic router adapter preserves the manual route shell qua
   assert.equal(experiment.conclusion.singleRunPerformanceConclusionAllowed, false);
   assert.equal(experiment.conclusion.threeRunPerformanceBaselineAvailable, true);
   assert.equal(experiment.conclusion.performanceRegression, false);
+  assert.equal(experiment.integrationPatch.blocked, false);
+  assert.equal(experiment.integrationPatch.applied, false);
+  assert.equal(experiment.integrationPatch.changedLines, 22);
+  assert.equal(experiment.integrationPatch.manualCodeEditsAfterPatchGeneration, 0);
+  assert.equal(experiment.integrationPatch.previewMatchesReviewedAdapter, true);
+  assert.equal(patch.reviewRequired, true);
+  assert.equal(patch.applied, false);
+  assert.equal(patch.blocked, false);
+  assert.equal(patch.changedLines, 22);
+  assert.equal(patch.changedHunks, 6);
+  assert.equal(readFileSync(`${caseDir}/integration-patch/app.js.preview`, "utf8"), readFileSync(`${caseDir}/app.js`, "utf8"));
   assert.equal(performance.runsPerVariant, 3);
   assert.equal(performance.manual.passRate, 1);
   assert.equal(performance.automatic.passRate, 1);

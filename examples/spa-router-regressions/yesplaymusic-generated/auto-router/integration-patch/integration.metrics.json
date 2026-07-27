@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-integration-patch",
+  "deterministic": true,
+  "reviewRequired": true,
+  "applied": false,
+  "sourcePath": "examples/spa-router-regressions/yesplaymusic-generated/public/app.js",
+  "sourceLines": 73,
+  "patchedLines": 69,
+  "changedLines": 22,
+  "changedHunks": 6,
+  "edits": [
+    {
+      "id": "router-import",
+      "matched": true,
+      "count": 1,
+      "detail": "inserted createRouter import"
+    },
+    {
+      "id": "local-navigate-helper",
+      "matched": true,
+      "count": 1,
+      "detail": "replaced local pushState/replaceState helper with router handle"
+    },
+    {
+      "id": "guard-navigation",
+      "matched": true,
+      "count": 1,
+      "detail": "delegated observed guard redirect to generated guard table"
+    },
+    {
+      "id": "link-navigation",
+      "matched": false,
+      "count": 0,
+      "detail": "delegated link navigation to generated router"
+    },
+    {
+      "id": "history-back",
+      "matched": true,
+      "count": 1,
+      "detail": "delegated history back to generated router"
+    },
+    {
+      "id": "history-forward",
+      "matched": true,
+      "count": 1,
+      "detail": "delegated history forward to generated router"
+    },
+    {
+      "id": "dynamic-input-navigation",
+      "matched": true,
+      "count": 1,
+      "detail": "delegated dynamic input route to generated router"
+    },
+    {
+      "id": "router-lifecycle",
+      "matched": true,
+      "count": 1,
+      "detail": "replaced manual popstate/render bootstrap with generated router lifecycle"
+    }
+  ],
+  "blocked": false,
+  "blockingReasons": [],
+  "modelCalls": 0,
+  "generatedCode": true,
+  "qualityRuns": 0,
+  "reviewReasons": [
+    "the patch is a preview and is never applied automatically",
+    "the visual DOM and CSS remain owned by the source route shell",
+    "guard redirect rewrites require human approval",
+    "the patched application must run the same Semantic Gold+ and visual matrix before acceptance"
+  ]
+}

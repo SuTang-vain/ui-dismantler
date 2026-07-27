@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
@@ -10,6 +11,7 @@ import { comparePixels } from "../evaluation/browser.js";
 import { runQualityGate } from "../workflow/pipeline.js";
 import { generateSpaRouteShellPlan } from "../planning/spa-route-shell.js";
 import { compareSpaRouteShellFiles, generateSpaRouteShellArtifact } from "../planning/spa-route-shell-generator.js";
+import { generateSpaRouteShellIntegrationPatch, generateSpaRouteShellIntegrationPatchFromFile } from "../planning/spa-route-shell-patch.js";
 import { PNG } from "pngjs";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -107,6 +109,37 @@ test("SPA route shell generator emits behavior-only files and explicit review me
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
+});
+
+test("SPA route shell integration patch reproduces the reviewed YesPlayMusic adapter without applying it", () => {
+  const caseDir = `${root}examples/spa-router-regressions/yesplaymusic-generated`;
+  const plan = JSON.parse(readFileSync(`${caseDir}/route-shell.plan.json`, "utf8"));
+  const sourcePath = `${caseDir}/public/app.js`;
+  const expectedPatched = readFileSync(`${caseDir}/auto-router/app.js`, "utf8");
+  const patch = generateSpaRouteShellIntegrationPatchFromFile(plan, sourcePath);
+  assert.equal(patch.metrics.reviewRequired, true);
+  assert.equal(patch.metrics.applied, false);
+  assert.equal(patch.metrics.blocked, false, JSON.stringify(patch.metrics, null, 2));
+  assert.equal(patch.metrics.changedHunks, 6);
+  assert.equal(patch.metrics.changedLines, 22);
+  const requiredEdits = ["router-import", "local-navigate-helper", "guard-navigation", "history-back", "history-forward", "dynamic-input-navigation", "router-lifecycle"];
+  assert.equal(requiredEdits.every((id) => patch.metrics.edits.find((edit) => edit.id === id)?.matched), true, JSON.stringify(patch.metrics, null, 2));
+  assert.equal(patch.patched, expectedPatched);
+  assert.match(patch.diff, /route-shell\.plan|app\.js/);
+});
+
+test("SPA route shell integration patch blocks when reviewed responsibilities cannot be located", () => {
+  const caseDir = `${root}examples/spa-router-regressions/yesplaymusic-generated`;
+  const plan = JSON.parse(readFileSync(`${caseDir}/route-shell.plan.json`, "utf8"));
+  const patch = generateSpaRouteShellIntegrationPatch(plan, "const render = () => {};\nrender();\n", { sourcePath: "unsupported-app.js" });
+  assert.equal(patch.metrics.reviewRequired, true);
+  assert.equal(patch.metrics.applied, false);
+  assert.equal(patch.metrics.blocked, true);
+  assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("history.back")));
+  assert.equal(patch.metrics.blockingReasons.some((reason) => reason.includes("history.forward")), false);
+  assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("dynamic input routes")));
+  assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("guard redirect")));
+  assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("lifecycle")));
 });
 
 test("SPA route shell file diff reports missing boundaries instead of pretending app.js is comparable", () => {

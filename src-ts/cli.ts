@@ -13,6 +13,7 @@ import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/librar
 import { planComponents, writeComponentPlanningReport, writeComponentSpecs } from "./planning/components.js";
 import { generateSpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { generateSpaRouteShellArtifact } from "./planning/spa-route-shell-generator.js";
+import { generateSpaRouteShellIntegrationPatch } from "./planning/spa-route-shell-patch.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
@@ -117,6 +118,22 @@ async function main(argv: string[]): Promise<number> {
       console.log(`✓ 已生成 SPA route shell 计划: ${resolve(out)}`);
       console.log(`  routes=${plan.routes.length}，transitions=${plan.transitions.length}，visualStates=${plan.capabilities.reviewedVisualStates}，reviewRequired=${plan.reviewRequired}，generationMs=${generationMs}`);
       return 0;
+    }
+    if (command === "spa-shell-patch") {
+      const planPath = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");
+      if (!planPath || !sourcePath || !outDir) throw new Error("spa-shell-patch 需要 <route-shell.plan.json>、--source 和 --out-dir");
+      const plan = JSON.parse(await readFile(resolve(planPath), "utf8"));
+      const source = await readFile(resolve(sourcePath), "utf8");
+      const patch = generateSpaRouteShellIntegrationPatch(plan, source, { sourcePath, importPath: flag(args, "--import-path") });
+      const absoluteOutDir = resolve(outDir);
+      await mkdir(absoluteOutDir, { recursive: true });
+      await writeFile(resolve(absoluteOutDir, "integration.patch"), patch.diff, "utf8");
+      await writeFile(resolve(absoluteOutDir, "app.js.preview"), patch.patched, "utf8");
+      await writeFile(resolve(absoluteOutDir, "integration.metrics.json"), `${JSON.stringify(patch.metrics, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 review-only SPA route shell integration patch: ${absoluteOutDir}`);
+      console.log(`  blocked=${patch.metrics.blocked}，changedLines=${patch.metrics.changedLines}，changedHunks=${patch.metrics.changedHunks}，applied=${patch.metrics.applied}`);
+      for (const reason of patch.metrics.blockingReasons) console.log(`  [BLOCKED] ${reason}`);
+      return patch.metrics.blocked ? 1 : 0;
     }
     if (command === "spa-shell-generate") {
       const planPath = args[0], outDir = flag(args, "--out-dir");

@@ -16,8 +16,11 @@
     "generated/fixtures.js": "800d8e91557c48cc84123ab027e1beba52f7f6ab6d54b50a6ad637eb8bf77505",
     "generated/README.md": "239a1ffe187789042670f75c5da39e3c04b40e65c4be34e0c8f77cd823fd6c64",
     "generation.metrics.json": "c8a7d211027014fa01f1f7e2534f8886c73500ad6555c51c408e3a054d2c7884",
-    "experiment.metrics.json": "988b5c656600b63c7ef33117bceccbb1ad5def400207f7ca28044f9969b9d939",
+    "experiment.metrics.json": "22cece2383b69144082262ba638991d766ac8097ae0466370e29588382bca92e",
     "performance-baseline.json": "c226ffdb0a43e76fd58c2b55ac9e23b6e13c2f632b3517dee1bd815cd734a119",
-    "RESULTS.md": "05232b8b4e99082b01d435891f81b67b87e8280b3f11d316304b9c9fd60ebaef"
+    "RESULTS.md": "e3ec959310fdc470088a154fea72f3589f8ed1193a3200b789dc2c98971dd7ec",
+    "integration-patch/integration.patch": "8f4736392d6cd22235acc08087417784599a69629c6977e07c9bc9a54d4aa430",
+    "integration-patch/app.js.preview": "46c731fb65f3af0660640bdb7ddc9a863d11e7dfa8ad434ed97f2bfce2e5714e",
+    "integration-patch/integration.metrics.json": "b316ee42940ac1c29e1a6597a71c3662f2accb3f41aa41e446cc37f4aeeb70a0"
   }
 }

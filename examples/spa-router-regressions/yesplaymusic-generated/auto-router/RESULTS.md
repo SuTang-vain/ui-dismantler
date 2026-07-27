@@ -42,6 +42,19 @@ A separate run against the live Vue development reference preserved navigation i
 
 This diagnostic is not counted as an automatic-router quality failure. It shows why generated-router correctness and upstream fixture/runtime health must be reported independently.
 
+## Integration patch automation
+
+The review-only patch generator now reproduces the reviewed `auto-router/app.js` exactly:
+
+- patch changed lines: 22
+- patch responsibility groups: 6
+- patch blocked: false
+- patch applied automatically: false
+- preview matches the reviewed adapter: yes
+- manual code edits after patch generation: 0
+
+If a required responsibility pattern is absent, the generator blocks the patch and reports the missing history, dynamic route, guard, or lifecycle responsibility instead of producing a partial implementation.
+
 ## Performance boundary
 
 A three-run alternating control baseline is now available:

@@ -71,5 +71,17 @@
     "manualCoefficientOfVariation": 0.01,
     "automaticCoefficientOfVariation": 0.015,
     "performanceRegression": false
+  },
+  "integrationPatch": {
+    "generated": true,
+    "reviewRequired": true,
+    "applied": false,
+    "blocked": false,
+    "changedLines": 22,
+    "changedHunks": 6,
+    "requiredEditsMatched": true,
+    "previewMatchesReviewedAdapter": true,
+    "manualCodeEditsAfterPatchGeneration": 0,
+    "note": "human review remains mandatory; the patch is never applied automatically"
   }
 }
