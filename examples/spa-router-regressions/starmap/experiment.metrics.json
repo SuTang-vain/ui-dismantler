@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "starmap-generated-gold",
+  "deterministic": true,
+  "sourceIdentity": "source-identity.json",
+  "modelCallsDuringQualityRun": 0,
+  "generationMode": "responsibility-guided-independent-route-visual-target",
+  "sourceRuntimeImplementationCopied": false,
+  "sourceVisualStylesMaterialized": true,
+  "caseSpecificIdentifierWhitelists": 0,
+  "repairIterations": 3,
+  "qualityRuns": {
+    "semantic": 3,
+    "strict": 2
+  },
+  "qualityThresholds": {
+    "computedStyle": 0.98,
+    "pixelDiff": 0.02,
+    "navigationIntegrity": 1,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "result": {
+    "semanticPass": true,
+    "strictPass": true,
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.002519,
+    "viewportRuns": 9
+  },
+  "networkIsolation": {
+    "modelApiCalls": 0,
+    "reviewedFixturesOnly": true,
+    "sourceHashesUnchanged": true
+  }
+}

@@ -21,6 +21,7 @@ import { analyzeSfcVisualResponsibilities, type SfcVisualResponsibilityGraph } f
 import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visual-target-plan.js";
 import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
 import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "./planning/api-fixture-responsibility.js";
+import { analyzeSpaAuthResponsibilities } from "./planning/spa-auth-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
@@ -42,7 +43,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -125,6 +126,16 @@ async function main(argv: string[]): Promise<number> {
       }
       console.log(`✓ 已生成 SPA route shell 计划: ${resolve(out)}`);
       console.log(`  routes=${plan.routes.length}，transitions=${plan.transitions.length}，visualStates=${plan.capabilities.reviewedVisualStates}，reviewRequired=${plan.reviewRequired}，generationMs=${generationMs}`);
+      return 0;
+    }
+    if (command === "spa-auth-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("spa-auth-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeSpaAuthResponsibilities(resolve(sourceRoot));
+      await writeFile(resolve(out), `${JSON.stringify({ ...graph, sourceRoot: "<external-source>" }, null, 2)}
+`, "utf8");
+      console.log(`✓ 已生成 SPA auth responsibility graph: ${resolve(out)}`);
+      console.log(`  files=${graph.metrics.filesScanned}，chains=${graph.metrics.completeQueryStorageAuthorizationChains}，401=${graph.metrics.unauthorizedBranches}，redirects=${graph.metrics.redirectNavigations}`);
       return 0;
     }
     if (command === "spa-vue-router-analyze") {

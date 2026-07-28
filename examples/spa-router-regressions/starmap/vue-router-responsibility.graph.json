@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "vue-router-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-starmap-source>",
+  "framework": {
+    "view": "vue",
+    "router": "vue-router",
+    "routerMajor": 4,
+    "state": "unknown"
+  },
+  "files": [
+    "App.vue",
+    "api/baikeClient.js",
+    "api/exports.js",
+    "api/llm.js",
+    "api/request.js",
+    "api/reviews.js",
+    "api/starmaps.js",
+    "api/tasks.js",
+    "api/users.js",
+    "components/BatchActionBar.vue",
+    "components/DraggableItemList.vue",
+    "components/LemmaSearchModal.vue",
+    "components/ModificationHistory.vue",
+    "components/Toast.vue",
+    "main.js",
+    "router/index.js",
+    "utils/constants.js",
+    "utils/helpers.js",
+    "views/ExportPage.vue",
+    "views/GenerationProgress.vue",
+    "views/ModelProfiles.vue",
+    "views/ReviewPage.vue",
+    "views/ThemeInput.vue"
+  ],
+  "routes": [
+    {
+      "path": "/",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/progress/:taskId",
+      "file": "router/index.js",
+      "dynamic": true,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/review/:taskId",
+      "file": "router/index.js",
+      "dynamic": true,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/export/:taskId",
+      "file": "router/index.js",
+      "dynamic": true,
+      "roles": [],
+      "module": false
+    },
+    {
+      "path": "/profiles",
+      "file": "router/index.js",
+      "dynamic": false,
+      "roles": [],
+      "module": false
+    }
+  ],
+  "responsibilities": [
+    {
+      "id": "router-construction:1",
+      "kind": "router-construction",
+      "owner": "router",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 41,
+          "pattern": "createRouter(",
+          "detail": "Vue Router 4 instance construction"
+        }
+      ]
+    },
+    {
+      "id": "route-table:2",
+      "kind": "route-table",
+      "owner": "route-table",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 8,
+          "pattern": "const routes = [",
+          "detail": "Vue Router route table"
+        }
+      ]
+    },
+    {
+      "id": "history-mode:3",
+      "kind": "history-mode",
+      "owner": "router",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 42,
+          "pattern": "createWebHistory(",
+          "detail": "Vue Router 4 HTML5 history factory"
+        }
+      ]
+    },
+    {
+      "id": "guard-before-each:4",
+      "kind": "guard-before-each",
+      "owner": "guard",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 46,
+          "pattern": "router.beforeEach(",
+          "detail": "router guard registration"
+        }
+      ]
+    },
+    {
+      "id": "history-navigation:5",
+      "kind": "history-navigation",
+      "owner": "router",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "file": "views/ExportPage.vue",
+          "line": 55,
+          "pattern": "router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/GenerationProgress.vue",
+          "line": 107,
+          "pattern": "router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/ModelProfiles.vue",
+          "line": 341,
+          "pattern": "router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/ReviewPage.vue",
+          "line": 306,
+          "pattern": "router.push(",
+          "detail": "imperative Vue Router navigation"
+        },
+        {
+          "file": "views/ThemeInput.vue",
+          "line": 231,
+          "pattern": "router.push(",
+          "detail": "imperative Vue Router navigation"
+        }
+      ]
+    },
+    {
+      "id": "router-link-navigation:6",
+      "kind": "router-link-navigation",
+      "owner": "component",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "components/LemmaSearchModal.vue",
+          "line": 2,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/ThemeInput.vue",
+          "line": 7,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/ThemeInput.vue",
+          "line": 7,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/ThemeInput.vue",
+          "line": 21,
+          "pattern": "<router-link",
+          "detail": "declarative router-link navigation"
+        },
+        {
+          "file": "views/ThemeInput.vue",
+          "line": 21,
+          "pattern": "to=\"",
+          "detail": "declarative router-link navigation"
+        }
+      ]
+    },
+    {
+      "id": "router-view-rendering:7",
+      "kind": "router-view-rendering",
+      "owner": "component",
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "App.vue",
+          "line": 3,
+          "pattern": "<router-view",
+          "detail": "route view rendering outlet"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "hashMode": false,
+    "historyMode": true,
+    "dynamicImports": false,
+    "nestedRoutes": false,
+    "roleMeta": false,
+    "guardRedirects": false,
+    "dynamicRouteInjection": false,
+    "historyNavigation": true,
+    "routerLinks": true,
+    "routerView": true,
+    "resetRouter": false
+  },
+  "blockers": [],
+  "reviewReasons": [
+    "Vue Router owns route matching and history semantics; the analyzer must not replace it with a generic router",
+    "dynamic route injection is role-dependent and requires a reviewed fixture identity",
+    "lazy component imports and router-view boundaries remain source-owned visual responsibilities",
+    "the output is an auditable graph and review-only integration proposal, not an applied source rewrite"
+  ],
+  "metrics": {
+    "filesScanned": 23,
+    "routesDiscovered": 5,
+    "dynamicRoutes": 3,
+    "roleProtectedRoutes": 0,
+    "evidenceCount": 15,
+    "scanMs": 9
+  }
+}

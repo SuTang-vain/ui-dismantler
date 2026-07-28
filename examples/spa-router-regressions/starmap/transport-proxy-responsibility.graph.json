@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "transport-proxy-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-starmap-source>",
+  "routes": [
+    {
+      "requestPrefix": "/api",
+      "environment": "development",
+      "source": "vite.config.js",
+      "configSource": "vite.config.js",
+      "scopeSources": [
+        "vite.config.js"
+      ],
+      "framework": "vite",
+      "contextCandidates": [
+        "/api"
+      ],
+      "targetCandidates": [
+        "http://localhost:8090"
+      ],
+      "routerCandidates": [],
+      "routerDecisionBranches": [],
+      "bypassDecisionBranches": [
+        {
+          "condition": "default",
+          "rawOutcome": "false",
+          "outcomeKind": "boolean",
+          "outcomeCandidates": [
+            "false"
+          ]
+        }
+      ],
+      "changeOrigin": true,
+      "ws": true,
+      "configureHook": false,
+      "bypassHook": true,
+      "analysisMode": "scope-ast",
+      "analysisDiagnostics": []
+    },
+    {
+      "requestPrefix": "/api",
+      "environment": "production",
+      "source": "vite.config.js",
+      "configSource": "vite.config.js",
+      "scopeSources": [
+        "vite.config.js"
+      ],
+      "framework": "vite",
+      "contextCandidates": [
+        "/api"
+      ],
+      "targetCandidates": [
+        "http://localhost:8090"
+      ],
+      "routerCandidates": [],
+      "routerDecisionBranches": [],
+      "bypassDecisionBranches": [
+        {
+          "condition": "default",
+          "rawOutcome": "false",
+          "outcomeKind": "boolean",
+          "outcomeCandidates": [
+            "false"
+          ]
+        }
+      ],
+      "changeOrigin": true,
+      "ws": true,
+      "configureHook": false,
+      "bypassHook": true,
+      "analysisMode": "scope-ast",
+      "analysisDiagnostics": []
+    }
+  ],
+  "diagnostics": [],
+  "metrics": {
+    "configFiles": 1,
+    "proxyScopes": 1,
+    "routes": 2,
+    "astRoutes": 2,
+    "fallbackRoutes": 0,
+    "dynamicContextsMaterialized": 1,
+    "diagnostics": 0
+  },
+  "reviewReasons": [
+    "project-level proxy evidence is independent from component API fixture extraction",
+    "dynamic browser prefixes are materialized only from concrete reviewed environment assignments",
+    "proxy targets, rewrites, router branches, and bypass outcomes remain audit evidence and never become browser fixture paths",
+    "all inferred routes require review before they can affect formal fixture or scheduler configuration"
+  ]
+}

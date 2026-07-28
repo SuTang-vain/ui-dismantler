@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:9530",
+  "generatedBaseUrl": "http://127.0.0.1:9531",
+  "navigationComparison": "strict",
+  "apiPrefix": "/api",
+  "fixtures": [
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "fetch",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/task-123/status",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": {
+          "themeName": "Reviewed Task",
+          "status": "completed"
+        }
+      }
+    }
+  ],
+  "execution": {
+    "contractConcurrency": 2,
+    "visualConcurrency": 3,
+    "visualCaptureConcurrency": 3,
+    "visualCanvasConcurrency": 1,
+    "visualPixelConcurrency": 1,
+    "actionTimeoutMs": 10000,
+    "browserShutdown": "graceful"
+  },
+  "scenarios": [
+    {
+      "id": "home-default",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [],
+      "assertions": {
+        "path": "/",
+        "search": "?token=reviewed-token",
+        "visibleSelector": ".theme-input-container",
+        "visibleText": "星图生产辅助 Agent"
+      }
+    },
+    {
+      "id": "profiles-loaded",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": ".hero-link"
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "search": "",
+        "visibleSelector": ".profile-list",
+        "visibleText": "Reviewed Profile",
+        "selectorCount": {
+          "target": ".profile-card",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "profiles-editor-open",
+      "entryPath": "/profiles?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": "button:has-text('新建配置')"
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "search": "?token=reviewed-token",
+        "visibleSelector": ".modal",
+        "visibleText": "新建配置"
+      }
+    },
+    {
+      "id": "profiles-editor-close",
+      "entryPath": "/profiles?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": "button:has-text('新建配置')"
+        },
+        {
+          "action": "click",
+          "target": ".modal-head button:has-text('关闭')"
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "absentSelector": ".modal-mask",
+        "visibleSelector": ".profile-list",
+        "visibleText": "OpenAI Production"
+      }
+    },
+    {
+      "id": "dynamic-progress-deep-link-reload",
+      "entryPath": "/progress/task-123?token=reviewed-token",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/progress/task-123",
+        "search": "?token=reviewed-token",
+        "visibleText": "生成进度"
+      }
+    },
+    {
+      "id": "history-back-home",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": ".hero-link"
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "search": "?token=reviewed-token",
+        "visibleSelector": ".theme-input-container"
+      }
+    }
+  ]
+}

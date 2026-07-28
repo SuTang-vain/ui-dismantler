@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "frozen-source-identity",
+  "sourceRoot": "<external-starmap-source>",
+  "files": {
+    "package.json": "2e34e7825f9afb8542bed4d3dd7cbcec45ba176429ab1dd7b7d058a0fe8701aa",
+    "package-lock.json": "763bd338f1c50614e2560899baa530d083716ffd1f2ffb65acb47b1be3cd9122",
+    "vite.config.js": "10478ffe0636846ae99bcf795b6d9c21a610df8f3050439ed443fa37c6a2b5a9",
+    "index.html": "6f03f371d8e508d1e4c482a414b9ac545065327383ae9a9f4d54706aced02d2f",
+    ".env.development": "e5f8360d39beedcf80983969e80bcf53debf2c7672bff9a26ec47df3e0f4cb77",
+    ".env.production": "c87aab77e7a28ebadff9bd9c97c35702fe3ce8891bb8f0da121874cae18f7ef3",
+    "src/main.js": "8a43d475d0d5a261c5e5806fb8592a337071758394c51b0e2038f2488e0ca7cb",
+    "src/App.vue": "4c26ad3cc46be73e0f7f8954e5bab8eafeca66ea077bf94407150570c637090e",
+    "src/router/index.js": "fda2fbf7cfc4fd19565efb516bcf2e4a67702701bfa813a28cb1d61f50dd8abe",
+    "src/api/request.js": "b2063a1ee5be6216938a60ac8e9d582fd7e6a048467e51aedcb0f2fc2140b18f",
+    "src/api/llm.js": "999e99c54d5e312d95b474422185a4e894cb85987b56d9a29e4114141ec21917",
+    "src/views/ThemeInput.vue": "55c6014565068052e762601267f8aafface95587cfc4cdd770d13d5c8e6aa6bf",
+    "src/views/ModelProfiles.vue": "c3fc0414c122e9372131bbf800a8b2af57f4c85d0ec02a39df523b17a6d4ac33"
+  }
+}

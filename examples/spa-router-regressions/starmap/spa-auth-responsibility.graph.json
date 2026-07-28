@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-auth-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "evidence": [
+    {
+      "kind": "query-read",
+      "file": "src/api/request.js",
+      "queryKey": "token",
+      "expression": "new URLSearchParams(window.location.search).get('token')"
+    },
+    {
+      "kind": "storage-write",
+      "file": "src/api/request.js",
+      "storage": "sessionStorage",
+      "key": "api_token",
+      "expression": "sessionStorage.setItem('api_token'"
+    },
+    {
+      "kind": "storage-read",
+      "file": "src/api/request.js",
+      "storage": "sessionStorage",
+      "key": "api_token",
+      "expression": "sessionStorage.getItem('api_token'"
+    },
+    {
+      "kind": "authorization-header",
+      "file": "src/api/request.js",
+      "header": "Authorization",
+      "expression": "headers.Authorization = `Bearer ${token}`"
+    },
+    {
+      "kind": "unauthorized-status",
+      "file": "src/api/request.js",
+      "status": 401,
+      "expression": "status === 401"
+    },
+    {
+      "kind": "redirect-read",
+      "file": "src/api/request.js",
+      "key": "redirectUrl",
+      "expression": "response.data?.redirectUrl"
+    },
+    {
+      "kind": "redirect-navigation",
+      "file": "src/api/request.js",
+      "key": "href",
+      "expression": "window.location.href = redirectUrl"
+    },
+    {
+      "kind": "storage-read",
+      "file": "src/views/ModelProfiles.vue",
+      "storage": "localStorage",
+      "key": "starmap_profile_id",
+      "expression": "localStorage.getItem('starmap_profile_id'"
+    },
+    {
+      "kind": "storage-write",
+      "file": "src/views/ModelProfiles.vue",
+      "storage": "localStorage",
+      "key": "starmap_profile_id",
+      "expression": "localStorage.setItem('starmap_profile_id'"
+    },
+    {
+      "kind": "storage-write",
+      "file": "src/views/ModelProfiles.vue",
+      "storage": "localStorage",
+      "key": "starmap_profile_snapshot",
+      "expression": "localStorage.setItem('starmap_profile_snapshot'"
+    }
+  ],
+  "contracts": {
+    "queryToStorage": [
+      {
+        "queryKey": "token",
+        "storage": "sessionStorage",
+        "storageKey": "api_token",
+        "files": [
+          "src/api/request.js"
+        ]
+      }
+    ],
+    "storageToAuthorization": [
+      {
+        "storage": "sessionStorage",
+        "storageKey": "api_token",
+        "header": "Authorization",
+        "files": [
+          "src/api/request.js"
+        ]
+      }
+    ],
+    "unauthorizedRedirect": [
+      {
+        "status": 401,
+        "redirectProperty": "redirectUrl",
+        "navigationTarget": "href",
+        "files": [
+          "src/api/request.js"
+        ]
+      }
+    ],
+    "freshAuthenticationRequired": true,
+    "crossRunPersistenceAllowed": false
+  },
+  "metrics": {
+    "filesScanned": 23,
+    "queryReads": 1,
+    "storageWrites": 3,
+    "storageReads": 2,
+    "authorizationHeaders": 1,
+    "unauthorizedBranches": 1,
+    "redirectNavigations": 1,
+    "completeQueryStorageAuthorizationChains": 1
+  },
+  "reviewReasons": [
+    "authentication evidence is extracted from query, storage, header, status, and navigation syntax without executing source code",
+    "storage artifacts remain isolated to one BrowserContext unless an explicitly reviewed setup contract is present",
+    "cross-run authentication persistence remains disabled even when a complete token chain is discovered",
+    "a fresh authentication contract is still required to prevent cached credentials from hiding regressions"
+  ]
+}

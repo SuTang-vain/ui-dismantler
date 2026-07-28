@@ -489,3 +489,56 @@ test("project transport graph materializes Vite template prefixes without requir
     assert.equal(graph.routes.every((route) => route.configSource === "vite.config.js"), true);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+test("Composition API await assignments and Axios method helpers bind reviewed fixtures without identifier whitelists", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-composition-api-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    writeFileSync(join(root, "src", "api", "request.js"), `export default axios.create({baseURL:'/api'})`);
+    writeFileSync(join(root, "src", "api", "profiles.js"), `import request from './request'; export const fetchRecords = () => request.get('/profiles'); export const createRecord = data => request.post('/profiles', data);`);
+    writeFileSync(join(root, "src", "views", "Profiles.vue"), `<template><main><article v-for="record in records" :key="record.id">{{ record.name }}</article></main><script setup>import {ref,onMounted} from 'vue'; import {fetchRecords} from '../api/profiles'; const records=ref([]); async function load(){const response=await fetchRecords(); records.value=response.data || []} onMounted(load)</script><style>article{padding:1rem}</style>`);
+    writeFileSync(join(root, "src", "views", "LazyProfiles.vue"), `<template><main>{{ records.length }}</main><script setup>import {ref} from 'vue'; const records=ref([]); async function load(){const { fetchRecords: loadRecords } = await import('../api/profiles'); const payload=await loadRecords(); records.value=payload.data}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = {
+      schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [],
+      fixtures: [{ path: "/profiles", pathMode: "transport-suffix", method: "GET", body: { success: true, data: [{ id: "reviewed", name: "Reviewed Profile" }] } }],
+    };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.importedApiCalls, 5);
+    assert.equal(api.metrics.matchedEndpoints, 2);
+    assert.equal(api.metrics.matchedFixtures, 2);
+    assert.equal(api.metrics.materializedBindings, 2);
+    assert.deepEqual(api.responsibilities.map((item) => [item.componentName, item.apiCall.method, item.apiCall.path, item.consumption.targetBinding, item.consumption.responsePath]), [
+      ["LazyProfiles", "GET", "/profiles", "records", "data"],
+      ["Profiles", "GET", "/profiles", "records", "data"],
+    ]);
+    assert.deepEqual(api.responsibilities[0].fixture.materializedValue, [{ id: "reviewed", name: "Reviewed Profile" }]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("visual target root ownership uses reviewed source structure for root and camel-cased routes", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-route-owner-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    writeFileSync(join(root, "src", "views", "ThemeInput.vue"), `<template><main class="theme-input-container"><h1>Star Map Agent</h1></main></template><script setup>const ready=true</script><style scoped>.theme-input-container{min-height:100vh}</style>`);
+    writeFileSync(join(root, "src", "views", "ModelProfiles.vue"), `<template><main class="profiles-container"><h1>Profiles</h1></main></template><script setup>const ready=true</script><style scoped>.profiles-container{min-height:100vh}</style>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const routePlan: SpaRouteShellPlan = {
+      schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
+      source: { mode: "reference-generated", configScenarios: 2, reportIncluded: true, reportPassed: true },
+      routes: [
+        { route: "/", pattern: "/", scenarios: ["home"], entry: true, final: true, assertions: [{ scenarioId: "home", visibleSelector: ".theme-input-container", visibleText: "Star Map Agent" }], visualStates: [{ scenarioId: "home", region: ".theme-input-container", styleTargets: [".theme-input-container"] }] },
+        { route: "/profiles", pattern: "/profiles", scenarios: ["profiles"], entry: true, final: true, assertions: [{ scenarioId: "profiles", visibleSelector: ".profiles-container" }], visualStates: [{ scenarioId: "profiles", region: ".profiles-container", styleTargets: [".profiles-container"] }] },
+      ],
+      transitions: [], selectorMappings: [], fixtureDependencies: [],
+      capabilities: { historyBack: false, historyForward: false, reload: false, dynamicInputRoutes: false, roleSpecificSelectors: false, reviewedVisualStates: 2 },
+      measurementTemplate: { modelCalls: 0, generationMs: 0, manualEdits: 0, manualEditedLines: 0, repairIterations: 0, qualityRuns: 0 }, reviewReasons: [],
+    };
+    const plan = generateVisualTargetPlan(graph, routePlan);
+    assert.equal(plan.metrics.unresolvedRoutes, 0);
+    assert.deepEqual(plan.boundaries.map((boundary) => [boundary.route, plan.owners.find((owner) => owner.id === boundary.rootOwnerId)?.componentName]), [
+      ["/", "ThemeInput"], ["/profiles", "ModelProfiles"],
+    ]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});

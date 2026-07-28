@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "visual-target-planning",
+  "deterministic": true,
+  "modelCalls": 0,
+  "generationMs": 9.936,
+  "manualEdits": 0,
+  "manualEditedLines": 0,
+  "repairIterations": 0,
+  "semanticRuns": 0,
+  "visualRuns": 0,
+  "visualRoutes": 2,
+  "boundaries": 2,
+  "owners": 2,
+  "chartOwners": 0,
+  "responsiveOwners": 0,
+  "interactiveOwners": 2,
+  "apiFixtureOwners": 1,
+  "canvasProfileProposals": 0,
+  "domProfileProposals": 2,
+  "unresolvedRoutes": 0,
+  "requiresHumanReview": true
+}

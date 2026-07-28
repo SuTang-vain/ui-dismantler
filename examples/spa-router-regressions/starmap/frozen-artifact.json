@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "reviewed-generated-vite-spa-route-visual-target",
+  "reviewRequired": true,
+  "fullGeneratedApplication": false,
+  "modelCalls": 0,
+  "networkIsolated": true,
+  "qualityThresholdsChanged": false,
+  "browserContextIsolation": true,
+  "sourceRuntimeImplementationCopied": false,
+  "files": {
+    "README.md": "0083e6acfcc347145d431341dc56d701c63f2515e0309933e085f19c08d4bb1d",
+    "source-identity.json": "42ca033fb01b3015517e01274dfc3f44daf9ec5a039a607b382d5f693bcc3e5d",
+    "route-shell.plan.json": "1075ac17991f9a0283f9aeb13577032aea5f793b8b0bbee9c7f74c598616dfc1",
+    "semantic-gold.config.json": "b24ea7684f26938c18c105cdb16c2e32c309683698c13f428f6542093ee43205",
+    "semantic-gold.final.results.json": "f967747be37a21c83f10d99d79e5bd12e62730867b9e978eba214a0039d714fd",
+    "strict-route-contract.config.json": "b5b0754c3f710a78fdc096efc3673231e10c959f50febcdeae5b3fbe40ec9fbf",
+    "strict-route-contract.final.results.json": "2dda5d9b72e60acb6476c0c73d64bc1c027f866bdc35c55be32cc293a9050a38",
+    "vue-router-responsibility.graph.json": "454554a953c8d21ffdc75929d95fae22498d390382a5bcf339732ff58d49ad54",
+    "transport-proxy-responsibility.graph.json": "a8c7967d31eef866f1017c094be6c23f55d89e8d4d09aef4483a0315634146a7",
+    "spa-auth-responsibility.graph.json": "0a1560bd7ac24bcc38a01f63cab4b0301e93079f0fa14dee38bfc0f9f041c60e",
+    "sfc-visual-responsibility.graph.json": "39e143f4b7bf45a1f5e13539f6637643a5669bb09d2121ff7bfe2f50e6fe5a70",
+    "visual-target.plan.json": "4e38575ebc1106a03580afa90fb2ae38bb4b8fe01d925566c8fa4af9d0e145b1",
+    "visual-target-planning.metrics.json": "9f5a96102be486d6e93fb6025e1dfd54f6d9a6278d9a01bceca5196a7b720434",
+    "experiment.metrics.json": "53b1d7c86e5649197356d9af4d97d8fd553451b62f04c69549c5b0102f44ca44",
+    "reference-server.mjs": "bc93525e6c22dc4a1878a66cfe0064386b3b6bac4954f6e6d1a8497d275661f6",
+    "generated-target/server.mjs": "34783100689db7a2144cc3a1895bbc82bc0e547785bbaa8d66f1d52718a4f3c9",
+    "generated-target/public/index.html": "4a426e2c214afc8b15789d3144a0de525183e5f5c9f15667d8e117c65ab64def",
+    "generated-target/public/app.js": "6e568a500cfd4208e9a90d0f70d5985889ce52408173e6de1d44c6eec2a26be1",
+    "generated-target/public/styles.css": "82206dd586a96c3b6da030da18cdfe56a36d72ff5c1417fd77a4cb7a77d06749"
+  }
+}

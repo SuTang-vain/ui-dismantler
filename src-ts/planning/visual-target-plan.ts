@@ -129,7 +129,22 @@ function routeTokens(route: string): string[] {
 }
 
 function pathTokens(component: SfcVisualComponentResponsibility): string[] {
-  return `${component.file}/${component.componentName}`.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const expandedName = component.componentName.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+  return `${component.file}/${expandedName}`.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+}
+
+function routeEvidenceClasses(route: SpaRouteShellRouteNode): string[] {
+  const values = [
+    ...route.assertions.map((assertion) => assertion.visibleSelector),
+    ...route.visualStates.flatMap((state) => [state.anchor, state.region, ...state.styleTargets]),
+  ].filter((value): value is string => Boolean(value));
+  return unique(values.flatMap((value) => [...value.matchAll(/\.([A-Za-z_][\w-]*)/g)].map((match) => match[1])));
+}
+
+function componentLiteralText(component: SfcVisualComponentResponsibility): string {
+  return component.templateStructure.nodes.flatMap((node) => node.content)
+    .filter((item): item is Extract<typeof item, { kind: "text" }> => item.kind === "text")
+    .map((item) => item.value.replace(/\s+/g, " ").trim()).filter(Boolean).join(" ");
 }
 
 function rootScore(route: SpaRouteShellRouteNode, component: SfcVisualComponentResponsibility): number {
@@ -138,6 +153,11 @@ function rootScore(route: SpaRouteShellRouteNode, component: SfcVisualComponentR
   let score = routeParts.reduce((sum, token) => sum + (componentParts.has(token) ? 20 : 0), 0);
   const path = component.file.toLowerCase();
   const name = component.componentName.toLowerCase();
+  const sourceClasses = new Set([...component.visualRegions, ...component.styles.flatMap((style) => style.classSelectors)]);
+  const evidenceClassMatches = routeEvidenceClasses(route).filter((className) => sourceClasses.has(className)).length;
+  score += Math.min(evidenceClassMatches, 3) * 30;
+  const literalText = componentLiteralText(component);
+  if (route.assertions.some((assertion) => assertion.visibleText && literalText.includes(assertion.visibleText))) score += 35;
   if (path.includes("/views/") || path.startsWith("views/")) score += 2;
   if (routeParts.at(-1) && name.includes(routeParts.at(-1)!)) score += 12;
   if (routeParts.includes("dashboard") && /views\/dashboard\/admin\/index\.vue$/.test(path)) score += 40;

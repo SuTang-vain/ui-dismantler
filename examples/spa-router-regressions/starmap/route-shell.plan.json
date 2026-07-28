@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": true,
+  "source": {
+    "mode": "reference-generated",
+    "configScenarios": 6,
+    "reportIncluded": false,
+    "reportPassed": false
+  },
+  "routes": [
+    {
+      "route": "/",
+      "pattern": "/",
+      "scenarios": [
+        "home-default",
+        "profiles-loaded",
+        "history-back-home"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "home-default",
+          "visibleSelector": ".theme-input-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "home-default",
+          "region": ".theme-input-container",
+          "styleTargets": [
+            ".theme-input-container",
+            ".hero-section",
+            ".input-form",
+            ".submit-btn"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/profiles",
+      "pattern": "/profiles",
+      "scenarios": [
+        "profiles-loaded",
+        "profiles-editor-open",
+        "profiles-editor-close"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "profiles-loaded",
+          "visibleSelector": ".profile-list"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "profiles-loaded",
+          "region": ".profiles-container",
+          "styleTargets": [
+            ".profiles-header",
+            ".profile-card",
+            ".card-meta"
+          ]
+        },
+        {
+          "scenarioId": "profiles-editor-open",
+          "region": ".profiles-container",
+          "styleTargets": [
+            ".modal-mask",
+            ".modal",
+            ".modal-body"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/progress/:taskId",
+      "pattern": "/progress/:taskId",
+      "scenarios": [
+        "dynamic-progress-deep-link-reload"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "dynamic-progress-deep-link-reload",
+          "visibleText": "生成进度"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/review/:taskId",
+      "pattern": "/review/:taskId",
+      "scenarios": [],
+      "entry": true,
+      "final": true,
+      "assertions": [],
+      "visualStates": []
+    },
+    {
+      "route": "/export/:taskId",
+      "pattern": "/export/:taskId",
+      "scenarios": [],
+      "entry": true,
+      "final": true,
+      "assertions": [],
+      "visualStates": []
+    }
+  ],
+  "transitions": [
+    {
+      "from": "/",
+      "to": "/profiles",
+      "method": "pushState",
+      "scenarios": [
+        "profiles-loaded",
+        "history-back-home"
+      ]
+    },
+    {
+      "from": "/profiles",
+      "to": "/",
+      "method": "popstate",
+      "scenarios": [
+        "history-back-home"
+      ]
+    }
+  ],
+  "selectorMappings": [],
+  "fixtureDependencies": [
+    {
+      "path": "/llm/profiles",
+      "method": "GET",
+      "scenarios": [
+        "profiles-loaded",
+        "profiles-editor-open",
+        "profiles-editor-close"
+      ]
+    },
+    {
+      "path": "/tasks/task-123/status",
+      "method": "GET",
+      "scenarios": [
+        "dynamic-progress-deep-link-reload"
+      ]
+    }
+  ],
+  "capabilities": {
+    "historyBack": true,
+    "historyForward": false,
+    "reload": true,
+    "dynamicInputRoutes": true,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 3
+  },
+  "measurementTemplate": {
+    "modelCalls": 0,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "HTML5 history route ownership is preserved",
+    "visual target is generated from reviewed ThemeInput and ModelProfiles responsibility boundaries",
+    "dynamic task routes remain route-shell boundaries until separately reviewed"
+  ]
+}

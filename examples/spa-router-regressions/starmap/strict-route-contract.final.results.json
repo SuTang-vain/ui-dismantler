@@ -1,0 +1,2087 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:9530",
+  "generatedBaseUrl": "http://127.0.0.1:9531",
+  "passed": true,
+  "scenariosPassed": 6,
+  "scenariosTotal": 6,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "home-default",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1924.679,
+      "timing": {
+        "queueWaitMs": 0.003,
+        "contextCreateMs": 26.015,
+        "instrumentationMs": 1.508,
+        "routeRegistrationMs": 0.802,
+        "pageCreateMs": 511.224,
+        "navigationMs": 579.542,
+        "initialSettleMs": 589.588,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 0,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 210.943,
+        "visualCaptureMs": 0,
+        "contextCloseMs": 4.008,
+        "totalMs": 1924.679,
+        "steps": []
+      }
+    },
+    {
+      "id": "profiles-loaded",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/profiles",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/profiles",
+          "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/profiles"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1941.511,
+      "timing": {
+        "queueWaitMs": 0.012,
+        "contextCreateMs": 26.247,
+        "instrumentationMs": 1.364,
+        "routeRegistrationMs": 0.864,
+        "pageCreateMs": 511.536,
+        "navigationMs": 325.802,
+        "initialSettleMs": 513.325,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 535.968,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 5.423,
+        "visualCaptureMs": 0.001,
+        "contextCloseMs": 9.025,
+        "totalMs": 1941.511,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "durationMs": 535.968,
+            "setupPrefix": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "profiles-editor-open",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/profiles?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/profiles?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/profiles?token=reviewed-token"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1548.326,
+      "timing": {
+        "queueWaitMs": 1924.69,
+        "contextCreateMs": 19.02,
+        "instrumentationMs": 0.258,
+        "routeRegistrationMs": 0.453,
+        "pageCreateMs": 240.356,
+        "navigationMs": 340.254,
+        "initialSettleMs": 569.431,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 319.785,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 51.931,
+        "visualCaptureMs": 0.001,
+        "contextCloseMs": 4.931,
+        "totalMs": 1548.326,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "durationMs": 319.785,
+            "setupPrefix": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "profiles-editor-close",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/profiles?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/profiles?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/profiles?token=reviewed-token"
+        },
+        {
+          "stepIndex": 1,
+          "action": "click",
+          "route": "/profiles?token=reviewed-token"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 2096.623,
+      "timing": {
+        "queueWaitMs": 1941.528,
+        "contextCreateMs": 74.381,
+        "instrumentationMs": 0.286,
+        "routeRegistrationMs": 0.17,
+        "pageCreateMs": 186.411,
+        "navigationMs": 471.321,
+        "initialSettleMs": 504.486,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 849.751,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 4.648,
+        "visualCaptureMs": 0.001,
+        "contextCloseMs": 4,
+        "totalMs": 2096.623,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "durationMs": 428.339,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 1,
+            "action": "click",
+            "durationMs": 421.412,
+            "setupPrefix": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "dynamic-progress-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/progress/task-123?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/progress/task-123?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/progress/task-123?token=reviewed-token"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1494.784,
+      "timing": {
+        "queueWaitMs": 3473.032,
+        "contextCreateMs": 12.227,
+        "instrumentationMs": 0.223,
+        "routeRegistrationMs": 0.16,
+        "pageCreateMs": 123.647,
+        "navigationMs": 305.968,
+        "initialSettleMs": 596.711,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 366.073,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 84.765,
+        "visualCaptureMs": 0,
+        "contextCloseMs": 3.497,
+        "totalMs": 1494.784,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "durationMs": 366.073,
+            "setupPrefix": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "history-back-home",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+      "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+        },
+        {
+          "method": "replaceState",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        },
+        {
+          "method": "pushState",
+          "target": "/profiles",
+          "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+        },
+        {
+          "method": "popstate",
+          "target": "/?token=reviewed-token",
+          "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "click",
+          "route": "/profiles"
+        },
+        {
+          "stepIndex": 1,
+          "action": "back",
+          "route": "/?token=reviewed-token"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1666.065,
+      "timing": {
+        "queueWaitMs": 4038.18,
+        "contextCreateMs": 13.91,
+        "instrumentationMs": 0.555,
+        "routeRegistrationMs": 0.176,
+        "pageCreateMs": 124.303,
+        "navigationMs": 180.783,
+        "initialSettleMs": 520.13,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 816.16,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 2.127,
+        "visualCaptureMs": 0,
+        "contextCloseMs": 6.123,
+        "totalMs": 1666.065,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "durationMs": 483.079,
+            "setupPrefix": false
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "durationMs": 333.081,
+            "setupPrefix": false
+          }
+        ]
+      }
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:9530",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "home-default",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1573.13,
+        "timing": {
+          "queueWaitMs": 0.114,
+          "contextCreateMs": 24.552,
+          "instrumentationMs": 2.111,
+          "routeRegistrationMs": 1.288,
+          "pageCreateMs": 510.692,
+          "navigationMs": 379.138,
+          "initialSettleMs": 512.068,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 130.499,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 10.702,
+          "totalMs": 1573.13,
+          "steps": []
+        }
+      },
+      {
+        "id": "profiles-loaded",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2462.476,
+        "timing": {
+          "queueWaitMs": 1.49,
+          "contextCreateMs": 24.775,
+          "instrumentationMs": 2.34,
+          "routeRegistrationMs": 0.726,
+          "pageCreateMs": 511.34,
+          "navigationMs": 378.763,
+          "initialSettleMs": 510.231,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 773.919,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 181.751,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 24.517,
+          "totalMs": 2462.476,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 773.919,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "profiles-editor-open",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1649.571,
+        "timing": {
+          "queueWaitMs": 1574.423,
+          "contextCreateMs": 60.534,
+          "instrumentationMs": 0.445,
+          "routeRegistrationMs": 0.187,
+          "pageCreateMs": 233.051,
+          "navigationMs": 466.92,
+          "initialSettleMs": 561.063,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 316.719,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.477,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 5.073,
+          "totalMs": 1649.571,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 316.719,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "profiles-editor-close",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          },
+          {
+            "stepIndex": 1,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2174.62,
+        "timing": {
+          "queueWaitMs": 2463.978,
+          "contextCreateMs": 66.254,
+          "instrumentationMs": 0.657,
+          "routeRegistrationMs": 0.378,
+          "pageCreateMs": 303.392,
+          "navigationMs": 198.553,
+          "initialSettleMs": 625.249,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 970.771,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 3.487,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.549,
+          "totalMs": 2174.62,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 449.135,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "click",
+              "durationMs": 521.636,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "dynamic-progress-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/progress/task-123?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/progress/task-123?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/progress/task-123?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/progress/task-123?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/progress/task-123?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1669.218,
+        "timing": {
+          "queueWaitMs": 3224.009,
+          "contextCreateMs": 67.783,
+          "instrumentationMs": 0.422,
+          "routeRegistrationMs": 0.57,
+          "pageCreateMs": 124.428,
+          "navigationMs": 243.501,
+          "initialSettleMs": 519.443,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 691.045,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 15.943,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.938,
+          "totalMs": 1669.218,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 691.045,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "history-back-home",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1822.445,
+        "timing": {
+          "queueWaitMs": 4638.615,
+          "contextCreateMs": 57.275,
+          "instrumentationMs": 0.827,
+          "routeRegistrationMs": 0.187,
+          "pageCreateMs": 128.224,
+          "navigationMs": 328.802,
+          "initialSettleMs": 509.372,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 783.721,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.672,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 7.387,
+          "totalMs": 1822.445,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 450.853,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "back",
+              "durationMs": 332.868,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:9531",
+    "passed": true,
+    "scenariosPassed": 6,
+    "scenariosTotal": 6,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "home-default",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1924.679,
+        "timing": {
+          "queueWaitMs": 0.003,
+          "contextCreateMs": 26.015,
+          "instrumentationMs": 1.508,
+          "routeRegistrationMs": 0.802,
+          "pageCreateMs": 511.224,
+          "navigationMs": 579.542,
+          "initialSettleMs": 589.588,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 210.943,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.008,
+          "totalMs": 1924.679,
+          "steps": []
+        }
+      },
+      {
+        "id": "profiles-loaded",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1941.511,
+        "timing": {
+          "queueWaitMs": 0.012,
+          "contextCreateMs": 26.247,
+          "instrumentationMs": 1.364,
+          "routeRegistrationMs": 0.864,
+          "pageCreateMs": 511.536,
+          "navigationMs": 325.802,
+          "initialSettleMs": 513.325,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 535.968,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 5.423,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 9.025,
+          "totalMs": 1941.511,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 535.968,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "profiles-editor-open",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1548.326,
+        "timing": {
+          "queueWaitMs": 1924.69,
+          "contextCreateMs": 19.02,
+          "instrumentationMs": 0.258,
+          "routeRegistrationMs": 0.453,
+          "pageCreateMs": 240.356,
+          "navigationMs": 340.254,
+          "initialSettleMs": 569.431,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 319.785,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 51.931,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 4.931,
+          "totalMs": 1548.326,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 319.785,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "profiles-editor-close",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          },
+          {
+            "stepIndex": 1,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2096.623,
+        "timing": {
+          "queueWaitMs": 1941.528,
+          "contextCreateMs": 74.381,
+          "instrumentationMs": 0.286,
+          "routeRegistrationMs": 0.17,
+          "pageCreateMs": 186.411,
+          "navigationMs": 471.321,
+          "initialSettleMs": 504.486,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 849.751,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.648,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 4,
+          "totalMs": 2096.623,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 428.339,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "click",
+              "durationMs": 421.412,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "dynamic-progress-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/progress/task-123?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/progress/task-123?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/progress/task-123?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1494.784,
+        "timing": {
+          "queueWaitMs": 3473.032,
+          "contextCreateMs": 12.227,
+          "instrumentationMs": 0.223,
+          "routeRegistrationMs": 0.16,
+          "pageCreateMs": 123.647,
+          "navigationMs": 305.968,
+          "initialSettleMs": 596.711,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 366.073,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 84.765,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 3.497,
+          "totalMs": 1494.784,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 366.073,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "history-back-home",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1666.065,
+        "timing": {
+          "queueWaitMs": 4038.18,
+          "contextCreateMs": 13.91,
+          "instrumentationMs": 0.555,
+          "routeRegistrationMs": 0.176,
+          "pageCreateMs": 124.303,
+          "navigationMs": 180.783,
+          "initialSettleMs": 520.13,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 816.16,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 2.127,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 6.123,
+          "totalMs": 1666.065,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 483.079,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "back",
+              "durationMs": 333.081,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "home-default",
+      "passed": true,
+      "reference": {
+        "id": "home-default",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1573.13,
+        "timing": {
+          "queueWaitMs": 0.114,
+          "contextCreateMs": 24.552,
+          "instrumentationMs": 2.111,
+          "routeRegistrationMs": 1.288,
+          "pageCreateMs": 510.692,
+          "navigationMs": 379.138,
+          "initialSettleMs": 512.068,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 130.499,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 10.702,
+          "totalMs": 1573.13,
+          "steps": []
+        }
+      },
+      "generated": {
+        "id": "home-default",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1924.679,
+        "timing": {
+          "queueWaitMs": 0.003,
+          "contextCreateMs": 26.015,
+          "instrumentationMs": 1.508,
+          "routeRegistrationMs": 0.802,
+          "pageCreateMs": 511.224,
+          "navigationMs": 579.542,
+          "initialSettleMs": 589.588,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 0,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 210.943,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.008,
+          "totalMs": 1924.679,
+          "steps": []
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "profiles-loaded",
+      "passed": true,
+      "reference": {
+        "id": "profiles-loaded",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2462.476,
+        "timing": {
+          "queueWaitMs": 1.49,
+          "contextCreateMs": 24.775,
+          "instrumentationMs": 2.34,
+          "routeRegistrationMs": 0.726,
+          "pageCreateMs": 511.34,
+          "navigationMs": 378.763,
+          "initialSettleMs": 510.231,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 773.919,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 181.751,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 24.517,
+          "totalMs": 2462.476,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 773.919,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "profiles-loaded",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1941.511,
+        "timing": {
+          "queueWaitMs": 0.012,
+          "contextCreateMs": 26.247,
+          "instrumentationMs": 1.364,
+          "routeRegistrationMs": 0.864,
+          "pageCreateMs": 511.536,
+          "navigationMs": 325.802,
+          "initialSettleMs": 513.325,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 535.968,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 5.423,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 9.025,
+          "totalMs": 1941.511,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 535.968,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "profiles-editor-open",
+      "passed": true,
+      "reference": {
+        "id": "profiles-editor-open",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1649.571,
+        "timing": {
+          "queueWaitMs": 1574.423,
+          "contextCreateMs": 60.534,
+          "instrumentationMs": 0.445,
+          "routeRegistrationMs": 0.187,
+          "pageCreateMs": 233.051,
+          "navigationMs": 466.92,
+          "initialSettleMs": 561.063,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 316.719,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.477,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 5.073,
+          "totalMs": 1649.571,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 316.719,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "profiles-editor-open",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1548.326,
+        "timing": {
+          "queueWaitMs": 1924.69,
+          "contextCreateMs": 19.02,
+          "instrumentationMs": 0.258,
+          "routeRegistrationMs": 0.453,
+          "pageCreateMs": 240.356,
+          "navigationMs": 340.254,
+          "initialSettleMs": 569.431,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 319.785,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 51.931,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 4.931,
+          "totalMs": 1548.326,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 319.785,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "profiles-editor-close",
+      "passed": true,
+      "reference": {
+        "id": "profiles-editor-close",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          },
+          {
+            "stepIndex": 1,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2174.62,
+        "timing": {
+          "queueWaitMs": 2463.978,
+          "contextCreateMs": 66.254,
+          "instrumentationMs": 0.657,
+          "routeRegistrationMs": 0.378,
+          "pageCreateMs": 303.392,
+          "navigationMs": 198.553,
+          "initialSettleMs": 625.249,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 970.771,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 3.487,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.549,
+          "totalMs": 2174.62,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 449.135,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "click",
+              "durationMs": 521.636,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "profiles-editor-close",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/profiles?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/profiles?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/profiles?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          },
+          {
+            "stepIndex": 1,
+            "action": "click",
+            "route": "/profiles?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2096.623,
+        "timing": {
+          "queueWaitMs": 1941.528,
+          "contextCreateMs": 74.381,
+          "instrumentationMs": 0.286,
+          "routeRegistrationMs": 0.17,
+          "pageCreateMs": 186.411,
+          "navigationMs": 471.321,
+          "initialSettleMs": 504.486,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 849.751,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.648,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 4,
+          "totalMs": 2096.623,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 428.339,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "click",
+              "durationMs": 421.412,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "dynamic-progress-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "dynamic-progress-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/progress/task-123?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/progress/task-123?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/progress/task-123?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/progress/task-123?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/progress/task-123?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1669.218,
+        "timing": {
+          "queueWaitMs": 3224.009,
+          "contextCreateMs": 67.783,
+          "instrumentationMs": 0.422,
+          "routeRegistrationMs": 0.57,
+          "pageCreateMs": 124.428,
+          "navigationMs": 243.501,
+          "initialSettleMs": 519.443,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 691.045,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 15.943,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 4.938,
+          "totalMs": 1669.218,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 691.045,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "dynamic-progress-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/progress/task-123?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/progress/task-123?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/progress/task-123?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/progress/task-123?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1494.784,
+        "timing": {
+          "queueWaitMs": 3473.032,
+          "contextCreateMs": 12.227,
+          "instrumentationMs": 0.223,
+          "routeRegistrationMs": 0.16,
+          "pageCreateMs": 123.647,
+          "navigationMs": 305.968,
+          "initialSettleMs": 596.711,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 366.073,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 84.765,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 3.497,
+          "totalMs": 1494.784,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 366.073,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "id": "history-back-home",
+      "passed": true,
+      "reference": {
+        "id": "history-back-home",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9530/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1822.445,
+        "timing": {
+          "queueWaitMs": 4638.615,
+          "contextCreateMs": 57.275,
+          "instrumentationMs": 0.827,
+          "routeRegistrationMs": 0.187,
+          "pageCreateMs": 128.224,
+          "navigationMs": 328.802,
+          "initialSettleMs": 509.372,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 783.721,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 4.672,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 7.387,
+          "totalMs": 1822.445,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 450.853,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "back",
+              "durationMs": 332.868,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "history-back-home",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "finalUrl": "http://127.0.0.1:9531/?token=reviewed-token",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":null}"
+          },
+          {
+            "method": "replaceState",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          },
+          {
+            "method": "pushState",
+            "target": "/profiles",
+            "state": "{\"back\":\"/?token=reviewed-token\",\"current\":\"/profiles\",\"forward\":null,\"position\":2,\"replaced\":false,\"scroll\":null}"
+          },
+          {
+            "method": "popstate",
+            "target": "/?token=reviewed-token",
+            "state": "{\"back\":null,\"current\":\"/?token=reviewed-token\",\"forward\":\"/profiles\",\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "click",
+            "route": "/profiles"
+          },
+          {
+            "stepIndex": 1,
+            "action": "back",
+            "route": "/?token=reviewed-token"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1666.065,
+        "timing": {
+          "queueWaitMs": 4038.18,
+          "contextCreateMs": 13.91,
+          "instrumentationMs": 0.555,
+          "routeRegistrationMs": 0.176,
+          "pageCreateMs": 124.303,
+          "navigationMs": 180.783,
+          "initialSettleMs": 520.13,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 816.16,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 2.127,
+          "visualCaptureMs": 0,
+          "contextCloseMs": 6.123,
+          "totalMs": 1666.065,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "click",
+              "durationMs": 483.079,
+              "setupPrefix": false
+            },
+            {
+              "stepIndex": 1,
+              "action": "back",
+              "durationMs": 333.081,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 6,
+    "totalScenarios": 6,
+    "failures": 0
+  },
+  "telemetry": {
+    "contractTargetRuns": 12,
+    "visualViewportRuns": 0,
+    "visualTargetRuns": 0,
+    "visualTargetReusedRuns": 0,
+    "visualTargetFreshRuns": 0,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 0,
+    "visualPreAnchorWaitMs": 0,
+    "visualPostAnchorWaitMs": 0,
+    "visualPostAnchorSkippedRuns": 0,
+    "visualStateReusedRuns": 0,
+    "contractSetupStateReusedRuns": 0,
+    "contractSetupStepsSkipped": 0,
+    "visualSetupStateReusedRuns": 0,
+    "visualSetupStepsSkipped": 0,
+    "contractSetupOwnerTiming": {
+      "ownerRuns": 0,
+      "totalMs": 0,
+      "contextCreateMs": 0,
+      "instrumentationMs": 0,
+      "routeRegistrationMs": 0,
+      "pageCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "setupPrefixStepsMs": 0,
+      "checkpointStorageMs": 0,
+      "checkpointVerificationMs": 0,
+      "assertionMs": 0,
+      "visualCaptureMs": 0
+    },
+    "visualCanvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "visualStability": {
+      "resourceReadinessMs": 0,
+      "signatureScanMs": 0,
+      "signature": {
+        "fullScans": 0,
+        "incrementalScans": 0,
+        "nodesAvailable": 0,
+        "nodesScanned": 0,
+        "nodesReused": 0,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 0
+      },
+      "networkProbeMs": 0,
+      "samples": 0,
+      "stableFrameSamples": 0,
+      "mutationBlockedSamples": 0,
+      "resizeBlockedSamples": 0,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 0,
+      "networkBlockedSamples": 0
+    },
+    "visualRunTiming": {
+      "queueWaitMs": 0,
+      "referenceTargetMs": 0,
+      "generatedTargetMs": 0,
+      "contextCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "scenarioStepsMs": 0,
+      "assertionMs": 0,
+      "contextCloseMs": 0,
+      "captureQueueWaitMs": 0,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 0,
+      "anchorMs": 0,
+      "postAnchorStabilityMs": 0,
+      "computedStyleMs": 0,
+      "screenshotMs": 0,
+      "pixelQueueWaitMs": 0,
+      "pixelCompareMs": 0,
+      "totalMs": 0
+    },
+    "visualScheduler": {
+      "configuredViewportConcurrency": 3,
+      "configuredCaptureConcurrency": 3,
+      "configuredCanvasConcurrency": 1,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 0,
+      "maxActiveContexts": 0,
+      "maxActiveCaptures": 0,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 0,
+      "viewportQueueWaitMs": 0,
+      "captureQueueWaitMs": 0,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0
+    },
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 2,
+    "visualConcurrency": 3,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 348.236,
+      "contractMs": 6461.284,
+      "comparisonMs": 0.663,
+      "visualMatrixMs": 0.353,
+      "browserCloseMs": 276.977,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 276.943,
+      "reportReadyMs": 6811.933,
+      "totalMs": 7088.921
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=6/6，generated=6/6"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=6/6，rate=1，failures=0"
+    }
+  ]
+}

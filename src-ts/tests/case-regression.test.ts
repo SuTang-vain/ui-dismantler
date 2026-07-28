@@ -250,9 +250,77 @@ test("Vue Element Admin frozen Semantic Gold+ regression preserves reviewed SPA 
   assert.equal(strictReport.passed, false, "Semantic Gold+ must not be relabeled as Vue Router Strict PASS");
 });
 
+test("Starmap frozen generated Gold+ preserves Vite SPA route visual auth and API responsibilities", () => {
+  const caseDir = `${root}examples/spa-router-regressions/starmap`;
+  const frozen = JSON.parse(readFileSync(`${caseDir}/frozen-artifact.json`, "utf8"));
+  const semantic = JSON.parse(readFileSync(`${caseDir}/semantic-gold.final.results.json`, "utf8"));
+  const strict = JSON.parse(readFileSync(`${caseDir}/strict-route-contract.final.results.json`, "utf8"));
+  const router = JSON.parse(readFileSync(`${caseDir}/vue-router-responsibility.graph.json`, "utf8"));
+  const visual = JSON.parse(readFileSync(`${caseDir}/sfc-visual-responsibility.graph.json`, "utf8"));
+  const targetPlan = JSON.parse(readFileSync(`${caseDir}/visual-target.plan.json`, "utf8"));
+  const auth = JSON.parse(readFileSync(`${caseDir}/spa-auth-responsibility.graph.json`, "utf8"));
+  const proxy = JSON.parse(readFileSync(`${caseDir}/transport-proxy-responsibility.graph.json`, "utf8"));
+
+  assert.equal(frozen.scope, "reviewed-generated-vite-spa-route-visual-target");
+  assert.equal(frozen.modelCalls, 0);
+  assert.equal(frozen.networkIsolated, true);
+  assert.equal(frozen.fullGeneratedApplication, false);
+  for (const [relativePath, expectedHash] of Object.entries(frozen.files as Record<string, string>)) {
+    const actualHash = createHash("sha256").update(readFileSync(`${caseDir}/${relativePath}`)).digest("hex");
+    assert.equal(actualHash, expectedHash, `${relativePath}: frozen Starmap artifact changed without review`);
+  }
+
+  assert.equal(router.framework.router, "vue-router");
+  assert.equal(router.framework.routerMajor, 4);
+  assert.equal(router.metrics.routesDiscovered, 5);
+  assert.equal(router.metrics.dynamicRoutes, 3);
+  assert.equal(router.capabilities.historyMode, true);
+  assert.equal(router.capabilities.hashMode, false);
+  assert.equal(proxy.metrics.astRoutes, 2);
+  assert.equal(proxy.metrics.fallbackRoutes, 0);
+  assert.equal(visual.apiFixtures.metrics.matchedFixtures, 1);
+  assert.equal(visual.apiFixtures.metrics.materializedBindings, 1);
+  assert.deepEqual(visual.apiFixtures.responsibilities.map((item: { componentName: string; apiCall: { localName: string }; consumption: { targetBinding: string; responsePath: string } }) => [item.componentName, item.apiCall.localName, item.consumption.targetBinding, item.consumption.responsePath]), [
+    ["ModelProfiles", "listProfiles", "profiles", "data"],
+  ]);
+  assert.equal(targetPlan.metrics.boundaries, 2);
+  assert.equal(targetPlan.metrics.unresolvedRoutes, 0);
+  assert.deepEqual(targetPlan.boundaries.map((boundary: { route: string }) => boundary.route), ["/", "/profiles"]);
+  assert.equal(auth.metrics.completeQueryStorageAuthorizationChains, 1);
+  assert.deepEqual(auth.contracts.queryToStorage[0], { queryKey: "token", storage: "sessionStorage", storageKey: "api_token", files: ["src/api/request.js"] });
+  assert.deepEqual(auth.contracts.storageToAuthorization[0], { storage: "sessionStorage", storageKey: "api_token", header: "Authorization", files: ["src/api/request.js"] });
+  assert.equal(auth.contracts.unauthorizedRedirect[0].status, 401);
+  assert.equal(auth.contracts.freshAuthenticationRequired, true);
+  assert.equal(auth.contracts.crossRunPersistenceAllowed, false);
+
+  assert.equal(semantic.passed, true);
+  assert.equal(semantic.scenariosPassed, 6);
+  assert.equal(semantic.scenariosTotal, 6);
+  assert.equal(semantic.navigationIntegrity.rate, 1);
+  assert.equal(semantic.visualMatrix.scenarioCount, 3);
+  assert.equal(semantic.visualMatrix.viewportRuns, 9);
+  assert.equal(semantic.visualMatrix.worstComputedStyle, 1);
+  assert.ok(semantic.visualMatrix.worstPixelDiff <= 0.02);
+  assert.equal(semantic.visualMatrix.stabilityFailures, 0);
+  assert.equal(semantic.runtimeErrors, 0);
+  assert.equal(semantic.requiredNetworkFailures, 0);
+  assert.equal(semantic.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+
+  assert.equal(strict.passed, true);
+  assert.equal(strict.scenariosPassed, 6);
+  assert.equal(strict.scenariosTotal, 6);
+  assert.equal(strict.navigationIntegrity.rate, 1);
+  assert.equal(strict.navigationIntegrity.failures, 0);
+  assert.equal(strict.runtimeErrors, 0);
+  assert.equal(strict.requiredNetworkFailures, 0);
+  assert.equal(strict.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+});
+
 const runGoldRegression = process.env.UI_DISMANTLER_GOLD_REGRESSION === "1";
 const vueElementAdminSource = process.env.UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE;
+const starmapSource = process.env.UI_DISMANTLER_STARMAP_SOURCE;
 const runVueElementAdminGold = runGoldRegression && Boolean(vueElementAdminSource);
+const runStarmapGold = runGoldRegression && Boolean(starmapSource);
 
 async function waitForHttp(url: string, timeoutMs = 90_000): Promise<void> {
   const started = Date.now();
@@ -403,6 +471,65 @@ test("Vue Element Admin live Semantic Gold+ regression preserves the frozen rout
     assert.equal(report.requiredNetworkFailures, 0);
     assert.equal(report.nonBlockingNetworkFailures, 0);
     assert.equal(report.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  } finally {
+    await Promise.all([stopDetachedProcess(reference), stopDetachedProcess(generated)]);
+    rmSync(artifacts, { recursive: true, force: true });
+  }
+});
+
+test("Starmap live Semantic and Strict Gold+ regression preserves the frozen generated target", { skip: !runStarmapGold, timeout: 240_000 }, async () => {
+  const caseDir = `${root}examples/spa-router-regressions/starmap`;
+  const sourceDir = starmapSource as string;
+  const identity = JSON.parse(readFileSync(`${caseDir}/source-identity.json`, "utf8"));
+  for (const [relativePath, expectedHash] of Object.entries(identity.files as Record<string, string>)) {
+    const actualHash = createHash("sha256").update(readFileSync(`${sourceDir}/${relativePath}`)).digest("hex");
+    assert.equal(actualHash, expectedHash, `${relativePath}: live Starmap source identity mismatch`);
+  }
+
+  const offset = process.pid % 1000;
+  const referencePort = 22000 + offset * 2;
+  const generatedPort = referencePort + 1;
+  const referenceBaseUrl = `http://127.0.0.1:${referencePort}`;
+  const generatedBaseUrl = `http://127.0.0.1:${generatedPort}`;
+  const artifacts = mkdtempSync(join(tmpdir(), "ui-dismantler-starmap-gold-"));
+  const reference = spawn(process.execPath, ["reference-server.mjs"], {
+    cwd: caseDir, detached: true, stdio: "ignore", env: { ...process.env, PORT: String(referencePort), STARMAP_SOURCE_DIST: `${sourceDir}/dist` },
+  });
+  const generated = spawn(process.execPath, ["server.mjs"], {
+    cwd: `${caseDir}/generated-target`, detached: true, stdio: "ignore", env: { ...process.env, PORT: String(generatedPort) },
+  });
+  reference.unref();
+  generated.unref();
+
+  try {
+    await Promise.all([waitForHttp(`${referenceBaseUrl}/`), waitForHttp(`${generatedBaseUrl}/`)]);
+    const semanticConfig = JSON.parse(readFileSync(`${caseDir}/semantic-gold.config.json`, "utf8")) as SpaRouterContractConfig;
+    semanticConfig.referenceBaseUrl = referenceBaseUrl;
+    semanticConfig.generatedBaseUrl = generatedBaseUrl;
+    if (semanticConfig.visualMatrix) semanticConfig.visualMatrix.artifactDir = artifacts;
+    const semantic = await evaluateSpaRouterContract(semanticConfig);
+    assert.equal(semantic.passed, true, JSON.stringify(semantic.qualityGates.filter((gate) => !gate.passed), null, 2));
+    assert.equal(semantic.scenariosPassed, 6);
+    assert.equal(semantic.visualMatrix?.scenarioCount, 3);
+    assert.equal(semantic.visualMatrix?.viewportRuns, 9);
+    assert.ok((semantic.visualMatrix?.worstComputedStyle ?? 0) >= 0.98);
+    assert.ok((semantic.visualMatrix?.worstPixelDiff ?? 1) <= 0.02);
+    assert.equal(semantic.navigationIntegrity.rate, 1);
+    assert.equal(semantic.runtimeErrors, 0);
+    assert.equal(semantic.requiredNetworkFailures, 0);
+    assert.equal(semantic.visualMatrix?.stabilityFailures, 0);
+    assert.equal(semantic.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+
+    const strictConfig = JSON.parse(readFileSync(`${caseDir}/strict-route-contract.config.json`, "utf8")) as SpaRouterContractConfig;
+    strictConfig.referenceBaseUrl = referenceBaseUrl;
+    strictConfig.generatedBaseUrl = generatedBaseUrl;
+    const strict = await evaluateSpaRouterContract(strictConfig);
+    assert.equal(strict.passed, true, JSON.stringify(strict.navigationIntegrity.failures, null, 2));
+    assert.equal(strict.scenariosPassed, 6);
+    assert.equal(strict.navigationIntegrity.rate, 1);
+    assert.equal(strict.runtimeErrors, 0);
+    assert.equal(strict.requiredNetworkFailures, 0);
+    assert.equal(strict.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
   } finally {
     await Promise.all([stopDetachedProcess(reference), stopDetachedProcess(generated)]);
     rmSync(artifacts, { recursive: true, force: true });

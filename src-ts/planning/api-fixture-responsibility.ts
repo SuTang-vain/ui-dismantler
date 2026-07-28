@@ -163,13 +163,23 @@ function sections(source: string): SfcSections {
 }
 function importedApis(script: string): ImportedApi[] {
   const output: ImportedApi[] = [];
-  for (const match of script.matchAll(/import\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/g)) {
-    for (const token of match[1].split(",").map((item) => item.trim()).filter(Boolean)) {
-      const parts = token.split(/\s+as\s+/);
-      output.push({ exportedName: parts[0].trim(), localName: (parts[1] ?? parts[0]).trim(), source: match[2] });
+  const appendBindings = (bindings: string, source: string): void => {
+    for (const token of bindings.split(",").map((item) => item.trim()).filter(Boolean)) {
+      const parts = token.split(/\s+as\s+|\s*:\s*/);
+      output.push({ exportedName: parts[0].trim(), localName: (parts[1] ?? parts[0]).trim(), source });
     }
+  };
+  for (const match of script.matchAll(/import\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/g)) {
+    appendBindings(match[1], match[2]);
   }
-  return output;
+  // Composition API code frequently loads optional API modules lazily. Treat the
+  // destructured import as the same symbol edge as a static named import.
+  for (const match of script.matchAll(/(?:const|let|var)\s*\{([^}]+)\}\s*=\s*await\s+import\s*\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+    appendBindings(match[1], match[2]);
+  }
+  return output.filter((item, index, values) => values.findIndex((candidate) =>
+    candidate.localName === item.localName && candidate.exportedName === item.exportedName && candidate.source === item.source,
+  ) === index);
 }
 function moduleCandidates(sourceRoot: string, componentFile: string, imported: string): string[] {
   const base = imported.startsWith("@/")
@@ -182,8 +192,18 @@ function moduleCandidates(sourceRoot: string, componentFile: string, imported: s
 }
 function endpointFromModule(moduleFile: string, exportedName: string): Endpoint | undefined {
   const source = readFileSync(moduleFile, "utf8");
-  const declaration = new RegExp(`export\\s+function\\s+${exportedName}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]*?)(?:\\n\\}|$)`).exec(source)?.[1];
+  const escapedName = exportedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const functionBody = new RegExp(`export\\s+(?:async\\s+)?function\\s+${escapedName}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]*?)(?:\\n\\}|$)`).exec(source)?.[1];
+  const arrowExpression = new RegExp(`export\\s+const\\s+${escapedName}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>\\s*([^;\\n]+)`).exec(source)?.[1]
+    ?? new RegExp(`export\\s+const\\s+${escapedName}\\s*=\\s*(?:async\\s*)?[A-Za-z_$][\\w$]*\\s*=>\\s*([^;\\n]+)`).exec(source)?.[1];
+  const declaration = functionBody ?? arrowExpression ?? "";
   if (!declaration) return undefined;
+
+  // Axios-style clients (`request.get/post/...`) are normalized into the same
+  // endpoint shape as the older request({ url, method }) convention.
+  const methodCall = declaration.match(/\b[A-Za-z_$][\w$]*\.(get|post|put|delete|patch)\s*\(\s*(['"`])([^'"`]+)\2/i);
+  if (methodCall) return { exportedName, method: methodCall[1].toUpperCase(), path: methodCall[3], moduleFile };
+
   const path = declaration.match(/\burl\s*:\s*['"]([^'"]+)['"]/)?.[1];
   if (!path) return undefined;
   const method = declaration.match(/\bmethod\s*:\s*['"]([^'"]+)['"]/)?.[1] ?? "get";
@@ -977,12 +997,23 @@ function joinTransportPath(prefix: string, endpointPath: string): string {
   return `${prefix.replace(/\/$/, "")}/${endpointPath.replace(/^\//, "")}`;
 }
 function consumptionFor(script: string, localName: string): Consumption | undefined {
-  const call = new RegExp(`${localName}\\s*\\([^)]*\\)\\s*\\.then\\s*\\(\\s*([A-Za-z_$][\\w$]*)\\s*=>\\s*\\{([\\s\\S]*?)\\}\\s*\\)`).exec(script);
-  if (!call) return undefined;
-  const responseName = call[1];
-  const assignment = new RegExp(`this\\.([A-Za-z_$][\\w$]*)\\s*=\\s*${responseName}((?:\\.(?!slice\\b)[A-Za-z_$][\\w$]*)+)(?:\\.slice\\(\\s*0\\s*,\\s*(\\d+)\\s*\\))?`).exec(call[2]);
+  const escapedName = localName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const thenCall = new RegExp(`${escapedName}\\s*\\([^)]*\\)\\s*\\.then\\s*\\(\\s*([A-Za-z_$][\\w$]*)\\s*=>\\s*\\{([\\s\\S]*?)\\}\\s*\\)`).exec(script);
+  if (thenCall) {
+    const responseName = thenCall[1];
+    const assignment = new RegExp(`this\\.([A-Za-z_$][\\w$]*)\\s*=\\s*${responseName}((?:\\.(?!slice\\b)[A-Za-z_$][\\w$]*)+)(?:\\.slice\\(\\s*0\\s*,\\s*(\\d+)\\s*\\))?`).exec(thenCall[2]);
+    if (assignment) return { targetBinding: assignment[1], responsePath: assignment[2].slice(1), sliceLimit: assignment[3] ? Number(assignment[3]) : undefined };
+  }
+
+  // Composition API data flow: bind the awaited response symbol to a later
+  // ref assignment. The identifiers are discovered from syntax, not names.
+  const awaited = new RegExp(`(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=\\s*await\\s+${escapedName}\\s*\\([^)]*\\)`).exec(script);
+  if (!awaited) return undefined;
+  const responseName = awaited[1];
+  const suffix = script.slice((awaited.index ?? 0) + awaited[0].length);
+  const assignment = new RegExp(`([A-Za-z_$][\\w$]*)\\.value\\s*=\\s*${responseName}(?:\\.([A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*))?(?:\\s*\\|\\|\\s*\\[\\])?(?:\\.slice\\(\\s*0\\s*,\\s*(\\d+)\\s*\\))?`).exec(suffix);
   if (!assignment) return undefined;
-  return { targetBinding: assignment[1], responsePath: assignment[2].slice(1), sliceLimit: assignment[3] ? Number(assignment[3]) : undefined };
+  return { targetBinding: assignment[1], responsePath: assignment[2] ?? "", sliceLimit: assignment[3] ? Number(assignment[3]) : undefined };
 }
 function valueAtPath(value: JsonValue, path: string): JsonValue | undefined {
   let current: JsonValue | undefined = value;
