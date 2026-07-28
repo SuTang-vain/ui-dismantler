@@ -209,3 +209,21 @@ Reviewed visual states declare either `dom` or `canvas` resource profiles. The V
 A same-server three-run A/B comparison retained `3/3` Semantic Gold+ for both variants. Median total time changed from `31.10 s` to `30.97 s` (`0.42%` lower), while median visual-matrix time changed from `20.84 s` to `20.72 s` (`0.58%` lower). More importantly, visual-matrix standard deviation fell `43.94%` and its range fell `49.71%`. The formal run recorded zero network-blocked stability samples, confirming that the observed variance belongs to Canvas/layout scheduling rather than public-network or model-API instability.
 
 To prevent Git evidence growth, the repository keeps one final full report plus `semantic-gold-resource-aware-summary.json`; the six raw A/B reports remain external and are represented by SHA-256 hashes in the summary.
+
+## 2026-07-28 incremental DOM/layout signature alternating A/B
+
+The incremental signature implementation was measured against the resource-aware scheduler base commit with the fixed sequence:
+
+```text
+current → base → current → base → current → base
+```
+
+Identity was frozen to tool commits `5c97e89` and `05d22eb`, Vue Element Admin source commit `6858a9ad67483025f6a9432a926beb9327037be3`, the same reviewed generated target, and deterministic local fixtures. Model calls were zero. All six runs retained Semantic Gold+: computed style `0.9825`, pixel diff `0.018210`, navigation integrity `1.0`, and zero runtime, required-network, stability, or blocking-handle failures.
+
+| Metric | Base median | Incremental median | Change |
+|---|---:|---:|---:|
+| signature scan | 8267.847 ms | 7170.582 ms | -13.27% |
+| Visual Matrix | 22710.720 ms | 22075.029 ms | -2.80% |
+| total | 33834.986 ms | 33732.441 ms | -0.30% |
+
+The incremental runs reused `94.63%` of observed node signatures. This proves a repeatable reduction in signature work and a smaller Visual Matrix improvement; the end-to-end change remains modest and is not presented as a large total-runtime speedup. Git retains the aggregate and SHA-256 hashes in `generated-target-auto-v1/incremental-signature-ab-summary.json`; six raw reports remain external performance evidence rather than permanent repository payload.

@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "1.0",
+  "experiment": "incremental-dom-layout-signature-alternating-ab",
+  "measuredAt": "2026-07-28",
+  "order": [
+    "current",
+    "base",
+    "current",
+    "base",
+    "current",
+    "base"
+  ],
+  "identity": {
+    "currentCommit": "5c97e89",
+    "baseCommit": "05d22eb",
+    "sourceCommit": "6858a9ad67483025f6a9432a926beb9327037be3",
+    "config": "examples/spa-router-regressions/vue-element-admin/reference-generated-semantic.auto-v1.config.json",
+    "networkMode": "local source and generated servers; deterministic reviewed fixtures; model calls 0"
+  },
+  "qualityThresholds": {
+    "computedStyleMin": 0.98,
+    "pixelDiffMax": 0.02,
+    "navigationIntegrity": 1,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "current": {
+    "runs": 3,
+    "passedRuns": 3,
+    "stableFailureRate": 0,
+    "signatureScanMs": {
+      "values": [
+        7170.582,
+        6666.27,
+        7623.128
+      ],
+      "median": 7170.582,
+      "mean": 7153.327,
+      "variance": 152745.079,
+      "standardDeviation": 390.826,
+      "range": 956.858
+    },
+    "visualMatrixMs": {
+      "values": [
+        21785,
+        22524.032,
+        22075.029
+      ],
+      "median": 22075.029,
+      "mean": 22128.02,
+      "variance": 92432.09,
+      "standardDeviation": 304.026,
+      "range": 739.032
+    },
+    "totalMs": {
+      "values": [
+        33894.845,
+        33732.441,
+        33591.428
+      ],
+      "median": 33732.441,
+      "mean": 33739.571,
+      "variance": 15369.067,
+      "standardDeviation": 123.972,
+      "range": 303.417
+    },
+    "samples": {
+      "values": [
+        442,
+        453,
+        430
+      ],
+      "median": 442,
+      "mean": 441.667,
+      "variance": 88.222,
+      "standardDeviation": 9.393,
+      "range": 23
+    },
+    "nodesScanned": {
+      "values": [
+        4991,
+        4914,
+        4876
+      ],
+      "median": 4914,
+      "mean": 4927,
+      "variance": 2288.667,
+      "standardDeviation": 47.84,
+      "range": 115
+    },
+    "nodesReused": {
+      "values": [
+        87384,
+        88829,
+        84296
+      ],
+      "median": 87384,
+      "mean": 86836.333,
+      "variance": 3574650.889,
+      "standardDeviation": 1890.675,
+      "range": 4533
+    },
+    "reuseRate": 0.946308
+  },
+  "base": {
+    "runs": 3,
+    "passedRuns": 3,
+    "stableFailureRate": 0,
+    "signatureScanMs": {
+      "values": [
+        7733.597,
+        8267.847,
+        8358.052
+      ],
+      "median": 8267.847,
+      "mean": 8119.832,
+      "variance": 75944.895,
+      "standardDeviation": 275.581,
+      "range": 624.455
+    },
+    "visualMatrixMs": {
+      "values": [
+        21701.547,
+        22710.72,
+        23109.561
+      ],
+      "median": 22710.72,
+      "mean": 22507.276,
+      "variance": 351111.968,
+      "standardDeviation": 592.547,
+      "range": 1408.014
+    },
+    "totalMs": {
+      "values": [
+        32941.056,
+        35100.817,
+        33834.986
+      ],
+      "median": 33834.986,
+      "mean": 33958.953,
+      "variance": 785111.838,
+      "standardDeviation": 886.065,
+      "range": 2159.761
+    },
+    "samples": {
+      "values": [
+        435,
+        423,
+        406
+      ],
+      "median": 423,
+      "mean": 421.333,
+      "variance": 141.556,
+      "standardDeviation": 11.898,
+      "range": 29
+    },
+    "nodesScanned": null,
+    "nodesReused": null,
+    "reuseRate": null
+  },
+  "delta": {
+    "signatureScanMs": {
+      "absoluteMs": -1097.265,
+      "percent": -13.27
+    },
+    "visualMatrixMs": {
+      "absoluteMs": -635.691,
+      "percent": -2.8
+    },
+    "totalMs": {
+      "absoluteMs": -102.545,
+      "percent": -0.3
+    }
+  },
+  "quality": {
+    "allRunsPassed": true,
+    "worstComputedStyle": 0.9825,
+    "worstPixelDiff": 0.01821,
+    "navigationIntegrity": 1,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "rawEvidence": [
+    {
+      "variant": "current",
+      "run": 1,
+      "file": "run-1-current.json",
+      "sha256": "1b1d869a66b28366bdf10692ba7c3933a126fcd76beaf619c2d22ee4e54c4ffc",
+      "retention": "external raw report; hash retained in Git summary"
+    },
+    {
+      "variant": "base",
+      "run": 2,
+      "file": "run-2-base.json",
+      "sha256": "5116d12eb9184f926344a1154dc27651a67114b5525065343eceec4601e14750",
+      "retention": "external raw report; hash retained in Git summary"
+    },
+    {
+      "variant": "current",
+      "run": 3,
+      "file": "run-3-current.json",
+      "sha256": "df24c522309ddd2889613caeb3c4341ed24ade922b062ff98364e2fde2f03114",
+      "retention": "external raw report; hash retained in Git summary"
+    },
+    {
+      "variant": "base",
+      "run": 4,
+      "file": "run-4-base.json",
+      "sha256": "6b5edee2c4c2b3aff1cd5cbbc522b6db39154a13f7386c2d67d2a0039bd8e208",
+      "retention": "external raw report; hash retained in Git summary"
+    },
+    {
+      "variant": "current",
+      "run": 5,
+      "file": "run-5-current.json",
+      "sha256": "98f28b275bde5e027d732fde930b4d255d75057bc942551d6a947e07fadef9e5",
+      "retention": "external raw report; hash retained in Git summary"
+    },
+    {
+      "variant": "base",
+      "run": 6,
+      "file": "run-6-base.json",
+      "sha256": "fd708826b901f53b69e2936146822bd45cd4ca912444dfe701f11d60b10ad8a0",
+      "retention": "external raw report; hash retained in Git summary"
+    }
+  ],
+  "conclusion": {
+    "signatureImprovementReproduced": true,
+    "visualMatrixImprovementReproduced": true,
+    "totalRuntimeImprovementReproduced": true,
+    "statement": "Incremental signature median changed -13.27% versus base; visual matrix -2.8%; total -0.3%. All six runs preserved Semantic Gold+."
+  }
+}

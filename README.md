@@ -154,3 +154,20 @@ node dist-ts/cli.js quality <original.html> --lib <component-lib-dir> \
 ```
 
 TypeScript `quality` 默认启用 Gold+：真实 Chrome 选择器命中、计算样式和截图像素差异都会成为独立失败门禁。
+
+### 分层回归命令
+
+TypeScript 工具链将回归成本分为三层，所有层级保持同一套 Gold+ 阈值，不通过降低视觉、稳定性、网络或生命周期要求换取速度：
+
+```bash
+# PR：类型、构建、单元测试、冻结 artifact/hash 与离线 Semantic 证据
+npm run test:pr
+
+# 合并前 Gold+：完整关键交互和浏览器矩阵
+UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin npm run test:gold
+
+# Nightly：PR + Gold+ + 四案例三轮性能基线，原始性能报告写入 /tmp
+UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin npm run test:nightly
+```
+
+`test:gold` 与 `test:nightly` 会先核对 Vue Element Admin 外部只读源是否处于 `source-lock.json` 固定 commit；缺少源目录或 commit 不一致会直接失败，避免正式 Gold+ 在跳过真实 SPA 案例后被误报为完整通过。性能基线输出到 `/tmp`，默认不向 Git 仓库写入大体积原始证据。

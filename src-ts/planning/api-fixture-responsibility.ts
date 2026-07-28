@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve } from "node:path";
+import { parse, type AnyNode } from "acorn";
+import { simple } from "acorn-walk";
 import { spaRouterFixturePathMatches, type SpaRouterContractConfig, type SpaRouterFixture } from "../evaluation/spa-router.js";
 import type { JsonValue } from "../types.js";
 import type { SfcVisualComponentResponsibility } from "./sfc-visual-responsibility.js";
@@ -72,6 +74,9 @@ export interface ApiFixtureResponsibilityGraph {
     proxyRoutesInferred: number;
     proxyTargetsInferred: number;
     proxyRewriteRulesInferred: number;
+    proxyAstRoutesInferred: number;
+    proxyFallbackRoutesInferred: number;
+    proxyParseDiagnostics: number;
   };
   reviewReasons: string[];
 }
@@ -104,6 +109,8 @@ export interface TransportProxyRouteEvidence {
   rewritePattern?: string;
   rewriteReplacement?: string;
   upstreamPathCandidate?: string;
+  analysisMode: "scope-ast" | "regex-fallback";
+  analysisDiagnostics: string[];
 }
 interface EnvironmentAssignment extends TransportRuntimeSelection {}
 
@@ -239,7 +246,7 @@ function proxyContexts(source: string): string[] {
 }
 
 function proxyBoolean(source: string, property: "changeOrigin" | "secure" | "ws"): boolean | undefined {
-  const match = new RegExp(`\\b${property}\\s*:\s*(true|false)`).exec(source);
+  const match = new RegExp(`\\b${property}\\s*:\\s*(true|false)`).exec(source);
   return match ? match[1] === "true" : undefined;
 }
 
@@ -268,6 +275,228 @@ function proxyRouterReferences(source: string): { variables: string[]; literals:
   };
 }
 
+interface ScopedProxyEntry {
+  source: string;
+  contextCandidates: string[];
+  contextVariables: string[];
+}
+
+interface ProxyScopeParseResult {
+  entries: ScopedProxyEntry[];
+  diagnostics: string[];
+  fallbackRequired: boolean;
+}
+
+function propertyName(node: AnyNode | undefined, source: string): string | undefined {
+  if (!node) return undefined;
+  if (node.type === "Identifier") return node.name as string;
+  if (node.type === "Literal" && (typeof node.value === "string" || typeof node.value === "number")) return String(node.value);
+  if (node.type === "TemplateLiteral" && node.expressions?.length === 0) return node.quasis?.[0]?.value?.cooked as string | undefined;
+  return source.slice(node.start, node.end).replace(/^['"]|['"]$/g, "");
+}
+
+function objectMember(object: AnyNode, name: string, source: string): AnyNode | undefined {
+  return ((object as any).properties as AnyNode[] | undefined)?.find((property) => property.type === "Property" && propertyName((property as any).key as AnyNode, source) === name);
+}
+
+function memberInitializer(member: AnyNode | undefined): AnyNode | undefined {
+  return member?.type === "Property" ? member.value as AnyNode : undefined;
+}
+
+function literalStrings(expression: AnyNode | undefined): string[] {
+  if (!expression) return [];
+  if (expression.type === "Literal" && typeof expression.value === "string") return [expression.value];
+  if (expression.type === "TemplateLiteral" && expression.expressions?.length === 0) return [expression.quasis?.[0]?.value?.cooked as string].filter(Boolean);
+  if (expression.type === "ArrayExpression") return (expression.elements as Array<AnyNode | null>).flatMap((element) => literalStrings(element ?? undefined));
+  return [];
+}
+
+function variableInitializers(program: AnyNode): Map<string, AnyNode> {
+  const output = new Map<string, AnyNode>();
+  simple(program, {
+    VariableDeclarator(node: AnyNode) {
+      const declaration = node as any;
+      if (declaration.id?.type === "Identifier" && declaration.init) output.set(declaration.id.name as string, declaration.init as AnyNode);
+    },
+  });
+  return output;
+}
+
+function resolveExpression(expression: AnyNode, variables: Map<string, AnyNode>, seen = new Set<string>()): AnyNode {
+  if (expression.type !== "Identifier" || seen.has(expression.name as string)) return expression;
+  const resolved = variables.get(expression.name as string);
+  if (!resolved) return expression;
+  seen.add(expression.name as string);
+  return resolveExpression(resolved, variables, seen);
+}
+
+function isDirectProxyObject(object: AnyNode, source: string): boolean {
+  return ["context", "target", "router", "pathRewrite", "rewrite", "changeOrigin", "secure", "ws", "configure", "bypass"]
+    .some((name) => Boolean(objectMember(object, name, source)));
+}
+
+function scopeFromObject(object: AnyNode, source: string, key?: AnyNode): ScopedProxyEntry {
+  const contextExpression = memberInitializer(objectMember(object, "context", source));
+  const keyText = propertyName(key, source);
+  const keySource = key ? source.slice(key.start, key.end) : "";
+  const contextSource = contextExpression ? source.slice(contextExpression.start, contextExpression.end) : "";
+  const contextIdentifiers = [keySource, contextSource].flatMap((value) => /^[A-Za-z_$][\w$]*$/.test(value.trim()) ? [value.trim()] : []);
+  return {
+    source: source.slice(object.start, object.end),
+    contextCandidates: unique([...(keyText?.startsWith("/") ? [keyText] : []), ...literalStrings(contextExpression)]),
+    contextVariables: unique([...environmentReferences(keySource), ...environmentReferences(contextSource), ...contextIdentifiers]),
+  };
+}
+
+function entriesFromProxyExpression(expression: AnyNode, source: string, variables: Map<string, AnyNode>): ScopedProxyEntry[] {
+  const resolved = resolveExpression(expression, variables);
+  if (resolved.type === "ArrayExpression") {
+    return (resolved.elements as Array<AnyNode | null>).flatMap((element) => {
+      if (!element) return [];
+      const value = resolveExpression(element, variables);
+      return value.type === "ObjectExpression" ? [scopeFromObject(value, source)] : [];
+    });
+  }
+  if (resolved.type !== "ObjectExpression") return [];
+  if (isDirectProxyObject(resolved, source)) return [scopeFromObject(resolved, source)];
+  return (resolved.properties as AnyNode[]).flatMap((property) => {
+    if (property.type !== "Property") return [];
+    const value = resolveExpression(property.value as AnyNode, variables);
+    return value.type === "ObjectExpression" ? [scopeFromObject(value, source, property.key as AnyNode)] : [];
+  });
+}
+
+function parseConfigProgram(source: string): { program?: AnyNode; diagnostics: string[] } {
+  try {
+    return { program: parse(source, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as AnyNode, diagnostics: [] };
+  } catch (moduleError) {
+    try {
+      return { program: parse(source, { ecmaVersion: "latest", sourceType: "script", allowHashBang: true }) as AnyNode, diagnostics: [] };
+    } catch (scriptError) {
+      const moduleMessage = moduleError instanceof Error ? moduleError.message : String(moduleError);
+      const scriptMessage = scriptError instanceof Error ? scriptError.message : String(scriptError);
+      return { diagnostics: [`Acorn module parse failed: ${moduleMessage}`, `Acorn script parse failed: ${scriptMessage}`] };
+    }
+  }
+}
+
+function scopedProxyEntries(_configFile: string, source: string): ProxyScopeParseResult {
+  const parsed = parseConfigProgram(source);
+  if (!parsed.program) return { entries: [], diagnostics: parsed.diagnostics, fallbackRequired: true };
+  const variables = variableInitializers(parsed.program);
+  const entries: ScopedProxyEntry[] = [];
+  simple(parsed.program, {
+    Property(node: AnyNode) {
+      const property = node as any;
+      if (propertyName(property.key as AnyNode, source) === "proxy" && property.value) {
+        entries.push(...entriesFromProxyExpression(property.value as AnyNode, source, variables));
+      }
+    },
+  });
+  if (!entries.length && /\bproxy\s*:\s*[\[{]/.test(source)) {
+    return { entries: [], diagnostics: ["AST parsed the config but did not recognize a supported proxy object or array shape"], fallbackRequired: true };
+  }
+  return { entries, diagnostics: [], fallbackRequired: false };
+}
+
+function environmentAliases(source: string): Map<string, string> {
+  const aliases = new Map<string, string>();
+  for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
+  return aliases;
+}
+
+function propertyEnvironmentVariables(source: string, property: string, aliases: Map<string, string>): string[] {
+  const direct = [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*(?:process\\.env|import\\.meta\\.env|env)\\.([A-Za-z_$][\\w$]*)`, "g"))].map((match) => match[1]);
+  const identifiers = [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*([A-Za-z_$][\\w$]*)`, "g"))].map((match) => aliases.get(match[1])).filter((item): item is string => Boolean(item));
+  return unique([...direct, ...identifiers]);
+}
+
+function propertyLiteralValues(source: string, property: string): string[] {
+  return [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*['\"]([^'\"]+)['\"]`, "g"))].map((match) => match[1]);
+}
+
+function routeFromScope(
+  sourceRoot: string,
+  configFile: string,
+  scope: ScopedProxyEntry,
+  endpointPath: string,
+  request: ReturnType<typeof requestClientEvidence>,
+  assignments: EnvironmentAssignment[],
+  analysisMode: TransportProxyRouteEvidence["analysisMode"],
+  analysisDiagnostics: string[],
+): TransportProxyRouteEvidence[] {
+  const aliases = environmentAliases(readFileSync(configFile, "utf8"));
+  const requestVariable = request.environmentVariable;
+  const targetVariables = propertyEnvironmentVariables(scope.source, "target", aliases);
+  const literalTargets = propertyLiteralValues(scope.source, "target");
+  const routerReferences = proxyRouterReferences(scope.source);
+  const dynamicRewriteVariable = [...scope.source.matchAll(/\[\s*['"]\^['"]\s*\+\s*(?:(?:process\.env|import\.meta\.env|env)\.)?([A-Za-z_$][\w$]*)\s*\]\s*:\s*['"]([^'"]*)['"]/g)][0];
+  const literalRewrite = [...scope.source.matchAll(/['"](\^\/[^'"]+)['"]\s*:\s*['"]([^'"]*)['"]/g)][0];
+  const callback = callbackRewrite(scope.source);
+  const framework = proxyFramework(configFile);
+  const output: TransportProxyRouteEvidence[] = [];
+
+  for (const prefix of request.prefixes) {
+    const selection = request.runtimeSelections.find((item) => item.value === prefix.value);
+    const environment = selection?.environment ?? "runtime";
+    const contextVariables = unique(scope.contextVariables.map((variable) => aliases.get(variable) ?? variable));
+    const resolvedContexts = unique([
+      ...scope.contextCandidates,
+      ...environmentValueCandidates(assignments, contextVariables, environment),
+    ]);
+    const matchesContext = resolvedContexts.includes(prefix.value)
+      || contextVariables.some((variable) => variable === requestVariable)
+      || (!resolvedContexts.length && scope.source.includes(prefix.value));
+    if (!matchesContext) continue;
+
+    const targetCandidates = unique([...literalTargets, ...environmentValueCandidates(assignments, targetVariables, environment)]);
+    const routerVariables = unique([
+      ...routerReferences.variables,
+      ...[...scope.source.matchAll(/\brouter\s*:\s*([A-Za-z_$][\w$]*)/g)].map((match) => aliases.get(match[1])).filter((item): item is string => Boolean(item)),
+    ]);
+    const routerCandidates = unique([...routerReferences.literals, ...environmentValueCandidates(assignments, routerVariables, environment)]);
+    let rewritePattern: string | undefined, rewriteReplacement: string | undefined;
+    let rewriteKind: TransportProxyRouteEvidence["rewriteKind"];
+    if (dynamicRewriteVariable) {
+      const variable = aliases.get(dynamicRewriteVariable[1]) ?? dynamicRewriteVariable[1];
+      if (!requestVariable || variable === requestVariable) {
+        rewritePattern = `^${prefix.value}`;
+        rewriteReplacement = dynamicRewriteVariable[2];
+        rewriteKind = "path-rewrite-map";
+      }
+    } else if (literalRewrite && new RegExp(literalRewrite[1]).test(prefix.value)) {
+      rewritePattern = literalRewrite[1]; rewriteReplacement = literalRewrite[2]; rewriteKind = "path-rewrite-map";
+    } else if (callback && new RegExp(callback.pattern).test(prefix.value)) {
+      rewritePattern = callback.pattern; rewriteReplacement = callback.replacement; rewriteKind = "rewrite-callback";
+    }
+    const upstreamPathCandidate = rewritePattern === undefined
+      ? undefined
+      : joinTransportPath(prefix.value.replace(new RegExp(rewritePattern), rewriteReplacement ?? ""), endpointPath);
+    output.push({
+      requestPrefix: prefix.value,
+      environment,
+      source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
+      framework,
+      contextCandidates: resolvedContexts,
+      targetCandidates,
+      routerCandidates,
+      changeOrigin: proxyBoolean(scope.source, "changeOrigin"),
+      secure: proxyBoolean(scope.source, "secure"),
+      ws: proxyBoolean(scope.source, "ws"),
+      configureHook: /\bconfigure(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(scope.source),
+      bypassHook: /\bbypass(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(scope.source),
+      analysisMode,
+      analysisDiagnostics,
+      ...(rewritePattern !== undefined ? { rewriteKind, rewritePattern, rewriteReplacement, upstreamPathCandidate } : {}),
+    });
+  }
+  return output;
+}
+
+function fallbackProxyEntry(source: string): ScopedProxyEntry {
+  return { source, contextCandidates: proxyContexts(source), contextVariables: environmentReferences(source) };
+}
+
 function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: ReturnType<typeof requestClientEvidence>): TransportProxyRouteEvidence[] {
   if (!request.prefixes.length) return [];
   const assignments = environmentAssignments(sourceRoot);
@@ -275,61 +504,13 @@ function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: R
   for (const configFile of proxyConfigCandidates(sourceRoot)) {
     const source = readFileSync(configFile, "utf8");
     if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:\s*[\[{])/.test(source)) continue;
-    const aliases = new Map<string, string>();
-    for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
-    const referencedVariables = new Set(environmentReferences(source));
-    for (const variable of aliases.values()) referencedVariables.add(variable);
-    const requestVariable = request.environmentVariable;
-    if (requestVariable && !referencedVariables.has(requestVariable) && !request.prefixes.some((prefix) => source.includes(prefix.value))) continue;
-
-    const targetVariables = [...source.matchAll(/\btarget\s*:\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]);
-    const literalTargets = [...source.matchAll(/\btarget\s*:\s*['"]([^'"]+)['"]/g)].map((match) => match[1]);
-    const routerReferences = proxyRouterReferences(source);
-    const routerVariables = routerReferences.variables;
-    const literalRouters = routerReferences.literals;
-    const dynamicRewriteVariable = [...source.matchAll(/\[\s*['"]\^['"]\s*\+\s*(?:(?:process\.env|import\.meta\.env|env)\.)?([A-Za-z_$][\w$]*)\s*\]\s*:\s*['"]([^'"]*)['"]/g)][0];
-    const literalRewrite = [...source.matchAll(/['"](\^\/[^'"]+)['"]\s*:\s*['"]([^'"]*)['"]/g)][0];
-    const callback = callbackRewrite(source);
-    const contexts = proxyContexts(source);
-    const framework = proxyFramework(configFile);
-
-    for (const prefix of request.prefixes) {
-      const selection = request.runtimeSelections.find((item) => item.value === prefix.value);
-      const environment = selection?.environment ?? "runtime";
-      const targetCandidates = unique([...literalTargets, ...environmentValueCandidates(assignments, targetVariables, environment)]);
-      const routerCandidates = unique([...literalRouters, ...environmentValueCandidates(assignments, routerVariables, environment)]);
-      let rewritePattern: string | undefined, rewriteReplacement: string | undefined;
-      let rewriteKind: TransportProxyRouteEvidence["rewriteKind"];
-      if (dynamicRewriteVariable) {
-        const variable = aliases.get(dynamicRewriteVariable[1]) ?? dynamicRewriteVariable[1];
-        if (!requestVariable || variable === requestVariable) {
-          rewritePattern = `^${prefix.value}`;
-          rewriteReplacement = dynamicRewriteVariable[2];
-          rewriteKind = "path-rewrite-map";
-        }
-      } else if (literalRewrite && new RegExp(literalRewrite[1]).test(prefix.value)) {
-        rewritePattern = literalRewrite[1]; rewriteReplacement = literalRewrite[2]; rewriteKind = "path-rewrite-map";
-      } else if (callback && new RegExp(callback.pattern).test(prefix.value)) {
-        rewritePattern = callback.pattern; rewriteReplacement = callback.replacement; rewriteKind = "rewrite-callback";
-      }
-      const upstreamPathCandidate = rewritePattern === undefined
-        ? undefined
-        : joinTransportPath(prefix.value.replace(new RegExp(rewritePattern), rewriteReplacement ?? ""), endpointPath);
-      output.push({
-        requestPrefix: prefix.value,
-        environment,
-        source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
-        framework,
-        contextCandidates: contexts,
-        targetCandidates,
-        routerCandidates,
-        changeOrigin: proxyBoolean(source, "changeOrigin"),
-        secure: proxyBoolean(source, "secure"),
-        ws: proxyBoolean(source, "ws"),
-        configureHook: /\bconfigure(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(source),
-        bypassHook: /\bbypass(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(source),
-        ...(rewritePattern !== undefined ? { rewriteKind, rewritePattern, rewriteReplacement, upstreamPathCandidate } : {}),
-      });
+    const parsed = scopedProxyEntries(configFile, source);
+    if (parsed.fallbackRequired) {
+      output.push(...routeFromScope(sourceRoot, configFile, fallbackProxyEntry(source), endpointPath, request, assignments, "regex-fallback", parsed.diagnostics));
+      continue;
+    }
+    for (const entry of parsed.entries) {
+      output.push(...routeFromScope(sourceRoot, configFile, entry, endpointPath, request, assignments, "scope-ast", []));
     }
   }
   return output;
@@ -469,12 +650,16 @@ export function analyzeApiFixtureResponsibilities(
       proxyRoutesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.length, 0),
       proxyTargetsInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.reduce((count, route) => count + route.targetCandidates.length, 0), 0),
       proxyRewriteRulesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.filter((route) => route.rewritePattern !== undefined).length, 0),
+      proxyAstRoutesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.filter((route) => route.analysisMode === "scope-ast").length, 0),
+      proxyFallbackRoutesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.filter((route) => route.analysisMode === "regex-fallback").length, 0),
+      proxyParseDiagnostics: responsibilities.reduce((sum, item) => sum + item.apiCall.proxyRoutes.reduce((count, route) => count + route.analysisDiagnostics.length, 0), 0),
     },
     reviewReasons: [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
       "unresolved calls remain explicit and are never replaced with guessed data",
       "transport prefixes are inferred only from the imported request client and concrete environment assignments",
       "dev-server proxy targets and path rewrites are retained as auditable transport evidence and never treated as browser request paths",
+      "proxy target, router, rewrite, and hook evidence is bound to one scope-aware AST proxy entry; unsupported or malformed config shapes use an explicit diagnostic fallback",
     ],
   };
 }

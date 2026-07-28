@@ -321,3 +321,60 @@ test("Webpack proxy arrays preserve context router and bypass evidence without c
     assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/api/orders"]);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+test("scope-aware proxy AST keeps sibling Vite routes from cross-binding targets rewrites and hooks", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-vite-proxy-scope-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `VITE_API_PREFIX=/api\nVITE_API_TARGET=https://api.example.test\nVITE_AUTH_PREFIX=/auth\nVITE_AUTH_TARGET=https://auth.example.test\n`);
+    writeFileSync(join(root, "vite.config.ts"), `import { defineConfig, loadEnv } from 'vite'; export default defineConfig(({mode})=>{const env=loadEnv(mode,process.cwd(),'');return {server:{proxy:{[env.VITE_API_PREFIX]:{target:env.VITE_API_TARGET,changeOrigin:true,rewrite:path=>path.replace(/^\\/api/,'/v2')},[env.VITE_AUTH_PREFIX]:{target:env.VITE_AUTH_TARGET,secure:false,ws:true,configure(proxy){}}}}}})`);
+    writeFileSync(join(root, "src", "utils", "request.ts"), `export default createClient({ baseURL: import.meta.env.VITE_API_PREFIX })`);
+    writeFileSync(join(root, "src", "api", "orders.ts"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.proxyRoutesInferred, 1);
+    assert.equal(api.metrics.proxyAstRoutesInferred, 1);
+    assert.equal(api.metrics.proxyFallbackRoutesInferred, 0);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.equal(route.analysisMode, "scope-ast");
+    assert.deepEqual(route.analysisDiagnostics, []);
+    assert.deepEqual(route.contextCandidates, ["/api"]);
+    assert.deepEqual(route.targetCandidates, ["https://api.example.test"]);
+    assert.equal(route.rewritePattern, "^/api");
+    assert.equal(route.upstreamPathCandidate, "/v2/orders");
+    assert.equal(route.secure, undefined);
+    assert.equal(route.ws, undefined);
+    assert.equal(route.configureHook, false);
+    assert.equal(route.targetCandidates.includes("https://auth.example.test"), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("unsupported TypeScript proxy syntax emits auditable regex fallback diagnostics", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-proxy-fallback-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, "vite.config.ts"), `type Config = { server: unknown }; const config: Config = {server:{proxy:{'/api':{target:'https://fallback.example.test',rewrite:path=>path.replace(/^\\/api/,'')}}}}; export default config`);
+    writeFileSync(join(root, "src", "utils", "request.ts"), `export default createClient({ baseURL: '/api' })`);
+    writeFileSync(join(root, "src", "api", "orders.ts"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.proxyRoutesInferred, 1);
+    assert.equal(api.metrics.proxyAstRoutesInferred, 0);
+    assert.equal(api.metrics.proxyFallbackRoutesInferred, 1);
+    assert.ok(api.metrics.proxyParseDiagnostics >= 2);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.equal(route.analysisMode, "regex-fallback");
+    assert.ok(route.analysisDiagnostics.some((item) => item.startsWith("Acorn module parse failed:")));
+    assert.deepEqual(route.targetCandidates, ["https://fallback.example.test"]);
+    assert.equal(route.rewritePattern, "^/api");
+    assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes(route.upstreamPathCandidate ?? ""), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
