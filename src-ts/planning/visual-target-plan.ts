@@ -3,6 +3,7 @@ import type { SfcVisualComponentResponsibility, SfcVisualResponsibilityGraph, Sf
 import type { SfcTemplateStructure } from "./sfc-template-structure.js";
 import type { ApiFixtureResponsibility } from "./api-fixture-responsibility.js";
 import type { SpaRouteShellPlan, SpaRouteShellRouteNode } from "./spa-route-shell.js";
+import type { RouterSfcResponsibilityGraph } from "./router-sfc-responsibility.js";
 
 export interface VisualTargetOwnerPlan {
   id: string;
@@ -78,6 +79,8 @@ export interface VisualTargetPlan {
     sourceRoot: string;
     graphComponents: number;
     graphChartComponents: number;
+    routerSfcGraphKind?: RouterSfcResponsibilityGraph["kind"];
+    routerSfcResolvedRoutes?: number;
   };
   selectorPolicy: {
     implementationSelectorsIndependent: true;
@@ -147,6 +150,38 @@ function componentLiteralText(component: SfcVisualComponentResponsibility): stri
     .map((item) => item.value.replace(/\s+/g, " ").trim()).filter(Boolean).join(" ");
 }
 
+function routeSegments(route: string): string[] {
+  return normalizedRoutePath(route).split("/").filter(Boolean);
+}
+
+function routePatternMatches(actual: string, pattern: string): boolean {
+  const actualSegments = routeSegments(actual);
+  const patternSegments = routeSegments(pattern);
+  if (actualSegments.length !== patternSegments.length) return false;
+  return patternSegments.every((segment, index) => segment.startsWith(":") || segment === "*" || segment === actualSegments[index]);
+}
+
+function normalizeSourceFile(file: string): string {
+  return file.replace(/^src\//, "").replace(/^\.\//, "");
+}
+
+function routerSfcRoot(route: SpaRouteShellRouteNode, components: SfcVisualComponentResponsibility[], routerGraph?: RouterSfcResponsibilityGraph): { root?: SfcVisualComponentResponsibility; candidates: string[]; blocked?: string } {
+  if (!routerGraph) return { candidates: [] };
+  const matches = routerGraph.routes.filter((binding) => routePatternMatches(route.route, binding.path));
+  if (matches.length === 0) return { candidates: [], blocked: "route is absent from the router-to-SFC graph" };
+  const binding = matches[0];
+  if (!binding.sfcFile || binding.resolution === "unresolved") {
+    return { candidates: matches.map((item) => `${item.path} -> unresolved`), blocked: `router component for ${binding.path} is unresolved` };
+  }
+  const expected = normalizeSourceFile(binding.sfcFile);
+  const ranked = components
+    .map((component) => ({ component, score: normalizeSourceFile(component.file) === expected || normalizeSourceFile(component.file).endsWith(`/${expected}`) ? 100 : 0 }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.component.file.localeCompare(b.component.file));
+  if (ranked.length === 0) return { candidates: [`${binding.path} -> ${binding.sfcFile}`], blocked: `SFC graph does not contain router owner ${binding.sfcFile}` };
+  return { root: ranked[0].component, candidates: ranked.map((item) => `${item.component.file} (${item.score})`) };
+}
+
 function rootScore(route: SpaRouteShellRouteNode, component: SfcVisualComponentResponsibility): number {
   const routeParts = routeTokens(route.route);
   const componentParts = new Set(pathTokens(component));
@@ -160,15 +195,14 @@ function rootScore(route: SpaRouteShellRouteNode, component: SfcVisualComponentR
   if (route.assertions.some((assertion) => assertion.visibleText && literalText.includes(assertion.visibleText))) score += 35;
   if (path.includes("/views/") || path.startsWith("views/")) score += 2;
   if (routeParts.at(-1) && name.includes(routeParts.at(-1)!)) score += 12;
-  if (routeParts.includes("dashboard") && /views\/dashboard\/admin\/index\.vue$/.test(path)) score += 40;
-  if (routeParts.includes("login") && /views\/login\/index\.vue$/.test(path)) score += 40;
-  if (routeParts.includes("permission") && routeParts.includes("directive") && /views\/permission\/directive\.vue$/.test(path)) score += 40;
   if (path.endsWith("/index.vue")) score += 3;
   if (path.includes("/components/")) score -= 10;
   return score;
 }
 
-function selectRoot(route: SpaRouteShellRouteNode, components: SfcVisualComponentResponsibility[]): { root?: SfcVisualComponentResponsibility; candidates: string[] } {
+function selectRoot(route: SpaRouteShellRouteNode, components: SfcVisualComponentResponsibility[], routerGraph?: RouterSfcResponsibilityGraph): { root?: SfcVisualComponentResponsibility; candidates: string[]; blocked?: string } {
+  const graphSelection = routerSfcRoot(route, components, routerGraph);
+  if (routerGraph) return graphSelection;
   const ranked = components
     .map((component) => ({ component, score: rootScore(route, component) }))
     .filter((item) => item.score > 0)
@@ -316,16 +350,16 @@ function resourceProfileProposal(owners: VisualTargetOwnerPlan[], components: Sf
   return { profile: "dom", confidence, evidence: domEvidence, reviewRequired: true };
 }
 
-export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph, routePlan: SpaRouteShellPlan): VisualTargetPlan {
+export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph, routePlan: SpaRouteShellPlan, routerGraph?: RouterSfcResponsibilityGraph): VisualTargetPlan {
   const visualRoutes = routePlan.routes.filter((route) => route.visualStates.length > 0);
   const ownersById = new Map<string, VisualTargetOwnerPlan>();
   const boundaries: VisualTargetBoundaryPlan[] = [];
   const unresolved: VisualTargetPlan["unresolved"] = [];
 
   for (const route of visualRoutes) {
-    const selected = selectRoot(route, sfcGraph.components);
+    const selected = selectRoot(route, sfcGraph.components, routerGraph);
     if (!selected.root) {
-      unresolved.push({ route: route.route, reason: "no SFC root reached the minimum route ownership score", candidates: selected.candidates });
+      unresolved.push({ route: route.route, reason: selected.blocked ?? "no SFC root reached the minimum route ownership score", candidates: selected.candidates });
       continue;
     }
     const owned = collectOwnedComponents(selected.root, sfcGraph.components);
@@ -373,6 +407,7 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
       sourceRoot: sfcGraph.sourceRoot,
       graphComponents: sfcGraph.metrics.components,
       graphChartComponents: sfcGraph.metrics.chartComponents,
+      ...(routerGraph ? { routerSfcGraphKind: routerGraph.kind, routerSfcResolvedRoutes: routerGraph.metrics.resolvedRoutes } : {}),
     },
     selectorPolicy: {
       implementationSelectorsIndependent: true,
@@ -408,6 +443,7 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
     reviewReasons: [
       "the plan proves visual ownership but does not authorize copying the reviewed target implementation",
       "acceptance selectors remain external quality-gate inputs and must not be used as implementation ownership evidence",
+      ...(routerGraph ? ["route roots use router-to-import-to-SFC evidence; acceptance selectors never determine ownership when the graph is provided; unresolved bindings remain blocked"] : ["router-to-SFC evidence was not provided; route root selection remains review-only heuristic"]),
       "chart and responsive responsibilities require the same Semantic Gold+ matrix after generation",
     ],
   };

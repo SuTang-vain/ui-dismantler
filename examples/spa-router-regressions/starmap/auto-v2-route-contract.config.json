@@ -1,0 +1,274 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:9530",
+  "generatedBaseUrl": "http://127.0.0.1:9531",
+  "navigationComparison": "semantic",
+  "apiPrefix": "/api",
+  "fixtures": [
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "fetch",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/task-123/status",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": {
+          "themeName": "Reviewed Task",
+          "status": "completed"
+        }
+      }
+    },
+    {
+      "path": "/reviews/task-123",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": {
+          "themeName": "Reviewed Task",
+          "items": []
+        }
+      }
+    },
+    {
+      "path": "/tasks/task-123",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": {
+          "themeName": "Reviewed Task",
+          "items": []
+        }
+      }
+    }
+  ],
+  "execution": {
+    "contractConcurrency": 1,
+    "actionTimeoutMs": 10000,
+    "browserShutdown": "graceful"
+  },
+  "scenarios": [
+    {
+      "id": "auto-v2-home",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [],
+      "assertions": {
+        "path": "/",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".theme-input-container",
+          "generated": "main[data-auto-v2-route=\"/\"]"
+        }
+      }
+    },
+    {
+      "id": "auto-v2-profiles-push",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hero-link",
+            "generated": "a[data-auto-v2-route=\"/profiles\"]"
+          }
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "search": "",
+        "visibleSelector": {
+          "reference": ".profile-list",
+          "generated": "main[data-auto-v2-route=\"/profiles\"]"
+        }
+      }
+    },
+    {
+      "id": "auto-v2-history-back",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hero-link",
+            "generated": "a[data-auto-v2-route=\"/profiles\"]"
+          }
+        },
+        {
+          "action": "back"
+        }
+      ],
+      "assertions": {
+        "path": "/",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".theme-input-container",
+          "generated": "main[data-auto-v2-route=\"/\"]"
+        }
+      }
+    },
+    {
+      "id": "auto-v2-progress-deep-link-reload",
+      "entryPath": "/progress/task-123?token=reviewed-token",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/progress/task-123",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".progress-container",
+          "generated": "main[data-auto-v2-route=\"/progress/:taskId\"]"
+        }
+      }
+    },
+    {
+      "id": "auto-v2-review-deep-link-reload",
+      "entryPath": "/review/task-123?token=reviewed-token",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/review/task-123",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".review-container",
+          "generated": "main[data-auto-v2-route=\"/review/:taskId\"]"
+        }
+      }
+    },
+    {
+      "id": "auto-v2-export-deep-link-reload",
+      "entryPath": "/export/task-123?token=reviewed-token",
+      "steps": [
+        {
+          "action": "reload"
+        }
+      ],
+      "assertions": {
+        "path": "/export/task-123",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".export-container",
+          "generated": "main[data-auto-v2-route=\"/export/:taskId\"]"
+        }
+      }
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import { generateSpaRouteShellPlan } from "../planning/spa-route-shell.js";
 import { compareSpaRouteShellFiles, generateSpaRouteShellArtifact } from "../planning/spa-route-shell-generator.js";
 import { generateSpaRouteShellIntegrationPatch, generateSpaRouteShellIntegrationPatchFromFile } from "../planning/spa-route-shell-patch.js";
 import { analyzeVueRouterResponsibility } from "../planning/vue-router-responsibility.js";
+import { analyzeRouterToSfcResponsibilities } from "../planning/router-sfc-responsibility.js";
 import { generateVueRouterIntegrationPatch } from "../planning/vue-router-patch.js";
 import { PNG } from "pngjs";
 
@@ -805,6 +806,47 @@ test("Vue Router responsibility graph ignores commented history mode and maps fr
   } finally {
     await rm(fixture, { recursive: true, force: true });
   }
+});
+
+test("Router-to-SFC graph resolves static and dynamic Vue route component ownership without acceptance selectors", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-router-sfc-"));
+  try {
+    await mkdir(join(fixture, "src", "router"), { recursive: true });
+    await mkdir(join(fixture, "src", "views"), { recursive: true });
+    await writeFile(join(fixture, "src", "router", "index.js"), `import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue'
+const routes=[{path:'/',name:'Home',component:Home},{path:'/progress/:taskId',name:'Progress',component:()=>import('../views/Progress.vue')}]
+export default createRouter({history:createWebHistory('/'),routes})
+`);
+    await writeFile(join(fixture, "src", "views", "Home.vue"), `<template><main class="home">Home</main></template>`);
+    await writeFile(join(fixture, "src", "views", "Progress.vue"), `<template><main class="progress">Progress</main></template>`);
+    const graph = analyzeRouterToSfcResponsibilities(fixture);
+    assert.equal(graph.framework.routerMajor, 4);
+    assert.equal(graph.metrics.routeBindings, 2);
+    assert.equal(graph.metrics.resolvedRoutes, 2);
+    assert.equal(graph.metrics.dynamicImports, 1);
+    assert.equal(graph.metrics.unresolvedRoutes, 0);
+    assert.deepEqual(graph.routes.map((route) => route.sfcFile), ["views/Home.vue", "views/Progress.vue"]);
+    assert.equal(graph.routes.every((route) => route.confidence === "high"), true);
+    assert.equal(graph.routes.some((route) => route.evidence.some((item) => item.detail.includes("static route component import binding"))), true);
+    assert.equal(graph.routes.some((route) => route.evidence.some((item) => item.detail.includes("dynamic route component import"))), true);
+  } finally { await rm(fixture, { recursive: true, force: true }); }
+});
+
+test("Router-to-SFC graph keeps unresolved route bindings reviewable instead of promoting acceptance evidence", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-router-sfc-unresolved-"));
+  try {
+    await mkdir(join(fixture, "router"), { recursive: true });
+    await writeFile(join(fixture, "router", "index.js"), `const routes=[{path:'/missing',component:resolveView()}]
+export default routes
+`);
+    const graph = analyzeRouterToSfcResponsibilities(fixture);
+    assert.equal(graph.metrics.routeBindings, 1);
+    assert.equal(graph.metrics.unresolvedRoutes, 1);
+    assert.equal(graph.unresolved[0]?.confidence, "medium");
+    assert.equal(graph.unresolved[0]?.reviewReasons.some((reason) => reason.includes("acceptance selector/text")), true);
+    assert.equal(graph.reviewReasons.some((reason) => reason.includes("unresolved route bindings")), true);
+  } finally { await rm(fixture, { recursive: true, force: true }); }
 });
 
 test("Vue Router integration patch stays review-only and observes instead of replacing the framework router", async () => {

@@ -256,6 +256,7 @@ test("Starmap frozen generated Gold+ preserves Vite SPA route visual auth and AP
   const semantic = JSON.parse(readFileSync(`${caseDir}/semantic-gold.final.results.json`, "utf8"));
   const strict = JSON.parse(readFileSync(`${caseDir}/strict-route-contract.final.results.json`, "utf8"));
   const router = JSON.parse(readFileSync(`${caseDir}/vue-router-responsibility.graph.json`, "utf8"));
+  const routerSfc = JSON.parse(readFileSync(`${caseDir}/router-sfc-responsibility.graph.json`, "utf8"));
   const visual = JSON.parse(readFileSync(`${caseDir}/sfc-visual-responsibility.graph.json`, "utf8"));
   const targetPlan = JSON.parse(readFileSync(`${caseDir}/visual-target.plan.json`, "utf8"));
   const auth = JSON.parse(readFileSync(`${caseDir}/spa-auth-responsibility.graph.json`, "utf8"));
@@ -276,6 +277,14 @@ test("Starmap frozen generated Gold+ preserves Vite SPA route visual auth and AP
   assert.equal(router.metrics.dynamicRoutes, 3);
   assert.equal(router.capabilities.historyMode, true);
   assert.equal(router.capabilities.hashMode, false);
+  assert.equal(routerSfc.kind, "router-to-sfc-responsibility-graph");
+  assert.equal(routerSfc.framework.routerMajor, 4);
+  assert.equal(routerSfc.metrics.routeBindings, 5);
+  assert.equal(routerSfc.metrics.resolvedRoutes, 5);
+  assert.equal(routerSfc.metrics.unresolvedRoutes, 0);
+  assert.equal(routerSfc.routes.every((route: { confidence: string; sfcFile: string | null }) => route.confidence === "high" && route.sfcFile), true);
+  assert.equal(targetPlan.source.routerSfcGraphKind, "router-to-sfc-responsibility-graph");
+  assert.equal(targetPlan.source.routerSfcResolvedRoutes, 5);
   assert.equal(proxy.metrics.astRoutes, 2);
   assert.equal(proxy.metrics.fallbackRoutes, 0);
   assert.equal(visual.apiFixtures.metrics.matchedFixtures, 1);
@@ -350,6 +359,29 @@ async function stopDetachedProcess(child: ChildProcess): Promise<void> {
   if (!graceful) { signal("SIGKILL"); await Promise.race([once(child, "exit"), new Promise((resolve) => setTimeout(resolve, 2_000))]); }
 }
 
+
+test("Starmap generated-target-auto-v2 passes an independent Semantic route contract without claiming visual Gold+", () => {
+  const caseDir = `${root}examples/spa-router-regressions/starmap`;
+  const contract = JSON.parse(readFileSync(`${caseDir}/auto-v2-route-contract.final.results.json`, "utf8"));
+  const manifest = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v2/artifact.manifest.json`, "utf8"));
+  assert.equal(contract.passed, true);
+  assert.equal(contract.scenariosPassed, 6);
+  assert.equal(contract.scenariosTotal, 6);
+  assert.equal(contract.navigationIntegrity.rate, 1);
+  assert.equal(contract.reference.passed, true);
+  assert.equal(contract.generated.passed, true);
+  assert.equal(contract.generated.runtimeErrors, 0);
+  assert.equal(contract.generated.unmockedApiRequests, 0);
+  assert.equal(contract.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  const generatedTransitions = contract.generated.results.flatMap((result: { transitions: Array<{ method: string }> }) => result.transitions.map((transition) => transition.method));
+  assert.equal(generatedTransitions.includes("replaceState"), true);
+  assert.equal(generatedTransitions.includes("pushState"), true);
+  assert.equal(generatedTransitions.includes("popstate"), true);
+  assert.equal(manifest.kind, "generated-target-auto-v2");
+  assert.equal(manifest.fullGeneratedApplication, false);
+  assert.equal(manifest.qualityComparison.routeComparable, true);
+  assert.equal(manifest.qualityComparison.comparable, false);
+});
 
 test("YesPlayMusic automatic router adapter preserves the manual route shell quality contract", () => {
   const caseDir = `${root}examples/spa-router-regressions/yesplaymusic-generated/auto-router`;

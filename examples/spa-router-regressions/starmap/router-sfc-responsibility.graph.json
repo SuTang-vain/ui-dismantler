@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "router-to-sfc-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "framework": {
+    "view": "vue",
+    "router": "vue-router",
+    "routerMajor": 4
+  },
+  "routes": [
+    {
+      "path": "/",
+      "name": "ThemeInput",
+      "routeFile": "router/index.js",
+      "componentExpression": "ThemeInput",
+      "resolution": "static-import",
+      "importBinding": "ThemeInput",
+      "sfcFile": "views/ThemeInput.vue",
+      "dynamic": false,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 10,
+          "pattern": "path: '/'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 12,
+          "pattern": "component: ThemeInput",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 2,
+          "pattern": "import ThemeInput from '../views/ThemeInput.vue'",
+          "detail": "static route component import binding"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/progress/:taskId",
+      "name": "GenerationProgress",
+      "routeFile": "router/index.js",
+      "componentExpression": "GenerationProgress",
+      "resolution": "static-import",
+      "importBinding": "GenerationProgress",
+      "sfcFile": "views/GenerationProgress.vue",
+      "dynamic": false,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 16,
+          "pattern": "path: '/progress/:taskId'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 18,
+          "pattern": "component: GenerationProgress",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 3,
+          "pattern": "import GenerationProgress from '../views/GenerationProgress.vue'",
+          "detail": "static route component import binding"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/review/:taskId",
+      "name": "ReviewPage",
+      "routeFile": "router/index.js",
+      "componentExpression": "ReviewPage",
+      "resolution": "static-import",
+      "importBinding": "ReviewPage",
+      "sfcFile": "views/ReviewPage.vue",
+      "dynamic": false,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 22,
+          "pattern": "path: '/review/:taskId'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 24,
+          "pattern": "component: ReviewPage",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 4,
+          "pattern": "import ReviewPage from '../views/ReviewPage.vue'",
+          "detail": "static route component import binding"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/export/:taskId",
+      "name": "ExportPage",
+      "routeFile": "router/index.js",
+      "componentExpression": "ExportPage",
+      "resolution": "static-import",
+      "importBinding": "ExportPage",
+      "sfcFile": "views/ExportPage.vue",
+      "dynamic": false,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 28,
+          "pattern": "path: '/export/:taskId'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 30,
+          "pattern": "component: ExportPage",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 5,
+          "pattern": "import ExportPage from '../views/ExportPage.vue'",
+          "detail": "static route component import binding"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/profiles",
+      "name": "ModelProfiles",
+      "routeFile": "router/index.js",
+      "componentExpression": "ModelProfiles",
+      "resolution": "static-import",
+      "importBinding": "ModelProfiles",
+      "sfcFile": "views/ModelProfiles.vue",
+      "dynamic": false,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/index.js",
+          "line": 34,
+          "pattern": "path: '/profiles'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 36,
+          "pattern": "component: ModelProfiles",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/index.js",
+          "line": 6,
+          "pattern": "import ModelProfiles from '../views/ModelProfiles.vue'",
+          "detail": "static route component import binding"
+        }
+      ],
+      "reviewReasons": []
+    }
+  ],
+  "unresolved": [],
+  "metrics": {
+    "filesScanned": 23,
+    "routerFiles": 1,
+    "routeBindings": 5,
+    "resolvedRoutes": 5,
+    "dynamicImports": 0,
+    "unresolvedRoutes": 0,
+    "evidenceCount": 15,
+    "scanMs": 5
+  },
+  "reviewReasons": [
+    "route component ownership is derived from router-to-import-to-SFC evidence, not acceptance selectors or visible text",
+    "the graph is review-only and does not authorize copying source implementation"
+  ]
+}

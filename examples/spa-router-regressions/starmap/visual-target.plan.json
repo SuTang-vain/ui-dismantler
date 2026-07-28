@@ -8,7 +8,9 @@
     "routePlanKind": "spa-route-shell-plan",
     "sourceRoot": "<external-starmap-source>",
     "graphComponents": 11,
-    "graphChartComponents": 0
+    "graphChartComponents": 0,
+    "routerSfcGraphKind": "router-to-sfc-responsibility-graph",
+    "routerSfcResolvedRoutes": 5
   },
   "selectorPolicy": {
     "implementationSelectorsIndependent": true,
@@ -3837,6 +3839,7 @@
   "reviewReasons": [
     "the plan proves visual ownership but does not authorize copying the reviewed target implementation",
     "acceptance selectors remain external quality-gate inputs and must not be used as implementation ownership evidence",
+    "route roots use router-to-import-to-SFC evidence; acceptance selectors never determine ownership when the graph is provided; unresolved bindings remain blocked",
     "chart and responsive responsibilities require the same Semantic Gold+ matrix after generation"
   ]
 }

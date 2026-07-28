@@ -15,11 +15,13 @@ import { generateSpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { generateSpaRouteShellArtifact } from "./planning/spa-route-shell-generator.js";
 import { generateSpaRouteShellIntegrationPatch } from "./planning/spa-route-shell-patch.js";
 import { analyzeVueRouterResponsibility } from "./planning/vue-router-responsibility.js";
+import { analyzeRouterToSfcResponsibilities } from "./planning/router-sfc-responsibility.js";
 import { generateVueRouterIntegrationPatch } from "./planning/vue-router-patch.js";
 import { analyzeEChartsResponsibilities } from "./planning/echarts-responsibility.js";
 import { analyzeSfcVisualResponsibilities, type SfcVisualResponsibilityGraph } from "./planning/sfc-visual-responsibility.js";
 import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visual-target-plan.js";
 import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
+import { generateGeneratedTargetAutoV2 } from "./planning/generated-target-auto-v2.js";
 import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "./planning/api-fixture-responsibility.js";
 import { analyzeSpaAuthResponsibilities } from "./planning/spa-auth-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
@@ -27,6 +29,11 @@ import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
 function has(args: string[], name: string): boolean { return args.includes(name); }
+function optionalNonNegativeNumber(args: string[], name: string): number | undefined {
+  const raw = flag(args, name); if (raw === undefined) return undefined;
+  const value = Number(raw); if (!Number.isFinite(value) || value < 0) throw new Error(`${name} 必须是非负数字`);
+  return value;
+}
 function parseNonNegativeInt(args: string[], name: string): number | undefined {
   const raw = flag(args, name);
   if (raw === undefined) return undefined;
@@ -43,7 +50,8 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]
+  visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -149,6 +157,16 @@ async function main(argv: string[]): Promise<number> {
       for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
       return graph.blockers.length > 0 ? 1 : 0;
     }
+    if (command === "spa-router-sfc-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("spa-router-sfc-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeRouterToSfcResponsibilities(resolve(sourceRoot));
+      const serializable = { ...graph, sourceRoot: "<external-source>" };
+      await writeFile(resolve(out), `${JSON.stringify(serializable, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 Router-to-SFC responsibility graph: ${resolve(out)}`);
+      console.log(`  files=${graph.metrics.filesScanned}，routes=${graph.metrics.routeBindings}，resolved=${graph.metrics.resolvedRoutes}，dynamic=${graph.metrics.dynamicImports}，unresolved=${graph.metrics.unresolvedRoutes}，reviewRequired=${graph.reviewRequired}`);
+      return graph.metrics.unresolvedRoutes > 0 ? 1 : 0;
+    }
     if (command === "spa-vue-router-patch") {
       const sourceRoot = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");
       if (!sourceRoot || !sourcePath || !outDir) throw new Error("spa-vue-router-patch 需要 <source-root>、--source 和 --out-dir");
@@ -199,6 +217,52 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，apiFixtures=${graph.apiFixtures?.metrics.matchedFixtures ?? 0}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
       for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
       return graph.blockers.length > 0 ? 1 : 0;
+    }
+    if (command === "visual-target-auto-v2") {
+      const planPath = args[0], routeShellPath = flag(args, "--route-shell"), routerSfcPath = flag(args, "--router-sfc");
+      const sfcVisualPath = flag(args, "--sfc-visual"), spaAuthPath = flag(args, "--spa-auth"), transportProxyPath = flag(args, "--transport-proxy"), outDir = flag(args, "--out-dir");
+      if (!planPath || !routeShellPath || !routerSfcPath || !sfcVisualPath || !spaAuthPath || !transportProxyPath || !outDir) throw new Error("visual-target-auto-v2 需要 visual plan、route shell、router-SFC、SFC visual、SPA auth、transport proxy 和 --out-dir");
+      const visualPlan = JSON.parse(await readFile(resolve(planPath), "utf8")) as VisualTargetPlan;
+      const routePlan = JSON.parse(await readFile(resolve(routeShellPath), "utf8")) as SpaRouteShellPlan;
+      const routerSfc = JSON.parse(await readFile(resolve(routerSfcPath), "utf8")) as import("./planning/router-sfc-responsibility.js").RouterSfcResponsibilityGraph;
+      const sfcVisual = JSON.parse(await readFile(resolve(sfcVisualPath), "utf8")) as SfcVisualResponsibilityGraph;
+      const spaAuth = JSON.parse(await readFile(resolve(spaAuthPath), "utf8"));
+      const transportProxy = JSON.parse(await readFile(resolve(transportProxyPath), "utf8"));
+      if (routerSfc.metrics.unresolvedRoutes > 0 || visualPlan.metrics.unresolvedRoutes > 0) throw new Error(`auto-v2 dispatch blocked: routerSfc=${routerSfc.metrics.unresolvedRoutes}, visualPlan=${visualPlan.metrics.unresolvedRoutes}`);
+      const readOptionalReport = async (name: string): Promise<unknown> => { const path = flag(args, name); return path ? JSON.parse(await readFile(resolve(path), "utf8")) : undefined; };
+      const startedAt = performance.now();
+      const bundle = { routePlan, visualPlan, routerSfc, sfcVisual, apiFixture: sfcVisual.apiFixtures, spaAuth, transportProxy };
+      const artifact = generateGeneratedTargetAutoV2(bundle, {
+        manualQualityReport: await readOptionalReport("--manual-report"), generatedQualityReport: await readOptionalReport("--generated-report"),
+        manualEditedLines: optionalNonNegativeNumber(args, "--manual-edited-lines"), repairIterations: optionalNonNegativeNumber(args, "--repair-iterations"),
+      });
+      const generationMs = Number((performance.now() - startedAt).toFixed(3)); artifact.metrics.generationMs = generationMs; artifact.costComparison.autoV2FirstPass.generationMs = generationMs;
+      const absoluteOutDir = resolve(outDir);
+      for (const generated of artifact.files) { const destination = resolve(absoluteOutDir, generated.path); await mkdir(resolve(destination, ".."), { recursive: true }); await writeFile(destination, generated.content, "utf8"); }
+      await writeFile(resolve(absoluteOutDir, "artifact.manifest.json"), `${JSON.stringify({ ...artifact, files: artifact.files.map(({ path, lines }) => ({ path, lines })) }, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "generation.metrics.json"), `${JSON.stringify({ ...artifact.metrics, schemaVersion: "1.0", phase: "generated-target-auto-v2", deterministic: true, reviewRequired: true }, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "experiment.comparison.json"), `${JSON.stringify({ quality: artifact.qualityComparison, cost: artifact.costComparison }, null, 2)}\n`, "utf8");
+      await writeFile(resolve(absoluteOutDir, "README.md"), `# Generated target auto-v2
+
+Responsibility-guided route and visual-owner shell.
+
+- model calls: 0
+- manual edits: 0
+- route entries: ${artifact.metrics.routeEntries}
+- visual owners: ${artifact.metrics.visualOwners}
+- generated lines: ${artifact.metrics.generatedLines}
+- generated bytes: ${artifact.metrics.generatedBytes}
+- compiled visual nodes: ${artifact.metrics.generatedVisualNodes}
+- interaction bindings: ${artifact.metrics.generatedInteractionBindings}
+- review required: true
+- full generated application: false
+- visual equivalence claimed: ${artifact.qualityComparison.comparable && artifact.qualityComparison.generated.passed === true ? "quality-report supplied; inspect formal gates" : "no"}
+
+The artifact consumes Router-to-SFC, SFC visual, API fixture, SPA auth, transport proxy, and route-shell responsibility evidence. It must pass Semantic and Gold+ before any fidelity claim.
+`, "utf8");
+      console.log(`✓ 已生成 generated-target-auto-v2: ${absoluteOutDir}`);
+      console.log(`  routes=${artifact.metrics.routeEntries}，owners=${artifact.metrics.visualOwners}，lines=${artifact.metrics.generatedLines}，nodes=${artifact.metrics.generatedVisualNodes}，bindings=${artifact.metrics.generatedInteractionBindings}，modelCalls=0，manualEdits=0，generationMs=${generationMs}，qualityComparable=${artifact.qualityComparison.comparable}`);
+      return 0;
     }
     if (command === "visual-target-generate") {
       const planPath = args[0], routeShellPath = flag(args, "--route-shell"), outDir = flag(args, "--out-dir");
@@ -251,8 +315,10 @@ Run Semantic navigation before visual Gold+. Formal measured iterations and rema
       if (!graphPath || !routeShellPath || !out) throw new Error("visual-target-plan 需要 <sfc-visual.graph.json>、--route-shell 和 --out");
       const graph = JSON.parse(await readFile(resolve(graphPath), "utf8")) as SfcVisualResponsibilityGraph;
       const routePlan = JSON.parse(await readFile(resolve(routeShellPath), "utf8")) as SpaRouteShellPlan;
+      const routerSfcPath = flag(args, "--router-sfc");
+      const routerSfcGraph = routerSfcPath ? JSON.parse(await readFile(resolve(routerSfcPath), "utf8")) as import("./planning/router-sfc-responsibility.js").RouterSfcResponsibilityGraph : undefined;
       const startedAt = performance.now();
-      const plan = generateVisualTargetPlan(graph, routePlan);
+      const plan = generateVisualTargetPlan(graph, routePlan, routerSfcGraph);
       const generationMs = Number((performance.now() - startedAt).toFixed(3));
       await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
       const metricsOut = flag(args, "--metrics-out");

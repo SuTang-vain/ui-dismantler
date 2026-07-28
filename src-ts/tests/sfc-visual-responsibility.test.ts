@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { analyzeEChartsResponsibilities } from "../planning/echarts-responsibility.js";
 import { analyzeSfcVisualResponsibilities } from "../planning/sfc-visual-responsibility.js";
+import { analyzeRouterToSfcResponsibilities } from "../planning/router-sfc-responsibility.js";
+import { generateGeneratedTargetAutoV2 } from "../planning/generated-target-auto-v2.js";
 
 function fixture(): string {
   const root = mkdtempSync(join(tmpdir(), "ui-dismantler-sfc-"));
@@ -104,6 +106,73 @@ test("visual target planner derives reviewed page/component/chart boundaries wit
 });
 
 import { generateVisualTargetArtifact } from "../planning/visual-target-generator.js";
+
+test("visual target planner prefers router-to-SFC ownership over route acceptance heuristics", () => {
+  const root = fixture();
+  try {
+    mkdirSync(join(root, "router"), { recursive: true });
+    writeFileSync(join(root, "router", "index.js"), `import DashboardAdmin from '../views/dashboard/index.vue'
+const routes=[{path:'/dashboard',name:'Dashboard',component:DashboardAdmin}]
+export default routes`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const routerGraph = analyzeRouterToSfcResponsibilities(root);
+    const routePlan: SpaRouteShellPlan = {
+      schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
+      source: { mode: "reference-generated", configScenarios: 1, reportIncluded: true, reportPassed: true },
+      routes: [{ route: "/#/dashboard", pattern: "/#/dashboard", scenarios: ["dashboard"], entry: true, final: true,
+        assertions: [{ scenarioId: "dashboard", visibleSelector: ".not-source-owned", visibleText: "Dashboard" }],
+        visualStates: [{ scenarioId: "dashboard", anchor: ".not-source-owned", region: ".not-source-owned", styleTargets: [".not-source-owned"], viewports: ["desktop"] }] }],
+      transitions: [], selectorMappings: [], fixtureDependencies: [],
+      capabilities: { historyBack: false, historyForward: false, reload: false, dynamicInputRoutes: false, roleSpecificSelectors: false, reviewedVisualStates: 1 },
+      measurementTemplate: { modelCalls: null, generationMs: null, manualEdits: null, manualEditedLines: null, repairIterations: null, qualityRuns: null }, reviewReasons: [],
+    };
+    const plan = generateVisualTargetPlan(graph, routePlan, routerGraph);
+    assert.equal(plan.metrics.unresolvedRoutes, 0);
+    assert.equal(plan.owners.find((owner) => owner.id === plan.boundaries[0].rootOwnerId)?.sourceFile, "views/dashboard/index.vue");
+    assert.equal(plan.source.routerSfcGraphKind, "router-to-sfc-responsibility-graph");
+    assert.equal(plan.reviewReasons.some((reason) => reason.includes("router-to-import-to-SFC")), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("generated-target-auto-v2 consumes router and responsibility evidence without claiming Gold+", () => {
+  const root = fixture();
+  try {
+    mkdirSync(join(root, "router"), { recursive: true });
+    writeFileSync(join(root, "router", "index.js"), `import DashboardAdmin from '../views/dashboard/index.vue'
+const routes=[{path:'/dashboard',name:'Dashboard',component:DashboardAdmin}]
+export default routes`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const routerSfc = analyzeRouterToSfcResponsibilities(root);
+    const routePlan: SpaRouteShellPlan = {
+      schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
+      source: { mode: "reference-generated", configScenarios: 1, reportIncluded: true, reportPassed: true },
+      routes: [{ route: "/#/dashboard", pattern: "/#/dashboard", scenarios: ["dashboard"], entry: true, final: true, assertions: [], visualStates: [{ scenarioId: "dashboard", styleTargets: [], viewports: ["desktop"] }] }],
+      transitions: [], selectorMappings: [], fixtureDependencies: [], capabilities: { historyBack: false, historyForward: false, reload: false, dynamicInputRoutes: false, roleSpecificSelectors: false, reviewedVisualStates: 1 },
+      measurementTemplate: { modelCalls: null, generationMs: null, manualEdits: null, manualEditedLines: null, repairIterations: null, qualityRuns: null }, reviewReasons: [],
+    };
+    const plan = generateVisualTargetPlan(graph, routePlan, routerSfc);
+    const manualReport = { passed: true, navigationIntegrity: { rate: 1 }, visualMatrix: { worstComputedStyle: 1, worstPixelDiff: 0.01, stabilityFailures: 0 }, runtimeErrors: 0, requiredNetworkFailures: 0, telemetry: { activeHandlesAfterClose: { totalBlockingHandles: 0 } } };
+    const artifact = generateGeneratedTargetAutoV2({ routePlan, visualPlan: plan, routerSfc, sfcVisual: graph, spaAuth: { metrics: { chains: 1 } }, transportProxy: { metrics: { routes: 1 } } }, { manualQualityReport: manualReport, manualEditedLines: 17, repairIterations: 2, generationMs: 3.5 });
+    assert.equal(artifact.kind, "generated-target-auto-v2");
+    assert.equal(artifact.fullGeneratedApplication, false);
+    assert.equal(artifact.metrics.routeEntries, 1);
+    assert.equal(artifact.metrics.visualOwners > 0, true);
+    assert.equal(artifact.metrics.generatedVisualNodes > artifact.metrics.visualOwners, true);
+    assert.equal(artifact.metrics.generatedInteractionBindings > 0, true);
+    assert.equal(artifact.source.routerSfcGraphKind, "router-to-sfc-responsibility-graph");
+    assert.equal(artifact.source.sfcVisualMetrics?.components, graph.metrics.components);
+    assert.equal(artifact.costComparison.manualReviewedTarget.manualEditedLines, 17);
+    assert.equal(artifact.costComparison.autoV2FirstPass.manualEditedLines, 0);
+    assert.equal(artifact.qualityComparison.comparable, false);
+    assert.equal(artifact.qualityComparison.routeComparable, false);
+    assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-visual-owner"), true);
+    assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-primitive-node"), true);
+    const server = artifact.files.find((file) => file.path === "server.mjs")?.content ?? "";
+    assert.equal(server.indexOf("const body=await readFile(path)") >= 0, true);
+    assert.equal(server.indexOf("const body=await readFile(path)") < server.indexOf("res.writeHead(200"), true);
+    assert.equal(artifact.limitations.some((item) => item.includes("does not claim visual equivalence")), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
 
 test("visual target generator emits a runnable review-only target without importing the reviewed implementation", () => {
   const root = fixture();

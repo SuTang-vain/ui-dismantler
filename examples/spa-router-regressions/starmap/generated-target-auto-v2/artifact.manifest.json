@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "generated-target-auto-v2",
+  "reviewRequired": true,
+  "fullGeneratedApplication": false,
+  "generatedVisualDom": true,
+  "source": {
+    "routerSfcGraphKind": "router-to-sfc-responsibility-graph",
+    "routeBindings": 5,
+    "resolvedRoutes": 5,
+    "visualBoundaries": 2,
+    "visualOwners": 2,
+    "sfcVisualMetrics": {
+      "filesScanned": 11,
+      "components": 11,
+      "styledComponents": 10,
+      "interactiveComponents": 8,
+      "chartComponents": 0,
+      "mediaQueries": 0,
+      "templateNodes": 281,
+      "elementUiPrimitives": 0,
+      "responsiveGridNodes": 0,
+      "embeddedSvgAssets": 0,
+      "canvasResourceComponents": 0,
+      "webglResourceComponents": 0,
+      "frameDrivenComponents": 0,
+      "compiledStyleSheets": 10,
+      "failedStyleSheets": 0,
+      "staticDataBindings": 88,
+      "dataCardinalities": 9,
+      "scanMs": 24
+    },
+    "apiFixtureMetrics": {
+      "componentsScanned": 11,
+      "importedApiCalls": 41,
+      "matchedEndpoints": 12,
+      "matchedFixtures": 1,
+      "materializedBindings": 1,
+      "renderedFields": 0,
+      "transportPrefixesInferred": 0,
+      "runtimeSelectionsInferred": 0,
+      "proxyRoutesInferred": 0,
+      "proxyTargetsInferred": 0,
+      "proxyRewriteRulesInferred": 0,
+      "proxyAstRoutesInferred": 0,
+      "proxyFallbackRoutesInferred": 0,
+      "proxyParseDiagnostics": 0
+    },
+    "spaAuthMetrics": {
+      "filesScanned": 23,
+      "queryReads": 1,
+      "storageWrites": 3,
+      "storageReads": 2,
+      "authorizationHeaders": 1,
+      "unauthorizedBranches": 1,
+      "redirectNavigations": 1,
+      "completeQueryStorageAuthorizationChains": 1
+    },
+    "transportProxyMetrics": {
+      "configFiles": 1,
+      "proxyScopes": 1,
+      "routes": 2,
+      "astRoutes": 2,
+      "fallbackRoutes": 0,
+      "dynamicContextsMaterialized": 1,
+      "diagnostics": 0
+    }
+  },
+  "files": [
+    {
+      "path": "public/index.html",
+      "lines": 1
+    },
+    {
+      "path": "public/app.js",
+      "lines": 99
+    },
+    {
+      "path": "public/styles.css",
+      "lines": 1
+    },
+    {
+      "path": "server.mjs",
+      "lines": 1
+    }
+  ],
+  "metrics": {
+    "generatedFiles": 4,
+    "generatedLines": 102,
+    "generatedBytes": 20207,
+    "routeEntries": 5,
+    "visualBoundaries": 2,
+    "visualOwners": 2,
+    "compiledOwnerRoots": 2,
+    "generatedVisualNodes": 133,
+    "generatedInteractionBindings": 13,
+    "modelCalls": 0,
+    "manualEdits": 0,
+    "manualEditedLines": 0,
+    "repairIterations": 0,
+    "generationMs": 4.94
+  },
+  "qualityComparison": {
+    "comparable": false,
+    "routeComparable": true,
+    "manual": {
+      "available": true,
+      "passed": true,
+      "navigationIntegrity": 1,
+      "computedStyle": 1,
+      "pixelDiff": 0.002519,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0
+    },
+    "generated": {
+      "available": true,
+      "passed": true,
+      "navigationIntegrity": 1,
+      "computedStyle": null,
+      "pixelDiff": null,
+      "runtimeErrors": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": null,
+      "blockingHandlesAfterClose": 0
+    },
+    "generatedMinusManual": {
+      "computedStyle": null,
+      "pixelDiff": null,
+      "navigationIntegrity": 0
+    },
+    "detail": "Semantic route reports are comparable, but generated visual Gold+ fields are absent; no visual-equivalence claim"
+  },
+  "costComparison": {
+    "manualReviewedTarget": {
+      "manualEditedLines": null,
+      "repairIterations": 3
+    },
+    "autoV2FirstPass": {
+      "generatedLines": 102,
+      "generatedBytes": 20207,
+      "manualEditedLines": 0,
+      "repairIterations": 0,
+      "modelCalls": 0,
+      "generationMs": 4.94
+    },
+    "detail": "manual values are reviewed inputs; auto-v2 first-pass values are deterministic generation telemetry"
+  },
+  "limitations": [
+    "auto-v2 is a responsibility-guided route and visual-owner shell, not a full business-page implementation",
+    "router ownership comes from route-to-import-to-SFC evidence; unresolved bindings must block dispatch",
+    "owner roots are compiled from primitive template evidence; unsupported primitives remain explicit review boundaries",
+    "API, auth, and proxy graphs are recorded as evidence inputs; runtime fixture materialization remains a separate reviewed step",
+    "the first Semantic and Gold+ run must be recorded before any manual repair; current artifact does not claim visual equivalence"
+  ]
+}
