@@ -34,10 +34,10 @@
     "generated-target-auto/generation.metrics.json": "cf611315c754c6687e236be3f2dd45615adcbb529a9b2a388ff01c762bbedecc",
     "generated-target-auto/experiment.metrics.json": "7b2acb361f50b8aa84b439d5d8f6c27dc04ae79f1a741352dd5e5f8a78cbb934",
     "visual-target.plan.json": "c92bd8d0f03bd6589ed1119a3881f481972fca5f1f5f621f83c72835addf599d",
-    "reference-generated-semantic.auto-v1.config.json": "9cd77f5a6f2990c0657c65c0b9925a8263f1ab2ff771f9b18ae916cb4948c442",
+    "reference-generated-semantic.auto-v1.config.json": "58c3a9efbba840eb19480451ef10fcea12490a03ed19d1224b95332e43cc511a",
     "generated-target-auto-v1/public/app.js": "1f1631647a0e818bcdb2a73dd38fa574c03f9f81e1f0d3a2ccfd6e55b994f7cc",
     "generated-target-auto-v1/public/styles.css": "fc7d73e0b8fdc6efdc2d3dd2eedff9a487037ae029afa05e1e104310bdbd2683",
-    "generated-target-auto-v1/experiment.metrics.json": "8cc6e8cc579a99281e04c2a32e4b21666911046142747f26b0bc390054ce0be0",
+    "generated-target-auto-v1/experiment.metrics.json": "646227e6814e7173821e5a6ffa12c851e5c260d4097f47fe4b9ab288395e0b97",
     "generated-target-auto-v1/semantic-navigation-reviewed-state-reuse-final.results.json": "ebbd1ea7618e83e292b1f9a668b439b4f87d6534219eb42212f2a56b869d80c8",
     "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-final.results.json": "4d7427ed4f75d0cc4b2c44a717ca29aeb9d3d925ab3c864659cc3989f7b1a0b3",
     "generated-target-auto-v1/semantic-gold-reviewed-state-reuse-coalesced.results.json": "655ed35962bac812542c2df53bc5d3c0cf3feb7c9abc0c3d2458f1fd97092ec4",
@@ -61,6 +61,8 @@
     "generated-target-auto-v1/semantic-gold-setup-overlap-fast-summary.json": "74befad4306b899237451293b4b0a2d09d141bb3f68f27e31538b89056087e96",
     "generated-target-auto-v1/semantic-gold-setup-overlap-fast-control-run-1.results.json": "1067b95a1c1e8607def644da01dc5e4e9428602cacdebc2faf99f16f09568e51",
     "generated-target-auto-v1/semantic-gold-setup-overlap-fast-control-run-2.results.json": "0f3ddceb00018c47a8dcc51f2bac28c51fb247453801fb48b5d1dcedee2cc930",
-    "generated-target-auto-v1/semantic-gold-setup-overlap-fast-control-run-3.results.json": "369bf2a51f978db4b18432518c71984f70147938330e9db0edacc74f15cb6d9e"
+    "generated-target-auto-v1/semantic-gold-setup-overlap-fast-control-run-3.results.json": "369bf2a51f978db4b18432518c71984f70147938330e9db0edacc74f15cb6d9e",
+    "generated-target-auto-v1/semantic-gold-resource-aware-final.results.json": "11d8ee7858615ebfdbaffe33b80c0fb7abdbc0cd2f9a67c1d850dd04f509b0d3",
+    "generated-target-auto-v1/semantic-gold-resource-aware-summary.json": "3f43c16d03b5894083c968af5bc3cd6265cf9a632076980ae21a1f5aa82cb89f"
   }
 }

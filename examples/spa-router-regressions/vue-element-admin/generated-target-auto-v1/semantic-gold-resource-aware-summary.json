@@ -1,0 +1,339 @@
+{
+  "schemaVersion": "1.0",
+  "date": "2026-07-27",
+  "runsPerVariant": 3,
+  "experiment": "resource-aware visual capture scheduler",
+  "qualityThresholdsChanged": false,
+  "browserContextIsolation": true,
+  "variants": {
+    "control": {
+      "passed": 3,
+      "timing": {
+        "totalMs": {
+          "values": [
+            31138.703,
+            30901.976,
+            31098.038
+          ],
+          "median": 31098.038,
+          "mean": 31046.239,
+          "sampleVariance": 16022.27,
+          "sampleStdDev": 126.579,
+          "range": 236.727
+        },
+        "contractMs": {
+          "values": [
+            9765.805,
+            9750.917,
+            9889.189
+          ],
+          "median": 9765.805,
+          "mean": 9801.97,
+          "sampleVariance": 5760.735,
+          "sampleStdDev": 75.9,
+          "range": 138.272
+        },
+        "visualMatrixMs": {
+          "values": [
+            20896.371,
+            20790.287,
+            20836.532
+          ],
+          "median": 20836.532,
+          "mean": 20841.063,
+          "sampleVariance": 2828.854,
+          "sampleStdDev": 53.187,
+          "range": 106.084
+        },
+        "screenshotMs": {
+          "values": [
+            485.696,
+            499.023,
+            454.682
+          ],
+          "median": 485.696,
+          "mean": 479.8,
+          "sampleVariance": 517.6,
+          "sampleStdDev": 22.751,
+          "range": 44.341
+        },
+        "pixelCompareMs": {
+          "values": [
+            443.733,
+            437.55,
+            449.761
+          ],
+          "median": 443.733,
+          "mean": 443.681,
+          "sampleVariance": 37.279,
+          "sampleStdDev": 6.106,
+          "range": 12.211
+        },
+        "signatureScanMs": {
+          "values": [
+            8158.88,
+            7641.478,
+            8695.27
+          ],
+          "median": 8158.88,
+          "mean": 8165.209,
+          "sampleVariance": 277649.44,
+          "sampleStdDev": 526.925,
+          "range": 1053.792
+        },
+        "canvasQueueWaitMs": {
+          "values": [
+            0.007,
+            0.007,
+            0.007
+          ],
+          "median": 0.007,
+          "mean": 0.007,
+          "sampleVariance": 0,
+          "sampleStdDev": 0,
+          "range": 0
+        }
+      },
+      "scheduler": [
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 6,
+          "configuredCanvasConcurrency": 6,
+          "configuredPixelConcurrency": 3,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 4,
+          "maxActiveCanvasCaptures": 4,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 0.832,
+          "captureQueueWaitMs": 0.025,
+          "canvasQueueWaitMs": 0.007,
+          "pixelQueueWaitMs": 0.007
+        },
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 6,
+          "configuredCanvasConcurrency": 6,
+          "configuredPixelConcurrency": 3,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 4,
+          "maxActiveCanvasCaptures": 4,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 1.174,
+          "captureQueueWaitMs": 0.018,
+          "canvasQueueWaitMs": 0.007,
+          "pixelQueueWaitMs": 0.008
+        },
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 6,
+          "configuredCanvasConcurrency": 6,
+          "configuredPixelConcurrency": 3,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 4,
+          "maxActiveCanvasCaptures": 4,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 0.865,
+          "captureQueueWaitMs": 0.017,
+          "canvasQueueWaitMs": 0.007,
+          "pixelQueueWaitMs": 0.006
+        }
+      ],
+      "quality": {
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.01821,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0
+      },
+      "rawEvidence": [
+        {
+          "file": "control-run-1.results.json",
+          "sha256": "71b3ccc5b361d18bd4df4dc018aad3d21fdb9998585a52db2a8074162d061365"
+        },
+        {
+          "file": "control-run-2.results.json",
+          "sha256": "ddfdb5a985bc7ebc66309ac72e3c2bb8751d9780839d54288faa8719c010a4e8"
+        },
+        {
+          "file": "control-run-3.results.json",
+          "sha256": "0770c9d62f86bba5c3e89edc840b153e53cb5ad9aea14a6cd744501034e7b778"
+        }
+      ]
+    },
+    "optimized": {
+      "passed": 3,
+      "timing": {
+        "totalMs": {
+          "values": [
+            31104.229,
+            30511.816,
+            30966.423
+          ],
+          "median": 30966.423,
+          "mean": 30860.823,
+          "sampleVariance": 96101.863,
+          "sampleStdDev": 310.003,
+          "range": 592.413
+        },
+        "contractMs": {
+          "values": [
+            10025.595,
+            9471.547,
+            9880.766
+          ],
+          "median": 9880.766,
+          "mean": 9792.636,
+          "sampleVariance": 82567.469,
+          "sampleStdDev": 287.346,
+          "range": 554.048
+        },
+        "visualMatrixMs": {
+          "values": [
+            20716.15,
+            20666.394,
+            20719.74
+          ],
+          "median": 20716.15,
+          "mean": 20700.761,
+          "sampleVariance": 889.057,
+          "sampleStdDev": 29.817,
+          "range": 53.346
+        },
+        "screenshotMs": {
+          "values": [
+            445.974,
+            476.1,
+            551.117
+          ],
+          "median": 476.1,
+          "mean": 491.064,
+          "sampleVariance": 2931.696,
+          "sampleStdDev": 54.145,
+          "range": 105.143
+        },
+        "pixelCompareMs": {
+          "values": [
+            452.162,
+            430.16,
+            445.478
+          ],
+          "median": 445.478,
+          "mean": 442.6,
+          "sampleVariance": 127.234,
+          "sampleStdDev": 11.28,
+          "range": 22.002
+        },
+        "signatureScanMs": {
+          "values": [
+            6647.733,
+            7155.208,
+            7104.735
+          ],
+          "median": 7104.735,
+          "mean": 6969.225,
+          "sampleVariance": 78154.871,
+          "sampleStdDev": 279.562,
+          "range": 507.475
+        },
+        "canvasQueueWaitMs": {
+          "values": [
+            11360.362,
+            11387.814,
+            11423.264
+          ],
+          "median": 11387.814,
+          "mean": 11390.48,
+          "sampleVariance": 994.496,
+          "sampleStdDev": 31.536,
+          "range": 62.902
+        }
+      },
+      "scheduler": [
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 3,
+          "configuredCanvasConcurrency": 2,
+          "configuredPixelConcurrency": 1,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 2,
+          "maxActiveCanvasCaptures": 2,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 0.973,
+          "captureQueueWaitMs": 0.019,
+          "canvasQueueWaitMs": 11360.362,
+          "pixelQueueWaitMs": 0.01
+        },
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 3,
+          "configuredCanvasConcurrency": 2,
+          "configuredPixelConcurrency": 1,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 2,
+          "maxActiveCanvasCaptures": 2,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 1.01,
+          "captureQueueWaitMs": 0.019,
+          "canvasQueueWaitMs": 11387.814,
+          "pixelQueueWaitMs": 0.009
+        },
+        {
+          "configuredViewportConcurrency": 3,
+          "configuredCaptureConcurrency": 3,
+          "configuredCanvasConcurrency": 2,
+          "configuredPixelConcurrency": 1,
+          "maxActiveViewports": 3,
+          "maxActiveContexts": 4,
+          "maxActiveCaptures": 2,
+          "maxActiveCanvasCaptures": 2,
+          "maxActivePixelComparisons": 1,
+          "viewportQueueWaitMs": 0.835,
+          "captureQueueWaitMs": 0.018,
+          "canvasQueueWaitMs": 11423.264,
+          "pixelQueueWaitMs": 0.008
+        }
+      ],
+      "quality": {
+        "worstComputedStyle": 0.9825,
+        "worstPixelDiff": 0.01821,
+        "navigationIntegrity": 1,
+        "runtimeErrors": 0,
+        "requiredNetworkFailures": 0,
+        "stabilityFailures": 0,
+        "blockingHandlesAfterClose": 0
+      },
+      "rawEvidence": [
+        {
+          "file": "optimized-run-1.results.json",
+          "sha256": "9e0b4219beb11f5ddff309acee8f3ed680149e5299f21bc8709baef80657805f"
+        },
+        {
+          "file": "optimized-run-2.results.json",
+          "sha256": "0c24debd7595a269d63a0c1475fa9126504cf47e6f4cbf9a30e7197f5d376761"
+        },
+        {
+          "file": "optimized-run-3.results.json",
+          "sha256": "bd6d94f7568c31e6516862cb4929f78a7c036d820f84f4e29cc922de9b3a0f21"
+        }
+      ]
+    }
+  },
+  "improvement": {
+    "totalMedianPercent": -0.42,
+    "visualMatrixMedianPercent": -0.58,
+    "visualMatrixStdDevPercent": -43.94,
+    "visualMatrixRangePercent": -49.71
+  },
+  "decision": {
+    "keep": true,
+    "rationale": "Caps Canvas/ECharts capture concurrency at two and pixel comparison at one. Median visual wall time improves slightly while visual-matrix standard deviation and range decrease materially. Contract variance remains independent of the visual scheduler."
+  },
+  "rawEvidencePolicy": "Raw A/B reports remain outside Git; hashes are retained here. Git stores the summary and one final formal Gold+ report."
+}

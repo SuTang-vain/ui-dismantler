@@ -112,6 +112,8 @@ export interface SpaRouterReviewedSetupState {
 export interface SpaRouterScenarioVisualState {
   /** Reviewed viewport ids for this route state. Omit to execute on every configured viewport. */
   viewports?: string[];
+  /** Reviewed resource classification used only for conservative capture scheduling. */
+  resourceProfile?: "dom" | "canvas";
   /** Scroll alignment target; capture remains viewport-wide unless screenshotRegion is also supplied. */
   screenshotAnchor?: SpaRouterRoleSelector;
   /** Reviewed visual responsibility region. When supplied, pixels are captured only inside this element. */
@@ -146,6 +148,12 @@ export interface SpaRouterVisualMatrixConfig {
 export interface SpaRouterExecutionConfig {
   contractConcurrency?: number;
   visualConcurrency?: number;
+  /** Maximum simultaneous target captures after navigation; defaults to visualConcurrency * 2. */
+  visualCaptureConcurrency?: number;
+  /** Maximum simultaneous Canvas/ECharts captures; defaults to visualCaptureConcurrency. */
+  visualCanvasConcurrency?: number;
+  /** Maximum simultaneous PNG comparisons; defaults to visualConcurrency. */
+  visualPixelConcurrency?: number;
   /** Per-action locator timeout. Execution failures are reported on the scenario instead of aborting the full matrix. */
   actionTimeoutMs?: number;
   browserShutdown?: "graceful" | "fast-kill";
@@ -197,6 +205,7 @@ export interface SpaRouterStepRoute {
 }
 
 export interface SpaRouterScenarioTiming {
+  queueWaitMs: number;
   contextCreateMs: number;
   instrumentationMs: number;
   routeRegistrationMs: number;
@@ -209,8 +218,72 @@ export interface SpaRouterScenarioTiming {
   checkpointVerificationMs: number;
   assertionMs: number;
   visualCaptureMs: number;
+  contextCloseMs: number;
   totalMs: number;
   steps: Array<{ stepIndex: number; action: SpaRouterStep["action"]; durationMs: number; setupPrefix: boolean }>;
+}
+
+
+export interface SpaRouterVisualStabilityTelemetry {
+  resourceReadinessMs: number;
+  signatureScanMs: number;
+  networkProbeMs: number;
+  samples: number;
+  stableFrameSamples: number;
+  mutationBlockedSamples: number;
+  resizeBlockedSamples: number;
+  canvasBlockedSamples: number;
+  layoutBlockedSamples: number;
+  networkBlockedSamples: number;
+}
+
+export interface SpaRouterVisualCaptureTiming {
+  captureQueueWaitMs: number;
+  canvasQueueWaitMs: number;
+  preAnchorStabilityMs: number;
+  anchorMs: number;
+  postAnchorStabilityMs: number;
+  computedStyleMs: number;
+  screenshotMs: number;
+  totalMs: number;
+}
+
+export interface SpaRouterVisualViewportTiming {
+  queueWaitMs: number;
+  referenceTargetMs: number;
+  generatedTargetMs: number;
+  contextCreateMs: number;
+  navigationMs: number;
+  initialSettleMs: number;
+  scenarioStepsMs: number;
+  assertionMs: number;
+  contextCloseMs: number;
+  captureQueueWaitMs: number;
+  canvasQueueWaitMs: number;
+  preAnchorStabilityMs: number;
+  anchorMs: number;
+  postAnchorStabilityMs: number;
+  computedStyleMs: number;
+  screenshotMs: number;
+  pixelQueueWaitMs: number;
+  pixelCompareMs: number;
+  totalMs: number;
+}
+
+export interface SpaRouterVisualSchedulerTelemetry {
+  configuredViewportConcurrency: number;
+  configuredCaptureConcurrency: number;
+  configuredCanvasConcurrency: number;
+  configuredPixelConcurrency: number;
+  maxActiveViewports: number;
+  maxActiveContexts: number;
+  maxActiveCaptures: number;
+  maxActiveCanvasCaptures: number;
+  maxActivePixelComparisons: number;
+  viewportQueueWaitMs: number;
+  captureQueueWaitMs: number;
+  canvasQueueWaitMs: number;
+  pixelQueueWaitMs: number;
 }
 
 export interface SpaRouterSetupOwnerTiming {
@@ -329,6 +402,8 @@ export interface SpaRouterVisualViewportResult extends QualityViewport {
   referenceSetupStepsSkipped: number;
   generatedSetupStepsSkipped: number;
   canvas: SpaRouterCanvasStabilityTelemetry;
+  stability: SpaRouterVisualStabilityTelemetry;
+  timing: SpaRouterVisualViewportTiming;
   requestClassifications: SpaRouterRequestClassificationCounts;
   durationMs: number;
   navigationPassed: boolean;
@@ -373,6 +448,9 @@ export interface SpaRouterVisualMatrixReport {
   setupStateReusedTargetRuns: number;
   setupStepsSkipped: number;
   canvas: SpaRouterCanvasStabilityTelemetry;
+  stability: SpaRouterVisualStabilityTelemetry;
+  timing: SpaRouterVisualViewportTiming;
+  scheduler: SpaRouterVisualSchedulerTelemetry;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
 
@@ -403,6 +481,9 @@ export interface SpaRouterExecutionTelemetry {
   visualSetupStepsSkipped: number;
   contractSetupOwnerTiming: SpaRouterSetupOwnerTiming;
   visualCanvas: SpaRouterCanvasStabilityTelemetry;
+  visualStability: SpaRouterVisualStabilityTelemetry;
+  visualRunTiming: SpaRouterVisualViewportTiming;
+  visualScheduler: SpaRouterVisualSchedulerTelemetry;
   visualRequestClassifications: SpaRouterRequestClassificationCounts;
   contractConcurrency: number;
   visualConcurrency: number;
@@ -473,6 +554,8 @@ interface SpaRouterVisualCapture {
   postAnchorWaitMs: number;
   postAnchorSkipped: boolean;
   canvas: SpaRouterCanvasStabilityTelemetry;
+  stability: SpaRouterVisualStabilityTelemetry;
+  timing: SpaRouterVisualCaptureTiming;
   reusedStateKey?: string;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
@@ -543,6 +626,145 @@ function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemet
     total.zrenderCompletionSignals += entry.zrenderCompletionSignals;
   }
   return total;
+}
+
+function emptyVisualStabilityTelemetry(): SpaRouterVisualStabilityTelemetry {
+  return {
+    resourceReadinessMs: 0, signatureScanMs: 0, networkProbeMs: 0, samples: 0, stableFrameSamples: 0,
+    mutationBlockedSamples: 0, resizeBlockedSamples: 0, canvasBlockedSamples: 0, layoutBlockedSamples: 0, networkBlockedSamples: 0,
+  };
+}
+
+function addVisualStabilityTelemetry(...entries: SpaRouterVisualStabilityTelemetry[]): SpaRouterVisualStabilityTelemetry {
+  const total = emptyVisualStabilityTelemetry();
+  for (const entry of entries) {
+    for (const key of Object.keys(total) as Array<keyof SpaRouterVisualStabilityTelemetry>) {
+      total[key] = Number((total[key] + entry[key]).toFixed(3));
+    }
+  }
+  return total;
+}
+
+function emptyVisualCaptureTiming(): SpaRouterVisualCaptureTiming {
+  return { captureQueueWaitMs: 0, canvasQueueWaitMs: 0, preAnchorStabilityMs: 0, anchorMs: 0, postAnchorStabilityMs: 0, computedStyleMs: 0, screenshotMs: 0, totalMs: 0 };
+}
+
+function addVisualCaptureTiming(...entries: SpaRouterVisualCaptureTiming[]): SpaRouterVisualCaptureTiming {
+  const total = emptyVisualCaptureTiming();
+  for (const entry of entries) for (const key of Object.keys(total) as Array<keyof SpaRouterVisualCaptureTiming>) total[key] = Number((total[key] + entry[key]).toFixed(3));
+  return total;
+}
+
+function emptyVisualViewportTiming(): SpaRouterVisualViewportTiming {
+  return {
+    queueWaitMs: 0, referenceTargetMs: 0, generatedTargetMs: 0, contextCreateMs: 0, navigationMs: 0, initialSettleMs: 0,
+    scenarioStepsMs: 0, assertionMs: 0, contextCloseMs: 0, captureQueueWaitMs: 0, canvasQueueWaitMs: 0,
+    preAnchorStabilityMs: 0, anchorMs: 0, postAnchorStabilityMs: 0, computedStyleMs: 0, screenshotMs: 0,
+    pixelQueueWaitMs: 0, pixelCompareMs: 0, totalMs: 0,
+  };
+}
+
+function addVisualViewportTiming(...entries: SpaRouterVisualViewportTiming[]): SpaRouterVisualViewportTiming {
+  const total = emptyVisualViewportTiming();
+  for (const entry of entries) for (const key of Object.keys(total) as Array<keyof SpaRouterVisualViewportTiming>) total[key] = Number((total[key] + entry[key]).toFixed(3));
+  return total;
+}
+
+interface SemaphoreLease { waitMs: number; release: () => void; }
+
+class AuditedSemaphore {
+  private active = 0;
+  private readonly waiting: Array<() => void> = [];
+  maxActive = 0;
+  totalWaitMs = 0;
+
+  constructor(readonly capacity: number) {}
+
+  async acquire(): Promise<SemaphoreLease> {
+    const startedAt = performance.now();
+    if (this.active < this.capacity) this.active += 1;
+    else await new Promise<void>((resolveWaiter) => this.waiting.push(resolveWaiter));
+    this.maxActive = Math.max(this.maxActive, this.active);
+    const waitMs = Number((performance.now() - startedAt).toFixed(3));
+    this.totalWaitMs = Number((this.totalWaitMs + waitMs).toFixed(3));
+    let released = false;
+    return {
+      waitMs,
+      release: () => {
+        if (released) return;
+        released = true;
+        const next = this.waiting.shift();
+        if (next) next();
+        else this.active -= 1;
+      },
+    };
+  }
+}
+
+class SpaVisualResourceScheduler {
+  readonly capture: AuditedSemaphore;
+  readonly canvas: AuditedSemaphore;
+  readonly pixel: AuditedSemaphore;
+  private activeViewports = 0;
+  private activeContexts = 0;
+  maxActiveViewports = 0;
+  maxActiveContexts = 0;
+  viewportQueueWaitMs = 0;
+
+  constructor(readonly viewportConcurrency: number, captureConcurrency: number, canvasConcurrency: number, pixelConcurrency: number) {
+    this.capture = new AuditedSemaphore(captureConcurrency);
+    this.canvas = new AuditedSemaphore(canvasConcurrency);
+    this.pixel = new AuditedSemaphore(pixelConcurrency);
+  }
+
+  viewportStarted(queueWaitMs: number): void {
+    this.viewportQueueWaitMs = Number((this.viewportQueueWaitMs + queueWaitMs).toFixed(3));
+    this.activeViewports += 1;
+    this.maxActiveViewports = Math.max(this.maxActiveViewports, this.activeViewports);
+  }
+  viewportFinished(): void { this.activeViewports = Math.max(0, this.activeViewports - 1); }
+  contextOpened(): void { this.activeContexts += 1; this.maxActiveContexts = Math.max(this.maxActiveContexts, this.activeContexts); }
+  contextClosed(): void { this.activeContexts = Math.max(0, this.activeContexts - 1); }
+
+  async acquireCapture(profile: "dom" | "canvas"): Promise<{ captureWaitMs: number; canvasWaitMs: number; release: () => void }> {
+    const canvasLease = profile === "canvas" ? await this.canvas.acquire() : undefined;
+    const captureLease = await this.capture.acquire();
+    return {
+      captureWaitMs: captureLease.waitMs,
+      canvasWaitMs: canvasLease?.waitMs ?? 0,
+      release: () => { captureLease.release(); canvasLease?.release(); },
+    };
+  }
+
+  telemetry(): SpaRouterVisualSchedulerTelemetry {
+    return {
+      configuredViewportConcurrency: this.viewportConcurrency,
+      configuredCaptureConcurrency: this.capture.capacity,
+      configuredCanvasConcurrency: this.canvas.capacity,
+      configuredPixelConcurrency: this.pixel.capacity,
+      maxActiveViewports: this.maxActiveViewports,
+      maxActiveContexts: this.maxActiveContexts,
+      maxActiveCaptures: this.capture.maxActive,
+      maxActiveCanvasCaptures: this.canvas.maxActive,
+      maxActivePixelComparisons: this.pixel.maxActive,
+      viewportQueueWaitMs: this.viewportQueueWaitMs,
+      captureQueueWaitMs: this.capture.totalWaitMs,
+      canvasQueueWaitMs: this.canvas.totalWaitMs,
+      pixelQueueWaitMs: this.pixel.totalWaitMs,
+    };
+  }
+}
+
+function emptyVisualSchedulerTelemetry(config: SpaRouterContractConfig): SpaRouterVisualSchedulerTelemetry {
+  const viewport = config.execution?.visualConcurrency ?? 1;
+  return {
+    configuredViewportConcurrency: viewport,
+    configuredCaptureConcurrency: config.execution?.visualCaptureConcurrency ?? viewport * 2,
+    configuredCanvasConcurrency: config.execution?.visualCanvasConcurrency ?? config.execution?.visualCaptureConcurrency ?? viewport * 2,
+    configuredPixelConcurrency: config.execution?.visualPixelConcurrency ?? viewport,
+    maxActiveViewports: 0, maxActiveContexts: 0, maxActiveCaptures: 0, maxActiveCanvasCaptures: 0, maxActivePixelComparisons: 0,
+    viewportQueueWaitMs: 0, captureQueueWaitMs: 0, canvasQueueWaitMs: 0, pixelQueueWaitMs: 0,
+  };
 }
 
 function emptySetupOwnerTiming(): SpaRouterSetupOwnerTiming {
@@ -745,11 +967,20 @@ function validateConfig(config: SpaRouterContractConfig): ReturnType<typeof reso
   const ids = config.scenarios.map((scenario) => scenario.id);
   if (ids.some((id) => !id) || new Set(ids).size !== ids.length) throw new TypeError("SPA Router scenarios 必须包含非空且唯一的 id");
   const mode = resolveMode(config);
-  for (const [name, value] of [["contractConcurrency", config.execution?.contractConcurrency], ["visualConcurrency", config.execution?.visualConcurrency]] as const) {
-    if (value !== undefined && (!Number.isInteger(value) || value < 1 || value > 4)) throw new TypeError(`execution.${name} 必须是 1..4 的整数`);
+  for (const [name, value, maximum] of [
+    ["contractConcurrency", config.execution?.contractConcurrency, 4],
+    ["visualConcurrency", config.execution?.visualConcurrency, 4],
+    ["visualCaptureConcurrency", config.execution?.visualCaptureConcurrency, 8],
+    ["visualCanvasConcurrency", config.execution?.visualCanvasConcurrency, 8],
+    ["visualPixelConcurrency", config.execution?.visualPixelConcurrency, 4],
+  ] as const) {
+    if (value !== undefined && (!Number.isInteger(value) || value < 1 || value > maximum)) throw new TypeError(`execution.${name} 必须是 1..${maximum} 的整数`);
   }
   if (config.execution?.actionTimeoutMs !== undefined && (!Number.isInteger(config.execution.actionTimeoutMs) || config.execution.actionTimeoutMs < 100 || config.execution.actionTimeoutMs > 30_000)) throw new TypeError("execution.actionTimeoutMs 必须是 100..30000 的整数");
   if (config.execution?.browserShutdown && !["graceful", "fast-kill"].includes(config.execution.browserShutdown)) throw new TypeError("execution.browserShutdown 必须是 graceful 或 fast-kill");
+  for (const scenario of config.scenarios) {
+    if (scenario.visual?.resourceProfile && !["dom", "canvas"].includes(scenario.visual.resourceProfile)) throw new TypeError(`scenario ${scenario.id} visual.resourceProfile 必须是 dom 或 canvas`);
+  }
   if (config.navigationComparison && !["strict", "semantic"].includes(config.navigationComparison)) throw new TypeError("navigationComparison 必须是 strict 或 semantic");
   const configuredViewportIds = new Set((config.visualMatrix?.viewports ?? []).map((viewport) => viewport.id));
   for (const scenario of config.scenarios) {
@@ -833,6 +1064,7 @@ interface VisualStabilityResult {
   stabilityFailures: string[];
   adaptiveWaitMs: number;
   canvas: SpaRouterCanvasStabilityTelemetry;
+  telemetry: SpaRouterVisualStabilityTelemetry;
   token: VisualStabilityToken;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
@@ -992,6 +1224,7 @@ async function visibleBlockingRequests(page: Page, requestActivity: RequestActiv
 
 async function settleVisual(page: Page, requestActivity: RequestActivity, config: SpaRouterContractConfig, timeoutMs = 1800, scopeSelector?: string): Promise<VisualStabilityResult> {
   const startedAt = Date.now(), quietWindowMs = 120;
+  const telemetry = emptyVisualStabilityTelemetry();
   await page.evaluate((selector) => {
     const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number }; disconnect: () => void } };
     host.__uiDismantlerSpaVisualScope?.disconnect();
@@ -1007,6 +1240,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
     host.__uiDismantlerSpaVisualScope = { selector: selector ?? "", state, disconnect: () => { mutationObserver.disconnect(); resizeObserver?.disconnect(); } };
   }, scopeSelector ?? "");
   const observedClassifications = new Map<string, SpaRouterRequestClassification>();
+  const resourceReadinessStartedAt = performance.now();
   await page.evaluate(async () => {
     if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
     const visibleImages = [...document.images].filter((image) => {
@@ -1023,6 +1257,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
       ]);
     }));
   });
+  telemetry.resourceReadinessMs = Number((performance.now() - resourceReadinessStartedAt).toFixed(3));
   const baselineToken = await readVisualStabilityToken(page);
   let canvasTelemetry = emptyCanvasStabilityTelemetry();
   const deadline = Date.now() + timeoutMs;
@@ -1030,6 +1265,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
   let lastBlockingRequests: Request[] = [];
   let lastState = { mutationQuiet: false, resizeQuiet: false, canvasQuiet: false, layoutStable: false, networkQuiet: false };
   while (Date.now() < deadline) {
+    const signatureStartedAt = performance.now();
     const sample = await page.evaluate((quietMs) => {
       type CanvasCacheEntry = { version: number; width: number; height: number; hash: number | string };
       const host = globalThis as typeof globalThis & {
@@ -1121,19 +1357,29 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
         canvasMetrics,
       };
     }, quietWindowMs);
+    telemetry.signatureScanMs = Number((telemetry.signatureScanMs + performance.now() - signatureStartedAt).toFixed(3));
+    telemetry.samples += 1;
     canvasTelemetry = addCanvasStabilityTelemetry(canvasTelemetry, { ...sample.canvasMetrics, canvasInvalidations: 0 });
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;
     previousSignature = sample.signature;
+    const networkProbeStartedAt = performance.now();
     const requestDecision = await visibleBlockingRequests(page, requestActivity, config);
+    telemetry.networkProbeMs = Number((telemetry.networkProbeMs + performance.now() - networkProbeStartedAt).toFixed(3));
     lastBlockingRequests = requestDecision.blocking;
     for (const [key, classification] of requestDecision.classifications) observedClassifications.set(key, classification);
     const networkQuiet = lastBlockingRequests.length === 0;
     lastState = { mutationQuiet: sample.mutationQuiet, resizeQuiet: sample.resizeQuiet, canvasQuiet: sample.canvasQuiet, layoutStable: stableSamples >= 2, networkQuiet };
+    telemetry.stableFrameSamples = stableSamples;
+    if (!lastState.mutationQuiet) telemetry.mutationBlockedSamples += 1;
+    if (!lastState.resizeQuiet) telemetry.resizeBlockedSamples += 1;
+    if (!lastState.canvasQuiet) telemetry.canvasBlockedSamples += 1;
+    if (!lastState.layoutStable) telemetry.layoutBlockedSamples += 1;
+    if (!lastState.networkQuiet) telemetry.networkBlockedSamples += 1;
     if (lastState.mutationQuiet && lastState.resizeQuiet && lastState.canvasQuiet && lastState.layoutStable && lastState.networkQuiet) {
       await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
       const token = await readVisualStabilityToken(page);
       canvasTelemetry.canvasInvalidations = Math.max(0, token.canvasInvalidations - baselineToken.canvasInvalidations);
-      return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+      return { stabilityFailures: [], adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, telemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
     }
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
@@ -1147,7 +1393,7 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
   await page.evaluate(() => (globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { disconnect: () => void } }).__uiDismantlerSpaVisualScope?.disconnect());
   const token = await readVisualStabilityToken(page);
   canvasTelemetry.canvasInvalidations = Math.max(0, token.canvasInvalidations - baselineToken.canvasInvalidations);
-  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
+  return { stabilityFailures, adaptiveWaitMs: Date.now() - startedAt, canvas: canvasTelemetry, telemetry, token, requestClassifications: countRequestClassifications(observedClassifications.values()) };
 }
 
 async function executeStep(page: Page, step: SpaRouterStep, role: SpaRouterTargetRole): Promise<void> {
@@ -1237,65 +1483,101 @@ async function normalizeScrollAnchor(page: Page, visual: SpaRouterScenarioVisual
   return selector;
 }
 
-async function captureVisualState(page: Page, visual: SpaRouterScenarioVisualState, role: SpaRouterTargetRole, requestActivity: RequestActivity, config: SpaRouterContractConfig, stabilityTimeoutMs?: number): Promise<SpaRouterVisualCapture> {
-  const stabilityScope = valueForRole(visual.screenshotRegion, role);
-  const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
-  const anchor = await normalizeScrollAnchor(page, visual, role);
-  const postAnchorToken = await readVisualStabilityToken(page);
-  const postAnchorSkipped = sameVisualStabilityToken(preAnchorStability.token, postAnchorToken) && requestActivity.active.size === 0;
-  const postAnchorStability = postAnchorSkipped
-    ? { stabilityFailures: [], adaptiveWaitMs: 0, canvas: emptyCanvasStabilityTelemetry(), token: postAnchorToken, requestClassifications: emptyRequestClassificationCounts() }
-    : await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
-  const stability = {
-    stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
-    adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
-    preAnchorWaitMs: preAnchorStability.adaptiveWaitMs,
-    postAnchorWaitMs: postAnchorStability.adaptiveWaitMs,
-    postAnchorSkipped,
-    canvas: addCanvasStabilityTelemetry(preAnchorStability.canvas, postAnchorStability.canvas),
-    requestClassifications: addRequestClassificationCounts(preAnchorStability.requestClassifications, postAnchorStability.requestClassifications),
-  };
-  const targets = visual.styleTargets?.length ? visual.styleTargets : [{ id: "document-body", selector: "body" }];
-  const failures: string[] = [];
-  const styles: ComputedStyleSnapshot[] = [];
-  for (const target of targets) {
-    const selector = valueForRole(target.selector, role);
-    if (!selector) { failures.push(`style target ${target.id} 缺少 ${role} selector`); continue; }
-    const snapshot = await page.locator(selector).first().evaluate((element, input) => {
-      const computed = getComputedStyle(element), rect = element.getBoundingClientRect();
-      return {
-        key: input.id, tag: element.tagName.toLowerCase(), id: input.id, classes: [input.id], selector: input.selector,
-        rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-        styles: Object.fromEntries(input.properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
-      };
-    }, { id: target.id, selector, properties: [...COMPUTED_STYLE_PROPERTIES] }).catch(() => null);
-    if (snapshot) styles.push(snapshot);
-    else failures.push(`style target ${target.id} 未命中 selector=${selector}`);
+async function captureVisualState(
+  page: Page,
+  visual: SpaRouterScenarioVisualState,
+  role: SpaRouterTargetRole,
+  requestActivity: RequestActivity,
+  config: SpaRouterContractConfig,
+  stabilityTimeoutMs?: number,
+  scheduler?: SpaVisualResourceScheduler,
+): Promise<SpaRouterVisualCapture> {
+  const startedAt = performance.now();
+  const timing = emptyVisualCaptureTiming();
+  const profile = visual.resourceProfile ?? "dom";
+  const lease = scheduler ? await scheduler.acquireCapture(profile) : undefined;
+  timing.captureQueueWaitMs = lease?.captureWaitMs ?? 0;
+  timing.canvasQueueWaitMs = lease?.canvasWaitMs ?? 0;
+  try {
+    const stabilityScope = valueForRole(visual.screenshotRegion, role);
+    let phaseStartedAt = performance.now();
+    const preAnchorStability = await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
+    timing.preAnchorStabilityMs = Number((performance.now() - phaseStartedAt).toFixed(3));
+
+    phaseStartedAt = performance.now();
+    const anchor = await normalizeScrollAnchor(page, visual, role);
+    timing.anchorMs = Number((performance.now() - phaseStartedAt).toFixed(3));
+
+    const postAnchorToken = await readVisualStabilityToken(page);
+    const postAnchorSkipped = sameVisualStabilityToken(preAnchorStability.token, postAnchorToken) && requestActivity.active.size === 0;
+    phaseStartedAt = performance.now();
+    const postAnchorStability = postAnchorSkipped
+      ? { stabilityFailures: [], adaptiveWaitMs: 0, canvas: emptyCanvasStabilityTelemetry(), telemetry: emptyVisualStabilityTelemetry(), token: postAnchorToken, requestClassifications: emptyRequestClassificationCounts() }
+      : await settleVisual(page, requestActivity, config, stabilityTimeoutMs, stabilityScope);
+    timing.postAnchorStabilityMs = Number((performance.now() - phaseStartedAt).toFixed(3));
+
+    const stability = {
+      stabilityFailures: [...preAnchorStability.stabilityFailures, ...postAnchorStability.stabilityFailures],
+      adaptiveWaitMs: preAnchorStability.adaptiveWaitMs + postAnchorStability.adaptiveWaitMs,
+      preAnchorWaitMs: preAnchorStability.adaptiveWaitMs,
+      postAnchorWaitMs: postAnchorStability.adaptiveWaitMs,
+      postAnchorSkipped,
+      canvas: addCanvasStabilityTelemetry(preAnchorStability.canvas, postAnchorStability.canvas),
+      telemetry: addVisualStabilityTelemetry(preAnchorStability.telemetry, postAnchorStability.telemetry),
+      requestClassifications: addRequestClassificationCounts(preAnchorStability.requestClassifications, postAnchorStability.requestClassifications),
+    };
+
+    phaseStartedAt = performance.now();
+    const targets = visual.styleTargets?.length ? visual.styleTargets : [{ id: "document-body", selector: "body" }];
+    const failures: string[] = [];
+    const styles: ComputedStyleSnapshot[] = [];
+    for (const target of targets) {
+      const selector = valueForRole(target.selector, role);
+      if (!selector) { failures.push(`style target ${target.id} 缺少 ${role} selector`); continue; }
+      const snapshot = await page.locator(selector).first().evaluate((element, input) => {
+        const computed = getComputedStyle(element), rect = element.getBoundingClientRect();
+        return {
+          key: input.id, tag: element.tagName.toLowerCase(), id: input.id, classes: [input.id], selector: input.selector,
+          rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+          styles: Object.fromEntries(input.properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
+        };
+      }, { id: target.id, selector, properties: [...COMPUTED_STYLE_PROPERTIES] }).catch(() => null);
+      if (snapshot) styles.push(snapshot);
+      else failures.push(`style target ${target.id} 未命中 selector=${selector}`);
+    }
+    timing.computedStyleMs = Number((performance.now() - phaseStartedAt).toFixed(3));
+
+    const region = valueForRole(visual.screenshotRegion, role) ?? null;
+    let regionRect: SpaRouterCaptureRect | null = null;
+    if (region) {
+      regionRect = await page.evaluate((selector) => {
+        let element: Element | null = null;
+        try { element = document.querySelector(selector); } catch { return null; }
+        if (!element) return null;
+        const style = getComputedStyle(element), rect = element.getBoundingClientRect();
+        if (style.display === "none" || style.visibility === "hidden" || rect.width <= 0 || rect.height <= 0) return null;
+        const x = Math.max(0, rect.x), y = Math.max(0, rect.y);
+        const width = Math.min(innerWidth - x, rect.right - x), height = Math.min(innerHeight - y, rect.bottom - y);
+        if (width <= 0 || height <= 0) return null;
+        return { x, y, width, height };
+      }, region);
+      if (!regionRect) failures.push(`screenshot region 未命中或不可见 selector=${region}`);
+    }
+
+    phaseStartedAt = performance.now();
+    const screenshot = await page.screenshot({ type: "png", fullPage: false, animations: "disabled", ...(regionRect ? { clip: regionRect } : {}) });
+    timing.screenshotMs = Number((performance.now() - phaseStartedAt).toFixed(3));
+    timing.totalMs = Number((performance.now() - startedAt).toFixed(3));
+    return {
+      screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures],
+      stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs,
+      preAnchorWaitMs: stability.preAnchorWaitMs, postAnchorWaitMs: stability.postAnchorWaitMs,
+      postAnchorSkipped: stability.postAnchorSkipped, canvas: stability.canvas, stability: stability.telemetry, timing,
+      requestClassifications: stability.requestClassifications,
+    };
+  } finally {
+    lease?.release();
   }
-  const region = valueForRole(visual.screenshotRegion, role) ?? null;
-  let regionRect: SpaRouterCaptureRect | null = null;
-  if (region) {
-    regionRect = await page.evaluate((selector) => {
-      let element: Element | null = null;
-      try { element = document.querySelector(selector); } catch { return null; }
-      if (!element) return null;
-      const style = getComputedStyle(element), rect = element.getBoundingClientRect();
-      if (style.display === "none" || style.visibility === "hidden" || rect.width <= 0 || rect.height <= 0) return null;
-      const x = Math.max(0, rect.x), y = Math.max(0, rect.y);
-      const width = Math.min(innerWidth - x, rect.right - x), height = Math.min(innerHeight - y, rect.bottom - y);
-      if (width <= 0 || height <= 0) return null;
-      return { x, y, width, height };
-    }, region);
-    if (!regionRect) failures.push(`screenshot region 未命中或不可见 selector=${region}`);
-  }
-  const screenshot = await page.screenshot({ type: "png", fullPage: false, animations: "disabled", ...(regionRect ? { clip: regionRect } : {}) });
-  return {
-    screenshot, styles, anchor, region, regionRect, failures: [...failures, ...stability.stabilityFailures],
-    stabilityFailures: stability.stabilityFailures, adaptiveWaitMs: stability.adaptiveWaitMs,
-    preAnchorWaitMs: stability.preAnchorWaitMs, postAnchorWaitMs: stability.postAnchorWaitMs,
-    postAnchorSkipped: stability.postAnchorSkipped, canvas: stability.canvas,
-    requestClassifications: stability.requestClassifications,
-  };
 }
 
 function fixtureHostnameMatches(actual: string, expected: string): boolean {
@@ -1364,6 +1646,8 @@ interface ExecuteScenarioOptions {
   setupStateReused?: boolean;
   setupCheckpointStepCount?: number;
   setupCheckpointAssertions?: SpaRouterAssertion;
+  visualScheduler?: SpaVisualResourceScheduler;
+  queueWaitMs?: number;
   onSetupCheckpoint?: (artifact: Omit<CachedSpaSetupState, "reusable">) => Promise<void> | void;
 }
 
@@ -1372,8 +1656,9 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
   let phaseStartedAt = performance.now();
   const phaseElapsed = (): number => Number((performance.now() - phaseStartedAt).toFixed(3));
   const timing: SpaRouterScenarioTiming = {
+    queueWaitMs: options.queueWaitMs ?? 0,
     contextCreateMs: 0, instrumentationMs: 0, routeRegistrationMs: 0, pageCreateMs: 0, navigationMs: 0, initialSettleMs: 0,
-    setupPrefixStepsMs: 0, remainingStepsMs: 0, checkpointStorageMs: 0, checkpointVerificationMs: 0, assertionMs: 0, visualCaptureMs: 0, totalMs: 0, steps: [],
+    setupPrefixStepsMs: 0, remainingStepsMs: 0, checkpointStorageMs: 0, checkpointVerificationMs: 0, assertionMs: 0, visualCaptureMs: 0, contextCloseMs: 0, totalMs: 0, steps: [],
   };
   const viewport = options.viewport ?? { id: "contract", label: "Contract", width: 1024, height: 768 };
   const context = await browser.newContext({
@@ -1381,8 +1666,10 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
     ...(options.storageState ? { storageState: options.storageState } : {}),
   });
   timing.contextCreateMs = phaseElapsed();
+  options.visualScheduler?.contextOpened();
   const runtimeErrors: string[] = [], unmockedApiRequests: string[] = [];
   let setupCheckpointPublished = false;
+  let resultForTiming: SpaRouterScenarioResult | undefined;
   try {
     phaseStartedAt = performance.now();
     await initializeRouterTracking(context, config.ignoredStateKeys ?? []);
@@ -1491,21 +1778,33 @@ async function executeScenario(browser: Browser, baseUrl: string, config: SpaRou
       } : {}),
     };
     phaseStartedAt = performance.now();
-    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config, config.visualMatrix?.stabilityTimeoutMs) : undefined;
+    const visual = options.captureVisual && scenario.visual ? await captureVisualState(page, scenario.visual, role, requestActivity, config, config.visualMatrix?.stabilityTimeoutMs, options.visualScheduler) : undefined;
     timing.visualCaptureMs = phaseElapsed();
+    resultForTiming = result;
     result.durationMs = timing.totalMs = Number((performance.now() - startedAt).toFixed(3));
     return { result, visual };
-  } finally { await context.close(); }
+  } finally {
+    phaseStartedAt = performance.now();
+    try { await context.close(); }
+    finally {
+      timing.contextCloseMs = phaseElapsed();
+      options.visualScheduler?.contextClosed();
+      timing.totalMs = Number((performance.now() - startedAt).toFixed(3));
+      if (resultForTiming) resultForTiming.durationMs = timing.totalMs;
+    }
+  }
 }
 
-async function mapWithConcurrency<T, R>(items: T[], concurrency: number, worker: (item: T, index: number) => Promise<R>): Promise<R[]> {
+async function mapWithConcurrency<T, R>(items: T[], concurrency: number, worker: (item: T, index: number, queueWaitMs: number) => Promise<R>): Promise<R[]> {
   const results = new Array<R>(items.length);
+  const queuedAt = performance.now();
   let nextIndex = 0;
   const runners = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
     while (true) {
       const index = nextIndex; nextIndex += 1;
       if (index >= items.length) return;
-      results[index] = await worker(items[index], index);
+      const queueWaitMs = Number((performance.now() - queuedAt).toFixed(3));
+      results[index] = await worker(items[index], index, queueWaitMs);
     }
   });
   await Promise.all(runners);
@@ -1605,7 +1904,7 @@ async function executeScenarioWithVisualStateReuse(
   baseUrl: string,
   config: SpaRouterContractConfig,
   scenario: SpaRouterScenario,
-  options: { viewport: QualityViewport; role: SpaRouterTargetRole; captureVisual: boolean },
+  options: { viewport: QualityViewport; role: SpaRouterTargetRole; captureVisual: boolean; visualScheduler?: SpaVisualResourceScheduler; queueWaitMs?: number },
   cache: SpaVisualStateCache,
   setupCache: SpaSetupStateCache,
 ): Promise<SpaRouterScenarioExecution> {
@@ -1640,6 +1939,8 @@ async function executeScenarioWithVisualStateReuse(
       postAnchorWaitMs: 0,
       postAnchorSkipped: true,
       canvas: emptyCanvasStabilityTelemetry(),
+      stability: emptyVisualStabilityTelemetry(),
+      timing: emptyVisualCaptureTiming(),
       requestClassifications: emptyRequestClassificationCounts(),
       reusedStateKey: scenario.visual?.reuseStateKey,
     },
@@ -1650,10 +1951,10 @@ async function evaluateTarget(browser: Browser, baseUrl: string, config: SpaRout
   const concurrency = config.execution?.contractConcurrency ?? 1;
   const visualStateCache: SpaVisualStateCache = new Map();
   const setupStateCache: SpaSetupStateCache = new Map();
-  const orderedExecutions = await mapWithConcurrency(config.scenarios, concurrency, async (scenario) => {
+  const orderedExecutions = await mapWithConcurrency(config.scenarios, concurrency, async (scenario, _index, queueWaitMs) => {
     const captureVisual = Boolean(options.visualViewport && scenario.visual);
-    if (!options.visualViewport) return executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, { role: options.role, captureVisual }, setupStateCache);
-    return executeScenarioWithVisualStateReuse(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role ?? "single", captureVisual }, visualStateCache, setupStateCache);
+    if (!options.visualViewport) return executeScenarioWithSetupStateReuse(browser, baseUrl, config, scenario, { role: options.role, captureVisual, queueWaitMs }, setupStateCache);
+    return executeScenarioWithVisualStateReuse(browser, baseUrl, config, scenario, { viewport: options.visualViewport, role: options.role ?? "single", captureVisual, queueWaitMs }, visualStateCache, setupStateCache);
   });
   const executions = new Map(config.scenarios.map((scenario, index) => [scenario.id, orderedExecutions[index]]));
   const results = [...executions.values()].map((execution) => execution.result);
@@ -1728,6 +2029,11 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
   if (!visualConfig) return undefined;
   const configuredViewports = visualConfig.viewports ?? DEFAULT_VISUAL_VIEWPORTS;
   const pixelThreshold = visualConfig.pixelThreshold ?? 0.02, styleThreshold = visualConfig.styleThreshold ?? 0.98;
+  const viewportConcurrency = config.execution?.visualConcurrency ?? 1;
+  const captureConcurrency = config.execution?.visualCaptureConcurrency ?? Math.min(8, viewportConcurrency * 2);
+  const canvasConcurrency = config.execution?.visualCanvasConcurrency ?? captureConcurrency;
+  const pixelConcurrency = config.execution?.visualPixelConcurrency ?? viewportConcurrency;
+  const scheduler = new SpaVisualResourceScheduler(viewportConcurrency, captureConcurrency, canvasConcurrency, pixelConcurrency);
   let reusedTargetRuns = 0, freshTargetRuns = 0;
   const matrices: SpaRouterScenarioVisualMatrix[] = [];
   const visualStateCache: SpaVisualStateCache = new Map();
@@ -1738,60 +2044,97 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
     const scenarioStartedAt = performance.now();
     const viewports = scenario.visual?.viewports?.length ? configuredViewports.filter((viewport) => scenario.visual?.viewports?.includes(viewport.id)) : configuredViewports;
     if (!viewports.length) throw new TypeError(`scenario ${scenario.id} visual.viewports 没有匹配的 configured viewport`);
-    const viewportResults = await mapWithConcurrency(viewports, config.execution?.visualConcurrency ?? 1, async (viewport): Promise<SpaRouterVisualViewportResult> => {
+    const viewportResults = await mapWithConcurrency(viewports, viewportConcurrency, async (viewport, _index, queueWaitMs): Promise<SpaRouterVisualViewportResult> => {
+      scheduler.viewportStarted(queueWaitMs);
       const viewportStartedAt = performance.now();
-      const canReuse = Boolean(reusableViewport && viewport.width === reusableViewport.width && viewport.height === reusableViewport.height);
-      const referenceReuse = canReuse ? referenceEvaluation.executions.get(scenario.id) : undefined;
-      const generatedReuse = canReuse ? generatedEvaluation.executions.get(scenario.id) : undefined;
-      const [reference, generated] = await Promise.all([
-        referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenarioWithVisualStateReuse(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true }, visualStateCache, setupStateCache),
-        generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenarioWithVisualStateReuse(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true }, visualStateCache, setupStateCache),
-      ]);
-      reusedTargetRuns += Number(Boolean(referenceReuse?.visual)) + Number(Boolean(generatedReuse?.visual));
-      freshTargetRuns += Number(!referenceReuse?.visual) + Number(!generatedReuse?.visual);
-      if (!reference.visual || !generated.visual) throw new Error(`场景 ${scenario.id} 的 visual capture 未生成`);
-      const comparison = compareScenario(scenario.id, reference.result, generated.result, { mode: config.navigationComparison, referenceBaseUrl, generatedBaseUrl, aliases: config.semanticRouteAliases });
-      const navigationFailures = comparison.failures.filter((failure) => NAVIGATION_FAILURE_REASONS.has(failure.reason));
-      const styles = compareComputedStyles(reference.visual.styles, generated.visual.styles);
-      const artifactDir = visualConfig.artifactDir ? resolve(visualConfig.artifactDir, scenario.id, viewport.id) : undefined;
-      const pixels = await comparePixels(reference.visual.screenshot, generated.visual.screenshot, pixelThreshold, artifactDir);
-      const nonNavigationComparisonFailures = comparison.failures.filter((failure) => !NAVIGATION_FAILURE_REASONS.has(failure.reason));
-      const captureFailures = [
-        ...reference.visual.failures.map((failure) => `reference visual: ${failure}`),
-        ...generated.visual.failures.map((failure) => `generated visual: ${failure}`),
-        ...reference.result.assertionFailures.map((failure) => `reference assertion: ${failure}`),
-        ...generated.result.assertionFailures.map((failure) => `generated assertion: ${failure}`),
-        ...nonNavigationComparisonFailures.map((failure) => `comparison ${failure.reason}: ${failure.detail}`),
-      ];
-      const runtimeErrors = reference.result.runtimeErrors.length + generated.result.runtimeErrors.length;
-      const unmockedApiRequests = reference.result.unmockedApiRequests.length + generated.result.unmockedApiRequests.length;
-      const requiredNetworkFailureDetails = [
-        ...reference.result.requiredNetworkFailures.map((failure) => `reference: ${failure}`),
-        ...generated.result.requiredNetworkFailures.map((failure) => `generated: ${failure}`),
-      ];
-      const nonBlockingNetworkFailureDetails = [
-        ...reference.result.nonBlockingNetworkFailures.map((failure) => `reference: ${failure}`),
-        ...generated.result.nonBlockingNetworkFailures.map((failure) => `generated: ${failure}`),
-      ];
-      const requiredNetworkFailures = requiredNetworkFailureDetails.length;
-      return {
-        ...viewport, passed: comparison.passed && navigationFailures.length === 0 && captureFailures.length === 0 && styles.rate >= styleThreshold && pixels.passed,
-        referenceFinalRoute: routeOf(reference.result.finalUrl), generatedFinalRoute: routeOf(generated.result.finalUrl),
-        referenceAnchor: reference.visual.anchor, generatedAnchor: generated.visual.anchor,
-        referenceRegion: reference.visual.region, generatedRegion: generated.visual.region, referenceRegionRect: reference.visual.regionRect, generatedRegionRect: generated.visual.regionRect,
-        runtimeErrors, unmockedApiRequests, requiredNetworkFailures, requiredNetworkFailureDetails, nonBlockingNetworkFailureDetails, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs,
-        preAnchorWaitMs: reference.visual.preAnchorWaitMs + generated.visual.preAnchorWaitMs, postAnchorWaitMs: reference.visual.postAnchorWaitMs + generated.visual.postAnchorWaitMs,
-        postAnchorSkipped: reference.visual.postAnchorSkipped && generated.visual.postAnchorSkipped,
-        visualStateReused: Boolean(reference.visualStateReused && generated.visualStateReused),
-        referenceVisualStateReuseKey: reference.visual.reusedStateKey ?? null,
-        generatedVisualStateReuseKey: generated.visual.reusedStateKey ?? null,
-        referenceSetupStateReused: reference.result.setupStateReused ?? false,
-        generatedSetupStateReused: generated.result.setupStateReused ?? false,
-        referenceSetupStepsSkipped: reference.result.setupStepsSkipped ?? 0,
-        generatedSetupStepsSkipped: generated.result.setupStepsSkipped ?? 0,
-        canvas: addCanvasStabilityTelemetry(reference.visual.canvas, generated.visual.canvas),
-        requestClassifications: addRequestClassificationCounts(reference.visual.requestClassifications, generated.visual.requestClassifications), durationMs: Number((performance.now() - viewportStartedAt).toFixed(3)), navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
-      };
+      try {
+        const canReuse = Boolean(reusableViewport && viewport.width === reusableViewport.width && viewport.height === reusableViewport.height);
+        const referenceReuse = canReuse ? referenceEvaluation.executions.get(scenario.id) : undefined;
+        const generatedReuse = canReuse ? generatedEvaluation.executions.get(scenario.id) : undefined;
+        const [reference, generated] = await Promise.all([
+          referenceReuse?.visual ? Promise.resolve(referenceReuse) : executeScenarioWithVisualStateReuse(browser, referenceBaseUrl, config, scenario, { viewport, role: "reference", captureVisual: true, visualScheduler: scheduler }, visualStateCache, setupStateCache),
+          generatedReuse?.visual ? Promise.resolve(generatedReuse) : executeScenarioWithVisualStateReuse(browser, generatedBaseUrl, config, scenario, { viewport, role: "generated", captureVisual: true, visualScheduler: scheduler }, visualStateCache, setupStateCache),
+        ]);
+        const referenceFresh = !referenceReuse?.visual, generatedFresh = !generatedReuse?.visual;
+        reusedTargetRuns += Number(!referenceFresh) + Number(!generatedFresh);
+        freshTargetRuns += Number(referenceFresh) + Number(generatedFresh);
+        if (!reference.visual || !generated.visual) throw new Error(`场景 ${scenario.id} 的 visual capture 未生成`);
+        const comparison = compareScenario(scenario.id, reference.result, generated.result, { mode: config.navigationComparison, referenceBaseUrl, generatedBaseUrl, aliases: config.semanticRouteAliases });
+        const navigationFailures = comparison.failures.filter((failure) => NAVIGATION_FAILURE_REASONS.has(failure.reason));
+        const styles = compareComputedStyles(reference.visual.styles, generated.visual.styles);
+        const artifactDir = visualConfig.artifactDir ? resolve(visualConfig.artifactDir, scenario.id, viewport.id) : undefined;
+        const pixelLease = await scheduler.pixel.acquire();
+        const pixelStartedAt = performance.now();
+        let pixels: PixelDiffReport;
+        try { pixels = await comparePixels(reference.visual.screenshot, generated.visual.screenshot, pixelThreshold, artifactDir); }
+        finally { pixelLease.release(); }
+        const pixelCompareMs = Number((performance.now() - pixelStartedAt).toFixed(3));
+        const nonNavigationComparisonFailures = comparison.failures.filter((failure) => !NAVIGATION_FAILURE_REASONS.has(failure.reason));
+        const captureFailures = [
+          ...reference.visual.failures.map((failure) => `reference visual: ${failure}`),
+          ...generated.visual.failures.map((failure) => `generated visual: ${failure}`),
+          ...reference.result.assertionFailures.map((failure) => `reference assertion: ${failure}`),
+          ...generated.result.assertionFailures.map((failure) => `generated assertion: ${failure}`),
+          ...nonNavigationComparisonFailures.map((failure) => `comparison ${failure.reason}: ${failure.detail}`),
+        ];
+        const runtimeErrors = reference.result.runtimeErrors.length + generated.result.runtimeErrors.length;
+        const unmockedApiRequests = reference.result.unmockedApiRequests.length + generated.result.unmockedApiRequests.length;
+        const requiredNetworkFailureDetails = [
+          ...reference.result.requiredNetworkFailures.map((failure) => `reference: ${failure}`),
+          ...generated.result.requiredNetworkFailures.map((failure) => `generated: ${failure}`),
+        ];
+        const nonBlockingNetworkFailureDetails = [
+          ...reference.result.nonBlockingNetworkFailures.map((failure) => `reference: ${failure}`),
+          ...generated.result.nonBlockingNetworkFailures.map((failure) => `generated: ${failure}`),
+        ];
+        const requiredNetworkFailures = requiredNetworkFailureDetails.length;
+        const captureTiming = addVisualCaptureTiming(referenceFresh ? reference.visual.timing : emptyVisualCaptureTiming(), generatedFresh ? generated.visual.timing : emptyVisualCaptureTiming());
+        const freshResults = [referenceFresh ? reference.result : undefined, generatedFresh ? generated.result : undefined].filter((item): item is SpaRouterScenarioResult => Boolean(item));
+        const timing: SpaRouterVisualViewportTiming = {
+          queueWaitMs,
+          referenceTargetMs: referenceFresh ? reference.result.timing.totalMs : 0,
+          generatedTargetMs: generatedFresh ? generated.result.timing.totalMs : 0,
+          contextCreateMs: freshResults.reduce((sum, item) => sum + item.timing.contextCreateMs, 0),
+          navigationMs: freshResults.reduce((sum, item) => sum + item.timing.navigationMs, 0),
+          initialSettleMs: freshResults.reduce((sum, item) => sum + item.timing.initialSettleMs, 0),
+          scenarioStepsMs: freshResults.reduce((sum, item) => sum + item.timing.setupPrefixStepsMs + item.timing.remainingStepsMs, 0),
+          assertionMs: freshResults.reduce((sum, item) => sum + item.timing.assertionMs, 0),
+          contextCloseMs: freshResults.reduce((sum, item) => sum + item.timing.contextCloseMs, 0),
+          captureQueueWaitMs: captureTiming.captureQueueWaitMs,
+          canvasQueueWaitMs: captureTiming.canvasQueueWaitMs,
+          preAnchorStabilityMs: captureTiming.preAnchorStabilityMs,
+          anchorMs: captureTiming.anchorMs,
+          postAnchorStabilityMs: captureTiming.postAnchorStabilityMs,
+          computedStyleMs: captureTiming.computedStyleMs,
+          screenshotMs: captureTiming.screenshotMs,
+          pixelQueueWaitMs: pixelLease.waitMs,
+          pixelCompareMs,
+          totalMs: Number((performance.now() - viewportStartedAt).toFixed(3)),
+        };
+        return {
+          ...viewport, passed: comparison.passed && navigationFailures.length === 0 && captureFailures.length === 0 && styles.rate >= styleThreshold && pixels.passed,
+          referenceFinalRoute: routeOf(reference.result.finalUrl), generatedFinalRoute: routeOf(generated.result.finalUrl),
+          referenceAnchor: reference.visual.anchor, generatedAnchor: generated.visual.anchor,
+          referenceRegion: reference.visual.region, generatedRegion: generated.visual.region, referenceRegionRect: reference.visual.regionRect, generatedRegionRect: generated.visual.regionRect,
+          runtimeErrors, unmockedApiRequests, requiredNetworkFailures, requiredNetworkFailureDetails, nonBlockingNetworkFailureDetails, stabilityFailures: [...reference.visual.stabilityFailures, ...generated.visual.stabilityFailures], adaptiveWaitMs: reference.visual.adaptiveWaitMs + generated.visual.adaptiveWaitMs,
+          preAnchorWaitMs: reference.visual.preAnchorWaitMs + generated.visual.preAnchorWaitMs, postAnchorWaitMs: reference.visual.postAnchorWaitMs + generated.visual.postAnchorWaitMs,
+          postAnchorSkipped: reference.visual.postAnchorSkipped && generated.visual.postAnchorSkipped,
+          visualStateReused: Boolean(reference.visualStateReused && generated.visualStateReused),
+          referenceVisualStateReuseKey: reference.visual.reusedStateKey ?? null,
+          generatedVisualStateReuseKey: generated.visual.reusedStateKey ?? null,
+          referenceSetupStateReused: reference.result.setupStateReused ?? false,
+          generatedSetupStateReused: generated.result.setupStateReused ?? false,
+          referenceSetupStepsSkipped: reference.result.setupStepsSkipped ?? 0,
+          generatedSetupStepsSkipped: generated.result.setupStepsSkipped ?? 0,
+          canvas: addCanvasStabilityTelemetry(reference.visual.canvas, generated.visual.canvas),
+          stability: addVisualStabilityTelemetry(reference.visual.stability, generated.visual.stability),
+          timing,
+          requestClassifications: addRequestClassificationCounts(reference.visual.requestClassifications, generated.visual.requestClassifications),
+          durationMs: timing.totalMs, navigationPassed: navigationFailures.length === 0, navigationFailures, captureFailures, styles, pixels,
+        };
+      } finally {
+        scheduler.viewportFinished();
+      }
     });
     matrices.push({ scenarioId: scenario.id, passed: viewportResults.every((viewport) => viewport.passed), viewports: viewportResults, worstComputedStyle: Math.min(...viewportResults.map((viewport) => viewport.styles.rate)), worstPixelDiff: Math.max(...viewportResults.map((viewport) => viewport.pixels.diffRate)), durationMs: Number((performance.now() - scenarioStartedAt).toFixed(3)) });
   }
@@ -1807,6 +2150,9 @@ async function evaluateVisualMatrix(browser: Browser, config: SpaRouterContractC
     setupStateReusedTargetRuns: entries.reduce((sum, entry) => sum + Number(entry.referenceSetupStateReused) + Number(entry.generatedSetupStateReused), 0),
     setupStepsSkipped: entries.reduce((sum, entry) => sum + entry.referenceSetupStepsSkipped + entry.generatedSetupStepsSkipped, 0),
     canvas: addCanvasStabilityTelemetry(...entries.map((entry) => entry.canvas)),
+    stability: addVisualStabilityTelemetry(...entries.map((entry) => entry.stability)),
+    timing: addVisualViewportTiming(...entries.map((entry) => entry.timing)),
+    scheduler: scheduler.telemetry(),
     requestClassifications: addRequestClassificationCounts(...entries.map((entry) => entry.requestClassifications)),
     worstComputedStyle: entries.length ? Math.min(...entries.map((entry) => entry.styles.rate)) : 0, worstPixelDiff: entries.length ? Math.max(...entries.map((entry) => entry.pixels.diffRate)) : 1,
     styleThreshold, pixelThreshold,
@@ -1861,7 +2207,7 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         schemaVersion: "1.0", mode: "single", baseUrl: resolved.baseUrl, passed: qualityGates.every((gate) => gate.passed),
         scenariosPassed: target.scenariosPassed, scenariosTotal: target.scenariosTotal, runtimeErrors: target.runtimeErrors, unmockedApiRequests: target.unmockedApiRequests,
         results: target.results, requiredNetworkFailures: target.requiredNetworkFailures, nonBlockingNetworkFailures: target.nonBlockingNetworkFailures, navigationIntegrity: { passed: target.passed, rate: target.scenariosTotal ? target.scenariosPassed / target.scenariosTotal : 0, matchedScenarios: target.scenariosPassed, totalScenarios: target.scenariosTotal, failures: target.scenariosTotal - target.scenariosPassed },
-        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, contractSetupStateReusedRuns: target.setupStateReusedRuns, contractSetupStepsSkipped: target.setupStepsSkipped, visualSetupStateReusedRuns: 0, visualSetupStepsSkipped: 0, contractSetupOwnerTiming: summarizeSetupOwnerTiming(target), visualCanvas: emptyCanvasStabilityTelemetry(), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
+        telemetry: { contractTargetRuns: target.scenariosTotal, visualViewportRuns: 0, visualTargetRuns: 0, visualTargetReusedRuns: 0, visualTargetFreshRuns: 0, visualStabilityFailures: 0, visualAdaptiveWaitMs: 0, visualPreAnchorWaitMs: 0, visualPostAnchorWaitMs: 0, visualPostAnchorSkippedRuns: 0, visualStateReusedRuns: 0, contractSetupStateReusedRuns: target.setupStateReusedRuns, contractSetupStepsSkipped: target.setupStepsSkipped, visualSetupStateReusedRuns: 0, visualSetupStepsSkipped: 0, contractSetupOwnerTiming: summarizeSetupOwnerTiming(target), visualCanvas: emptyCanvasStabilityTelemetry(), visualStability: emptyVisualStabilityTelemetry(), visualRunTiming: emptyVisualViewportTiming(), visualScheduler: emptyVisualSchedulerTelemetry(config), visualRequestClassifications: emptyRequestClassificationCounts(), contractConcurrency: config.execution?.contractConcurrency ?? 1, visualConcurrency: config.execution?.visualConcurrency ?? 1, browserShutdownMode: "graceful", fastShutdownUsed: false, fastShutdownConfirmed: false, fastShutdownLockAcquired: false, fastShutdownLockWaitMs: 0, activeHandlesBeforeClose: activeHandleSnapshot(), activeHandlesAfterClose: activeHandleSnapshot(), timing }, qualityGates,
       };
       timing.reportReadyMs = elapsed(totalStartedAt);
       allowFastShutdown = requestedFastShutdown && report.passed;
@@ -1918,6 +2264,9 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
         visualSetupStepsSkipped: visualMatrix?.setupStepsSkipped ?? 0,
         contractSetupOwnerTiming: summarizeSetupOwnerTiming(reference, generated),
         visualCanvas: visualMatrix?.canvas ?? emptyCanvasStabilityTelemetry(),
+        visualStability: visualMatrix?.stability ?? emptyVisualStabilityTelemetry(),
+        visualRunTiming: visualMatrix?.timing ?? emptyVisualViewportTiming(),
+        visualScheduler: visualMatrix?.scheduler ?? emptyVisualSchedulerTelemetry(config),
         visualRequestClassifications: visualMatrix?.requestClassifications ?? emptyRequestClassificationCounts(),
         contractConcurrency: config.execution?.contractConcurrency ?? 1,
         visualConcurrency: config.execution?.visualConcurrency ?? 1,

@@ -199,3 +199,13 @@ The automatic Gold+ config now marks the common three-step admin login prefix as
 ### Overlapped setup-owner performance phase
 
 Authenticated owner profiling showed that visual capture—not login storage serialization—was the dominant cost (`76.61%`). After the reviewed dashboard checkpoint passes, the runner now releases the storage-state promise early and executes remaining contract scenarios concurrently in fresh BrowserContexts while the owner continues its complete visual gate. A three-run fast-shutdown control reduced median total time from `42.57 s` to `32.04 s` (`24.75%`) and contract time from `21.10 s` to `10.27 s` (`51.34%`) with unchanged Gold+ thresholds and zero blocking handles. Runtime environment, dev-server proxy target, and path-rewrite evidence are now separately represented in the API responsibility graph. Cross-run authentication persistence remains disabled; only its source/fixture/config identity gate has been implemented.
+
+### Resource-aware visual scheduling and phase telemetry
+
+The route-state matrix now reports cumulative queue time, context creation, navigation, initial settle, scenario steps, pre/post-anchor stability, computed-style capture, PNG encoding, pixel comparison, context close, DOM/layout/network blocker samples, Canvas scan cost, and peak active BrowserContexts. These measurements are observational and do not shorten the existing settled-frame, network-quiet, style, pixel, navigation, or lifecycle gates.
+
+Reviewed visual states declare either `dom` or `canvas` resource profiles. The Vue Element Admin matrix keeps `visualConcurrency=3`, but limits target capture to three, Canvas/ECharts capture to two, and PNG comparison to one. Every target still runs in a fresh isolated BrowserContext; only admission to the capture and comparison critical sections is scheduled.
+
+A same-server three-run A/B comparison retained `3/3` Semantic Gold+ for both variants. Median total time changed from `31.10 s` to `30.97 s` (`0.42%` lower), while median visual-matrix time changed from `20.84 s` to `20.72 s` (`0.58%` lower). More importantly, visual-matrix standard deviation fell `43.94%` and its range fell `49.71%`. The formal run recorded zero network-blocked stability samples, confirming that the observed variance belongs to Canvas/layout scheduling rather than public-network or model-API instability.
+
+To prevent Git evidence growth, the repository keeps one final full report plus `semantic-gold-resource-aware-summary.json`; the six raw A/B reports remain external and are represented by SHA-256 hashes in the summary.

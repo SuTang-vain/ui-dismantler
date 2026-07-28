@@ -347,6 +347,10 @@ test("SPA route-state visual matrix compares reviewed styles and pixels across v
   assert.equal(report.telemetry.visualTargetFreshRuns, 2);
   assert.equal(report.telemetry.visualStabilityFailures, 0);
   assert.ok(report.telemetry.visualAdaptiveWaitMs > 0);
+  assert.ok(report.telemetry.visualRunTiming.totalMs > 0);
+  assert.ok(report.telemetry.visualStability.samples > 0);
+  assert.ok(report.telemetry.visualScheduler.maxActiveViewports >= 1);
+  assert.ok(report.telemetry.visualScheduler.maxActiveContexts >= 1);
   assert.equal(report.telemetry.browserShutdownMode, "fast-kill");
   assert.equal(report.telemetry.fastShutdownUsed, true);
   assert.equal(report.telemetry.fastShutdownConfirmed, true);
@@ -562,8 +566,9 @@ test("SPA adaptive visual stability waits for canvas animation frames to settle"
     const base = `http://127.0.0.1:${address.port}`;
     const report = await evaluateSpaRouterContract({
       schemaVersion: "1.0", referenceBaseUrl: base, generatedBaseUrl: base,
-      visualMatrix: { stabilityTimeoutMs: 1800, viewports: [{ id: "desktop", label: "Desktop", width: 1024, height: 768 }] },
-      scenarios: [{ id: "canvas-animation", entryPath: "/", steps: [], assertions: { visibleSelector: "#chart" }, visual: { screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
+      execution: { visualConcurrency: 2, visualCaptureConcurrency: 2, visualCanvasConcurrency: 1, visualPixelConcurrency: 1 },
+      visualMatrix: { stabilityTimeoutMs: 1800, viewports: [{ id: "canvas-probe", label: "Canvas Probe", width: 900, height: 700 }] },
+      scenarios: [{ id: "canvas-animation", entryPath: "/", steps: [], assertions: { visibleSelector: "#chart" }, visual: { resourceProfile: "canvas", screenshotAnchor: "#view", screenshotRegion: "#view", styleTargets: [{ id: "view", selector: "#view" }] } }],
     });
     assert.equal(report.passed, true, JSON.stringify(report, null, 2));
     // The initial page settle overlaps the animation. The quality contract is
@@ -579,6 +584,14 @@ test("SPA adaptive visual stability waits for canvas animation frames to settle"
     assert.ok(report.telemetry.visualCanvas.animationCompletionSignals > 0, JSON.stringify(report.telemetry, null, 2));
     assert.ok(report.telemetry.visualCanvas.echartsCompletionSignals > 0, JSON.stringify(report.telemetry, null, 2));
     assert.equal(report.telemetry.visualCanvas.zrenderCompletionSignals, 0);
+    assert.ok(report.telemetry.visualStability.samples > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualStability.signatureScanMs > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.telemetry.visualScheduler.configuredCanvasConcurrency, 1);
+    assert.equal(report.telemetry.visualScheduler.maxActiveCanvasCaptures, 1);
+    assert.ok(report.telemetry.visualScheduler.maxActiveContexts >= 2, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.telemetry.visualScheduler.maxActivePixelComparisons, 1);
+    assert.ok(report.telemetry.visualRunTiming.screenshotMs > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualRunTiming.pixelCompareMs > 0, JSON.stringify(report.telemetry, null, 2));
     assert.equal(report.telemetry.visualPostAnchorSkippedRuns, 1);
     assert.equal(report.visualMatrix?.stabilityFailures, 0);
   } finally {

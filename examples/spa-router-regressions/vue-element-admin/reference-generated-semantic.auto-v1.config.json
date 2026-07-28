@@ -5,7 +5,10 @@
     "contractConcurrency": 3,
     "browserShutdown": "fast-kill",
     "actionTimeoutMs": 5000,
-    "visualConcurrency": 3
+    "visualConcurrency": 3,
+    "visualCaptureConcurrency": 3,
+    "visualCanvasConcurrency": 2,
+    "visualPixelConcurrency": 1
   },
   "scenarios": [
     {
@@ -35,7 +38,8 @@
             "id": "login-form",
             "selector": ".login-form"
           }
-        ]
+        ],
+        "resourceProfile": "dom"
       }
     },
     {
@@ -76,7 +80,8 @@
             "selector": ".dashboard-container"
           }
         ],
-        "reuseStateKey": "authenticated-dashboard-default"
+        "reuseStateKey": "authenticated-dashboard-default",
+        "resourceProfile": "canvas"
       },
       "setupState": {
         "stateKey": "authenticated-admin",
@@ -137,7 +142,8 @@
         "viewports": [
           "desktop",
           "tablet"
-        ]
+        ],
+        "resourceProfile": "dom"
       },
       "setupState": {
         "stateKey": "authenticated-admin",
@@ -236,7 +242,8 @@
         "viewports": [
           "desktop",
           "tablet"
-        ]
+        ],
+        "resourceProfile": "dom"
       },
       "setupState": {
         "stateKey": "authenticated-admin",
@@ -289,7 +296,8 @@
             "selector": ".dashboard-container"
           }
         ],
-        "reuseStateKey": "authenticated-dashboard-default"
+        "reuseStateKey": "authenticated-dashboard-default",
+        "resourceProfile": "canvas"
       },
       "setupState": {
         "stateKey": "authenticated-admin",

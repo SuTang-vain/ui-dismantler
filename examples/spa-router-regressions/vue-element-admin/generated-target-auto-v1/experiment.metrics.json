@@ -7,8 +7,8 @@
   "modelCalls": 0,
   "artifactManualEdits": 0,
   "artifactManualEditedLines": 0,
-  "algorithmRepairIterations": 19,
-  "qualityRuns": 43,
+  "algorithmRepairIterations": 20,
+  "qualityRuns": 51,
   "plan": {
     "boundaries": 4,
     "owners": 20,
@@ -449,5 +449,31 @@
     ],
     "configHashIncludesTargetRevision": true,
     "reason": "current-run login verification remains mandatory; overlap removes the safe portion of owner cost without persisting authentication tokens"
+  },
+  "resourceAwareVisualScheduler": {
+    "enabled": true,
+    "resourceProfiles": [
+      "dom",
+      "canvas"
+    ],
+    "viewportConcurrency": 3,
+    "captureConcurrency": 3,
+    "canvasConcurrency": 2,
+    "pixelConcurrency": 1,
+    "freshBrowserContextPerTarget": true,
+    "sharedPageOrContext": false,
+    "controlledRunsPerVariant": 3,
+    "controlMedianTotalMs": 31098.038,
+    "optimizedMedianTotalMs": 30966.423,
+    "totalMedianReductionPercent": 0.42,
+    "controlMedianVisualMatrixMs": 20836.532,
+    "optimizedMedianVisualMatrixMs": 20716.15,
+    "visualMedianReductionPercent": 0.58,
+    "visualStdDevReductionPercent": 43.94,
+    "visualRangeReductionPercent": 49.71,
+    "networkBlockedSamples": 0,
+    "qualityThresholdsChanged": false,
+    "rawEvidenceCommitted": false,
+    "rawEvidenceHashesRetainedInSummary": true
   }
 }

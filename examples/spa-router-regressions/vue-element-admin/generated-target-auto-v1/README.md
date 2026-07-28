@@ -56,3 +56,13 @@ A same-server three-run fast-shutdown A/B matrix retained `3/3` Gold+ passes for
 Transport planning now records runtime environment selections and separately models Vue/webpack dev-server proxy target and `pathRewrite` evidence. Rewritten upstream paths are not incorrectly added to browser fixture paths. The Vue Element Admin source has three runtime base-URL selections and no proxy route; dedicated fixtures verify dynamic proxy keys, environment-specific targets, and rewrite output.
 
 Cross-run storage-state persistence remains disabled. An identity gate now proves that source commit, fixture hash, and setup/config hash—including the reviewed target revision—must all match before a persisted artifact could be considered. Current-run login verification remains mandatory. Evidence: `semantic-gold-setup-owner-profile.results.json`, `semantic-gold-setup-overlap-fast-final.results.json`, the three `semantic-gold-setup-overlap-fast-control-run-*.results.json` files, the three optimized `semantic-gold-setup-overlap-fast-run-*.results.json` files, and `semantic-gold-setup-overlap-fast-summary.json`.
+
+### Resource-aware visual scheduling and phase telemetry
+
+The route-state matrix now reports cumulative queue time, context creation, navigation, initial settle, scenario steps, pre/post-anchor stability, computed-style capture, PNG encoding, pixel comparison, context close, DOM/layout/network blocker samples, Canvas scan cost, and peak active BrowserContexts. These measurements are observational and do not shorten the existing settled-frame, network-quiet, style, pixel, navigation, or lifecycle gates.
+
+Reviewed visual states declare either `dom` or `canvas` resource profiles. The Vue Element Admin matrix keeps `visualConcurrency=3`, but limits target capture to three, Canvas/ECharts capture to two, and PNG comparison to one. Every target still runs in a fresh isolated BrowserContext; only admission to the capture and comparison critical sections is scheduled.
+
+A same-server three-run A/B comparison retained `3/3` Semantic Gold+ for both variants. Median total time changed from `31.10 s` to `30.97 s` (`0.42%` lower), while median visual-matrix time changed from `20.84 s` to `20.72 s` (`0.58%` lower). More importantly, visual-matrix standard deviation fell `43.94%` and its range fell `49.71%`. The formal run recorded zero network-blocked stability samples, confirming that the observed variance belongs to Canvas/layout scheduling rather than public-network or model-API instability.
+
+To prevent Git evidence growth, the repository keeps one final full report plus `semantic-gold-resource-aware-summary.json`; the six raw A/B reports remain external and are represented by SHA-256 hashes in the summary.
