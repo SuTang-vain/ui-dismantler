@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
 export type VueRouterResponsibilityKind =
@@ -159,7 +159,9 @@ function routeSummaries(files: ScanFile[]): VueRouterRouteSummary[] {
 
 export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterResponsibilityGraph {
   const started = Date.now();
-  const root = resolve(sourceRoot);
+  const requestedRoot = resolve(sourceRoot);
+  const nestedSourceRoot = join(requestedRoot, "src");
+  const root = existsSync(join(nestedSourceRoot, "router")) ? nestedSourceRoot : requestedRoot;
   const files = listSourceFiles(root).map((absolutePath): ScanFile => ({
     absolutePath,
     relativePath: relative(root, absolutePath),
@@ -175,17 +177,26 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
   const routes = routeSummaries(files);
   const all = files.map((file) => file.source).join("\n");
   const activeRouterSource = stripComments(routerIndex?.source ?? "");
-  const explicitHistoryMode = /mode\s*:\s*['"]history['"]/.test(activeRouterSource);
+  const vueRouter4 = /import\s*\{[^}]*\bcreateRouter\b[^}]*\}\s*from\s*['"]vue-router['"]/.test(activeRouterSource);
+  const explicitHistoryMode = /mode\s*:\s*['"]history['"]/.test(activeRouterSource) || /\bcreateWebHistory\s*\(/.test(activeRouterSource);
+  const explicitHashMode = /\bcreateWebHashHistory\s*\(/.test(activeRouterSource);
 
-  addResponsibility(responsibilities, "router-construction", "router", "high", routerFiles.flatMap((file) => findEvidence(file, /new\s+Router\s*\(/g, "Vue Router instance construction")));
+  addResponsibility(responsibilities, "router-construction", "router", "high", routerFiles.flatMap((file) => [
+    ...findEvidence(file, /new\s+Router\s*\(/g, "Vue Router 2/3 instance construction"),
+    ...findEvidence(file, /\bcreateRouter\s*\(/g, "Vue Router 4 instance construction"),
+  ]));
   addResponsibility(responsibilities, "route-table", "route-table", "high", routerIndex ? [
     ...findEvidence(routerIndex, /export\s+const\s+constantRoutes\s*=\s*\[/g, "constant route table"),
     ...findEvidence(routerIndex, /export\s+const\s+asyncRoutes\s*=\s*\[/g, "role-aware asynchronous route table"),
+    ...findEvidence(routerIndex, /(?:export\s+)?const\s+routes\s*=\s*\[/g, "Vue Router route table"),
   ] : []);
   addResponsibility(responsibilities, "route-module", "route-table", "high", files.filter((file) => file.relativePath.includes("router/modules/")).map((file) => evidence(file, file.relativePath, "modular route table source")));
   addResponsibility(responsibilities, "dynamic-route-import", "route-table", "high", routerFiles.flatMap((file) => findEvidence(file, /component\s*:\s*\(\)\s*=>\s*import\s*\(/g, "lazy route component import")));
   addResponsibility(responsibilities, "history-mode", "router", "high", routerIndex && explicitHistoryMode
-    ? findEvidence({ ...routerIndex, source: activeRouterSource }, /mode\s*:\s*['"]history['"]/g, "explicit active history mode")
+    ? [
+      ...findEvidence({ ...routerIndex, source: activeRouterSource }, /mode\s*:\s*['"]history['"]/g, "explicit active history mode"),
+      ...findEvidence({ ...routerIndex, source: activeRouterSource }, /\bcreateWebHistory\s*\(/g, "Vue Router 4 HTML5 history factory"),
+    ]
     : []);
   addResponsibility(responsibilities, "guard-before-each", "guard", "high", [
     ...(routerIndex ? findEvidence(routerIndex, /router\.beforeEach\s*\(/g, "router guard registration") : []),
@@ -217,7 +228,7 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
   ] : []);
 
   const capabilities = {
-    hashMode: responsibilities.some((item) => item.kind === "router-construction") && !explicitHistoryMode,
+    hashMode: explicitHashMode || (responsibilities.some((item) => item.kind === "router-construction") && !explicitHistoryMode && !vueRouter4),
     historyMode: explicitHistoryMode,
     dynamicImports: responsibilities.some((item) => item.kind === "dynamic-route-import"),
     nestedRoutes: routes.some((route) => route.path.startsWith("/") === false) || /children\s*:\s*\[/.test(all),
@@ -239,7 +250,7 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
     kind: "vue-router-responsibility-graph",
     reviewRequired: true,
     sourceRoot: root,
-    framework: { view: "vue", router: "vue-router", routerMajor: 3, state: storePermission ? "vuex" : "unknown" },
+    framework: { view: "vue", router: "vue-router", routerMajor: vueRouter4 ? 4 : 3, state: storePermission ? "vuex" : "unknown" },
     files: files.map((file) => file.relativePath),
     routes,
     responsibilities,

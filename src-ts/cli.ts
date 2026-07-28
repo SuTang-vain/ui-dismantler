@@ -20,7 +20,7 @@ import { analyzeEChartsResponsibilities } from "./planning/echarts-responsibilit
 import { analyzeSfcVisualResponsibilities, type SfcVisualResponsibilityGraph } from "./planning/sfc-visual-responsibility.js";
 import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visual-target-plan.js";
 import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
-import { analyzeApiFixtureResponsibilities } from "./planning/api-fixture-responsibility.js";
+import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "./planning/api-fixture-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
 
@@ -42,7 +42,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -155,6 +155,17 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  blocked=${patch.metrics.blocked}，covered=${patch.metrics.responsibilitiesCovered.length}，missing=${patch.metrics.responsibilitiesMissing.length}，applied=${patch.metrics.applied}`);
       for (const reason of patch.metrics.blockingReasons) console.log(`  [BLOCKED] ${reason}`);
       return patch.metrics.blocked ? 1 : 0;
+    }
+    if (command === "transport-proxy-analyze") {
+      const sourceRoot = args[0], out = flag(args, "--out");
+      if (!sourceRoot || !out) throw new Error("transport-proxy-analyze 需要 <source-root> 和 --out");
+      const graph = analyzeTransportProxyResponsibilities(resolve(sourceRoot));
+      const serializable = { ...graph, sourceRoot: "<external-source>" };
+      await writeFile(resolve(out), `${JSON.stringify(serializable, null, 2)}
+`, "utf8");
+      console.log(`✓ 已生成 Transport Proxy responsibility graph: ${resolve(out)}`);
+      console.log(`  configs=${graph.metrics.configFiles}，scopes=${graph.metrics.proxyScopes}，routes=${graph.metrics.routes}，dynamicContexts=${graph.metrics.dynamicContextsMaterialized}，fallback=${graph.metrics.fallbackRoutes}，diagnostics=${graph.metrics.diagnostics}`);
+      return graph.metrics.fallbackRoutes > 0 || graph.metrics.diagnostics > 0 ? 1 : 0;
     }
     if (command === "sfc-visual-analyze") {
       const sourceRoot = args[0], out = flag(args, "--out");

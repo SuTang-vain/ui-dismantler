@@ -81,6 +81,26 @@ export interface ApiFixtureResponsibilityGraph {
   reviewReasons: string[];
 }
 
+
+export interface TransportProxyResponsibilityGraph {
+  schemaVersion: "1.0";
+  kind: "transport-proxy-responsibility-graph";
+  reviewRequired: true;
+  sourceRoot: string;
+  routes: TransportProxyRouteEvidence[];
+  diagnostics: Array<{ source: string; message: string }>;
+  metrics: {
+    configFiles: number;
+    proxyScopes: number;
+    routes: number;
+    astRoutes: number;
+    fallbackRoutes: number;
+    dynamicContextsMaterialized: number;
+    diagnostics: number;
+  };
+  reviewReasons: string[];
+}
+
 interface SfcSections { template: string; script: string }
 interface ImportedApi { localName: string; exportedName: string; source: string }
 interface Endpoint { exportedName: string; method: string; path: string; moduleFile: string }
@@ -175,7 +195,7 @@ function environmentAssignments(sourceRoot: string): EnvironmentAssignment[] {
     if (!entry.isFile() || !entry.name.startsWith(".env")) continue;
     const environment = entry.name === ".env" ? "default" : entry.name.slice(".env.".length);
     const source = readFileSync(join(sourceRoot, entry.name), "utf8");
-    for (const match of source.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*=\s*['"]?([^'"\r\n#]+)['"]?\s*$/gm)) {
+    for (const match of source.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*=\s*['"]?([^'"\r\n#]*)['"]?\s*$/gm)) {
       assignments.push({ environment, variable: match[1], value: match[2].trim(), source: `${entry.name}:${match[1]}` });
     }
   }
@@ -347,6 +367,7 @@ interface ScopedProxyEntry {
   sourceFiles: string[];
   aliasSources: string[];
   contextCandidates: string[];
+  contextExpressions: string[];
   contextVariables: string[];
 }
 
@@ -636,6 +657,7 @@ function scopeFromObject(ref: AstExpressionRef, cache: Map<string, AstModuleCont
     sourceFiles: expanded.files,
     aliasSources: expanded.aliasSources,
     contextCandidates: unique([...(keyText?.startsWith("/") ? [keyText] : []), ...literalStrings(contextExpression), ...proxyContexts(expanded.source)]),
+    contextExpressions: unique([keySource, contextSource].map((value) => value.trim()).filter(Boolean)),
     contextVariables: unique([...environmentReferences(keySource), ...environmentReferences(contextSource), ...contextIdentifiers]),
   };
 }
@@ -684,6 +706,54 @@ function scopedProxyEntries(configFile: string, source: string): ProxyScopeParse
   return { entries, diagnostics, fallbackRequired: false };
 }
 
+
+function normalizedProxyPrefix(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "/";
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  const normalized = withLeadingSlash.replace(/\/{2,}/g, "/");
+  return normalized.length > 1 ? normalized.replace(/\/$/, "") : normalized;
+}
+
+function materializeContextExpression(expression: string, assignments: EnvironmentAssignment[], environment: string): string[] {
+  const trimmed = expression.trim();
+  if (!trimmed) return [];
+  if (/^['"][^'"]+['"]$/.test(trimmed)) return [normalizedProxyPrefix(trimmed.slice(1, -1))];
+  const variables = environmentReferences(trimmed);
+  if (!variables.length) return [];
+  const valuesByVariable = new Map(variables.map((variable) => [variable, environmentValueCandidates(assignments, [variable], environment)]));
+  const combinations: Record<string, string>[] = [{}];
+  for (const variable of variables) {
+    const values = valuesByVariable.get(variable) ?? [];
+    if (!values.length) continue;
+    const previous = combinations.splice(0, combinations.length);
+    for (const item of previous) for (const value of values) combinations.push({ ...item, [variable]: value });
+  }
+  if (!combinations.length) return [];
+  const output: string[] = [];
+  for (const combination of combinations) {
+    let rendered = trimmed.replace(/^`|`$/g, "");
+    rendered = rendered.replace(/\$\{\s*(?:(?:process\.env|import\.meta\.env|[A-Za-z_$][\w$]*)\.)?((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)(?:\s*\|\|\s*['"]([^'"]*)['"])?\s*\}/g, (_match, variable: string, fallback: string | undefined) => combination[variable] || fallback || "");
+    const direct = /^(?:(?:process\.env|import\.meta\.env|[A-Za-z_$][\w$]*)\.)((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)$/.exec(rendered)?.[1];
+    if (direct) rendered = combination[direct] ?? rendered;
+    if (!rendered.includes("${") && !/(?:process\.env|import\.meta\.env)\./.test(rendered)) output.push(normalizedProxyPrefix(rendered));
+  }
+  return unique(output);
+}
+
+function materializedScopeContexts(scope: ScopedProxyEntry, assignments: EnvironmentAssignment[], environment: string): string[] {
+  const hasStandaloneEnvironmentContext = scope.contextExpressions.some((expression) => {
+    const value = expression.trim();
+    return /^[A-Za-z_$][\w$]*$/.test(value)
+      || /^(?:(?:process\.env|import\.meta\.env|[A-Za-z_$][\w$]*)\.)((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)$/.test(value);
+  });
+  return unique([
+    ...scope.contextCandidates.map(normalizedProxyPrefix),
+    ...(hasStandaloneEnvironmentContext ? environmentValueCandidates(assignments, scope.contextVariables, environment).map(normalizedProxyPrefix) : []),
+    ...scope.contextExpressions.flatMap((expression) => materializeContextExpression(expression, assignments, environment)),
+  ]);
+}
+
 function environmentAliases(source: string): Map<string, string> {
   const aliases = new Map<string, string>();
   for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|[A-Za-z_$][\w$]*)\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)/g)) aliases.set(match[1], match[2]);
@@ -698,6 +768,12 @@ function propertyEnvironmentVariables(source: string, property: string, aliases:
 
 function propertyLiteralValues(source: string, property: string): string[] {
   return [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*['\"]([^'\"]+)['\"]`, "g"))].map((match) => match[1]);
+}
+
+
+function propertyEnvironmentFallbacks(source: string, property: string): Array<{ variable: string; fallback: string }> {
+  const pattern = new RegExp(`\\b${property}\\s*:\\s*(?:process\\.env|import\\.meta\\.env|[A-Za-z_$][\\w$]*)\\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)\\s*\\|\\|\\s*['"]([^'"]*)['"]`, "g");
+  return [...source.matchAll(pattern)].map((match) => ({ variable: match[1], fallback: match[2] }));
 }
 
 function routeFromScope(
@@ -726,15 +802,19 @@ function routeFromScope(
     const environment = selection?.environment ?? "runtime";
     const contextVariables = unique(scope.contextVariables.map((variable) => aliases.get(variable) ?? variable));
     const resolvedContexts = unique([
-      ...scope.contextCandidates,
-      ...environmentValueCandidates(assignments, contextVariables, environment),
+      ...materializedScopeContexts({ ...scope, contextVariables }, assignments, environment),
     ]);
     const matchesContext = resolvedContexts.includes(prefix.value)
       || contextVariables.some((variable) => variable === requestVariable)
       || (!resolvedContexts.length && scope.source.includes(prefix.value));
     if (!matchesContext) continue;
 
-    const targetCandidates = unique([...literalTargets, ...environmentValueCandidates(assignments, targetVariables, environment)]);
+    const environmentTargets = environmentValueCandidates(assignments, targetVariables, environment).filter(Boolean);
+    const fallbackTargets = propertyEnvironmentFallbacks(scope.source, "target")
+      .filter((item) => targetVariables.includes(item.variable) && environmentTargets.length === 0)
+      .map((item) => item.fallback)
+      .filter(Boolean);
+    const targetCandidates = unique([...literalTargets, ...environmentTargets, ...fallbackTargets]);
     const routerVariables = unique([
       ...routerReferences.variables,
       ...[...scope.source.matchAll(/\brouter\s*:\s*([A-Za-z_$][\w$]*)/g)].map((match) => aliases.get(match[1])).filter((item): item is string => Boolean(item)),
@@ -760,9 +840,10 @@ function routeFromScope(
     } else if (callback && new RegExp(callback.pattern).test(prefix.value)) {
       rewritePattern = callback.pattern; rewriteReplacement = callback.replacement; rewriteKind = "rewrite-callback";
     }
+    const rewrittenPrefix = prefix.value.replace(new RegExp(rewritePattern ?? "(?!)"), rewriteReplacement ?? "");
     const upstreamPathCandidate = rewritePattern === undefined
       ? undefined
-      : joinTransportPath(prefix.value.replace(new RegExp(rewritePattern), rewriteReplacement ?? ""), endpointPath);
+      : endpointPath ? joinTransportPath(rewrittenPrefix, endpointPath) : normalizedProxyPrefix(rewrittenPrefix);
     output.push({
       requestPrefix: prefix.value,
       environment,
@@ -789,7 +870,7 @@ function routeFromScope(
 }
 
 function fallbackProxyEntry(source: string): ScopedProxyEntry {
-  return { source, sourceFile: "", sourceFiles: [], aliasSources: [source], contextCandidates: proxyContexts(source), contextVariables: environmentReferences(source) };
+  return { source, sourceFile: "", sourceFiles: [], aliasSources: [source], contextCandidates: proxyContexts(source), contextExpressions: [], contextVariables: environmentReferences(source) };
 }
 
 function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: ReturnType<typeof requestClientEvidence>): TransportProxyRouteEvidence[] {
@@ -810,6 +891,85 @@ function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: R
     }
   }
   return output;
+}
+
+
+function projectScopeRequests(scope: ScopedProxyEntry, assignments: EnvironmentAssignment[], configFile: string): Array<ReturnType<typeof requestClientEvidence>> {
+  const environments = unique(assignments.map((item) => item.environment));
+  if (!environments.length) environments.push("runtime");
+  const output: Array<ReturnType<typeof requestClientEvidence>> = [];
+  for (const environment of environments) {
+    const contexts = materializedScopeContexts(scope, assignments, environment);
+    for (const value of contexts) {
+      output.push({
+        clientFile: configFile,
+        environmentVariable: scope.contextVariables[0],
+        prefixes: [{ value, source: `${relative(dirname(configFile), configFile) || configFile}:proxy-context` }],
+        runtimeSelections: [{ environment, variable: scope.contextVariables[0] ?? "proxy-context", value, source: `${configFile}:proxy-context` }],
+      });
+    }
+  }
+  if (!output.length) {
+    for (const value of scope.contextCandidates) {
+      output.push({ clientFile: configFile, prefixes: [{ value, source: `${configFile}:proxy-context` }], runtimeSelections: [] });
+    }
+  }
+  return output;
+}
+
+export function analyzeTransportProxyResponsibilities(sourceRoot: string): TransportProxyResponsibilityGraph {
+  const root = resolve(sourceRoot);
+  const assignments = environmentAssignments(root);
+  const routes: TransportProxyRouteEvidence[] = [];
+  const diagnostics: Array<{ source: string; message: string }> = [];
+  let proxyScopes = 0;
+  let dynamicContextsMaterialized = 0;
+  const configs = proxyConfigCandidates(root);
+  for (const configFile of configs) {
+    const source = readFileSync(configFile, "utf8");
+    if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:)/.test(source)) continue;
+    const parsed = scopedProxyEntries(configFile, source);
+    for (const message of parsed.diagnostics) diagnostics.push({ source: relative(root, configFile).replaceAll("\\", "/"), message });
+    const entries = parsed.fallbackRequired ? [(() => { const fallback = fallbackProxyEntry(source); fallback.sourceFile = configFile; fallback.sourceFiles = [configFile]; return fallback; })()] : parsed.entries;
+    proxyScopes += entries.length;
+    for (const entry of entries) {
+      const requests = projectScopeRequests(entry, assignments, configFile);
+      if (entry.contextExpressions.some((expression) => assignments.some((assignment) => materializeContextExpression(expression, assignments, assignment.environment).length > 0))) dynamicContextsMaterialized += 1;
+      for (const request of requests) {
+        routes.push(...routeFromScope(root, configFile, entry, "", request, assignments, parsed.fallbackRequired ? "regex-fallback" : "scope-ast", parsed.diagnostics));
+      }
+    }
+  }
+  const uniqueRoutes = routes.filter((route, index, values) => values.findIndex((item) =>
+    item.requestPrefix === route.requestPrefix
+      && item.environment === route.environment
+      && item.source === route.source
+      && JSON.stringify(item.targetCandidates) === JSON.stringify(route.targetCandidates)
+      && JSON.stringify(item.routerCandidates) === JSON.stringify(route.routerCandidates),
+  ) === index);
+  return {
+    schemaVersion: "1.0",
+    kind: "transport-proxy-responsibility-graph",
+    reviewRequired: true,
+    sourceRoot: root,
+    routes: uniqueRoutes,
+    diagnostics,
+    metrics: {
+      configFiles: configs.length,
+      proxyScopes,
+      routes: uniqueRoutes.length,
+      astRoutes: uniqueRoutes.filter((route) => route.analysisMode === "scope-ast").length,
+      fallbackRoutes: uniqueRoutes.filter((route) => route.analysisMode === "regex-fallback").length,
+      dynamicContextsMaterialized,
+      diagnostics: diagnostics.length,
+    },
+    reviewReasons: [
+      "project-level proxy evidence is independent from component API fixture extraction",
+      "dynamic browser prefixes are materialized only from concrete reviewed environment assignments",
+      "proxy targets, rewrites, router branches, and bypass outcomes remain audit evidence and never become browser fixture paths",
+      "all inferred routes require review before they can affect formal fixture or scheduler configuration",
+    ],
+  };
 }
 
 function joinTransportPath(prefix: string, endpointPath: string): string {

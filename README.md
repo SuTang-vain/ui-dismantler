@@ -171,3 +171,12 @@ UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin npm r
 ```
 
 `test:gold` 与 `test:nightly` 会先核对 Vue Element Admin 外部只读源是否处于 `source-lock.json` 固定 commit；缺少源目录或 commit 不一致会直接失败，避免正式 Gold+ 在跳过真实 SPA 案例后被误报为完整通过。性能基线输出到 `/tmp`，默认不向 Git 仓库写入大体积原始证据。
+
+项目级 Vite/Webpack/Vue CLI 代理责任可以独立分析，不要求组件 API fixture 已经匹配：
+
+```bash
+node dist-ts/cli.js transport-proxy-analyze /absolute/project-root \
+  --out /tmp/transport-proxy.graph.json
+```
+
+该图会保留环境、浏览器请求前缀、target、rewrite、router/bypass 分支及 AST/fallback 诊断。动态模板前缀只使用具体 `.env*` 赋值物化；upstream 路径和 bypass 返回值不会自动成为浏览器 fixture path。`spa-vue-router-analyze` 同时接受 Vue/Vite 项目根目录或其 `src/` 目录。

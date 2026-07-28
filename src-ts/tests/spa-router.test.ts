@@ -901,3 +901,20 @@ test("SPA visual matrix honors reviewed per-scenario viewport scope instead of f
     await new Promise<void>((resolve, reject) => viewportServer.close((error) => error ? reject(error) : resolve()));
   }
 });
+
+test("Vue Router responsibility accepts a Vite project root and normalizes ownership to src", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-vite-project-router-"));
+  try {
+    await mkdir(join(fixture, "src", "router"), { recursive: true });
+    await writeFile(join(fixture, "src", "router", "index.js"), `import {createRouter,createWebHistory} from 'vue-router'; const routes=[{path:'/'},{path:'/profiles'}]; const router=createRouter({history:createWebHistory('/'),routes}); router.beforeEach((to,from,next)=>next()); export default router`);
+    await writeFile(join(fixture, "src", "App.vue"), `<template><router-view /></template>`);
+    const graph = analyzeVueRouterResponsibility(fixture);
+    assert.equal(graph.sourceRoot, join(fixture, "src"));
+    assert.equal(graph.blockers.length, 0, graph.blockers.join("\n"));
+    assert.equal(graph.metrics.routesDiscovered, 2);
+    assert.equal(graph.capabilities.historyMode, true);
+    assert.equal(graph.capabilities.routerView, true);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});

@@ -184,7 +184,7 @@ test("SFC visual analysis embeds local SvgIcon geometry without filename-specifi
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
-import { analyzeApiFixtureResponsibilities } from "../planning/api-fixture-responsibility.js";
+import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "../planning/api-fixture-responsibility.js";
 import type { SpaRouterContractConfig } from "../evaluation/spa-router.js";
 
 test("nested Vue templates preserve every Element UI table column and bind reviewed API fixtures", () => {
@@ -462,5 +462,30 @@ test("proxy graph preserves router and bypass conditional return branches as aud
     ]);
     assert.equal(route.bypassHook, true);
     assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes("/index.html"), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("project transport graph materializes Vite template prefixes without requiring component fixtures", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-project-proxy-"));
+  try {
+    writeFileSync(join(root, ".env.development"), `VITE_BASE_PATH=/console\nVITE_API_TARGET=https://dev-api.example.test\n`);
+    writeFileSync(join(root, ".env.production"), `VITE_BASE_PATH=/\nVITE_API_TARGET=\n`);
+    writeFileSync(join(root, "vite.config.js"), `import {defineConfig,loadEnv} from 'vite'; export default defineConfig(({mode})=>{const env=loadEnv(mode,process.cwd(),'');return {server:{proxy:{[\`${'${env.VITE_BASE_PATH || \'\'}'}/api\`]:{target:env.VITE_API_TARGET || 'http://localhost:8090',changeOrigin:true,ws:true,bypass:req=>false}}}}})`);
+    const graph = analyzeTransportProxyResponsibilities(root);
+    assert.equal(graph.metrics.configFiles, 1);
+    assert.equal(graph.metrics.proxyScopes, 1);
+    assert.equal(graph.metrics.routes, 2);
+    assert.equal(graph.metrics.astRoutes, 2);
+    assert.equal(graph.metrics.dynamicContextsMaterialized, 1);
+    assert.equal(graph.metrics.fallbackRoutes, 0);
+    assert.equal(graph.metrics.diagnostics, 0);
+    assert.deepEqual(graph.routes.map((route) => ({ environment: route.environment, prefix: route.requestPrefix, target: route.targetCandidates[0] })), [
+      { environment: "development", prefix: "/console/api", target: "https://dev-api.example.test" },
+      { environment: "production", prefix: "/api", target: "http://localhost:8090" },
+    ]);
+    assert.deepEqual(graph.routes[0].bypassDecisionBranches, [
+      { condition: "default", rawOutcome: "false", outcomeKind: "boolean", outcomeCandidates: ["false"] },
+    ]);
+    assert.equal(graph.routes.every((route) => route.configSource === "vite.config.js"), true);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
