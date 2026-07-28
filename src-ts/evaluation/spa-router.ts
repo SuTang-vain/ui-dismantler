@@ -224,9 +224,22 @@ export interface SpaRouterScenarioTiming {
 }
 
 
+export interface SpaRouterSignatureTelemetry {
+  fullScans: number;
+  incrementalScans: number;
+  nodesAvailable: number;
+  nodesScanned: number;
+  nodesReused: number;
+  mutationInvalidations: number;
+  resizeInvalidations: number;
+  scrollInvalidations: number;
+  scanMs: number;
+}
+
 export interface SpaRouterVisualStabilityTelemetry {
   resourceReadinessMs: number;
   signatureScanMs: number;
+  signature: SpaRouterSignatureTelemetry;
   networkProbeMs: number;
   samples: number;
   stableFrameSamples: number;
@@ -630,17 +643,22 @@ function addCanvasStabilityTelemetry(...entries: SpaRouterCanvasStabilityTelemet
 
 function emptyVisualStabilityTelemetry(): SpaRouterVisualStabilityTelemetry {
   return {
-    resourceReadinessMs: 0, signatureScanMs: 0, networkProbeMs: 0, samples: 0, stableFrameSamples: 0,
+    resourceReadinessMs: 0, signatureScanMs: 0,
+    signature: { fullScans: 0, incrementalScans: 0, nodesAvailable: 0, nodesScanned: 0, nodesReused: 0, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, scanMs: 0 },
+    networkProbeMs: 0, samples: 0, stableFrameSamples: 0,
     mutationBlockedSamples: 0, resizeBlockedSamples: 0, canvasBlockedSamples: 0, layoutBlockedSamples: 0, networkBlockedSamples: 0,
   };
 }
 
 function addVisualStabilityTelemetry(...entries: SpaRouterVisualStabilityTelemetry[]): SpaRouterVisualStabilityTelemetry {
   const total = emptyVisualStabilityTelemetry();
+  const scalarKeys: Array<Exclude<keyof SpaRouterVisualStabilityTelemetry, "signature">> = [
+    "resourceReadinessMs", "signatureScanMs", "networkProbeMs", "samples", "stableFrameSamples",
+    "mutationBlockedSamples", "resizeBlockedSamples", "canvasBlockedSamples", "layoutBlockedSamples", "networkBlockedSamples",
+  ];
   for (const entry of entries) {
-    for (const key of Object.keys(total) as Array<keyof SpaRouterVisualStabilityTelemetry>) {
-      total[key] = Number((total[key] + entry[key]).toFixed(3));
-    }
+    for (const key of scalarKeys) total[key] = Number((total[key] + entry[key]).toFixed(3));
+    for (const key of Object.keys(total.signature) as Array<keyof SpaRouterSignatureTelemetry>) total.signature[key] = Number((total.signature[key] + entry.signature[key]).toFixed(3));
   }
   return total;
 }
@@ -1068,6 +1086,14 @@ interface VisualStabilityResult {
   token: VisualStabilityToken;
   requestClassifications: SpaRouterRequestClassificationCounts;
 }
+interface VisualStabilitySample {
+  signature: string;
+  mutationQuiet: boolean;
+  resizeQuiet: boolean;
+  canvasQuiet: boolean;
+  canvasMetrics: Omit<SpaRouterCanvasStabilityTelemetry, "canvasInvalidations">;
+  signatureMetrics: Omit<SpaRouterSignatureTelemetry, "scanMs">;
+}
 interface VisualStabilityToken {
   mutationCount: number;
   resizeCount: number;
@@ -1226,50 +1252,65 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
   const startedAt = Date.now(), quietWindowMs = 120;
   const telemetry = emptyVisualStabilityTelemetry();
   await page.evaluate((selector) => {
-    const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number }; disconnect: () => void } };
+    type ElementSignatureCache = { value: string };
+    type VisualScopeState = {
+      lastMutationAt: number; lastResizeAt: number; elements: Element[]; cache: WeakMap<Element, ElementSignatureCache>;
+      indexes: WeakMap<Element, number>; hashes: string[]; globalSignature: string; resizeRects: WeakMap<Element, string>;
+      dirty: Set<Element>; fullScanRequired: boolean; mutationInvalidations: number; resizeInvalidations: number;
+      scrollInvalidations: number; scrollVersion: number; scannedScrollVersion: number;
+    };
+    const host = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { selector: string; state: VisualScopeState; resizeObserver?: ResizeObserver; sample: (quietMs: number) => VisualStabilitySample; disconnect: () => void } };
     host.__uiDismantlerSpaVisualScope?.disconnect();
     let scope: Element | null = null;
     try { scope = selector ? document.querySelector(selector) : document.documentElement; } catch { scope = document.documentElement; }
-    const state = { lastMutationAt: performance.now(), lastResizeAt: performance.now() };
-    const mutationObserver = new MutationObserver(() => { state.lastMutationAt = performance.now(); });
-    const resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(() => { state.lastResizeAt = performance.now(); });
-    if (scope) {
-      mutationObserver.observe(scope, { subtree: true, childList: true, attributes: true, characterData: true });
-      resizeObserver?.observe(scope);
-    }
-    host.__uiDismantlerSpaVisualScope = { selector: selector ?? "", state, disconnect: () => { mutationObserver.disconnect(); resizeObserver?.disconnect(); } };
-  }, scopeSelector ?? "");
-  const observedClassifications = new Map<string, SpaRouterRequestClassification>();
-  const resourceReadinessStartedAt = performance.now();
-  await page.evaluate(async () => {
-    if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
-    const visibleImages = [...document.images].filter((image) => {
-      const style = getComputedStyle(image), rect = image.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+    const state: VisualScopeState = {
+      lastMutationAt: performance.now(), lastResizeAt: performance.now(), elements: [], cache: new WeakMap(), indexes: new WeakMap(), hashes: [], globalSignature: "", resizeRects: new WeakMap(),
+      dirty: new Set(), fullScanRequired: true, mutationInvalidations: 0, resizeInvalidations: 0, scrollInvalidations: 0, scrollVersion: 0, scannedScrollVersion: -1,
+    };
+    const markWithAncestors = (element: Element | null): void => {
+      let current = element;
+      while (current) {
+        if (!state.dirty.has(current)) { state.dirty.add(current); state.mutationInvalidations += 1; }
+        if (current === scope) break;
+        current = current.parentElement;
+      }
+    };
+    const mutationObserver = new MutationObserver((mutations) => {
+      state.lastMutationAt = performance.now();
+      for (const mutation of mutations) {
+        markWithAncestors(mutation.target instanceof Element ? mutation.target : mutation.target.parentElement);
+        if (mutation.type === "childList") {
+          state.fullScanRequired = true;
+          for (const added of mutation.addedNodes) if (added instanceof Element) markWithAncestors(added);
+        }
+      }
     });
-    await Promise.all(visibleImages.map(async (image) => {
-      await Promise.race([
-        (async () => {
-          if (!image.complete) await new Promise<void>((done) => { image.addEventListener("load", () => done(), { once: true }); image.addEventListener("error", () => done(), { once: true }); });
-          if (typeof image.decode === "function") await image.decode().catch(() => undefined);
-        })(),
-        new Promise<void>((done) => setTimeout(done, 1200)),
-      ]);
-    }));
-  });
-  telemetry.resourceReadinessMs = Number((performance.now() - resourceReadinessStartedAt).toFixed(3));
-  const baselineToken = await readVisualStabilityToken(page);
-  let canvasTelemetry = emptyCanvasStabilityTelemetry();
-  const deadline = Date.now() + timeoutMs;
-  let previousSignature = "", stableSamples = 0;
-  let lastBlockingRequests: Request[] = [];
-  let lastState = { mutationQuiet: false, resizeQuiet: false, canvasQuiet: false, layoutStable: false, networkQuiet: false };
-  while (Date.now() < deadline) {
-    const signatureStartedAt = performance.now();
-    const sample = await page.evaluate((quietMs) => {
+    const resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver((entries) => {
+      let changed = false;
+      for (const entry of entries) {
+        const value = `${Math.round(entry.contentRect.width * 10) / 10}:${Math.round(entry.contentRect.height * 10) / 10}`;
+        const previous = state.resizeRects.get(entry.target); state.resizeRects.set(entry.target, value);
+        if (previous === undefined || previous === value) continue;
+        changed = true;
+        if (!state.dirty.has(entry.target)) { state.dirty.add(entry.target); state.resizeInvalidations += 1; }
+      }
+      if (changed) state.lastResizeAt = performance.now();
+    });
+    const onScroll = (): void => { state.scrollVersion += 1; state.scrollInvalidations += 1; };
+    if (scope) mutationObserver.observe(scope, { subtree: true, childList: true, attributes: true, characterData: true });
+    addEventListener("scroll", onScroll, { capture: true, passive: true });
+    host.__uiDismantlerSpaVisualScope = {
+      selector: selector ?? "", state, resizeObserver,
+      sample: (quietMs: number): VisualStabilitySample => {
       type CanvasCacheEntry = { version: number; width: number; height: number; hash: number | string };
+      type VisualScopeState = {
+        lastMutationAt: number; lastResizeAt: number; elements: Element[]; cache: WeakMap<Element, { value: string }>;
+        indexes: WeakMap<Element, number>; hashes: string[]; globalSignature: string; resizeRects: WeakMap<Element, string>;
+        dirty: Set<Element>; fullScanRequired: boolean; mutationInvalidations: number; resizeInvalidations: number;
+        scrollInvalidations: number; scrollVersion: number; scannedScrollVersion: number;
+      };
       const host = globalThis as typeof globalThis & {
-        __uiDismantlerSpaVisualScope?: { selector: string; state: { lastMutationAt: number; lastResizeAt: number } };
+        __uiDismantlerSpaVisualScope?: { selector: string; state: VisualScopeState; resizeObserver?: ResizeObserver };
         __uiDismantlerSpaCanvas?: {
           versions: WeakMap<HTMLCanvasElement, number>;
           dirty: WeakSet<HTMLCanvasElement>;
@@ -1283,11 +1324,77 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
       const now = performance.now(), scoped = host.__uiDismantlerSpaVisualScope;
       let scope: Element = document.documentElement;
       if (scoped?.selector) { try { scope = document.querySelector(scoped.selector) ?? document.documentElement; } catch { scope = document.documentElement; } }
-      const elements = [scope, ...[...scope.querySelectorAll("*")]];
-      const elementSignature = elements.slice(0, 500).map((element) => {
+      const signatureState = scoped?.state;
+      for (const animation of document.getAnimations()) {
+        const target = (animation.effect as KeyframeEffect | null)?.target;
+        if (target instanceof Element && scope.contains(target)) signatureState?.dirty.add(target);
+      }
+      let fullScan = !signatureState || signatureState.fullScanRequired || signatureState.elements.length === 0;
+      if (signatureState && signatureState.scrollVersion !== signatureState.scannedScrollVersion) {
+        for (const element of signatureState.elements) signatureState.dirty.add(element);
+        signatureState.scannedScrollVersion = signatureState.scrollVersion;
+      }
+      const hashString = (value: string): string => {
+        let first = 2166136261, second = 2246822507;
+        for (let index = 0; index < value.length; index += 1) {
+          const code = value.charCodeAt(index);
+          first = Math.imul(first ^ code, 16777619);
+          second = Math.imul(second ^ code, 3266489909);
+        }
+        return `${first >>> 0}:${second >>> 0}`;
+      };
+      const readElementHash = (element: Element): string => {
         const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
-        return [element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length];
-      });
+        return hashString([element.tagName, element.id, String(element.className), Math.round(rect.x * 10) / 10, Math.round(rect.y * 10) / 10, Math.round(rect.width * 10) / 10, Math.round(rect.height * 10) / 10, style.display, style.visibility, (element.textContent ?? "").length].join("\u001f"));
+      };
+      let elements = fullScan ? [scope, ...[...scope.querySelectorAll("*")]].slice(0, 500) : signatureState!.elements;
+      const signatureMetrics = {
+        fullScans: fullScan ? 1 : 0, incrementalScans: fullScan ? 0 : 1, nodesAvailable: elements.length,
+        nodesScanned: 0, nodesReused: 0, mutationInvalidations: signatureState?.mutationInvalidations ?? 0,
+        resizeInvalidations: signatureState?.resizeInvalidations ?? 0, scrollInvalidations: signatureState?.scrollInvalidations ?? 0,
+      };
+      let elementSignature = "";
+      const performFullScan = (): void => {
+        if (!signatureState) return;
+        signatureState.elements = elements;
+        signatureState.indexes = new WeakMap();
+        signatureState.hashes = [];
+        for (const [index, element] of elements.entries()) {
+          const value = readElementHash(element);
+          signatureState.indexes.set(element, index);
+          signatureState.cache.set(element, { value });
+          signatureState.hashes.push(value);
+          scoped?.resizeObserver?.observe(element);
+          signatureMetrics.nodesScanned += 1;
+        }
+        signatureState.globalSignature = hashString(signatureState.hashes.join("|"));
+      };
+      if (signatureState && fullScan) performFullScan();
+      else if (signatureState) {
+        let changed = false;
+        for (const element of signatureState.dirty) {
+          const index = signatureState.indexes.get(element);
+          if (index === undefined || !element.isConnected || (element !== scope && !scope.contains(element))) { fullScan = true; break; }
+          const value = readElementHash(element), cached = signatureState.cache.get(element)?.value;
+          signatureState.cache.set(element, { value });
+          signatureState.hashes[index] = value;
+          signatureMetrics.nodesScanned += 1;
+          if (cached !== value) changed = true;
+        }
+        if (fullScan) {
+          elements = [scope, ...[...scope.querySelectorAll("*")]].slice(0, 500);
+          signatureMetrics.fullScans = 1; signatureMetrics.incrementalScans = 0; signatureMetrics.nodesAvailable = elements.length; signatureMetrics.nodesScanned = 0;
+          performFullScan();
+        } else if (changed) signatureState.globalSignature = hashString(signatureState.hashes.join("|"));
+      }
+      if (signatureState) {
+        signatureMetrics.nodesReused = Math.max(0, signatureMetrics.nodesAvailable - signatureMetrics.nodesScanned);
+        elementSignature = signatureState.globalSignature;
+        signatureState.dirty.clear(); signatureState.fullScanRequired = false; signatureState.mutationInvalidations = 0;
+        signatureState.resizeInvalidations = 0; signatureState.scrollInvalidations = 0;
+      } else {
+        const hashes = elements.map(readElementHash); signatureMetrics.nodesScanned = hashes.length; elementSignature = hashString(hashes.join("|"));
+      }
       const canvasState = host.__uiDismantlerSpaCanvas;
       const canvasMetrics = {
         canvasScanMs: 0, canvasSamples: 0, canvasCacheHits: 0, canvasSignatureChanges: 0,
@@ -1355,9 +1462,55 @@ async function settleVisual(page: Page, requestActivity: RequestActivity, config
         resizeQuiet: Boolean(scoped && now - scoped.state.lastResizeAt >= quietMs),
         canvasQuiet: !canvasState || now - canvasState.lastInvalidationAt >= quietMs,
         canvasMetrics,
+        signatureMetrics,
       };
+      },
+      disconnect: () => { mutationObserver.disconnect(); resizeObserver?.disconnect(); removeEventListener("scroll", onScroll, true); },
+    };
+  }, scopeSelector ?? "");
+  const observedClassifications = new Map<string, SpaRouterRequestClassification>();
+  const resourceReadinessStartedAt = performance.now();
+  await page.evaluate(async () => {
+    if (document.fonts && document.fonts.status !== "loaded") await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, 1200))]);
+    const visibleImages = [...document.images].filter((image) => {
+      const style = getComputedStyle(image), rect = image.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+    });
+    await Promise.all(visibleImages.map(async (image) => {
+      await Promise.race([
+        (async () => {
+          if (!image.complete) await new Promise<void>((done) => { image.addEventListener("load", () => done(), { once: true }); image.addEventListener("error", () => done(), { once: true }); });
+          if (typeof image.decode === "function") await image.decode().catch(() => undefined);
+        })(),
+        new Promise<void>((done) => setTimeout(done, 1200)),
+      ]);
+    }));
+  });
+  telemetry.resourceReadinessMs = Number((performance.now() - resourceReadinessStartedAt).toFixed(3));
+  const baselineToken = await readVisualStabilityToken(page);
+  let canvasTelemetry = emptyCanvasStabilityTelemetry();
+  const deadline = Date.now() + timeoutMs;
+  let previousSignature = "", stableSamples = 0;
+  let lastBlockingRequests: Request[] = [];
+  let lastState = { mutationQuiet: false, resizeQuiet: false, canvasQuiet: false, layoutStable: false, networkQuiet: false };
+  while (Date.now() < deadline) {
+    const signatureStartedAt = performance.now();
+    const sample = await page.evaluate((quietMs) => {
+      const runtime = globalThis as typeof globalThis & { __uiDismantlerSpaVisualScope?: { sample: (value: number) => VisualStabilitySample } };
+      if (!runtime.__uiDismantlerSpaVisualScope) throw new Error("visual stability sampler is unavailable");
+      return runtime.__uiDismantlerSpaVisualScope.sample(quietMs);
     }, quietWindowMs);
-    telemetry.signatureScanMs = Number((telemetry.signatureScanMs + performance.now() - signatureStartedAt).toFixed(3));
+    const signatureScanElapsedMs = Number((performance.now() - signatureStartedAt).toFixed(3));
+    telemetry.signatureScanMs = Number((telemetry.signatureScanMs + signatureScanElapsedMs).toFixed(3));
+    telemetry.signature.fullScans += sample.signatureMetrics.fullScans;
+    telemetry.signature.incrementalScans += sample.signatureMetrics.incrementalScans;
+    telemetry.signature.nodesAvailable += sample.signatureMetrics.nodesAvailable;
+    telemetry.signature.nodesScanned += sample.signatureMetrics.nodesScanned;
+    telemetry.signature.nodesReused += sample.signatureMetrics.nodesReused;
+    telemetry.signature.mutationInvalidations += sample.signatureMetrics.mutationInvalidations;
+    telemetry.signature.resizeInvalidations += sample.signatureMetrics.resizeInvalidations;
+    telemetry.signature.scrollInvalidations += sample.signatureMetrics.scrollInvalidations;
+    telemetry.signature.scanMs = Number((telemetry.signature.scanMs + signatureScanElapsedMs).toFixed(3));
     telemetry.samples += 1;
     canvasTelemetry = addCanvasStabilityTelemetry(canvasTelemetry, { ...sample.canvasMetrics, canvasInvalidations: 0 });
     stableSamples = sample.signature === previousSignature ? stableSamples + 1 : 0;

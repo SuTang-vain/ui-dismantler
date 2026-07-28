@@ -1,5 +1,5 @@
 import type { EChartsComponentResponsibility } from "./echarts-responsibility.js";
-import type { SfcVisualComponentResponsibility, SfcVisualResponsibilityGraph } from "./sfc-visual-responsibility.js";
+import type { SfcVisualComponentResponsibility, SfcVisualResponsibilityGraph, SfcVisualResourceEvidence } from "./sfc-visual-responsibility.js";
 import type { SfcTemplateStructure } from "./sfc-template-structure.js";
 import type { ApiFixtureResponsibility } from "./api-fixture-responsibility.js";
 import type { SpaRouteShellPlan, SpaRouteShellRouteNode } from "./spa-route-shell.js";
@@ -36,6 +36,18 @@ export interface VisualTargetOwnerPlan {
   reviewReasons: string[];
 }
 
+export interface VisualResourceProfileProposal {
+  profile: "dom" | "canvas";
+  confidence: number;
+  evidence: Array<{
+    ownerId: string;
+    sourceFile: string;
+    kind: SfcVisualResourceEvidence["kind"] | "echarts-owner" | "dom-structure";
+    detail: string;
+  }>;
+  reviewRequired: true;
+}
+
 export interface VisualTargetBoundaryPlan {
   id: string;
   route: string;
@@ -50,6 +62,7 @@ export interface VisualTargetBoundaryPlan {
     viewports: string[];
   };
   ownerIds: string[];
+  resourceProfileProposal: VisualResourceProfileProposal;
   reviewRequired: true;
   reviewReasons: string[];
 }
@@ -82,6 +95,8 @@ export interface VisualTargetPlan {
     responsiveOwners: number;
     interactiveOwners: number;
     apiFixtureOwners: number;
+    canvasProfileProposals: number;
+    domProfileProposals: number;
     unresolvedRoutes: number;
   };
   measurementTemplate: {
@@ -238,6 +253,49 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
   return [base, ...chartOwners];
 }
 
+
+function resourceProfileProposal(owners: VisualTargetOwnerPlan[], components: SfcVisualComponentResponsibility[]): VisualResourceProfileProposal {
+  const evidence: VisualResourceProfileProposal["evidence"] = [];
+  const ownerComponents = new Map(components.map((component) => [component.id, component]));
+  for (const owner of owners) {
+    if (owner.kind === "chart" && owner.runtimeDependencies.some((dependency) => dependency === "echarts")) {
+      evidence.push({ ownerId: owner.id, sourceFile: owner.sourceFile, kind: "echarts-owner", detail: `ECharts owner ${owner.componentName} initializes reviewed chart output` });
+    }
+    const component = ownerComponents.get(owner.componentId);
+    for (const item of component?.visualResourceEvidence ?? []) {
+      evidence.push({ ownerId: owner.id, sourceFile: item.sourceFile, kind: item.kind, detail: `${item.detail} (line ${item.line})` });
+    }
+  }
+  const deduplicated = evidence.filter((item, index, items) => items.findIndex((candidate) => candidate.ownerId === item.ownerId && candidate.kind === item.kind && candidate.detail === item.detail) === index);
+  const confidenceByKind: Record<VisualResourceProfileProposal["evidence"][number]["kind"], number> = {
+    "webgl-context": 0.99,
+    "echarts-owner": 0.96,
+    "zrender-runtime": 0.96,
+    "canvas-api": 0.94,
+    "canvas-element": 0.88,
+    "request-animation-frame": 0.62,
+    "dom-structure": 0.9,
+  };
+  const canvasKinds = new Set<VisualResourceProfileProposal["evidence"][number]["kind"]>(["webgl-context", "echarts-owner", "zrender-runtime", "canvas-api", "canvas-element"]);
+  const canvasEvidence = deduplicated.filter((item) => canvasKinds.has(item.kind));
+  if (canvasEvidence.length > 0) {
+    return {
+      profile: "canvas",
+      confidence: Number(Math.max(...canvasEvidence.map((item) => confidenceByKind[item.kind])).toFixed(2)),
+      evidence: deduplicated,
+      reviewRequired: true,
+    };
+  }
+  const domEvidence = deduplicated.length > 0 ? deduplicated : owners.slice(0, 4).map((owner) => ({
+    ownerId: owner.id,
+    sourceFile: owner.sourceFile,
+    kind: "dom-structure" as const,
+    detail: `owner ${owner.componentName} exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence`,
+  }));
+  const confidence = owners.every((owner) => owner.confidence === "high") ? 0.9 : 0.78;
+  return { profile: "dom", confidence, evidence: domEvidence, reviewRequired: true };
+}
+
 export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph, routePlan: SpaRouteShellPlan): VisualTargetPlan {
   const visualRoutes = routePlan.routes.filter((route) => route.visualStates.length > 0);
   const ownersById = new Map<string, VisualTargetOwnerPlan>();
@@ -259,6 +317,7 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
       }
     }
     const states = route.visualStates;
+    const boundaryOwners = unique(ownerIds).map((ownerId) => ownersById.get(ownerId)).filter((owner): owner is VisualTargetOwnerPlan => Boolean(owner));
     boundaries.push({
       id: `boundary:${normalizedRoutePath(route.route).replaceAll("/", ":") || "root"}`,
       route: route.route,
@@ -273,6 +332,7 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
         viewports: unique(states.flatMap((state) => state.viewports ?? ["desktop", "tablet", "mobile"])),
       },
       ownerIds: unique(ownerIds),
+      resourceProfileProposal: resourceProfileProposal(boundaryOwners, sfcGraph.components),
       reviewRequired: true,
       reviewReasons: unique([
         "implementation selectors are generated independently from acceptance selectors",
@@ -310,6 +370,8 @@ export function generateVisualTargetPlan(sfcGraph: SfcVisualResponsibilityGraph,
       responsiveOwners: owners.filter((owner) => owner.responsiveMediaQueries.length > 0).length,
       interactiveOwners: owners.filter((owner) => owner.interactions.events.length + owner.interactions.models.length > 0).length,
       apiFixtureOwners: owners.filter((owner) => owner.apiFixtures.length > 0).length,
+      canvasProfileProposals: boundaries.filter((boundary) => boundary.resourceProfileProposal.profile === "canvas").length,
+      domProfileProposals: boundaries.filter((boundary) => boundary.resourceProfileProposal.profile === "dom").length,
       unresolvedRoutes: unresolved.length,
     },
     measurementTemplate: {

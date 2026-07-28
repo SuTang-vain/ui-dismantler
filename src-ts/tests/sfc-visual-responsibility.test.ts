@@ -90,6 +90,11 @@ test("visual target planner derives reviewed page/component/chart boundaries wit
     assert.equal(plan.metrics.boundaries, 1);
     assert.equal(plan.metrics.unresolvedRoutes, 0);
     assert.equal(plan.metrics.chartOwners, 1);
+    assert.equal(plan.metrics.canvasProfileProposals, 1);
+    assert.equal(plan.boundaries[0].resourceProfileProposal.profile, "canvas");
+    assert.equal(plan.boundaries[0].resourceProfileProposal.confidence, 0.96);
+    assert.equal(plan.boundaries[0].resourceProfileProposal.reviewRequired, true);
+    assert.equal(plan.boundaries[0].resourceProfileProposal.evidence.some((item) => item.kind === "echarts-owner"), true);
     assert.equal(plan.owners.find((owner) => owner.id === plan.boundaries[0].rootOwnerId)?.componentName, "DashboardAdmin");
     assert.equal(plan.boundaries[0].acceptance.styleTargets.includes(".dashboard-editor-container"), true);
     assert.equal(plan.owners.some((owner) => owner.componentName === "PanelGroup"), true);
@@ -227,5 +232,92 @@ test("nested Vue templates preserve every Element UI table column and bind revie
     assert.deepEqual(api.responsibilities[0].renderedFields.map((field) => field.field), ["order_no", "price", "status"]);
     assert.deepEqual(api.responsibilities[0].filterValueMaps.statusFilter, { success: "success", pending: "danger" });
     assert.equal(Array.isArray(api.responsibilities[0].fixture.materializedValue), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+
+test("visual resource planner proposes reviewed WebGL and DOM profiles from responsibility evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-resource-profile-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    writeFileSync(join(root, "src", "views", "Scene.vue"), `<template><main class="scene"><canvas ref="surface"></canvas></main></template><script>export default { name:'Scene', mounted(){const gl=this.$refs.surface.getContext('webgl2'); const draw=()=>{gl.clear(gl.COLOR_BUFFER_BIT);requestAnimationFrame(draw)};draw()} }</script><style>.scene{height:100vh}</style>`);
+    writeFileSync(join(root, "src", "views", "About.vue"), `<template><main class="about"><h1>About</h1></main></template><script>export default { name:'About' }</script><style>.about{padding:20px}</style>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    assert.equal(graph.metrics.canvasResourceComponents, 1);
+    assert.equal(graph.metrics.webglResourceComponents, 1);
+    assert.equal(graph.metrics.frameDrivenComponents, 1);
+    const createRoutePlan = (route: string, selector: string): SpaRouteShellPlan => ({
+      schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
+      source: { mode: "reference-generated", configScenarios: 1, reportIncluded: true, reportPassed: true },
+      routes: [{ route, pattern: route, scenarios: [route], entry: true, final: true, assertions: [{ scenarioId: route, visibleSelector: selector }], visualStates: [{ scenarioId: route, region: selector, styleTargets: [selector] }] }],
+      transitions: [], selectorMappings: [], fixtureDependencies: [], capabilities: { historyBack: false, historyForward: false, reload: false, dynamicInputRoutes: false, roleSpecificSelectors: false, reviewedVisualStates: 1 },
+      measurementTemplate: { modelCalls: null, generationMs: null, manualEdits: null, manualEditedLines: null, repairIterations: null, qualityRuns: null }, reviewReasons: [],
+    });
+    const scenePlan = generateVisualTargetPlan(graph, createRoutePlan("/#/scene", ".scene"));
+    assert.equal(scenePlan.boundaries[0].resourceProfileProposal.profile, "canvas");
+    assert.equal(scenePlan.boundaries[0].resourceProfileProposal.confidence, 0.99);
+    assert.equal(scenePlan.boundaries[0].resourceProfileProposal.evidence.some((item) => item.kind === "webgl-context"), true);
+    assert.equal(scenePlan.boundaries[0].resourceProfileProposal.evidence.some((item) => item.kind === "request-animation-frame"), true);
+    const aboutPlan = generateVisualTargetPlan(graph, createRoutePlan("/#/about", ".about"));
+    assert.equal(aboutPlan.boundaries[0].resourceProfileProposal.profile, "dom");
+    assert.equal(aboutPlan.boundaries[0].resourceProfileProposal.reviewRequired, true);
+    assert.equal(aboutPlan.boundaries[0].resourceProfileProposal.evidence.some((item) => item.kind === "dom-structure"), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("Vite proxy responsibility keeps browser prefix separate from reviewed upstream rewrite evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-vite-proxy-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `VITE_API_PREFIX=/api\nVITE_API_TARGET=https://vite-api.example.test\n`);
+    writeFileSync(join(root, "vite.config.ts"), `import { defineConfig, loadEnv } from 'vite'; export default defineConfig(({mode})=>{const env=loadEnv(mode,process.cwd(),'');return {server:{proxy:{[env.VITE_API_PREFIX]:{target:env.VITE_API_TARGET,changeOrigin:true,secure:false,ws:true,rewrite:path=>path.replace(/^\\/api/,'/v1'),configure(proxy,options){}}}}}})`);
+    writeFileSync(join(root, "src", "utils", "request.ts"), `export default createClient({ baseURL: import.meta.env.VITE_API_PREFIX })`);
+    writeFileSync(join(root, "src", "api", "orders.ts"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.proxyRoutesInferred, 1);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/api/orders"]);
+    assert.equal(route.framework, "vite");
+    assert.equal(route.requestPrefix, "/api");
+    assert.deepEqual(route.targetCandidates, ["https://vite-api.example.test"]);
+    assert.equal(route.changeOrigin, true);
+    assert.equal(route.secure, false);
+    assert.equal(route.ws, true);
+    assert.equal(route.configureHook, true);
+    assert.equal(route.rewriteKind, "rewrite-callback");
+    assert.equal(route.rewritePattern, "^/api");
+    assert.equal(route.upstreamPathCandidate, "/v1/orders");
+    assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes(route.upstreamPathCandidate ?? ""), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("Webpack proxy arrays preserve context router and bypass evidence without changing fixture paths", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-webpack-proxy-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `APP_API_PREFIX=/api\nAPP_API_TARGET=https://webpack-api.example.test\nAPP_ROUTER_TARGET=https://router.example.test\n`);
+    writeFileSync(join(root, "webpack.config.js"), `module.exports={devServer:{proxy:[{context:['/api','/auth'],target:process.env.APP_API_TARGET,router(req){return process.env.APP_ROUTER_TARGET},changeOrigin:true,pathRewrite(path){return path.replace(/^\\/api/,'')},bypass(req){return false}}]}}`);
+    writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: process.env.APP_API_PREFIX })`);
+    writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.equal(route.framework, "webpack");
+    assert.deepEqual(route.contextCandidates, ["/api", "/auth"]);
+    assert.deepEqual(route.targetCandidates, ["https://webpack-api.example.test"]);
+    assert.deepEqual(route.routerCandidates, ["https://router.example.test"]);
+    assert.equal(route.bypassHook, true);
+    assert.equal(route.rewriteKind, "rewrite-callback");
+    assert.equal(route.upstreamPathCandidate, "/orders");
+    assert.deepEqual(api.responsibilities[0].apiCall.transportPathCandidates, ["/api/orders"]);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

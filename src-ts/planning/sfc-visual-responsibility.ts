@@ -18,6 +18,13 @@ export interface SfcStyleResponsibility {
   compileStatus: "compiled" | "raw-css" | "failed";
 }
 
+export interface SfcVisualResourceEvidence {
+  kind: "canvas-element" | "canvas-api" | "webgl-context" | "request-animation-frame" | "zrender-runtime";
+  sourceFile: string;
+  line: number;
+  detail: string;
+}
+
 export interface SfcVisualComponentResponsibility {
   id: string;
   file: string;
@@ -36,6 +43,7 @@ export interface SfcVisualComponentResponsibility {
   lifecycle: string[];
   styles: SfcStyleResponsibility[];
   runtimeDependencies: string[];
+  visualResourceEvidence: SfcVisualResourceEvidence[];
   chartResponsibilityIds: string[];
   confidence: "high" | "medium";
   reviewReasons: string[];
@@ -63,6 +71,9 @@ export interface SfcVisualResponsibilityGraph {
     elementUiPrimitives: number;
     responsiveGridNodes: number;
     embeddedSvgAssets: number;
+    canvasResourceComponents: number;
+    webglResourceComponents: number;
+    frameDrivenComponents: number;
     compiledStyleSheets: number;
     failedStyleSheets: number;
     staticDataBindings: number;
@@ -92,6 +103,21 @@ function listVueFiles(root: string): string[] {
 }
 
 function unique(values: string[]): string[] { return [...new Set(values.filter(Boolean))].sort(); }
+function lineAt(source: string, offset: number): number { return source.slice(0, Math.max(0, offset)).split("\n").length; }
+function visualResourceEvidence(relativePath: string, template: string, script: string, runtimeDependencies: string[]): SfcVisualResourceEvidence[] {
+  const evidence: SfcVisualResourceEvidence[] = [];
+  const record = (kind: SfcVisualResourceEvidence["kind"], source: string, regex: RegExp, detail: string): void => {
+    for (const match of allMatches(source, regex)) evidence.push({ kind, sourceFile: relativePath, line: lineAt(source, match.index ?? 0), detail: `${detail}: ${match[0].slice(0, 120)}` });
+  };
+  record("canvas-element", template, /<canvas(?:\s|>)/gi, "template declares a Canvas rendering surface");
+  record("webgl-context", script, /\.getContext\(\s*['"](?:webgl2?|experimental-webgl)['"]/g, "script acquires a WebGL rendering context");
+  record("canvas-api", script, /\.getContext\(\s*['"]2d['"]|\.(?:fillRect|strokeRect|clearRect|drawImage|putImageData|fillText|strokeText|arc|bezierCurveTo|quadraticCurveTo)\s*\(/g, "script uses a Canvas 2D drawing API");
+  record("request-animation-frame", script, /\brequestAnimationFrame\s*\(/g, "script registers a frame-driven render or update loop");
+  if (runtimeDependencies.some((dependency) => /(?:^|\/)zrender(?:$|\/)/i.test(dependency))) {
+    evidence.push({ kind: "zrender-runtime", sourceFile: relativePath, line: 1, detail: "component imports the ZRender runtime" });
+  }
+  return evidence.filter((item, index, items) => items.findIndex((candidate) => candidate.kind === item.kind && candidate.line === item.line && candidate.detail === item.detail) === index);
+}
 function allMatches(source: string, regex: RegExp): RegExpMatchArray[] {
   const flags = regex.flags.includes("g") ? regex.flags : `${regex.flags}g`;
   return [...source.matchAll(new RegExp(regex.source, flags))];
@@ -235,6 +261,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     });
     const lifecycle = lifecycleNames.filter((name) => new RegExp(`\\b${name}\\s*\\(`).test(parsed.script));
     const runtimeDependencies = unique(imports.filter((item) => item.thirdParty).map((item) => item.source.split("/")[0].startsWith("@") ? item.source.split("/").slice(0, 2).join("/") : item.source.split("/")[0]));
+    const resourceEvidence = visualResourceEvidence(relativePath, parsed.template, parsed.script, runtimeDependencies);
     const chartResponsibilityIds = echarts.components.filter((item) => item.file === relativePath).map((item) => item.id);
     const reviewReasons: string[] = [];
     if (styles.some((style) => style.scoped)) reviewReasons.push("scoped styles require selector ownership preservation");
@@ -254,6 +281,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       lifecycle,
       styles,
       runtimeDependencies,
+      visualResourceEvidence: resourceEvidence,
       chartResponsibilityIds,
       confidence: parsed.template && (parsed.script || parsed.styles.length > 0) ? "high" : "medium",
       reviewReasons,
@@ -287,6 +315,9 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       elementUiPrimitives: components.reduce((sum, item) => sum + item.templateStructure.nodes.filter((node) => node.primitive).length, 0),
       responsiveGridNodes: components.reduce((sum, item) => sum + item.templateStructure.responsiveGridNodes, 0),
       embeddedSvgAssets: components.reduce((sum, item) => sum + item.templateStructure.nodes.reduce((nodeSum, node) => nodeSum + (node.embeddedAssets?.length ?? 0), 0), 0),
+      canvasResourceComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "canvas-element" || evidence.kind === "canvas-api" || evidence.kind === "zrender-runtime")).length,
+      webglResourceComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "webgl-context")).length,
+      frameDrivenComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "request-animation-frame")).length,
       compiledStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus !== "failed").length, 0),
       failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
       staticDataBindings: components.reduce((sum, item) => sum + Object.keys(item.dataCardinality.staticBindings).length, 0),

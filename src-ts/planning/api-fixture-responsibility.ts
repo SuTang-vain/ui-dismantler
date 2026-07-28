@@ -91,7 +91,16 @@ export interface TransportProxyRouteEvidence {
   requestPrefix: string;
   environment: string;
   source: string;
+  framework: "vite" | "webpack" | "vue-cli" | "unknown";
+  contextCandidates: string[];
   targetCandidates: string[];
+  routerCandidates: string[];
+  changeOrigin?: boolean;
+  secure?: boolean;
+  ws?: boolean;
+  configureHook: boolean;
+  bypassHook: boolean;
+  rewriteKind?: "path-rewrite-map" | "rewrite-callback";
   rewritePattern?: string;
   rewriteReplacement?: string;
   upstreamPathCandidate?: string;
@@ -170,7 +179,7 @@ function requestClientEvidence(sourceRoot: string, moduleFile: string, exportedN
   const clientSourceName = relative(sourceRoot, clientFile).replaceAll("\\", "/");
   const literal = clientSource.match(/\bbaseURL\s*:\s*['"]([^'"]+)['"]/)?.[1];
   if (literal) return { clientFile, prefixes: [{ value: literal, source: clientSourceName }], runtimeSelections: [] };
-  const environmentVariable = clientSource.match(/\bbaseURL\s*:\s*process\.env\.([A-Za-z_$][\w$]*)/)?.[1];
+  const environmentVariable = clientSource.match(/\bbaseURL\s*:\s*(?:process\.env|import\.meta\.env)\.([A-Za-z_$][\w$]*)/)?.[1];
   if (environmentVariable) {
     const runtimeSelections = environmentAssignments(sourceRoot).filter((item) => item.variable === environmentVariable);
     return {
@@ -197,8 +206,66 @@ function requestClientEvidence(sourceRoot: string, moduleFile: string, exportedN
 }
 
 function proxyConfigCandidates(sourceRoot: string): string[] {
-  return ["vue.config.js", "vue.config.cjs", "vue.config.mjs", "vue.config.ts", "webpack.config.js", "webpack.config.cjs", join("config", "index.js")]
-    .map((item) => join(sourceRoot, item)).filter((item) => existsSync(item) && statSync(item).isFile());
+  return [
+    "vite.config.js", "vite.config.cjs", "vite.config.mjs", "vite.config.ts", "vite.config.mts",
+    "vue.config.js", "vue.config.cjs", "vue.config.mjs", "vue.config.ts",
+    "webpack.config.js", "webpack.config.cjs", "webpack.config.mjs", "webpack.config.ts", join("config", "index.js"),
+  ].map((item) => join(sourceRoot, item)).filter((item) => existsSync(item) && statSync(item).isFile());
+}
+
+function proxyFramework(configFile: string): TransportProxyRouteEvidence["framework"] {
+  const name = configFile.replaceAll("\\", "/").split("/").pop() ?? "";
+  if (name.startsWith("vite.config.")) return "vite";
+  if (name.startsWith("vue.config.")) return "vue-cli";
+  if (name.startsWith("webpack.config.") || name === "index.js") return "webpack";
+  return "unknown";
+}
+
+function environmentReferences(source: string): string[] {
+  return unique([...source.matchAll(/(?:process\.env|import\.meta\.env|\benv)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]));
+}
+
+function environmentValueCandidates(assignments: EnvironmentAssignment[], variables: string[], environment: string): string[] {
+  return unique(variables.flatMap((variable) => assignments
+    .filter((item) => item.variable === variable && (item.environment === environment || environment === "runtime" || item.environment === "default"))
+    .map((item) => item.value)));
+}
+
+function proxyContexts(source: string): string[] {
+  const literals = [...source.matchAll(/['"](\/[^'"]+)['"]\s*:\s*\{/g)].map((match) => match[1]);
+  const direct = [...source.matchAll(/\bcontext\s*:\s*['"]([^'"]+)['"]/g)].map((match) => match[1]);
+  const arrays = [...source.matchAll(/\bcontext\s*:\s*\[([^\]]+)\]/g)].flatMap((match) => [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((item) => item[1]));
+  return unique([...literals, ...direct, ...arrays]);
+}
+
+function proxyBoolean(source: string, property: "changeOrigin" | "secure" | "ws"): boolean | undefined {
+  const match = new RegExp(`\\b${property}\\s*:\s*(true|false)`).exec(source);
+  return match ? match[1] === "true" : undefined;
+}
+
+function callbackRewrite(source: string): { pattern: string; replacement: string } | undefined {
+  const patterns = [
+    /\b(?:rewrite|pathRewrite)\s*:\s*(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*[A-Za-z_$][\w$]*\.replace\(\s*\/((?:\\.|[^/])+)\/[dgimsuvy]*\s*,\s*['"]([^'"]*)['"]\s*\)/,
+    /\b(?:rewrite|pathRewrite)\s*:\s*function\s*\([^)]*\)\s*\{[\s\S]{0,240}?return\s+[A-Za-z_$][\w$]*\.replace\(\s*\/((?:\\.|[^/])+)\/[dgimsuvy]*\s*,\s*['"]([^'"]*)['"]\s*\)/,
+    /\b(?:rewrite|pathRewrite)\s*\([^)]*\)\s*\{[\s\S]{0,240}?return\s+[A-Za-z_$][\w$]*\.replace\(\s*\/((?:\\.|[^/])+)\/[dgimsuvy]*\s*,\s*['"]([^'"]*)['"]\s*\)/,
+  ];
+  for (const pattern of patterns) {
+    const match = pattern.exec(source);
+    if (match) return { pattern: match[1].replaceAll("\\/", "/"), replacement: match[2] };
+  }
+  return undefined;
+}
+
+function proxyRouterReferences(source: string): { variables: string[]; literals: string[] } {
+  const bodies = [
+    ...[...source.matchAll(/\brouter\s*:\s*(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*([^,}]+)/g)].map((match) => match[1]),
+    ...[...source.matchAll(/\brouter\s*:\s*function\s*\([^)]*\)\s*\{([\s\S]{0,240}?)\}/g)].map((match) => match[1]),
+    ...[...source.matchAll(/\brouter\s*\([^)]*\)\s*\{([\s\S]{0,240}?)\}/g)].map((match) => match[1]),
+  ];
+  return {
+    variables: unique(bodies.flatMap((body) => [...body.matchAll(/(?:process\.env|import\.meta\.env|\benv)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]))),
+    literals: unique(bodies.flatMap((body) => [...body.matchAll(/(?:return\s+)?['"]([^'"]+)['"]/g)].map((match) => match[1]))),
+  };
 }
 
 function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: ReturnType<typeof requestClientEvidence>): TransportProxyRouteEvidence[] {
@@ -207,38 +274,61 @@ function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: R
   const output: TransportProxyRouteEvidence[] = [];
   for (const configFile of proxyConfigCandidates(sourceRoot)) {
     const source = readFileSync(configFile, "utf8");
-    if (!/\b(?:devServer\s*:\s*\{|proxy\s*:\s*\{)/.test(source)) continue;
+    if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:\s*[\[{])/.test(source)) continue;
     const aliases = new Map<string, string>();
-    for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*process\.env\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
-    const referencedVariables = new Set<string>();
-    for (const match of source.matchAll(/process\.env\.([A-Za-z_$][\w$]*)/g)) referencedVariables.add(match[1]);
+    for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
+    const referencedVariables = new Set(environmentReferences(source));
     for (const variable of aliases.values()) referencedVariables.add(variable);
     const requestVariable = request.environmentVariable;
     if (requestVariable && !referencedVariables.has(requestVariable) && !request.prefixes.some((prefix) => source.includes(prefix.value))) continue;
-    const targetVariables = [...source.matchAll(/\btarget\s*:\s*process\.env\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]);
+
+    const targetVariables = [...source.matchAll(/\btarget\s*:\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]);
     const literalTargets = [...source.matchAll(/\btarget\s*:\s*['"]([^'"]+)['"]/g)].map((match) => match[1]);
-    const dynamicRewriteVariable = [...source.matchAll(/\[\s*['"]\^['"]\s*\+\s*(?:process\.env\.)?([A-Za-z_$][\w$]*)\s*\]\s*:\s*['"]([^'"]*)['"]/g)][0];
+    const routerReferences = proxyRouterReferences(source);
+    const routerVariables = routerReferences.variables;
+    const literalRouters = routerReferences.literals;
+    const dynamicRewriteVariable = [...source.matchAll(/\[\s*['"]\^['"]\s*\+\s*(?:(?:process\.env|import\.meta\.env|env)\.)?([A-Za-z_$][\w$]*)\s*\]\s*:\s*['"]([^'"]*)['"]/g)][0];
     const literalRewrite = [...source.matchAll(/['"](\^\/[^'"]+)['"]\s*:\s*['"]([^'"]*)['"]/g)][0];
+    const callback = callbackRewrite(source);
+    const contexts = proxyContexts(source);
+    const framework = proxyFramework(configFile);
+
     for (const prefix of request.prefixes) {
       const selection = request.runtimeSelections.find((item) => item.value === prefix.value);
       const environment = selection?.environment ?? "runtime";
-      const targetCandidates = unique([
-        ...literalTargets,
-        ...targetVariables.flatMap((variable) => assignments.filter((item) => item.variable === variable && (item.environment === environment || environment === "runtime")).map((item) => item.value)),
-      ]);
+      const targetCandidates = unique([...literalTargets, ...environmentValueCandidates(assignments, targetVariables, environment)]);
+      const routerCandidates = unique([...literalRouters, ...environmentValueCandidates(assignments, routerVariables, environment)]);
       let rewritePattern: string | undefined, rewriteReplacement: string | undefined;
+      let rewriteKind: TransportProxyRouteEvidence["rewriteKind"];
       if (dynamicRewriteVariable) {
         const variable = aliases.get(dynamicRewriteVariable[1]) ?? dynamicRewriteVariable[1];
-        if (!requestVariable || variable === requestVariable) { rewritePattern = `^${prefix.value}`; rewriteReplacement = dynamicRewriteVariable[2]; }
+        if (!requestVariable || variable === requestVariable) {
+          rewritePattern = `^${prefix.value}`;
+          rewriteReplacement = dynamicRewriteVariable[2];
+          rewriteKind = "path-rewrite-map";
+        }
       } else if (literalRewrite && new RegExp(literalRewrite[1]).test(prefix.value)) {
-        rewritePattern = literalRewrite[1]; rewriteReplacement = literalRewrite[2];
+        rewritePattern = literalRewrite[1]; rewriteReplacement = literalRewrite[2]; rewriteKind = "path-rewrite-map";
+      } else if (callback && new RegExp(callback.pattern).test(prefix.value)) {
+        rewritePattern = callback.pattern; rewriteReplacement = callback.replacement; rewriteKind = "rewrite-callback";
       }
       const upstreamPathCandidate = rewritePattern === undefined
         ? undefined
         : joinTransportPath(prefix.value.replace(new RegExp(rewritePattern), rewriteReplacement ?? ""), endpointPath);
       output.push({
-        requestPrefix: prefix.value, environment, source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
-        targetCandidates, ...(rewritePattern !== undefined ? { rewritePattern, rewriteReplacement, upstreamPathCandidate } : {}),
+        requestPrefix: prefix.value,
+        environment,
+        source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
+        framework,
+        contextCandidates: contexts,
+        targetCandidates,
+        routerCandidates,
+        changeOrigin: proxyBoolean(source, "changeOrigin"),
+        secure: proxyBoolean(source, "secure"),
+        ws: proxyBoolean(source, "ws"),
+        configureHook: /\bconfigure(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(source),
+        bypassHook: /\bbypass(?:\s*:\s*(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*)|\s*\([^)]*\)\s*\{)/.test(source),
+        ...(rewritePattern !== undefined ? { rewriteKind, rewritePattern, rewriteReplacement, upstreamPathCandidate } : {}),
       });
     }
   }

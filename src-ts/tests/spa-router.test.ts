@@ -548,6 +548,7 @@ test("SPA adaptive visual stability fails continuous DOM mutations instead of ca
     assert.equal(report.passed, false);
     assert.ok((report.visualMatrix?.stabilityFailures ?? 0) > 0, JSON.stringify(report.visualMatrix, null, 2));
     assert.ok((report.telemetry.visualAdaptiveWaitMs ?? 0) >= 400);
+    assert.ok(report.telemetry.visualStability.signature.mutationInvalidations > 0, JSON.stringify(report.telemetry.visualStability, null, 2));
     assert.equal(report.qualityGates.find((gate) => gate.id === "visual-runtime")?.passed, false);
     assert.equal(report.qualityGates.find((gate) => gate.id === "scenario-viewport-matrix")?.passed, false);
     assert.equal(report.telemetry.browserShutdownMode, "graceful-fallback");
@@ -586,6 +587,11 @@ test("SPA adaptive visual stability waits for canvas animation frames to settle"
     assert.equal(report.telemetry.visualCanvas.zrenderCompletionSignals, 0);
     assert.ok(report.telemetry.visualStability.samples > 0, JSON.stringify(report.telemetry, null, 2));
     assert.ok(report.telemetry.visualStability.signatureScanMs > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualStability.signature.fullScans > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualStability.signature.incrementalScans > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualStability.signature.nodesScanned > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.ok(report.telemetry.visualStability.signature.nodesReused > 0, JSON.stringify(report.telemetry, null, 2));
+    assert.equal(report.telemetry.visualStability.signature.scanMs, report.telemetry.visualStability.signatureScanMs);
     assert.equal(report.telemetry.visualScheduler.configuredCanvasConcurrency, 1);
     assert.equal(report.telemetry.visualScheduler.maxActiveCanvasCaptures, 1);
     assert.ok(report.telemetry.visualScheduler.maxActiveContexts >= 2, JSON.stringify(report.telemetry, null, 2));
