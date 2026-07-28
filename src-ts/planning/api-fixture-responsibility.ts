@@ -92,14 +92,24 @@ export interface TransportRuntimeSelection {
   value: string;
   source: string;
 }
+export interface TransportProxyDecisionBranch {
+  condition: string;
+  rawOutcome: string;
+  outcomeKind: "literal" | "environment" | "boolean" | "nullish" | "expression";
+  outcomeCandidates: string[];
+}
 export interface TransportProxyRouteEvidence {
   requestPrefix: string;
   environment: string;
   source: string;
+  configSource: string;
+  scopeSources: string[];
   framework: "vite" | "webpack" | "vue-cli" | "unknown";
   contextCandidates: string[];
   targetCandidates: string[];
   routerCandidates: string[];
+  routerDecisionBranches: TransportProxyDecisionBranch[];
+  bypassDecisionBranches: TransportProxyDecisionBranch[];
   changeOrigin?: boolean;
   secure?: boolean;
   ws?: boolean;
@@ -229,7 +239,7 @@ function proxyFramework(configFile: string): TransportProxyRouteEvidence["framew
 }
 
 function environmentReferences(source: string): string[] {
-  return unique([...source.matchAll(/(?:process\.env|import\.meta\.env|\benv)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]));
+  return unique([...source.matchAll(/(?:process\.env|import\.meta\.env|\b[A-Za-z_$][\w$]*)\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)/g)].map((match) => match[1]));
 }
 
 function environmentValueCandidates(assignments: EnvironmentAssignment[], variables: string[], environment: string): string[] {
@@ -264,19 +274,78 @@ function callbackRewrite(source: string): { pattern: string; replacement: string
 }
 
 function proxyRouterReferences(source: string): { variables: string[]; literals: string[] } {
-  const bodies = [
-    ...[...source.matchAll(/\brouter\s*:\s*(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*([^,}]+)/g)].map((match) => match[1]),
-    ...[...source.matchAll(/\brouter\s*:\s*function\s*\([^)]*\)\s*\{([\s\S]{0,240}?)\}/g)].map((match) => match[1]),
-    ...[...source.matchAll(/\brouter\s*\([^)]*\)\s*\{([\s\S]{0,240}?)\}/g)].map((match) => match[1]),
-  ];
+  const returns = proxyFunctionBodies(source, "router").flatMap((body) => [...body.matchAll(/return\s+([^;\n}]+)/g)].map((match) => match[1].trim()));
   return {
-    variables: unique(bodies.flatMap((body) => [...body.matchAll(/(?:process\.env|import\.meta\.env|\benv)\.([A-Za-z_$][\w$]*)/g)].map((match) => match[1]))),
-    literals: unique(bodies.flatMap((body) => [...body.matchAll(/(?:return\s+)?['"]([^'"]+)['"]/g)].map((match) => match[1]))),
+    variables: unique(returns.flatMap((value) => [...value.matchAll(/(?:process\.env|import\.meta\.env|\b[A-Za-z_$][\w$]*)\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)/g)].map((match) => match[1]))),
+    literals: unique(returns.map((value) => /^['"]([^'"]+)['"]$/.exec(value)?.[1]).filter((item): item is string => Boolean(item))),
   };
+}
+
+interface ConditionalProxyReturn {
+  condition: string;
+  rawOutcome: string;
+  outcomeKind: TransportProxyDecisionBranch["outcomeKind"];
+  environmentVariable?: string;
+  literalCandidate?: string;
+}
+
+function proxyFunctionBodies(source: string, property: "router" | "bypass"): string[] {
+  const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const bodies = [
+    ...[...source.matchAll(new RegExp(`\\b${escaped}\\s*:\\s*(?:\\([^)]*\\)|[A-Za-z_$][\\w$]*)\\s*=>\\s*\\{([\\s\\S]{0,1200}?)\\}`, "g"))].map((match) => match[1]),
+    ...[...source.matchAll(new RegExp(`\\b${escaped}\\s*:\\s*function\\s*\\([^)]*\\)\\s*\\{([\\s\\S]{0,1200}?)\\}`, "g"))].map((match) => match[1]),
+    ...[...source.matchAll(new RegExp(`\\b${escaped}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]{0,1200}?)\\}`, "g"))].map((match) => match[1]),
+  ];
+  const expressions = [...source.matchAll(new RegExp(`\\b${escaped}\\s*:\\s*(?:\\([^)]*\\)|[A-Za-z_$][\\w$]*)\\s*=>\\s*([^,}]+)`, "g"))].map((match) => `return ${match[1]}`);
+  return unique([...bodies, ...expressions]);
+}
+
+function classifyConditionalOutcome(rawOutcome: string, aliases: Map<string, string>): Omit<ConditionalProxyReturn, "condition"> {
+  const raw = rawOutcome.trim().replace(/;$/, "");
+  const literal = /^['"]([^'"]*)['"]$/.exec(raw);
+  if (literal) return { rawOutcome: raw, outcomeKind: "literal", literalCandidate: literal[1] };
+  if (/^(?:true|false)$/.test(raw)) return { rawOutcome: raw, outcomeKind: "boolean", literalCandidate: raw };
+  if (/^(?:null|undefined)$/.test(raw)) return { rawOutcome: raw, outcomeKind: "nullish", literalCandidate: raw };
+  const environment = /(?:process\.env|import\.meta\.env|\b[A-Za-z_$][\w$]*)\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)/.exec(raw)?.[1];
+  if (environment) return { rawOutcome: raw, outcomeKind: "environment", environmentVariable: environment };
+  const alias = /^[A-Za-z_$][\w$]*$/.test(raw) ? aliases.get(raw) : undefined;
+  if (alias) return { rawOutcome: raw, outcomeKind: "environment", environmentVariable: alias };
+  return { rawOutcome: raw, outcomeKind: "expression" };
+}
+
+function conditionalProxyReturns(source: string, property: "router" | "bypass", aliases: Map<string, string>): ConditionalProxyReturn[] {
+  const output: ConditionalProxyReturn[] = [];
+  for (const body of proxyFunctionBodies(source, property)) {
+    const occupied: Array<[number, number]> = [];
+    for (const match of body.matchAll(/if\s*\(([^)]{1,320})\)\s*(?:\{\s*)?return\s+([^;\n}]+)\s*;?\s*\}?/g)) {
+      if (match.index === undefined) continue;
+      occupied.push([match.index, match.index + match[0].length]);
+      output.push({ condition: match[1].trim().replace(/\s+/g, " "), ...classifyConditionalOutcome(match[2], aliases) });
+    }
+    for (const match of body.matchAll(/return\s+([^;\n}]+)\s*;?/g)) {
+      if (match.index === undefined || occupied.some(([start, end]) => match.index! >= start && match.index! < end)) continue;
+      output.push({ condition: "default", ...classifyConditionalOutcome(match[1], aliases) });
+    }
+  }
+  return output.filter((branch, index, values) => values.findIndex((item) => item.condition === branch.condition && item.rawOutcome === branch.rawOutcome) === index);
+}
+
+function materializeDecisionBranches(branches: ConditionalProxyReturn[], assignments: EnvironmentAssignment[], environment: string): TransportProxyDecisionBranch[] {
+  return branches.map((branch) => ({
+    condition: branch.condition,
+    rawOutcome: branch.rawOutcome,
+    outcomeKind: branch.outcomeKind,
+    outcomeCandidates: branch.environmentVariable
+      ? environmentValueCandidates(assignments, [branch.environmentVariable], environment)
+      : branch.literalCandidate !== undefined ? [branch.literalCandidate] : [],
+  }));
 }
 
 interface ScopedProxyEntry {
   source: string;
+  sourceFile: string;
+  sourceFiles: string[];
+  aliasSources: string[];
   contextCandidates: string[];
   contextVariables: string[];
 }
@@ -286,6 +355,18 @@ interface ProxyScopeParseResult {
   diagnostics: string[];
   fallbackRequired: boolean;
 }
+
+interface AstImportBinding { imported: string; source: string }
+interface AstModuleContext {
+  file: string;
+  source: string;
+  program: AnyNode;
+  variables: Map<string, AnyNode>;
+  functions: Map<string, AnyNode>;
+  imports: Map<string, AstImportBinding>;
+  exports: Map<string, string | AnyNode>;
+}
+interface AstExpressionRef { node: AnyNode; module: AstModuleContext }
 
 function propertyName(node: AnyNode | undefined, source: string): string | undefined {
   if (!node) return undefined;
@@ -300,14 +381,14 @@ function objectMember(object: AnyNode, name: string, source: string): AnyNode | 
 }
 
 function memberInitializer(member: AnyNode | undefined): AnyNode | undefined {
-  return member?.type === "Property" ? member.value as AnyNode : undefined;
+  return member?.type === "Property" ? (member as any).value as AnyNode : undefined;
 }
 
 function literalStrings(expression: AnyNode | undefined): string[] {
   if (!expression) return [];
-  if (expression.type === "Literal" && typeof expression.value === "string") return [expression.value];
-  if (expression.type === "TemplateLiteral" && expression.expressions?.length === 0) return [expression.quasis?.[0]?.value?.cooked as string].filter(Boolean);
-  if (expression.type === "ArrayExpression") return (expression.elements as Array<AnyNode | null>).flatMap((element) => literalStrings(element ?? undefined));
+  if (expression.type === "Literal" && typeof (expression as any).value === "string") return [(expression as any).value as string];
+  if (expression.type === "TemplateLiteral" && (expression as any).expressions?.length === 0) return [(expression as any).quasis?.[0]?.value?.cooked as string].filter(Boolean);
+  if (expression.type === "ArrayExpression") return ((expression as any).elements as Array<AnyNode | null>).flatMap((element) => literalStrings(element ?? undefined));
   return [];
 }
 
@@ -322,48 +403,15 @@ function variableInitializers(program: AnyNode): Map<string, AnyNode> {
   return output;
 }
 
-function resolveExpression(expression: AnyNode, variables: Map<string, AnyNode>, seen = new Set<string>()): AnyNode {
-  if (expression.type !== "Identifier" || seen.has(expression.name as string)) return expression;
-  const resolved = variables.get(expression.name as string);
-  if (!resolved) return expression;
-  seen.add(expression.name as string);
-  return resolveExpression(resolved, variables, seen);
-}
-
-function isDirectProxyObject(object: AnyNode, source: string): boolean {
-  return ["context", "target", "router", "pathRewrite", "rewrite", "changeOrigin", "secure", "ws", "configure", "bypass"]
-    .some((name) => Boolean(objectMember(object, name, source)));
-}
-
-function scopeFromObject(object: AnyNode, source: string, key?: AnyNode): ScopedProxyEntry {
-  const contextExpression = memberInitializer(objectMember(object, "context", source));
-  const keyText = propertyName(key, source);
-  const keySource = key ? source.slice(key.start, key.end) : "";
-  const contextSource = contextExpression ? source.slice(contextExpression.start, contextExpression.end) : "";
-  const contextIdentifiers = [keySource, contextSource].flatMap((value) => /^[A-Za-z_$][\w$]*$/.test(value.trim()) ? [value.trim()] : []);
-  return {
-    source: source.slice(object.start, object.end),
-    contextCandidates: unique([...(keyText?.startsWith("/") ? [keyText] : []), ...literalStrings(contextExpression)]),
-    contextVariables: unique([...environmentReferences(keySource), ...environmentReferences(contextSource), ...contextIdentifiers]),
-  };
-}
-
-function entriesFromProxyExpression(expression: AnyNode, source: string, variables: Map<string, AnyNode>): ScopedProxyEntry[] {
-  const resolved = resolveExpression(expression, variables);
-  if (resolved.type === "ArrayExpression") {
-    return (resolved.elements as Array<AnyNode | null>).flatMap((element) => {
-      if (!element) return [];
-      const value = resolveExpression(element, variables);
-      return value.type === "ObjectExpression" ? [scopeFromObject(value, source)] : [];
-    });
-  }
-  if (resolved.type !== "ObjectExpression") return [];
-  if (isDirectProxyObject(resolved, source)) return [scopeFromObject(resolved, source)];
-  return (resolved.properties as AnyNode[]).flatMap((property) => {
-    if (property.type !== "Property") return [];
-    const value = resolveExpression(property.value as AnyNode, variables);
-    return value.type === "ObjectExpression" ? [scopeFromObject(value, source, property.key as AnyNode)] : [];
+function functionDeclarations(program: AnyNode): Map<string, AnyNode> {
+  const output = new Map<string, AnyNode>();
+  simple(program, {
+    FunctionDeclaration(node: AnyNode) {
+      const declaration = node as any;
+      if (declaration.id?.name) output.set(declaration.id.name as string, node);
+    },
   });
+  return output;
 }
 
 function parseConfigProgram(source: string): { program?: AnyNode; diagnostics: string[] } {
@@ -380,33 +428,270 @@ function parseConfigProgram(source: string): { program?: AnyNode; diagnostics: s
   }
 }
 
-function scopedProxyEntries(_configFile: string, source: string): ProxyScopeParseResult {
+function moduleCandidate(importer: string, specifier: string): string | undefined {
+  if (!specifier.startsWith(".")) return undefined;
+  const base = resolve(dirname(importer), specifier);
+  const candidates = extname(base)
+    ? [base]
+    : [base, ...[".js", ".mjs", ".cjs", ".ts", ".mts"].map((extension) => `${base}${extension}`), ...["index.js", "index.mjs", "index.cjs", "index.ts", "index.mts"].map((name) => join(base, name))];
+  return candidates.find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
+}
+
+function collectModuleBindings(context: AstModuleContext): void {
+  const body = (context.program as any).body as AnyNode[];
+  for (const statement of body) {
+    const node = statement as any;
+    if (node.type === "ImportDeclaration" && typeof node.source?.value === "string") {
+      for (const specifier of node.specifiers ?? []) {
+        const imported = specifier.type === "ImportDefaultSpecifier" ? "default" : specifier.type === "ImportSpecifier" ? propertyName(specifier.imported as AnyNode, context.source) : "*";
+        if (specifier.local?.name && imported) context.imports.set(specifier.local.name as string, { imported, source: node.source.value as string });
+      }
+    }
+    if (node.type === "ExportDefaultDeclaration") {
+      context.exports.set("default", node.declaration as AnyNode);
+    }
+    if (node.type === "ExportNamedDeclaration") {
+      const declaration = node.declaration as any;
+      if (declaration?.type === "VariableDeclaration") {
+        for (const item of declaration.declarations ?? []) if (item.id?.type === "Identifier") context.exports.set(item.id.name as string, item.id as AnyNode);
+      } else if (declaration?.type === "FunctionDeclaration" && declaration.id?.name) {
+        context.exports.set(declaration.id.name as string, declaration.id as AnyNode);
+      }
+      for (const specifier of node.specifiers ?? []) {
+        const exported = propertyName(specifier.exported as AnyNode, context.source);
+        const local = propertyName(specifier.local as AnyNode, context.source);
+        if (exported && local) context.exports.set(exported, local);
+      }
+    }
+  }
+  simple(context.program, {
+    AssignmentExpression(node: AnyNode) {
+      const assignment = node as any;
+      const left = assignment.left;
+      if (left?.type !== "MemberExpression") return;
+      const objectText = context.source.slice(left.object.start, left.object.end);
+      const property = propertyName(left.property as AnyNode, context.source);
+      if (objectText === "module" && property === "exports") context.exports.set("default", assignment.right as AnyNode);
+      else if (objectText === "exports" && property) context.exports.set(property, assignment.right as AnyNode);
+    },
+  });
+}
+
+function loadAstModule(file: string, sourceOverride: string | undefined, cache: Map<string, AstModuleContext>, diagnostics: string[]): AstModuleContext | undefined {
+  const resolvedFile = resolve(file);
+  const existing = cache.get(resolvedFile);
+  if (existing) return existing;
+  const source = sourceOverride ?? readFileSync(resolvedFile, "utf8");
   const parsed = parseConfigProgram(source);
-  if (!parsed.program) return { entries: [], diagnostics: parsed.diagnostics, fallbackRequired: true };
-  const variables = variableInitializers(parsed.program);
+  if (!parsed.program) {
+    diagnostics.push(...parsed.diagnostics.map((message) => `${resolvedFile}: ${message}`));
+    return undefined;
+  }
+  const context: AstModuleContext = {
+    file: resolvedFile,
+    source,
+    program: parsed.program,
+    variables: variableInitializers(parsed.program),
+    functions: functionDeclarations(parsed.program),
+    imports: new Map(),
+    exports: new Map(),
+  };
+  cache.set(resolvedFile, context);
+  collectModuleBindings(context);
+  return context;
+}
+
+function exportedRef(module: AstModuleContext, exported: string, cache: Map<string, AstModuleContext>, diagnostics: string[], seen: Set<string>): AstExpressionRef | undefined {
+  const binding = module.exports.get(exported);
+  if (!binding) return undefined;
+  if (typeof binding === "string") return resolveIdentifierRef(binding, module, cache, diagnostics, seen);
+  if (binding.type === "Identifier") return resolveIdentifierRef((binding as any).name as string, module, cache, diagnostics, seen);
+  return { node: binding, module };
+}
+
+function resolveIdentifierRef(name: string, module: AstModuleContext, cache: Map<string, AstModuleContext>, diagnostics: string[], seen: Set<string>): AstExpressionRef | undefined {
+  const identity = `${module.file}#${name}`;
+  if (seen.has(identity)) return undefined;
+  seen.add(identity);
+  const local = module.variables.get(name);
+  if (local) return resolveExpressionRef({ node: local, module }, cache, diagnostics, seen);
+  const declaredFunction = module.functions.get(name);
+  if (declaredFunction) return { node: declaredFunction, module };
+  const imported = module.imports.get(name);
+  if (imported) {
+    const importedFile = moduleCandidate(module.file, imported.source);
+    if (!importedFile) {
+      diagnostics.push(`${module.file}: imported proxy binding ${name} could not resolve ${imported.source}`);
+      return undefined;
+    }
+    const importedModule = loadAstModule(importedFile, undefined, cache, diagnostics);
+    return importedModule ? exportedRef(importedModule, imported.imported, cache, diagnostics, seen) : undefined;
+  }
+  return undefined;
+}
+
+function resolveExpressionRef(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[], seen = new Set<string>()): AstExpressionRef {
+  if (ref.node.type !== "Identifier") return ref;
+  return resolveIdentifierRef((ref.node as any).name as string, ref.module, cache, diagnostics, seen) ?? ref;
+}
+
+function functionRef(name: string, module: AstModuleContext, cache: Map<string, AstModuleContext>, diagnostics: string[], seen: Set<string>): AstExpressionRef | undefined {
+  const identity = `${module.file}#function:${name}`;
+  if (seen.has(identity)) return undefined;
+  seen.add(identity);
+  const declaration = module.functions.get(name);
+  if (declaration) return { node: declaration, module };
+  const variable = module.variables.get(name);
+  if (variable && ["ArrowFunctionExpression", "FunctionExpression"].includes(variable.type)) return { node: variable, module };
+  const imported = module.imports.get(name);
+  if (!imported) return undefined;
+  const importedFile = moduleCandidate(module.file, imported.source);
+  if (!importedFile) {
+    diagnostics.push(`${module.file}: imported proxy factory ${name} could not resolve ${imported.source}`);
+    return undefined;
+  }
+  const importedModule = loadAstModule(importedFile, undefined, cache, diagnostics);
+  const exported = importedModule ? exportedRef(importedModule, imported.imported, cache, diagnostics, seen) : undefined;
+  if (!exported) return undefined;
+  if (["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"].includes(exported.node.type)) return exported;
+  if (exported.node.type === "Identifier") return functionRef((exported.node as any).name as string, exported.module, cache, diagnostics, seen);
+  return undefined;
+}
+
+function directReturnExpressions(functionNode: AnyNode): AnyNode[] {
+  const body = (functionNode as any).body as AnyNode | undefined;
+  if (!body) return [];
+  if (body.type !== "BlockStatement") return [body];
+  const output: AnyNode[] = [];
+  const visit = (node: AnyNode): void => {
+    if (node !== body && ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"].includes(node.type)) return;
+    if (node.type === "ReturnStatement") {
+      const argument = (node as any).argument as AnyNode | undefined;
+      if (argument) output.push(argument);
+      return;
+    }
+    for (const value of Object.values(node as any)) {
+      if (Array.isArray(value)) {
+        for (const child of value) if (child && typeof child === "object" && typeof child.type === "string") visit(child as AnyNode);
+      } else if (value && typeof value === "object" && typeof (value as any).type === "string") {
+        visit(value as AnyNode);
+      }
+    }
+  };
+  visit(body);
+  return output;
+}
+
+function expressionAlternatives(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[], depth: number): AstExpressionRef[] {
+  if (depth > 12) {
+    diagnostics.push(`${ref.module.file}: proxy expression resolution exceeded depth 12`);
+    return [];
+  }
+  const resolved = resolveExpressionRef(ref, cache, diagnostics);
+  if (resolved.node.type !== "CallExpression") return [resolved];
+  const callee = (resolved.node as any).callee as AnyNode;
+  if (callee?.type !== "Identifier") {
+    diagnostics.push(`${resolved.module.file}: proxy factory call uses an unsupported non-identifier callee`);
+    return [];
+  }
+  const factory = functionRef((callee as any).name as string, resolved.module, cache, diagnostics, new Set());
+  if (!factory) {
+    diagnostics.push(`${resolved.module.file}: proxy factory ${(callee as any).name} could not be statically resolved`);
+    return [];
+  }
+  return directReturnExpressions(factory.node).flatMap((node) => expressionAlternatives({ node, module: factory.module }, cache, diagnostics, depth + 1));
+}
+
+function isDirectProxyObject(object: AnyNode, source: string): boolean {
+  return ["context", "target", "router", "pathRewrite", "rewrite", "changeOrigin", "secure", "ws", "configure", "bypass"]
+    .some((name) => Boolean(objectMember(object, name, source)));
+}
+
+function expandedObjectEvidence(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[], depth = 0): { source: string; files: string[]; aliasSources: string[] } {
+  if (depth > 12 || ref.node.type !== "ObjectExpression") return { source: ref.module.source.slice(ref.node.start, ref.node.end), files: [ref.module.file], aliasSources: [ref.module.source] };
+  const sources = [ref.module.source.slice(ref.node.start, ref.node.end)];
+  const files = [ref.module.file];
+  const aliases = [ref.module.source];
+  for (const property of (ref.node as any).properties as AnyNode[]) {
+    if (property.type !== "SpreadElement") continue;
+    for (const spread of expressionAlternatives({ node: (property as any).argument as AnyNode, module: ref.module }, cache, diagnostics, depth + 1)) {
+      if (spread.node.type !== "ObjectExpression") continue;
+      const nested = expandedObjectEvidence(spread, cache, diagnostics, depth + 1);
+      sources.push(nested.source); files.push(...nested.files); aliases.push(...nested.aliasSources);
+    }
+  }
+  return { source: sources.join("\n"), files: unique(files), aliasSources: unique(aliases) };
+}
+
+function scopeFromObject(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[], key?: { node: AnyNode; module: AstModuleContext }): ScopedProxyEntry {
+  const expanded = expandedObjectEvidence(ref, cache, diagnostics);
+  const contextExpression = memberInitializer(objectMember(ref.node, "context", ref.module.source));
+  const keyText = key ? propertyName(key.node, key.module.source) : undefined;
+  const keySource = key ? key.module.source.slice(key.node.start, key.node.end) : "";
+  const contextSource = contextExpression ? ref.module.source.slice(contextExpression.start, contextExpression.end) : expanded.source.match(/\bcontext\s*:\s*([^,}]+)/)?.[1] ?? "";
+  const contextIdentifiers = [keySource, contextSource].flatMap((value) => /^[A-Za-z_$][\w$]*$/.test(value.trim()) ? [value.trim()] : []);
+  return {
+    source: expanded.source,
+    sourceFile: ref.module.file,
+    sourceFiles: expanded.files,
+    aliasSources: expanded.aliasSources,
+    contextCandidates: unique([...(keyText?.startsWith("/") ? [keyText] : []), ...literalStrings(contextExpression), ...proxyContexts(expanded.source)]),
+    contextVariables: unique([...environmentReferences(keySource), ...environmentReferences(contextSource), ...contextIdentifiers]),
+  };
+}
+
+function entriesFromProxyExpression(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[], depth = 0): ScopedProxyEntry[] {
+  return expressionAlternatives(ref, cache, diagnostics, depth).flatMap((resolved) => {
+    if (resolved.node.type === "ArrayExpression") {
+      return ((resolved.node as any).elements as Array<AnyNode | null>).flatMap((element) => {
+        if (!element) return [];
+        if (element.type === "SpreadElement") return entriesFromProxyExpression({ node: (element as any).argument as AnyNode, module: resolved.module }, cache, diagnostics, depth + 1);
+        return expressionAlternatives({ node: element, module: resolved.module }, cache, diagnostics, depth + 1)
+          .filter((value) => value.node.type === "ObjectExpression")
+          .map((value) => scopeFromObject(value, cache, diagnostics));
+      });
+    }
+    if (resolved.node.type !== "ObjectExpression") return [];
+    if (isDirectProxyObject(resolved.node, resolved.module.source)) return [scopeFromObject(resolved, cache, diagnostics)];
+    return ((resolved.node as any).properties as AnyNode[]).flatMap((property) => {
+      if (property.type === "SpreadElement") return entriesFromProxyExpression({ node: (property as any).argument as AnyNode, module: resolved.module }, cache, diagnostics, depth + 1);
+      if (property.type !== "Property") return [];
+      const key = { node: (property as any).key as AnyNode, module: resolved.module };
+      return expressionAlternatives({ node: (property as any).value as AnyNode, module: resolved.module }, cache, diagnostics, depth + 1)
+        .filter((value) => value.node.type === "ObjectExpression")
+        .map((value) => scopeFromObject(value, cache, diagnostics, key));
+    });
+  });
+}
+
+function scopedProxyEntries(configFile: string, source: string): ProxyScopeParseResult {
+  const diagnostics: string[] = [];
+  const cache = new Map<string, AstModuleContext>();
+  const root = loadAstModule(configFile, source, cache, diagnostics);
+  if (!root) return { entries: [], diagnostics, fallbackRequired: true };
   const entries: ScopedProxyEntry[] = [];
-  simple(parsed.program, {
+  simple(root.program, {
     Property(node: AnyNode) {
       const property = node as any;
-      if (propertyName(property.key as AnyNode, source) === "proxy" && property.value) {
-        entries.push(...entriesFromProxyExpression(property.value as AnyNode, source, variables));
+      if (propertyName(property.key as AnyNode, root.source) === "proxy" && property.value) {
+        entries.push(...entriesFromProxyExpression({ node: property.value as AnyNode, module: root }, cache, diagnostics));
       }
     },
   });
-  if (!entries.length && /\bproxy\s*:\s*[\[{]/.test(source)) {
-    return { entries: [], diagnostics: ["AST parsed the config but did not recognize a supported proxy object or array shape"], fallbackRequired: true };
+  if (!entries.length && /\bproxy\s*:/.test(source)) {
+    return { entries: [], diagnostics: [...diagnostics, "AST parsed the config but did not recognize a supported proxy object, array, spread, import, or factory shape"], fallbackRequired: true };
   }
-  return { entries, diagnostics: [], fallbackRequired: false };
+  return { entries, diagnostics, fallbackRequired: false };
 }
 
 function environmentAliases(source: string): Map<string, string> {
   const aliases = new Map<string, string>();
-  for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|env)\.([A-Za-z_$][\w$]*)/g)) aliases.set(match[1], match[2]);
+  for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:process\.env|import\.meta\.env|[A-Za-z_$][\w$]*)\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)/g)) aliases.set(match[1], match[2]);
   return aliases;
 }
 
 function propertyEnvironmentVariables(source: string, property: string, aliases: Map<string, string>): string[] {
-  const direct = [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*(?:process\\.env|import\\.meta\\.env|env)\\.([A-Za-z_$][\\w$]*)`, "g"))].map((match) => match[1]);
+  const direct = [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*(?:process\\.env|import\\.meta\\.env|[A-Za-z_$][\\w$]*)\\.((?:VITE_|VUE_APP_|REACT_APP_|NEXT_PUBLIC_|APP_)[A-Za-z0-9_$]*)`, "g"))].map((match) => match[1]);
   const identifiers = [...source.matchAll(new RegExp(`\\b${property}\\s*:\\s*([A-Za-z_$][\\w$]*)`, "g"))].map((match) => aliases.get(match[1])).filter((item): item is string => Boolean(item));
   return unique([...direct, ...identifiers]);
 }
@@ -425,7 +710,7 @@ function routeFromScope(
   analysisMode: TransportProxyRouteEvidence["analysisMode"],
   analysisDiagnostics: string[],
 ): TransportProxyRouteEvidence[] {
-  const aliases = environmentAliases(readFileSync(configFile, "utf8"));
+  const aliases = environmentAliases([readFileSync(configFile, "utf8"), ...scope.aliasSources].join("\n"));
   const requestVariable = request.environmentVariable;
   const targetVariables = propertyEnvironmentVariables(scope.source, "target", aliases);
   const literalTargets = propertyLiteralValues(scope.source, "target");
@@ -454,7 +739,13 @@ function routeFromScope(
       ...routerReferences.variables,
       ...[...scope.source.matchAll(/\brouter\s*:\s*([A-Za-z_$][\w$]*)/g)].map((match) => aliases.get(match[1])).filter((item): item is string => Boolean(item)),
     ]);
-    const routerCandidates = unique([...routerReferences.literals, ...environmentValueCandidates(assignments, routerVariables, environment)]);
+    const routerDecisionBranches = materializeDecisionBranches(conditionalProxyReturns(scope.source, "router", aliases), assignments, environment);
+    const bypassDecisionBranches = materializeDecisionBranches(conditionalProxyReturns(scope.source, "bypass", aliases), assignments, environment);
+    const routerCandidates = unique([
+      ...routerReferences.literals,
+      ...environmentValueCandidates(assignments, routerVariables, environment),
+      ...routerDecisionBranches.flatMap((branch) => branch.outcomeCandidates),
+    ]);
     let rewritePattern: string | undefined, rewriteReplacement: string | undefined;
     let rewriteKind: TransportProxyRouteEvidence["rewriteKind"];
     if (dynamicRewriteVariable) {
@@ -475,11 +766,15 @@ function routeFromScope(
     output.push({
       requestPrefix: prefix.value,
       environment,
-      source: relative(sourceRoot, configFile).replaceAll("\\", "/"),
+      source: relative(sourceRoot, scope.sourceFile).replaceAll("\\", "/"),
+      configSource: relative(sourceRoot, configFile).replaceAll("\\", "/"),
+      scopeSources: scope.sourceFiles.map((file) => relative(sourceRoot, file).replaceAll("\\", "/")),
       framework,
       contextCandidates: resolvedContexts,
       targetCandidates,
       routerCandidates,
+      routerDecisionBranches,
+      bypassDecisionBranches,
       changeOrigin: proxyBoolean(scope.source, "changeOrigin"),
       secure: proxyBoolean(scope.source, "secure"),
       ws: proxyBoolean(scope.source, "ws"),
@@ -494,7 +789,7 @@ function routeFromScope(
 }
 
 function fallbackProxyEntry(source: string): ScopedProxyEntry {
-  return { source, contextCandidates: proxyContexts(source), contextVariables: environmentReferences(source) };
+  return { source, sourceFile: "", sourceFiles: [], aliasSources: [source], contextCandidates: proxyContexts(source), contextVariables: environmentReferences(source) };
 }
 
 function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: ReturnType<typeof requestClientEvidence>): TransportProxyRouteEvidence[] {
@@ -506,7 +801,8 @@ function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: R
     if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:\s*[\[{])/.test(source)) continue;
     const parsed = scopedProxyEntries(configFile, source);
     if (parsed.fallbackRequired) {
-      output.push(...routeFromScope(sourceRoot, configFile, fallbackProxyEntry(source), endpointPath, request, assignments, "regex-fallback", parsed.diagnostics));
+      const fallback = fallbackProxyEntry(source); fallback.sourceFile = configFile; fallback.sourceFiles = [configFile];
+      output.push(...routeFromScope(sourceRoot, configFile, fallback, endpointPath, request, assignments, "regex-fallback", parsed.diagnostics));
       continue;
     }
     for (const entry of parsed.entries) {

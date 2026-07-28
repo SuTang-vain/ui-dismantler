@@ -372,9 +372,95 @@ test("unsupported TypeScript proxy syntax emits auditable regex fallback diagnos
     assert.ok(api.metrics.proxyParseDiagnostics >= 2);
     const route = api.responsibilities[0].apiCall.proxyRoutes[0];
     assert.equal(route.analysisMode, "regex-fallback");
-    assert.ok(route.analysisDiagnostics.some((item) => item.startsWith("Acorn module parse failed:")));
+    assert.ok(route.analysisDiagnostics.some((item) => item.includes("Acorn module parse failed:")));
     assert.deepEqual(route.targetCandidates, ["https://fallback.example.test"]);
     assert.equal(route.rewritePattern, "^/api");
     assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes(route.upstreamPathCandidate ?? ""), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("proxy AST resolves imported spread maps factory returns and shared route options", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-proxy-import-factory-"));
+  try {
+    mkdirSync(join(root, "config"), { recursive: true });
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `VITE_API_PREFIX=/api\nVITE_API_TARGET=https://api.example.test\n`);
+    writeFileSync(join(root, "config", "proxy.js"), `const shared={changeOrigin:true,secure:false}; export function createApiProxy(env){return {[env.VITE_API_PREFIX]:{...shared,target:env.VITE_API_TARGET,rewrite:path=>path.replace(/^\\/api/,'/v3')}}}`);
+    writeFileSync(join(root, "vite.config.js"), `import {defineConfig,loadEnv} from 'vite'; import {createApiProxy} from './config/proxy.js'; export default defineConfig(({mode})=>{const env=loadEnv(mode,process.cwd(),''); return {server:{proxy:{...createApiProxy(env),'/health':{target:'https://health.example.test',ws:true}}}}})`);
+    writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: import.meta.env.VITE_API_PREFIX })`);
+    writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.proxyRoutesInferred, 1);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.equal(route.analysisMode, "scope-ast");
+    assert.equal(route.source, "config/proxy.js");
+    assert.equal(route.configSource, "vite.config.js");
+    assert.deepEqual(route.scopeSources, ["config/proxy.js"]);
+    assert.deepEqual(route.contextCandidates, ["/api"]);
+    assert.deepEqual(route.targetCandidates, ["https://api.example.test"]);
+    assert.equal(route.changeOrigin, true);
+    assert.equal(route.secure, false);
+    assert.equal(route.ws, undefined);
+    assert.equal(route.rewritePattern, "^/api");
+    assert.equal(route.upstreamPathCandidate, "/v3/orders");
+    assert.equal(route.targetCandidates.includes("https://health.example.test"), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("proxy AST resolves an imported default proxy object without broad sibling evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-proxy-import-default-"));
+  try {
+    mkdirSync(join(root, "config"), { recursive: true });
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, "config", "proxy.js"), `const routes={'/api':{target:'https://api.example.test',changeOrigin:true},'/auth':{target:'https://auth.example.test',secure:false}}; export default routes`);
+    writeFileSync(join(root, "vite.config.js"), `import {defineConfig} from 'vite'; import routes from './config/proxy.js'; export default defineConfig({server:{proxy:routes}})`);
+    writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: '/api' })`);
+    writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.proxyRoutesInferred, 1);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.equal(route.source, "config/proxy.js");
+    assert.deepEqual(route.targetCandidates, ["https://api.example.test"]);
+    assert.equal(route.secure, undefined);
+    assert.equal(route.targetCandidates.includes("https://auth.example.test"), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("proxy graph preserves router and bypass conditional return branches as audit evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-proxy-decisions-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, ".env.development"), `APP_API_PREFIX=/api\nAPP_API_TARGET=https://api.example.test\nAPP_TENANT_TARGET=https://tenant.example.test\n`);
+    writeFileSync(join(root, "webpack.config.js"), `module.exports={devServer:{proxy:[{context:'/api',target:process.env.APP_API_TARGET,router(req){if(req.headers.host==='tenant.example.test') return process.env.APP_TENANT_TARGET; return process.env.APP_API_TARGET},bypass(req){if(req.headers.accept==='text/html') return '/index.html'; return false}}]}}`);
+    writeFileSync(join(root, "src", "utils", "request.js"), `export default createClient({ baseURL: process.env.APP_API_PREFIX })`);
+    writeFileSync(join(root, "src", "api", "orders.js"), `import request from '@/utils/request'; export function fetchOrders(){ return request({url:'/orders',method:'get'}) }`);
+    writeFileSync(join(root, "src", "views", "Orders.vue"), `<template><div>{{ list.length }}</div></template><script>import { fetchOrders } from '@/api/orders'; export default {name:'Orders',data(){return {list:[]}},created(){fetchOrders().then(response=>{this.list=response.data.items})}}</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/api/orders", method: "GET", body: { data: { items: [] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    const route = api.responsibilities[0].apiCall.proxyRoutes[0];
+    assert.deepEqual(route.routerCandidates, ["https://tenant.example.test", "https://api.example.test"]);
+    assert.deepEqual(route.routerDecisionBranches, [
+      { condition: "req.headers.host==='tenant.example.test'", rawOutcome: "process.env.APP_TENANT_TARGET", outcomeKind: "environment", outcomeCandidates: ["https://tenant.example.test"] },
+      { condition: "default", rawOutcome: "process.env.APP_API_TARGET", outcomeKind: "environment", outcomeCandidates: ["https://api.example.test"] },
+    ]);
+    assert.deepEqual(route.bypassDecisionBranches, [
+      { condition: "req.headers.accept==='text/html'", rawOutcome: "'/index.html'", outcomeKind: "literal", outcomeCandidates: ["/index.html"] },
+      { condition: "default", rawOutcome: "false", outcomeKind: "boolean", outcomeCandidates: ["false"] },
+    ]);
+    assert.equal(route.bypassHook, true);
+    assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes("/index.html"), false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
