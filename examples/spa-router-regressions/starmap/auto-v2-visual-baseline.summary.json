@@ -1,0 +1,722 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "auto-v2-visual-baseline-to-responsibility-runtime-gold-plus",
+  "deterministic": true,
+  "modelCalls": 0,
+  "manualCssRepairs": 0,
+  "qualityThresholds": {
+    "computedStyle": 0.98,
+    "pixelDiff": 0.02,
+    "navigationIntegrity": 1,
+    "runtimeErrors": 0,
+    "requiredNetworkFailures": 0,
+    "stabilityFailures": 0,
+    "blockingHandlesAfterClose": 0
+  },
+  "sourceStyleMaterialization": {
+    "styleSheetsAvailable": 2,
+    "styleSheetsMaterialized": 2,
+    "styleSheetsFailed": 0,
+    "rulesMaterialized": 74,
+    "selectorsMaterialized": 80,
+    "selectorOwnership": "data-visual-owner",
+    "caseSpecificWhitelists": false
+  },
+  "before": {
+    "reviewedRegion": {
+      "passed": false,
+      "scenariosPassed": 3,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 1,
+      "worstComputedStyle": 0.7018,
+      "worstPixelDiff": 0.610122,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": false,
+          "worstComputedStyle": 0.7149,
+          "worstPixelDiff": 0.610122,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.610122,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.588277,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.609639,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": false,
+          "worstComputedStyle": 0.7149,
+          "worstPixelDiff": 0.124059,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.044229,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7237,
+              "pixelDiff": 0.047085,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7237,
+              "pixelDiff": 0.124059,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": false,
+          "worstComputedStyle": 0.7018,
+          "worstPixelDiff": 0.574519,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.574519,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.4415,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.245132,
+              "dimensionMismatch": true,
+              "captureFailures": []
+            }
+          }
+        }
+      }
+    },
+    "fullViewport": {
+      "passed": false,
+      "scenariosPassed": 3,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 1,
+      "worstComputedStyle": 0.7018,
+      "worstPixelDiff": 0.727333,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": false,
+          "worstComputedStyle": 0.7149,
+          "worstPixelDiff": 0.368647,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.333213,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.361574,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.368647,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": false,
+          "worstComputedStyle": 0.7149,
+          "worstPixelDiff": 0.104827,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7149,
+              "pixelDiff": 0.046525,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7237,
+              "pixelDiff": 0.043313,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7237,
+              "pixelDiff": 0.104827,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": false,
+          "worstComputedStyle": 0.7018,
+          "worstPixelDiff": 0.727333,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.727333,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.559756,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.7018,
+              "pixelDiff": 0.387444,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        }
+      }
+    }
+  },
+  "afterScopedStyle": {
+    "reviewedRegion": {
+      "passed": false,
+      "scenariosPassed": 2,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 0.6666666666666666,
+      "worstComputedStyle": 0.8991,
+      "worstPixelDiff": 0.574865,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": false,
+          "worstComputedStyle": 0.9079,
+          "worstPixelDiff": 0.248241,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.134861,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.172728,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.248241,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": false,
+          "worstComputedStyle": 0.8991,
+          "worstPixelDiff": 0.574865,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9649,
+              "pixelDiff": 0.574865,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9518,
+              "pixelDiff": 0.506082,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.8991,
+              "pixelDiff": 0.238808,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": false,
+          "worstComputedStyle": 0.9254,
+          "worstPixelDiff": 0.214066,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.105652,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.097666,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.214066,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            }
+          }
+        }
+      }
+    },
+    "fullViewport": {
+      "passed": false,
+      "scenariosPassed": 2,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 0.6666666666666666,
+      "worstComputedStyle": 0.8991,
+      "worstPixelDiff": 0.674779,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": false,
+          "worstComputedStyle": 0.9079,
+          "worstPixelDiff": 0.248241,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.134861,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.172728,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.9079,
+              "pixelDiff": 0.248241,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": false,
+          "worstComputedStyle": 0.8991,
+          "worstPixelDiff": 0.674779,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9649,
+              "pixelDiff": 0.674779,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9518,
+              "pixelDiff": 0.506082,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.8991,
+              "pixelDiff": 0.238808,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": false,
+          "worstComputedStyle": 0.9254,
+          "worstPixelDiff": 0.214066,
+          "viewports": {
+            "desktop": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.083777,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            },
+            "tablet": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.097666,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            },
+            "mobile": {
+              "passed": false,
+              "computedStyle": 0.9254,
+              "pixelDiff": 0.214066,
+              "dimensionMismatch": false,
+              "captureFailures": [
+                "generated assertion: step[0] action=click failed: locator.click: Timeout 10000ms exceeded.",
+                "comparison generated-assertion-failure: generated 场景断言失败: step[0] action=click failed: locator.click: Timeout 10000ms exceeded."
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "observedDelta": {
+    "reviewedRegionWorstComputedStyle": 0.1973,
+    "reviewedRegionWorstPixelDiff": -0.035257,
+    "fullViewportWorstComputedStyle": 0.1973,
+    "fullViewportWorstPixelDiff": -0.052554
+  },
+  "classification": [
+    {
+      "kind": "css-responsibility",
+      "status": "resolved",
+      "evidence": "1 global style context plus 2/2 owner stylesheets and 74 rules materialized"
+    },
+    {
+      "kind": "conditional-state",
+      "status": "resolved-for-reviewed-boundaries",
+      "evidence": "9 runtime condition bindings driven by AST state evidence"
+    },
+    {
+      "kind": "interaction-state",
+      "status": "resolved-for-reviewed-boundaries",
+      "evidence": "11 executable interaction bindings and 42 static state writes"
+    },
+    {
+      "kind": "data-cardinality",
+      "status": "resolved-for-reviewed-boundaries",
+      "evidence": "1 reviewed fixture binding expands 2 loop instances"
+    },
+    {
+      "kind": "data-binding",
+      "status": "resolved-for-reviewed-boundaries",
+      "evidence": "21 text bindings resolved; 1 unsupported binding remains outside current measured mismatch"
+    },
+    {
+      "kind": "selection-state",
+      "status": "resolved-for-reviewed-boundaries",
+      "evidence": "1 fixture selection inferred from loop equality, unique predicate and unresolved state-write evidence"
+    },
+    {
+      "kind": "visual-quality",
+      "status": "gold-plus-pass",
+      "evidence": "region and full matrices both 3/3 PASS; worst style 0.9868; worst pixel 0.00295"
+    }
+  ],
+  "nextRecommendedAlgorithm": "Generalize the state/data runtime on a blind Vite SPA and add nested route plus polling lifecycle coverage; do not tune Starmap further.",
+  "afterResponsibilityRuntime": {
+    "reviewedRegion": {
+      "passed": true,
+      "scenariosPassed": 3,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 1,
+      "worstComputedStyle": 0.9868,
+      "worstPixelDiff": 0.00295,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": true,
+          "worstComputedStyle": 0.9868,
+          "worstPixelDiff": 0,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.00295,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.001002,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.001261,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.00295,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        }
+      }
+    },
+    "fullViewport": {
+      "passed": true,
+      "scenariosPassed": 3,
+      "scenariosTotal": 3,
+      "navigationIntegrity": 1,
+      "worstComputedStyle": 0.9868,
+      "worstPixelDiff": 0.00295,
+      "runtimeErrors": 0,
+      "unmockedApiRequests": 0,
+      "requiredNetworkFailures": 0,
+      "stabilityFailures": 0,
+      "blockingHandlesAfterClose": 0,
+      "scenarios": {
+        "home-default": {
+          "passed": true,
+          "worstComputedStyle": 0.9868,
+          "worstPixelDiff": 0,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 0.9868,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-loaded": {
+          "passed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        },
+        "profiles-editor-open": {
+          "passed": true,
+          "worstComputedStyle": 1,
+          "worstPixelDiff": 0.00295,
+          "viewports": {
+            "desktop": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.000765,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "tablet": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.001261,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            },
+            "mobile": {
+              "passed": true,
+              "computedStyle": 1,
+              "pixelDiff": 0.00295,
+              "dimensionMismatch": false,
+              "captureFailures": []
+            }
+          }
+        }
+      }
+    }
+  },
+  "finalAlgorithm": {
+    "handlerStateWriteEvidence": true,
+    "primitiveInteractionExecutor": true,
+    "conditionalRegionMaterialization": true,
+    "reviewedFixtureCardinality": true,
+    "templateFieldBinding": true,
+    "pureDisplayFunctionResponsibility": true,
+    "globalStyleContext": true,
+    "transparentBehaviorShell": true,
+    "caseSpecificWhitelists": false,
+    "generation": {
+      "generatedLines": 1235,
+      "generatedBytes": 61846,
+      "initialStateBindings": 7,
+      "executableInteractionBindings": 11,
+      "executableStateWrites": 42,
+      "runtimeConditionBindings": 9,
+      "reviewedFixtureBindings": 1,
+      "generatedLoopInstances": 2,
+      "resolvedTextBindings": 21,
+      "unresolvedTextBindings": 1,
+      "inferredFixtureSelections": 1,
+      "globalStyleSheetsMaterialized": 1,
+      "sourceStyleSheetsMaterialized": 2,
+      "modelCalls": 0,
+      "manualEditedLines": 0,
+      "repairIterations": 0
+    }
+  },
+  "finalDeltaFromFirstPass": {
+    "reviewedRegionComputedStyle": 0.285,
+    "reviewedRegionPixelDiff": -0.607172,
+    "fullViewportComputedStyle": 0.285,
+    "fullViewportPixelDiff": -0.724383
+  }
+}

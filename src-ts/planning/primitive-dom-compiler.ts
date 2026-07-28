@@ -25,6 +25,7 @@ export interface PrimitiveDomNode {
   content: SfcTemplateContentToken[];
   embeddedAssets?: SfcTemplateNode["embeddedAssets"];
   conditions: string[];
+  conditionDirective?: { kind: "if" | "else-if" | "else" | "show"; expression?: string };
   loops: string[];
   slot?: string;
   primitiveKind?: ElementUiPrimitiveKind;
@@ -67,9 +68,12 @@ export interface PrimitiveDomCompilation {
 }
 
 const nativeTags = new Set([
-  "a", "article", "aside", "b", "br", "button", "div", "footer", "form", "h1", "h2", "h3", "h4", "header",
-  "i", "img", "input", "label", "li", "main", "nav", "p", "section", "small", "span", "strong", "table", "tbody",
-  "td", "th", "thead", "tr", "ul",
+  "a", "abbr", "address", "article", "aside", "audio", "b", "blockquote", "br", "button", "canvas", "caption", "code",
+  "col", "colgroup", "data", "datalist", "dd", "details", "dialog", "div", "dl", "dt", "em", "fieldset", "figcaption",
+  "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hr", "i", "iframe", "img", "input",
+  "label", "legend", "li", "main", "mark", "meter", "nav", "ol", "option", "optgroup", "output", "p", "picture", "pre",
+  "progress", "q", "s", "section", "select", "small", "source", "span", "strong", "sub", "summary", "sup", "table", "tbody",
+  "td", "textarea", "tfoot", "th", "thead", "time", "tr", "track", "u", "ul", "video",
 ]);
 
 const strategyByPrimitive: Partial<Record<ElementUiPrimitiveKind, PrimitiveRenderStrategy>> = {
@@ -97,8 +101,8 @@ function eventBinding(node: SfcTemplateNode): PrimitiveInteractionBinding[] {
   });
 }
 function mappedAttributes(node: SfcTemplateNode): Record<string, string | true> {
-  const allowed = new Set(["autocomplete", "content", "label", "manual", "name", "placeholder", "placement", "prop", "ref", "size", "src", "alt", "class-name", "tabindex", "title", "type", "value"]);
-  return Object.fromEntries(Object.entries(node.attributes).filter(([name]) => allowed.has(name) || name.startsWith(":") || name === "v-model" || name === "v-permission"));
+  const allowed = new Set(["accept", "action", "alt", "autocomplete", "checked", "class-name", "cols", "content", "disabled", "download", "for", "form", "height", "href", "id", "label", "manual", "max", "maxlength", "method", "min", "minlength", "multiple", "name", "pattern", "placeholder", "placement", "poster", "prop", "readonly", "ref", "rel", "required", "role", "rows", "selected", "size", "src", "step", "tabindex", "target", "title", "type", "value", "width"]);
+  return Object.fromEntries(Object.entries(node.attributes).filter(([name]) => allowed.has(name) || name.startsWith(":") || name.startsWith("aria-") || name.startsWith("data-") || name === "v-model" || name === "v-permission"));
 }
 function nodeStrategy(node: SfcTemplateNode): PrimitiveRenderStrategy {
   if (node.primitive) return strategyByPrimitive[node.primitive.kind] ?? "native";
@@ -150,7 +154,8 @@ export function compilePrimitiveDom(structure: SfcTemplateStructure, scope = "co
       id: `${scope}:${source.id}`, sourceNodeId: source.id, parentId: source.parentId ? `${scope}:${source.parentId}` : undefined,
       order: source.order, sourceTag: source.tag, componentName: source.componentName, renderTag: renderTag(source, strategy), renderStrategy: strategy,
       classes: classesFor(source), attributes: mappedAttributes(source), inlineStyle: source.inlineStyle, content: source.content, embeddedAssets: source.embeddedAssets,
-      conditions: source.conditions, loops: source.loops, slot: source.slot, primitiveKind: source.primitive?.kind, responsiveSpans,
+      conditions: source.conditions, conditionDirective: typeof source.attributes["v-if"] === "string" ? { kind: "if", expression: source.attributes["v-if"] } : typeof source.attributes["v-else-if"] === "string" ? { kind: "else-if", expression: source.attributes["v-else-if"] } : source.attributes["v-else"] === true ? { kind: "else" } : typeof source.attributes["v-show"] === "string" ? { kind: "show", expression: source.attributes["v-show"] } : undefined,
+      loops: source.loops, slot: source.slot, primitiveKind: source.primitive?.kind, responsiveSpans,
     };
   });
   const styleRules = nodes.flatMap(primitiveRules);

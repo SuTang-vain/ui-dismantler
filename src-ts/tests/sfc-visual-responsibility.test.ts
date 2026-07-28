@@ -7,6 +7,9 @@ import { analyzeEChartsResponsibilities } from "../planning/echarts-responsibili
 import { analyzeSfcVisualResponsibilities } from "../planning/sfc-visual-responsibility.js";
 import { analyzeRouterToSfcResponsibilities } from "../planning/router-sfc-responsibility.js";
 import { generateGeneratedTargetAutoV2 } from "../planning/generated-target-auto-v2.js";
+import { materializeOwnerSourceStyles } from "../planning/scoped-style-materializer.js";
+import { analyzeSfcStateResponsibilities } from "../planning/sfc-state-responsibility.js";
+import { compilePrimitiveExpression, evaluatePrimitiveExpression } from "../planning/primitive-expression.js";
 
 function fixture(): string {
   const root = mkdtempSync(join(tmpdir(), "ui-dismantler-sfc-"));
@@ -134,6 +137,57 @@ export default routes`);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+test("SFC state responsibility follows pure helpers and emits executable handler writes without identifier whitelists", () => {
+  const result = analyzeSfcStateResponsibilities(`
+import { ref } from 'vue';
+const panel = ref({ open:false, form: blankForm() });
+function blankForm(){ return { name:'', count:2 } }
+function openPanel(){ panel.value = { open:true, form:blankForm() } }
+function closePanel(){ panel.value.open = false }
+function unresolved(value){ panel.value.form.name = value }
+function displayDate(value){ if(!value) return '—'; return new Date(value).toLocaleString('zh-CN') }
+`);
+  assert.equal(result.parsed, true);
+  assert.deepEqual(result.initialState.panel, { open: false, form: { name: "", count: 2 } });
+  assert.deepEqual(result.handlers.find((handler) => handler.handler === "openPanel")?.writes.map((write) => [write.path, write.value]), [
+    ["panel.open", true], ["panel.form", { name: "", count: 2 }],
+  ]);
+  assert.deepEqual(result.handlers.find((handler) => handler.handler === "closePanel")?.writes.map((write) => [write.path, write.value]), [["panel.open", false]]);
+  assert.equal(result.unresolvedWrites.some((write) => write.handler === "unresolved" && write.path === "panel.form.name"), true);
+  assert.equal(result.metrics.handlersWithWrites >= 2, true);
+  assert.deepEqual(result.displayFunctions, [{ functionName: "displayDate", parameter: "value", operation: "date-locale-string", locale: "zh-CN", fallback: "—", sourceLine: 8, confidence: "high" }]);
+});
+
+test("primitive expression evaluator safely resolves paths, logical conditions and fixture text operands", () => {
+  const scope = { loading: false, records: [{ id: "a" }], editor: { open: true }, item: { active: false, name: "Reviewed" } };
+  assert.deepEqual(evaluatePrimitiveExpression(compilePrimitiveExpression("!loading && records.length"), scope), { resolved: true, value: 1 });
+  assert.deepEqual(evaluatePrimitiveExpression(compilePrimitiveExpression("editor.open && item.name"), scope), { resolved: true, value: "Reviewed" });
+  assert.deepEqual(evaluatePrimitiveExpression(compilePrimitiveExpression("item.active ? 'yes' : 'no'"), scope), { resolved: true, value: "no" });
+  assert.equal(evaluatePrimitiveExpression(compilePrimitiveExpression("format(item.name)"), scope).resolved, false);
+  const displayScope = { ...scope, __autoV2DisplayFunctions: [{ functionName: "displayDate", operation: "date-locale-string", locale: "zh-CN", fallback: "—" }] };
+  assert.deepEqual(evaluatePrimitiveExpression(compilePrimitiveExpression("displayDate('2026-07-20T02:30:00.000Z')"), displayScope), { resolved: true, value: new Date("2026-07-20T02:30:00.000Z").toLocaleString("zh-CN") });
+});
+
+test("scoped style materializer preserves media and keyframes while binding selectors to visual ownership", () => {
+  const result = materializeOwnerSourceStyles({
+    id: "visual:owner",
+    sourceStyleSheets: [{
+      index: 0,
+      scoped: true,
+      compileStatus: "raw-css",
+      compiledCss: `.root,.child:hover{color:red}@media (max-width:600px){.root>.item{display:none}}@keyframes spin{from{opacity:0}to{opacity:1}}`,
+    }],
+  });
+  assert.equal(result.metrics.styleSheetsMaterialized, 1);
+  assert.equal(result.metrics.rulesMaterialized, 2);
+  assert.equal(result.metrics.selectorsMaterialized, 3);
+  assert.equal(result.metrics.keyframeRulesPreserved, 2);
+  assert.match(result.css, /\[data-visual-owner="visual:owner"\] \.root/);
+  assert.match(result.css, /@media \(max-width:600px\)/);
+  assert.equal(result.css.includes(`[data-visual-owner="visual:owner"] from`), false);
+  assert.match(result.css, /@keyframes spin\{from\{opacity:0\}to\{opacity:1\}\}/);
+});
+
 test("generated-target-auto-v2 consumes router and responsibility evidence without claiming Gold+", () => {
   const root = fixture();
   try {
@@ -159,6 +213,9 @@ export default routes`);
     assert.equal(artifact.metrics.visualOwners > 0, true);
     assert.equal(artifact.metrics.generatedVisualNodes > artifact.metrics.visualOwners, true);
     assert.equal(artifact.metrics.generatedInteractionBindings > 0, true);
+    assert.equal(artifact.metrics.sourceStyleSheetsAvailable > 0, true);
+    assert.equal(artifact.metrics.sourceStyleSheetsMaterialized > 0, true);
+    assert.equal(artifact.metrics.sourceStyleRulesMaterialized > 0, true);
     assert.equal(artifact.source.routerSfcGraphKind, "router-to-sfc-responsibility-graph");
     assert.equal(artifact.source.sfcVisualMetrics?.components, graph.metrics.components);
     assert.equal(artifact.costComparison.manualReviewedTarget.manualEditedLines, 17);
@@ -167,10 +224,52 @@ export default routes`);
     assert.equal(artifact.qualityComparison.routeComparable, false);
     assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-visual-owner"), true);
     assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-primitive-node"), true);
+    assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("auto-v2-route-marker"), true);
+    const styles = artifact.files.find((file) => file.path === "public/styles.css")?.content ?? "";
+    assert.equal(styles.includes(`[data-visual-owner="visual:sfc:2"] .card-panel`), true);
+    assert.equal(styles.includes(".auto-v2-owner,.auto-v2-owner-body{display:contents}"), true);
     const server = artifact.files.find((file) => file.path === "server.mjs")?.content ?? "";
     assert.equal(server.indexOf("const body=await readFile(path)") >= 0, true);
     assert.equal(server.indexOf("const body=await readFile(path)") < server.indexOf("res.writeHead(200"), true);
     assert.equal(artifact.limitations.some((item) => item.includes("does not claim visual equivalence")), true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("auto-v2 materializes reviewed fixture cardinality, field bindings, conditions and handler state writes", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-auto-v2-state-data-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "router"), { recursive: true });
+    writeFileSync(join(root, "src", "api", "records.js"), `export const listRecords=()=>request.get('/records')`);
+    writeFileSync(join(root, "src", "router", "index.js"), `import Profiles from '../views/Profiles.vue'; export default [{path:'/profiles',component:Profiles}]`);
+    writeFileSync(join(root, "src", "views", "Profiles.vue"), `<template><main class="profiles"><button class="open" @click="openEditor()">Open</button><section v-if="records.length"><article v-for="record in records" class="card" :class="{ active:selected === record.id }"><strong>{{ record.name }}</strong><span v-if="record.preferred">Preferred</span></article></section><p v-else>Empty</p><div v-if="editor.open" class="modal"><input v-model="editor.form.name"><button class="close" @click="closeEditor">Close</button></div></main></template><script setup>import {ref,onMounted} from 'vue';import {listRecords} from '../api/records';const records=ref([]);const selected=ref(localStorage.getItem('selected')||'');const editor=ref({open:false,form:blankForm()});function blankForm(){return {name:'',count:2}}function openEditor(){editor.value={open:true,form:blankForm()}}function closeEditor(){editor.value.open=false}async function load(){const response=await listRecords();records.value=response.data||[];const preferred=records.value.find((record)=>record.preferred);if(preferred)selected.value=preferred.id}onMounted(load)</script><style scoped>.profiles{min-height:100vh}.modal{position:fixed;inset:0}.card{padding:8px}</style>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/records", pathMode: "transport-suffix", method: "GET", body: { data: [{ id: "a", name: "Alice", preferred: false }, { id: "b", name: "Bob", preferred: true }] } }] };
+    graph.apiFixtures = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    const routerSfc = analyzeRouterToSfcResponsibilities(root);
+    const routePlan: SpaRouteShellPlan = {
+      schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
+      source: { mode: "reference-generated", configScenarios: 1, reportIncluded: true, reportPassed: true },
+      routes: [{ route: "/profiles", pattern: "/profiles", scenarios: ["profiles"], entry: true, final: true, assertions: [{ scenarioId: "profiles", visibleSelector: ".profiles" }], visualStates: [{ scenarioId: "profiles", region: ".profiles", styleTargets: [".profiles"] }] }],
+      transitions: [], selectorMappings: [], fixtureDependencies: [], capabilities: { historyBack: false, historyForward: false, reload: false, dynamicInputRoutes: false, roleSpecificSelectors: false, reviewedVisualStates: 1 },
+      measurementTemplate: { modelCalls: 0, generationMs: 0, manualEdits: 0, manualEditedLines: 0, repairIterations: 0, qualityRuns: 0 }, reviewReasons: [],
+    };
+    const plan = generateVisualTargetPlan(graph, routePlan, routerSfc);
+    const artifact = generateGeneratedTargetAutoV2({ routePlan, visualPlan: plan, routerSfc, sfcVisual: graph });
+    const app = artifact.files.find((file) => file.path === "public/app.js")?.content ?? "";
+    assert.equal(artifact.metrics.reviewedFixtureBindings, 1);
+    assert.equal(artifact.metrics.generatedLoopInstances, 2);
+    assert.equal(artifact.metrics.executableInteractionBindings, 2);
+    assert.equal(artifact.metrics.runtimeConditionBindings >= 1, true);
+    assert.equal(artifact.metrics.resolvedTextBindings, 2);
+    assert.equal(artifact.metrics.inferredFixtureSelections, 1);
+    assert.equal(app.includes("Alice"), true);
+    assert.equal(app.includes("Bob"), true);
+    assert.equal(app.includes('"path": "editor.open"'), true);
+    assert.equal(app.includes('"selected": "b"'), true);
+    assert.equal(app.includes("data-auto-v2-condition"), true);
+    assert.equal(app.includes("data-auto-v2-instance"), true);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 

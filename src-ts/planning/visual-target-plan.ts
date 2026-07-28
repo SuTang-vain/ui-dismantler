@@ -17,6 +17,7 @@ export interface VisualTargetOwnerPlan {
   childComponents: string[];
   templateStructure: SfcTemplateStructure;
   dataCardinality: SfcVisualComponentResponsibility["dataCardinality"];
+  stateResponsibility: SfcVisualComponentResponsibility["stateResponsibility"];
   apiFixtures: ApiFixtureResponsibility[];
   interactions: { events: string[]; models: string[]; conditions: string[]; loops: string[] };
   lifecycle: string[];
@@ -260,6 +261,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
     childComponents: component.childComponents,
     templateStructure: component.templateStructure,
     dataCardinality: component.dataCardinality,
+    stateResponsibility: component.stateResponsibility,
     apiFixtures: graph.apiFixtures?.responsibilities.filter((item) => item.componentId === component.id) ?? [],
     interactions: component.bindings,
     lifecycle: component.lifecycle,
@@ -284,6 +286,7 @@ function ownerPlan(component: SfcVisualComponentResponsibility, parentComponentI
       childComponents: [],
       templateStructure: { roots: [], nodes: [], componentOrder: [], primitiveCounts: {}, inlineVisualDeclarations: 0, conditionalRegions: 0, repeatedRegions: 0, slotOwners: 0, responsiveGridNodes: 0 },
       dataCardinality: component.dataCardinality,
+      stateResponsibility: component.stateResponsibility,
       apiFixtures: [],
       interactions: { events: chart.interactions, models: [], conditions: [], loops: [] },
       lifecycle: chart.lifecycle,

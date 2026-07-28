@@ -5,6 +5,7 @@ import { analyzeEChartsResponsibilities, type EChartsResponsibilityGraph } from 
 import { analyzeSfcTemplateStructure, type SfcTemplateStructure } from "./sfc-template-structure.js";
 import { analyzeDataCardinality, type DataCardinalityResponsibility } from "./data-cardinality.js";
 import type { ApiFixtureResponsibilityGraph } from "./api-fixture-responsibility.js";
+import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "./sfc-state-responsibility.js";
 
 export interface SfcStyleResponsibility {
   index: number;
@@ -33,6 +34,7 @@ export interface SfcVisualComponentResponsibility {
   childComponents: string[];
   templateStructure: SfcTemplateStructure;
   dataCardinality: DataCardinalityResponsibility;
+  stateResponsibility: SfcStateResponsibility;
   visualRegions: string[];
   bindings: {
     events: string[];
@@ -78,6 +80,11 @@ export interface SfcVisualResponsibilityGraph {
     failedStyleSheets: number;
     staticDataBindings: number;
     dataCardinalities: number;
+    stateInitialBindings: number;
+    stateHandlers: number;
+    stateWrites: number;
+    displayFunctions: number;
+    unresolvedStateWrites: number;
     scanMs: number;
   };
 }
@@ -247,6 +254,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     const conditions = unique(allMatches(parsed.template, /v-(?:if|else-if|show)\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const loops = unique(allMatches(parsed.template, /v-for\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const dataCardinality = analyzeDataCardinality(parsed.script, loops);
+    const stateResponsibility = analyzeSfcStateResponsibilities(parsed.script);
     const styles = parsed.styles.map((style, styleIndex): SfcStyleResponsibility => {
       const language = style.attributes.match(/\blang\s*=\s*['"]([^'"]+)['"]/)?.[1] ?? "css";
       return {
@@ -276,6 +284,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       childComponents,
       templateStructure: embedSvgIconAssets(root, analyzeSfcTemplateStructure(parsed.template)),
       dataCardinality,
+      stateResponsibility,
       visualRegions,
       bindings: { events, models, conditions, loops },
       lifecycle,
@@ -322,6 +331,11 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
       staticDataBindings: components.reduce((sum, item) => sum + Object.keys(item.dataCardinality.staticBindings).length, 0),
       dataCardinalities: components.reduce((sum, item) => sum + item.dataCardinality.cardinalities.length, 0),
+      stateInitialBindings: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.initialBindings, 0),
+      stateHandlers: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.handlers, 0),
+      stateWrites: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.stateWrites, 0),
+      displayFunctions: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.displayFunctions, 0),
+      unresolvedStateWrites: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.unresolvedWrites, 0),
       scanMs: Date.now() - started,
     },
   };

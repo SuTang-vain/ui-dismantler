@@ -360,10 +360,13 @@ async function stopDetachedProcess(child: ChildProcess): Promise<void> {
 }
 
 
-test("Starmap generated-target-auto-v2 passes an independent Semantic route contract without claiming visual Gold+", () => {
+test("Starmap generated-target-auto-v2 preserves independent Semantic and reviewed visual Gold+ evidence", () => {
   const caseDir = `${root}examples/spa-router-regressions/starmap`;
   const contract = JSON.parse(readFileSync(`${caseDir}/auto-v2-route-contract.final.results.json`, "utf8"));
   const manifest = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v2/artifact.manifest.json`, "utf8"));
+  const generation = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v2/generation.metrics.json`, "utf8"));
+  const visual = JSON.parse(readFileSync(`${caseDir}/auto-v2-visual-final-full.results.json`, "utf8"));
+  const summary = JSON.parse(readFileSync(`${caseDir}/auto-v2-visual-baseline.summary.json`, "utf8"));
   assert.equal(contract.passed, true);
   assert.equal(contract.scenariosPassed, 6);
   assert.equal(contract.scenariosTotal, 6);
@@ -380,7 +383,26 @@ test("Starmap generated-target-auto-v2 passes an independent Semantic route cont
   assert.equal(manifest.kind, "generated-target-auto-v2");
   assert.equal(manifest.fullGeneratedApplication, false);
   assert.equal(manifest.qualityComparison.routeComparable, true);
-  assert.equal(manifest.qualityComparison.comparable, false);
+  assert.equal(manifest.qualityComparison.comparable, true);
+  assert.equal(manifest.qualityComparison.generated.passed, true);
+  assert.equal(manifest.qualityComparison.generated.computedStyle >= 0.98, true);
+  assert.equal(manifest.qualityComparison.generated.pixelDiff <= 0.02, true);
+  assert.equal(generation.modelCalls, 0);
+  assert.equal(generation.manualEditedLines, 0);
+  assert.equal(generation.executableInteractionBindings, 11);
+  assert.equal(generation.runtimeConditionBindings, 9);
+  assert.equal(generation.reviewedFixtureBindings, 1);
+  assert.equal(generation.generatedLoopInstances, 2);
+  assert.equal(generation.inferredFixtureSelections, 1);
+  assert.equal(generation.globalStyleSheetsMaterialized, 1);
+  assert.equal(visual.passed, true);
+  assert.equal(visual.visualMatrix.scenarioCount, 3);
+  assert.equal(visual.visualMatrix.viewportRuns, 9);
+  assert.equal(visual.visualMatrix.worstComputedStyle >= 0.98, true);
+  assert.equal(visual.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(visual.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  assert.equal(summary.afterResponsibilityRuntime.reviewedRegion.passed, true);
+  assert.equal(summary.afterResponsibilityRuntime.fullViewport.passed, true);
 });
 
 test("YesPlayMusic automatic router adapter preserves the manual route shell quality contract", () => {

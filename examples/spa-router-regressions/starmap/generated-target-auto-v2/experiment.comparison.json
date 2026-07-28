@@ -1,6 +1,6 @@
 {
   "quality": {
-    "comparable": false,
+    "comparable": true,
     "routeComparable": true,
     "manual": {
       "available": true,
@@ -17,32 +17,32 @@
       "available": true,
       "passed": true,
       "navigationIntegrity": 1,
-      "computedStyle": null,
-      "pixelDiff": null,
+      "computedStyle": 0.9868,
+      "pixelDiff": 0.00295,
       "runtimeErrors": 0,
       "requiredNetworkFailures": 0,
-      "stabilityFailures": null,
+      "stabilityFailures": 0,
       "blockingHandlesAfterClose": 0
     },
     "generatedMinusManual": {
-      "computedStyle": null,
-      "pixelDiff": null,
+      "computedStyle": -0.0132,
+      "pixelDiff": 0.000431,
       "navigationIntegrity": 0
     },
-    "detail": "Semantic route reports are comparable, but generated visual Gold+ fields are absent; no visual-equivalence claim"
+    "detail": "report-level quality comparison; formal Gold+ gates remain authoritative"
   },
   "cost": {
     "manualReviewedTarget": {
       "manualEditedLines": null,
-      "repairIterations": 3
+      "repairIterations": null
     },
     "autoV2FirstPass": {
-      "generatedLines": 102,
-      "generatedBytes": 20207,
+      "generatedLines": 1235,
+      "generatedBytes": 61846,
       "manualEditedLines": 0,
       "repairIterations": 0,
       "modelCalls": 0,
-      "generationMs": 4.94
+      "generationMs": 43.59
     },
     "detail": "manual values are reviewed inputs; auto-v2 first-pass values are deterministic generation telemetry"
   }

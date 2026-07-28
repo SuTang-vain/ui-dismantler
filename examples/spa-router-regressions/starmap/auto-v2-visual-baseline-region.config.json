@@ -1,0 +1,274 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:9530",
+  "generatedBaseUrl": "http://127.0.0.1:9531",
+  "navigationComparison": "semantic",
+  "apiPrefix": "/api",
+  "fixtures": [
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/llm/profiles",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "fetch",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": [
+          {
+            "id": "profile-reviewed-1",
+            "name": "Reviewed Profile",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-20250514",
+            "apiUrl": "https://api.anthropic.com",
+            "apiKey": "sk-reviewed",
+            "temperature": 0.5,
+            "maxTokens": 800,
+            "updatedAt": "2026-07-20T02:30:00.000Z",
+            "isDefault": true
+          },
+          {
+            "id": "profile-reviewed-2",
+            "name": "OpenAI Production",
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "apiUrl": "https://api.openai.com/v1",
+            "apiKey": "（未设置）",
+            "temperature": 0.2,
+            "maxTokens": 1600,
+            "updatedAt": "2026-07-21T06:10:00.000Z",
+            "isDefault": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/task-123/status",
+      "pathMode": "transport-suffix",
+      "method": "GET",
+      "resourceType": "xhr",
+      "requestHeaders": {
+        "authorization": "Bearer reviewed-token"
+      },
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "success": true,
+        "data": {
+          "themeName": "Reviewed Task",
+          "status": "completed"
+        }
+      }
+    }
+  ],
+  "visualMatrix": {
+    "viewports": [
+      {
+        "id": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "id": "tablet",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "id": "mobile",
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "artifactDir": "examples/spa-router-regressions/starmap/auto-v2-visual-artifacts-region",
+    "stabilityTimeoutMs": 10000
+  },
+  "execution": {
+    "contractConcurrency": 2,
+    "visualConcurrency": 3,
+    "visualCaptureConcurrency": 3,
+    "visualCanvasConcurrency": 1,
+    "visualPixelConcurrency": 1,
+    "actionTimeoutMs": 10000,
+    "browserShutdown": "graceful"
+  },
+  "scenarios": [
+    {
+      "id": "home-default",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [],
+      "assertions": {
+        "path": "/",
+        "search": "?token=reviewed-token",
+        "visibleSelector": ".theme-input-container",
+        "visibleText": "星图生产辅助 Agent"
+      },
+      "visual": {
+        "screenshotAnchor": ".theme-input-container",
+        "screenshotRegion": ".theme-input-container",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".theme-input-container"
+          },
+          {
+            "id": "hero",
+            "selector": ".hero-section"
+          },
+          {
+            "id": "form",
+            "selector": ".input-form"
+          },
+          {
+            "id": "submit",
+            "selector": ".submit-btn"
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    },
+    {
+      "id": "profiles-loaded",
+      "entryPath": "/?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": ".hero-link",
+            "generated": "a[data-auto-v2-route=\"/profiles\"]"
+          }
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "search": "",
+        "visibleSelector": {
+          "reference": ".profile-list",
+          "generated": ".profile-list"
+        },
+        "visibleText": "后台模型配置"
+      },
+      "visual": {
+        "screenshotAnchor": ".profiles-container",
+        "screenshotRegion": ".profiles-container",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".profiles-container"
+          },
+          {
+            "id": "header",
+            "selector": ".profiles-header"
+          },
+          {
+            "id": "card",
+            "selector": ".profile-card"
+          },
+          {
+            "id": "meta",
+            "selector": ".card-meta"
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    },
+    {
+      "id": "profiles-editor-open",
+      "entryPath": "/profiles?token=reviewed-token",
+      "steps": [
+        {
+          "action": "click",
+          "target": {
+            "reference": "button:has-text('新建配置')",
+            "generated": "button.btn-primary"
+          }
+        }
+      ],
+      "assertions": {
+        "path": "/profiles",
+        "search": "?token=reviewed-token",
+        "visibleSelector": {
+          "reference": ".modal",
+          "generated": ".modal"
+        },
+        "visibleText": "新建配置"
+      },
+      "visual": {
+        "screenshotAnchor": ".modal",
+        "screenshotRegion": ".profiles-container",
+        "styleTargets": [
+          {
+            "id": "mask",
+            "selector": ".modal-mask"
+          },
+          {
+            "id": "modal",
+            "selector": ".modal"
+          },
+          {
+            "id": "body",
+            "selector": ".modal-body"
+          },
+          {
+            "id": "field",
+            "selector": ".modal-body .form-group"
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    }
+  ]
+}

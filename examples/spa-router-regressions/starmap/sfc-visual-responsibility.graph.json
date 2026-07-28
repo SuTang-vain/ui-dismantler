@@ -2,7 +2,7 @@
   "schemaVersion": "1.0",
   "kind": "sfc-visual-responsibility-graph",
   "reviewRequired": true,
-  "sourceRoot": "<external-starmap-source>",
+  "sourceRoot": "<external-source>",
   "framework": "vue-sfc",
   "components": [
     {
@@ -69,6 +69,27 @@
         "sliceLimits": [],
         "templateRepeats": [],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [],
       "bindings": {
@@ -334,6 +355,46 @@
         "sliceLimits": [],
         "templateRepeats": [],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "handleBatchDelete",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 22
+          },
+          {
+            "handler": "handleBatchEditLabel",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 15
+          },
+          {
+            "handler": "handleClearSelection",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 28
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 3,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [
         "batch-action-bar",
@@ -865,6 +926,78 @@
         "sliceLimits": [],
         "templateRepeats": [],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "default",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 12
+          },
+          {
+            "handler": "handleDelete",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 69
+          },
+          {
+            "handler": "handleEdit",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 64
+          },
+          {
+            "handler": "isSelected",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 35
+          },
+          {
+            "handler": "onDragEnd",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 48
+          },
+          {
+            "handler": "onLabelChange",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 59
+          },
+          {
+            "handler": "onSortChange",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 54
+          },
+          {
+            "handler": "toggleSelect",
+            "writes": [],
+            "helperCalls": [
+              "isSelected"
+            ],
+            "sourceLine": 40
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 8,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [
         "btn-delete",
@@ -1597,6 +1730,95 @@
         ],
         "unresolvedReferences": []
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "searchQuery": "",
+          "isSearching": false,
+          "searchResults": [],
+          "selectedItems": []
+        },
+        "handlers": [
+          {
+            "handler": "close",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 69
+          },
+          {
+            "handler": "handleConfirm",
+            "writes": [],
+            "helperCalls": [
+              "close"
+            ],
+            "sourceLine": 63
+          },
+          {
+            "handler": "handleSearch",
+            "writes": [
+              {
+                "path": "isSearching",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 36,
+                "confidence": "high"
+              },
+              {
+                "path": "isSearching",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 44,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 33
+          },
+          {
+            "handler": "isSelected",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 49
+          },
+          {
+            "handler": "toggleSelect",
+            "writes": [],
+            "helperCalls": [
+              "isSelected"
+            ],
+            "sourceLine": 54
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "handleSearch",
+            "path": "searchResults",
+            "expression": "searchResults.value = results || []",
+            "sourceLine": 39
+          },
+          {
+            "handler": "toggleSelect",
+            "path": "selectedItems",
+            "expression": "selectedItems.value = selectedItems.value.filter(s => s.lemmaId !== item.lemmaId)",
+            "sourceLine": 56
+          }
+        ],
+        "metrics": {
+          "initialBindings": 4,
+          "handlers": 5,
+          "handlersWithWrites": 1,
+          "stateWrites": 2,
+          "displayFunctions": 0,
+          "unresolvedWrites": 2
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "visualRegions": [
         "btn-close",
         "btn-primary",
@@ -2148,6 +2370,71 @@
         ],
         "unresolvedReferences": []
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "loading": false,
+          "modifications": []
+        },
+        "handlers": [
+          {
+            "handler": "formatTime",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 42
+          },
+          {
+            "handler": "getActionLabel",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 31
+          },
+          {
+            "handler": "loadModifications",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 17,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 26,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 16
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "loadModifications",
+            "path": "modifications",
+            "expression": "modifications.value = res.data",
+            "sourceLine": 21
+          }
+        ],
+        "metrics": {
+          "initialBindings": 2,
+          "handlers": 3,
+          "handlersWithWrites": 1,
+          "stateWrites": 2,
+          "displayFunctions": 0,
+          "unresolvedWrites": 1
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "visualRegions": [
         "action-type",
         "actionType",
@@ -2295,6 +2582,27 @@
         "sliceLimits": [],
         "templateRepeats": [],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [],
       "bindings": {
@@ -2592,6 +2900,70 @@
         "sliceLimits": [],
         "templateRepeats": [],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "exporting": false
+        },
+        "handlers": [
+          {
+            "handler": "goToHome",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 31
+          },
+          {
+            "handler": "handleExport",
+            "writes": [
+              {
+                "path": "exporting",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 15,
+                "confidence": "high"
+              },
+              {
+                "path": "exporting",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 27,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 11
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "handleExport",
+            "path": "a.href",
+            "expression": "a.href = url",
+            "sourceLine": 19
+          },
+          {
+            "handler": "handleExport",
+            "path": "a.download",
+            "expression": "a.download = `starmap_${taskId}_${Date.now()}.csv`",
+            "sourceLine": 20
+          }
+        ],
+        "metrics": {
+          "initialBindings": 1,
+          "handlers": 2,
+          "handlersWithWrites": 1,
+          "stateWrites": 2,
+          "displayFunctions": 0,
+          "unresolvedWrites": 2
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [
         "back-btn",
@@ -3056,6 +3428,85 @@
           "(step, index) in steps"
         ],
         "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "taskInfo": {}
+        },
+        "handlers": [
+          {
+            "handler": "fetchStatus",
+            "writes": [
+              {
+                "path": "pollingTimer",
+                "value": null,
+                "expression": "null",
+                "sourceLine": 71,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "stopPolling"
+            ],
+            "sourceLine": 50
+          },
+          {
+            "handler": "goToReview",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 75
+          },
+          {
+            "handler": "startPolling",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 64
+          },
+          {
+            "handler": "stopPolling",
+            "writes": [
+              {
+                "path": "pollingTimer",
+                "value": null,
+                "expression": "null",
+                "sourceLine": 71,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 68
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "fetchStatus",
+            "path": "taskInfo",
+            "expression": "taskInfo.value = res.data",
+            "sourceLine": 54
+          },
+          {
+            "handler": "startPolling",
+            "path": "pollingTimer",
+            "expression": "pollingTimer = setInterval(fetchStatus, 2000)",
+            "sourceLine": 65
+          }
+        ],
+        "metrics": {
+          "initialBindings": 1,
+          "handlers": 4,
+          "handlersWithWrites": 2,
+          "stateWrites": 2,
+          "displayFunctions": 0,
+          "unresolvedWrites": 2
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
       },
       "visualRegions": [
         "active",
@@ -5149,6 +5600,380 @@
           "LLM_PROVIDERS"
         ]
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "profiles": [],
+          "loading": false,
+          "editor": {
+            "open": false,
+            "id": "",
+            "saving": false,
+            "error": "",
+            "form": {
+              "name": "",
+              "provider": "anthropic",
+              "model": "",
+              "apiUrl": "",
+              "apiKey": "",
+              "secretKey": "",
+              "temperature": 0.5,
+              "maxTokens": 800,
+              "isDefault": false
+            }
+          }
+        },
+        "handlers": [
+          {
+            "handler": "applyToTheme",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 167
+          },
+          {
+            "handler": "blankForm",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 28
+          },
+          {
+            "handler": "closeEditor",
+            "writes": [
+              {
+                "path": "editor.open",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 104,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 103
+          },
+          {
+            "handler": "formatTime",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 52
+          },
+          {
+            "handler": "load",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 57
+          },
+          {
+            "handler": "onProviderChange",
+            "writes": [
+              {
+                "path": "editor.form.secretKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 49,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 47
+          },
+          {
+            "handler": "openEditor",
+            "writes": [
+              {
+                "path": "editor.open",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 82,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 84,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 85,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form.apiKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 91,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form.secretKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 92,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.id",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 99,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form",
+                "value": {
+                  "name": "",
+                  "provider": "anthropic",
+                  "model": "",
+                  "apiUrl": "",
+                  "apiKey": "",
+                  "secretKey": "",
+                  "temperature": 0.5,
+                  "maxTokens": 800,
+                  "isDefault": false
+                },
+                "expression": "blankForm()",
+                "sourceLine": 99,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [
+              "blankForm"
+            ],
+            "sourceLine": 79
+          },
+          {
+            "handler": "remove",
+            "writes": [
+              {
+                "path": "selectedId",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 160,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "load"
+            ],
+            "sourceLine": 155
+          },
+          {
+            "handler": "save",
+            "writes": [
+              {
+                "path": "editor.error",
+                "value": "请填写名称",
+                "expression": "'请填写名称'",
+                "sourceLine": 110,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "请选 Provider",
+                "expression": "'请选 Provider'",
+                "sourceLine": 114,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "custom 模式必须填 API URL",
+                "expression": "'custom 模式必须填 API URL'",
+                "sourceLine": 118,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 121,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 122,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 141,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.open",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 104,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "closeEditor",
+              "load"
+            ],
+            "sourceLine": 107
+          },
+          {
+            "handler": "setDefault",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "load"
+            ],
+            "sourceLine": 145
+          }
+        ],
+        "displayFunctions": [
+          {
+            "functionName": "formatTime",
+            "parameter": "iso",
+            "operation": "date-locale-string",
+            "locale": "zh-CN",
+            "fallback": "—",
+            "sourceLine": 52,
+            "confidence": "high"
+          }
+        ],
+        "unresolvedWrites": [
+          {
+            "handler": "applyToTheme",
+            "path": "selectedId",
+            "expression": "selectedId.value = p.id",
+            "sourceLine": 169
+          },
+          {
+            "handler": "load",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "load",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "remove",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "remove",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "save",
+            "path": "editor.error",
+            "expression": "editor.value.error = e.message || String(e)",
+            "sourceLine": 139
+          },
+          {
+            "handler": "save",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "save",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "setDefault",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "setDefault",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          }
+        ],
+        "metrics": {
+          "initialBindings": 3,
+          "handlers": 10,
+          "handlersWithWrites": 7,
+          "stateWrites": 25,
+          "displayFunctions": 1,
+          "unresolvedWrites": 10
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "visualRegions": [
         "active",
         "badge",
@@ -6997,6 +7822,315 @@
         ],
         "unresolvedReferences": []
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "taskName": "",
+          "currentStep": 1,
+          "reviewItems": [],
+          "loading": true,
+          "submitting": false,
+          "showSuccess": false
+        },
+        "handlers": [
+          {
+            "handler": "approveItem",
+            "writes": [
+              {
+                "path": "item.reviewed",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 85,
+                "confidence": "high"
+              },
+              {
+                "path": "item.approved",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 86,
+                "confidence": "high"
+              },
+              {
+                "path": "item.editing",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 87,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 82
+          },
+          {
+            "handler": "cancelEdit",
+            "writes": [
+              {
+                "path": "item.editing",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 143,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 140
+          },
+          {
+            "handler": "confirmAllReviews",
+            "writes": [
+              {
+                "path": "submitting",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 150,
+                "confidence": "high"
+              },
+              {
+                "path": "showSuccess",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 165,
+                "confidence": "high"
+              },
+              {
+                "path": "submitting",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 174,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 147
+          },
+          {
+            "handler": "fetchReviewData",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 36,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 78,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 35
+          },
+          {
+            "handler": "rejectItem",
+            "writes": [
+              {
+                "path": "item.reviewed",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 94,
+                "confidence": "high"
+              },
+              {
+                "path": "item.approved",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 95,
+                "confidence": "high"
+              },
+              {
+                "path": "item.editing",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 97,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 91
+          },
+          {
+            "handler": "resetItem",
+            "writes": [
+              {
+                "path": "item.reviewed",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 108,
+                "confidence": "high"
+              },
+              {
+                "path": "item.approved",
+                "value": null,
+                "expression": "null",
+                "sourceLine": 109,
+                "confidence": "high"
+              },
+              {
+                "path": "item.editing",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 110,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 105
+          },
+          {
+            "handler": "saveEdit",
+            "writes": [
+              {
+                "path": "item.approved",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 135,
+                "confidence": "high"
+              },
+              {
+                "path": "item.reviewed",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 136,
+                "confidence": "high"
+              },
+              {
+                "path": "item.editing",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 137,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 125
+          },
+          {
+            "handler": "startEdit",
+            "writes": [
+              {
+                "path": "item.editing",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 117,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 114
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "fetchReviewData",
+            "path": "taskName",
+            "expression": "taskName.value = res.data.themeName || res.data.task?.themeName || ''",
+            "sourceLine": 40
+          },
+          {
+            "handler": "fetchReviewData",
+            "path": "reviewItems",
+            "expression": "reviewItems.value = items.map(item => ({ ...item, reviewed: false, approved: null, editing: false, editLemmaName: item.lemmaName, editLabel: item.label, editReason: item.reason, editRank: item.rank, }))",
+            "sourceLine": 42
+          },
+          {
+            "handler": "fetchReviewData",
+            "path": "taskName",
+            "expression": "taskName.value = res.data.themeName || ''",
+            "sourceLine": 60
+          },
+          {
+            "handler": "rejectItem",
+            "path": "item.editLemmaName",
+            "expression": "item.editLemmaName = item.lemmaName",
+            "sourceLine": 98
+          },
+          {
+            "handler": "rejectItem",
+            "path": "item.editLabel",
+            "expression": "item.editLabel = item.label",
+            "sourceLine": 99
+          },
+          {
+            "handler": "rejectItem",
+            "path": "item.editReason",
+            "expression": "item.editReason = item.reason",
+            "sourceLine": 100
+          },
+          {
+            "handler": "rejectItem",
+            "path": "item.editRank",
+            "expression": "item.editRank = item.rank",
+            "sourceLine": 101
+          },
+          {
+            "handler": "saveEdit",
+            "path": "item.lemmaName",
+            "expression": "item.lemmaName = item.editLemmaName",
+            "sourceLine": 130
+          },
+          {
+            "handler": "saveEdit",
+            "path": "item.label",
+            "expression": "item.label = item.editLabel",
+            "sourceLine": 131
+          },
+          {
+            "handler": "saveEdit",
+            "path": "item.reason",
+            "expression": "item.reason = item.editReason",
+            "sourceLine": 132
+          },
+          {
+            "handler": "saveEdit",
+            "path": "item.rank",
+            "expression": "item.rank = item.editRank",
+            "sourceLine": 133
+          },
+          {
+            "handler": "startEdit",
+            "path": "item.editLemmaName",
+            "expression": "item.editLemmaName = item.lemmaName",
+            "sourceLine": 118
+          },
+          {
+            "handler": "startEdit",
+            "path": "item.editLabel",
+            "expression": "item.editLabel = item.label",
+            "sourceLine": 119
+          },
+          {
+            "handler": "startEdit",
+            "path": "item.editReason",
+            "expression": "item.editReason = item.reason",
+            "sourceLine": 120
+          },
+          {
+            "handler": "startEdit",
+            "path": "item.editRank",
+            "expression": "item.editRank = item.rank",
+            "sourceLine": 121
+          }
+        ],
+        "metrics": {
+          "initialBindings": 6,
+          "handlers": 8,
+          "handlersWithWrites": 8,
+          "stateWrites": 19,
+          "displayFunctions": 0,
+          "unresolvedWrites": 15
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "visualRegions": [
         "approved",
         "btn-approve",
@@ -8598,6 +9732,97 @@
           "LLM_PROVIDERS"
         ]
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "submitting": false,
+          "showAdvanced": false,
+          "formData": {
+            "themeName": "",
+            "objective": "",
+            "referenceEntries": "",
+            "categoryHint": "",
+            "useLLMBackend": "http"
+          }
+        },
+        "handlers": [
+          {
+            "handler": "handleSubmit",
+            "writes": [
+              {
+                "path": "submitting",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 51,
+                "confidence": "high"
+              },
+              {
+                "path": "payload.useLLMBackend",
+                "value": "http",
+                "expression": "'http'",
+                "sourceLine": 64,
+                "confidence": "high"
+              },
+              {
+                "path": "submitting",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 86,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 47
+          },
+          {
+            "handler": "loadProfileSnapshot",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 12
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmProvider",
+            "expression": "payload.llmProvider = formData.value.llmProvider",
+            "sourceLine": 65
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmModel",
+            "expression": "payload.llmModel = formData.value.llmModel",
+            "sourceLine": 66
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmApiKey",
+            "expression": "payload.llmApiKey = formData.value.llmApiKey",
+            "sourceLine": 67
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmApiUrl",
+            "expression": "payload.llmApiUrl = formData.value.llmApiUrl",
+            "sourceLine": 69
+          }
+        ],
+        "metrics": {
+          "initialBindings": 3,
+          "handlers": 2,
+          "handlersWithWrites": 1,
+          "stateWrites": 3,
+          "displayFunctions": 0,
+          "unresolvedWrites": 4
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "visualRegions": [
         "active",
         "advanced-content",
@@ -8726,7 +9951,7 @@
       "chartFiles": 0,
       "components": 0,
       "evidenceCount": 0,
-      "scanMs": 5
+      "scanMs": 6
     }
   },
   "blockers": [],
@@ -8753,13 +9978,18 @@
     "failedStyleSheets": 0,
     "staticDataBindings": 88,
     "dataCardinalities": 9,
-    "scanMs": 24
+    "stateInitialBindings": 20,
+    "stateHandlers": 45,
+    "stateWrites": 55,
+    "displayFunctions": 1,
+    "unresolvedStateWrites": 36,
+    "scanMs": 45
   },
   "apiFixtures": {
     "schemaVersion": "1.0",
     "kind": "api-fixture-responsibility-graph",
     "reviewRequired": true,
-    "sourceRoot": "<external-starmap-source>",
+    "sourceRoot": "<external-source>",
     "responsibilities": [
       {
         "id": "api-fixture:sfc:9:listProfiles",

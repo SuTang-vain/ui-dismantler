@@ -6,7 +6,7 @@
   "source": {
     "sfcGraphKind": "sfc-visual-responsibility-graph",
     "routePlanKind": "spa-route-shell-plan",
-    "sourceRoot": "<external-starmap-source>",
+    "sourceRoot": "<external-source>",
     "graphComponents": 11,
     "graphChartComponents": 0,
     "routerSfcGraphKind": "router-to-sfc-responsibility-graph",
@@ -2167,6 +2167,380 @@
           "LLM_PROVIDERS"
         ]
       },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "profiles": [],
+          "loading": false,
+          "editor": {
+            "open": false,
+            "id": "",
+            "saving": false,
+            "error": "",
+            "form": {
+              "name": "",
+              "provider": "anthropic",
+              "model": "",
+              "apiUrl": "",
+              "apiKey": "",
+              "secretKey": "",
+              "temperature": 0.5,
+              "maxTokens": 800,
+              "isDefault": false
+            }
+          }
+        },
+        "handlers": [
+          {
+            "handler": "applyToTheme",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 167
+          },
+          {
+            "handler": "blankForm",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 28
+          },
+          {
+            "handler": "closeEditor",
+            "writes": [
+              {
+                "path": "editor.open",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 104,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 103
+          },
+          {
+            "handler": "formatTime",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 52
+          },
+          {
+            "handler": "load",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 57
+          },
+          {
+            "handler": "onProviderChange",
+            "writes": [
+              {
+                "path": "editor.form.secretKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 49,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 47
+          },
+          {
+            "handler": "openEditor",
+            "writes": [
+              {
+                "path": "editor.open",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 82,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 84,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 85,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form.apiKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 91,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form.secretKey",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 92,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.id",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 99,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.form",
+                "value": {
+                  "name": "",
+                  "provider": "anthropic",
+                  "model": "",
+                  "apiUrl": "",
+                  "apiKey": "",
+                  "secretKey": "",
+                  "temperature": 0.5,
+                  "maxTokens": 800,
+                  "isDefault": false
+                },
+                "expression": "blankForm()",
+                "sourceLine": 99,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [
+              "blankForm"
+            ],
+            "sourceLine": 79
+          },
+          {
+            "handler": "remove",
+            "writes": [
+              {
+                "path": "selectedId",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 160,
+                "confidence": "high"
+              },
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "load"
+            ],
+            "sourceLine": 155
+          },
+          {
+            "handler": "save",
+            "writes": [
+              {
+                "path": "editor.error",
+                "value": "请填写名称",
+                "expression": "'请填写名称'",
+                "sourceLine": 110,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "请选 Provider",
+                "expression": "'请选 Provider'",
+                "sourceLine": 114,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "custom 模式必须填 API URL",
+                "expression": "'custom 模式必须填 API URL'",
+                "sourceLine": 118,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.error",
+                "value": "",
+                "expression": "''",
+                "sourceLine": 121,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 122,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.saving",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 141,
+                "confidence": "high"
+              },
+              {
+                "path": "editor.open",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 104,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "closeEditor",
+              "load"
+            ],
+            "sourceLine": 107
+          },
+          {
+            "handler": "setDefault",
+            "writes": [
+              {
+                "path": "loading",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 58,
+                "confidence": "medium"
+              },
+              {
+                "path": "loading",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 75,
+                "confidence": "medium"
+              }
+            ],
+            "helperCalls": [
+              "load"
+            ],
+            "sourceLine": 145
+          }
+        ],
+        "displayFunctions": [
+          {
+            "functionName": "formatTime",
+            "parameter": "iso",
+            "operation": "date-locale-string",
+            "locale": "zh-CN",
+            "fallback": "—",
+            "sourceLine": 52,
+            "confidence": "high"
+          }
+        ],
+        "unresolvedWrites": [
+          {
+            "handler": "applyToTheme",
+            "path": "selectedId",
+            "expression": "selectedId.value = p.id",
+            "sourceLine": 169
+          },
+          {
+            "handler": "load",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "load",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "remove",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "remove",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "save",
+            "path": "editor.error",
+            "expression": "editor.value.error = e.message || String(e)",
+            "sourceLine": 139
+          },
+          {
+            "handler": "save",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "save",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          },
+          {
+            "handler": "setDefault",
+            "path": "profiles",
+            "expression": "profiles.value = res.data || []",
+            "sourceLine": 62
+          },
+          {
+            "handler": "setDefault",
+            "path": "selectedId",
+            "expression": "selectedId.value = def.id",
+            "sourceLine": 66
+          }
+        ],
+        "metrics": {
+          "initialBindings": 3,
+          "handlers": 10,
+          "handlersWithWrites": 7,
+          "stateWrites": 25,
+          "displayFunctions": 1,
+          "unresolvedWrites": 10
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
       "apiFixtures": [
         {
           "id": "api-fixture:sfc:9:listProfiles",
@@ -3761,6 +4135,97 @@
         "unresolvedReferences": [
           "LLM_BACKENDS",
           "LLM_PROVIDERS"
+        ]
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "initialState": {
+          "submitting": false,
+          "showAdvanced": false,
+          "formData": {
+            "themeName": "",
+            "objective": "",
+            "referenceEntries": "",
+            "categoryHint": "",
+            "useLLMBackend": "http"
+          }
+        },
+        "handlers": [
+          {
+            "handler": "handleSubmit",
+            "writes": [
+              {
+                "path": "submitting",
+                "value": true,
+                "expression": "true",
+                "sourceLine": 51,
+                "confidence": "high"
+              },
+              {
+                "path": "payload.useLLMBackend",
+                "value": "http",
+                "expression": "'http'",
+                "sourceLine": 64,
+                "confidence": "high"
+              },
+              {
+                "path": "submitting",
+                "value": false,
+                "expression": "false",
+                "sourceLine": 86,
+                "confidence": "high"
+              }
+            ],
+            "helperCalls": [],
+            "sourceLine": 47
+          },
+          {
+            "handler": "loadProfileSnapshot",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 12
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmProvider",
+            "expression": "payload.llmProvider = formData.value.llmProvider",
+            "sourceLine": 65
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmModel",
+            "expression": "payload.llmModel = formData.value.llmModel",
+            "sourceLine": 66
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmApiKey",
+            "expression": "payload.llmApiKey = formData.value.llmApiKey",
+            "sourceLine": 67
+          },
+          {
+            "handler": "handleSubmit",
+            "path": "payload.llmApiUrl",
+            "expression": "payload.llmApiUrl = formData.value.llmApiUrl",
+            "sourceLine": 69
+          }
+        ],
+        "metrics": {
+          "initialBindings": 3,
+          "handlers": 2,
+          "handlersWithWrites": 1,
+          "stateWrites": 3,
+          "displayFunctions": 0,
+          "unresolvedWrites": 4
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
         ]
       },
       "apiFixtures": [],
