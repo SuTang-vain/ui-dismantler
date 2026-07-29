@@ -1,0 +1,492 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4179",
+  "passed": true,
+  "scenariosPassed": 1,
+  "scenariosTotal": 1,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "login-deep-link-reload",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4179/login",
+      "finalUrl": "http://127.0.0.1:4179/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/login",
+          "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1772.375,
+      "timing": {
+        "queueWaitMs": 0.017,
+        "contextCreateMs": 27.659,
+        "instrumentationMs": 1.283,
+        "routeRegistrationMs": 1.183,
+        "pageCreateMs": 384.636,
+        "navigationMs": 265.641,
+        "initialSettleMs": 528.544,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 532.444,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 22.236,
+        "visualCaptureMs": 0.001,
+        "contextCloseMs": 6.441,
+        "totalMs": 1772.375,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "durationMs": 532.444,
+            "setupPrefix": false
+          }
+        ]
+      }
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4173",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1787.132,
+        "timing": {
+          "queueWaitMs": 0.027,
+          "contextCreateMs": 25.656,
+          "instrumentationMs": 2.613,
+          "routeRegistrationMs": 1.426,
+          "pageCreateMs": 379.198,
+          "navigationMs": 272.602,
+          "initialSettleMs": 527.998,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 534.942,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.807,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 20.122,
+          "totalMs": 1787.132,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 534.942,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4179",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1772.375,
+        "timing": {
+          "queueWaitMs": 0.017,
+          "contextCreateMs": 27.659,
+          "instrumentationMs": 1.283,
+          "routeRegistrationMs": 1.183,
+          "pageCreateMs": 384.636,
+          "navigationMs": 265.641,
+          "initialSettleMs": 528.544,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 532.444,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.236,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 6.441,
+          "totalMs": 1772.375,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 532.444,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "login-deep-link-reload",
+      "passed": true,
+      "reference": {
+        "id": "login-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1787.132,
+        "timing": {
+          "queueWaitMs": 0.027,
+          "contextCreateMs": 25.656,
+          "instrumentationMs": 2.613,
+          "routeRegistrationMs": 1.426,
+          "pageCreateMs": 379.198,
+          "navigationMs": 272.602,
+          "initialSettleMs": 527.998,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 534.942,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.807,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 20.122,
+          "totalMs": 1787.132,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 534.942,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "login-deep-link-reload",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1772.375,
+        "timing": {
+          "queueWaitMs": 0.017,
+          "contextCreateMs": 27.659,
+          "instrumentationMs": 1.283,
+          "routeRegistrationMs": 1.183,
+          "pageCreateMs": 384.636,
+          "navigationMs": 265.641,
+          "initialSettleMs": 528.544,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 532.444,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 22.236,
+          "visualCaptureMs": 0.001,
+          "contextCloseMs": 6.441,
+          "totalMs": 1772.375,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 532.444,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 1,
+    "totalScenarios": 1,
+    "failures": 0
+  },
+  "telemetry": {
+    "contractTargetRuns": 2,
+    "visualViewportRuns": 0,
+    "visualTargetRuns": 0,
+    "visualTargetReusedRuns": 0,
+    "visualTargetFreshRuns": 0,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 0,
+    "visualPreAnchorWaitMs": 0,
+    "visualPostAnchorWaitMs": 0,
+    "visualPostAnchorSkippedRuns": 0,
+    "visualStateReusedRuns": 0,
+    "contractSetupStateReusedRuns": 0,
+    "contractSetupStepsSkipped": 0,
+    "visualSetupStateReusedRuns": 0,
+    "visualSetupStepsSkipped": 0,
+    "contractSetupOwnerTiming": {
+      "ownerRuns": 0,
+      "totalMs": 0,
+      "contextCreateMs": 0,
+      "instrumentationMs": 0,
+      "routeRegistrationMs": 0,
+      "pageCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "setupPrefixStepsMs": 0,
+      "checkpointStorageMs": 0,
+      "checkpointVerificationMs": 0,
+      "assertionMs": 0,
+      "visualCaptureMs": 0
+    },
+    "visualCanvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "visualStability": {
+      "resourceReadinessMs": 0,
+      "signatureScanMs": 0,
+      "signature": {
+        "fullScans": 0,
+        "incrementalScans": 0,
+        "nodesAvailable": 0,
+        "nodesScanned": 0,
+        "nodesReused": 0,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 0
+      },
+      "networkProbeMs": 0,
+      "samples": 0,
+      "stableFrameSamples": 0,
+      "mutationBlockedSamples": 0,
+      "resizeBlockedSamples": 0,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 0,
+      "networkBlockedSamples": 0
+    },
+    "visualRunTiming": {
+      "queueWaitMs": 0,
+      "referenceTargetMs": 0,
+      "generatedTargetMs": 0,
+      "contextCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "scenarioStepsMs": 0,
+      "assertionMs": 0,
+      "contextCloseMs": 0,
+      "captureQueueWaitMs": 0,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 0,
+      "anchorMs": 0,
+      "postAnchorStabilityMs": 0,
+      "computedStyleMs": 0,
+      "screenshotMs": 0,
+      "pixelQueueWaitMs": 0,
+      "pixelCompareMs": 0,
+      "totalMs": 0
+    },
+    "visualScheduler": {
+      "configuredViewportConcurrency": 1,
+      "configuredCaptureConcurrency": 2,
+      "configuredCanvasConcurrency": 2,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 0,
+      "maxActiveContexts": 0,
+      "maxActiveCaptures": 0,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 0,
+      "viewportQueueWaitMs": 0,
+      "captureQueueWaitMs": 0,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0
+    },
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 1,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {}
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 533.363,
+      "contractMs": 1788.736,
+      "comparisonMs": 0.427,
+      "visualMatrixMs": 0.258,
+      "browserCloseMs": 237.859,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 237.83,
+      "reportReadyMs": 2323.902,
+      "totalMs": 2561.77
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=1/1，generated=1/1"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=1/1，rate=1，failures=0"
+    }
+  ]
+}

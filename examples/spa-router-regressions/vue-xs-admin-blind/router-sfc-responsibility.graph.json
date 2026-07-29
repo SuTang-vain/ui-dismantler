@@ -1,0 +1,2147 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "router-to-sfc-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "framework": {
+    "view": "vue",
+    "router": "vue-router",
+    "routerMajor": 4
+  },
+  "routes": [
+    {
+      "path": "/about",
+      "recordPath": "/about",
+      "name": "RtAdminInfo",
+      "routeFile": "router/modules/about/index.ts",
+      "routeRecords": [
+        "router/modules/about/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/about/index.ts",
+          "line": 6,
+          "pattern": "path: '/about'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/about/index",
+      "recordPath": "index",
+      "name": "RtAbout",
+      "routeFile": "router/modules/about/index.ts",
+      "routeRecords": [
+        "router/modules/about/index.ts"
+      ],
+      "parentPath": "/about",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/about/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/about/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/about/index.ts",
+          "line": 17,
+          "pattern": "path: 'index'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/about/index.ts",
+          "line": 19,
+          "pattern": "() => import('@/views/about/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/about/index.ts",
+          "line": 19,
+          "pattern": "import('@/views/about/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components",
+      "recordPath": "/components",
+      "name": "RtComponents",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 6,
+          "pattern": "path: '/components'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/components/form",
+      "recordPath": "form",
+      "name": "RtForm",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/form/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/form/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 17,
+          "pattern": "path: 'form'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 19,
+          "pattern": "() => import('@/views/components/form/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 19,
+          "pattern": "import('@/views/components/form/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/table",
+      "recordPath": "table",
+      "name": "RtTable",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/table-page/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/table-page/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 23,
+          "pattern": "path: 'table'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 25,
+          "pattern": "() => import('@/views/components/table-page/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 25,
+          "pattern": "import('@/views/components/table-page/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/drag",
+      "recordPath": "drag",
+      "name": "RtDrag",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/drag/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/drag/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 29,
+          "pattern": "path: 'drag'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 31,
+          "pattern": "() => import('@/views/components/drag/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 31,
+          "pattern": "import('@/views/components/drag/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/count-to",
+      "recordPath": "count-to",
+      "name": "RtCountTo",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/count-to/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/count-to/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 35,
+          "pattern": "path: 'count-to'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 37,
+          "pattern": "() => import('@/views/components/count-to/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 37,
+          "pattern": "import('@/views/components/count-to/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/seamless-scroll",
+      "recordPath": "seamless-scroll",
+      "name": "RtSeamlessScroll",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/seamless-scroll/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/seamless-scroll/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 41,
+          "pattern": "path: 'seamless-scroll'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 43,
+          "pattern": "() => import('@/views/components/seamless-scroll/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 43,
+          "pattern": "import('@/views/components/seamless-scroll/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/date-time",
+      "recordPath": "date-time",
+      "name": "DateTime",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components",
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 47,
+          "pattern": "path: 'date-time'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/components/date-time/date-select",
+      "recordPath": "date-select",
+      "name": "RtDate",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components/date-time",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/date/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/date/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 54,
+          "pattern": "path: 'date-select'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 56,
+          "pattern": "() => import('@/views/components/date/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 56,
+          "pattern": "import('@/views/components/date/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/components/date-time/calendar",
+      "recordPath": "calendar",
+      "name": "RtCalendar",
+      "routeFile": "router/modules/components/index.ts",
+      "routeRecords": [
+        "router/modules/components/index.ts"
+      ],
+      "parentPath": "/components/date-time",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/components/calendar/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/components/calendar/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 60,
+          "pattern": "path: 'calendar'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 62,
+          "pattern": "() => import('@/views/components/calendar/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/components/index.ts",
+          "line": 62,
+          "pattern": "import('@/views/components/calendar/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/details_page",
+      "recordPath": "/details_page",
+      "name": "RtDetailsPage",
+      "routeFile": "router/modules/details-page/index.ts",
+      "routeRecords": [
+        "router/modules/details-page/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [
+        "views/details-page/index.vue"
+      ],
+      "routeKind": "layout-owner",
+      "ownershipRoles": [
+        "layout-owner"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/details-page/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/details-page/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 6,
+          "pattern": "path: '/details_page'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 13,
+          "pattern": "() => import('@/views/details-page/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 13,
+          "pattern": "import('@/views/details-page/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "layout component does not expose a direct router-view; inspect nested AppMain/router-view ownership"
+      ]
+    },
+    {
+      "path": "/details_page/details_info",
+      "recordPath": "details_info",
+      "name": "RtDetailsInfo",
+      "routeFile": "router/modules/details-page/index.ts",
+      "routeRecords": [
+        "router/modules/details-page/index.ts"
+      ],
+      "parentPath": "/details_page",
+      "layoutChain": [
+        "views/details-page/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/details-page/datails-info/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/details-page/datails-info/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 16,
+          "pattern": "path: 'details_info'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 25,
+          "pattern": "() => import('@/views/details-page/datails-info/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 25,
+          "pattern": "import('@/views/details-page/datails-info/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/details_page/details_params/:id",
+      "recordPath": "details_params/:id",
+      "name": "RtDetailsParams",
+      "routeFile": "router/modules/details-page/index.ts",
+      "routeRecords": [
+        "router/modules/details-page/index.ts"
+      ],
+      "parentPath": "/details_page",
+      "layoutChain": [
+        "views/details-page/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/details-page/datails-params/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/details-page/datails-params/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 28,
+          "pattern": "path: 'details_params/:id'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 37,
+          "pattern": "() => import('@/views/details-page/datails-params/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/details-page/index.ts",
+          "line": 37,
+          "pattern": "import('@/views/details-page/datails-params/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/echarts",
+      "recordPath": "/echarts",
+      "name": "RtEcharts",
+      "routeFile": "router/modules/echarts/index.ts",
+      "routeRecords": [
+        "router/modules/echarts/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 6,
+          "pattern": "path: '/echarts'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/echarts/bar",
+      "recordPath": "bar",
+      "name": "RtBar",
+      "routeFile": "router/modules/echarts/index.ts",
+      "routeRecords": [
+        "router/modules/echarts/index.ts"
+      ],
+      "parentPath": "/echarts",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/echarts/bar/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/echarts/bar/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 12,
+          "pattern": "path: 'bar'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 14,
+          "pattern": "() => import('@/views/echarts/bar/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 14,
+          "pattern": "import('@/views/echarts/bar/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/echarts/map",
+      "recordPath": "map",
+      "name": "RtMap",
+      "routeFile": "router/modules/echarts/index.ts",
+      "routeRecords": [
+        "router/modules/echarts/index.ts"
+      ],
+      "parentPath": "/echarts",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/echarts/map/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/echarts/map/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 18,
+          "pattern": "path: 'map'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 20,
+          "pattern": "() => import('@/views/echarts/map/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/echarts/index.ts",
+          "line": 20,
+          "pattern": "import('@/views/echarts/map/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/editor",
+      "recordPath": "/editor",
+      "name": "RtEditor",
+      "routeFile": "router/modules/editor/index.ts",
+      "routeRecords": [
+        "router/modules/editor/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 6,
+          "pattern": "path: '/editor'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/editor/rich-text",
+      "recordPath": "rich-text",
+      "name": "RtRichText",
+      "routeFile": "router/modules/editor/index.ts",
+      "routeRecords": [
+        "router/modules/editor/index.ts"
+      ],
+      "parentPath": "/editor",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/editor/rich-text/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/editor/rich-text/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 12,
+          "pattern": "path: 'rich-text'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 14,
+          "pattern": "() => import('@/views/editor/rich-text/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 14,
+          "pattern": "import('@/views/editor/rich-text/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/editor/markdown",
+      "recordPath": "markdown",
+      "name": "RtMarkdown",
+      "routeFile": "router/modules/editor/index.ts",
+      "routeRecords": [
+        "router/modules/editor/index.ts"
+      ],
+      "parentPath": "/editor",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/editor/markdown/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/editor/markdown/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 18,
+          "pattern": "path: 'markdown'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 20,
+          "pattern": "() => import('@/views/editor/markdown/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 20,
+          "pattern": "import('@/views/editor/markdown/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/editor/logic-flow",
+      "recordPath": "logic-flow",
+      "name": "RtLogicFlow",
+      "routeFile": "router/modules/editor/index.ts",
+      "routeRecords": [
+        "router/modules/editor/index.ts"
+      ],
+      "parentPath": "/editor",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/editor/logic-flow/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/editor/logic-flow/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 24,
+          "pattern": "path: 'logic-flow'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 26,
+          "pattern": "() => import('@/views/editor/logic-flow/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/editor/index.ts",
+          "line": 26,
+          "pattern": "import('@/views/editor/logic-flow/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/error",
+      "recordPath": "/error",
+      "name": "error",
+      "routeFile": "router/modules/error/index.ts",
+      "routeRecords": [
+        "router/modules/error/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "layout-owner",
+      "ownershipRoles": [
+        "layout-owner"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": true,
+      "componentExpression": "Layout",
+      "resolution": "dynamic-import",
+      "importBinding": "Layout",
+      "sfcFile": "layouts/page-layouts/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 8,
+          "pattern": "path: '/error'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 11,
+          "pattern": "Layout",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 4,
+          "pattern": "const Layout = () => import('@/layouts/page-layouts/index.vue')",
+          "detail": "local route component factory binding"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "layout component does not expose a direct router-view; inspect nested AppMain/router-view ownership"
+      ]
+    },
+    {
+      "path": "/error/403",
+      "recordPath": "403",
+      "name": "403",
+      "routeFile": "router/modules/error/index.ts",
+      "routeRecords": [
+        "router/modules/error/index.ts"
+      ],
+      "parentPath": "/error",
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/error/403.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/error/403.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 21,
+          "pattern": "path: '403'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 23,
+          "pattern": "() => import('@/views/error/403.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 23,
+          "pattern": "import('@/views/error/403.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/error/404",
+      "recordPath": "404",
+      "name": "404",
+      "routeFile": "router/modules/error/index.ts",
+      "routeRecords": [
+        "router/modules/error/index.ts"
+      ],
+      "parentPath": "/error",
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/error/404.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/error/404.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 27,
+          "pattern": "path: '404'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 29,
+          "pattern": "() => import('@/views/error/404.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 29,
+          "pattern": "import('@/views/error/404.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/error/500",
+      "recordPath": "500",
+      "name": "500",
+      "routeFile": "router/modules/error/index.ts",
+      "routeRecords": [
+        "router/modules/error/index.ts"
+      ],
+      "parentPath": "/error",
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/error/500.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/error/500.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 33,
+          "pattern": "path: '500'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 35,
+          "pattern": "() => import('@/views/error/500.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/error/index.ts",
+          "line": 35,
+          "pattern": "import('@/views/error/500.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/external-link",
+      "recordPath": "/external-link",
+      "name": "RtExternal",
+      "routeFile": "router/modules/externa-link/index.ts",
+      "routeRecords": [
+        "router/modules/externa-link/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "route-grouping",
+      "ownershipRoles": [
+        "route-grouping"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/externa-link/index.ts",
+          "line": 6,
+          "pattern": "path: '/external-link'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "route grouping node has no proven visual owner"
+      ]
+    },
+    {
+      "path": "/external-link/embedded-page",
+      "recordPath": "embedded-page",
+      "name": "RtGitLink",
+      "routeFile": "router/modules/externa-link/index.ts",
+      "routeRecords": [
+        "router/modules/externa-link/index.ts"
+      ],
+      "parentPath": "/external-link",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/external-link/embedded-page/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/external-link/embedded-page/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/externa-link/index.ts",
+          "line": 22,
+          "pattern": "path: 'embedded-page'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/externa-link/index.ts",
+          "line": 23,
+          "pattern": "() => import('@/views/external-link/embedded-page/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/externa-link/index.ts",
+          "line": 23,
+          "pattern": "import('@/views/external-link/embedded-page/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/functions",
+      "recordPath": "/functions",
+      "name": "Functions",
+      "routeFile": "router/modules/functions/index.ts",
+      "routeRecords": [
+        "router/modules/functions/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 6,
+          "pattern": "path: '/functions'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/functions/water_mark",
+      "recordPath": "water_mark",
+      "name": "RtWaterMark",
+      "routeFile": "router/modules/functions/index.ts",
+      "routeRecords": [
+        "router/modules/functions/index.ts"
+      ],
+      "parentPath": "/functions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/functions/water-mark/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/functions/water-mark/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 18,
+          "pattern": "path: 'water_mark'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 20,
+          "pattern": "() => import('@/views/functions/water-mark/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 20,
+          "pattern": "import('@/views/functions/water-mark/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/functions/preview-pdf",
+      "recordPath": "preview-pdf",
+      "name": "RtPreviewPdf",
+      "routeFile": "router/modules/functions/index.ts",
+      "routeRecords": [
+        "router/modules/functions/index.ts"
+      ],
+      "parentPath": "/functions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/functions/pdf/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/functions/pdf/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 24,
+          "pattern": "path: 'preview-pdf'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 26,
+          "pattern": "() => import('@/views/functions/pdf/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 26,
+          "pattern": "import('@/views/functions/pdf/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/functions/preview-docx",
+      "recordPath": "preview-docx",
+      "name": "RtPreviewDocx",
+      "routeFile": "router/modules/functions/index.ts",
+      "routeRecords": [
+        "router/modules/functions/index.ts"
+      ],
+      "parentPath": "/functions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/functions/docx/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/functions/docx/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 30,
+          "pattern": "path: 'preview-docx'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 32,
+          "pattern": "() => import('@/views/functions/docx/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 32,
+          "pattern": "import('@/views/functions/docx/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/functions/guide",
+      "recordPath": "guide",
+      "name": "RtGuide",
+      "routeFile": "router/modules/functions/index.ts",
+      "routeRecords": [
+        "router/modules/functions/index.ts"
+      ],
+      "parentPath": "/functions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/functions/guide/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/functions/guide/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 36,
+          "pattern": "path: 'guide'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 38,
+          "pattern": "() => import('@/views/functions/guide/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/functions/index.ts",
+          "line": 38,
+          "pattern": "import('@/views/functions/guide/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/welcome",
+      "recordPath": "/welcome",
+      "name": "RtWelcome",
+      "routeFile": "router/modules/home/index.ts",
+      "routeRecords": [
+        "router/modules/home/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/index/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/index/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/home/index.ts",
+          "line": 9,
+          "pattern": "path: '/welcome'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/home/index.ts",
+          "line": 11,
+          "pattern": "() => import('@/views/index/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/home/index.ts",
+          "line": 11,
+          "pattern": "import('@/views/index/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/nested",
+      "recordPath": "/nested",
+      "name": "RtNested",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 6,
+          "pattern": "path: '/nested'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/nested/menu1",
+      "recordPath": "menu1",
+      "name": "RtMenu1",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested",
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 16,
+          "pattern": "path: 'menu1'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/nested/menu1/menu1-1",
+      "recordPath": "menu1-1",
+      "name": "RtMenu1-1",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested/menu1",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/nested/menu1/menu1-1/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/nested/menu1/menu1-1/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 22,
+          "pattern": "path: 'menu1-1'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 23,
+          "pattern": "() => import('@/views/nested/menu1/menu1-1/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 23,
+          "pattern": "import('@/views/nested/menu1/menu1-1/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/nested/menu1/menu1-2",
+      "recordPath": "menu1-2",
+      "name": "RtMenu1-2",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested/menu1",
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 28,
+          "pattern": "path: 'menu1-2'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/nested/menu1/menu1-2/menu1-2-1",
+      "recordPath": "menu1-2-1",
+      "name": "RtMenu1-2-1",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested/menu1/menu1-2",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/nested/menu1/menu1-2/menu1-2-1/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 34,
+          "pattern": "path: 'menu1-2-1'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 35,
+          "pattern": "() => import('@/views/nested/menu1/menu1-2/menu1-2-1/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 35,
+          "pattern": "import('@/views/nested/menu1/menu1-2/menu1-2-1/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/nested/menu1/menu1-2/menu1-2-2",
+      "recordPath": "menu1-2-2",
+      "name": "RtMenu1-2-2",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested/menu1/menu1-2",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/nested/menu1/menu1-2/menu1-2-2/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/nested/menu1/menu1-2/menu1-2-2/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 40,
+          "pattern": "path: 'menu1-2-2'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 41,
+          "pattern": "() => import('@/views/nested/menu1/menu1-2/menu1-2-2/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 41,
+          "pattern": "import('@/views/nested/menu1/menu1-2/menu1-2-2/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/nested/menu1/menu1-3",
+      "recordPath": "menu1-3",
+      "name": "RtMenu1-3",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested/menu1",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/nested/menu1/menu1-3/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/nested/menu1/menu1-3/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 48,
+          "pattern": "path: 'menu1-3'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 49,
+          "pattern": "() => import('@/views/nested/menu1/menu1-3/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 49,
+          "pattern": "import('@/views/nested/menu1/menu1-3/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/nested/menu2",
+      "recordPath": "menu2",
+      "name": "RtMenu2",
+      "routeFile": "router/modules/nested/index.ts",
+      "routeRecords": [
+        "router/modules/nested/index.ts"
+      ],
+      "parentPath": "/nested",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/nested/menu2/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/nested/menu2/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 56,
+          "pattern": "path: 'menu2'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 57,
+          "pattern": "() => import('@/views/nested/menu2/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/nested/index.ts",
+          "line": 57,
+          "pattern": "import('@/views/nested/menu2/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/permissions",
+      "recordPath": "/permissions",
+      "name": "RtPermissions",
+      "routeFile": "router/modules/permissions/index.ts",
+      "routeRecords": [
+        "router/modules/permissions/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "redirect-only-parent",
+      "ownershipRoles": [
+        "redirect-only-parent"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 7,
+          "pattern": "path: '/permissions'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "redirect-only parent has no visual owner; inspect its children independently"
+      ]
+    },
+    {
+      "path": "/permissions/page",
+      "recordPath": "page",
+      "name": "RtPermissionsPage",
+      "routeFile": "router/modules/permissions/index.ts",
+      "routeRecords": [
+        "router/modules/permissions/index.ts"
+      ],
+      "parentPath": "/permissions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/permissions/page/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/permissions/page/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 13,
+          "pattern": "path: 'page'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 15,
+          "pattern": "() => import('@/views/permissions/page/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 15,
+          "pattern": "import('@/views/permissions/page/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/permissions/test-page-admin",
+      "recordPath": "test-page-admin",
+      "name": "RtPermissionsTestPageAdmin",
+      "routeFile": "router/modules/permissions/index.ts",
+      "routeRecords": [
+        "router/modules/permissions/index.ts"
+      ],
+      "parentPath": "/permissions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/permissions/test-permissions-a/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/permissions/test-permissions-a/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 19,
+          "pattern": "path: 'test-page-admin'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 21,
+          "pattern": "() => import('@/views/permissions/test-permissions-a/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 21,
+          "pattern": "import('@/views/permissions/test-permissions-a/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/permissions/test-page-test",
+      "recordPath": "test-page-test",
+      "name": "RtPermissionsTestPageTest",
+      "routeFile": "router/modules/permissions/index.ts",
+      "routeRecords": [
+        "router/modules/permissions/index.ts"
+      ],
+      "parentPath": "/permissions",
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/permissions/test-permissions-b/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/permissions/test-permissions-b/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 25,
+          "pattern": "path: 'test-page-test'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 27,
+          "pattern": "() => import('@/views/permissions/test-permissions-b/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/permissions/index.ts",
+          "line": 27,
+          "pattern": "import('@/views/permissions/test-permissions-b/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/",
+      "recordPath": "/",
+      "name": "RtRoot",
+      "routeFile": "router/modules/root/index.ts",
+      "routeRecords": [
+        "router/modules/root/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "Layout",
+      "resolution": "dynamic-import",
+      "importBinding": "Layout",
+      "sfcFile": "layouts/page-layouts/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 8,
+          "pattern": "path: '/'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 9,
+          "pattern": "Layout",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 4,
+          "pattern": "const Layout = () => import('@/layouts/page-layouts/index.vue')",
+          "detail": "local route component factory binding"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/login",
+      "recordPath": "/login",
+      "name": "login",
+      "routeFile": "router/modules/root/index.ts",
+      "routeRecords": [
+        "router/modules/root/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/views/login/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "views/login/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 18,
+          "pattern": "path: '/login'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 19,
+          "pattern": "() => import('@/views/login/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 19,
+          "pattern": "import('@/views/login/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/redirect",
+      "recordPath": "/redirect",
+      "name": null,
+      "routeFile": "router/modules/root/index.ts",
+      "routeRecords": [
+        "router/modules/root/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "layout-owner",
+      "ownershipRoles": [
+        "layout-owner"
+      ],
+      "parentOnly": true,
+      "visualOwnerProven": true,
+      "componentExpression": "Layout",
+      "resolution": "dynamic-import",
+      "importBinding": "Layout",
+      "sfcFile": "layouts/page-layouts/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 23,
+          "pattern": "path: '/redirect'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 24,
+          "pattern": "Layout",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 4,
+          "pattern": "const Layout = () => import('@/layouts/page-layouts/index.vue')",
+          "detail": "local route component factory binding"
+        }
+      ],
+      "reviewReasons": [
+        "child route paths are resolved relative to this route record",
+        "layout component does not expose a direct router-view; inspect nested AppMain/router-view ownership"
+      ]
+    },
+    {
+      "path": "/redirect/:path(.*)",
+      "recordPath": "/redirect/:path(.*)",
+      "name": "Redirect",
+      "routeFile": "router/modules/root/index.ts",
+      "routeRecords": [
+        "router/modules/root/index.ts"
+      ],
+      "parentPath": "/redirect",
+      "layoutChain": [
+        "layouts/page-layouts/index.vue"
+      ],
+      "routeKind": "visual-leaf",
+      "ownershipRoles": [
+        "visual-leaf"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": true,
+      "componentExpression": "() => import('@/layouts/redirect/index.vue')",
+      "resolution": "dynamic-import",
+      "importBinding": null,
+      "sfcFile": "layouts/redirect/index.vue",
+      "dynamic": true,
+      "confidence": "high",
+      "evidence": [
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 28,
+          "pattern": "path: '/redirect/:path(.*)'",
+          "detail": "route path declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 30,
+          "pattern": "() => import('@/layouts/redirect/index.vue')",
+          "detail": "route component declaration"
+        },
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 30,
+          "pattern": "import('@/layouts/redirect/index.vue')",
+          "detail": "dynamic route component import"
+        }
+      ],
+      "reviewReasons": []
+    },
+    {
+      "path": "/:path(.*)",
+      "recordPath": "/:path(.*)",
+      "name": null,
+      "routeFile": "router/modules/root/index.ts",
+      "routeRecords": [
+        "router/modules/root/index.ts"
+      ],
+      "parentPath": null,
+      "layoutChain": [],
+      "routeKind": "route-grouping",
+      "ownershipRoles": [
+        "route-grouping"
+      ],
+      "parentOnly": false,
+      "visualOwnerProven": false,
+      "componentExpression": null,
+      "resolution": "unresolved",
+      "importBinding": null,
+      "sfcFile": null,
+      "dynamic": false,
+      "confidence": "low",
+      "evidence": [
+        {
+          "file": "router/modules/root/index.ts",
+          "line": 34,
+          "pattern": "path: '/:path(.*)'",
+          "detail": "route path declaration"
+        }
+      ],
+      "reviewReasons": [
+        "route grouping node has no proven visual owner"
+      ]
+    }
+  ],
+  "unresolved": [],
+  "metrics": {
+    "filesScanned": 148,
+    "routerFiles": 16,
+    "routeBindings": 50,
+    "resolvedRoutes": 50,
+    "dynamicImports": 38,
+    "unresolvedRoutes": 0,
+    "routeGroups": 2,
+    "redirectOnlyParents": 10,
+    "layoutOwners": 3,
+    "visualLeaves": 35,
+    "evidenceCount": 126,
+    "scanMs": 25
+  },
+  "reviewReasons": [
+    "route component ownership is derived from router-to-import-to-SFC evidence, not acceptance selectors or visible text",
+    "the graph is review-only and does not authorize copying source implementation"
+  ]
+}

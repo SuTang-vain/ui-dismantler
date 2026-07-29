@@ -8,6 +8,14 @@ import { chromium, type Browser, type BrowserContext, type BrowserServer, type L
 import { compareComputedStyles, comparePixels, COMPUTED_STYLE_PROPERTIES } from "./browser.js";
 import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport, StyleComparisonReport } from "../types.js";
 
+export interface SpaRouterFixtureReview {
+  reviewed: true;
+  sourceFile: string;
+  sourceHash: string;
+  evidence: string[];
+  requestSelection?: Record<string, JsonValue>;
+}
+
 export interface SpaRouterFixture {
   /** Exact URL pathname. Kept optional so host-wide fixtures can be expressed explicitly. */
   path?: string;
@@ -32,6 +40,8 @@ export interface SpaRouterFixture {
   body?: JsonValue;
   /** Base64-encoded binary response body. Mutually exclusive with body. */
   bodyBase64?: string;
+  /** Explicit source-backed review evidence. Required before route fixtures can authorize generated ownership. */
+  review?: SpaRouterFixtureReview;
 }
 
 export type SpaRouterRequestClassification =

@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "generated-target-auto-v2",
+  "reviewRequired": true,
+  "fullGeneratedApplication": false,
+  "generatedVisualDom": true,
+  "source": {
+    "routerSfcGraphKind": "router-to-sfc-responsibility-graph",
+    "routeBindings": 50,
+    "resolvedRoutes": 50,
+    "visualBoundaries": 4,
+    "visualOwners": 15,
+    "sfcVisualMetrics": {
+      "filesScanned": 74,
+      "components": 74,
+      "styledComponents": 45,
+      "interactiveComponents": 29,
+      "chartComponents": 5,
+      "mediaQueries": 0,
+      "templateNodes": 482,
+      "elementUiPrimitives": 65,
+      "responsiveGridNodes": 8,
+      "embeddedSvgAssets": 0,
+      "canvasResourceComponents": 0,
+      "webglResourceComponents": 0,
+      "frameDrivenComponents": 1,
+      "compiledStyleSheets": 39,
+      "globalStyleSheets": 2,
+      "compiledGlobalStyleSheets": 1,
+      "failedStyleSheets": 6,
+      "styleFailureReasons": {
+        "syntax-parse-failure": 0,
+        "unresolved-variable": 6,
+        "unsupported-mixin": 0,
+        "nested-selector-expansion-failure": 0,
+        "external-import-failure": 0,
+        "framework-generated-selector": 0,
+        "compiler-unavailable": 0,
+        "unknown": 0
+      },
+      "staticDataBindings": 40,
+      "dataCardinalities": 24,
+      "stateInitialBindings": 21,
+      "stateHandlers": 48,
+      "stateWrites": 5,
+      "displayFunctions": 0,
+      "unresolvedStateWrites": 18,
+      "scanMs": 310
+    },
+    "apiFixtureMetrics": {
+      "componentsScanned": 74,
+      "importedApiCalls": 136,
+      "apiCandidates": 136,
+      "actualApiWrappers": 1,
+      "frameworkComposables": 79,
+      "localStateStoreHelpers": 10,
+      "utilityFunctions": 46,
+      "unresolvedLocalTransports": 0,
+      "responseFlows": 3,
+      "dynamicRouteFlows": 1,
+      "matchedEndpoints": 1,
+      "matchedFixtures": 0,
+      "materializedBindings": 0,
+      "renderedFields": 0,
+      "transportPrefixesInferred": 0,
+      "runtimeSelectionsInferred": 0,
+      "proxyRoutesInferred": 0,
+      "proxyTargetsInferred": 0,
+      "proxyRewriteRulesInferred": 0,
+      "proxyAstRoutesInferred": 0,
+      "proxyFallbackRoutesInferred": 0,
+      "proxyParseDiagnostics": 0
+    },
+    "apiRouteOwnershipMetrics": {
+      "responseFlows": 3,
+      "dynamicRouteFlows": 1,
+      "routeLinks": 1,
+      "reviewedFixtures": 1,
+      "routeRecordFixtures": 1,
+      "matchedRouteRecords": 33,
+      "unresolvedFlows": 0,
+      "unresolvedRouteRecords": 0
+    },
+    "spaAuthMetrics": {
+      "filesScanned": 144,
+      "queryReads": 0,
+      "storageWrites": 2,
+      "storageReads": 2,
+      "storageRemoves": 2,
+      "storageAdapters": 1,
+      "resolvedStorageAdapters": 1,
+      "authorizationHeaders": 0,
+      "unauthorizedBranches": 0,
+      "redirectNavigations": 0,
+      "guardRegistrations": 1,
+      "completeRouteGuards": 1,
+      "loginFlows": 1,
+      "completeLoginFlows": 1,
+      "dynamicRouteInitializers": 1,
+      "completeDynamicRouteInitializers": 1,
+      "completeQueryStorageAuthorizationChains": 0
+    },
+    "transportProxyMetrics": {
+      "configFiles": 1,
+      "proxyScopes": 1,
+      "routes": 3,
+      "astRoutes": 3,
+      "fallbackRoutes": 0,
+      "dynamicContextsMaterialized": 1,
+      "diagnostics": 6
+    }
+  },
+  "files": [
+    {
+      "path": "public/index.html",
+      "lines": 1
+    },
+    {
+      "path": "public/app.js",
+      "lines": 1009
+    },
+    {
+      "path": "public/styles.css",
+      "lines": 1
+    },
+    {
+      "path": "server.mjs",
+      "lines": 1
+    }
+  ],
+  "metrics": {
+    "generatedFiles": 4,
+    "generatedLines": 1012,
+    "generatedBytes": 89153,
+    "routeEntries": 50,
+    "visualBoundaries": 4,
+    "visualOwners": 15,
+    "compiledOwnerRoots": 15,
+    "generatedVisualNodes": 90,
+    "generatedInteractionBindings": 3,
+    "globalStyleSheetsMaterialized": 1,
+    "sourceStyleSheetsAvailable": 10,
+    "sourceStyleSheetsMaterialized": 10,
+    "sourceStyleSheetsFailed": 0,
+    "sourceStyleRulesMaterialized": 38,
+    "sourceStyleSelectorsMaterialized": 38,
+    "initialStateBindings": 3,
+    "executableInteractionBindings": 0,
+    "executableStateWrites": 0,
+    "runtimeConditionBindings": 0,
+    "reviewedFixtureBindings": 0,
+    "generatedLoopInstances": 0,
+    "resolvedTextBindings": 0,
+    "unresolvedTextBindings": 6,
+    "inferredFixtureSelections": 0,
+    "reviewedApiRouteLinks": 1,
+    "apiRouteOwnedRecords": 33,
+    "modelCalls": 0,
+    "manualEdits": 0,
+    "manualEditedLines": 0,
+    "repairIterations": 0,
+    "generationMs": 21.997
+  },
+  "qualityComparison": {
+    "comparable": false,
+    "routeComparable": false,
+    "manual": {
+      "available": false,
+      "passed": null,
+      "navigationIntegrity": null,
+      "computedStyle": null,
+      "pixelDiff": null,
+      "runtimeErrors": null,
+      "requiredNetworkFailures": null,
+      "stabilityFailures": null,
+      "blockingHandlesAfterClose": null
+    },
+    "generated": {
+      "available": false,
+      "passed": null,
+      "navigationIntegrity": null,
+      "computedStyle": null,
+      "pixelDiff": null,
+      "runtimeErrors": null,
+      "requiredNetworkFailures": null,
+      "stabilityFailures": null,
+      "blockingHandlesAfterClose": null
+    },
+    "generatedMinusManual": {
+      "computedStyle": null,
+      "pixelDiff": null,
+      "navigationIntegrity": null
+    },
+    "detail": "quality reports were not supplied; auto-v2 is a review candidate and does not claim visual equivalence"
+  },
+  "costComparison": {
+    "manualReviewedTarget": {
+      "manualEditedLines": null,
+      "repairIterations": null
+    },
+    "autoV2FirstPass": {
+      "generatedLines": 1012,
+      "generatedBytes": 89153,
+      "manualEditedLines": 0,
+      "repairIterations": 0,
+      "modelCalls": 0,
+      "generationMs": 21.997
+    },
+    "detail": "manual values are reviewed inputs; auto-v2 first-pass values are deterministic generation telemetry"
+  },
+  "limitations": [
+    "auto-v2 is a responsibility-guided route and visual-owner shell, not a full business-page implementation",
+    "router ownership comes from route-to-import-to-SFC evidence; unresolved bindings must block dispatch",
+    "owner roots are compiled from primitive template evidence; unsupported primitives remain explicit review boundaries",
+    "compiled source styles are selector-scoped to their visual owner; failed stylesheet parsing remains an explicit review boundary",
+    "only explicitly reviewed API fixture values are eligible for initial data and loop materialization",
+    "API-backed route ownership is consumed only when source-backed fixture review, route shape, mutation, and Router-to-SFC matching are all resolved",
+    "handler state writes and conditional rendering remain executable only when structural AST evidence is available",
+    "the first Semantic and Gold+ run must be recorded before any manual repair; current artifact does not claim visual equivalence"
+  ]
+}

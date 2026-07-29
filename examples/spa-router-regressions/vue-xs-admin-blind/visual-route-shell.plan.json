@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "mode": "reference-generated",
+    "configScenarios": 4,
+    "reportIncluded": false
+  },
+  "routes": [
+    {
+      "route": "/login",
+      "pattern": "/login",
+      "scenarios": [
+        "login-reviewed-region"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "login-reviewed-region",
+          "visibleText": "Vue Xs Admin",
+          "visibleSelector": ".login-box"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "login-reviewed-region",
+          "anchor": ".login-box",
+          "region": ".login-box",
+          "styleTargets": [
+            ".page-container",
+            ".login-box",
+            ".demo-ruleForm",
+            ".submit-btn"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/welcome",
+      "pattern": "/welcome",
+      "scenarios": [
+        "welcome-reviewed-region"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "welcome-reviewed-region",
+          "visibleText": "待办事项",
+          "visibleSelector": ".page-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "welcome-reviewed-region",
+          "anchor": ".page-container",
+          "region": ".page-container",
+          "styleTargets": [
+            ".page-container",
+            ".box-card",
+            ".card-content"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/nested/menu1/menu1-1",
+      "pattern": "/nested/menu1/menu1-1",
+      "scenarios": [
+        "nested-menu-reviewed-region"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "nested-menu-reviewed-region",
+          "visibleText": "menu 1-1",
+          "visibleSelector": ".page-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "nested-menu-reviewed-region",
+          "anchor": ".page-container",
+          "region": ".page-container",
+          "styleTargets": [
+            ".page-container",
+            ".el-alert"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/echarts/bar",
+      "pattern": "/echarts/bar",
+      "scenarios": [
+        "echarts-bar-reviewed-region"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "echarts-bar-reviewed-region",
+          "visibleSelector": ".page-container"
+        }
+      ],
+      "visualStates": [
+        {
+          "scenarioId": "echarts-bar-reviewed-region",
+          "anchor": ".page-container",
+          "region": ".page-container",
+          "styleTargets": [
+            ".page-container",
+            "canvas"
+          ]
+        }
+      ]
+    }
+  ],
+  "transitions": [],
+  "selectorMappings": [],
+  "fixtureDependencies": [],
+  "capabilities": {
+    "historyBack": false,
+    "historyForward": false,
+    "reload": false,
+    "dynamicInputRoutes": false,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 4
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "route observations describe behavior, not production component boundaries",
+    "guard and redirect intent must be reviewed before code generation",
+    "visual selectors are acceptance targets and must not be treated as implementation selectors automatically",
+    "fixture bodies may contain sensitive or environment-specific data and are intentionally summarized"
+  ]
+}

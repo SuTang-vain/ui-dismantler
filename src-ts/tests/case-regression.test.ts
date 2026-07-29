@@ -360,6 +360,137 @@ async function stopDetachedProcess(child: ChildProcess): Promise<void> {
 }
 
 
+
+test("Vue XS Admin blind route API ownership preserves reviewed nested route evidence", () => {
+  const caseDir = `${root}examples/spa-router-regressions/vue-xs-admin-blind`;
+  const identity = JSON.parse(readFileSync(`${caseDir}/source-identity.json`, "utf8"));
+  const fixture = JSON.parse(readFileSync(`${caseDir}/reviewed-route-fixture.config.json`, "utf8"));
+  const ownership = JSON.parse(readFileSync(`${caseDir}/api-route-ownership.graph.json`, "utf8"));
+  const routePlan = JSON.parse(readFileSync(`${caseDir}/route-shell.plan.json`, "utf8"));
+  const generation = JSON.parse(readFileSync(`${caseDir}/generated-route-shell/generation.metrics.json`, "utf8"));
+  const semantic = JSON.parse(readFileSync(`${caseDir}/generated-semantic.results.json`, "utf8"));
+  const runtime = JSON.parse(readFileSync(`${caseDir}/reference-runtime.identity.json`, "utf8"));
+  const routerSfc = JSON.parse(readFileSync(`${caseDir}/router-sfc-responsibility.graph.json`, "utf8"));
+  const visualGraph = JSON.parse(readFileSync(`${caseDir}/sfc-visual-responsibility.graph.json`, "utf8"));
+  const visualPlan = JSON.parse(readFileSync(`${caseDir}/visual-target.plan.json`, "utf8"));
+  const authGraph = JSON.parse(readFileSync(`${caseDir}/spa-auth-responsibility.graph.json`, "utf8"));
+  const autoV2 = JSON.parse(readFileSync(`${caseDir}/generated-target-auto-v2-owned-tree/generation.metrics.json`, "utf8"));
+  const strictLogin = JSON.parse(readFileSync(`${caseDir}/strict-login-owned-tree.results.json`, "utf8"));
+  const visualBaseline = JSON.parse(readFileSync(`${caseDir}/login-visual-owned-tree.results.json`, "utf8"));
+  const loginVisualFinal = JSON.parse(readFileSync(`${caseDir}/login-visual-element-plus.results.json`, "utf8"));
+  const generatedApp = readFileSync(`${caseDir}/generated-target-auto-v2-owned-tree/public/app.js`, "utf8");
+
+  assert.equal(identity.commit, "99027d176d3c23643bd4c25ba00ec77d2b72bb56");
+  assert.equal(identity.routeMock.sha256, "cb8d02deedccd65ddfa9f149cddd45596d42880c8a90e8e56cd4c4c9d15fb931");
+  assert.equal(identity.sourceModified, false);
+  assert.equal(fixture.fixtures[0].review.reviewed, true);
+  assert.equal(fixture.fixtures[0].review.sourceHash, identity.routeMock.sha256);
+  assert.equal(fixture.fixtures[0].review.requestSelection.name, "admin");
+  assert.equal(fixture.fixtures[0].body.data.length, 9);
+
+  assert.equal(ownership.kind, "api-route-ownership-graph");
+  assert.equal(ownership.metrics.dynamicRouteFlows, 1);
+  assert.equal(ownership.metrics.routeLinks, 1);
+  assert.equal(ownership.metrics.reviewedFixtures, 1);
+  assert.equal(ownership.metrics.matchedRouteRecords, 33);
+  assert.equal(ownership.metrics.unresolvedFlows, 0);
+  assert.deepEqual(ownership.unresolved, []);
+  assert.equal(ownership.links[0].shape.shape, "route-record-array");
+  assert.equal(ownership.links[0].shape.cardinality, 9);
+  assert.deepEqual(ownership.links[0].shape.fields, ["children", "name", "path"]);
+  assert.equal(ownership.links[0].routeOwnership.requiresReview, false);
+  assert.equal(ownership.links[0].routeOwnership.matches.some((match: { apiName: string; routePath: string; matchKind: string }) => match.apiName === "RtGitLink" && match.routePath === "/external-link/embedded-page" && match.matchKind === "name"), true);
+  assert.equal(ownership.links[0].routeOwnership.matches.some((match: { routePath: string; leafOwners: string[] }) => match.routePath === "/nested/menu1/menu1-1" && match.leafOwners.includes("views/nested/menu1/menu1-1/index.vue")), true);
+
+  assert.deepEqual(routePlan.routes.map((route: { route: string }) => route.route), ["/login", "/welcome", "/nested/menu1/menu1-1", "/echarts"]);
+  assert.equal(routePlan.capabilities.reload, true);
+  assert.equal(routePlan.capabilities.reviewedVisualStates, 0);
+  assert.equal(generation.modelCalls, 0);
+  assert.equal(generation.manualEdits, 0);
+  assert.equal(generation.repairIterations, 0);
+  assert.equal(generation.reviewRequired, true);
+
+  assert.equal(semantic.passed, true);
+  assert.equal(semantic.scenariosPassed, 4);
+  assert.equal(semantic.scenariosTotal, 4);
+  assert.equal(semantic.navigationIntegrity.rate, 1);
+  assert.equal(semantic.runtimeErrors, 0);
+  assert.equal(semantic.requiredNetworkFailures, 0);
+  assert.equal(semantic.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  assert.equal(semantic.visualMatrix, undefined);
+
+  assert.equal(runtime.runtime.node, "v22.23.0");
+  assert.equal(runtime.runtime.pnpm, "9.0.0");
+  assert.equal(runtime.dependencyIdentity.pnpmLockSha256, "408ed95bfb777ce5c985953eb459f1df0226e795b602cc1e4dbc749b6d25b235");
+  assert.equal(runtime.dependencyIdentity.frozenLockfile, true);
+  assert.equal(runtime.qualityNetworkPolicy, "offline-after-install");
+  assert.equal(runtime.sourceStatusCleanAfterInstall, true);
+  assert.equal(routerSfc.metrics.resolvedRoutes, 50);
+  assert.equal(routerSfc.metrics.unresolvedRoutes, 0);
+  const login = visualGraph.components.find((component: { file: string }) => component.file === "src/views/login/index.vue");
+  const loginForm = visualGraph.components.find((component: { file: string }) => component.file === "src/views/login/compoontne/form.vue");
+  assert.equal(login.childComponents.includes("Form"), true);
+  assert.equal(loginForm.stateResponsibility.parsed, true);
+  assert.equal(loginForm.stateResponsibility.parseMode, "typescript-erasure");
+  assert.equal(loginForm.stateResponsibility.metrics.initialBindings, 3);
+  assert.equal(loginForm.templateStructure.primitiveCounts.checkbox, 1);
+  assert.equal(visualGraph.metrics.globalStyleSheets, 2);
+  assert.equal(visualGraph.metrics.compiledGlobalStyleSheets, 1);
+  assert.equal(visualGraph.globalStyles.find((style: { sourceFile: string }) => style.sourceFile === "src/styles/index.scss").compileStatus, "compiled");
+  assert.deepEqual(visualPlan.boundaries.map((boundary: { route: string }) => boundary.route), ["/login", "/welcome", "/nested/menu1/menu1-1", "/echarts/bar"]);
+  assert.equal(visualPlan.boundaries.find((boundary: { route: string }) => boundary.route === "/login").ownerIds.includes("visual:sfc:63"), true);
+  assert.equal(authGraph.schemaVersion, "1.1");
+  assert.equal(authGraph.metrics.storageAdapters, 1);
+  assert.equal(authGraph.metrics.resolvedStorageAdapters, 1);
+  assert.equal(authGraph.metrics.completeLoginFlows, 1);
+  assert.equal(authGraph.metrics.completeRouteGuards, 1);
+  assert.equal(authGraph.metrics.completeDynamicRouteInitializers, 1);
+  assert.equal(authGraph.contracts.storageAdapters[0].storage, "localStorage");
+  assert.equal(authGraph.contracts.storageAdapters[0].prefix, "XsAdmin");
+  assert.equal(authGraph.contracts.storageAdapters[0].keys.find((item: { logicalKey: string }) => item.logicalKey === "userInfo").effectiveKey, "XsAdmin_userInfo");
+  assert.equal(authGraph.contracts.loginFlows[0].endpoint.path, "/mock_api/login");
+  assert.equal(authGraph.contracts.loginFlows[0].identityWrite.storageKey, "userInfo");
+  assert.equal(authGraph.contracts.loginFlows[0].routeInitialization, "initRoute");
+  assert.equal(authGraph.contracts.routeGuards[0].authenticatedStatePath, "userInfoStore.userInfo");
+  assert.equal(authGraph.contracts.routeGuards[0].freshLoadRouteInitialization, "initRoute");
+  assert.equal(authGraph.contracts.routeGuards[0].dynamicRouteMutation, "addRoute");
+  assert.equal(authGraph.contracts.loginFlows[0].requiresReview, true);
+  assert.equal(authGraph.contracts.routeGuards[0].requiresReview, true);
+  assert.equal(autoV2.modelCalls, 0);
+  assert.equal(autoV2.manualEditedLines, 0);
+  assert.equal(autoV2.routeEntries, 50);
+  assert.equal(autoV2.visualOwners, 15);
+  assert.equal(autoV2.initialStateBindings, 3);
+  assert.equal(autoV2.reviewedApiRouteLinks, 1);
+  assert.equal(autoV2.apiRouteOwnedRecords, 33);
+  assert.equal(autoV2.globalStyleSheetsMaterialized, 1);
+  assert.equal(generatedApp.includes("el-form-item__content"), true);
+  assert.equal(generatedApp.includes("el-input__wrapper"), true);
+  assert.equal(generatedApp.includes("el-checkbox__inner"), true);
+  assert.equal(strictLogin.passed, true);
+  assert.equal(strictLogin.navigationIntegrity.rate, 1);
+  assert.equal(strictLogin.runtimeErrors, 0);
+  assert.equal(strictLogin.requiredNetworkFailures, 0);
+  assert.equal(strictLogin.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  assert.equal(visualBaseline.passed, false, "first-pass visual baseline must not be relabeled as Gold+");
+  assert.equal(visualBaseline.visualMatrix.viewportRuns, 3);
+  assert.equal(visualBaseline.visualMatrix.worstComputedStyle < 0.98, true);
+  assert.equal(visualBaseline.visualMatrix.worstPixelDiff > 0.02, true);
+  assert.equal(visualBaseline.visualMatrix.stabilityFailures, 0);
+  assert.equal(visualBaseline.runtimeErrors, 0);
+  assert.equal(visualBaseline.requiredNetworkFailures, 0);
+  assert.equal(visualBaseline.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+  assert.equal(loginVisualFinal.passed, true);
+  assert.equal(loginVisualFinal.visualMatrix.viewportRuns, 3);
+  assert.equal(loginVisualFinal.visualMatrix.worstComputedStyle, 1);
+  assert.equal(loginVisualFinal.visualMatrix.worstPixelDiff <= 0.02, true);
+  assert.equal(loginVisualFinal.navigationIntegrity.rate, 1);
+  assert.equal(loginVisualFinal.runtimeErrors, 0);
+  assert.equal(loginVisualFinal.requiredNetworkFailures, 0);
+  assert.equal(loginVisualFinal.visualMatrix.stabilityFailures, 0);
+  assert.equal(loginVisualFinal.telemetry.activeHandlesAfterClose.totalBlockingHandles, 0);
+});
+
 test("Starmap generated-target-auto-v2 preserves independent Semantic and reviewed visual Gold+ evidence", () => {
   const caseDir = `${root}examples/spa-router-regressions/starmap`;
   const contract = JSON.parse(readFileSync(`${caseDir}/auto-v2-route-contract.final.results.json`, "utf8"));

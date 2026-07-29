@@ -52,7 +52,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
 }
 function usage(): void {
   console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]
-  visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
+  visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
@@ -144,7 +144,7 @@ async function main(argv: string[]): Promise<number> {
       await writeFile(resolve(out), `${JSON.stringify({ ...graph, sourceRoot: "<external-source>" }, null, 2)}
 `, "utf8");
       console.log(`✓ 已生成 SPA auth responsibility graph: ${resolve(out)}`);
-      console.log(`  files=${graph.metrics.filesScanned}，chains=${graph.metrics.completeQueryStorageAuthorizationChains}，401=${graph.metrics.unauthorizedBranches}，redirects=${graph.metrics.redirectNavigations}`);
+      console.log(`  files=${graph.metrics.filesScanned}，tokenChains=${graph.metrics.completeQueryStorageAuthorizationChains}，loginFlows=${graph.metrics.completeLoginFlows}/${graph.metrics.loginFlows}，guards=${graph.metrics.completeRouteGuards}/${graph.metrics.guardRegistrations}，dynamicRoutes=${graph.metrics.completeDynamicRouteInitializers}/${graph.metrics.dynamicRouteInitializers}，storageAdapters=${graph.metrics.resolvedStorageAdapters}/${graph.metrics.storageAdapters}`);
       return 0;
     }
     if (command === "spa-vue-router-analyze") {
@@ -235,7 +235,7 @@ async function main(argv: string[]): Promise<number> {
     }
     if (command === "visual-target-auto-v2") {
       const planPath = args[0], routeShellPath = flag(args, "--route-shell"), routerSfcPath = flag(args, "--router-sfc");
-      const sfcVisualPath = flag(args, "--sfc-visual"), spaAuthPath = flag(args, "--spa-auth"), transportProxyPath = flag(args, "--transport-proxy"), outDir = flag(args, "--out-dir");
+      const sfcVisualPath = flag(args, "--sfc-visual"), spaAuthPath = flag(args, "--spa-auth"), transportProxyPath = flag(args, "--transport-proxy"), apiRouteOwnershipPath = flag(args, "--api-route-ownership"), outDir = flag(args, "--out-dir");
       if (!planPath || !routeShellPath || !routerSfcPath || !sfcVisualPath || !spaAuthPath || !transportProxyPath || !outDir) throw new Error("visual-target-auto-v2 需要 visual plan、route shell、router-SFC、SFC visual、SPA auth、transport proxy 和 --out-dir");
       const visualPlan = JSON.parse(await readFile(resolve(planPath), "utf8")) as VisualTargetPlan;
       const routePlan = JSON.parse(await readFile(resolve(routeShellPath), "utf8")) as SpaRouteShellPlan;
@@ -243,10 +243,12 @@ async function main(argv: string[]): Promise<number> {
       const sfcVisual = JSON.parse(await readFile(resolve(sfcVisualPath), "utf8")) as SfcVisualResponsibilityGraph;
       const spaAuth = JSON.parse(await readFile(resolve(spaAuthPath), "utf8"));
       const transportProxy = JSON.parse(await readFile(resolve(transportProxyPath), "utf8"));
-      if (routerSfc.metrics.unresolvedRoutes > 0 || visualPlan.metrics.unresolvedRoutes > 0) throw new Error(`auto-v2 dispatch blocked: routerSfc=${routerSfc.metrics.unresolvedRoutes}, visualPlan=${visualPlan.metrics.unresolvedRoutes}`);
+      const apiRouteOwnership = apiRouteOwnershipPath ? JSON.parse(await readFile(resolve(apiRouteOwnershipPath), "utf8")) as import("./planning/api-route-ownership.js").ApiRouteOwnershipGraph : undefined;
+      const unresolvedApiRouteLinks = apiRouteOwnership?.links.filter((link) => link.routeOwnership.requiresReview).length ?? 0;
+      if (routerSfc.metrics.unresolvedRoutes > 0 || visualPlan.metrics.unresolvedRoutes > 0 || unresolvedApiRouteLinks > 0) throw new Error(`auto-v2 dispatch blocked: routerSfc=${routerSfc.metrics.unresolvedRoutes}, visualPlan=${visualPlan.metrics.unresolvedRoutes}, apiRouteOwnership=${unresolvedApiRouteLinks}`);
       const readOptionalReport = async (name: string): Promise<unknown> => { const path = flag(args, name); return path ? JSON.parse(await readFile(resolve(path), "utf8")) : undefined; };
       const startedAt = performance.now();
-      const bundle = { routePlan, visualPlan, routerSfc, sfcVisual, apiFixture: sfcVisual.apiFixtures, spaAuth, transportProxy };
+      const bundle = { routePlan, visualPlan, routerSfc, sfcVisual, apiFixture: sfcVisual.apiFixtures, apiRouteOwnership, spaAuth, transportProxy };
       const artifact = generateGeneratedTargetAutoV2(bundle, {
         manualQualityReport: await readOptionalReport("--manual-report"), generatedQualityReport: await readOptionalReport("--generated-report"),
         manualEditedLines: optionalNonNegativeNumber(args, "--manual-edited-lines"), repairIterations: optionalNonNegativeNumber(args, "--repair-iterations"),
@@ -281,6 +283,8 @@ Responsibility-guided route and visual-owner shell.
 - generated loop instances: ${artifact.metrics.generatedLoopInstances}
 - resolved/unresolved text bindings: ${artifact.metrics.resolvedTextBindings}/${artifact.metrics.unresolvedTextBindings}
 - inferred reviewed fixture selections: ${artifact.metrics.inferredFixtureSelections}
+- reviewed API route links: ${artifact.metrics.reviewedApiRouteLinks}
+- API route-owned records: ${artifact.metrics.apiRouteOwnedRecords}
 - review required: true
 - full generated application: false
 - visual equivalence claimed: ${artifact.qualityComparison.comparable && artifact.qualityComparison.generated.passed === true ? "quality-report supplied; inspect formal gates" : "no"}

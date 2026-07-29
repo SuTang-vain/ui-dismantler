@@ -1,0 +1,4291 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "visual-target-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "sfcGraphKind": "sfc-visual-responsibility-graph",
+    "routePlanKind": "spa-route-shell-plan",
+    "sourceRoot": "<external-source>",
+    "graphComponents": 74,
+    "graphChartComponents": 5,
+    "routerSfcGraphKind": "router-to-sfc-responsibility-graph",
+    "routerSfcResolvedRoutes": 50
+  },
+  "selectorPolicy": {
+    "implementationSelectorsIndependent": true,
+    "acceptanceSelectorsPreserved": true,
+    "implementationAttribute": "data-visual-owner"
+  },
+  "boundaries": [
+    {
+      "id": "boundary:login",
+      "route": "/login",
+      "scenarioIds": [
+        "login-reviewed-region"
+      ],
+      "rootOwnerId": "visual:sfc:64",
+      "acceptance": {
+        "visibleSelectors": [
+          ".login-box"
+        ],
+        "visibleText": [
+          "Vue Xs Admin"
+        ],
+        "screenshotAnchors": [
+          ".login-box"
+        ],
+        "screenshotRegions": [
+          ".login-box"
+        ],
+        "styleTargets": [
+          ".demo-ruleForm",
+          ".login-box",
+          ".page-container",
+          ".submit-btn"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:sfc:11",
+        "visual:sfc:3",
+        "visual:sfc:4",
+        "visual:sfc:63",
+        "visual:sfc:64"
+      ],
+      "resourceProfileProposal": {
+        "profile": "dom",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "ownerId": "visual:sfc:11",
+            "sourceFile": "src/components/SvgIcon/index.vue",
+            "kind": "dom-structure",
+            "detail": "owner SvgIcon exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence"
+          },
+          {
+            "ownerId": "visual:sfc:3",
+            "sourceFile": "src/components/Application/AppLocale.vue",
+            "kind": "dom-structure",
+            "detail": "owner AppLocale exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence"
+          },
+          {
+            "ownerId": "visual:sfc:4",
+            "sourceFile": "src/components/Application/AppTheme.vue",
+            "kind": "dom-structure",
+            "detail": "owner AppTheme exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence"
+          },
+          {
+            "ownerId": "visual:sfc:63",
+            "sourceFile": "src/views/login/compoontne/form.vue",
+            "kind": "dom-structure",
+            "detail": "owner form exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence"
+          }
+        ],
+        "reviewRequired": true
+      },
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "boundary:welcome",
+      "route": "/welcome",
+      "scenarioIds": [
+        "welcome-reviewed-region"
+      ],
+      "rootOwnerId": "visual:sfc:62",
+      "acceptance": {
+        "visibleSelectors": [
+          ".page-container"
+        ],
+        "visibleText": [
+          "待办事项"
+        ],
+        "screenshotAnchors": [
+          ".page-container"
+        ],
+        "screenshotRegions": [
+          ".page-container"
+        ],
+        "styleTargets": [
+          ".box-card",
+          ".card-content",
+          ".page-container"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:echarts:4",
+        "visual:echarts:5",
+        "visual:sfc:11",
+        "visual:sfc:59",
+        "visual:sfc:60",
+        "visual:sfc:61",
+        "visual:sfc:62"
+      ],
+      "resourceProfileProposal": {
+        "profile": "canvas",
+        "confidence": 0.96,
+        "evidence": [
+          {
+            "ownerId": "visual:echarts:4",
+            "sourceFile": "src/views/index/components/PieChart.vue",
+            "kind": "echarts-owner",
+            "detail": "ECharts owner PieChart initializes reviewed chart output"
+          },
+          {
+            "ownerId": "visual:echarts:5",
+            "sourceFile": "src/views/index/components/WordCloud.vue",
+            "kind": "echarts-owner",
+            "detail": "ECharts owner WordCloud initializes reviewed chart output"
+          }
+        ],
+        "reviewRequired": true
+      },
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "scoped styles require selector ownership preservation",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "boundary:nested:menu1:menu1-1",
+      "route": "/nested/menu1/menu1-1",
+      "scenarioIds": [
+        "nested-menu-reviewed-region"
+      ],
+      "rootOwnerId": "visual:sfc:66",
+      "acceptance": {
+        "visibleSelectors": [
+          ".page-container"
+        ],
+        "visibleText": [
+          "menu 1-1"
+        ],
+        "screenshotAnchors": [
+          ".page-container"
+        ],
+        "screenshotRegions": [
+          ".page-container"
+        ],
+        "styleTargets": [
+          ".el-alert",
+          ".page-container"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:sfc:66"
+      ],
+      "resourceProfileProposal": {
+        "profile": "dom",
+        "confidence": 0.78,
+        "evidence": [
+          {
+            "ownerId": "visual:sfc:66",
+            "sourceFile": "src/views/nested/menu1/menu1-1/index.vue",
+            "kind": "dom-structure",
+            "detail": "owner menu1-1 exposes DOM/SVG structure without Canvas, WebGL, ZRender, or ECharts responsibility evidence"
+          }
+        ],
+        "reviewRequired": true
+      },
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors"
+      ]
+    },
+    {
+      "id": "boundary:echarts:bar",
+      "route": "/echarts/bar",
+      "scenarioIds": [
+        "echarts-bar-reviewed-region"
+      ],
+      "rootOwnerId": "visual:sfc:44",
+      "acceptance": {
+        "visibleSelectors": [
+          ".page-container"
+        ],
+        "visibleText": [],
+        "screenshotAnchors": [
+          ".page-container"
+        ],
+        "screenshotRegions": [
+          ".page-container"
+        ],
+        "styleTargets": [
+          ".page-container",
+          "canvas"
+        ],
+        "viewports": [
+          "desktop",
+          "mobile",
+          "tablet"
+        ]
+      },
+      "ownerIds": [
+        "visual:echarts:1",
+        "visual:sfc:43",
+        "visual:sfc:44"
+      ],
+      "resourceProfileProposal": {
+        "profile": "canvas",
+        "confidence": 0.96,
+        "evidence": [
+          {
+            "ownerId": "visual:echarts:1",
+            "sourceFile": "src/views/echarts/bar/components/BarRace.vue",
+            "kind": "echarts-owner",
+            "detail": "ECharts owner BarRace initializes reviewed chart output"
+          }
+        ],
+        "reviewRequired": true
+      },
+      "reviewRequired": true,
+      "reviewReasons": [
+        "implementation selectors are generated independently from acceptance selectors",
+        "scoped styles require selector ownership preservation",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    }
+  ],
+  "owners": [
+    {
+      "id": "visual:sfc:3",
+      "componentId": "sfc:3",
+      "componentName": "AppLocale",
+      "sourceFile": "src/components/Application/AppLocale.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:64",
+      "implementationSelector": "[data-visual-owner=\"sfc:3\"]",
+      "acceptanceSelectors": [
+        ".cursor",
+        ".icon"
+      ],
+      "childComponents": [
+        "ElDropdown",
+        "ElDropdownItem",
+        "ElDropdownMenu",
+        "SvgIcon"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-dropdown",
+            "componentName": "ElDropdown",
+            "classes": [],
+            "attributes": {
+              "trigger": "click",
+              "@command": "tolochos"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "SvgIcon",
+            "componentName": "SvgIcon",
+            "classes": [
+              "cursor",
+              "icon"
+            ],
+            "attributes": {
+              "class": "icon cursor",
+              "name": "locales"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": []
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#dropdown": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 2,
+            "tag": "el-dropdown-menu",
+            "componentName": "ElDropdownMenu",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 3,
+            "tag": "el-dropdown-item",
+            "componentName": "ElDropdownItem",
+            "classes": [],
+            "attributes": {
+              "v-for": "item in localesList",
+              ":key": "item.locale",
+              ":command": "item.locale"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [
+              "item in localesList"
+            ],
+            "content": [
+              {
+                "kind": "text",
+                "value": " {{ item.name }} "
+              }
+            ]
+          }
+        ],
+        "componentOrder": [
+          "ElDropdown",
+          "SvgIcon",
+          "ElDropdownMenu",
+          "ElDropdownItem"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 1,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:item in localesList",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "item in localesList"
+        ],
+        "unresolvedReferences": [
+          "localesList"
+        ]
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "typescript-erasure",
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "tolochos",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 10
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [
+          {
+            "handler": "tolochos",
+            "path": "i18n.locale",
+            "expression": "i18n.locale.value = key",
+            "sourceLine": 11
+          }
+        ],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 1,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 1
+        },
+        "reviewReasons": [
+          "TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis",
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [
+          "command"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "item in localesList"
+        ]
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".icon{color:var(--text-color-primary);font-size:var(--font-size-extra-large)}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "visual:sfc:4",
+      "componentId": "sfc:4",
+      "componentName": "AppTheme",
+      "sourceFile": "src/components/Application/AppTheme.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:64",
+      "implementationSelector": "[data-visual-owner=\"sfc:4\"]",
+      "acceptanceSelectors": [
+        ".cursor",
+        ".icon",
+        ".theme",
+        ".theme-dark",
+        ".theme-inner"
+      ],
+      "childComponents": [
+        "SvgIcon"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "cursor",
+              "dark",
+              "theme",
+              "theme-dark"
+            ],
+            "attributes": {
+              "class": "theme cursor",
+              ":class": "{ 'theme-dark': color === 'dark' }",
+              "@click": "\"",
+              "()": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " { color = color === 'dark' ? 'light' : 'dark'; } \" > "
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "theme-inner"
+            ],
+            "attributes": {
+              "class": "theme-inner"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "SvgIcon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "name": "sun"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": []
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "SvgIcon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "name": "moon"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": []
+          }
+        ],
+        "componentOrder": [
+          "SvgIcon",
+          "SvgIcon"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [
+          "click"
+        ],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".theme{display:flex;position:relative;align-items:center;justify-content:space-between;width:48px;height:26px;padding:0 5px;border:1px solid var(--text-color-primary);border-radius:30px;background-color:#151515;font-size:.8em}.theme .theme-inner{position:absolute;z-index:1;width:16px;height:16px;transition:transform .5s,background-color .5s;border-radius:50%;background-color:var(--text-color-primary);will-change:transform}.theme-dark .theme-inner{transform:translateX(calc(100% + 4px))}.icon{font-size:1em}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "visual:sfc:11",
+      "componentId": "sfc:11",
+      "componentName": "SvgIcon",
+      "sourceFile": "src/components/SvgIcon/index.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:62",
+      "implementationSelector": "[data-visual-owner=\"sfc:11\"]",
+      "acceptanceSelectors": [
+        ".svg",
+        ".svg-icon"
+      ],
+      "childComponents": [
+        "ElIcon"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1",
+          "template:3"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-icon",
+            "componentName": "ElIcon",
+            "classes": [],
+            "attributes": {
+              "v-if": "isELIcon",
+              ":class": "`svg-icon ${className}`"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "isELIcon"
+            ],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "component",
+            "componentName": "component",
+            "classes": [],
+            "attributes": {
+              ":is": "name"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "depth": 0,
+            "tag": "i",
+            "componentName": "i",
+            "classes": [
+              "svg-icon"
+            ],
+            "attributes": {
+              "v-else": true,
+              "class": "svg-icon",
+              ":class": "className"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 1,
+            "tag": "svg",
+            "componentName": "svg",
+            "classes": [
+              "svg"
+            ],
+            "attributes": {
+              "class": "svg",
+              ":aria-hidden": "true"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "use",
+            "componentName": "use",
+            "classes": [],
+            "attributes": {
+              ":xlink:href": "symbolId",
+              ":fill": "color"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElIcon"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 1,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {
+          "props": {
+            "$unsupported": "defineProps({\n    // route object\n    prefix: {\n      type: String,\n      default: 'icon',\n    },\n    name: {\n      type: String,\n      required: true,\n    },\n    color: {\n      type: String,\n      default: '#333',\n    },\n    className: {\n "
+          },
+          "isELIcon": {
+            "$unsupported": "computed(() => props.name.indexOf('iEL') !== -1)"
+          },
+          "symbolId": {
+            "$unsupported": "computed(() => `#${props.prefix}-${props.name}`)"
+          }
+        },
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "isELIcon"
+        ],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".svg-icon{display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;width:1em;height:1em;color:currentcolor;font-size:1em}.svg-icon .svg{width:1em;height:1em;color:currentcolor}.svg-icon .svg use{fill:currentcolor}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [
+        "vue"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:echarts:1",
+      "componentId": "echarts:1",
+      "componentName": "BarRace",
+      "sourceFile": "src/views/echarts/bar/components/BarRace.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:43",
+      "implementationSelector": "[data-visual-owner=\"echarts:1\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:1",
+        "themes": [],
+        "chartTypes": [
+          "bar"
+        ],
+        "optionKeys": [
+          "xAxis",
+          "yAxis",
+          "grid",
+          "legend",
+          "series"
+        ],
+        "optionSlices": [],
+        "staticBindings": {},
+        "dataSources": [
+          "number"
+        ],
+        "capabilities": {
+          "initializesChart": false,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": false,
+          "disposesChart": false,
+          "usesTheme": false
+        }
+      },
+      "confidence": "medium",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:43",
+      "componentId": "sfc:43",
+      "componentName": "BarRace",
+      "sourceFile": "src/views/echarts/bar/components/BarRace.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:44",
+      "implementationSelector": "[data-visual-owner=\"sfc:43\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "h3",
+            "componentName": "h3",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "动态柱状图"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-ref"
+            ],
+            "attributes": {
+              "ref": "chart-ref",
+              "class": "chart-ref"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".chart-ref{width:100%;height:380px}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:44",
+      "componentId": "sfc:44",
+      "componentName": "bar",
+      "sourceFile": "src/views/echarts/bar/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:44\"]",
+      "acceptanceSelectors": [
+        ".page-container"
+      ],
+      "childComponents": [
+        "BarRace"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "page-container"
+            ],
+            "attributes": {
+              "class": "page-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "BarRace",
+            "componentName": "BarRace",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "BarRace"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    },
+    {
+      "id": "visual:sfc:59",
+      "componentId": "sfc:59",
+      "componentName": "Comment",
+      "sourceFile": "src/views/index/components/Comment.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:62",
+      "implementationSelector": "[data-visual-owner=\"sfc:59\"]",
+      "acceptanceSelectors": [
+        ".comment",
+        ".item",
+        ".item-content",
+        ".text",
+        ".time",
+        ".title"
+      ],
+      "childComponents": [
+        "ElDivider"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "comment"
+            ],
+            "attributes": {
+              "class": "comment"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "ul",
+            "componentName": "ul",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "li",
+            "componentName": "li",
+            "classes": [],
+            "attributes": {
+              "v-for": "(_item, index) in 4",
+              ":key": "index"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [
+              "(_item, index) in 4"
+            ],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "item"
+            ],
+            "attributes": {
+              "class": "item"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "img",
+            "componentName": "img",
+            "classes": [],
+            "attributes": {
+              "src": "@/assets/login/logo.png"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "item-content"
+            ],
+            "attributes": {
+              "class": "item-content"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ]
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 5,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "title"
+            ],
+            "attributes": {
+              "class": "title"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "某某某"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:6",
+            "depth": 5,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "time"
+            ],
+            "attributes": {
+              "class": "time"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "2021-12-31"
+              }
+            ]
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:6",
+            "depth": 5,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "text"
+            ],
+            "attributes": {
+              "class": "text"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " 据我观察，你今天吃意大利面遇到不良商家，没有拌42号混凝土，以及使用劣质螺丝钉，严重影响你的扭矩，从而影响UFO的产量，吸收不足引发内蜂蜜失调，导致排放系统紊乱，对整个太平洋以及充电器造成严重的核污染。我个人认为，这个意大利面就应该拌42号混凝土，因为这个螺丝钉的长度，它很容易会直接影响到挖掘机的扭矩你知道吧，你往里砸的时候，一瞬间它就会产生大量的高能蛋白。 "
+              }
+            ]
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "el-divider",
+            "componentName": "ElDivider",
+            "classes": [],
+            "attributes": {
+              "v-if": "index !== 3",
+              "border-style": "double"
+            },
+            "inlineStyle": {},
+            "conditions": [
+              "index !== 3"
+            ],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElDivider"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 1,
+        "repeatedRegions": 1,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:(_item, index) in 4",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(_item, index) in 4"
+        ],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [
+          "index !== 3"
+        ],
+        "loops": [
+          "(_item, index) in 4"
+        ]
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".comment{width:100%;height:410px;overflow-y:auto}.comment .item{display:flex}.comment .item img{width:50px;height:50px;border-radius:50%}.comment .item .item-content{display:flex;flex-direction:column;margin-left:16px}.comment .item .item-content .title{font-size:var(--font-size-medium)}.comment .item .item-content .time{margin:5px 0;font-size:var(--font-size-extra-small)}.comment .item .item-content .text{display:-webkit-box;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:2;-webkit-box-orient:vertical}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:echarts:4",
+      "componentId": "echarts:4",
+      "componentName": "PieChart",
+      "sourceFile": "src/views/index/components/PieChart.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:60",
+      "implementationSelector": "[data-visual-owner=\"echarts:4\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:4",
+        "themes": [],
+        "chartTypes": [
+          "pie"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "legend",
+          "series"
+        ],
+        "optionSlices": [
+          {
+            "line": 12,
+            "source": "{\n      tooltip: {\n        trigger: 'item',\n      },\n      legend: {\n        // top: '5%',\n        bottom: '1%',\n        left: 'center',\n      },\n      series: [\n        {\n          name: 'Access From',\n          type: 'pie',\n          radius: ['40%', '60%'],\n          avoidLabelOverlap: false,\n          itemStyle: {\n            borderRadius: 10,\n            borderColor: '#fff',\n            borderWidth: 2,\n          },\n          label: {\n            show: false,\n            position: 'center',\n          },\n          emphasis: {\n            label: {\n              show: true,\n              fontSize: '20',\n              fontWeight: 'bold',\n            },\n          },\n          labelLine: {\n            show: false,\n          },\n          data: [\n            { value: 20, name: 'React' },\n            { value: 70, name: 'Vue' },\n            { value: 10, name: 'Angular' },\n          ],\n        },\n      ],\n    }",
+            "seriesCount": 1,
+            "literalDataArrays": 1,
+            "containerHeight": "362px",
+            "option": {
+              "tooltip": {
+                "trigger": "item"
+              },
+              "legend": {
+                "bottom": "1%",
+                "left": "center"
+              },
+              "series": [
+                {
+                  "name": "Access From",
+                  "type": "pie",
+                  "radius": [
+                    "40%",
+                    "60%"
+                  ],
+                  "avoidLabelOverlap": false,
+                  "itemStyle": {
+                    "borderRadius": 10,
+                    "borderColor": "#fff",
+                    "borderWidth": 2
+                  },
+                  "label": {
+                    "show": false,
+                    "position": "center"
+                  },
+                  "emphasis": {
+                    "label": {
+                      "show": true,
+                      "fontSize": "20",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  "labelLine": {
+                    "show": false
+                  },
+                  "data": [
+                    {
+                      "value": 20,
+                      "name": "React"
+                    },
+                    {
+                      "value": 70,
+                      "name": "Vue"
+                    },
+                    {
+                      "value": 10,
+                      "name": "Angular"
+                    }
+                  ]
+                }
+              ]
+            },
+            "references": []
+          }
+        ],
+        "staticBindings": {},
+        "dataSources": [
+          "item",
+          "tooltip",
+          "trigger"
+        ],
+        "capabilities": {
+          "initializesChart": false,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": false,
+          "disposesChart": false,
+          "usesTheme": false
+        }
+      },
+      "confidence": "medium",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:60",
+      "componentId": "sfc:60",
+      "componentName": "PieChart",
+      "sourceFile": "src/views/index/components/PieChart.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:62",
+      "implementationSelector": "[data-visual-owner=\"sfc:60\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-ref"
+            ],
+            "attributes": {
+              "ref": "chart-ref",
+              "class": "chart-ref"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".chart-ref{width:100%;height:362px}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:echarts:5",
+      "componentId": "echarts:5",
+      "componentName": "WordCloud",
+      "sourceFile": "src/views/index/components/WordCloud.vue",
+      "kind": "chart",
+      "parentOwnerId": "visual:sfc:61",
+      "implementationSelector": "[data-visual-owner=\"echarts:5\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [],
+        "nodes": [],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "typescript-erasure",
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "color",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 51
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 1,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis",
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [
+        "echarts"
+      ],
+      "chart": {
+        "responsibilityId": "echarts:5",
+        "themes": [],
+        "chartTypes": [
+          "wordCloud"
+        ],
+        "optionKeys": [
+          "tooltip",
+          "series"
+        ],
+        "optionSlices": [],
+        "staticBindings": {},
+        "dataSources": [
+          "item",
+          "tooltip",
+          "trigger"
+        ],
+        "capabilities": {
+          "initializesChart": false,
+          "updatesOptions": true,
+          "watchesData": false,
+          "resizesChart": false,
+          "disposesChart": false,
+          "usesTheme": false
+        }
+      },
+      "confidence": "medium",
+      "reviewReasons": [
+        "chart geometry and canvas/SVG output require browser visual validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:61",
+      "componentId": "sfc:61",
+      "componentName": "WordCloud",
+      "sourceFile": "src/views/index/components/WordCloud.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:62",
+      "implementationSelector": "[data-visual-owner=\"sfc:61\"]",
+      "acceptanceSelectors": [
+        ".chart-ref"
+      ],
+      "childComponents": [],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "chart-ref"
+            ],
+            "attributes": {
+              "ref": "chart-ref",
+              "class": "chart-ref"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "typescript-erasure",
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "color",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 51
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 1,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis",
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".chart-ref{width:100%;height:410px}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [
+        "echarts",
+        "vue"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "third-party chart lifecycle and visual output require Gold+ matrix validation"
+      ]
+    },
+    {
+      "id": "visual:sfc:62",
+      "componentId": "sfc:62",
+      "componentName": "index",
+      "sourceFile": "src/views/index/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:62\"]",
+      "acceptanceSelectors": [
+        ".box-card",
+        ".card-content",
+        ".card-header",
+        ".cursor",
+        ".el-card__header",
+        ".el-progress-bar__outer",
+        ".enter-y",
+        ".number",
+        ".numerical-value"
+      ],
+      "childComponents": [
+        "Comment",
+        "ElCard",
+        "ElCol",
+        "ElProgress",
+        "ElRow",
+        "PieChart",
+        "SvgIcon",
+        "VisitAnalysis",
+        "WordCloud"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:14"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:27"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              ":gutter": "20",
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "20"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              "v-for": "(item, index) in speedList",
+              ":key": "index",
+              ":xs": "24",
+              ":sm": "24",
+              ":md": "6",
+              ":lg": "6",
+              ":xl": "6"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [
+              "(item, index) in speedList"
+            ],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                "v-for": "(item, index) in speedList",
+                ":key": "index",
+                ":xs": "24",
+                ":sm": "24",
+                ":md": "6",
+                ":lg": "6",
+                ":xl": "6"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "md": "6",
+                "lg": "6",
+                "xl": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card"
+            ],
+            "attributes": {
+              "class": "box-card"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#header": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              }
+            ]
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:5",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-header",
+              "cursor"
+            ],
+            "attributes": {
+              "class": "card-header cursor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              }
+            ]
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "{{ item.title }}"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:6",
+            "depth": 6,
+            "tag": "SvgIcon",
+            "componentName": "SvgIcon",
+            "classes": [],
+            "attributes": {
+              "name": "iEL-arrow-right"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "embeddedAssets": []
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-content"
+            ],
+            "attributes": {
+              "class": "card-content"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:13"
+              }
+            ]
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:9",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "numerical-value"
+            ],
+            "attributes": {
+              "class": "numerical-value"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [
+              "number"
+            ],
+            "attributes": {
+              "class": "number"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "{{ item.online }}/{{ item.total }}"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:10",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Online/Total"
+              }
+            ]
+          },
+          {
+            "id": "template:13",
+            "order": 12,
+            "parentId": "template:9",
+            "depth": 5,
+            "tag": "el-progress",
+            "componentName": "ElProgress",
+            "classes": [],
+            "attributes": {
+              ":text-inside": "true",
+              ":stroke-width": "26",
+              ":percentage": "value(item.online, item.total)"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "progress",
+              "sourceTag": "el-progress",
+              "props": {
+                ":text-inside": "true",
+                ":stroke-width": "26",
+                ":percentage": "value(item.online, item.total)"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:14",
+            "order": 13,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              ":gutter": "20",
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:15"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:21"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "20"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:15",
+            "order": 14,
+            "parentId": "template:14",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":md": "18",
+              ":lg": "18",
+              ":xl": "18"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:16"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":md": "18",
+                ":lg": "18",
+                ":xl": "18"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "md": "18",
+                "lg": "18",
+                "xl": "18"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:16",
+            "order": 15,
+            "parentId": "template:15",
+            "depth": 3,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card"
+            ],
+            "attributes": {
+              "class": "box-card"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:17"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:20"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:17",
+            "order": 16,
+            "parentId": "template:16",
+            "depth": 4,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#header": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:18"
+              }
+            ]
+          },
+          {
+            "id": "template:18",
+            "order": 17,
+            "parentId": "template:17",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-header",
+              "cursor"
+            ],
+            "attributes": {
+              "class": "card-header cursor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:19"
+              }
+            ]
+          },
+          {
+            "id": "template:19",
+            "order": 18,
+            "parentId": "template:18",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "任务数据"
+              }
+            ]
+          },
+          {
+            "id": "template:20",
+            "order": 19,
+            "parentId": "template:16",
+            "depth": 4,
+            "tag": "VisitAnalysis",
+            "componentName": "VisitAnalysis",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:21",
+            "order": 20,
+            "parentId": "template:14",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":md": "6",
+              ":lg": "6",
+              ":xl": "6"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:22"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":md": "6",
+                ":lg": "6",
+                ":xl": "6"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "md": "6",
+                "lg": "6",
+                "xl": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:22",
+            "order": 21,
+            "parentId": "template:21",
+            "depth": 3,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card"
+            ],
+            "attributes": {
+              "class": "box-card"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:23"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:26"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:23",
+            "order": 22,
+            "parentId": "template:22",
+            "depth": 4,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#header": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:24"
+              }
+            ]
+          },
+          {
+            "id": "template:24",
+            "order": 23,
+            "parentId": "template:23",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-header",
+              "cursor"
+            ],
+            "attributes": {
+              "class": "card-header cursor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:25"
+              }
+            ]
+          },
+          {
+            "id": "template:25",
+            "order": 24,
+            "parentId": "template:24",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "任务数据"
+              }
+            ]
+          },
+          {
+            "id": "template:26",
+            "order": 25,
+            "parentId": "template:22",
+            "depth": 4,
+            "tag": "PieChart",
+            "componentName": "PieChart",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:27",
+            "order": 26,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-row",
+            "componentName": "ElRow",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              ":gutter": "20",
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:28"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:34"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-row",
+              "sourceTag": "el-row",
+              "props": {
+                ":gutter": "20"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:28",
+            "order": 27,
+            "parentId": "template:27",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":md": "18",
+              ":lg": "18",
+              ":xl": "18"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:29"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":md": "18",
+                ":lg": "18",
+                ":xl": "18"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "md": "18",
+                "lg": "18",
+                "xl": "18"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:29",
+            "order": 28,
+            "parentId": "template:28",
+            "depth": 3,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card"
+            ],
+            "attributes": {
+              "class": "box-card"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:30"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:33"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:30",
+            "order": 29,
+            "parentId": "template:29",
+            "depth": 4,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#header": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:31"
+              }
+            ]
+          },
+          {
+            "id": "template:31",
+            "order": 30,
+            "parentId": "template:30",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-header",
+              "cursor"
+            ],
+            "attributes": {
+              "class": "card-header cursor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:32"
+              }
+            ]
+          },
+          {
+            "id": "template:32",
+            "order": 31,
+            "parentId": "template:31",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "评论列表"
+              }
+            ]
+          },
+          {
+            "id": "template:33",
+            "order": 32,
+            "parentId": "template:29",
+            "depth": 4,
+            "tag": "Comment",
+            "componentName": "Comment",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:34",
+            "order": 33,
+            "parentId": "template:27",
+            "depth": 2,
+            "tag": "el-col",
+            "componentName": "ElCol",
+            "classes": [],
+            "attributes": {
+              ":xs": "24",
+              ":sm": "24",
+              ":md": "6",
+              ":lg": "6",
+              ":xl": "6"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:35"
+              }
+            ],
+            "primitive": {
+              "kind": "layout-column",
+              "sourceTag": "el-col",
+              "props": {
+                ":xs": "24",
+                ":sm": "24",
+                ":md": "6",
+                ":lg": "6",
+                ":xl": "6"
+              },
+              "responsiveSpans": {
+                "xs": "24",
+                "sm": "24",
+                "md": "6",
+                "lg": "6",
+                "xl": "6"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping",
+                "responsive grid spans require viewport-specific layout validation"
+              ]
+            }
+          },
+          {
+            "id": "template:35",
+            "order": 34,
+            "parentId": "template:34",
+            "depth": 3,
+            "tag": "el-card",
+            "componentName": "ElCard",
+            "classes": [
+              "box-card"
+            ],
+            "attributes": {
+              "class": "box-card"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:36"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:39"
+              }
+            ],
+            "primitive": {
+              "kind": "card",
+              "sourceTag": "el-card",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:36",
+            "order": 35,
+            "parentId": "template:35",
+            "depth": 4,
+            "tag": "template",
+            "componentName": "template",
+            "classes": [],
+            "attributes": {
+              "#header": true
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:37"
+              }
+            ]
+          },
+          {
+            "id": "template:37",
+            "order": 36,
+            "parentId": "template:36",
+            "depth": 5,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "card-header",
+              "cursor"
+            ],
+            "attributes": {
+              "class": "card-header cursor"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:38"
+              }
+            ]
+          },
+          {
+            "id": "template:38",
+            "order": 37,
+            "parentId": "template:37",
+            "depth": 6,
+            "tag": "span",
+            "componentName": "span",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "词云"
+              }
+            ]
+          },
+          {
+            "id": "template:39",
+            "order": 38,
+            "parentId": "template:35",
+            "depth": 4,
+            "tag": "WordCloud",
+            "componentName": "WordCloud",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElRow",
+          "ElCol",
+          "ElCard",
+          "SvgIcon",
+          "ElProgress",
+          "ElRow",
+          "ElCol",
+          "ElCard",
+          "VisitAnalysis",
+          "ElCol",
+          "ElCard",
+          "PieChart",
+          "ElRow",
+          "ElCol",
+          "ElCard",
+          "Comment",
+          "ElCol",
+          "ElCard",
+          "WordCloud"
+        ],
+        "primitiveCounts": {
+          "layout-row": 3,
+          "layout-column": 5,
+          "card": 5,
+          "progress": 1
+        },
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 1,
+        "slotOwners": 0,
+        "responsiveGridNodes": 5
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [
+          {
+            "path": "templateRepeat[0]:(item, index) in speedList",
+            "count": -1,
+            "source": "template-repeat"
+          }
+        ],
+        "sliceLimits": [],
+        "templateRepeats": [
+          "(item, index) in speedList"
+        ],
+        "unresolvedReferences": [
+          "speedList"
+        ]
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "typescript-erasure",
+        "initialState": {},
+        "handlers": [
+          {
+            "handler": "value",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 36
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 1,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis",
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": [
+          "(item, index) in speedList"
+        ]
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".box-card{margin-bottom:20px}.box-card :deep(.el-card__header){padding-bottom:0;border:none}.box-card .card-header{display:flex;align-items:center;justify-content:space-between;font-weight:600}.box-card .card-content :deep(.el-progress-bar__outer){height:17px !important}.box-card .card-content .numerical-value{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px}.box-card .card-content .numerical-value .number{color:var(--text-color-primary);font-size:var(--font-size-extra-large);font-weight:600}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:sfc:63",
+      "componentId": "sfc:63",
+      "componentName": "form",
+      "sourceFile": "src/views/login/compoontne/form.vue",
+      "kind": "component",
+      "parentOwnerId": "visual:sfc:64",
+      "implementationSelector": "[data-visual-owner=\"sfc:63\"]",
+      "acceptanceSelectors": [
+        ".demo-ruleForm",
+        ".enter-y",
+        ".form-item-container",
+        ".submit-btn"
+      ],
+      "childComponents": [
+        "ElButton",
+        "ElCheckbox",
+        "ElForm",
+        "ElFormItem",
+        "ElInput"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "el-form",
+            "componentName": "ElForm",
+            "classes": [
+              "demo-ruleForm"
+            ],
+            "attributes": {
+              "ref": "rule-form-ref",
+              ":model": "ruleForm",
+              ":rules": "rules",
+              "size": "large",
+              "class": "demo-ruleForm"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              }
+            ],
+            "primitive": {
+              "kind": "form",
+              "sourceTag": "el-form",
+              "props": {
+                "ref": "rule-form-ref",
+                ":model": "ruleForm",
+                ":rules": "rules",
+                "size": "large"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              "prop": "username",
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {
+                "prop": "username"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "el-input",
+            "componentName": "ElInput",
+            "classes": [],
+            "attributes": {
+              "v-model": "ruleForm.username",
+              ":prefix-icon": "Avatar",
+              "clearable": true,
+              ":placeholder": "`${$t('sys.login.userName')}：admin`"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "input",
+              "sourceTag": "el-input",
+              "props": {
+                "v-model": "ruleForm.username",
+                ":prefix-icon": "Avatar",
+                "clearable": true,
+                ":placeholder": "`${$t('sys.login.userName')}：admin`"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              "prop": "password",
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {
+                "prop": "password"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 2,
+            "tag": "el-input",
+            "componentName": "ElInput",
+            "classes": [],
+            "attributes": {
+              "v-model": "ruleForm.password",
+              "type": "password",
+              ":prefix-icon": "Lock",
+              "clearable": true,
+              "show-password": true,
+              ":placeholder": "`${$t('sys.login.password')}：admin123`"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "input",
+              "sourceTag": "el-input",
+              "props": {
+                "v-model": "ruleForm.password",
+                "type": "password",
+                ":prefix-icon": "Lock",
+                "clearable": true,
+                "show-password": true,
+                ":placeholder": "`${$t('sys.login.password')}：admin123`"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:6",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "form-item-container"
+            ],
+            "attributes": {
+              "class": "form-item-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "el-checkbox",
+            "componentName": "ElCheckbox",
+            "classes": [],
+            "attributes": {
+              "v-model": "checked",
+              ":label": "$t('sys.login.rememberPassword')"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [],
+            "primitive": {
+              "kind": "checkbox",
+              "sourceTag": "el-checkbox",
+              "props": {
+                "v-model": "checked",
+                ":label": "$t('sys.login.rememberPassword')"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "el-button",
+            "componentName": "ElButton",
+            "classes": [],
+            "attributes": {
+              "link": true,
+              "type": "primary"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " {{ $t('sys.login.forgotPassword') }} "
+              }
+            ],
+            "primitive": {
+              "kind": "button",
+              "sourceTag": "el-button",
+              "props": {
+                "link": true,
+                "type": "primary"
+              },
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-form-item",
+            "componentName": "ElFormItem",
+            "classes": [
+              "enter-y"
+            ],
+            "attributes": {
+              "class": "enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              }
+            ],
+            "primitive": {
+              "kind": "form-field",
+              "sourceTag": "el-form-item",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:10",
+            "depth": 2,
+            "tag": "el-button",
+            "componentName": "ElButton",
+            "classes": [
+              "submit-btn"
+            ],
+            "attributes": {
+              "class": "submit-btn",
+              "@click": "submitForm(ruleFormRef)"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": " {{ $t('sys.login.loginButton') }} "
+              }
+            ],
+            "primitive": {
+              "kind": "button",
+              "sourceTag": "el-button",
+              "props": {},
+              "reviewReasons": [
+                "Element UI primitive requires stable DOM/CSS mapping"
+              ]
+            }
+          }
+        ],
+        "componentOrder": [
+          "ElForm",
+          "ElFormItem",
+          "ElInput",
+          "ElFormItem",
+          "ElInput",
+          "ElFormItem",
+          "ElCheckbox",
+          "ElButton",
+          "ElFormItem",
+          "ElButton"
+        ],
+        "primitiveCounts": {
+          "form": 1,
+          "form-field": 4,
+          "input": 2,
+          "checkbox": 1,
+          "button": 2
+        },
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "typescript-erasure",
+        "initialState": {
+          "ruleForm": {
+            "username": "",
+            "password": ""
+          },
+          "checked": false,
+          "rules": {
+            "username": [
+              {
+                "trigger": "blur"
+              }
+            ],
+            "password": [
+              {
+                "trigger": "blur"
+              }
+            ]
+          }
+        },
+        "handlers": [
+          {
+            "handler": "onLogin",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 27
+          },
+          {
+            "handler": "submitForm",
+            "writes": [],
+            "helperCalls": [],
+            "sourceLine": 36
+          }
+        ],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 3,
+          "handlers": 2,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis",
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [
+          "click"
+        ],
+        "models": [
+          "checked",
+          "ruleForm.password",
+          "ruleForm.username"
+        ],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".submit-btn{width:100%}.form-item-container{display:flex;align-items:center;justify-content:space-between;width:100%;height:30px}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [
+        "@element-plus/icons-vue",
+        "element-plus",
+        "vue",
+        "vue-router"
+      ],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation",
+        "template events require reviewed state-transition scenarios"
+      ]
+    },
+    {
+      "id": "visual:sfc:64",
+      "componentId": "sfc:64",
+      "componentName": "login",
+      "sourceFile": "src/views/login/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:64\"]",
+      "acceptanceSelectors": [
+        ".application",
+        ".back",
+        ".container",
+        ".enter-x",
+        ".enter-y",
+        ".flex",
+        ".flex-row",
+        ".h-",
+        ".head",
+        ".icon-size",
+        ".item",
+        ".items-center",
+        ".justify-center",
+        ".login-box",
+        ".login-form",
+        ".logo",
+        ".logo-img",
+        ".logo-name",
+        ".m-0",
+        ".mb-10",
+        ".ml-4",
+        ".mx-auto",
+        ".page-container",
+        ".px",
+        ".w-"
+      ],
+      "childComponents": [
+        "AppLocale",
+        "AppTheme",
+        "Form"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "page-container"
+            ],
+            "attributes": {
+              "class": "page-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "container",
+              "mx-auto"
+            ],
+            "attributes": {
+              "class": "container mx-auto"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:3"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:7"
+              }
+            ]
+          },
+          {
+            "id": "template:3",
+            "order": 2,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "head"
+            ],
+            "attributes": {
+              "class": "head"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:4"
+              }
+            ]
+          },
+          {
+            "id": "template:4",
+            "order": 3,
+            "parentId": "template:3",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "application"
+            ],
+            "attributes": {
+              "class": "application"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:5"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:6"
+              }
+            ]
+          },
+          {
+            "id": "template:5",
+            "order": 4,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "AppLocale",
+            "componentName": "AppLocale",
+            "classes": [
+              "enter-x",
+              "icon-size",
+              "item"
+            ],
+            "attributes": {
+              "class": "item icon-size enter-x"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:6",
+            "order": 5,
+            "parentId": "template:4",
+            "depth": 4,
+            "tag": "AppTheme",
+            "componentName": "AppTheme",
+            "classes": [
+              "enter-x",
+              "item"
+            ],
+            "attributes": {
+              "class": "item enter-x"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:7",
+            "order": 6,
+            "parentId": "template:2",
+            "depth": 2,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "login-box"
+            ],
+            "attributes": {
+              "class": "login-box"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:8"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:11"
+              }
+            ]
+          },
+          {
+            "id": "template:8",
+            "order": 7,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "enter-y",
+              "flex",
+              "flex-row",
+              "items-center",
+              "justify-center",
+              "mb-10"
+            ],
+            "attributes": {
+              "className": "mb-10 flex flex-row items-center justify-center enter-y"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:9"
+              },
+              {
+                "kind": "node",
+                "nodeId": "template:10"
+              }
+            ]
+          },
+          {
+            "id": "template:9",
+            "order": 8,
+            "parentId": "template:8",
+            "depth": 4,
+            "tag": "img",
+            "componentName": "img",
+            "classes": [
+              "h-[44px]",
+              "w-[44px]"
+            ],
+            "attributes": {
+              "class": "h-[44px] w-[44px]",
+              "src": "@/assets/logo.png",
+              "mode": "scaleToFill",
+              "alt": "logo"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          },
+          {
+            "id": "template:10",
+            "order": 9,
+            "parentId": "template:8",
+            "depth": 4,
+            "tag": "h2",
+            "componentName": "h2",
+            "classes": [
+              "m-0",
+              "ml-4"
+            ],
+            "attributes": {
+              "className": "m-0 ml-4"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "text",
+                "value": "Vue Xs Admin"
+              }
+            ]
+          },
+          {
+            "id": "template:11",
+            "order": 10,
+            "parentId": "template:7",
+            "depth": 3,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "login-form"
+            ],
+            "attributes": {
+              "class": "login-form"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:12"
+              }
+            ]
+          },
+          {
+            "id": "template:12",
+            "order": 11,
+            "parentId": "template:11",
+            "depth": 4,
+            "tag": "Form",
+            "componentName": "Form",
+            "classes": [],
+            "attributes": {},
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "AppLocale",
+          "AppTheme",
+          "Form"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [
+        {
+          "index": 0,
+          "scoped": true,
+          "compiledCss": ".back{background-color:red}.page-container{width:100vw;height:100vh;transition:all .3s linear;border-radius:0}.page-container .container{display:flex;justify-content:space-between;width:100%;height:100%;margin:auto;padding:0 2rem}.page-container .container .head{display:flex;position:fixed;top:0;left:0;align-items:center;justify-content:flex-end;width:100%;padding:10px 20px}.page-container .container .head .application{display:flex;align-items:center;justify-content:space-between}.page-container .container .head .application .icon-size{font-size:var(--font-size-extra-large)}.page-container .container .head .application .item{margin-left:20px}.page-container .container .head .logo{display:flex;align-items:center;justify-content:center}.page-container .container .head .logo .logo-img{width:44px;height:44px}.page-container .container .head .logo .logo-name{margin-left:8px;color:#999;font:bold 200% Consolas,Monaco,monospace;font-size:18px;text-transform:uppercase}.page-container .container .login-box{align-self:start;margin:auto;padding:40px;border-radius:10px;box-shadow:0 15px 25px 0 rgba(0,0,0,.6);text-align:center}.page-container .container .login-box .login-form{width:360px}",
+          "compileStatus": "compiled"
+        }
+      ],
+      "runtimeDependencies": [],
+      "confidence": "high",
+      "reviewReasons": [
+        "scoped styles require selector ownership preservation"
+      ]
+    },
+    {
+      "id": "visual:sfc:66",
+      "componentId": "sfc:66",
+      "componentName": "menu1-1",
+      "sourceFile": "src/views/nested/menu1/menu1-1/index.vue",
+      "kind": "page",
+      "implementationSelector": "[data-visual-owner=\"sfc:66\"]",
+      "acceptanceSelectors": [
+        ".page-container"
+      ],
+      "childComponents": [
+        "ElAlert"
+      ],
+      "templateStructure": {
+        "roots": [
+          "template:1"
+        ],
+        "nodes": [
+          {
+            "id": "template:1",
+            "order": 0,
+            "depth": 0,
+            "tag": "div",
+            "componentName": "div",
+            "classes": [
+              "page-container"
+            ],
+            "attributes": {
+              "class": "page-container"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": [
+              {
+                "kind": "node",
+                "nodeId": "template:2"
+              }
+            ]
+          },
+          {
+            "id": "template:2",
+            "order": 1,
+            "parentId": "template:1",
+            "depth": 1,
+            "tag": "el-alert",
+            "componentName": "ElAlert",
+            "classes": [],
+            "attributes": {
+              ":closable": "false",
+              "title": "menu 1-1",
+              "type": "success"
+            },
+            "inlineStyle": {},
+            "conditions": [],
+            "loops": [],
+            "content": []
+          }
+        ],
+        "componentOrder": [
+          "ElAlert"
+        ],
+        "primitiveCounts": {},
+        "inlineVisualDeclarations": 0,
+        "conditionalRegions": 0,
+        "repeatedRegions": 0,
+        "slotOwners": 0,
+        "responsiveGridNodes": 0
+      },
+      "dataCardinality": {
+        "staticBindings": {},
+        "cardinalities": [],
+        "sliceLimits": [],
+        "templateRepeats": [],
+        "unresolvedReferences": []
+      },
+      "stateResponsibility": {
+        "schemaVersion": "1.0",
+        "kind": "sfc-state-responsibility",
+        "parsed": true,
+        "parseMode": "javascript",
+        "initialState": {},
+        "handlers": [],
+        "displayFunctions": [],
+        "unresolvedWrites": [],
+        "metrics": {
+          "initialBindings": 0,
+          "handlers": 0,
+          "handlersWithWrites": 0,
+          "stateWrites": 0,
+          "displayFunctions": 0,
+          "unresolvedWrites": 0
+        },
+        "reviewReasons": [
+          "only structurally proven static state writes are executable candidates",
+          "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values"
+        ]
+      },
+      "apiFixtures": [],
+      "interactions": {
+        "events": [],
+        "models": [],
+        "conditions": [],
+        "loops": []
+      },
+      "lifecycle": [],
+      "responsiveMediaQueries": [],
+      "sourceStyleSheets": [],
+      "runtimeDependencies": [],
+      "confidence": "medium",
+      "reviewReasons": []
+    }
+  ],
+  "unresolved": [],
+  "metrics": {
+    "visualRoutes": 4,
+    "boundaries": 4,
+    "owners": 15,
+    "chartOwners": 3,
+    "responsiveOwners": 0,
+    "interactiveOwners": 3,
+    "apiFixtureOwners": 0,
+    "canvasProfileProposals": 2,
+    "domProfileProposals": 2,
+    "unresolvedRoutes": 0
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "reviewMs": null,
+    "generatedLines": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "semanticRuns": null,
+    "visualRuns": null
+  },
+  "reviewReasons": [
+    "the plan proves visual ownership but does not authorize copying the reviewed target implementation",
+    "acceptance selectors remain external quality-gate inputs and must not be used as implementation ownership evidence",
+    "route roots use router-to-import-to-SFC evidence; acceptance selectors never determine ownership when the graph is provided; unresolved bindings remain blocked",
+    "chart and responsive responsibilities require the same Semantic Gold+ matrix after generation"
+  ]
+}

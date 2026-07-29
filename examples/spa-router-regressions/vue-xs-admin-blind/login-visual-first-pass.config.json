@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4179",
+  "navigationComparison": "strict",
+  "visualMatrix": {
+    "viewports": [
+      { "id": "desktop", "width": 1440, "height": 900 },
+      { "id": "tablet", "width": 1024, "height": 768 },
+      { "id": "mobile", "width": 390, "height": 844 }
+    ],
+    "pixelThreshold": 0.02,
+    "styleThreshold": 0.98,
+    "artifactDir": "examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts",
+    "stabilityTimeoutMs": 10000
+  },
+  "execution": {
+    "contractConcurrency": 1,
+    "visualConcurrency": 2,
+    "visualCaptureConcurrency": 2,
+    "visualCanvasConcurrency": 1,
+    "visualPixelConcurrency": 1,
+    "actionTimeoutMs": 10000,
+    "browserShutdown": "graceful"
+  },
+  "scenarios": [
+    {
+      "id": "login-reviewed-region",
+      "entryPath": "/login",
+      "steps": [
+        { "action": "reload" }
+      ],
+      "assertions": {
+        "path": "/login",
+        "visibleSelector": {
+          "reference": ".login-box",
+          "generated": "[data-visual-owner=\"visual:sfc:64\"] .login-box"
+        },
+        "visibleText": "Vue Xs Admin"
+      },
+      "visual": {
+        "screenshotAnchor": {
+          "reference": ".login-box",
+          "generated": "[data-visual-owner=\"visual:sfc:64\"] .login-box"
+        },
+        "screenshotRegion": {
+          "reference": ".login-box",
+          "generated": "[data-visual-owner=\"visual:sfc:64\"] .login-box"
+        },
+        "styleTargets": [
+          {
+            "id": "login-box",
+            "selector": {
+              "reference": ".login-box",
+              "generated": "[data-visual-owner=\"visual:sfc:64\"] .login-box"
+            }
+          },
+          {
+            "id": "form",
+            "selector": {
+              "reference": ".demo-ruleForm",
+              "generated": "[data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm"
+            }
+          },
+          {
+            "id": "submit",
+            "selector": {
+              "reference": ".submit-btn",
+              "generated": "[data-visual-owner=\"visual:sfc:63\"] .submit-btn"
+            }
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    }
+  ]
+}

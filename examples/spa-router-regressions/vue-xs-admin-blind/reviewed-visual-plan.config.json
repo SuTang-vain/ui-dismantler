@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4175",
+  "navigationComparison": "semantic",
+  "scenarios": [
+    {
+      "id": "login-reviewed-region",
+      "entryPath": "/login",
+      "steps": [],
+      "assertions": {
+        "path": "/login",
+        "visibleSelector": ".login-box",
+        "visibleText": "Vue Xs Admin"
+      },
+      "visual": {
+        "screenshotAnchor": ".login-box",
+        "screenshotRegion": ".login-box",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".page-container"
+          },
+          {
+            "id": "login-box",
+            "selector": ".login-box"
+          },
+          {
+            "id": "form",
+            "selector": ".demo-ruleForm"
+          },
+          {
+            "id": "submit",
+            "selector": ".submit-btn"
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    },
+    {
+      "id": "welcome-reviewed-region",
+      "entryPath": "/welcome",
+      "steps": [],
+      "assertions": {
+        "path": "/welcome",
+        "visibleSelector": ".page-container",
+        "visibleText": "待办事项"
+      },
+      "visual": {
+        "screenshotAnchor": ".page-container",
+        "screenshotRegion": ".page-container",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".page-container"
+          },
+          {
+            "id": "card",
+            "selector": ".box-card"
+          },
+          {
+            "id": "card-content",
+            "selector": ".card-content"
+          }
+        ],
+        "resourceProfile": "canvas"
+      }
+    },
+    {
+      "id": "nested-menu-reviewed-region",
+      "entryPath": "/nested/menu1/menu1-1",
+      "steps": [],
+      "assertions": {
+        "path": "/nested/menu1/menu1-1",
+        "visibleSelector": ".page-container",
+        "visibleText": "menu 1-1"
+      },
+      "visual": {
+        "screenshotAnchor": ".page-container",
+        "screenshotRegion": ".page-container",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".page-container"
+          },
+          {
+            "id": "alert",
+            "selector": ".el-alert"
+          }
+        ],
+        "resourceProfile": "dom"
+      }
+    },
+    {
+      "id": "echarts-bar-reviewed-region",
+      "entryPath": "/echarts/bar",
+      "steps": [],
+      "assertions": {
+        "path": "/echarts/bar",
+        "visibleSelector": ".page-container"
+      },
+      "visual": {
+        "screenshotAnchor": ".page-container",
+        "screenshotRegion": ".page-container",
+        "styleTargets": [
+          {
+            "id": "page",
+            "selector": ".page-container"
+          },
+          {
+            "id": "chart",
+            "selector": "canvas"
+          }
+        ],
+        "resourceProfile": "canvas"
+      }
+    }
+  ]
+}

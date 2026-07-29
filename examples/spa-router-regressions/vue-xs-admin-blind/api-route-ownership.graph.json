@@ -1,0 +1,487 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "api-route-ownership-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "links": [
+    {
+      "id": "api-route-link:api-flow:src/router/utils.ts:getRouteApi",
+      "flowId": "api-flow:src/router/utils.ts:getRouteApi",
+      "endpoint": {
+        "method": "POST",
+        "path": "/mock_api/getRoute"
+      },
+      "consumerFile": "src/router/utils.ts",
+      "targetBinding": "handleRouteList",
+      "responsePath": "data",
+      "mutation": "router.addRoute",
+      "shape": {
+        "shape": "route-record-array",
+        "cardinality": 9,
+        "observedItemCount": 9,
+        "fields": [
+          "children",
+          "name",
+          "path"
+        ],
+        "evidence": [
+          "reviewed fixture response body",
+          "response path: data",
+          "route path/name/children structure observed"
+        ]
+      },
+      "routeOwnership": {
+        "matches": [
+          {
+            "apiPath": "/welcome",
+            "apiName": "RtWelcome",
+            "routePath": "/welcome",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/index/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components",
+            "apiName": "RtComponents",
+            "routePath": "/components",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/form/index.vue",
+              "views/components/table-page/index.vue",
+              "views/components/drag/index.vue",
+              "views/components/count-to/index.vue",
+              "views/components/seamless-scroll/index.vue",
+              "views/components/date/index.vue",
+              "views/components/calendar/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/components/form",
+            "apiName": "RtForm",
+            "routePath": "/components/form",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/form/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/table",
+            "apiName": "RtTable",
+            "routePath": "/components/table",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/table-page/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/drag",
+            "apiName": "RtDrag",
+            "routePath": "/components/drag",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/drag/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/count-to",
+            "apiName": "RtCountTo",
+            "routePath": "/components/count-to",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/count-to/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/seamless-scroll",
+            "apiName": "RtSeamlessScroll",
+            "routePath": "/components/seamless-scroll",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/seamless-scroll/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/date-time",
+            "apiName": "DateTime",
+            "routePath": "/components/date-time",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/date/index.vue",
+              "views/components/calendar/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/components/date-time/date-select",
+            "apiName": "RtDate",
+            "routePath": "/components/date-time/date-select",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/date/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/components/date-time/calendar",
+            "apiName": "RtCalendar",
+            "routePath": "/components/date-time/calendar",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/components/calendar/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/echarts",
+            "apiName": "RtEcharts",
+            "routePath": "/echarts",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/echarts/bar/index.vue",
+              "views/echarts/map/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/echarts/bar",
+            "apiName": "RtBar",
+            "routePath": "/echarts/bar",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/echarts/bar/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/echarts/map",
+            "apiName": "RtMap",
+            "routePath": "/echarts/map",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/echarts/map/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/editor",
+            "apiName": "RtEditor",
+            "routePath": "/editor",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/editor/rich-text/index.vue",
+              "views/editor/markdown/index.vue",
+              "views/editor/logic-flow/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/editor/rich-text",
+            "apiName": "RtRichText",
+            "routePath": "/editor/rich-text",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/editor/rich-text/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/editor/markdown",
+            "apiName": "RtMarkdown",
+            "routePath": "/editor/markdown",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/editor/markdown/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/editor/logic-flow",
+            "apiName": "RtLogicFlow",
+            "routePath": "/editor/logic-flow",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/editor/logic-flow/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/permissions",
+            "apiName": "RtPermissions",
+            "routePath": "/permissions",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/permissions/page/index.vue",
+              "views/permissions/test-permissions-a/index.vue",
+              "views/permissions/test-permissions-b/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/permissions/page",
+            "apiName": "RtPermissionsPage",
+            "routePath": "/permissions/page",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/permissions/page/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/permissions/test-page-admin",
+            "apiName": "RtPermissionsTestPageAdmin",
+            "routePath": "/permissions/test-page-admin",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/permissions/test-permissions-a/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/nested",
+            "apiName": "RtNested",
+            "routePath": "/nested",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-1/index.vue",
+              "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+              "views/nested/menu1/menu1-2/menu1-2-2/index.vue",
+              "views/nested/menu1/menu1-3/index.vue",
+              "views/nested/menu2/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/nested/menu1",
+            "apiName": "RtMenu1",
+            "routePath": "/nested/menu1",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-1/index.vue",
+              "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+              "views/nested/menu1/menu1-2/menu1-2-2/index.vue",
+              "views/nested/menu1/menu1-3/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/nested/menu1/menu1-1",
+            "apiName": "RtMenu1-1",
+            "routePath": "/nested/menu1/menu1-1",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-1/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/nested/menu1/menu1-2",
+            "apiName": "RtMenu1-2",
+            "routePath": "/nested/menu1/menu1-2",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-2/menu1-2-1/index.vue",
+              "views/nested/menu1/menu1-2/menu1-2-2/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/nested/menu1/menu1-2/menu1-2-1",
+            "apiName": "RtMenu1-2-1",
+            "routePath": "/nested/menu1/menu1-2/menu1-2-1",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-2/menu1-2-1/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/nested/menu1/menu1-2/menu1-2-2",
+            "apiName": "RtMenu1-2-2",
+            "routePath": "/nested/menu1/menu1-2/menu1-2-2",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-2/menu1-2-2/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/nested/menu1/menu1-3",
+            "apiName": "RtMenu1-3",
+            "routePath": "/nested/menu1/menu1-3",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu1/menu1-3/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/nested/menu2",
+            "apiName": "RtMenu2",
+            "routePath": "/nested/menu2",
+            "matchKind": "path",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/nested/menu2/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/external-link",
+            "apiName": "RtExternal",
+            "routePath": "/external-link",
+            "matchKind": "path",
+            "routeKind": "route-grouping",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/external-link/embedded-page/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "https://github.com/SuperCuteXiaoSi/xiaosiAdmin",
+            "apiName": "RtGitLink",
+            "routePath": "/external-link/embedded-page",
+            "matchKind": "name",
+            "routeKind": "visual-leaf",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/external-link/embedded-page/index.vue"
+            ],
+            "visualOwnerProven": true
+          },
+          {
+            "apiPath": "/about",
+            "apiName": "RtAdminInfo",
+            "routePath": "/about",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/about/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/about",
+            "apiName": "RtAbout",
+            "routePath": "/about",
+            "matchKind": "path",
+            "routeKind": "redirect-only-parent",
+            "layoutChain": [],
+            "leafOwners": [
+              "views/about/index.vue"
+            ],
+            "visualOwnerProven": false
+          },
+          {
+            "apiPath": "/details_page",
+            "apiName": "RtDetailsPage",
+            "routePath": "/details_page",
+            "matchKind": "path",
+            "routeKind": "layout-owner",
+            "layoutChain": [
+              "views/details-page/index.vue"
+            ],
+            "leafOwners": [
+              "views/details-page/datails-info/index.vue",
+              "views/details-page/datails-params/index.vue"
+            ],
+            "visualOwnerProven": true
+          }
+        ],
+        "requiresReview": false
+      },
+      "fixture": {
+        "matched": true,
+        "reviewed": true,
+        "index": 0,
+        "sourceFile": "mock/route.mock.ts",
+        "sourceHash": "cb8d02deedccd65ddfa9f149cddd45596d42880c8a90e8e56cd4c4c9d15fb931"
+      },
+      "confidence": "high",
+      "reviewReasons": [
+        "endpoint and response consumer are linked by local import and await usage",
+        "dynamic route mutation remains review evidence and does not authorize source runtime copying"
+      ]
+    }
+  ],
+  "unresolved": [],
+  "metrics": {
+    "responseFlows": 3,
+    "dynamicRouteFlows": 1,
+    "routeLinks": 1,
+    "reviewedFixtures": 1,
+    "routeRecordFixtures": 1,
+    "matchedRouteRecords": 33,
+    "unresolvedFlows": 0,
+    "unresolvedRouteRecords": 0
+  },
+  "reviewReasons": [
+    "route API data is linked to Router-to-SFC ownership only through reviewed response fixtures and explicit route mutation evidence",
+    "transport prefix candidates may match reviewed browser fixture paths, while upstream proxy rewrites are never used as browser fixture paths",
+    "unresolved route shape or ownership remains explicit and cannot authorize generated visual ownership"
+  ]
+}

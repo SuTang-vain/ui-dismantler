@@ -12,7 +12,10 @@ export interface ApiRouteRecordShape {
 }
 
 export interface ApiRouteOwnershipMatch {
+  apiPath: string | null;
+  apiName: string | null;
   routePath: string;
+  matchKind: "path" | "name";
   routeKind: RouterSfcRouteBinding["routeKind"];
   layoutChain: string[];
   leafOwners: string[];
@@ -34,7 +37,10 @@ export interface ApiRouteOwnershipLink {
   };
   fixture: {
     matched: boolean;
+    reviewed: boolean;
     index: number | null;
+    sourceFile?: string;
+    sourceHash?: string;
   };
   confidence: "high" | "medium" | "low";
   reviewReasons: string[];
@@ -111,32 +117,41 @@ function collectFields(records: Array<{ [key: string]: JsonValue }>): string[] {
 }
 
 function joinPath(parent: string | null, recordPath: string): string {
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(recordPath)) return recordPath;
   if (recordPath.startsWith("/")) return recordPath || "/";
   if (!parent || parent === "/") return `/${recordPath.replace(/^\/+/, "")}`;
   return `${parent.replace(/\/+$/, "")}/${recordPath.replace(/^\/+/, "")}`;
 }
 
-function routePaths(records: Array<{ [key: string]: JsonValue }>, parent: string | null = null): string[] {
-  const output: string[] = [];
+interface RouteRecordReference { path: string | null; name: string | null }
+
+function routeRecordReferences(records: Array<{ [key: string]: JsonValue }>, parent: string | null = null): RouteRecordReference[] {
+  const output: RouteRecordReference[] = [];
   for (const record of records) {
     const rawPath = typeof record.path === "string" ? record.path : "";
     const path = rawPath ? joinPath(parent, rawPath) : parent;
-    if (path) output.push(path);
-    if (Array.isArray(record.children)) output.push(...routePaths(record.children.filter(isRecord), path ?? parent));
+    const name = typeof record.name === "string" ? record.name : null;
+    if (path || name) output.push({ path, name });
+    if (Array.isArray(record.children)) output.push(...routeRecordReferences(record.children.filter(isRecord), path ?? parent));
   }
   return output;
 }
 
-function ownershipForPath(path: string, routerGraph: RouterSfcResponsibilityGraph): ApiRouteOwnershipMatch | undefined {
-  const candidates = routerGraph.routes.filter((route) => route.path === path);
+function ownershipForReference(reference: RouteRecordReference, routerGraph: RouterSfcResponsibilityGraph): ApiRouteOwnershipMatch | undefined {
+  const pathCandidates = reference.path ? routerGraph.routes.filter((route) => route.path === reference.path) : [];
+  const nameCandidates = reference.name ? routerGraph.routes.filter((route) => route.name === reference.name) : [];
+  const candidates = pathCandidates.length ? pathCandidates : nameCandidates;
   if (!candidates.length) return undefined;
   const route = candidates.find((candidate) => candidate.routeKind === "visual-leaf") ?? candidates.find((candidate) => candidate.visualOwnerProven) ?? candidates[0];
   const leafOwners = routerGraph.routes
-    .filter((candidate) => candidate.routeKind === "visual-leaf" && (candidate.path === path || (route.routeKind === "layout-owner" && candidate.path.startsWith(`${path}/`))))
+    .filter((candidate) => candidate.routeKind === "visual-leaf" && (candidate.path === route.path || (route.routeKind !== "visual-leaf" && candidate.path.startsWith(`${route.path}/`))))
     .map((candidate) => candidate.sfcFile)
     .filter((file): file is string => Boolean(file));
   return {
+    apiPath: reference.path,
+    apiName: reference.name,
     routePath: route.path,
+    matchKind: pathCandidates.length ? "path" : "name",
     routeKind: route.routeKind,
     layoutChain: route.layoutChain,
     leafOwners: [...new Set([...(route.sfcFile && route.routeKind === "visual-leaf" ? [route.sfcFile] : []), ...leafOwners])],
@@ -153,14 +168,18 @@ function linkFlow(flow: ApiResponseFlowEvidence, apiGraph: ApiFixtureResponsibil
   if (!fixtureMatch) reasons.push("no reviewed fixture matches the route API endpoint; route record shape remains unresolved");
   const responseValue = valueAtPath(fixtureMatch?.fixture.body, flow.responsePath);
   const extracted = routeRecordValues(responseValue);
-  const matches = extracted.shape === "unknown" ? [] : routePaths(extracted.records).map((path) => ownershipForPath(path, routerGraph)).filter((match): match is ApiRouteOwnershipMatch => Boolean(match));
-  const paths = extracted.shape === "unknown" ? [] : routePaths(extracted.records);
-  const unresolvedPaths = paths.filter((path) => !matches.some((match) => match.routePath === path));
+  const references = extracted.shape === "unknown" ? [] : routeRecordReferences(extracted.records);
+  const matches = references.map((reference) => ownershipForReference(reference, routerGraph)).filter((match): match is ApiRouteOwnershipMatch => Boolean(match));
+  const unresolvedReferences = references.filter((reference) => !matches.some((match) => match.apiPath === reference.path && match.apiName === reference.name));
   if (extracted.shape === "unknown") reasons.push("reviewed response does not prove a route-record object or array");
   if (extracted.shape !== "unknown" && extracted.records.length === 0) reasons.push("route-record fixture has no records; nested route ownership cannot be proven");
-  if (unresolvedPaths.length) reasons.push(`route records have no Router-to-SFC owner: ${unresolvedPaths.join(", ")}`);
+  if (unresolvedReferences.length) reasons.push(`route records have no Router-to-SFC owner: ${unresolvedReferences.map((reference) => reference.path ?? reference.name ?? "<unknown>").join(", ")}`);
   if (!matches.length) reasons.push("no route-record path matched the Router-to-SFC responsibility graph");
   const mutation = flow.routeMutations.includes("addRoutes") ? "router.addRoutes" : flow.routeMutations.includes("addRoute") ? "router.addRoute" : "unresolved";
+  const fixtureReviewed = fixtureMatch?.fixture.review?.reviewed === true;
+  if (fixtureMatch && !fixtureReviewed) reasons.push("route fixture lacks explicit source-backed review metadata");
+  const ownershipResolved = matches.length > 0 && matches.every((match) => match.visualOwnerProven || match.leafOwners.length > 0);
+  const requiresReview = !fixtureReviewed || extracted.shape === "unknown" || extracted.records.length === 0 || unresolvedReferences.length > 0 || !ownershipResolved || mutation === "unresolved";
   return {
     id: `api-route-link:${flow.id}`,
     flowId: flow.id,
@@ -176,9 +195,15 @@ function linkFlow(flow: ApiResponseFlowEvidence, apiGraph: ApiFixtureResponsibil
       fields: extracted.shape === "unknown" ? [] : collectFields(extracted.records),
       evidence: ["reviewed fixture response body", `response path: ${flow.responsePath}`, ...(extracted.shape !== "unknown" ? ["route path/name/children structure observed"] : [])],
     },
-    routeOwnership: { matches, requiresReview: true },
-    fixture: { matched: Boolean(fixtureMatch), index: fixtureMatch?.index ?? null },
-    confidence: matches.length && extracted.shape !== "unknown" ? "high" : fixtureMatch ? "medium" : "low",
+    routeOwnership: { matches, requiresReview },
+    fixture: {
+      matched: Boolean(fixtureMatch),
+      reviewed: fixtureReviewed,
+      index: fixtureMatch?.index ?? null,
+      sourceFile: fixtureMatch?.fixture.review?.sourceFile,
+      sourceHash: fixtureMatch?.fixture.review?.sourceHash,
+    },
+    confidence: !requiresReview ? "high" : fixtureMatch ? "medium" : "low",
     reviewReasons: [...new Set(reasons)],
   };
 }
@@ -190,7 +215,7 @@ export function linkApiRouteOwnership(
 ): ApiRouteOwnershipGraph {
   const flows = apiGraph.responseFlows.filter((flow) => flow.flowKind === "dynamic-route-injection");
   const links = flows.map((flow) => linkFlow(flow, apiGraph, config, routerGraph));
-  const unresolved = links.flatMap((link) => link.reviewReasons.some((reason) => /unresolved|no reviewed fixture|no route-record|no Router-to-SFC/.test(reason)) ? [{ flowId: link.flowId, reason: link.reviewReasons.join("; ") }] : []);
+  const unresolved = links.filter((link) => link.routeOwnership.requiresReview).map((link) => ({ flowId: link.flowId, reason: link.reviewReasons.join("; ") }));
   return {
     schemaVersion: "1.0",
     kind: "api-route-ownership-graph",
@@ -202,7 +227,7 @@ export function linkApiRouteOwnership(
       responseFlows: apiGraph.responseFlows.length,
       dynamicRouteFlows: flows.length,
       routeLinks: links.length,
-      reviewedFixtures: links.filter((link) => link.fixture.matched).length,
+      reviewedFixtures: links.filter((link) => link.fixture.reviewed).length,
       routeRecordFixtures: links.filter((link) => link.shape.shape !== "unknown").length,
       matchedRouteRecords: links.reduce((count, link) => count + link.routeOwnership.matches.length, 0),
       unresolvedFlows: unresolved.length,

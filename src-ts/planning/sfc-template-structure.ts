@@ -1,5 +1,5 @@
 export type ElementUiPrimitiveKind =
-  | "layout-row" | "layout-column" | "form" | "form-field" | "input" | "button"
+  | "layout-row" | "layout-column" | "form" | "form-field" | "input" | "checkbox" | "button"
   | "radio-group" | "radio-button" | "tag" | "tabs" | "tab-pane" | "table"
   | "table-column" | "card" | "progress" | "dialog" | "tooltip";
 
@@ -55,7 +55,7 @@ export interface SfcTemplateStructure {
 
 const primitiveByTag: Record<string, ElementUiPrimitiveKind> = {
   "el-row": "layout-row", "el-col": "layout-column", "el-form": "form", "el-form-item": "form-field",
-  "el-input": "input", "el-button": "button", "el-radio-group": "radio-group", "el-radio-button": "radio-button",
+  "el-input": "input", "el-checkbox": "checkbox", "el-button": "button", "el-radio-group": "radio-group", "el-radio-button": "radio-button",
   "el-tag": "tag", "el-tabs": "tabs", "el-tab-pane": "tab-pane", "el-table": "table",
   "el-table-column": "table-column", "el-card": "card", "el-progress": "progress", "el-dialog": "dialog", "el-tooltip": "tooltip",
 };
@@ -77,7 +77,7 @@ function parseStyle(value: string | true | undefined): Record<string, string> {
   }));
 }
 function classes(attributes: Record<string, string | true>): string[] {
-  const literal = typeof attributes.class === "string" ? attributes.class.split(/\s+/) : [];
+  const literal = [attributes.class, attributes.className].flatMap((value) => typeof value === "string" ? value.split(/\s+/) : []);
   const bound = typeof attributes[":class"] === "string" ? [...attributes[":class"].matchAll(/["']([A-Za-z_][\w-]*)["']/g)].map((item) => item[1]) : [];
   return unique([...literal, ...bound]);
 }

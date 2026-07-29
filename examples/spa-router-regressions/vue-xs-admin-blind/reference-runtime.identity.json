@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "sourceCommit": "99027d176d3c23643bd4c25ba00ec77d2b72bb56",
+  "sourceTreeHash": "03959e661176b0cac4cbd66da49c5fa85e9d9b5d9fed22a7552b6f7adb30b2af",
+  "qualityNetworkPolicy": "offline-after-install",
+  "networkPhase": {
+    "separated": true,
+    "completedAt": "2026-07-29T07:16:53Z",
+    "installLogSha256": "3f3739dfbaf0d8bb8e071e6e98201ec071f348fd8b07dded0e72a955c3f13aa0"
+  },
+  "runtime": {
+    "node": "v22.23.0",
+    "npm": "10.9.8",
+    "pnpm": "9.0.0",
+    "platform": "Darwin-arm64"
+  },
+  "dependencyIdentity": {
+    "packageJsonSha256": "1740920998236aa50c603059ead44d2201c1e1c80645ed673db279e36da8ade8",
+    "pnpmLockSha256": "408ed95bfb777ce5c985953eb459f1df0226e795b602cc1e4dbc749b6d25b235",
+    "modulesManifestSha256": "8f82d50be1a7d098b2baf5246176880eb12c2beef575587e6265fa7fff3750e8",
+    "pnpmStore": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-runtime-cache/vue-xs-admin-99027d1/pnpm-store",
+    "pnpmStoreSizeKiB": 670188,
+    "packageDirectoryCount": 1627,
+    "frozenLockfile": true
+  },
+  "sourceStatusCleanAfterInstall": true
+}

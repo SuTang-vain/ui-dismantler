@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "spa-route-shell-plan",
+  "reviewRequired": true,
+  "generatedCode": false,
+  "source": {
+    "mode": "reference-generated",
+    "configScenarios": 4,
+    "reportIncluded": false
+  },
+  "routes": [
+    {
+      "route": "/login",
+      "pattern": "/login",
+      "scenarios": [
+        "login-deep-link"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "login-deep-link"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/welcome",
+      "pattern": "/welcome",
+      "scenarios": [
+        "welcome-deep-link"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "welcome-deep-link"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/nested/menu1/menu1-1",
+      "pattern": "/nested/menu1/menu1-1",
+      "scenarios": [
+        "nested-menu-deep-link"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "nested-menu-deep-link"
+        }
+      ],
+      "visualStates": []
+    },
+    {
+      "route": "/echarts",
+      "pattern": "/echarts",
+      "scenarios": [
+        "echarts-boundary-deep-link"
+      ],
+      "entry": true,
+      "final": true,
+      "assertions": [
+        {
+          "scenarioId": "echarts-boundary-deep-link"
+        }
+      ],
+      "visualStates": []
+    }
+  ],
+  "transitions": [
+    {
+      "scenarioId": "login-deep-link",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/login",
+      "to": "/login"
+    },
+    {
+      "scenarioId": "welcome-deep-link",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/welcome",
+      "to": "/welcome"
+    },
+    {
+      "scenarioId": "nested-menu-deep-link",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/nested/menu1/menu1-1",
+      "to": "/nested/menu1/menu1-1"
+    },
+    {
+      "scenarioId": "echarts-boundary-deep-link",
+      "stepIndex": 0,
+      "action": "reload",
+      "from": "/echarts",
+      "to": "/echarts"
+    }
+  ],
+  "selectorMappings": [],
+  "fixtureDependencies": [
+    {
+      "method": "POST",
+      "path": "/mock_api/getRoute",
+      "binary": false
+    }
+  ],
+  "capabilities": {
+    "historyBack": false,
+    "historyForward": false,
+    "reload": true,
+    "dynamicInputRoutes": false,
+    "roleSpecificSelectors": false,
+    "reviewedVisualStates": 0
+  },
+  "measurementTemplate": {
+    "modelCalls": null,
+    "generationMs": null,
+    "manualEdits": null,
+    "manualEditedLines": null,
+    "repairIterations": null,
+    "qualityRuns": null
+  },
+  "reviewReasons": [
+    "route observations describe behavior, not production component boundaries",
+    "guard and redirect intent must be reviewed before code generation",
+    "visual selectors are acceptance targets and must not be treated as implementation selectors automatically",
+    "fixture bodies may contain sensitive or environment-specific data and are intentionally summarized"
+  ]
+}

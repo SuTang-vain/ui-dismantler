@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "route-shell-generation",
+  "deterministic": true,
+  "reviewRequired": true,
+  "generatedCode": true,
+  "modelCalls": 0,
+  "generationMs": 0.007,
+  "manualEdits": 0,
+  "manualEditedLines": 0,
+  "repairIterations": 0,
+  "qualityRuns": 0,
+  "generatedFiles": [
+    {
+      "path": "routes.js",
+      "lines": 47
+    },
+    {
+      "path": "guards.js",
+      "lines": 9
+    },
+    {
+      "path": "router.js",
+      "lines": 42
+    },
+    {
+      "path": "fixtures.js",
+      "lines": 14
+    },
+    {
+      "path": "README.md",
+      "lines": 16
+    }
+  ],
+  "generatedLines": 128,
+  "diff": {
+    "baselinePath": null,
+    "comparableFiles": 0,
+    "generatedFiles": 5,
+    "baselineFiles": 0,
+    "generatedLines": 128,
+    "baselineLines": 0,
+    "changedFiles": 0,
+    "changedLines": 0,
+    "missingBaselineFiles": [
+      "README.md",
+      "fixtures.js",
+      "guards.js",
+      "router.js",
+      "routes.js"
+    ],
+    "baselineOnlyFiles": [],
+    "comparable": false,
+    "note": "baseline route-shell directory was not supplied"
+  },
+  "manualQuality": {
+    "reportPath": null,
+    "available": false
+  },
+  "generatedQuality": {
+    "reportPath": null,
+    "available": false
+  },
+  "qualityComparison": {
+    "comparable": false,
+    "passed": null,
+    "navigationIntegrityDelta": null,
+    "computedStyleDelta": null,
+    "pixelDiffDelta": null,
+    "detail": "quality reports not supplied; scaffold generation does not claim visual equivalence"
+  },
+  "reviewReasons": [
+    "the scaffold contains router/history/guard/fixture behavior only",
+    "visual DOM and CSS are intentionally excluded",
+    "observed redirects require human approval before production use",
+    "Semantic Gold+ comparison is valid only when both report paths are supplied for the actual applications"
+  ]
+}

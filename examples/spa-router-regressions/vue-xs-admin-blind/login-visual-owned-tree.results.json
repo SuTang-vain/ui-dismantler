@@ -1,0 +1,1713 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4179",
+  "passed": false,
+  "scenariosPassed": 1,
+  "scenariosTotal": 1,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "login-reviewed-region",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4179/login",
+      "finalUrl": "http://127.0.0.1:4179/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/login",
+          "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 1676.717,
+      "timing": {
+        "queueWaitMs": 0.004,
+        "contextCreateMs": 18.215,
+        "instrumentationMs": 2.464,
+        "routeRegistrationMs": 1.031,
+        "pageCreateMs": 307.702,
+        "navigationMs": 205.069,
+        "initialSettleMs": 514.111,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 365.832,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 17.369,
+        "visualCaptureMs": 237.162,
+        "contextCloseMs": 6.086,
+        "totalMs": 1676.717,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "durationMs": 365.832,
+            "setupPrefix": false
+          }
+        ]
+      }
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4173",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2742.031,
+        "timing": {
+          "queueWaitMs": 0.059,
+          "contextCreateMs": 16.576,
+          "instrumentationMs": 3.197,
+          "routeRegistrationMs": 1.877,
+          "pageCreateMs": 307.414,
+          "navigationMs": 283.14,
+          "initialSettleMs": 568.418,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 434.708,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.321,
+          "visualCaptureMs": 1102.162,
+          "contextCloseMs": 3.909,
+          "totalMs": 2742.031,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 434.708,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4179",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1676.717,
+        "timing": {
+          "queueWaitMs": 0.004,
+          "contextCreateMs": 18.215,
+          "instrumentationMs": 2.464,
+          "routeRegistrationMs": 1.031,
+          "pageCreateMs": 307.702,
+          "navigationMs": 205.069,
+          "initialSettleMs": 514.111,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 365.832,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 17.369,
+          "visualCaptureMs": 237.162,
+          "contextCloseMs": 6.086,
+          "totalMs": 1676.717,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 365.832,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "login-reviewed-region",
+      "passed": true,
+      "reference": {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2742.031,
+        "timing": {
+          "queueWaitMs": 0.059,
+          "contextCreateMs": 16.576,
+          "instrumentationMs": 3.197,
+          "routeRegistrationMs": 1.877,
+          "pageCreateMs": 307.414,
+          "navigationMs": 283.14,
+          "initialSettleMs": 568.418,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 434.708,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 19.321,
+          "visualCaptureMs": 1102.162,
+          "contextCloseMs": 3.909,
+          "totalMs": 2742.031,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 434.708,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 1676.717,
+        "timing": {
+          "queueWaitMs": 0.004,
+          "contextCreateMs": 18.215,
+          "instrumentationMs": 2.464,
+          "routeRegistrationMs": 1.031,
+          "pageCreateMs": 307.702,
+          "navigationMs": 205.069,
+          "initialSettleMs": 514.111,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 365.832,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 17.369,
+          "visualCaptureMs": 237.162,
+          "contextCloseMs": 6.086,
+          "totalMs": 1676.717,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 365.832,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 4,
+    "totalScenarios": 4,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": false,
+    "scenarios": [
+      {
+        "scenarioId": "login-reviewed-region",
+        "passed": false,
+        "viewports": [
+          {
+            "id": "desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 500,
+              "y": 249,
+              "width": 440,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 500,
+              "y": 322.09375,
+              "width": 440,
+              "height": 255.8125
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1186,
+            "preAnchorWaitMs": 1186,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 16.054,
+              "signatureScanMs": 71.599,
+              "signature": {
+                "fullScans": 2,
+                "incrementalScans": 20,
+                "nodesAvailable": 874,
+                "nodesScanned": 152,
+                "nodesReused": 722,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 71.599
+              },
+              "networkProbeMs": 0.107,
+              "samples": 22,
+              "stableFrameSamples": 4,
+              "mutationBlockedSamples": 4,
+              "resizeBlockedSamples": 4,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 20,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 0.011,
+              "referenceTargetMs": 3382.571,
+              "generatedTargetMs": 2135.745,
+              "contextCreateMs": 70.75800000000001,
+              "navigationMs": 681.167,
+              "initialSettleMs": 1144.364,
+              "scenarioStepsMs": 1133.659,
+              "assertionMs": 70.589,
+              "contextCloseMs": 12.271,
+              "captureQueueWaitMs": 116.407,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 1185.832,
+              "anchorMs": 31.728,
+              "postAnchorStabilityMs": 0.036,
+              "computedStyleMs": 46.92,
+              "screenshotMs": 75.208,
+              "pixelQueueWaitMs": 0.001,
+              "pixelCompareMs": 28.021,
+              "totalMs": 3411.392
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 3411.392,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 132,
+              "rate": 0.7719,
+              "mismatches": [
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "height",
+                  "reference": "402px",
+                  "generated": "255.812px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "transform-origin",
+                  "reference": "220px 201px",
+                  "generated": "220px 127.906px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-top",
+                  "reference": "229px",
+                  "generated": "322.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-right",
+                  "reference": "388px",
+                  "generated": "468px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-bottom",
+                  "reference": "229px",
+                  "generated": "322.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-left",
+                  "reference": "388px",
+                  "generated": "468px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.y",
+                  "reference": "249",
+                  "generated": "322.09375"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.height",
+                  "reference": "402",
+                  "generated": "255.8125"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "height",
+                  "reference": "216px",
+                  "generated": "90px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "transform-origin",
+                  "reference": "180px 108px",
+                  "generated": "180px 45px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.y",
+                  "reference": "373",
+                  "generated": "447.90625"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.height",
+                  "reference": "216",
+                  "generated": "90"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "display",
+                  "reference": "flex",
+                  "generated": "inline-block"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "height",
+                  "reference": "40px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-width",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-height",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "transform-origin",
+                  "reference": "180px 20px",
+                  "generated": "180px 3px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "justify-content",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "align-items",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-top",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-right",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-bottom",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-left",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "background-color",
+                  "reference": "rgb(255, 255, 255)",
+                  "generated": "rgb(239, 239, 239)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "color",
+                  "reference": "rgb(96, 98, 102)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-top-color",
+                  "reference": "rgb(220, 223, 230)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-radius",
+                  "reference": "4px",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "font-weight",
+                  "reference": "500",
+                  "generated": "400"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "line-height",
+                  "reference": "14px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.y",
+                  "reference": "549",
+                  "generated": "531.90625"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.height",
+                  "reference": "40",
+                  "generated": "6"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 440,
+              "height": 255,
+              "referenceWidth": 440,
+              "referenceHeight": 402,
+              "generatedWidth": 440,
+              "generatedHeight": 255,
+              "dimensionMismatch": true,
+              "differentPixels": 4879,
+              "totalPixels": 112200,
+              "diffRate": 0.043485,
+              "passed": false,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 292,
+              "y": 183,
+              "width": 440,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 292,
+              "y": 256.09375,
+              "width": 440,
+              "height": 255.8125
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1201,
+            "preAnchorWaitMs": 1201,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 2.485,
+              "signatureScanMs": 66.27,
+              "signature": {
+                "fullScans": 2,
+                "incrementalScans": 22,
+                "nodesAvailable": 936,
+                "nodesScanned": 157,
+                "nodesReused": 779,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 66.27
+              },
+              "networkProbeMs": 0.325,
+              "samples": 24,
+              "stableFrameSamples": 5,
+              "mutationBlockedSamples": 6,
+              "resizeBlockedSamples": 6,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 21,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 0.543,
+              "referenceTargetMs": 0,
+              "generatedTargetMs": 0,
+              "contextCreateMs": 0,
+              "navigationMs": 0,
+              "initialSettleMs": 0,
+              "scenarioStepsMs": 0,
+              "assertionMs": 0,
+              "contextCloseMs": 0,
+              "captureQueueWaitMs": 0,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 0,
+              "anchorMs": 0,
+              "postAnchorStabilityMs": 0,
+              "computedStyleMs": 0,
+              "screenshotMs": 0,
+              "pixelQueueWaitMs": 0.009,
+              "pixelCompareMs": 32.375,
+              "totalMs": 34.735
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 34.735,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 132,
+              "rate": 0.7719,
+              "mismatches": [
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "height",
+                  "reference": "402px",
+                  "generated": "255.812px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "transform-origin",
+                  "reference": "220px 201px",
+                  "generated": "220px 127.906px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-top",
+                  "reference": "163px",
+                  "generated": "256.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-right",
+                  "reference": "240px",
+                  "generated": "260px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-bottom",
+                  "reference": "163px",
+                  "generated": "256.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-left",
+                  "reference": "240px",
+                  "generated": "260px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.y",
+                  "reference": "183",
+                  "generated": "256.09375"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.height",
+                  "reference": "402",
+                  "generated": "255.8125"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "height",
+                  "reference": "216px",
+                  "generated": "90px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "transform-origin",
+                  "reference": "180px 108px",
+                  "generated": "180px 45px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.y",
+                  "reference": "307",
+                  "generated": "381.90625"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.height",
+                  "reference": "216",
+                  "generated": "90"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "display",
+                  "reference": "flex",
+                  "generated": "inline-block"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "height",
+                  "reference": "40px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-width",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-height",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "transform-origin",
+                  "reference": "180px 20px",
+                  "generated": "180px 3px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "justify-content",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "align-items",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-top",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-right",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-bottom",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-left",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "background-color",
+                  "reference": "rgb(255, 255, 255)",
+                  "generated": "rgb(239, 239, 239)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "color",
+                  "reference": "rgb(96, 98, 102)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-top-color",
+                  "reference": "rgb(220, 223, 230)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-radius",
+                  "reference": "4px",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "font-weight",
+                  "reference": "500",
+                  "generated": "400"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "line-height",
+                  "reference": "14px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.y",
+                  "reference": "483",
+                  "generated": "465.90625"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.height",
+                  "reference": "40",
+                  "generated": "6"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 440,
+              "height": 255,
+              "referenceWidth": 440,
+              "referenceHeight": 402,
+              "generatedWidth": 440,
+              "generatedHeight": 255,
+              "dimensionMismatch": true,
+              "differentPixels": 4879,
+              "totalPixels": 112200,
+              "diffRate": 0.043485,
+              "passed": false,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "width": 390,
+            "height": 844,
+            "passed": false,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 221,
+              "width": 390,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 294.09375,
+              "width": 390,
+              "height": 255.8125
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1534,
+            "preAnchorWaitMs": 1244,
+            "postAnchorWaitMs": 290,
+            "postAnchorSkipped": false,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 6.83,
+              "signatureScanMs": 173.569,
+              "signature": {
+                "fullScans": 4,
+                "incrementalScans": 26,
+                "nodesAvailable": 1146,
+                "nodesScanned": 234,
+                "nodesReused": 912,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 173.569
+              },
+              "networkProbeMs": 0.143,
+              "samples": 30,
+              "stableFrameSamples": 9,
+              "mutationBlockedSamples": 9,
+              "resizeBlockedSamples": 9,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 25,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 35.381,
+              "referenceTargetMs": 3446.203,
+              "generatedTargetMs": 2295.856,
+              "contextCreateMs": 221.59300000000002,
+              "navigationMs": 653.408,
+              "initialSettleMs": 1191.964,
+              "scenarioStepsMs": 1016.972,
+              "assertionMs": 59.468999999999994,
+              "contextCloseMs": 8.864,
+              "captureQueueWaitMs": 0.007,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 1244.441,
+              "anchorMs": 52.274,
+              "postAnchorStabilityMs": 289.98,
+              "computedStyleMs": 100.581,
+              "screenshotMs": 56.32,
+              "pixelQueueWaitMs": 0.001,
+              "pixelCompareMs": 16.311,
+              "totalMs": 3462.711
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 3462.711,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 134,
+              "rate": 0.7836,
+              "mismatches": [
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "height",
+                  "reference": "402px",
+                  "generated": "255.812px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "transform-origin",
+                  "reference": "220px 201px",
+                  "generated": "220px 127.906px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-top",
+                  "reference": "201px",
+                  "generated": "294.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "margin-bottom",
+                  "reference": "201px",
+                  "generated": "294.094px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.y",
+                  "reference": "221",
+                  "generated": "294.09375"
+                },
+                {
+                  "key": ".login-box ↔ [data-visual-owner=\"visual:sfc:64\"] .login-box",
+                  "property": "rect.height",
+                  "reference": "402",
+                  "generated": "255.8125"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "height",
+                  "reference": "216px",
+                  "generated": "90px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "transform-origin",
+                  "reference": "180px 108px",
+                  "generated": "180px 45px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "border-top-color",
+                  "reference": "rgb(144, 147, 153)",
+                  "generated": "rgb(38, 50, 56)"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "font-size",
+                  "reference": "14px",
+                  "generated": "16px"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "line-height",
+                  "reference": "21px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.y",
+                  "reference": "345",
+                  "generated": "419.90625"
+                },
+                {
+                  "key": ".demo-ruleForm ↔ [data-visual-owner=\"visual:sfc:63\"] .demo-ruleForm",
+                  "property": "rect.height",
+                  "reference": "216",
+                  "generated": "90"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "display",
+                  "reference": "flex",
+                  "generated": "inline-block"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "height",
+                  "reference": "40px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-width",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "min-height",
+                  "reference": "auto",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "transform-origin",
+                  "reference": "180px 20px",
+                  "generated": "180px 3px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "justify-content",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "align-items",
+                  "reference": "center",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-top",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-right",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-bottom",
+                  "reference": "12px",
+                  "generated": "1px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "padding-left",
+                  "reference": "19px",
+                  "generated": "6px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "background-color",
+                  "reference": "rgb(255, 255, 255)",
+                  "generated": "rgb(239, 239, 239)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "color",
+                  "reference": "rgb(96, 98, 102)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-top-color",
+                  "reference": "rgb(220, 223, 230)",
+                  "generated": "rgb(0, 0, 0)"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "border-radius",
+                  "reference": "4px",
+                  "generated": "0px"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "font-weight",
+                  "reference": "500",
+                  "generated": "400"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "line-height",
+                  "reference": "14px",
+                  "generated": "normal"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.y",
+                  "reference": "521",
+                  "generated": "503.90625"
+                },
+                {
+                  "key": ".submit-btn ↔ [data-visual-owner=\"visual:sfc:63\"] .submit-btn",
+                  "property": "rect.height",
+                  "reference": "40",
+                  "generated": "6"
+                }
+              ]
+            },
+            "pixels": {
+              "width": 390,
+              "height": 255,
+              "referenceWidth": 390,
+              "referenceHeight": 402,
+              "generatedWidth": 390,
+              "generatedHeight": 255,
+              "dimensionMismatch": true,
+              "differentPixels": 4739,
+              "totalPixels": 99450,
+              "diffRate": 0.047652,
+              "passed": false,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-first-pass-artifacts/login-reviewed-region/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 0.7719,
+        "worstPixelDiff": 0.047652,
+        "durationMs": 3498.211
+      }
+    ],
+    "scenarioCount": 1,
+    "viewportRuns": 3,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 3,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 3921,
+    "preAnchorWaitMs": 3631,
+    "postAnchorWaitMs": 290,
+    "postAnchorSkippedRuns": 2,
+    "visualStateReusedRuns": 0,
+    "setupStateReusedTargetRuns": 0,
+    "setupStepsSkipped": 0,
+    "canvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "stability": {
+      "resourceReadinessMs": 25.369,
+      "signatureScanMs": 311.438,
+      "signature": {
+        "fullScans": 8,
+        "incrementalScans": 68,
+        "nodesAvailable": 2956,
+        "nodesScanned": 543,
+        "nodesReused": 2413,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 311.438
+      },
+      "networkProbeMs": 0.575,
+      "samples": 76,
+      "stableFrameSamples": 18,
+      "mutationBlockedSamples": 19,
+      "resizeBlockedSamples": 19,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 66,
+      "networkBlockedSamples": 0
+    },
+    "timing": {
+      "queueWaitMs": 35.935,
+      "referenceTargetMs": 6828.774,
+      "generatedTargetMs": 4431.601,
+      "contextCreateMs": 292.351,
+      "navigationMs": 1334.575,
+      "initialSettleMs": 2336.328,
+      "scenarioStepsMs": 2150.631,
+      "assertionMs": 130.058,
+      "contextCloseMs": 21.135,
+      "captureQueueWaitMs": 116.414,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 2430.273,
+      "anchorMs": 84.002,
+      "postAnchorStabilityMs": 290.016,
+      "computedStyleMs": 147.501,
+      "screenshotMs": 131.528,
+      "pixelQueueWaitMs": 0.011,
+      "pixelCompareMs": 76.707,
+      "totalMs": 6908.838
+    },
+    "scheduler": {
+      "configuredViewportConcurrency": 2,
+      "configuredCaptureConcurrency": 2,
+      "configuredCanvasConcurrency": 1,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 2,
+      "maxActiveContexts": 4,
+      "maxActiveCaptures": 2,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 1,
+      "viewportQueueWaitMs": 35.935,
+      "captureQueueWaitMs": 116.414,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0.011
+    },
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 0.7719,
+    "worstPixelDiff": 0.047652,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 6,
+    "reusedTargetRuns": 2,
+    "freshTargetRuns": 4
+  },
+  "telemetry": {
+    "contractTargetRuns": 2,
+    "visualViewportRuns": 3,
+    "visualTargetRuns": 6,
+    "visualTargetReusedRuns": 2,
+    "visualTargetFreshRuns": 4,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 3921,
+    "visualPreAnchorWaitMs": 3631,
+    "visualPostAnchorWaitMs": 290,
+    "visualPostAnchorSkippedRuns": 2,
+    "visualStateReusedRuns": 0,
+    "contractSetupStateReusedRuns": 0,
+    "contractSetupStepsSkipped": 0,
+    "visualSetupStateReusedRuns": 0,
+    "visualSetupStepsSkipped": 0,
+    "contractSetupOwnerTiming": {
+      "ownerRuns": 0,
+      "totalMs": 0,
+      "contextCreateMs": 0,
+      "instrumentationMs": 0,
+      "routeRegistrationMs": 0,
+      "pageCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "setupPrefixStepsMs": 0,
+      "checkpointStorageMs": 0,
+      "checkpointVerificationMs": 0,
+      "assertionMs": 0,
+      "visualCaptureMs": 0
+    },
+    "visualCanvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "visualStability": {
+      "resourceReadinessMs": 25.369,
+      "signatureScanMs": 311.438,
+      "signature": {
+        "fullScans": 8,
+        "incrementalScans": 68,
+        "nodesAvailable": 2956,
+        "nodesScanned": 543,
+        "nodesReused": 2413,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 311.438
+      },
+      "networkProbeMs": 0.575,
+      "samples": 76,
+      "stableFrameSamples": 18,
+      "mutationBlockedSamples": 19,
+      "resizeBlockedSamples": 19,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 66,
+      "networkBlockedSamples": 0
+    },
+    "visualRunTiming": {
+      "queueWaitMs": 35.935,
+      "referenceTargetMs": 6828.774,
+      "generatedTargetMs": 4431.601,
+      "contextCreateMs": 292.351,
+      "navigationMs": 1334.575,
+      "initialSettleMs": 2336.328,
+      "scenarioStepsMs": 2150.631,
+      "assertionMs": 130.058,
+      "contextCloseMs": 21.135,
+      "captureQueueWaitMs": 116.414,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 2430.273,
+      "anchorMs": 84.002,
+      "postAnchorStabilityMs": 290.016,
+      "computedStyleMs": 147.501,
+      "screenshotMs": 131.528,
+      "pixelQueueWaitMs": 0.011,
+      "pixelCompareMs": 76.707,
+      "totalMs": 6908.838
+    },
+    "visualScheduler": {
+      "configuredViewportConcurrency": 2,
+      "configuredCaptureConcurrency": 2,
+      "configuredCanvasConcurrency": 1,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 2,
+      "maxActiveContexts": 4,
+      "maxActiveCaptures": 2,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 1,
+      "viewportQueueWaitMs": 35.935,
+      "captureQueueWaitMs": 116.414,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0.011
+    },
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 358.028,
+      "contractMs": 2743.797,
+      "comparisonMs": 0.527,
+      "visualMatrixMs": 3499.274,
+      "browserCloseMs": 206.884,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 206.857,
+      "reportReadyMs": 6602.511,
+      "totalMs": 6809.4
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=1/1，generated=1/1"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": false,
+      "detail": "0/1 SPA route states 通过，viewportRuns=3，worstComputedStyle=0.7719，worstPixelDiff=0.047652"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=4/4，rate=1，failures=0"
+    }
+  ]
+}

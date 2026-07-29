@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4179",
+  "navigationComparison": "strict",
+  "execution": {
+    "contractConcurrency": 1,
+    "actionTimeoutMs": 10000,
+    "browserShutdown": "graceful"
+  },
+  "scenarios": [
+    {
+      "id": "login-deep-link-reload",
+      "entryPath": "/login",
+      "steps": [
+        { "action": "reload" }
+      ],
+      "assertions": {
+        "path": "/login",
+        "visibleSelector": {
+          "reference": ".login-box",
+          "generated": "[data-visual-owner=\"visual:sfc:64\"] .login-box"
+        },
+        "visibleText": "Vue Xs Admin"
+      }
+    }
+  ]
+}

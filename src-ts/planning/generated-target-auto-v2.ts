@@ -14,6 +14,7 @@ import {
 } from "./primitive-expression.js";
 import type { JsonValue } from "../types.js";
 import type { SfcVisualResponsibilityGraph } from "./sfc-visual-responsibility.js";
+import type { ApiRouteOwnershipGraph } from "./api-route-ownership.js";
 
 export interface AutoV2GeneratedFile {
   path: string;
@@ -27,6 +28,7 @@ export interface AutoV2SourceBundle {
   routerSfc: RouterSfcResponsibilityGraph;
   sfcVisual?: SfcVisualResponsibilityGraph;
   apiFixture?: { metrics?: Record<string, unknown> };
+  apiRouteOwnership?: ApiRouteOwnershipGraph;
   spaAuth?: { metrics?: Record<string, unknown>; contracts?: unknown };
   transportProxy?: { metrics?: Record<string, unknown> };
 }
@@ -70,6 +72,7 @@ export interface GeneratedTargetAutoV2Artifact {
     visualOwners: number;
     sfcVisualMetrics: Record<string, unknown> | null;
     apiFixtureMetrics: Record<string, unknown> | null;
+    apiRouteOwnershipMetrics: Record<string, unknown> | null;
     spaAuthMetrics: Record<string, unknown> | null;
     transportProxyMetrics: Record<string, unknown> | null;
   };
@@ -99,6 +102,8 @@ export interface GeneratedTargetAutoV2Artifact {
     resolvedTextBindings: number;
     unresolvedTextBindings: number;
     inferredFixtureSelections: number;
+    reviewedApiRouteLinks: number;
+    apiRouteOwnedRecords: number;
     modelCalls: 0;
     manualEdits: 0;
     manualEditedLines: 0;
@@ -155,12 +160,17 @@ interface AutoV2RouteRecord {
   ownerIds: string[];
   screenshotAnchors: string[];
   viewports: string[];
+  apiRouteOwnership: { reviewed: boolean; matchKind: "path" | "name" } | null;
 }
 
 function routeRecord(bundle: AutoV2SourceBundle): AutoV2RouteRecord[] {
   const boundaries = bundle.visualPlan.boundaries;
+  const reviewedApiMatches = bundle.apiRouteOwnership?.links
+    .filter((link) => !link.routeOwnership.requiresReview)
+    .flatMap((link) => link.routeOwnership.matches) ?? [];
   return bundle.routerSfc.routes.map((route) => {
     const boundary = boundaries.find((candidate) => routeMatches(candidate.route, route.path));
+    const apiMatch = reviewedApiMatches.find((candidate) => candidate.routePath === route.path);
     return {
       path: route.path,
       name: route.name,
@@ -169,9 +179,10 @@ function routeRecord(bundle: AutoV2SourceBundle): AutoV2RouteRecord[] {
       resolution: route.resolution,
       confidence: route.confidence,
       visualBoundary: boundary?.id ?? null,
-      ownerIds: boundary?.ownerIds ?? [],
+      ownerIds: boundary ? [boundary.rootOwnerId] : [],
       screenshotAnchors: boundary?.acceptance.screenshotAnchors ?? [],
       viewports: boundary?.acceptance.viewports ?? [],
+      apiRouteOwnership: apiMatch ? { reviewed: true, matchKind: apiMatch.matchKind } : null,
     };
   });
 }
@@ -451,6 +462,24 @@ function renderPrimitiveCompilation(compilation: PrimitiveDomCompilation, owner:
     const tokens = node.content.map((token) => token.kind === "text" ? renderText(token.value, context) : (childBySource.get(token.nodeId) ? renderNode(childBySource.get(token.nodeId)!, context, `${instance}-${childBySource.get(token.nodeId)!.order}`) : "")).join("");
     const fallbackChildren = tokens || (children.get(node.sourceNodeId) ?? []).sort((left, right) => left.order - right.order).map((child) => renderNode(child, context, `${instance}-${child.order}`)).join("");
     const attributes = renderAttributes(node, context, instance, conditionKey);
+    const classMatch = / class="([^"]*)"/.exec(attributes);
+    const classValue = classMatch?.[1] ?? "";
+    const withoutClass = classMatch ? attributes.replace(classMatch[0], "") : attributes;
+    if (node.primitiveKind === "form-field") return `<div${attributes}><div class="el-form-item__content">${fallbackChildren}</div></div>`;
+    if (node.primitiveKind === "input") {
+      const innerAttributes = withoutClass.replace(/ (?:clearable|show-password)(?= |>|$)/g, "");
+      const prefix = node.attributes[":prefix-icon"] ? `<span class="el-input__prefix"><span class="el-input__prefix-inner"><span class="el-input__icon" aria-hidden="true">●</span></span></span>` : "";
+      const suffix = node.attributes.clearable === true || node.attributes["show-password"] === true ? `<span class="el-input__suffix"><span class="el-input__suffix-inner"><span class="el-input__icon" aria-hidden="true">○</span></span></span>` : "";
+      return `<div class="${classValue}"><div class="el-input__wrapper">${prefix}<input class="el-input__inner"${innerAttributes}>${suffix}</div></div>`;
+    }
+    if (node.primitiveKind === "checkbox") {
+      const identity: string[] = [];
+      const outerAttributes = withoutClass.replace(/ (data-(?:primitive-node|auto-v2-[^= ]+)="[^"]*")/g, (_match, value: string) => { identity.push(value); return ""; });
+      const labelExpression = typeof node.attributes[":label"] === "string" ? evaluatePrimitiveExpression(bindPrimitiveExpression(compilePrimitiveExpression(node.attributes[":label"]), context), scopeFor(context)) : null;
+      const label = labelExpression?.resolved ? escapeHtml(String(labelExpression.value ?? "")) : fallbackChildren;
+      return `<label class="${classValue}"${outerAttributes}><span class="el-checkbox__input"><span class="el-checkbox__inner"></span><input class="el-checkbox__original" type="checkbox" ${identity.join(" ")}></span><span class="el-checkbox__label">${label}</span></label>`;
+    }
+    if (node.primitiveKind === "button") return `<button${attributes}><span>${fallbackChildren}</span></button>`;
     const voidTag = new Set(["input", "img", "br", "hr", "meta", "link"]).has(node.renderTag);
     return voidTag ? `<${node.renderTag}${attributes}>` : `<${node.renderTag}${attributes}>${fallbackChildren}</${node.renderTag}>`;
   };
@@ -484,16 +513,44 @@ function ownerMarkup(owner: VisualTargetOwnerPlan): GeneratedOwnerRender {
   return { ...rendered, renderMetrics: rendered.metrics, sourceStyles, css: `${rendered.css}${sourceStyles.css}`, html: `<section class="auto-v2-owner" data-visual-owner="${escapeHtml(owner.id)}" data-source-file="${escapeHtml(owner.sourceFile)}"><header>${escapeHtml(label)}</header><div class="auto-v2-owner-body">${body}</div></section>` };
 }
 
+function regexEscape(value: string): string { return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+function materializeOwnedComponentTree(owner: VisualTargetOwnerPlan, renders: Record<string, GeneratedOwnerRender>, owners: VisualTargetOwnerPlan[], stack = new Set<string>()): string {
+  const render = renders[owner.id];
+  if (!render || stack.has(owner.id)) return render?.html ?? "";
+  let html = render.html;
+  const nextStack = new Set(stack).add(owner.id);
+  for (const child of owners.filter((candidate) => candidate.parentOwnerId === owner.id)) {
+    const childHtml = materializeOwnedComponentTree(child, renders, owners, nextStack);
+    const nodes = owner.templateStructure.nodes.filter((node) => node.componentName.toLowerCase() === child.componentName.toLowerCase());
+    for (const node of nodes) {
+      const marker = `data-primitive-node="auto-v2-${owner.id}:${node.id}"`;
+      const placeholder = new RegExp(`<([a-z][\\w-]*)\\b(?=[^>]*${regexEscape(marker)})[^>]*>\\s*</\\1>`, "g");
+      html = html.replace(placeholder, childHtml);
+    }
+  }
+  return html;
+}
+
 function generatedApp(bundle: AutoV2SourceBundle): string {
   const records = routeRecord(bundle);
   const ownerRenders = Object.fromEntries(bundle.visualPlan.owners.map((owner) => [owner.id, ownerMarkup(owner)]));
-  const ownerMarkupById = Object.fromEntries(Object.entries(ownerRenders).map(([id, render]) => [id, render.html]));
+  const ownerMarkupById = Object.fromEntries(bundle.visualPlan.owners.map((owner) => [owner.id, materializeOwnedComponentTree(owner, ownerRenders, bundle.visualPlan.owners)]));
   const ownerRuntimeById = Object.fromEntries(Object.entries(ownerRenders).map(([id, render]) => [id, render.runtime]));
   const initial = normalizePath(bundle.routePlan.routes.find((route) => route.entry)?.route ?? records[0]?.path ?? "/");
+  const vueRouter4 = bundle.routerSfc.framework.router === "vue-router" && bundle.routerSfc.framework.routerMajor === 4;
+  const historyRuntime = vueRouter4
+    ? `const currentRoute=()=>location.pathname+location.search+location.hash;
+const vueRouterState=(current,{back=null,forward=null,replaced=false,position=Math.max(0,history.length-1),scroll=null}={})=>({back,current,forward,replaced,position,scroll});
+const pushRoute=(target)=>{const current=currentRoute(),position=Number.isInteger(history.state?.position)?history.state.position:Math.max(0,history.length-1);history.replaceState({...vueRouterState(current,{...history.state,forward:target,replaced:true,position,scroll:{left:scrollX,top:scrollY}})},'',current);history.pushState(vueRouterState(target,{back:current,position:position+1}), '', target)};
+const initializeHistoryState=()=>history.replaceState(vueRouterState(currentRoute(),{replaced:true,position:Math.max(0,history.length-1),scroll:{left:scrollX,top:scrollY}}),'',location.href);`
+    : `const pushRoute=(target)=>history.pushState({autoV2:true,route:target},'',target);
+const initializeHistoryState=()=>history.replaceState({autoV2:true,route:${JSON.stringify(initial)}},'',location.href);`;
   return `const ROUTES=${json(records)};
 const OWNER_MARKUP=${json(ownerMarkupById)};
 const OWNER_RUNTIME=${json(ownerRuntimeById)};
 const BOUNDARIES=${json(Object.fromEntries(bundle.visualPlan.boundaries.map((boundary) => [boundary.id, { route: boundary.route, ownerIds: boundary.ownerIds }])))};
+${historyRuntime}
 const app=document.getElementById('app');
 const OWNER_STATE={};
 const clone=(value)=>JSON.parse(JSON.stringify(value));
@@ -506,21 +563,23 @@ const bindOwner=(owner)=>{const root=document.querySelector('[data-visual-owner=
 const normalize=(value)=>{const hash=value.includes('#')?value.slice(value.indexOf('#')+1):value;const path=(hash.split('?')[0]||'/');return path.startsWith('/')?path:'/'+path};
 const matches=(path,pattern)=>{const a=normalize(path).split('/').filter(Boolean),b=normalize(pattern).split('/').filter(Boolean);return a.length===b.length&&b.every((part,index)=>part.startsWith(':')||part==='*'||part===a[index])};
 const routeFor=(path)=>ROUTES.find((route)=>matches(path,route.path))||ROUTES[0];
-const render=()=>{const path=normalize(location.pathname+location.search),route=routeFor(path);const owners=(route.ownerIds||[]).map((id)=>OWNER_MARKUP['visual:'+id]||OWNER_MARKUP[id]||'').join('');const marker=owners?'':'<span class="auto-v2-route-marker" aria-hidden="true"></span>';app.innerHTML='<nav class="auto-v2-nav">'+ROUTES.map((item)=>'<a href="'+item.path+'" data-auto-v2-route="'+item.path+'">'+(item.name||item.path)+'</a>').join('')+'</nav><main data-auto-v2-route="'+route.path+'" data-auto-v2-component="'+(route.componentFile||'')+'"><h1>'+((route.name||route.path))+'</h1>'+marker+owners+'</main>';document.title=route.name||route.path;document.querySelectorAll('[data-auto-v2-route]').forEach((node)=>node.addEventListener('click',(event)=>{if(node.tagName==='A'){event.preventDefault();history.pushState({autoV2:true,route:node.getAttribute('href')},'',node.getAttribute('href'));render()}}));for(const id of route.ownerIds||[])bindOwner(id)};
-history.replaceState({autoV2:true,route:${JSON.stringify(initial)}},'',location.href);addEventListener('popstate',render);render();
+const render=()=>{const path=normalize(location.pathname+location.search),route=routeFor(path);const owners=(route.ownerIds||[]).map((id)=>OWNER_MARKUP['visual:'+id]||OWNER_MARKUP[id]||'').join('');const marker=owners?'':'<span class="auto-v2-route-marker" aria-hidden="true"></span>';app.innerHTML='<nav class="auto-v2-nav">'+ROUTES.map((item)=>'<a href="'+item.path+'" data-auto-v2-route="'+item.path+'">'+(item.name||item.path)+'</a>').join('')+'</nav><main data-auto-v2-route="'+route.path+'" data-auto-v2-component="'+(route.componentFile||'')+'"><h1>'+((route.name||route.path))+'</h1>'+marker+owners+'</main>';document.title=route.name||route.path;document.querySelectorAll('[data-auto-v2-route]').forEach((node)=>node.addEventListener('click',(event)=>{if(node.tagName==='A'){event.preventDefault();pushRoute(node.getAttribute('href'));render()}}));for(const id of BOUNDARIES[route.visualBoundary]?.ownerIds||route.ownerIds||[])bindOwner(id)};
+initializeHistoryState();addEventListener('popstate',render);render();
 void BOUNDARIES;`;
 }
 
 function globalStyleContext(bundle: AutoV2SourceBundle): { css: string; styleSheets: number } {
   const roots = (bundle.sfcVisual?.components ?? []).filter((component) => component.templateStructure.nodes.some((node) => node.componentName === "RouterView" || node.tag.toLowerCase() === "router-view"));
-  const sheets = roots.flatMap((component) => component.styles.filter((style) => !style.scoped && style.compileStatus !== "failed" && style.compiledCss).map((style) => style.compiledCss!));
+  const componentSheets = roots.flatMap((component) => component.styles.filter((style) => !style.scoped && style.compileStatus !== "failed" && style.compiledCss).map((style) => style.compiledCss!));
+  const globalSheets = (bundle.sfcVisual?.globalStyles ?? []).filter((style) => style.compileStatus !== "failed" && style.compiledCss).map((style) => style.compiledCss!);
+  const sheets = [...globalSheets, ...componentSheets];
   return { css: sheets.join("\n"), styleSheets: sheets.length };
 }
 
 function generatedStyles(bundle: AutoV2SourceBundle): string {
   const ownerCss = bundle.visualPlan.owners.map((owner) => ownerMarkup(owner).css).filter(Boolean).join("");
   const globalCss = globalStyleContext(bundle).css;
-  return `:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#263238;background:#fff}*{box-sizing:border-box}html,body,#app{margin:0;min-height:100%}body{min-height:100vh}[hidden]{display:none!important}.auto-v2-nav{position:fixed;right:8px;top:8px;z-index:2147483647;opacity:0;display:flex;gap:4px;padding:4px;background:rgba(38,50,56,.92);border-radius:4px}.auto-v2-nav a{color:#fff;text-decoration:none;font-size:11px;padding:3px 5px}.auto-v2-nav a:hover{text-decoration:underline}main{max-width:none;margin:0;padding:0}main>h1,.auto-v2-owner>header{display:none}.auto-v2-route-marker{display:block;width:1px;height:1px;opacity:0;pointer-events:none}.auto-v2-owner,.auto-v2-owner-body{display:contents}${globalCss}${ownerCss}`;
+  return `:root{--el-font-size-base:14px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#909399;background:#fff;line-height:1.5}*{box-sizing:border-box}html,body,#app{margin:0;min-height:100%}body{min-height:100vh}[hidden]{display:none!important}.auto-v2-nav{position:fixed;right:8px;top:8px;z-index:2147483647;opacity:0;display:flex;gap:4px;padding:4px;background:rgba(38,50,56,.92);border-radius:4px}.auto-v2-nav a{color:#fff;text-decoration:none;font-size:11px;padding:3px 5px}.auto-v2-nav a:hover{text-decoration:underline}main{max-width:none;margin:0;padding:0}main>h1,.auto-v2-owner>header{display:none}.auto-v2-route-marker{display:block;width:1px;height:1px;opacity:0;pointer-events:none}.auto-v2-owner,.auto-v2-owner-body{display:contents}${globalCss}${ownerCss}`;
 }
 
 
@@ -606,6 +665,7 @@ export function generateGeneratedTargetAutoV2(bundle: AutoV2SourceBundle, option
       visualOwners: bundle.visualPlan.metrics.owners,
       sfcVisualMetrics: bundle.sfcVisual?.metrics ?? null,
       apiFixtureMetrics: bundle.apiFixture?.metrics ?? null,
+      apiRouteOwnershipMetrics: bundle.apiRouteOwnership?.metrics ?? null,
       spaAuthMetrics: bundle.spaAuth?.metrics ?? null,
       transportProxyMetrics: bundle.transportProxy?.metrics ?? null,
     },
@@ -635,6 +695,8 @@ export function generateGeneratedTargetAutoV2(bundle: AutoV2SourceBundle, option
       resolvedTextBindings,
       unresolvedTextBindings,
       inferredFixtureSelections,
+      reviewedApiRouteLinks: bundle.apiRouteOwnership?.links.filter((link) => !link.routeOwnership.requiresReview).length ?? 0,
+      apiRouteOwnedRecords: bundle.apiRouteOwnership?.links.filter((link) => !link.routeOwnership.requiresReview).reduce((count, link) => count + link.routeOwnership.matches.length, 0) ?? 0,
       modelCalls: 0,
       manualEdits: 0,
       manualEditedLines: 0,
@@ -653,6 +715,7 @@ export function generateGeneratedTargetAutoV2(bundle: AutoV2SourceBundle, option
       "owner roots are compiled from primitive template evidence; unsupported primitives remain explicit review boundaries",
       "compiled source styles are selector-scoped to their visual owner; failed stylesheet parsing remains an explicit review boundary",
       "only explicitly reviewed API fixture values are eligible for initial data and loop materialization",
+      "API-backed route ownership is consumed only when source-backed fixture review, route shape, mutation, and Router-to-SFC matching are all resolved",
       "handler state writes and conditional rendering remain executable only when structural AST evidence is available",
       "the first Semantic and Gold+ run must be recorded before any manual repair; current artifact does not claim visual equivalence",
     ],

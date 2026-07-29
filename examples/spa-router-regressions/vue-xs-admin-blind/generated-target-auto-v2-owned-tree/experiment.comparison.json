@@ -1,0 +1,49 @@
+{
+  "quality": {
+    "comparable": false,
+    "routeComparable": false,
+    "manual": {
+      "available": false,
+      "passed": null,
+      "navigationIntegrity": null,
+      "computedStyle": null,
+      "pixelDiff": null,
+      "runtimeErrors": null,
+      "requiredNetworkFailures": null,
+      "stabilityFailures": null,
+      "blockingHandlesAfterClose": null
+    },
+    "generated": {
+      "available": false,
+      "passed": null,
+      "navigationIntegrity": null,
+      "computedStyle": null,
+      "pixelDiff": null,
+      "runtimeErrors": null,
+      "requiredNetworkFailures": null,
+      "stabilityFailures": null,
+      "blockingHandlesAfterClose": null
+    },
+    "generatedMinusManual": {
+      "computedStyle": null,
+      "pixelDiff": null,
+      "navigationIntegrity": null
+    },
+    "detail": "quality reports were not supplied; auto-v2 is a review candidate and does not claim visual equivalence"
+  },
+  "cost": {
+    "manualReviewedTarget": {
+      "manualEditedLines": null,
+      "repairIterations": null
+    },
+    "autoV2FirstPass": {
+      "generatedLines": 1012,
+      "generatedBytes": 89153,
+      "manualEditedLines": 0,
+      "repairIterations": 0,
+      "modelCalls": 0,
+      "generationMs": 21.997
+    },
+    "detail": "manual values are reviewed inputs; auto-v2 first-pass values are deterministic generation telemetry"
+  }
+}

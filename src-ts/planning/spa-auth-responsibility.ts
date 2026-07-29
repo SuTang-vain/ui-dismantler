@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
+import { analyzeSpaAuthGuardResponsibilities, type AuthDynamicRouteContract, type AuthGuardEvidence, type AuthLoginFlowContract, type AuthRouteGuardContract, type AuthStorageAdapterContract } from "./spa-auth-guard-responsibility.js";
 
 export interface SpaAuthEvidence {
   kind: "query-read" | "storage-write" | "storage-read" | "authorization-header" | "unauthorized-status" | "redirect-read" | "redirect-navigation";
@@ -13,15 +14,19 @@ export interface SpaAuthEvidence {
 }
 
 export interface SpaAuthResponsibilityGraph {
-  schemaVersion: "1.0";
+  schemaVersion: "1.1";
   kind: "spa-auth-responsibility-graph";
   reviewRequired: true;
   sourceRoot: string;
-  evidence: SpaAuthEvidence[];
+  evidence: Array<SpaAuthEvidence | AuthGuardEvidence>;
   contracts: {
     queryToStorage: Array<{ queryKey: string; storage: "sessionStorage" | "localStorage"; storageKey: string; files: string[] }>;
     storageToAuthorization: Array<{ storage: "sessionStorage" | "localStorage"; storageKey: string; header: string; files: string[] }>;
     unauthorizedRedirect: Array<{ status: 401; redirectProperty?: string; navigationTarget: string; files: string[] }>;
+    storageAdapters: AuthStorageAdapterContract[];
+    loginFlows: AuthLoginFlowContract[];
+    routeGuards: AuthRouteGuardContract[];
+    dynamicRouteInitialization: AuthDynamicRouteContract[];
     freshAuthenticationRequired: true;
     crossRunPersistenceAllowed: false;
   };
@@ -30,9 +35,18 @@ export interface SpaAuthResponsibilityGraph {
     queryReads: number;
     storageWrites: number;
     storageReads: number;
+    storageRemoves: number;
+    storageAdapters: number;
+    resolvedStorageAdapters: number;
     authorizationHeaders: number;
     unauthorizedBranches: number;
     redirectNavigations: number;
+    guardRegistrations: number;
+    completeRouteGuards: number;
+    loginFlows: number;
+    completeLoginFlows: number;
+    dynamicRouteInitializers: number;
+    completeDynamicRouteInitializers: number;
     completeQueryStorageAuthorizationChains: number;
   };
   reviewReasons: string[];
@@ -66,6 +80,7 @@ function uniqueFiles(values: SpaAuthEvidence[]): string[] {
 export function analyzeSpaAuthResponsibilities(sourceRoot: string): SpaAuthResponsibilityGraph {
   const root = resolve(sourceRoot);
   const files = sourceFiles(root);
+  const guardAnalysis = analyzeSpaAuthGuardResponsibilities(root);
   const evidence: SpaAuthEvidence[] = [];
   for (const absolute of files) {
     if (!statSync(absolute).isFile()) continue;
@@ -115,15 +130,19 @@ export function analyzeSpaAuthResponsibilities(sourceRoot: string): SpaAuthRespo
   }] : [];
   const completeChains = queryToStorage.filter((query) => storageToAuthorization.some((auth) => auth.storage === query.storage && auth.storageKey === query.storageKey)).length;
   return {
-    schemaVersion: "1.0",
+    schemaVersion: "1.1",
     kind: "spa-auth-responsibility-graph",
     reviewRequired: true,
     sourceRoot: root,
-    evidence,
+    evidence: [...evidence, ...guardAnalysis.evidence],
     contracts: {
       queryToStorage,
       storageToAuthorization,
       unauthorizedRedirect,
+      storageAdapters: guardAnalysis.storageAdapters,
+      loginFlows: guardAnalysis.loginFlows,
+      routeGuards: guardAnalysis.routeGuards,
+      dynamicRouteInitialization: guardAnalysis.dynamicRouteInitialization,
       freshAuthenticationRequired: true,
       crossRunPersistenceAllowed: false,
     },
@@ -131,14 +150,25 @@ export function analyzeSpaAuthResponsibilities(sourceRoot: string): SpaAuthRespo
       filesScanned: files.length,
       queryReads: queryReads.length,
       storageWrites: writes.length,
-      storageReads: reads.length,
+      storageReads: reads.length + guardAnalysis.evidence.filter((item) => item.kind === "storage-adapter-read").length,
+      storageRemoves: guardAnalysis.metrics.storageRemoves,
+      storageAdapters: guardAnalysis.metrics.storageAdapters,
+      resolvedStorageAdapters: guardAnalysis.metrics.resolvedStorageAdapters,
       authorizationHeaders: authHeaders.length,
       unauthorizedBranches: unauthorized.length,
       redirectNavigations: redirectNavigations.length,
+      guardRegistrations: guardAnalysis.metrics.guardRegistrations,
+      completeRouteGuards: guardAnalysis.metrics.completeRouteGuards,
+      loginFlows: guardAnalysis.metrics.loginFlows,
+      completeLoginFlows: guardAnalysis.metrics.completeLoginFlows,
+      dynamicRouteInitializers: guardAnalysis.metrics.dynamicRouteInitializers,
+      completeDynamicRouteInitializers: guardAnalysis.metrics.completeDynamicRouteInitializers,
       completeQueryStorageAuthorizationChains: completeChains,
     },
     reviewReasons: [
-      "authentication evidence is extracted from query, storage, header, status, and navigation syntax without executing source code",
+      "authentication evidence is extracted from query, storage, imported wrapper, handler data flow, router guard, header, status, and navigation structure without executing source code",
+      "third-party storage defaults are resolved only from installed frozen dependency implementation; unresolved wrapper behavior remains review-required",
+      "login, role, dynamic-route, and guard chains remain review-required until source-backed credential and fixture selection is approved",
       "storage artifacts remain isolated to one BrowserContext unless an explicitly reviewed setup contract is present",
       "cross-run authentication persistence remains disabled even when a complete token chain is discovered",
       "a fresh authentication contract is still required to prevent cached credentials from hiding regressions",

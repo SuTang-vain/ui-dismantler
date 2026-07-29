@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 import { analyzeEChartsResponsibilities, type EChartsResponsibilityGraph } from "./echarts-responsibility.js";
 import { analyzeSfcTemplateStructure, type SfcTemplateStructure } from "./sfc-template-structure.js";
 import { analyzeDataCardinality, type DataCardinalityResponsibility } from "./data-cardinality.js";
@@ -28,6 +29,11 @@ export interface SfcStyleResponsibility {
   compiledCss?: string;
   compileStatus: "compiled" | "raw-css" | "failed";
   failureReason?: SfcStyleFailureReason;
+}
+
+export interface SfcGlobalStyleResponsibility extends SfcStyleResponsibility {
+  sourceFile: string;
+  importedBy: string;
 }
 
 export interface SfcVisualResourceEvidence {
@@ -69,6 +75,7 @@ export interface SfcVisualResponsibilityGraph {
   sourceRoot: string;
   framework: "vue-sfc";
   components: SfcVisualComponentResponsibility[];
+  globalStyles?: SfcGlobalStyleResponsibility[];
   echarts: EChartsResponsibilityGraph;
   apiFixtures?: ApiFixtureResponsibilityGraph;
   blockers: string[];
@@ -88,6 +95,8 @@ export interface SfcVisualResponsibilityGraph {
     webglResourceComponents: number;
     frameDrivenComponents: number;
     compiledStyleSheets: number;
+    globalStyleSheets?: number;
+    compiledGlobalStyleSheets?: number;
     failedStyleSheets: number;
     styleFailureReasons: Record<SfcStyleFailureReason, number>;
     staticDataBindings: number;
@@ -218,7 +227,7 @@ function compileVisualStyle(root: string, absolutePath: string, language: string
   try {
     const includePaths = [dirname(absolutePath), join(root, "src"), join(root, "src", "styles")];
     if (compiler.compileString) {
-      const result = compiler.compileString(source, { syntax: language === "sass" ? "indented" : "scss", style: "compressed", loadPaths: includePaths, logger: { warn() {}, debug() {} } });
+      const result = compiler.compileString(source, { syntax: language === "sass" ? "indented" : "scss", style: "compressed", loadPaths: includePaths, url: pathToFileURL(absolutePath), importers: [{ findFileUrl(url: string) { return url.startsWith("@/") ? pathToFileURL(join(root, "src", url.slice(2))) : null; } }], logger: { warn() {}, debug() {} } });
       return { compiledCss: String(result.css).trim(), compileStatus: "compiled" };
     }
     if (compiler.renderSync) {
@@ -257,12 +266,39 @@ function embedSvgIconAssets(root: string, structure: SfcTemplateStructure): SfcT
   return structure;
 }
 
+
+function globalStyleResponsibilities(root: string): SfcGlobalStyleResponsibility[] {
+  const entry = ["main.ts", "main.js", "main.mts", "main.mjs"].map((name) => join(root, "src", name)).find(existsSync);
+  if (!entry) return [];
+  const source = readFileSync(entry, "utf8"), importedBy = relative(root, entry).replaceAll("\\", "/");
+  const output: SfcGlobalStyleResponsibility[] = [];
+  for (const match of source.matchAll(/\bimport\s+['"]([^'"]+\.(?:css|scss|sass))['"]/g)) {
+    const specifier = match[1];
+    if (!specifier.startsWith(".") && !specifier.startsWith("@/")) continue;
+    const absolute = specifier.startsWith("@/") ? join(root, "src", specifier.slice(2)) : resolve(dirname(entry), specifier);
+    if (!existsSync(absolute)) continue;
+    const styleSource = readFileSync(absolute, "utf8"), language = extname(absolute).slice(1) || "css";
+    const compiled = language === "css" && /@import\s+['"]?[^./'"\s]/.test(styleSource)
+      ? { compileStatus: "failed" as const, failureReason: "external-import-failure" as const }
+      : compileVisualStyle(root, absolute, language, styleSource);
+    output.push({
+      index: output.length, language, scoped: false, module: false, sourceFile: relative(root, absolute).replaceAll("\\", "/"), importedBy,
+      mediaQueries: unique(allMatches(styleSource, /@media\s*([^\{]+)/g).map((item) => item[1].trim())),
+      classSelectors: unique(allMatches(styleSource, /\.([A-Za-z_][\w-]*)/g).map((item) => item[1])),
+      customProperties: unique(allMatches(styleSource, /(--[A-Za-z_][\w-]*)\s*:/g).map((item) => item[1])),
+      ...compiled,
+    });
+  }
+  return output;
+}
+
 const lifecycleNames = ["beforeCreate", "created", "beforeMount", "mounted", "beforeUpdate", "updated", "beforeDestroy", "destroyed", "beforeUnmount", "unmounted"];
 
 export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualResponsibilityGraph {
   const started = Date.now();
   const root = resolve(sourceRoot);
   const echarts = analyzeEChartsResponsibilities(root);
+  const globalStyles = globalStyleResponsibilities(root);
   const vueFiles = listVueFiles(root);
   const components = vueFiles.map((absolutePath, index): SfcVisualComponentResponsibility => {
     const relativePath = relative(root, absolutePath).replaceAll("\\", "/");
@@ -270,8 +306,13 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     const imports = importResponsibilities(parsed.script);
     const tags = allMatches(parsed.template, /<([A-Za-z][\w-]*)\b/g).map((match) => match[1]);
     const nativeTags = new Set(["div", "span", "section", "main", "aside", "header", "footer", "nav", "button", "input", "form", "label", "table", "thead", "tbody", "tr", "td", "th", "ul", "ol", "li", "a", "img", "svg", "path", "component", "template", "slot", "transition", "keep-alive"]);
-    const childComponents = unique(tags.filter((tag) => tag.includes("-") || /^[A-Z]/.test(tag)).filter((tag) => !nativeTags.has(tag.toLowerCase())).map(normalizeTag));
-    const visualRegions = unique(allMatches(parsed.template, /(?:class|:class)\s*=\s*['"]([^'"]+)['"]/g).flatMap((match) => allMatches(match[1], /[A-Za-z_][\w-]*/g).map((item) => item[0])).filter((item) => !["true", "false"].includes(item)));
+    const importedComponentLocals = new Set(imports.map((item) => item.local));
+    const childComponents = unique(tags.filter((tag) => {
+      const normalized = normalizeTag(tag);
+      if (importedComponentLocals.has(tag) || importedComponentLocals.has(normalized)) return true;
+      return (tag.includes("-") || /^[A-Z]/.test(tag)) && !nativeTags.has(tag.toLowerCase());
+    }).map(normalizeTag));
+    const visualRegions = unique(allMatches(parsed.template, /(?:class|className|:class)\s*=\s*['"]([^'"]+)['"]/g).flatMap((match) => allMatches(match[1], /[A-Za-z_][\w-]*/g).map((item) => item[0])).filter((item) => !["true", "false"].includes(item)));
     const events = unique(allMatches(parsed.template, /(?:@|v-on:)([\w-]+)/g).map((match) => match[1]));
     const models = unique(allMatches(parsed.template, /v-model(?::[\w-]+)?\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
     const conditions = unique(allMatches(parsed.template, /v-(?:if|else-if|show)\s*=\s*['"]([^'"]+)['"]/g).map((match) => match[1]));
@@ -329,6 +370,7 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
     sourceRoot: root,
     framework: "vue-sfc",
     components,
+    globalStyles,
     echarts,
     blockers,
     reviewReasons: [
@@ -351,6 +393,8 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       webglResourceComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "webgl-context")).length,
       frameDrivenComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "request-animation-frame")).length,
       compiledStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus !== "failed").length, 0),
+      globalStyleSheets: globalStyles.length,
+      compiledGlobalStyleSheets: globalStyles.filter((style) => style.compileStatus !== "failed").length,
       failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
       styleFailureReasons: Object.fromEntries(([
         "syntax-parse-failure", "unresolved-variable", "unsupported-mixin", "nested-selector-expansion-failure",

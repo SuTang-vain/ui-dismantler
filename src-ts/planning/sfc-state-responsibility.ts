@@ -30,6 +30,7 @@ export interface SfcStateResponsibility {
   schemaVersion: "1.0";
   kind: "sfc-state-responsibility";
   parsed: boolean;
+  parseMode: "javascript" | "typescript-erasure" | "failed";
   initialState: Record<string, JsonValue>;
   handlers: SfcHandlerStateResponsibility[];
   displayFunctions: SfcDisplayFunctionResponsibility[];
@@ -257,31 +258,106 @@ function analyzeDisplayFunctions(functions: Map<string, any>, source: string): S
   return output.sort((left, right) => left.functionName.localeCompare(right.functionName));
 }
 
+function preserveLines(value: string): string {
+  return value.replace(/[^\n]/g, " ");
+}
+
+function eraseGenericCallTypeArguments(source: string): string {
+  const chars = [...source];
+  for (let index = 0; index < chars.length; index += 1) {
+    if (chars[index] !== "<" || index === 0 || !/[\w$)\]]/.test(chars[index - 1] ?? "")) continue;
+    let depth = 0, quote = "", escaped = false, end = -1;
+    for (let cursor = index; cursor < chars.length; cursor += 1) {
+      const char = chars[cursor];
+      if (quote) {
+        if (escaped) escaped = false;
+        else if (char === "\\") escaped = true;
+        else if (char === quote) quote = "";
+        continue;
+      }
+      if (char === "\"" || char === "'" || char === "`") { quote = char; continue; }
+      if (char === "<") depth += 1;
+      else if (char === ">") {
+        depth -= 1;
+        if (depth === 0) { end = cursor; break; }
+      }
+    }
+    if (end < 0) continue;
+    let next = end + 1;
+    while (/\s/.test(chars[next] ?? "")) next += 1;
+    if (chars[next] !== "(") continue;
+    for (let cursor = index; cursor <= end; cursor += 1) if (chars[cursor] !== "\n") chars[cursor] = " ";
+    index = end;
+  }
+  return chars.join("");
+}
+
+export function eraseTypeScriptStateSyntax(source: string): string {
+  return eraseGenericCallTypeArguments(source)
+    .replace(/\bimport\s+type\s+[^;\n]+;?/g, preserveLines)
+    .replace(/([,{]\s*)type\s+[A-Za-z_$][\w$]*(\s*,?)/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
+    .replace(/\bexport\s+type\s+[^;]+;/g, preserveLines)
+    .replace(/\b(?:export\s+)?interface\s+[A-Za-z_$][\w$]*(?:\s+extends\s+[^\{]+)?\s*\{[^}]*\}/gs, preserveLines)
+    .replace(/\btype\s+[A-Za-z_$][\w$]*(?:\s*<[^;={}]+>)?\s*=\s*[^;]+;/g, preserveLines)
+    .replace(/([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)?)\s*<[^;(){}]*>\s*(?=\()/g, "$1")
+    .replace(/\s+as\s+(?:const|[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)/g, (value) => preserveLines(value))
+    .replace(/([A-Za-z_$][\w$]*)\s*\??:\s*\{[A-Za-z0-9_$?:,\s\[\]|]*(?:\{[A-Za-z0-9_$?:,\s\[\]|]*\}[A-Za-z0-9_$?:,\s\[\]|]*)*\}(?=\s*[,)=])/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
+    .replace(/([A-Za-z_$][\w$]*|\))\s*\??:\s*(?:[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)(?=\s*(?:=(?!>)|=>|[,;){}]))/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
+    .replace(/(\))\s*:\s*(?:[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)\s*(?=\{)/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
+    .replace(/\s+satisfies\s+[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?/g, preserveLines);
+}
+
+export function parseTypeScriptErasedProgram(script: string): { program: any; source: string; mode: "javascript" | "typescript-erasure"; reviewReasons: string[] } {
+  try {
+    return {
+      program: parse(script, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as any,
+      source: script,
+      mode: "javascript",
+      reviewReasons: [],
+    };
+  } catch (javascriptError) {
+    const erased = eraseTypeScriptStateSyntax(script);
+    try {
+      return {
+        program: parse(erased, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as any,
+        source: erased,
+        mode: "typescript-erasure",
+        reviewReasons: ["TypeScript syntax was erased with line-preserving structural rules before state responsibility analysis"],
+      };
+    } catch (erasedError) {
+      throw new SyntaxError(`TypeScript erasure parse failed after Acorn parse error: ${javascriptError instanceof Error ? javascriptError.message : String(javascriptError)}; ${erasedError instanceof Error ? erasedError.message : String(erasedError)}`);
+    }
+  }
+}
+
 export function analyzeSfcStateResponsibilities(script: string): SfcStateResponsibility {
   try {
-    const program = parse(script, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as any;
+    const parsed = parseTypeScriptErasedProgram(script);
+    const program = parsed.program;
+    const analysisSource = parsed.source;
     const functions = collectFunctions(program);
     const handlers: SfcHandlerStateResponsibility[] = [];
     const unresolvedWrites: SfcStateResponsibility["unresolvedWrites"] = [];
     for (const [handlerName, handler] of [...functions.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-      const evidence = collectHandlerWrites(handlerName, handler, script, functions);
-      handlers.push({ handler: handlerName, writes: evidence.writes, helperCalls: evidence.helperCalls, sourceLine: lineAt(script, handler.start ?? 0) });
+      const evidence = collectHandlerWrites(handlerName, handler, analysisSource, functions);
+      handlers.push({ handler: handlerName, writes: evidence.writes, helperCalls: evidence.helperCalls, sourceLine: lineAt(analysisSource, handler.start ?? 0) });
       unresolvedWrites.push(...evidence.unresolved.map((write) => ({ handler: handlerName, ...write })));
     }
     const initial = initialState(program, functions);
-    const displayFunctions = analyzeDisplayFunctions(functions, script);
+    const displayFunctions = analyzeDisplayFunctions(functions, analysisSource);
     const stateWrites = handlers.reduce((sum, handler) => sum + handler.writes.length, 0);
     return {
-      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, initialState: initial, handlers, displayFunctions, unresolvedWrites,
+      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: parsed.mode, initialState: initial, handlers, displayFunctions, unresolvedWrites,
       metrics: { initialBindings: Object.keys(initial).length, handlers: handlers.length, handlersWithWrites: handlers.filter((handler) => handler.writes.length > 0).length, stateWrites, displayFunctions: displayFunctions.length, unresolvedWrites: unresolvedWrites.length },
       reviewReasons: [
+        ...parsed.reviewReasons,
         "only structurally proven static state writes are executable candidates",
         "dynamic values and conditional branches remain reviewable evidence rather than guessed runtime values",
       ],
     };
   } catch (error) {
     return {
-      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: false, initialState: {}, handlers: [], displayFunctions: [], unresolvedWrites: [],
+      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: false, parseMode: "failed", initialState: {}, handlers: [], displayFunctions: [], unresolvedWrites: [],
       metrics: { initialBindings: 0, handlers: 0, handlersWithWrites: 0, stateWrites: 0, displayFunctions: 0, unresolvedWrites: 0 },
       reviewReasons: ["script parse failure blocks executable state responsibility"],
       parseError: error instanceof Error ? error.message : String(error),

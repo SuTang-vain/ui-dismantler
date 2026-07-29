@@ -137,6 +137,18 @@ export default routes`);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+test("imported SFC component ownership overrides a colliding native tag name", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-imported-component-"));
+  try {
+    mkdirSync(join(root, "src"), { recursive: true });
+    writeFileSync(join(root, "src", "Form.vue"), `<template><section class="custom-form">Reviewed form</section></template>`);
+    writeFileSync(join(root, "src", "Page.vue"), `<script setup>import Form from './Form.vue'</script><template><main><Form/><form><input /></form></main></template>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const page = graph.components.find((component) => component.file === "src/Page.vue");
+    assert.deepEqual(page?.childComponents, ["Form"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
 test("SFC state responsibility follows pure helpers and emits executable handler writes without identifier whitelists", () => {
   const result = analyzeSfcStateResponsibilities(`
 import { ref } from 'vue';
@@ -156,6 +168,25 @@ function displayDate(value){ if(!value) return '—'; return new Date(value).toL
   assert.equal(result.unresolvedWrites.some((write) => write.handler === "unresolved" && write.path === "panel.form.name"), true);
   assert.equal(result.metrics.handlersWithWrites >= 2, true);
   assert.deepEqual(result.displayFunctions, [{ functionName: "displayDate", parameter: "value", operation: "date-locale-string", locale: "zh-CN", fallback: "—", sourceLine: 8, confidence: "high" }]);
+});
+
+test("SFC state responsibility erases TypeScript syntax without identifier allowlists", () => {
+  const result = analyzeSfcStateResponsibilities(`
+import type { FormInstance } from 'element-plus';
+import { reactive, ref } from 'vue';
+const formRef = ref<FormInstance | null>(null);
+const form = reactive<{ username: string; password: string }>({ username: '', password: '' });
+const opened = ref<boolean>(false);
+const openPanel = (): void => { opened.value = true; };
+const resetForm = (): void => { form.username = ''; form.password = ''; };
+`);
+  assert.equal(result.parsed, true);
+  assert.equal(result.parseMode, "typescript-erasure");
+  assert.deepEqual(result.initialState.form, { username: "", password: "" });
+  assert.equal(result.initialState.opened, false);
+  assert.deepEqual(result.handlers.find((handler) => handler.handler === "openPanel")?.writes.map((write) => [write.path, write.value]), [["opened", true]]);
+  assert.deepEqual(result.handlers.find((handler) => handler.handler === "resetForm")?.writes.map((write) => [write.path, write.value]), [["form.username", ""], ["form.password", ""]]);
+  assert.equal(result.reviewReasons.some((reason) => reason.includes("TypeScript syntax was erased")), true);
 });
 
 test("primitive expression evaluator safely resolves paths, logical conditions and fixture text operands", () => {
@@ -211,6 +242,7 @@ const routes=[{path:'/dashboard',name:'Dashboard',component:DashboardAdmin}]
 export default routes`);
     const graph = analyzeSfcVisualResponsibilities(root);
     const routerSfc = analyzeRouterToSfcResponsibilities(root);
+    routerSfc.framework = { view: "vue", router: "vue-router", routerMajor: 4 };
     const routePlan: SpaRouteShellPlan = {
       schemaVersion: "1.0", kind: "spa-route-shell-plan", reviewRequired: true, generatedCode: false,
       source: { mode: "reference-generated", configScenarios: 1, reportIncluded: true, reportPassed: true },
@@ -220,7 +252,17 @@ export default routes`);
     };
     const plan = generateVisualTargetPlan(graph, routePlan, routerSfc);
     const manualReport = { passed: true, navigationIntegrity: { rate: 1 }, visualMatrix: { worstComputedStyle: 1, worstPixelDiff: 0.01, stabilityFailures: 0 }, runtimeErrors: 0, requiredNetworkFailures: 0, telemetry: { activeHandlesAfterClose: { totalBlockingHandles: 0 } } };
-    const artifact = generateGeneratedTargetAutoV2({ routePlan, visualPlan: plan, routerSfc, sfcVisual: graph, spaAuth: { metrics: { chains: 1 } }, transportProxy: { metrics: { routes: 1 } } }, { manualQualityReport: manualReport, manualEditedLines: 17, repairIterations: 2, generationMs: 3.5 });
+    const apiRouteOwnership: ApiRouteOwnershipGraph = {
+      schemaVersion: "1.0", kind: "api-route-ownership-graph", reviewRequired: true, sourceRoot: root,
+      links: [{
+        id: "api-route-link:test", flowId: "api-flow:test", endpoint: { method: "POST", path: "/routes" }, consumerFile: "router/index.js", targetBinding: "routes", responsePath: "data", mutation: "router.addRoute",
+        shape: { shape: "route-record-array", cardinality: 1, observedItemCount: 1, fields: ["path"], evidence: ["reviewed fixture"] },
+        routeOwnership: { matches: [{ apiPath: "/dashboard", apiName: "Dashboard", routePath: "/dashboard", matchKind: "path", routeKind: "visual-leaf", layoutChain: [], leafOwners: ["views/dashboard/index.vue"], visualOwnerProven: true }], requiresReview: false },
+        fixture: { matched: true, reviewed: true, index: 0, sourceFile: "mock/routes.ts", sourceHash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }, confidence: "high", reviewReasons: [],
+      }],
+      unresolved: [], metrics: { responseFlows: 1, dynamicRouteFlows: 1, routeLinks: 1, reviewedFixtures: 1, routeRecordFixtures: 1, matchedRouteRecords: 1, unresolvedFlows: 0, unresolvedRouteRecords: 0 }, reviewReasons: [],
+    };
+    const artifact = generateGeneratedTargetAutoV2({ routePlan, visualPlan: plan, routerSfc, sfcVisual: graph, apiRouteOwnership, spaAuth: { metrics: { chains: 1 } }, transportProxy: { metrics: { routes: 1 } } }, { manualQualityReport: manualReport, manualEditedLines: 17, repairIterations: 2, generationMs: 3.5 });
     assert.equal(artifact.kind, "generated-target-auto-v2");
     assert.equal(artifact.fullGeneratedApplication, false);
     assert.equal(artifact.metrics.routeEntries, 1);
@@ -232,6 +274,9 @@ export default routes`);
     assert.equal(artifact.metrics.sourceStyleRulesMaterialized > 0, true);
     assert.equal(artifact.source.routerSfcGraphKind, "router-to-sfc-responsibility-graph");
     assert.equal(artifact.source.sfcVisualMetrics?.components, graph.metrics.components);
+    assert.equal(artifact.metrics.reviewedApiRouteLinks, 1);
+    assert.equal(artifact.metrics.apiRouteOwnedRecords, 1);
+    assert.match(artifact.files.find((file) => file.path === "public/app.js")?.content ?? "", /"apiRouteOwnership"\s*:\s*\{\s*"reviewed"\s*:\s*true,\s*"matchKind"\s*:\s*"path"/);
     assert.equal(artifact.costComparison.manualReviewedTarget.manualEditedLines, 17);
     assert.equal(artifact.costComparison.autoV2FirstPass.manualEditedLines, 0);
     assert.equal(artifact.qualityComparison.comparable, false);
@@ -239,6 +284,7 @@ export default routes`);
     assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-visual-owner"), true);
     assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("data-primitive-node"), true);
     assert.equal(artifact.files.find((file) => file.path === "public/app.js")?.content.includes("auto-v2-route-marker"), true);
+    assert.equal((artifact.files.find((file) => file.path === "public/app.js")?.content ?? "").includes("const vueRouterState="), true);
     const styles = artifact.files.find((file) => file.path === "public/styles.css")?.content ?? "";
     assert.equal(styles.includes(`[data-visual-owner="visual:sfc:2"] .card-panel`), true);
     assert.equal(styles.includes(".auto-v2-owner,.auto-v2-owner-body{display:contents}"), true);
@@ -336,13 +382,17 @@ test("template structure preserves ordered literal text around primitive childre
   assert.equal(span.content[2].kind === "text" && span.content[2].value.trim(), "can see this");
 });
 
-test("primitive DOM compiler maps Element UI structure inline styles interactions and responsive spans", () => {
-  const structure = analyzeSfcTemplateStructure(`<template><el-form class="login-form"><el-form-item><el-input v-model="form.name" placeholder="Name" /></el-form-item><el-button type="primary" style="width:100%" @click.native.prevent="submit">Login</el-button><el-row><el-col :xs="24" :lg="8"><el-tag type="info">A</el-tag></el-col></el-row></el-form></template>`);
+test("primitive DOM compiler maps Element UI structure utility classes interactions and responsive spans", () => {
+  const structure = analyzeSfcTemplateStructure(`<template><el-form class="login-form"><el-form-item><el-input v-model="form.name" placeholder="Name" /></el-form-item><el-checkbox v-model="remember" label="Remember"/><el-button type="primary" style="width:100%" @click.native.prevent="submit">Login</el-button><div className="mb-10 flex items-center justify-center"><img class="h-[44px] w-[44px]"></div><div class="container mx-auto"></div><el-row><el-col :xs="24" :lg="8"><el-tag type="info">A</el-tag></el-col></el-row></el-form></template>`);
   const compilation = compilePrimitiveDom(structure);
   assert.equal(compilation.metrics.compiledNodes, structure.nodes.length);
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "form")?.renderTag, "form");
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "input")?.renderStrategy, "input");
+  assert.equal(compilation.nodes.find((node) => node.primitiveKind === "checkbox")?.renderStrategy, "checkbox");
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "button")?.classes.includes("el-button--primary"), true);
+  assert.equal(structure.nodes.find((node) => node.attributes.className)?.classes.includes("mb-10"), true);
+  assert.equal(compilation.styleRules.some((rule) => rule.provenance === "utility-class" && rule.declarations["margin-bottom"] === "2.5rem"), true);
+  assert.equal(compilation.styleRules.some((rule) => rule.provenance === "utility-class" && rule.media === "(min-width:1280px)" && rule.declarations["max-width"] === "1280px"), true);
   assert.deepEqual(compilation.nodes.find((node) => node.primitiveKind === "layout-column")?.responsiveSpans, { xs: 24, lg: 8 });
   assert.equal(compilation.interactions.some((binding) => binding.event === "click" && binding.expression === "submit" && binding.modifiers.includes("prevent")), true);
   assert.equal(compilation.styleRules.some((rule) => rule.provenance === "source-inline-style" && rule.declarations.width === "100%"), true);
@@ -367,7 +417,7 @@ test("SFC visual analysis embeds local SvgIcon geometry without filename-specifi
 });
 
 import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "../planning/api-fixture-responsibility.js";
-import { linkApiRouteOwnership } from "../planning/api-route-ownership.js";
+import { linkApiRouteOwnership, type ApiRouteOwnershipGraph } from "../planning/api-route-ownership.js";
 import type { SpaRouterContractConfig } from "../evaluation/spa-router.js";
 
 test("nested Vue templates preserve every Element UI table column and bind reviewed API fixtures", () => {
@@ -505,7 +555,7 @@ export const router = { addRoute: (_route: unknown) => undefined }`);
     writeFileSync(join(root, "src", "views", "UserDetail.vue"), `<template><main>User detail</main></template>`);
     writeFileSync(join(root, "src", "views", "Routes.vue"), `<template><main>{{ label }}</main></template><script setup lang="ts">import { ref } from 'vue'; import { usePermissionStoreHook } from '@/store/modules/permission'; import { formatLabel } from '@/utils/format'; import { getRouteApi } from '@/server/route'; const label = ref(formatLabel('routes')); const store = usePermissionStoreHook(); const response = await getRouteApi({ name: 'admin' }); store.menus = response.data;</script>`);
     const graph = analyzeSfcVisualResponsibilities(root);
-    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/mock_api/routes", method: "POST", body: { data: [{ path: "/admin", name: "Admin", children: [{ path: "users", name: "Users" }, { path: "users/detail/:id", name: "UserDetail" }] }] } }] };
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/mock_api/routes", method: "POST", body: { data: [{ path: "/admin", name: "Admin", children: [{ path: "users", name: "Users" }, { path: "users/detail/:id", name: "UserDetail" }] }] }, review: { reviewed: true, sourceFile: "mock/routes.ts", sourceHash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", evidence: ["static route response literal"], requestSelection: { role: "admin" } } }] };
     const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
     assert.ok(api.metrics.apiCandidates >= 4);
     assert.ok(api.metrics.frameworkComposables >= 1);
@@ -531,9 +581,15 @@ export const router = { addRoute: (_route: unknown) => undefined }`);
     assert.equal(link?.shape.cardinality, 1);
     assert.deepEqual(link?.shape.fields, ["children", "name", "path"]);
     assert.equal(link?.mutation, "router.addRoute");
+    assert.equal(link?.fixture.reviewed, true);
+    assert.equal(link?.routeOwnership.requiresReview, false);
     assert.deepEqual(link?.routeOwnership.matches.map((item) => item.routePath), ["/admin", "/admin/users", "/admin/users/detail/:id"]);
     assert.deepEqual(link?.routeOwnership.matches.find((item) => item.routePath === "/admin/users")?.layoutChain, ["layouts/Layout.vue"]);
     assert.deepEqual(link?.routeOwnership.matches.find((item) => item.routePath === "/admin/users")?.leafOwners, ["views/Users.vue"]);
+    const unreviewedConfig: SpaRouterContractConfig = { ...config, fixtures: config.fixtures?.map(({ review: _review, ...fixture }) => fixture) };
+    const unreviewedOwnership = linkApiRouteOwnership(api, routerGraph, unreviewedConfig);
+    assert.equal(unreviewedOwnership.links[0]?.routeOwnership.requiresReview, true);
+    assert.equal(unreviewedOwnership.links[0]?.reviewReasons.some((reason) => reason.includes("lacks explicit source-backed review metadata")), true);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 

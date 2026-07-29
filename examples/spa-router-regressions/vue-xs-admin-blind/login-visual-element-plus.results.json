@@ -1,0 +1,1020 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "reference-generated",
+  "referenceBaseUrl": "http://127.0.0.1:4173",
+  "generatedBaseUrl": "http://127.0.0.1:4179",
+  "passed": true,
+  "scenariosPassed": 1,
+  "scenariosTotal": 1,
+  "runtimeErrors": 0,
+  "unmockedApiRequests": 0,
+  "requiredNetworkFailures": 0,
+  "nonBlockingNetworkFailures": 0,
+  "results": [
+    {
+      "id": "login-reviewed-region",
+      "passed": true,
+      "entryUrl": "http://127.0.0.1:4179/login",
+      "finalUrl": "http://127.0.0.1:4179/login",
+      "transitions": [
+        {
+          "method": "replaceState",
+          "target": "/login",
+          "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+        }
+      ],
+      "stepRoutes": [
+        {
+          "stepIndex": 0,
+          "action": "reload",
+          "route": "/login"
+        }
+      ],
+      "runtimeErrors": [],
+      "unmockedApiRequests": [],
+      "requiredNetworkFailures": [],
+      "nonBlockingNetworkFailures": [],
+      "assertionFailures": [],
+      "durationMs": 2736.003,
+      "timing": {
+        "queueWaitMs": 0.002,
+        "contextCreateMs": 22.202,
+        "instrumentationMs": 1.094,
+        "routeRegistrationMs": 0.402,
+        "pageCreateMs": 309.463,
+        "navigationMs": 208.787,
+        "initialSettleMs": 533.94,
+        "setupPrefixStepsMs": 0,
+        "remainingStepsMs": 534.464,
+        "checkpointStorageMs": 0,
+        "checkpointVerificationMs": 0,
+        "assertionMs": 29.966,
+        "visualCaptureMs": 1085.701,
+        "contextCloseMs": 5.316,
+        "totalMs": 2736.003,
+        "steps": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "durationMs": 534.464,
+            "setupPrefix": false
+          }
+        ]
+      }
+    }
+  ],
+  "reference": {
+    "baseUrl": "http://127.0.0.1:4173",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2802.963,
+        "timing": {
+          "queueWaitMs": 0.022,
+          "contextCreateMs": 21.524,
+          "instrumentationMs": 1.377,
+          "routeRegistrationMs": 0.635,
+          "pageCreateMs": 308.188,
+          "navigationMs": 212.603,
+          "initialSettleMs": 530.79,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 533.581,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 29.654,
+          "visualCaptureMs": 1155.484,
+          "contextCloseMs": 4.373,
+          "totalMs": 2802.963,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 533.581,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generated": {
+    "baseUrl": "http://127.0.0.1:4179",
+    "passed": true,
+    "scenariosPassed": 1,
+    "scenariosTotal": 1,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "nonBlockingNetworkFailures": 0,
+    "setupStateReusedRuns": 0,
+    "setupStepsSkipped": 0,
+    "setupCheckpointsPublished": 0,
+    "results": [
+      {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2736.003,
+        "timing": {
+          "queueWaitMs": 0.002,
+          "contextCreateMs": 22.202,
+          "instrumentationMs": 1.094,
+          "routeRegistrationMs": 0.402,
+          "pageCreateMs": 309.463,
+          "navigationMs": 208.787,
+          "initialSettleMs": 533.94,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 534.464,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 29.966,
+          "visualCaptureMs": 1085.701,
+          "contextCloseMs": 5.316,
+          "totalMs": 2736.003,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 534.464,
+              "setupPrefix": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "id": "login-reviewed-region",
+      "passed": true,
+      "reference": {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4173/login",
+        "finalUrl": "http://127.0.0.1:4173/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2802.963,
+        "timing": {
+          "queueWaitMs": 0.022,
+          "contextCreateMs": 21.524,
+          "instrumentationMs": 1.377,
+          "routeRegistrationMs": 0.635,
+          "pageCreateMs": 308.188,
+          "navigationMs": 212.603,
+          "initialSettleMs": 530.79,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 533.581,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 29.654,
+          "visualCaptureMs": 1155.484,
+          "contextCloseMs": 4.373,
+          "totalMs": 2802.963,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 533.581,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "generated": {
+        "id": "login-reviewed-region",
+        "passed": true,
+        "entryUrl": "http://127.0.0.1:4179/login",
+        "finalUrl": "http://127.0.0.1:4179/login",
+        "transitions": [
+          {
+            "method": "replaceState",
+            "target": "/login",
+            "state": "{\"back\":null,\"current\":\"/login\",\"forward\":null,\"position\":1,\"replaced\":true,\"scroll\":{\"left\":0,\"top\":0}}"
+          }
+        ],
+        "stepRoutes": [
+          {
+            "stepIndex": 0,
+            "action": "reload",
+            "route": "/login"
+          }
+        ],
+        "runtimeErrors": [],
+        "unmockedApiRequests": [],
+        "requiredNetworkFailures": [],
+        "nonBlockingNetworkFailures": [],
+        "assertionFailures": [],
+        "durationMs": 2736.003,
+        "timing": {
+          "queueWaitMs": 0.002,
+          "contextCreateMs": 22.202,
+          "instrumentationMs": 1.094,
+          "routeRegistrationMs": 0.402,
+          "pageCreateMs": 309.463,
+          "navigationMs": 208.787,
+          "initialSettleMs": 533.94,
+          "setupPrefixStepsMs": 0,
+          "remainingStepsMs": 534.464,
+          "checkpointStorageMs": 0,
+          "checkpointVerificationMs": 0,
+          "assertionMs": 29.966,
+          "visualCaptureMs": 1085.701,
+          "contextCloseMs": 5.316,
+          "totalMs": 2736.003,
+          "steps": [
+            {
+              "stepIndex": 0,
+              "action": "reload",
+              "durationMs": 534.464,
+              "setupPrefix": false
+            }
+          ]
+        }
+      },
+      "failures": []
+    }
+  ],
+  "navigationIntegrity": {
+    "passed": true,
+    "rate": 1,
+    "matchedScenarios": 4,
+    "totalScenarios": 4,
+    "failures": 0
+  },
+  "visualMatrix": {
+    "passed": true,
+    "scenarios": [
+      {
+        "scenarioId": "login-reviewed-region",
+        "passed": true,
+        "viewports": [
+          {
+            "id": "desktop",
+            "width": 1440,
+            "height": 900,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 500,
+              "y": 249,
+              "width": 440,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 500,
+              "y": 249,
+              "width": 440,
+              "height": 402
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 1831,
+            "preAnchorWaitMs": 1831,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 3.158,
+              "signatureScanMs": 83.252,
+              "signature": {
+                "fullScans": 2,
+                "incrementalScans": 34,
+                "nodesAvailable": 1578,
+                "nodesScanned": 258,
+                "nodesReused": 1320,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 83.252
+              },
+              "networkProbeMs": 0.149,
+              "samples": 36,
+              "stableFrameSamples": 4,
+              "mutationBlockedSamples": 6,
+              "resizeBlockedSamples": 6,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 34,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 0.018,
+              "referenceTargetMs": 3216.169,
+              "generatedTargetMs": 2847.223,
+              "contextCreateMs": 80.982,
+              "navigationMs": 702.067,
+              "initialSettleMs": 1118.643,
+              "scenarioStepsMs": 1082.607,
+              "assertionMs": 175.534,
+              "contextCloseMs": 10.449,
+              "captureQueueWaitMs": 0.005,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 1830.594,
+              "anchorMs": 36.208,
+              "postAnchorStabilityMs": 0.046,
+              "computedStyleMs": 48.218,
+              "screenshotMs": 60.449,
+              "pixelQueueWaitMs": 0.002,
+              "pixelCompareMs": 40.113,
+              "totalMs": 3257.6
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 3257.6,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 440,
+              "height": 402,
+              "referenceWidth": 440,
+              "referenceHeight": 402,
+              "generatedWidth": 440,
+              "generatedHeight": 402,
+              "dimensionMismatch": false,
+              "differentPixels": 2135,
+              "totalPixels": 176880,
+              "diffRate": 0.01207,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/desktop/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/desktop/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/desktop/diff.png"
+            }
+          },
+          {
+            "id": "tablet",
+            "width": 1024,
+            "height": 768,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 292,
+              "y": 183,
+              "width": 440,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 292,
+              "y": 183,
+              "width": 440,
+              "height": 402
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 2028,
+            "preAnchorWaitMs": 2028,
+            "postAnchorWaitMs": 0,
+            "postAnchorSkipped": true,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 3.298,
+              "signatureScanMs": 123.21,
+              "signature": {
+                "fullScans": 2,
+                "incrementalScans": 37,
+                "nodesAvailable": 1715,
+                "nodesScanned": 273,
+                "nodesReused": 1442,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 123.21
+              },
+              "networkProbeMs": 0.43,
+              "samples": 39,
+              "stableFrameSamples": 4,
+              "mutationBlockedSamples": 6,
+              "resizeBlockedSamples": 6,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 37,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 0.36,
+              "referenceTargetMs": 0,
+              "generatedTargetMs": 0,
+              "contextCreateMs": 0,
+              "navigationMs": 0,
+              "initialSettleMs": 0,
+              "scenarioStepsMs": 0,
+              "assertionMs": 0,
+              "contextCloseMs": 0,
+              "captureQueueWaitMs": 0,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 0,
+              "anchorMs": 0,
+              "postAnchorStabilityMs": 0,
+              "computedStyleMs": 0,
+              "screenshotMs": 0,
+              "pixelQueueWaitMs": 0.003,
+              "pixelCompareMs": 38.909,
+              "totalMs": 39.939
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 39.939,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 440,
+              "height": 402,
+              "referenceWidth": 440,
+              "referenceHeight": 402,
+              "generatedWidth": 440,
+              "generatedHeight": 402,
+              "dimensionMismatch": false,
+              "differentPixels": 2135,
+              "totalPixels": 176880,
+              "diffRate": 0.01207,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/tablet/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/tablet/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/tablet/diff.png"
+            }
+          },
+          {
+            "id": "mobile",
+            "width": 390,
+            "height": 844,
+            "passed": true,
+            "referenceFinalRoute": "/login",
+            "generatedFinalRoute": "/login",
+            "referenceAnchor": ".login-box",
+            "generatedAnchor": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegion": ".login-box",
+            "generatedRegion": "[data-visual-owner=\"visual:sfc:64\"] .login-box",
+            "referenceRegionRect": {
+              "x": 0,
+              "y": 221,
+              "width": 390,
+              "height": 402
+            },
+            "generatedRegionRect": {
+              "x": 0,
+              "y": 221,
+              "width": 390,
+              "height": 402
+            },
+            "runtimeErrors": 0,
+            "unmockedApiRequests": 0,
+            "requiredNetworkFailures": 0,
+            "requiredNetworkFailureDetails": [],
+            "nonBlockingNetworkFailureDetails": [],
+            "stabilityFailures": [],
+            "adaptiveWaitMs": 947,
+            "preAnchorWaitMs": 627,
+            "postAnchorWaitMs": 320,
+            "postAnchorSkipped": false,
+            "visualStateReused": false,
+            "referenceVisualStateReuseKey": null,
+            "generatedVisualStateReuseKey": null,
+            "referenceSetupStateReused": false,
+            "generatedSetupStateReused": false,
+            "referenceSetupStepsSkipped": 0,
+            "generatedSetupStepsSkipped": 0,
+            "canvas": {
+              "canvasScanMs": 0,
+              "canvasSamples": 0,
+              "canvasCacheHits": 0,
+              "canvasSignatureChanges": 0,
+              "canvasInvalidations": 0,
+              "animationTargetSamples": 0,
+              "animationCompletedSamples": 0,
+              "animationPendingSamples": 0,
+              "animationCompletionSignals": 0,
+              "echartsCompletionSignals": 0,
+              "zrenderCompletionSignals": 0
+            },
+            "stability": {
+              "resourceReadinessMs": 36.422,
+              "signatureScanMs": 34.433,
+              "signature": {
+                "fullScans": 4,
+                "incrementalScans": 16,
+                "nodesAvailable": 874,
+                "nodesScanned": 256,
+                "nodesReused": 618,
+                "mutationInvalidations": 0,
+                "resizeInvalidations": 0,
+                "scrollInvalidations": 0,
+                "scanMs": 34.433
+              },
+              "networkProbeMs": 0.091,
+              "samples": 20,
+              "stableFrameSamples": 10,
+              "mutationBlockedSamples": 10,
+              "resizeBlockedSamples": 10,
+              "canvasBlockedSamples": 0,
+              "layoutBlockedSamples": 14,
+              "networkBlockedSamples": 0
+            },
+            "timing": {
+              "queueWaitMs": 40.381,
+              "referenceTargetMs": 3533.229,
+              "generatedTargetMs": 3612.602,
+              "contextCreateMs": 217.603,
+              "navigationMs": 925.608,
+              "initialSettleMs": 1164.4279999999999,
+              "scenarioStepsMs": 1201.712,
+              "assertionMs": 43.831,
+              "contextCloseMs": 11.911999999999999,
+              "captureQueueWaitMs": 1595.858,
+              "canvasQueueWaitMs": 0,
+              "preAnchorStabilityMs": 627.404,
+              "anchorMs": 42.012,
+              "postAnchorStabilityMs": 319.864,
+              "computedStyleMs": 78.706,
+              "screenshotMs": 89.507,
+              "pixelQueueWaitMs": 0.002,
+              "pixelCompareMs": 20.594,
+              "totalMs": 3633.556
+            },
+            "requestClassifications": {
+              "non-blocking-telemetry": 0,
+              "non-blocking-configured-host": 0,
+              "blocking-required": 0,
+              "blocking-current-dom-image": 0,
+              "ignored-stale-image": 0
+            },
+            "durationMs": 3633.556,
+            "navigationPassed": true,
+            "navigationFailures": [],
+            "captureFailures": [],
+            "styles": {
+              "matched": 3,
+              "referenceCount": 3,
+              "generatedCount": 3,
+              "propertyCount": 171,
+              "matchingProperties": 171,
+              "rate": 1,
+              "mismatches": []
+            },
+            "pixels": {
+              "width": 390,
+              "height": 402,
+              "referenceWidth": 390,
+              "referenceHeight": 402,
+              "generatedWidth": 390,
+              "generatedHeight": 402,
+              "dimensionMismatch": false,
+              "differentPixels": 2137,
+              "totalPixels": 156780,
+              "diffRate": 0.013631,
+              "passed": true,
+              "threshold": 0.02,
+              "referenceImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/mobile/reference.png",
+              "generatedImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/mobile/generated.png",
+              "diffImagePath": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-browser-matrix-reuse/examples/spa-router-regressions/vue-xs-admin-blind/login-visual-element-plus-artifacts/login-reviewed-region/mobile/diff.png"
+            }
+          }
+        ],
+        "worstComputedStyle": 1,
+        "worstPixelDiff": 0.013631,
+        "durationMs": 3674.072
+      }
+    ],
+    "scenarioCount": 1,
+    "viewportRuns": 3,
+    "runtimeErrors": 0,
+    "unmockedApiRequests": 0,
+    "requiredNetworkFailures": 0,
+    "navigationFailures": 0,
+    "navigationMatchedRuns": 3,
+    "stabilityFailures": 0,
+    "adaptiveWaitMs": 4806,
+    "preAnchorWaitMs": 4486,
+    "postAnchorWaitMs": 320,
+    "postAnchorSkippedRuns": 2,
+    "visualStateReusedRuns": 0,
+    "setupStateReusedTargetRuns": 0,
+    "setupStepsSkipped": 0,
+    "canvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "stability": {
+      "resourceReadinessMs": 42.878,
+      "signatureScanMs": 240.895,
+      "signature": {
+        "fullScans": 8,
+        "incrementalScans": 87,
+        "nodesAvailable": 4167,
+        "nodesScanned": 787,
+        "nodesReused": 3380,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 240.895
+      },
+      "networkProbeMs": 0.67,
+      "samples": 95,
+      "stableFrameSamples": 18,
+      "mutationBlockedSamples": 22,
+      "resizeBlockedSamples": 22,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 85,
+      "networkBlockedSamples": 0
+    },
+    "timing": {
+      "queueWaitMs": 40.759,
+      "referenceTargetMs": 6749.398,
+      "generatedTargetMs": 6459.825,
+      "contextCreateMs": 298.585,
+      "navigationMs": 1627.675,
+      "initialSettleMs": 2283.071,
+      "scenarioStepsMs": 2284.319,
+      "assertionMs": 219.365,
+      "contextCloseMs": 22.361,
+      "captureQueueWaitMs": 1595.863,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 2457.998,
+      "anchorMs": 78.22,
+      "postAnchorStabilityMs": 319.91,
+      "computedStyleMs": 126.924,
+      "screenshotMs": 149.956,
+      "pixelQueueWaitMs": 0.007,
+      "pixelCompareMs": 99.616,
+      "totalMs": 6931.095
+    },
+    "scheduler": {
+      "configuredViewportConcurrency": 2,
+      "configuredCaptureConcurrency": 2,
+      "configuredCanvasConcurrency": 1,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 2,
+      "maxActiveContexts": 4,
+      "maxActiveCaptures": 2,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 1,
+      "viewportQueueWaitMs": 40.759,
+      "captureQueueWaitMs": 1595.863,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0.007
+    },
+    "requestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "worstComputedStyle": 1,
+    "worstPixelDiff": 0.013631,
+    "styleThreshold": 0.98,
+    "pixelThreshold": 0.02,
+    "targetRuns": 6,
+    "reusedTargetRuns": 2,
+    "freshTargetRuns": 4
+  },
+  "telemetry": {
+    "contractTargetRuns": 2,
+    "visualViewportRuns": 3,
+    "visualTargetRuns": 6,
+    "visualTargetReusedRuns": 2,
+    "visualTargetFreshRuns": 4,
+    "visualStabilityFailures": 0,
+    "visualAdaptiveWaitMs": 4806,
+    "visualPreAnchorWaitMs": 4486,
+    "visualPostAnchorWaitMs": 320,
+    "visualPostAnchorSkippedRuns": 2,
+    "visualStateReusedRuns": 0,
+    "contractSetupStateReusedRuns": 0,
+    "contractSetupStepsSkipped": 0,
+    "visualSetupStateReusedRuns": 0,
+    "visualSetupStepsSkipped": 0,
+    "contractSetupOwnerTiming": {
+      "ownerRuns": 0,
+      "totalMs": 0,
+      "contextCreateMs": 0,
+      "instrumentationMs": 0,
+      "routeRegistrationMs": 0,
+      "pageCreateMs": 0,
+      "navigationMs": 0,
+      "initialSettleMs": 0,
+      "setupPrefixStepsMs": 0,
+      "checkpointStorageMs": 0,
+      "checkpointVerificationMs": 0,
+      "assertionMs": 0,
+      "visualCaptureMs": 0
+    },
+    "visualCanvas": {
+      "canvasScanMs": 0,
+      "canvasSamples": 0,
+      "canvasCacheHits": 0,
+      "canvasSignatureChanges": 0,
+      "canvasInvalidations": 0,
+      "animationTargetSamples": 0,
+      "animationCompletedSamples": 0,
+      "animationPendingSamples": 0,
+      "animationCompletionSignals": 0,
+      "echartsCompletionSignals": 0,
+      "zrenderCompletionSignals": 0
+    },
+    "visualStability": {
+      "resourceReadinessMs": 42.878,
+      "signatureScanMs": 240.895,
+      "signature": {
+        "fullScans": 8,
+        "incrementalScans": 87,
+        "nodesAvailable": 4167,
+        "nodesScanned": 787,
+        "nodesReused": 3380,
+        "mutationInvalidations": 0,
+        "resizeInvalidations": 0,
+        "scrollInvalidations": 0,
+        "scanMs": 240.895
+      },
+      "networkProbeMs": 0.67,
+      "samples": 95,
+      "stableFrameSamples": 18,
+      "mutationBlockedSamples": 22,
+      "resizeBlockedSamples": 22,
+      "canvasBlockedSamples": 0,
+      "layoutBlockedSamples": 85,
+      "networkBlockedSamples": 0
+    },
+    "visualRunTiming": {
+      "queueWaitMs": 40.759,
+      "referenceTargetMs": 6749.398,
+      "generatedTargetMs": 6459.825,
+      "contextCreateMs": 298.585,
+      "navigationMs": 1627.675,
+      "initialSettleMs": 2283.071,
+      "scenarioStepsMs": 2284.319,
+      "assertionMs": 219.365,
+      "contextCloseMs": 22.361,
+      "captureQueueWaitMs": 1595.863,
+      "canvasQueueWaitMs": 0,
+      "preAnchorStabilityMs": 2457.998,
+      "anchorMs": 78.22,
+      "postAnchorStabilityMs": 319.91,
+      "computedStyleMs": 126.924,
+      "screenshotMs": 149.956,
+      "pixelQueueWaitMs": 0.007,
+      "pixelCompareMs": 99.616,
+      "totalMs": 6931.095
+    },
+    "visualScheduler": {
+      "configuredViewportConcurrency": 2,
+      "configuredCaptureConcurrency": 2,
+      "configuredCanvasConcurrency": 1,
+      "configuredPixelConcurrency": 1,
+      "maxActiveViewports": 2,
+      "maxActiveContexts": 4,
+      "maxActiveCaptures": 2,
+      "maxActiveCanvasCaptures": 0,
+      "maxActivePixelComparisons": 1,
+      "viewportQueueWaitMs": 40.759,
+      "captureQueueWaitMs": 1595.863,
+      "canvasQueueWaitMs": 0,
+      "pixelQueueWaitMs": 0.007
+    },
+    "visualRequestClassifications": {
+      "non-blocking-telemetry": 0,
+      "non-blocking-configured-host": 0,
+      "blocking-required": 0,
+      "blocking-current-dom-image": 0,
+      "ignored-stale-image": 0
+    },
+    "contractConcurrency": 1,
+    "visualConcurrency": 2,
+    "browserShutdownMode": "graceful",
+    "fastShutdownUsed": false,
+    "fastShutdownConfirmed": false,
+    "fastShutdownLockAcquired": false,
+    "fastShutdownLockWaitMs": 0,
+    "activeHandlesBeforeClose": {
+      "totalHandles": 7,
+      "totalBlockingHandles": 5,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2,
+        "socket": 4,
+        "child-process": 1
+      },
+      "resourcesByType": {
+        "CloseReq": 1,
+        "pipe": 6,
+        "ProcessWrap": 1
+      },
+      "requestsByType": {
+        "filesystem": 1
+      }
+    },
+    "activeHandlesAfterClose": {
+      "totalHandles": 2,
+      "totalBlockingHandles": 0,
+      "standardIoHandles": 2,
+      "handlesByType": {
+        "stdio": 2
+      },
+      "resourcesByType": {
+        "pipe": 2
+      },
+      "requestsByType": {}
+    },
+    "timing": {
+      "browserLaunchMs": 332.335,
+      "contractMs": 2803.873,
+      "comparisonMs": 0.914,
+      "visualMatrixMs": 3674.903,
+      "browserCloseMs": 209.528,
+      "browserDisconnectMs": 0,
+      "browserProcessCloseMs": 209.502,
+      "reportReadyMs": 6812.908,
+      "totalMs": 7022.441
+    }
+  },
+  "qualityGates": [
+    {
+      "id": "scenario-protocol",
+      "passed": true,
+      "detail": "reference=1/1，generated=1/1"
+    },
+    {
+      "id": "scenario-viewport-matrix",
+      "passed": true,
+      "detail": "1/1 SPA route states 通过，viewportRuns=3，worstComputedStyle=1，worstPixelDiff=0.013631"
+    },
+    {
+      "id": "visual-runtime",
+      "passed": true,
+      "detail": "referenceRuntimeErrors=0，generatedRuntimeErrors=0，visualRuntimeErrors=0，stabilityFailures=0"
+    },
+    {
+      "id": "resource-readiness",
+      "passed": true,
+      "detail": "referenceUnmockedApi=0，generatedUnmockedApi=0，visualUnmockedApi=0，requiredNetworkFailures=0"
+    },
+    {
+      "id": "navigation-integrity",
+      "passed": true,
+      "detail": "matched=4/4，rate=1，failures=0"
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "schemaVersion": "1.1",
+  "kind": "spa-auth-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "evidence": [
+    {
+      "kind": "storage-read",
+      "file": "src/config/index.ts",
+      "storage": "localStorage",
+      "key": "appConfigMode",
+      "expression": "localStorage.getItem('appConfigMode'"
+    },
+    {
+      "kind": "storage-write",
+      "file": "src/config/index.ts",
+      "storage": "localStorage",
+      "key": "appConfigMode",
+      "expression": "localStorage.setItem('appConfigMode'"
+    },
+    {
+      "kind": "storage-write",
+      "file": "src/store/modules/app.ts",
+      "storage": "localStorage",
+      "key": "appConfigMode",
+      "expression": "localStorage.setItem('appConfigMode'"
+    },
+    {
+      "kind": "storage-adapter-config",
+      "file": "src/config/index.ts",
+      "line": 30,
+      "expression": "_storage.setStorageConfig({ ...config.StorageConfig, prefix: config.title })",
+      "binding": "_storage",
+      "importSource": "@jsxiaosi/utils",
+      "confidence": "high"
+    },
+    {
+      "kind": "storage-adapter-remove",
+      "file": "src/layouts/page-layouts/components/Seting/pageSettings/index.vue",
+      "line": 13,
+      "expression": "_storage.removeStorage('multiTabsList')",
+      "binding": "_storage",
+      "importSource": "@jsxiaosi/utils",
+      "storage": "localStorage",
+      "key": "multiTabsList",
+      "confidence": "medium",
+      "effectiveKey": "XsAdmin_multiTabsList"
+    },
+    {
+      "kind": "storage-adapter-read",
+      "file": "src/store/modules/user.ts",
+      "line": 13,
+      "expression": "_storage.getStorage ('userInfo')",
+      "binding": "_storage",
+      "importSource": "@jsxiaosi/utils",
+      "storage": "localStorage",
+      "key": "userInfo",
+      "confidence": "medium",
+      "effectiveKey": "XsAdmin_userInfo"
+    },
+    {
+      "kind": "storage-adapter-write",
+      "file": "src/store/modules/user.ts",
+      "line": 31,
+      "expression": "_storage.setStorage ('userInfo', value)",
+      "binding": "_storage",
+      "importSource": "@jsxiaosi/utils",
+      "storage": "localStorage",
+      "key": "userInfo",
+      "confidence": "medium",
+      "effectiveKey": "XsAdmin_userInfo"
+    },
+    {
+      "kind": "storage-adapter-remove",
+      "file": "src/store/modules/user.ts",
+      "line": 41,
+      "expression": "_storage.removeStorage('userInfo')",
+      "binding": "_storage",
+      "importSource": "@jsxiaosi/utils",
+      "storage": "localStorage",
+      "key": "userInfo",
+      "confidence": "medium",
+      "effectiveKey": "XsAdmin_userInfo"
+    },
+    {
+      "kind": "route-initialization",
+      "file": "src/router/utils.ts",
+      "line": 1,
+      "expression": "async function initRoute(permission ) { const { clearAllCachePage, setWholeMenus } = usePermissionStoreHook(); resetRouter(); clearAllCachePage(); let routeList = []; if (permission) { routeList = await getRouteList(permission); // 更新路由列表前通过formatFlatteningRoutes打平树结构 privilegeRouting( router.options.routes , formatFlatteningRoutes(routeList) , ); setWholeMenus(routeList); } return routeList; }",
+      "handler": "initRoute",
+      "confidence": "high"
+    },
+    {
+      "kind": "dynamic-route-add",
+      "file": "src/router/utils.ts",
+      "expression": "initRoute → privilegeRouting → addRoute",
+      "handler": "initRoute",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-registration",
+      "file": "src/router/index.ts",
+      "line": 29,
+      "expression": "router.beforeEach",
+      "handler": "beforeEach",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-authenticated-state",
+      "file": "src/router/index.ts",
+      "expression": "userInfoStore.userInfo",
+      "statePath": "userInfoStore.userInfo",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-navigation",
+      "file": "src/router/index.ts",
+      "expression": "next(from.path)",
+      "routeTarget": "from.path",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-navigation",
+      "file": "src/router/index.ts",
+      "expression": "push(to.path)",
+      "routeTarget": "to.path",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-navigation",
+      "file": "src/router/index.ts",
+      "expression": "push(/login)",
+      "routeTarget": "/login",
+      "confidence": "high"
+    },
+    {
+      "kind": "guard-navigation",
+      "file": "src/router/index.ts",
+      "expression": "next(/login)",
+      "routeTarget": "/login",
+      "confidence": "high"
+    },
+    {
+      "kind": "login-api-call",
+      "file": "src/views/login/compoontne/form.vue",
+      "expression": "getUserInfo(...)",
+      "handler": "onLogin",
+      "confidence": "high"
+    },
+    {
+      "kind": "login-success",
+      "file": "src/views/login/compoontne/form.vue",
+      "expression": "res.code === 1",
+      "handler": "onLogin",
+      "confidence": "high"
+    },
+    {
+      "kind": "identity-store-write",
+      "file": "src/views/login/compoontne/form.vue",
+      "expression": "useUserInfoStoreHook().setUserInfo(res.data)",
+      "handler": "onLogin",
+      "key": "userInfo",
+      "confidence": "high"
+    },
+    {
+      "kind": "role-read",
+      "file": "src/views/login/compoontne/form.vue",
+      "expression": "res.data.role",
+      "statePath": "res.data.role",
+      "handler": "onLogin",
+      "confidence": "high"
+    }
+  ],
+  "contracts": {
+    "queryToStorage": [],
+    "storageToAuthorization": [],
+    "unauthorizedRedirect": [],
+    "storageAdapters": [
+      {
+        "binding": "_storage",
+        "importSource": "@jsxiaosi/utils",
+        "storage": "localStorage",
+        "storageResolution": "dependency-default",
+        "prefix": "XsAdmin",
+        "keys": [
+          {
+            "logicalKey": "multiTabsList",
+            "effectiveKey": "XsAdmin_multiTabsList",
+            "reads": 0,
+            "writes": 0,
+            "removes": 1,
+            "files": [
+              "src/layouts/page-layouts/components/Seting/pageSettings/index.vue"
+            ]
+          },
+          {
+            "logicalKey": "userInfo",
+            "effectiveKey": "XsAdmin_userInfo",
+            "reads": 1,
+            "writes": 1,
+            "removes": 1,
+            "files": [
+              "src/store/modules/user.ts"
+            ]
+          }
+        ],
+        "dependencyEvidence": [
+          "@jsxiaosi/utils/es/window/storage/index.mjs: wrapper default localStorage",
+          "public/serverConfig.json: title and StorageConfig match the wrapper configuration flow"
+        ],
+        "requiresReview": false
+      }
+    ],
+    "loginFlows": [
+      {
+        "file": "src/views/login/compoontne/form.vue",
+        "handler": "onLogin",
+        "triggerHandlers": [
+          "onLogin",
+          "submitForm"
+        ],
+        "apiCall": "getUserInfo",
+        "endpoint": {
+          "method": "POST",
+          "path": "/mock_api/login",
+          "sourceFile": "src/server/useInfo.ts"
+        },
+        "successCondition": "res.code === 1",
+        "identityWrite": {
+          "call": "useUserInfoStoreHook().setUserInfo",
+          "responsePath": "res.data",
+          "storageKey": "userInfo"
+        },
+        "rolePath": "res.data.role",
+        "routeInitialization": "initRoute",
+        "navigationTarget": "/",
+        "complete": true,
+        "requiresReview": true,
+        "evidenceFiles": [
+          "src/router/utils.ts",
+          "src/server/useInfo.ts",
+          "src/store/modules/user.ts",
+          "src/views/login/compoontne/form.vue"
+        ]
+      }
+    ],
+    "routeGuards": [
+      {
+        "file": "src/router/index.ts",
+        "routerBinding": "router",
+        "authenticatedStatePath": "userInfoStore.userInfo",
+        "loginPath": "/login",
+        "unauthenticatedRedirect": "/login",
+        "authenticatedLoginRedirect": "from.path",
+        "freshLoadRouteInitialization": "initRoute",
+        "freshLoadResumeTarget": "to.path",
+        "initializationFailureRedirect": "/login",
+        "dynamicRouteMutation": "addRoute",
+        "complete": true,
+        "requiresReview": true,
+        "evidenceFiles": [
+          "src/router/index.ts",
+          "src/router/utils.ts"
+        ]
+      }
+    ],
+    "dynamicRouteInitialization": [
+      {
+        "entryFunction": "initRoute",
+        "file": "src/router/utils.ts",
+        "permissionParameter": "permission",
+        "apiCalls": [
+          "getRouteList"
+        ],
+        "routeMutation": "addRoute",
+        "menuMutation": "setWholeMenus",
+        "callChain": [
+          "initRoute",
+          "privilegeRouting",
+          "addRoute"
+        ],
+        "complete": true,
+        "requiresReview": true,
+        "evidenceFiles": [
+          "src/router/utils.ts"
+        ]
+      }
+    ],
+    "freshAuthenticationRequired": true,
+    "crossRunPersistenceAllowed": false
+  },
+  "metrics": {
+    "filesScanned": 144,
+    "queryReads": 0,
+    "storageWrites": 2,
+    "storageReads": 2,
+    "storageRemoves": 2,
+    "storageAdapters": 1,
+    "resolvedStorageAdapters": 1,
+    "authorizationHeaders": 0,
+    "unauthorizedBranches": 0,
+    "redirectNavigations": 0,
+    "guardRegistrations": 1,
+    "completeRouteGuards": 1,
+    "loginFlows": 1,
+    "completeLoginFlows": 1,
+    "dynamicRouteInitializers": 1,
+    "completeDynamicRouteInitializers": 1,
+    "completeQueryStorageAuthorizationChains": 0
+  },
+  "reviewReasons": [
+    "authentication evidence is extracted from query, storage, imported wrapper, handler data flow, router guard, header, status, and navigation structure without executing source code",
+    "third-party storage defaults are resolved only from installed frozen dependency implementation; unresolved wrapper behavior remains review-required",
+    "login, role, dynamic-route, and guard chains remain review-required until source-backed credential and fixture selection is approved",
+    "storage artifacts remain isolated to one BrowserContext unless an explicitly reviewed setup contract is present",
+    "cross-run authentication persistence remains disabled even when a complete token chain is discovered",
+    "a fresh authentication contract is still required to prevent cached credentials from hiding regressions"
+  ]
+}

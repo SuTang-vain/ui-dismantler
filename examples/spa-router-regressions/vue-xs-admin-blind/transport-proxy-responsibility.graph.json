@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "transport-proxy-responsibility-graph",
+  "reviewRequired": true,
+  "sourceRoot": "<external-source>",
+  "routes": [
+    {
+      "requestPrefix": "/api",
+      "environment": "development",
+      "source": "build/vite/server.ts",
+      "configSource": "vite.config.ts",
+      "scopeSources": [
+        "build/vite/server.ts"
+      ],
+      "framework": "vite",
+      "contextCandidates": [
+        "/api"
+      ],
+      "targetCandidates": [],
+      "routerCandidates": [],
+      "routerDecisionBranches": [],
+      "bypassDecisionBranches": [],
+      "changeOrigin": true,
+      "configureHook": false,
+      "bypassHook": false,
+      "analysisMode": "scope-ast",
+      "analysisDiagnostics": [
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn module parse failed: Unexpected token (3:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (3:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: TypeScript syntax was erased for auditable proxy AST fallback",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn module parse failed: Unexpected token (1:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: TypeScript syntax was erased for auditable proxy AST fallback"
+      ],
+      "rewriteKind": "rewrite-callback",
+      "rewritePattern": "^/api",
+      "rewriteReplacement": "",
+      "upstreamPathCandidate": "/"
+    },
+    {
+      "requestPrefix": "/api",
+      "environment": "production",
+      "source": "build/vite/server.ts",
+      "configSource": "vite.config.ts",
+      "scopeSources": [
+        "build/vite/server.ts"
+      ],
+      "framework": "vite",
+      "contextCandidates": [
+        "/api"
+      ],
+      "targetCandidates": [],
+      "routerCandidates": [],
+      "routerDecisionBranches": [],
+      "bypassDecisionBranches": [],
+      "changeOrigin": true,
+      "configureHook": false,
+      "bypassHook": false,
+      "analysisMode": "scope-ast",
+      "analysisDiagnostics": [
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn module parse failed: Unexpected token (3:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (3:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: TypeScript syntax was erased for auditable proxy AST fallback",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn module parse failed: Unexpected token (1:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: TypeScript syntax was erased for auditable proxy AST fallback"
+      ],
+      "rewriteKind": "rewrite-callback",
+      "rewritePattern": "^/api",
+      "rewriteReplacement": "",
+      "upstreamPathCandidate": "/"
+    },
+    {
+      "requestPrefix": "/api",
+      "environment": "staging",
+      "source": "build/vite/server.ts",
+      "configSource": "vite.config.ts",
+      "scopeSources": [
+        "build/vite/server.ts"
+      ],
+      "framework": "vite",
+      "contextCandidates": [
+        "/api"
+      ],
+      "targetCandidates": [],
+      "routerCandidates": [],
+      "routerDecisionBranches": [],
+      "bypassDecisionBranches": [],
+      "changeOrigin": true,
+      "configureHook": false,
+      "bypassHook": false,
+      "analysisMode": "scope-ast",
+      "analysisDiagnostics": [
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn module parse failed: Unexpected token (3:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (3:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: TypeScript syntax was erased for auditable proxy AST fallback",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn module parse failed: Unexpected token (1:12)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)",
+        "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: TypeScript syntax was erased for auditable proxy AST fallback"
+      ],
+      "rewriteKind": "rewrite-callback",
+      "rewritePattern": "^/api",
+      "rewriteReplacement": "",
+      "upstreamPathCandidate": "/"
+    }
+  ],
+  "diagnostics": [
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn module parse failed: Unexpected token (3:12)"
+    },
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (3:0)"
+    },
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/vite.config.ts: TypeScript syntax was erased for auditable proxy AST fallback"
+    },
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn module parse failed: Unexpected token (1:12)"
+    },
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: Acorn script parse failed: 'import' and 'export' may appear only with 'sourceType: module' (1:0)"
+    },
+    {
+      "source": "vite.config.ts",
+      "message": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin/build/vite/server.ts: TypeScript syntax was erased for auditable proxy AST fallback"
+    }
+  ],
+  "metrics": {
+    "configFiles": 1,
+    "proxyScopes": 1,
+    "routes": 3,
+    "astRoutes": 3,
+    "fallbackRoutes": 0,
+    "dynamicContextsMaterialized": 1,
+    "diagnostics": 6
+  },
+  "reviewReasons": [
+    "project-level proxy evidence is independent from component API fixture extraction",
+    "dynamic browser prefixes are materialized only from concrete reviewed environment assignments",
+    "proxy targets, rewrites, router branches, and bypass outcomes remain audit evidence and never become browser fixture paths",
+    "all inferred routes require review before they can affect formal fixture or scheduler configuration"
+  ]
+}
