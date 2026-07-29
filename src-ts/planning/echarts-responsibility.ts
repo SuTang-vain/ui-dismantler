@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { basename, extname, join, relative, resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { collectStaticReferences, extractTopLevelStaticBindings, parseStaticExpression, type StaticExpressionValue } from "./static-expression.js";
 
 export interface EChartsResponsibilityEvidence {
@@ -105,7 +105,7 @@ function componentName(file: SourceFile): string {
 }
 
 const knownOptionKeys = ["xAxis", "yAxis", "grid", "tooltip", "legend", "series", "radar", "dataset", "visualMap", "dataZoom", "title"];
-const chartRendererTypes = new Set(["line", "bar", "pie", "radar", "scatter", "effectScatter", "map", "graph", "gauge", "funnel", "heatmap", "treemap", "sunburst", "boxplot", "candlestick", "lines", "sankey", "parallel", "themeRiver", "pictorialBar", "custom"]);
+const chartRendererTypes = new Set(["line", "bar", "pie", "radar", "scatter", "effectScatter", "map", "graph", "gauge", "funnel", "heatmap", "treemap", "sunburst", "boxplot", "candlestick", "lines", "sankey", "parallel", "themeRiver", "pictorialBar", "wordCloud", "custom"]);
 const lifecyclePatterns: Array<[string, RegExp]> = [
   ["mounted", /\bmounted\s*\(/], ["beforeDestroy", /\bbeforeDestroy\s*\(/], ["beforeUnmount", /\bbeforeUnmount\s*\(/],
   ["dispose", /\.dispose\s*\(/], ["resize", /\.resize\s*\(|\bresize\b/], ["watch", /\bwatch\s*:/],
@@ -113,22 +113,50 @@ const lifecyclePatterns: Array<[string, RegExp]> = [
 
 
 function balancedObjectAfter(source: string, start: number): string | undefined {
-  const open = source.indexOf("{", start); if (open < 0) return undefined;
+  const openParen = source.indexOf("(", start);
+  if (openParen < 0) return undefined;
+  const firstArgument = source.slice(openParen + 1).match(/^\s*\{/);
+  if (!firstArgument) return undefined;
+  const open = openParen + 1 + (firstArgument[0].length - 1);
   let depth = 0, quote = "", escaped = false;
   for (let index = open; index < source.length; index++) {
     const char = source[index];
     if (quote) { if (escaped) escaped = false; else if (char === "\\") escaped = true; else if (char === quote) quote = ""; continue; }
     if (char === "'" || char === '"' || char === "`") { quote = char; continue; }
-    if (char === "{") depth++; else if (char === "}" && --depth === 0) return source.slice(open, index + 1);
+    if (char === "{") depth++;
+    else if (char === "}" && --depth === 0) {
+      const closeParen = source.slice(index + 1).match(/^\s*\)/);
+      if (!closeParen) return undefined;
+      const afterCall = source.slice(index + 1 + closeParen[0].length).trimStart();
+      if (afterCall.startsWith("{")) return undefined;
+      return source.slice(open, index + 1);
+    }
   }
   return undefined;
+}
+
+function resolveImportedModule(sourceRoot: string, importer: SourceFile, specifier: string): string | undefined {
+  const candidate = specifier.startsWith("@/")
+    ? join(sourceRoot, "src", specifier.slice(2))
+    : specifier.startsWith(".")
+      ? resolve(dirname(importer.absolutePath), specifier)
+      : undefined;
+  if (!candidate) return undefined;
+  const candidates = [candidate, `${candidate}.ts`, `${candidate}.js`, `${candidate}.tsx`, `${candidate}.vue`, join(candidate, "index.ts"), join(candidate, "index.js"), join(candidate, "index.vue")];
+  return candidates.find((item) => existsSync(item));
+}
+
+function importsChartRuntime(sourceRoot: string, file: SourceFile, runtimeFiles: Set<string>): boolean {
+  return [...file.source.matchAll(/\bimport\s+(?:\{[^}]+\}|[A-Za-z_$][\w$]*)\s+from\s+['"]([^'"]+)['"]/g)]
+    .map((match) => resolveImportedModule(sourceRoot, file, match[1]))
+    .some((importedFile) => Boolean(importedFile && runtimeFiles.has(importedFile)));
 }
 function chartContainerHeight(source: string): string | undefined {
   return source.match(/\bheight\s*:\s*\{[\s\S]{0,300}?\bdefault\s*:\s*["']([^"']+)["']/)?.[1]
     ?? source.match(/(?:height\s*:\s*|height=["'])(\d+(?:px|%|vh|rem)?)/i)?.[1];
 }
 function optionSlices(file: SourceFile): EChartsComponentResponsibility["optionSlices"] {
-  return matches(file.source, /\.setOption\s*\(/g).flatMap((match) => {
+  return matches(file.source, /(?:\.setOption\b|\bsetOptions\b)\s*\(/g).flatMap((match) => {
     const object = balancedObjectAfter(file.source, match.index ?? 0); if (!object) return [];
     const option = parseStaticExpression(object);
     return [{
@@ -150,10 +178,14 @@ export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsRespo
     relativePath: relative(root, absolutePath).replaceAll("\\", "/"),
     source: readFileSync(absolutePath, "utf8"),
   }));
-  const chartFiles = files.filter((file) => /(?:from\s+['"]echarts['"]|require\s*\(\s*['"]echarts(?:\/[^'"]*)?['"]\s*\)|\becharts\.init\s*\()/.test(file.source));
+  const directChartFiles = files.filter((file) => /(?:from\s+['"]echarts['"]|require\s*\(\s*['"]echarts(?:\/[^'"]*)?['"]\s*\)|\becharts\.init\s*\()/.test(file.source));
+  const directChartPaths = new Set(directChartFiles.map((file) => file.absolutePath));
+  const runtimeWrapperPaths = new Set(directChartFiles.filter((file) => extname(file.relativePath) !== ".vue").map((file) => file.absolutePath));
+  const visualSources = files.filter((file) => extname(file.relativePath) === ".vue" || /<template(?:\s|>)/i.test(file.source));
+  const chartFiles = visualSources.filter((file) => directChartPaths.has(file.absolutePath) || (/\bsetOptions\s*\(/.test(file.source) && importsChartRuntime(root, file, runtimeWrapperPaths)));
   const components = chartFiles.map((file, index): EChartsComponentResponsibility => {
     const initEvidence = evidence(file, /\becharts\.init\s*\([^)]*/g, "ECharts instance initialization");
-    const optionEvidence = evidence(file, /\.setOption\s*\(/g, "chart option application");
+    const optionEvidence = evidence(file, /(?:\.setOption\b|\bsetOptions\b)\s*\(/g, "chart option application");
     const themeEvidence = evidence(file, /(?:echarts\/theme\/([\w-]+)|echarts\.init\s*\([^,]+,\s*['"]([^'"]+)['"])/g, "ECharts theme dependency");
     const chartTypeMatches = matches(file.source, /\btype\s*:\s*['"]([A-Za-z][\w-]*)['"]/g);
     const themes = unique(themeEvidence.flatMap((item) => {
@@ -182,7 +214,7 @@ export function analyzeEChartsResponsibilities(sourceRoot: string): EChartsRespo
       chartTypes: unique(chartTypeMatches.map((match) => match[1]).filter((type) => chartRendererTypes.has(type))),
       optionKeys: knownOptionKeys.filter((key) => new RegExp(`\\b${key}\\s*:`).test(file.source)),
       optionSlices: optionSlices(file),
-      staticBindings: extractTopLevelStaticBindings(file.source.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/i)?.[1] ?? file.source),
+      staticBindings: extractTopLevelStaticBindings([...file.source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map((match) => match[1]).join("\n") || file.source),
       dataSources,
       lifecycle: unique(lifecycle),
       interactions,

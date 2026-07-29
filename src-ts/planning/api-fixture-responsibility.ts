@@ -19,6 +19,43 @@ export interface ApiFixtureRenderedField {
   tagged: boolean;
 }
 
+export type ApiCandidateKind =
+  | "framework-composable"
+  | "local-state-store-helper"
+  | "utility-function"
+  | "actual-api-wrapper"
+  | "unresolved-local-transport";
+
+export interface ApiCandidateEvidence {
+  componentId: string;
+  componentFile: string;
+  localName: string;
+  exportedName: string;
+  importSource: string;
+  kind: ApiCandidateKind;
+  moduleFile?: string;
+  endpoint?: { method: string; path: string };
+  evidence: string[];
+}
+
+export interface ApiResponseFlowEvidence {
+  id: string;
+  apiLocalName: string;
+  exportedName: string;
+  importSource: string;
+  apiModuleFile: string;
+  endpoint: { method: string; path: string };
+  consumerFile: string;
+  responseSymbol: string;
+  responsePath: string;
+  targetBinding: string;
+  flowKind: "generic-consumer" | "dynamic-route-injection";
+  routeMutationEvidence: string[];
+  routeMutations: Array<"addRoute" | "addRoutes">;
+  confidence: "high" | "medium";
+  reviewReasons: string[];
+}
+
 export interface ApiFixtureResponsibility {
   id: string;
   componentId: string;
@@ -61,10 +98,20 @@ export interface ApiFixtureResponsibilityGraph {
   reviewRequired: true;
   sourceRoot: string;
   responsibilities: ApiFixtureResponsibility[];
+  candidates: ApiCandidateEvidence[];
+  responseFlows: ApiResponseFlowEvidence[];
   unresolved: Array<{ componentId: string; apiLocalName: string; reason: string }>;
   metrics: {
     componentsScanned: number;
     importedApiCalls: number;
+    apiCandidates: number;
+    actualApiWrappers: number;
+    frameworkComposables: number;
+    localStateStoreHelpers: number;
+    utilityFunctions: number;
+    unresolvedLocalTransports: number;
+    responseFlows: number;
+    dynamicRouteFlows: number;
     matchedEndpoints: number;
     matchedFixtures: number;
     materializedBindings: number;
@@ -190,25 +237,79 @@ function moduleCandidates(sourceRoot: string, componentFile: string, imported: s
   if (!base) return [];
   return unique([base, `${base}.js`, `${base}.ts`, `${base}.mjs`, join(base, "index.js"), join(base, "index.ts")]);
 }
-function endpointFromModule(moduleFile: string, exportedName: string): Endpoint | undefined {
-  const source = readFileSync(moduleFile, "utf8");
+function exportedDeclaration(source: string, exportedName: string): string {
   const escapedName = exportedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const functionBody = new RegExp(`export\\s+(?:async\\s+)?function\\s+${escapedName}\\s*\\([^)]*\\)\\s*\\{([\\s\\S]*?)(?:\\n\\}|$)`).exec(source)?.[1];
-  const arrowExpression = new RegExp(`export\\s+const\\s+${escapedName}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>\\s*([^;\\n]+)`).exec(source)?.[1]
-    ?? new RegExp(`export\\s+const\\s+${escapedName}\\s*=\\s*(?:async\\s*)?[A-Za-z_$][\\w$]*\\s*=>\\s*([^;\\n]+)`).exec(source)?.[1];
-  const declaration = functionBody ?? arrowExpression ?? "";
+  if (functionBody) return functionBody;
+  const declaration = new RegExp(`export\\s+const\\s+${escapedName}(?:\\s*:[^=;]+)?\\s*=`).exec(source);
+  if (!declaration || declaration.index === undefined) return "";
+  const start = declaration.index + declaration[0].length;
+  let braces = 0, brackets = 0, parens = 0;
+  let quote: string | null = null;
+  let escaped = false;
+  for (let index = start; index < source.length; index += 1) {
+    const character = source[index];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) quote = null;
+      continue;
+    }
+    if (character === "'" || character === '"' || character === "`") { quote = character; continue; }
+    if (character === "{") braces += 1;
+    else if (character === "}") braces -= 1;
+    else if (character === "[") brackets += 1;
+    else if (character === "]") brackets -= 1;
+    else if (character === "(") parens += 1;
+    else if (character === ")") parens -= 1;
+    else if (character === ";" && braces === 0 && brackets === 0 && parens === 0) return source.slice(start, index);
+  }
+  return source.slice(start);
+}
+
+function staticStringBindings(source: string): Map<string, string> {
+  const values = new Map<string, string>();
+  for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*['"]([^'"]+)['"]/g)) values.set(match[1], match[2]);
+  for (const match of source.matchAll(/\b(?:const\s+)?enum\s+([A-Za-z_$][\w$]*)\s*\{([\s\S]*?)\}/g)) {
+    for (const member of match[2].matchAll(/\b([A-Za-z_$][\w$]*)\s*=\s*['"]([^'"]+)['"]/g)) values.set(`${match[1]}.${member[1]}`, member[2]);
+  }
+  for (const match of source.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*\{([\s\S]*?)\}\s*(?:as\s+const)?/g)) {
+    for (const member of match[2].matchAll(/\b([A-Za-z_$][\w$]*)\s*:\s*['"]([^'"]+)['"]/g)) values.set(`${match[1]}.${member[1]}`, member[2]);
+  }
+  return values;
+}
+
+function staticStringValue(source: string, expression: string): string | undefined {
+  const normalized = expression.trim().replace(/\s+as\s+const$/, "");
+  const literal = /^['"]([^'"]+)['"]$/.exec(normalized);
+  if (literal) return literal[1];
+  return staticStringBindings(source).get(normalized);
+}
+
+function endpointFromModule(moduleFile: string, exportedName: string): Endpoint | undefined {
+  const source = readFileSync(moduleFile, "utf8");
+  const declaration = exportedDeclaration(source, exportedName);
   if (!declaration) return undefined;
 
-  // Axios-style clients (`request.get/post/...`) are normalized into the same
-  // endpoint shape as the older request({ url, method }) convention.
-  const methodCall = declaration.match(/\b[A-Za-z_$][\w$]*\.(get|post|put|delete|patch)\s*\(\s*(['"`])([^'"`]+)\2/i);
-  if (methodCall) return { exportedName, method: methodCall[1].toUpperCase(), path: methodCall[3], moduleFile };
+  // Axios-style clients and typed wrappers such as
+  // `client.post<Result, Params>({ url: Api.LIST })` share one endpoint shape.
+  const methodCall = /\b[A-Za-z_$][\w$]*\.(get|post|put|delete|patch)\s*(?:<[\s\S]{0,800}?>\s*)?\(/i.exec(declaration);
+  if (methodCall && methodCall.index !== undefined) {
+    const argumentsSource = declaration.slice(methodCall.index + methodCall[0].length);
+    const directPath = /^\s*(['"])([^'"]+)\1/.exec(argumentsSource)?.[2];
+    if (directPath) return { exportedName, method: methodCall[1].toUpperCase(), path: directPath, moduleFile };
+    const urlExpression = /\burl\s*:\s*([^,}\n]+)/.exec(argumentsSource)?.[1];
+    const path = urlExpression ? staticStringValue(source, urlExpression) : undefined;
+    if (path) return { exportedName, method: methodCall[1].toUpperCase(), path, moduleFile };
+  }
 
-  const path = declaration.match(/\burl\s*:\s*['"]([^'"]+)['"]/)?.[1];
+  const urlExpression = /\burl\s*:\s*([^,}\n]+)/.exec(declaration)?.[1];
+  const path = urlExpression ? staticStringValue(source, urlExpression) : undefined;
   if (!path) return undefined;
   const method = declaration.match(/\bmethod\s*:\s*['"]([^'"]+)['"]/)?.[1] ?? "get";
   return { exportedName, method: method.toUpperCase(), path, moduleFile };
 }
+
 function environmentAssignments(sourceRoot: string): EnvironmentAssignment[] {
   const assignments: EnvironmentAssignment[] = [];
   for (const entry of readdirSync(sourceRoot, { withFileTypes: true })) {
@@ -455,16 +556,46 @@ function functionDeclarations(program: AnyNode): Map<string, AnyNode> {
   return output;
 }
 
-function parseConfigProgram(source: string): { program?: AnyNode; diagnostics: string[] } {
+function eraseTypeScriptSyntaxForProxyAst(source: string): string {
+  return source
+    .replace(/\bimport\s+type\s+[^;\n]+;?/g, "")
+    .replace(/\bexport\s+type\s+[^{=;]+(?:=[^;]+;|;)/g, "")
+    .replace(/\s+as\s+(?:const|[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*[A-Za-z_$][\w$]*)*)/g, "")
+    .replace(/([\w$)'\"]|\))\s*:\s*(?:[A-Z][A-Za-z0-9_$]*|string|number|boolean|unknown|any|void|never|Record|Partial|Pick|Readonly|Array)(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:[A-Z][A-Za-z0-9_$]*|string|number|boolean|unknown|any|void|never))*(?=\s*(?:=(?!>)|[;,)}{]))/g, "$1")
+    .replace(/(\))\s*:\s*(?:[A-Z][A-Za-z0-9_$]*|string|number|boolean|unknown|any|void|never|Record|Partial|Pick|Readonly|Array)(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:[A-Z][A-Za-z0-9_$]*|string|number|boolean|unknown|any|void|never))*\s*=>/g, "$1 =>")
+    .replace(/\s+satisfies\s+[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?/g, "");
+}
+
+function parseConfigProgram(source: string): { program?: AnyNode; source: string; diagnostics: string[] } {
   try {
-    return { program: parse(source, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as AnyNode, diagnostics: [] };
+    return { program: parse(source, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as AnyNode, source, diagnostics: [] };
   } catch (moduleError) {
     try {
-      return { program: parse(source, { ecmaVersion: "latest", sourceType: "script", allowHashBang: true }) as AnyNode, diagnostics: [] };
+      return { program: parse(source, { ecmaVersion: "latest", sourceType: "script", allowHashBang: true }) as AnyNode, source, diagnostics: [] };
     } catch (scriptError) {
       const moduleMessage = moduleError instanceof Error ? moduleError.message : String(moduleError);
       const scriptMessage = scriptError instanceof Error ? scriptError.message : String(scriptError);
-      return { diagnostics: [`Acorn module parse failed: ${moduleMessage}`, `Acorn script parse failed: ${scriptMessage}`] };
+      const erased = eraseTypeScriptSyntaxForProxyAst(source);
+      try {
+        return {
+          program: parse(erased, { ecmaVersion: "latest", sourceType: "module", allowHashBang: true }) as AnyNode,
+          source: erased,
+          diagnostics: [
+            `Acorn module parse failed: ${moduleMessage}`,
+            `Acorn script parse failed: ${scriptMessage}`,
+            "TypeScript syntax was erased for auditable proxy AST fallback",
+          ],
+        };
+      } catch (transpileError) {
+        return {
+          source,
+          diagnostics: [
+            `Acorn module parse failed: ${moduleMessage}`,
+            `Acorn script parse failed: ${scriptMessage}`,
+            `TypeScript transpile fallback parse failed: ${transpileError instanceof Error ? transpileError.message : String(transpileError)}`,
+          ],
+        };
+      }
     }
   }
 }
@@ -530,7 +661,7 @@ function loadAstModule(file: string, sourceOverride: string | undefined, cache: 
   }
   const context: AstModuleContext = {
     file: resolvedFile,
-    source,
+    source: parsed.source,
     program: parsed.program,
     variables: variableInitializers(parsed.program),
     functions: functionDeclarations(parsed.program),
@@ -538,6 +669,7 @@ function loadAstModule(file: string, sourceOverride: string | undefined, cache: 
     exports: new Map(),
   };
   cache.set(resolvedFile, context);
+  diagnostics.push(...parsed.diagnostics.map((message) => `${resolvedFile}: ${message}`));
   collectModuleBindings(context);
   return context;
 }
@@ -706,6 +838,16 @@ function entriesFromProxyExpression(ref: AstExpressionRef, cache: Map<string, As
   });
 }
 
+function entriesFromServerExpression(ref: AstExpressionRef, cache: Map<string, AstModuleContext>, diagnostics: string[]): ScopedProxyEntry[] {
+  return expressionAlternatives(ref, cache, diagnostics, 0).flatMap((resolved) => {
+    if (resolved.node.type !== "ObjectExpression") return [];
+    const proxy = memberInitializer(objectMember(resolved.node, "proxy", resolved.module.source));
+    return proxy
+      ? entriesFromProxyExpression({ node: proxy, module: resolved.module }, cache, diagnostics)
+      : [];
+  });
+}
+
 function scopedProxyEntries(configFile: string, source: string): ProxyScopeParseResult {
   const diagnostics: string[] = [];
   const cache = new Map<string, AstModuleContext>();
@@ -715,15 +857,25 @@ function scopedProxyEntries(configFile: string, source: string): ProxyScopeParse
   simple(root.program, {
     Property(node: AnyNode) {
       const property = node as any;
-      if (propertyName(property.key as AnyNode, root.source) === "proxy" && property.value) {
+      const key = propertyName(property.key as AnyNode, root.source);
+      if (key === "proxy" && property.value) {
         entries.push(...entriesFromProxyExpression({ node: property.value as AnyNode, module: root }, cache, diagnostics));
+      }
+      if (key === "server" && property.value) {
+        entries.push(...entriesFromServerExpression({ node: property.value as AnyNode, module: root }, cache, diagnostics));
       }
     },
   });
-  if (!entries.length && /\bproxy\s*:/.test(source)) {
+  const uniqueEntries = entries.filter((entry, index, values) => values.findIndex((candidate) =>
+    candidate.sourceFile === entry.sourceFile
+      && candidate.source === entry.source
+      && JSON.stringify(candidate.contextCandidates) === JSON.stringify(entry.contextCandidates)
+      && JSON.stringify(candidate.contextExpressions) === JSON.stringify(entry.contextExpressions)
+  ) === index);
+  if (!uniqueEntries.length && /\bproxy\s*:/.test(source)) {
     return { entries: [], diagnostics: [...diagnostics, "AST parsed the config but did not recognize a supported proxy object, array, spread, import, or factory shape"], fallbackRequired: true };
   }
-  return { entries, diagnostics, fallbackRequired: false };
+  return { entries: uniqueEntries, diagnostics, fallbackRequired: false };
 }
 
 
@@ -899,7 +1051,7 @@ function proxyRouteEvidence(sourceRoot: string, endpointPath: string, request: R
   const output: TransportProxyRouteEvidence[] = [];
   for (const configFile of proxyConfigCandidates(sourceRoot)) {
     const source = readFileSync(configFile, "utf8");
-    if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:\s*[\[{])/.test(source)) continue;
+    if (!/\b(?:devServer|server|proxy)\s*:/.test(source)) continue;
     const parsed = scopedProxyEntries(configFile, source);
     if (parsed.fallbackRequired) {
       const fallback = fallbackProxyEntry(source); fallback.sourceFile = configFile; fallback.sourceFiles = [configFile];
@@ -947,7 +1099,7 @@ export function analyzeTransportProxyResponsibilities(sourceRoot: string): Trans
   const configs = proxyConfigCandidates(root);
   for (const configFile of configs) {
     const source = readFileSync(configFile, "utf8");
-    if (!/\b(?:devServer\s*:\s*\{|server\s*:\s*\{|proxy\s*:)/.test(source)) continue;
+    if (!/\b(?:devServer|server|proxy)\s*:/.test(source)) continue;
     const parsed = scopedProxyEntries(configFile, source);
     for (const message of parsed.diagnostics) diagnostics.push({ source: relative(root, configFile).replaceAll("\\", "/"), message });
     const entries = parsed.fallbackRequired ? [(() => { const fallback = fallbackProxyEntry(source); fallback.sourceFile = configFile; fallback.sourceFiles = [configFile]; return fallback; })()] : parsed.entries;
@@ -1012,8 +1164,16 @@ function consumptionFor(script: string, localName: string): Consumption | undefi
   const responseName = awaited[1];
   const suffix = script.slice((awaited.index ?? 0) + awaited[0].length);
   const assignment = new RegExp(`([A-Za-z_$][\\w$]*)\\.value\\s*=\\s*${responseName}(?:\\.([A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*))?(?:\\s*\\|\\|\\s*\\[\\])?(?:\\.slice\\(\\s*0\\s*,\\s*(\\d+)\\s*\\))?`).exec(suffix);
-  if (!assignment) return undefined;
-  return { targetBinding: assignment[1], responsePath: assignment[2] ?? "", sliceLimit: assignment[3] ? Number(assignment[3]) : undefined };
+  if (assignment) return { targetBinding: assignment[1], responsePath: assignment[2] ?? "", sliceLimit: assignment[3] ? Number(assignment[3]) : undefined };
+  const plainAssignment = new RegExp(`(?:^|[;{])\\s*([A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*)\\s*=\\s*${responseName}((?:\\.[A-Za-z_$][\\w$]*)+)`).exec(suffix);
+  if (plainAssignment) return { targetBinding: plainAssignment[1], responsePath: plainAssignment[2].slice(1) };
+
+  // A response can be consumed by a state/action method rather than assigned
+  // directly, e.g. `store.setUserInfo(response.data)`. Keep this as explicit
+  // structural evidence; do not infer ownership from the method name.
+  const consumedByCall = new RegExp(`(?<![A-Za-z0-9_$])(?!if\\b|for\\b|while\\b|switch\\b|catch\\b)([A-Za-z_$][\\w$]*(?:\\([^)]*\\))?(?:\\.[A-Za-z_$][\\w$]*(?:\\([^)]*\\))?)*)\\s*\\([^;{}]{0,480}?${responseName}((?:\\.[A-Za-z_$][\\w$]*)+)[^;{}]{0,480}?\\)`).exec(suffix);
+  if (consumedByCall) return { targetBinding: consumedByCall[1], responsePath: consumedByCall[2].slice(1) };
+  return undefined;
 }
 function valueAtPath(value: JsonValue, path: string): JsonValue | undefined {
   let current: JsonValue | undefined = value;
@@ -1070,6 +1230,82 @@ function filterValueMaps(script: string, fields: ApiFixtureRenderedField[]): Rec
   return output;
 }
 
+function listProjectSourceFiles(root: string): string[] {
+  const files: string[] = [];
+  const visit = (directory: string): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "dist") continue;
+      const absolute = join(directory, entry.name);
+      if (entry.isDirectory()) visit(absolute);
+      else if (/\.(?:js|mjs|cjs|ts|tsx|vue)$/.test(entry.name)) files.push(absolute);
+    }
+  };
+  visit(root);
+  return files.sort();
+}
+
+function isFrameworkImport(source: string): boolean {
+  return /^(?:vue|vue-router|pinia|@vue(?:use)?(?:\/|$)|element-plus(?:\/|$)|@element-plus(?:\/|$))/.test(source);
+}
+
+function hasTransportEvidence(source: string): boolean {
+  return /\.(?:get|post|put|delete|patch)\s*(?:<[^>]+>)?\s*\(/.test(source) || /\b(?:url|baseURL)\s*:/.test(source);
+}
+
+function classifyApiCandidate(imported: ImportedApi, moduleFile: string | undefined, endpoint: Endpoint | undefined): ApiCandidateKind {
+  if (endpoint) return "actual-api-wrapper";
+  if (isFrameworkImport(imported.source)) return "framework-composable";
+  if (!moduleFile) return imported.source.startsWith(".") || imported.source.startsWith("@/") ? "unresolved-local-transport" : "utility-function";
+  const normalized = moduleFile.replaceAll("\\", "/");
+  const source = readFileSync(moduleFile, "utf8");
+  if (/(?:^|\/)store(?:s)?\//.test(normalized) || /\bdefineStore\s*\(/.test(source)) return "local-state-store-helper";
+  if (hasTransportEvidence(source) || /(?:^|\/)(?:api|server|service|request)(?:\/|\.)/.test(normalized)) return "unresolved-local-transport";
+  return "utility-function";
+}
+
+function responseFlowFor(sourceRoot: string, absoluteFile: string): ApiResponseFlowEvidence[] {
+  const source = readFileSync(absoluteFile, "utf8");
+  const relativeFile = relative(sourceRoot, absoluteFile).replaceAll("\\", "/");
+  const flows: ApiResponseFlowEvidence[] = [];
+  for (const imported of importedApis(source)) {
+    if (!new RegExp(`\\b${imported.localName}\\s*\\(`).test(source)) continue;
+    const moduleFile = moduleCandidates(sourceRoot, relativeFile, imported.source).find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
+    if (!moduleFile) continue;
+    const endpoint = endpointFromModule(moduleFile, imported.exportedName);
+    if (!endpoint) continue;
+    const consumption = consumptionFor(source, imported.localName);
+    if (!consumption) continue;
+    const routeMutationEvidence: string[] = [];
+    const routeMutations: Array<"addRoute" | "addRoutes"> = [];
+    if (/\.\s*addRoute\s*\(/.test(source)) routeMutations.push("addRoute");
+    if (/\.\s*addRoutes\s*\(/.test(source)) routeMutations.push("addRoutes");
+    if (routeMutations.length) routeMutationEvidence.push(`Vue Router ${routeMutations.join("/")} call in the same consumer module`);
+    if (/(?:^|\/)router(?:\/|\.)/.test(relativeFile) && routeMutationEvidence.length) routeMutationEvidence.push("consumer belongs to a router module and consumes the API response");
+    const flowKind: ApiResponseFlowEvidence["flowKind"] = routeMutationEvidence.length ? "dynamic-route-injection" : "generic-consumer";
+    flows.push({
+      id: `api-flow:${relativeFile}:${imported.localName}`,
+      apiLocalName: imported.localName,
+      exportedName: imported.exportedName,
+      importSource: imported.source,
+      apiModuleFile: relative(sourceRoot, moduleFile).replaceAll("\\", "/"),
+      endpoint: { method: endpoint.method, path: endpoint.path },
+      consumerFile: relativeFile,
+      responseSymbol: source.match(new RegExp(`(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=\\s*await\\s+${imported.localName}\\s*\\(`))?.[1] ?? "",
+      responsePath: consumption.responsePath,
+      targetBinding: consumption.targetBinding,
+      flowKind,
+      routeMutationEvidence,
+      routeMutations,
+      confidence: routeMutationEvidence.length ? "high" : "medium",
+      reviewReasons: [
+        "endpoint and response consumer are linked by local import and await usage",
+        ...(routeMutationEvidence.length ? ["dynamic route mutation remains review evidence and does not authorize source runtime copying"] : []),
+      ],
+    });
+  }
+  return flows;
+}
+
 function hashFixture(body: JsonValue): string { return createHash("sha256").update(JSON.stringify(body)).digest("hex"); }
 
 export function analyzeApiFixtureResponsibilities(
@@ -1081,6 +1317,7 @@ export function analyzeApiFixtureResponsibilities(
   const unresolved: ApiFixtureResponsibilityGraph["unresolved"] = [];
   let importedApiCalls = 0;
   let matchedEndpoints = 0;
+  const candidates: ApiCandidateEvidence[] = [];
   for (const component of components) {
     const absolute = join(sourceRoot, component.file);
     if (!existsSync(absolute)) continue;
@@ -1089,9 +1326,30 @@ export function analyzeApiFixtureResponsibilities(
       if (!new RegExp(`\\b${imported.localName}\\s*\\(`).test(parsed.script)) continue;
       importedApiCalls += 1;
       const moduleFile = moduleCandidates(sourceRoot, component.file, imported.source).find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
-      if (!moduleFile) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "imported API module could not be resolved" }); continue; }
-      const endpoint = endpointFromModule(moduleFile, imported.exportedName);
-      if (!endpoint) { unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "request endpoint could not be statically extracted" }); continue; }
+      const endpoint = moduleFile ? endpointFromModule(moduleFile, imported.exportedName) : undefined;
+      const candidateKind = classifyApiCandidate(imported, moduleFile, endpoint);
+      candidates.push({
+        componentId: component.id,
+        componentFile: component.file,
+        localName: imported.localName,
+        exportedName: imported.exportedName,
+        importSource: imported.source,
+        kind: candidateKind,
+        ...(moduleFile ? { moduleFile: relative(sourceRoot, moduleFile).replaceAll("\\", "/") } : {}),
+        ...(endpoint ? { endpoint: { method: endpoint.method, path: endpoint.path } } : {}),
+        evidence: [
+          `imported function ${imported.localName} is invoked in the consumer module`,
+          `candidate classified as ${candidateKind} from import/module/endpoint evidence`,
+        ],
+      });
+      if (!moduleFile) {
+        if (candidateKind === "unresolved-local-transport") unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "imported local API module could not be resolved" });
+        continue;
+      }
+      if (!endpoint) {
+        if (candidateKind === "unresolved-local-transport") unresolved.push({ componentId: component.id, apiLocalName: imported.localName, reason: "local transport module was found but request endpoint could not be statically extracted" });
+        continue;
+      }
       matchedEndpoints += 1;
       const transport = requestClientEvidence(sourceRoot, moduleFile, imported.exportedName);
       const transportPrefixes = transport.prefixes;
@@ -1125,11 +1383,22 @@ export function analyzeApiFixtureResponsibilities(
       });
     }
   }
+  const responseFlows = listProjectSourceFiles(sourceRoot).flatMap((file) => responseFlowFor(sourceRoot, file));
   return {
     schemaVersion: "1.0", kind: "api-fixture-responsibility-graph", reviewRequired: true, sourceRoot,
-    responsibilities, unresolved,
+    responsibilities, candidates, responseFlows, unresolved,
     metrics: {
-      componentsScanned: components.length, importedApiCalls, matchedEndpoints,
+      componentsScanned: components.length,
+      importedApiCalls,
+      apiCandidates: candidates.length,
+      actualApiWrappers: candidates.filter((item) => item.kind === "actual-api-wrapper").length,
+      frameworkComposables: candidates.filter((item) => item.kind === "framework-composable").length,
+      localStateStoreHelpers: candidates.filter((item) => item.kind === "local-state-store-helper").length,
+      utilityFunctions: candidates.filter((item) => item.kind === "utility-function").length,
+      unresolvedLocalTransports: candidates.filter((item) => item.kind === "unresolved-local-transport").length,
+      responseFlows: responseFlows.length,
+      dynamicRouteFlows: responseFlows.filter((item) => item.flowKind === "dynamic-route-injection").length,
+      matchedEndpoints,
       matchedFixtures: responsibilities.length, materializedBindings: responsibilities.length,
       renderedFields: responsibilities.reduce((sum, item) => sum + item.renderedFields.length, 0),
       transportPrefixesInferred: responsibilities.reduce((sum, item) => sum + item.apiCall.transportPrefixes.length, 0),
@@ -1143,6 +1412,8 @@ export function analyzeApiFixtureResponsibilities(
     },
     reviewReasons: [
       "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
+      "API candidates are classified by framework/package, local module, transport, endpoint and store evidence instead of variable-name allowlists",
+      "response flows are reported independently from reviewed fixture materialization so route/store consumers remain auditable when fixtures are incomplete",
       "unresolved calls remain explicit and are never replaced with guessed data",
       "transport prefixes are inferred only from the imported request client and concrete environment assignments",
       "dev-server proxy targets and path rewrites are retained as auditable transport evidence and never treated as browser request paths",

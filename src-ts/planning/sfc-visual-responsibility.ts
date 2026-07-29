@@ -7,6 +7,16 @@ import { analyzeDataCardinality, type DataCardinalityResponsibility } from "./da
 import type { ApiFixtureResponsibilityGraph } from "./api-fixture-responsibility.js";
 import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "./sfc-state-responsibility.js";
 
+export type SfcStyleFailureReason =
+  | "syntax-parse-failure"
+  | "unresolved-variable"
+  | "unsupported-mixin"
+  | "nested-selector-expansion-failure"
+  | "external-import-failure"
+  | "framework-generated-selector"
+  | "compiler-unavailable"
+  | "unknown";
+
 export interface SfcStyleResponsibility {
   index: number;
   language: string;
@@ -17,6 +27,7 @@ export interface SfcStyleResponsibility {
   customProperties: string[];
   compiledCss?: string;
   compileStatus: "compiled" | "raw-css" | "failed";
+  failureReason?: SfcStyleFailureReason;
 }
 
 export interface SfcVisualResourceEvidence {
@@ -78,6 +89,7 @@ export interface SfcVisualResponsibilityGraph {
     frameDrivenComponents: number;
     compiledStyleSheets: number;
     failedStyleSheets: number;
+    styleFailureReasons: Record<SfcStyleFailureReason, number>;
     staticDataBindings: number;
     dataCardinalities: number;
     stateInitialBindings: number;
@@ -181,6 +193,17 @@ function importResponsibilities(script: string): Array<{ local: string; source: 
 
 interface SassCompiler { compileString?: (source: string, options: Record<string, unknown>) => { css: string }; renderSync?: (options: Record<string, unknown>) => { css: Uint8Array | string } }
 const sassCompilerByRoot = new Map<string, SassCompiler | null>();
+
+function classifyStyleFailure(source: string, errorMessage = ""): SfcStyleFailureReason {
+  const message = errorMessage.toLowerCase();
+  if (/undefined variable|variable.+not found|unknown variable/.test(message)) return "unresolved-variable";
+  if (/mixin|include/.test(message) || /@mixin|@include/.test(source)) return "unsupported-mixin";
+  if (/\b(?:@use|@forward|@import)\b/.test(source) && /import|module|load|stylesheet|cannot find/.test(message)) return "external-import-failure";
+  if (/[&]|:deep|::v-deep|:global/.test(source) && /selector|nest|parent/.test(message)) return "nested-selector-expansion-failure";
+  if (/(?:\.el-|element-plus|:deep|::v-deep)/.test(source)) return "framework-generated-selector";
+  if (message) return "syntax-parse-failure";
+  return "unknown";
+}
 function sassCompiler(root: string): SassCompiler | null {
   if (sassCompilerByRoot.has(root)) return sassCompilerByRoot.get(root) ?? null;
   try {
@@ -188,10 +211,10 @@ function sassCompiler(root: string): SassCompiler | null {
     sassCompilerByRoot.set(root, loaded); return loaded;
   } catch { sassCompilerByRoot.set(root, null); return null; }
 }
-function compileVisualStyle(root: string, absolutePath: string, language: string, source: string): { compiledCss?: string; compileStatus: SfcStyleResponsibility["compileStatus"] } {
+function compileVisualStyle(root: string, absolutePath: string, language: string, source: string): { compiledCss?: string; compileStatus: SfcStyleResponsibility["compileStatus"]; failureReason?: SfcStyleFailureReason } {
   if (language === "css") return { compiledCss: source.trim(), compileStatus: "raw-css" };
-  if (!["scss", "sass"].includes(language)) return { compileStatus: "failed" };
-  const compiler = sassCompiler(root); if (!compiler) return { compileStatus: "failed" };
+  if (!["scss", "sass"].includes(language)) return { compileStatus: "failed", failureReason: "syntax-parse-failure" };
+  const compiler = sassCompiler(root); if (!compiler) return { compileStatus: "failed", failureReason: "compiler-unavailable" };
   try {
     const includePaths = [dirname(absolutePath), join(root, "src"), join(root, "src", "styles")];
     if (compiler.compileString) {
@@ -202,8 +225,8 @@ function compileVisualStyle(root: string, absolutePath: string, language: string
       const result = compiler.renderSync({ data: source, outputStyle: "compressed", includePaths, indentedSyntax: language === "sass", file: absolutePath });
       return { compiledCss: Buffer.from(result.css).toString("utf8").trim(), compileStatus: "compiled" };
     }
-    return { compileStatus: "failed" };
-  } catch { return { compileStatus: "failed" }; }
+    return { compileStatus: "failed", failureReason: "unknown" };
+  } catch (error) { return { compileStatus: "failed", failureReason: classifyStyleFailure(source, error instanceof Error ? error.message : String(error)) }; }
 }
 
 function svgIconCandidates(attributes: Record<string, string | true>): string[] {
@@ -329,6 +352,10 @@ export function analyzeSfcVisualResponsibilities(sourceRoot: string): SfcVisualR
       frameDrivenComponents: components.filter((item) => item.visualResourceEvidence.some((evidence) => evidence.kind === "request-animation-frame")).length,
       compiledStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus !== "failed").length, 0),
       failedStyleSheets: components.reduce((sum, item) => sum + item.styles.filter((style) => style.compileStatus === "failed").length, 0),
+      styleFailureReasons: Object.fromEntries(([
+        "syntax-parse-failure", "unresolved-variable", "unsupported-mixin", "nested-selector-expansion-failure",
+        "external-import-failure", "framework-generated-selector", "compiler-unavailable", "unknown",
+      ] as SfcStyleFailureReason[]).map((reason) => [reason, components.reduce((count, item) => count + item.styles.filter((style) => style.failureReason === reason).length, 0)])) as Record<SfcStyleFailureReason, number>,
       staticDataBindings: components.reduce((sum, item) => sum + Object.keys(item.dataCardinality.staticBindings).length, 0),
       dataCardinalities: components.reduce((sum, item) => sum + item.dataCardinality.cardinalities.length, 0),
       stateInitialBindings: components.reduce((sum, item) => sum + item.stateResponsibility.metrics.initialBindings, 0),

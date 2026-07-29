@@ -23,6 +23,7 @@ import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visu
 import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
 import { generateGeneratedTargetAutoV2 } from "./planning/generated-target-auto-v2.js";
 import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "./planning/api-fixture-responsibility.js";
+import { linkApiRouteOwnership } from "./planning/api-route-ownership.js";
 import { analyzeSpaAuthResponsibilities } from "./planning/spa-auth-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
@@ -167,6 +168,20 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  files=${graph.metrics.filesScanned}，routes=${graph.metrics.routeBindings}，resolved=${graph.metrics.resolvedRoutes}，dynamic=${graph.metrics.dynamicImports}，unresolved=${graph.metrics.unresolvedRoutes}，reviewRequired=${graph.reviewRequired}`);
       return graph.metrics.unresolvedRoutes > 0 ? 1 : 0;
     }
+    if (command === "spa-api-route-link") {
+      const sourceRoot = args[0], fixtureConfigPath = flag(args, "--fixture-config"), out = flag(args, "--out");
+      if (!sourceRoot || !fixtureConfigPath || !out) throw new Error("spa-api-route-link 需要 <source-root>、--fixture-config 和 --out");
+      const absoluteSourceRoot = resolve(sourceRoot);
+      const config = JSON.parse(await readFile(resolve(fixtureConfigPath), "utf8")) as SpaRouterContractConfig;
+      const sfc = analyzeSfcVisualResponsibilities(absoluteSourceRoot);
+      const api = analyzeApiFixtureResponsibilities(absoluteSourceRoot, config, sfc.components);
+      const router = analyzeRouterToSfcResponsibilities(absoluteSourceRoot);
+      const graph = linkApiRouteOwnership(api, router, config);
+      await writeFile(resolve(out), `${JSON.stringify({ ...graph, sourceRoot: "<external-source>" }, null, 2)}\n`, "utf8");
+      console.log(`✓ 已生成 API route ownership graph: ${resolve(out)}`);
+      console.log(`  flows=${graph.metrics.dynamicRouteFlows}，links=${graph.metrics.routeLinks}，matchedRecords=${graph.metrics.matchedRouteRecords}，unresolved=${graph.metrics.unresolvedFlows}，reviewRequired=${graph.reviewRequired}`);
+      return 0;
+    }
     if (command === "spa-vue-router-patch") {
       const sourceRoot = args[0], sourcePath = flag(args, "--source"), outDir = flag(args, "--out-dir");
       if (!sourceRoot || !sourcePath || !outDir) throw new Error("spa-vue-router-patch 需要 <source-root>、--source 和 --out-dir");
@@ -214,7 +229,7 @@ async function main(argv: string[]): Promise<number> {
       };
       await writeFile(resolve(out), `${JSON.stringify(serializable, null, 2)}\n`, "utf8");
       console.log(`✓ 已生成 SFC visual responsibility graph: ${resolve(out)}`);
-      console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，apiFixtures=${graph.apiFixtures?.metrics.matchedFixtures ?? 0}，stateHandlers=${graph.metrics.stateHandlers}，stateWrites=${graph.metrics.stateWrites}，displayFunctions=${graph.metrics.displayFunctions}，unresolvedStateWrites=${graph.metrics.unresolvedStateWrites}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
+      console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，apiWrappers=${graph.apiFixtures?.metrics.actualApiWrappers ?? 0}，apiFixtures=${graph.apiFixtures?.metrics.matchedFixtures ?? 0}，apiFlows=${graph.apiFixtures?.metrics.responseFlows ?? 0}，dynamicRouteFlows=${graph.apiFixtures?.metrics.dynamicRouteFlows ?? 0}，stateHandlers=${graph.metrics.stateHandlers}，stateWrites=${graph.metrics.stateWrites}，displayFunctions=${graph.metrics.displayFunctions}，unresolvedStateWrites=${graph.metrics.unresolvedStateWrites}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
       for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
       return graph.blockers.length > 0 ? 1 : 0;
     }

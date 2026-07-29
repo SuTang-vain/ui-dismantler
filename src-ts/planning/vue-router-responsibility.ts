@@ -53,7 +53,7 @@ export interface VueRouterResponsibilityGraph {
     view: "vue";
     router: "vue-router";
     routerMajor: 2 | 3 | 4;
-    state: "vuex" | "unknown";
+    state: "vuex" | "pinia" | "unknown";
   };
   files: string[];
   routes: VueRouterRouteSummary[];
@@ -169,10 +169,13 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
     lines: [],
   }));
   const responsibilities: VueRouterResponsibility[] = [];
-  const routerFiles = files.filter((file) => /(^|\/)router(?:\/|\.js$)/.test(file.relativePath));
-  const routerIndex = files.find((file) => file.relativePath === "router/index.js");
-  const permission = files.find((file) => file.relativePath === "permission.js");
-  const storePermission = files.find((file) => file.relativePath === "store/modules/permission.js");
+  const routerFiles = files.filter((file) => /(^|\/)router(?:\/|\.(?:js|ts|mjs|cjs|jsx|tsx)$)/.test(file.relativePath));
+  const routerIndex = files.find((file) => /(^|\/)router\/index\.(?:js|ts|mjs|cjs|jsx|tsx)$/.test(file.relativePath));
+  const guardFiles = files.filter((file) => /\brouter\.(?:beforeEach|afterEach)\s*\(/.test(stripComments(file.source)));
+  const storePermissionFiles = files.filter((file) =>
+    /(^|\/)store(?:s)?\//.test(file.relativePath)
+    && /(?:permission|role|access|route)/i.test(file.relativePath)
+  );
   for (const file of files) file.lines = file.source.split("\n");
   const routes = routeSummaries(files);
   const all = files.map((file) => file.source).join("\n");
@@ -185,11 +188,11 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
     ...findEvidence(file, /new\s+Router\s*\(/g, "Vue Router 2/3 instance construction"),
     ...findEvidence(file, /\bcreateRouter\s*\(/g, "Vue Router 4 instance construction"),
   ]));
-  addResponsibility(responsibilities, "route-table", "route-table", "high", routerIndex ? [
-    ...findEvidence(routerIndex, /export\s+const\s+constantRoutes\s*=\s*\[/g, "constant route table"),
-    ...findEvidence(routerIndex, /export\s+const\s+asyncRoutes\s*=\s*\[/g, "role-aware asynchronous route table"),
-    ...findEvidence(routerIndex, /(?:export\s+)?const\s+routes\s*=\s*\[/g, "Vue Router route table"),
-  ] : []);
+  addResponsibility(responsibilities, "route-table", "route-table", "high", routerFiles.flatMap((file) => [
+    ...findEvidence(file, /export\s+const\s+constantRoutes\s*=\s*\[/g, "constant route table"),
+    ...findEvidence(file, /export\s+const\s+asyncRoutes\s*=\s*\[/g, "role-aware asynchronous route table"),
+    ...findEvidence(file, /(?:export\s+)?const\s+routes\s*=\s*\[/g, "Vue Router route table"),
+  ]));
   addResponsibility(responsibilities, "route-module", "route-table", "high", files.filter((file) => file.relativePath.includes("router/modules/")).map((file) => evidence(file, file.relativePath, "modular route table source")));
   addResponsibility(responsibilities, "dynamic-route-import", "route-table", "high", routerFiles.flatMap((file) => findEvidence(file, /component\s*:\s*\(\)\s*=>\s*import\s*\(/g, "lazy route component import")));
   addResponsibility(responsibilities, "history-mode", "router", "high", routerIndex && explicitHistoryMode
@@ -198,34 +201,39 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
       ...findEvidence({ ...routerIndex, source: activeRouterSource }, /\bcreateWebHistory\s*\(/g, "Vue Router 4 HTML5 history factory"),
     ]
     : []);
-  addResponsibility(responsibilities, "guard-before-each", "guard", "high", [
-    ...(routerIndex ? findEvidence(routerIndex, /router\.beforeEach\s*\(/g, "router guard registration") : []),
-    ...(permission ? findEvidence(permission, /router\.beforeEach\s*\(/g, "global authentication and permission guard") : []),
-  ]);
-  addResponsibility(responsibilities, "guard-after-each", "guard", "high", [
-    ...(routerIndex ? findEvidence(routerIndex, /router\.afterEach\s*\(/g, "router after-hook registration") : []),
-    ...(permission ? findEvidence(permission, /router\.afterEach\s*\(/g, "progress-bar completion hook") : []),
-  ]);
-  addResponsibility(responsibilities, "guard-whitelist", "guard", "high", permission ? findEvidence(permission, /whiteList\s*=\s*\[[^\]]*\]/g, "unauthenticated route allow-list") : []);
-  addResponsibility(responsibilities, "guard-token-check", "guard", "high", permission ? findEvidence(permission, /getToken\s*\(\)/g, "authentication token check") : []);
+  addResponsibility(responsibilities, "guard-before-each", "guard", "high", guardFiles.flatMap((file) =>
+    findEvidence(file, /router\.beforeEach\s*\(/g, "global router guard registration")
+  ));
+  addResponsibility(responsibilities, "guard-after-each", "guard", "high", guardFiles.flatMap((file) =>
+    findEvidence(file, /router\.afterEach\s*\(/g, "global router after-hook registration")
+  ));
+  addResponsibility(responsibilities, "guard-whitelist", "guard", "high", guardFiles.flatMap((file) =>
+    findEvidence(file, /(?:whiteList|whiteRoutes?|publicRoutes?)\s*=\s*\[[^\]]*\]/gi, "unauthenticated route allow-list")
+  ));
+  addResponsibility(responsibilities, "guard-token-check", "guard", "high", guardFiles.flatMap((file) =>
+    findEvidence(file, /getToken\s*\(|hasToken\b|(?:userInfo|session|auth(?:entication)?)Store\.[\w$]+/gi, "authentication state check")
+  ));
   addResponsibility(responsibilities, "guard-role-resolution", "guard", "high", [
-    ...(permission ? findEvidence(permission, /getInfo|roles|hasRoles/g, "user role resolution in navigation guard") : []),
-    ...(storePermission ? findEvidence(storePermission, /roles\.includes|hasPermission/g, "role-based route filtering") : []),
+    ...guardFiles.flatMap((file) => findEvidence(file, /getInfo|roles|hasRoles|\.roles\b/g, "user role resolution in navigation guard")),
+    ...storePermissionFiles.flatMap((file) => findEvidence(file, /roles\.includes|hasPermission|filter.*Routes/gi, "role-based route filtering")),
   ]);
   addResponsibility(responsibilities, "guard-dynamic-route-injection", "guard", "high", [
-    ...(permission ? findEvidence(permission, /router\.addRoutes\s*\(/g, "dynamic accessible route injection") : []),
-    ...(storePermission ? findEvidence(storePermission, /generateRoutes\s*\(/g, "Vuex action generating accessible routes") : []),
+    ...files.flatMap((file) => findEvidence(file, /router\.addRoutes?\s*\(/g, "dynamic accessible route injection")),
+    ...storePermissionFiles.flatMap((file) => findEvidence(file, /generateRoutes\s*\(|initRoute\s*\(/g, "state-owned accessible route generation")),
   ]);
-  addResponsibility(responsibilities, "guard-redirect", "guard", "high", permission ? findEvidence(permission, /next\s*\([^\n]*(?:login|path|replace)/gi, "guard redirect via next()") : []);
+  addResponsibility(responsibilities, "guard-redirect", "guard", "high", guardFiles.flatMap((file) => [
+    ...findEvidence(file, /next\s*\([^\n]*(?:login|path|replace)/gi, "guard redirect via next()"),
+    ...findEvidence(file, /router\.(?:push|replace)\s*\([^\n]*(?:login|path|replace)/gi, "guard redirect via router navigation"),
+  ]));
   addResponsibility(responsibilities, "history-navigation", "router", "medium", files.flatMap((file) => findEvidence(file, /\$router\.(?:push|replace|go|back|forward)\s*\(|router\.(?:push|replace|go|back|forward)\s*\(/g, "imperative Vue Router navigation")));
   addResponsibility(responsibilities, "router-link-navigation", "component", "high", files.flatMap((file) => findEvidence(file, /<router-link\b|:to\s*=|\bto\s*=\s*['"]/g, "declarative router-link navigation")));
   addResponsibility(responsibilities, "router-view-rendering", "component", "high", files.flatMap((file) => findEvidence(file, /<router-view\b/g, "route view rendering outlet")));
   addResponsibility(responsibilities, "route-meta-roles", "route-table", "high", routerFiles.flatMap((file) => findEvidence(file, /roles\s*:\s*\[[^\]]+\]/g, "role metadata on route")));
   addResponsibility(responsibilities, "reset-router", "router", "high", routerIndex ? findEvidence(routerIndex, /resetRouter\s*\(|router\.matcher\s*=/g, "router matcher reset for dynamic route lifecycle") : []);
-  addResponsibility(responsibilities, "state-route-filtering", "store", "high", storePermission ? [
-    ...findEvidence(storePermission, /filterAsyncRoutes\s*\(/g, "recursive permission route filtering"),
-    ...findEvidence(storePermission, /constantRoutes\.concat\(/g, "constant and accessible route composition"),
-  ] : []);
+  addResponsibility(responsibilities, "state-route-filtering", "store", "high", storePermissionFiles.flatMap((file) => [
+    ...findEvidence(file, /filterAsyncRoutes\s*\(|filter.*Routes\s*\(/gi, "recursive permission route filtering"),
+    ...findEvidence(file, /constantRoutes\.concat\(|routeModulesList|wholeMenus/gi, "constant and accessible route composition"),
+  ]));
 
   const capabilities = {
     hashMode: explicitHashMode || (responsibilities.some((item) => item.kind === "router-construction") && !explicitHistoryMode && !vueRouter4),
@@ -241,7 +249,7 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
     resetRouter: responsibilities.some((item) => item.kind === "reset-router"),
   };
   const blockers: string[] = [];
-  if (!routerIndex) blockers.push("router/index.js was not found; route ownership cannot be proven");
+  if (!routerIndex) blockers.push("router/index.(js|ts|mjs|cjs|jsx|tsx) was not found; route ownership cannot be proven");
   if (!responsibilities.some((item) => item.kind === "guard-before-each")) blockers.push("global beforeEach guard was not found");
   if (capabilities.dynamicRouteInjection && !capabilities.roleMeta) blockers.push("dynamic route injection was found without auditable route meta roles");
   const roleProtectedRoutes = routes.filter((route) => route.roles.length > 0).length;
@@ -250,7 +258,16 @@ export function analyzeVueRouterResponsibility(sourceRoot: string): VueRouterRes
     kind: "vue-router-responsibility-graph",
     reviewRequired: true,
     sourceRoot: root,
-    framework: { view: "vue", router: "vue-router", routerMajor: vueRouter4 ? 4 : 3, state: storePermission ? "vuex" : "unknown" },
+    framework: {
+      view: "vue",
+      router: "vue-router",
+      routerMajor: vueRouter4 ? 4 : 3,
+      state: files.some((file) => /from\s*['"]pinia['"]|\bdefineStore\s*\(/.test(stripComments(file.source)))
+        ? "pinia"
+        : files.some((file) => /from\s*['"]vuex['"]|\bnew\s+Vuex\.Store\s*\(/.test(stripComments(file.source)))
+          ? "vuex"
+          : "unknown",
+    },
     files: files.map((file) => file.relativePath),
     routes,
     responsibilities,

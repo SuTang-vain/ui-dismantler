@@ -833,6 +833,50 @@ export default createRouter({history:createWebHistory('/'),routes})
   } finally { await rm(fixture, { recursive: true, force: true }); }
 });
 
+test("Router-to-SFC graph merges nested paths and preserves Layout ownership roles", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-router-sfc-nested-"));
+  try {
+    await mkdir(join(fixture, "src", "router"), { recursive: true });
+    await mkdir(join(fixture, "src", "layouts"), { recursive: true });
+    await mkdir(join(fixture, "src", "views", "admin"), { recursive: true });
+    await writeFile(join(fixture, "src", "router", "index.ts"), `import { createRouter, createWebHistory } from 'vue-router'
+import Layout from '../layouts/Layout.vue'
+const routes = [{
+  path: '/admin',
+  component: Layout,
+  children: [
+    { path: 'users', component: () => import('../views/admin/Users.vue') },
+    { path: 'group', children: [{ path: 'detail/:id', component: () => import('../views/admin/Detail.vue') }] },
+  ],
+}, { path: '/login', component: () => import('../views/Login.vue') }]
+const redirectState = { path: '/login' }
+export default createRouter({ history: createWebHistory(), routes })
+`);
+    await writeFile(join(fixture, "src", "layouts", "Layout.vue"), `<template><section><router-view /></section></template>`);
+    await writeFile(join(fixture, "src", "views", "admin", "Users.vue"), `<template><main>Users</main></template>`);
+    await writeFile(join(fixture, "src", "views", "admin", "Detail.vue"), `<template><main>Detail</main></template>`);
+    await writeFile(join(fixture, "src", "views", "Login.vue"), `<template><main>Login</main></template>`);
+    const graph = analyzeRouterToSfcResponsibilities(fixture);
+    const admin = graph.routes.find((route) => route.path === "/admin");
+    const users = graph.routes.find((route) => route.path === "/admin/users");
+    const detail = graph.routes.find((route) => route.path === "/admin/group/detail/:id");
+    assert.equal(graph.metrics.routeBindings, 5);
+    assert.equal(graph.metrics.unresolvedRoutes, 0);
+    assert.equal(admin?.routeKind, "layout-owner");
+    assert.deepEqual(admin?.ownershipRoles, ["layout-owner", "router-view-parent"]);
+    assert.equal(admin?.visualOwnerProven, true);
+    assert.deepEqual(admin?.layoutChain, ["layouts/Layout.vue"]);
+    assert.equal(users?.parentPath, "/admin");
+    assert.deepEqual(users?.layoutChain, ["layouts/Layout.vue"]);
+    assert.equal(users?.routeKind, "visual-leaf");
+    assert.equal(detail?.recordPath, "detail/:id");
+    assert.deepEqual(detail?.layoutChain, ["layouts/Layout.vue"]);
+    assert.equal(graph.routes.filter((route) => route.path === "/login").length, 1);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
 test("Router-to-SFC graph keeps unresolved route bindings reviewable instead of promoting acceptance evidence", async () => {
   const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-router-sfc-unresolved-"));
   try {
@@ -846,6 +890,25 @@ export default routes
     assert.equal(graph.unresolved[0]?.confidence, "medium");
     assert.equal(graph.unresolved[0]?.reviewReasons.some((reason) => reason.includes("acceptance selector/text")), true);
     assert.equal(graph.reviewReasons.some((reason) => reason.includes("unresolved route bindings")), true);
+  } finally { await rm(fixture, { recursive: true, force: true }); }
+});
+
+test("Router-to-SFC graph resolves local dynamic component factories without identifier whitelists", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-router-sfc-factory-"));
+  try {
+    await mkdir(join(fixture, "src", "router", "modules"), { recursive: true });
+    await mkdir(join(fixture, "src", "layouts"), { recursive: true });
+    await writeFile(join(fixture, "src", "router", "modules", "root.ts"), `const ShellBoundary = () => import('@/layouts/PageLayout.vue')
+export default [{ path: '/', component: ShellBoundary }]
+`);
+    await writeFile(join(fixture, "src", "layouts", "PageLayout.vue"), `<template><router-view /></template>`);
+    const graph = analyzeRouterToSfcResponsibilities(fixture);
+    assert.equal(graph.metrics.routeBindings, 1);
+    assert.equal(graph.metrics.resolvedRoutes, 1);
+    assert.equal(graph.metrics.dynamicImports, 1);
+    assert.equal(graph.routes[0]?.sfcFile, "layouts/PageLayout.vue");
+    assert.equal(graph.routes[0]?.importBinding, "ShellBoundary");
+    assert.equal(graph.routes[0]?.evidence.some((item) => item.detail === "local route component factory binding"), true);
   } finally { await rm(fixture, { recursive: true, force: true }); }
 });
 
@@ -884,7 +947,7 @@ test("Vue Router integration patch blocks when route ownership evidence is incom
     const patch = generateVueRouterIntegrationPatch(graph, `router.afterEach(() => {})\n`);
     assert.equal(patch.metrics.blocked, true);
     assert.ok(patch.metrics.responsibilitiesMissing.includes("router-construction"));
-    assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("router/index.js")));
+    assert.ok(patch.metrics.blockingReasons.some((reason) => reason.includes("router/index.")));
   } finally {
     await rm(fixture, { recursive: true, force: true });
   }
@@ -956,6 +1019,36 @@ test("Vue Router responsibility accepts a Vite project root and normalizes owner
     assert.equal(graph.metrics.routesDiscovered, 2);
     assert.equal(graph.capabilities.historyMode, true);
     assert.equal(graph.capabilities.routerView, true);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test("Vue Router responsibility resolves TypeScript router indexes and Pinia route guards", async () => {
+  const fixture = await mkdtemp(join(tmpdir(), "ui-dismantler-vue-router-ts-pinia-"));
+  try {
+    await mkdir(join(fixture, "src", "router", "modules"), { recursive: true });
+    await mkdir(join(fixture, "src", "stores"), { recursive: true });
+    await writeFile(join(fixture, "src", "router", "index.ts"), `import { createRouter, createWebHistory } from 'vue-router'
+import { usePermissionStore } from '@/stores/permission'
+const routes = [{ path: '/', component: () => import('@/views/Home.vue') }, { path: '/admin', meta: { roles: ['admin'] }, component: () => import('@/views/Admin.vue') }]
+export const router = createRouter({ history: createWebHistory('/'), routes })
+router.beforeEach((to, _from, next) => { const permission = usePermissionStore(); if (!permission.userInfo && to.path !== '/login') next('/login'); else next() })
+router.afterEach(() => {})
+`);
+    await writeFile(join(fixture, "src", "router", "modules", "nested.ts"), `export const nestedRoutes = [{ path: 'users', children: [{ path: 'detail/:id' }] }]
+`);
+    await writeFile(join(fixture, "src", "stores", "permission.ts"), `import { defineStore } from 'pinia'
+export const usePermissionStore = defineStore('permission', { state: () => ({ userInfo: null }), actions: { initRoute() { return [] } } })
+`);
+    const graph = analyzeVueRouterResponsibility(fixture);
+    assert.equal(graph.framework.state, "pinia");
+    assert.equal(graph.blockers.length, 0, graph.blockers.join("\n"));
+    assert.equal(graph.capabilities.historyMode, true);
+    assert.equal(graph.capabilities.routerView, false);
+    assert.ok(graph.responsibilities.some((item) => item.kind === "guard-before-each"));
+    assert.ok(graph.responsibilities.some((item) => item.kind === "guard-after-each"));
+    assert.ok(graph.routes.some((route) => route.path === "/admin" && route.roles.includes("admin")));
   } finally {
     await rm(fixture, { recursive: true, force: true });
   }

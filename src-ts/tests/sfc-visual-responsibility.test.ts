@@ -168,6 +168,20 @@ test("primitive expression evaluator safely resolves paths, logical conditions a
   assert.deepEqual(evaluatePrimitiveExpression(compilePrimitiveExpression("displayDate('2026-07-20T02:30:00.000Z')"), displayScope), { resolved: true, value: new Date("2026-07-20T02:30:00.000Z").toLocaleString("zh-CN") });
 });
 
+test("SCSS failures distinguish compiler-unavailable from source syntax evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-scss-taxonomy-"));
+  try {
+    writeFileSync(join(root, "package.json"), `{ "name": "scss-taxonomy-fixture" }`);
+    mkdirSync(join(root, "src"), { recursive: true });
+    writeFileSync(join(root, "src", "Broken.vue"), `<template><main>Broken</main></template><style lang="scss"><div class="nested">$color: red; .nested { color: $color; }</style>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const style = graph.components[0]?.styles[0];
+    assert.equal(style?.compileStatus, "failed");
+    assert.equal(style?.failureReason, "compiler-unavailable");
+    assert.equal(graph.metrics.styleFailureReasons["compiler-unavailable"], 1);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
 test("scoped style materializer preserves media and keyframes while binding selectors to visual ownership", () => {
   const result = materializeOwnerSourceStyles({
     id: "visual:owner",
@@ -353,6 +367,7 @@ test("SFC visual analysis embeds local SvgIcon geometry without filename-specifi
 });
 
 import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "../planning/api-fixture-responsibility.js";
+import { linkApiRouteOwnership } from "../planning/api-route-ownership.js";
 import type { SpaRouterContractConfig } from "../evaluation/spa-router.js";
 
 test("nested Vue templates preserve every Element UI table column and bind reviewed API fixtures", () => {
@@ -433,6 +448,95 @@ test("visual resource planner proposes reviewed WebGL and DOM profiles from resp
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+test("API responsibility resolves TypeScript enum endpoints through custom HTTP wrappers", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-api-enum-endpoint-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "api"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    writeFileSync(join(root, "src", "utils", "request.ts"), `export const deffHttp = { get: async (_config: unknown) => ({ data: { items: [] } }) }`);
+    writeFileSync(join(root, "src", "api", "records.ts"), `import { deffHttp } from '@/utils/request'
+enum Api { LIST = '/mock_api/records' }
+export const fetchRecords = () => deffHttp.get<{ items: string[] }>({ url: Api.LIST })
+`);
+    writeFileSync(join(root, "src", "views", "Records.vue"), `<template><el-table :data="rows"><el-table-column label="Name"><template #default="{ row }">{{ row.name }}</template></el-table-column></el-table></template><script setup lang="ts">import { ref } from 'vue'; import { fetchRecords } from '@/api/records'; const rows = ref([]); const consumeRows = (_value: unknown) => {}; const response = await fetchRecords(); consumeRows(response.data.items);</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/mock_api/records", method: "GET", body: { data: { items: [{ name: "A" }] } } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.equal(api.metrics.importedApiCalls, 2);
+    assert.equal(api.metrics.matchedEndpoints, 1);
+    assert.equal(api.metrics.matchedFixtures, 1);
+    assert.equal(api.responsibilities[0]?.apiCall.path, "/mock_api/records");
+    assert.equal(api.responsibilities[0]?.apiCall.method, "GET");
+    assert.equal(api.responsibilities[0]?.consumption.targetBinding, "consumeRows");
+    assert.equal(api.responsibilities[0]?.consumption.responsePath, "data.items");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("API responsibility taxonomy separates framework, store, utility and transport evidence", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-api-taxonomy-"));
+  try {
+    mkdirSync(join(root, "src", "views"), { recursive: true });
+    mkdirSync(join(root, "src", "server"), { recursive: true });
+    mkdirSync(join(root, "src", "store", "modules"), { recursive: true });
+    mkdirSync(join(root, "src", "utils"), { recursive: true });
+    mkdirSync(join(root, "src", "router"), { recursive: true });
+    mkdirSync(join(root, "src", "layouts"), { recursive: true });
+    writeFileSync(join(root, "src", "server", "route.ts"), `import { deffHttp } from '@/utils/request'
+enum Api { ROUTES = '/mock_api/routes' }
+export const getRouteApi = (data: { name: string }) => deffHttp.post({ url: Api.ROUTES, data })
+`);
+    writeFileSync(join(root, "src", "utils", "request.ts"), `export const deffHttp = { post: async (_config: unknown) => ({ data: [] }) }`);
+    writeFileSync(join(root, "src", "utils", "format.ts"), `export const formatLabel = (value: string) => value.trim()`);
+    writeFileSync(join(root, "src", "store", "modules", "permission.ts"), `import { defineStore } from 'pinia'
+export const usePermissionStore = defineStore('permission', { state: () => ({ menus: [] }) })
+export const usePermissionStoreHook = () => usePermissionStore()
+`);
+    writeFileSync(join(root, "src", "router", "utils.ts"), `import { getRouteApi } from '@/server/route'
+import { router } from './index'
+export async function initRoute(permission: string) { const response = await getRouteApi({ name: permission }); if (response.data.length) { const routeList = handleRouteList(response.data); router.addRoute(routeList[0]); } }
+function handleRouteList(value: unknown[]) { return value }
+`);
+    writeFileSync(join(root, "src", "router", "index.ts"), `const Layout = () => import('@/layouts/Layout.vue')
+export const routes = [{ path: '/admin', component: Layout, children: [{ path: 'users', component: () => import('@/views/Users.vue') }, { path: 'users/detail/:id', component: () => import('@/views/UserDetail.vue') }] }]
+export const router = { addRoute: (_route: unknown) => undefined }`);
+    writeFileSync(join(root, "src", "layouts", "Layout.vue"), `<template><router-view /></template>`);
+    writeFileSync(join(root, "src", "views", "Users.vue"), `<template><main>Users</main></template>`);
+    writeFileSync(join(root, "src", "views", "UserDetail.vue"), `<template><main>User detail</main></template>`);
+    writeFileSync(join(root, "src", "views", "Routes.vue"), `<template><main>{{ label }}</main></template><script setup lang="ts">import { ref } from 'vue'; import { usePermissionStoreHook } from '@/store/modules/permission'; import { formatLabel } from '@/utils/format'; import { getRouteApi } from '@/server/route'; const label = ref(formatLabel('routes')); const store = usePermissionStoreHook(); const response = await getRouteApi({ name: 'admin' }); store.menus = response.data;</script>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const config: SpaRouterContractConfig = { schemaVersion: "1.0", baseUrl: "http://127.0.0.1:3000", scenarios: [], fixtures: [{ path: "/mock_api/routes", method: "POST", body: { data: [{ path: "/admin", name: "Admin", children: [{ path: "users", name: "Users" }, { path: "users/detail/:id", name: "UserDetail" }] }] } }] };
+    const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    assert.ok(api.metrics.apiCandidates >= 4);
+    assert.ok(api.metrics.frameworkComposables >= 1);
+    assert.ok(api.metrics.localStateStoreHelpers >= 1);
+    assert.ok(api.metrics.utilityFunctions >= 1);
+    assert.ok(api.metrics.actualApiWrappers >= 1);
+    assert.ok(api.metrics.responseFlows >= 2);
+    assert.ok(api.metrics.dynamicRouteFlows >= 1);
+    const routeFlow = api.responseFlows.find((flow) => flow.flowKind === "dynamic-route-injection");
+    assert.equal(routeFlow?.endpoint.path, "/mock_api/routes");
+    assert.equal(routeFlow?.responsePath, "data");
+    assert.equal(routeFlow?.targetBinding, "handleRouteList");
+    assert.equal(routeFlow?.routeMutationEvidence.some((item) => item.includes("addRoute")), true);
+    assert.deepEqual(routeFlow?.routeMutations, ["addRoute"]);
+    const routerGraph = analyzeRouterToSfcResponsibilities(root);
+    const routeOwnership = linkApiRouteOwnership(api, routerGraph, config);
+    assert.equal(routeOwnership.metrics.routeLinks, 1);
+    assert.equal(routeOwnership.metrics.routeRecordFixtures, 1);
+    assert.equal(routeOwnership.metrics.matchedRouteRecords, 3);
+    assert.equal(routeOwnership.metrics.unresolvedFlows, 0);
+    const link = routeOwnership.links[0];
+    assert.equal(link?.shape.shape, "route-record-array");
+    assert.equal(link?.shape.cardinality, 1);
+    assert.deepEqual(link?.shape.fields, ["children", "name", "path"]);
+    assert.equal(link?.mutation, "router.addRoute");
+    assert.deepEqual(link?.routeOwnership.matches.map((item) => item.routePath), ["/admin", "/admin/users", "/admin/users/detail/:id"]);
+    assert.deepEqual(link?.routeOwnership.matches.find((item) => item.routePath === "/admin/users")?.layoutChain, ["layouts/Layout.vue"]);
+    assert.deepEqual(link?.routeOwnership.matches.find((item) => item.routePath === "/admin/users")?.leafOwners, ["views/Users.vue"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
 test("Vite proxy responsibility keeps browser prefix separate from reviewed upstream rewrite evidence", () => {
   const root = mkdtempSync(join(tmpdir(), "ui-dismantler-vite-proxy-"));
   try {
@@ -461,6 +565,22 @@ test("Vite proxy responsibility keeps browser prefix separate from reviewed upst
     assert.equal(route.rewritePattern, "^/api");
     assert.equal(route.upstreamPathCandidate, "/v1/orders");
     assert.equal(api.responsibilities[0].apiCall.transportPathCandidates.includes(route.upstreamPathCandidate ?? ""), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("proxy AST resolves imported Vite server factory returns", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-vite-server-factory-"));
+  try {
+    mkdirSync(join(root, "build", "vite"), { recursive: true });
+    writeFileSync(join(root, "vite.config.ts"), `import { createViteServer } from './build/vite/server'; export default { server: createViteServer() }`);
+    writeFileSync(join(root, "build", "vite", "server.ts"), `export function createViteServer(){ const options={proxy:{'/api':{target:'https://api.example.test',changeOrigin:true,rewrite:path=>path.replace(/^\\/api/,'')}}}; return options }`);
+    const graph = analyzeTransportProxyResponsibilities(root);
+    assert.equal(graph.metrics.proxyScopes, 1, JSON.stringify(graph, null, 2));
+    assert.equal(graph.metrics.routes, 1, JSON.stringify(graph, null, 2));
+    assert.equal(graph.routes[0]?.requestPrefix, "/api");
+    assert.equal(graph.routes[0]?.source, "build/vite/server.ts");
+    assert.deepEqual(graph.routes[0]?.targetCandidates, ["https://api.example.test"]);
+    assert.equal(graph.routes[0]?.rewritePattern, "^/api");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
