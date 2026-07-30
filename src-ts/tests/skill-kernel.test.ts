@@ -8,6 +8,7 @@ import { defineSkill } from "../core/skills/contract.js";
 import { SkillExecutionError } from "../core/skills/evidence.js";
 import { ResponsibilityGraphStore } from "../core/responsibility/store.js";
 import { ProfileExecutionPlanner } from "../core/profiles/execution-plan.js";
+import { ProfileExecutor } from "../core/profiles/executor.js";
 import { SkillExecutionContext } from "../core/skills/execution-context.js";
 import { SkillRegistry } from "../core/skills/registry.js";
 import type { SpaRouterContractConfig, SpaRouterContractReport } from "../evaluation/spa-router.js";
@@ -19,6 +20,8 @@ import {
 import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
 import { createDefaultReviewedBindingRegistry } from "../profiles/default-bindings.js";
 import { createDefaultTaskProfileRegistry } from "../profiles/default-profiles.js";
+import { TaskProfileRegistry } from "../core/profiles/registry.js";
+import { ReviewedBindingRegistry } from "../core/artifacts/registry.js";
 import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
@@ -327,4 +330,107 @@ test("Skill Registry rejects duplicates, missing dependencies, and dependency cy
   registry.register(skillB);
   assert.throws(() => registry.resolve(["skill-a"]), /dependency cycle/);
   await assert.rejects(() => registry.execute("missing-skill", {}), /unknown skill/);
+});
+
+
+test("Profile Executor runs reviewed providers artifacts evidence and responsibility deltas in dependency order", async () => {
+  const skills = new SkillRegistry();
+  const calls: string[] = [];
+  skills.register(defineSkill({
+    manifest: {
+      id: "profile-source", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Profile source",
+      stages: ["analyze"], consumes: ["seed-input"], optionalConsumes: [], produces: ["seed-artifact"], requires: [], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute(input: { seed: string }) { calls.push("profile-source"); return { value: input.seed }; },
+    projectResponsibilityGraph(output: { value: string }) {
+      return { schemaVersion: "1.0", skillId: "profile-source", sourceGraphKind: "profile-probe", nodes: [{ id: "probe:source", kind: "probe", attributes: { value: output.value }, evidence: [], reviewRequired: false }], edges: [], unresolved: [], reviewRequired: false };
+    },
+  }));
+  skills.register(defineSkill({
+    manifest: {
+      id: "profile-consumer", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Profile consumer",
+      stages: ["analyze"], consumes: ["seed-artifact", "suffix-input"], optionalConsumes: [], produces: ["combined-artifact"], requires: ["profile-source"], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute(input: { seed: { value: string }; suffix: string }) { calls.push("profile-consumer"); return `${input.seed.value}:${input.suffix}`; },
+  }));
+  const profiles = new TaskProfileRegistry(skills).register({
+    id: "profile-probe", contractVersion: "1.0", summary: "Profile execution probe", requiredSkills: ["profile-consumer"], optionalSkills: [], qualityGates: [],
+  });
+  const bindings = new ReviewedBindingRegistry(skills).register({
+    consumerSkillId: "profile-consumer", inputContract: "seed-artifact", inputPath: "seed", artifactContract: "seed-artifact", reviewed: true,
+  });
+  const report = await new ProfileExecutor(skills, profiles, bindings).execute("profile-probe", {
+    inputProviders: [
+      { contract: "seed-input", providerId: "reviewed-seed", reviewed: true, inputPath: "seed", value: "alpha" },
+      { contract: "suffix-input", providerId: "reviewed-suffix", reviewed: true, inputPath: "suffix", value: "omega" },
+    ],
+  });
+  assert.equal(report.status, "succeeded");
+  assert.deepEqual(calls, ["profile-source", "profile-consumer"]);
+  assert.deepEqual(report.steps.map((step) => step.status), ["succeeded", "succeeded"]);
+  assert.equal(report.steps[0]?.evidence?.status, "succeeded");
+  assert.equal(report.steps[1]?.output, "alpha:omega");
+  assert.deepEqual(report.artifacts.map((artifact) => artifact.contract), ["seed-artifact", "combined-artifact"]);
+  assert.equal(report.responsibilityDeltas[0]?.skillId, "profile-source");
+  assert.equal(report.steps[0]?.graphDelta?.nodes[0]?.id, "probe:source");
+});
+
+test("Profile Executor blocks the complete run before side effects when required providers are unreviewed", async () => {
+  const skills = new SkillRegistry();
+  let executions = 0;
+  skills.register(defineSkill({
+    manifest: {
+      id: "review-probe", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Review probe",
+      stages: ["analyze"], consumes: ["reviewed-input"], optionalConsumes: [], produces: ["reviewed-output"], requires: [], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute() { executions += 1; return true; },
+  }));
+  const profiles = new TaskProfileRegistry(skills).register({
+    id: "review-profile", contractVersion: "1.0", summary: "Review profile", requiredSkills: ["review-probe"], optionalSkills: [], qualityGates: [],
+  });
+  const report = await new ProfileExecutor(skills, profiles, new ReviewedBindingRegistry(skills)).execute("review-profile", {
+    inputProviders: [{ contract: "reviewed-input", providerId: "draft", reviewed: false, inputPath: "value", value: "unsafe" }],
+  });
+  assert.equal(report.status, "blocked");
+  assert.equal(executions, 0);
+  assert.equal(report.steps[0]?.status, "blocked");
+  assert.deepEqual(report.steps[0]?.blockedBy, ["unreviewed-input:reviewed-input"]);
+  assert.equal(report.blockers.includes("review-probe has unreviewed input contract reviewed-input"), true);
+});
+
+test("Profile Executor records failed evidence and blocks downstream Skills", async () => {
+  const skills = new SkillRegistry();
+  let downstreamExecutions = 0;
+  skills.register(defineSkill({
+    manifest: {
+      id: "successful-step", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Successful step",
+      stages: ["analyze"], consumes: [], optionalConsumes: [], produces: ["successful-output"], requires: [], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute() { return { ok: true }; },
+  }));
+  skills.register(defineSkill({
+    manifest: {
+      id: "failing-step", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Failing step",
+      stages: ["analyze"], consumes: [], optionalConsumes: [], produces: ["failed-output"], requires: ["successful-step"], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute(): Promise<never> { throw new Error("profile failure"); },
+  }));
+  skills.register(defineSkill({
+    manifest: {
+      id: "downstream-step", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Downstream step",
+      stages: ["analyze"], consumes: [], optionalConsumes: [], produces: [], requires: ["failing-step"], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+    },
+    async execute() { downstreamExecutions += 1; return true; },
+  }));
+  const profiles = new TaskProfileRegistry(skills).register({
+    id: "failure-profile", contractVersion: "1.0", summary: "Failure profile", requiredSkills: ["downstream-step"], optionalSkills: [], qualityGates: [],
+  });
+  const report = await new ProfileExecutor(skills, profiles, new ReviewedBindingRegistry(skills)).execute("failure-profile");
+  assert.equal(report.status, "failed");
+  assert.deepEqual(report.steps.map((step) => step.status), ["succeeded", "failed", "blocked"]);
+  assert.equal(report.steps[1]?.evidence?.status, "failed");
+  assert.equal(report.steps[1]?.error, "skill failing-step failed: profile failure");
+  assert.deepEqual(report.steps[2]?.blockedBy, ["failed-skill:failing-step"]);
+  assert.equal(downstreamExecutions, 0);
+  assert.deepEqual(report.artifacts.map((artifact) => artifact.contract), ["successful-output"]);
 });

@@ -49,7 +49,7 @@ The initial profiles are intentionally small:
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
 - `data-backed-spa`: adds `component-ownership`, `transport-proxy`, and `api-responsibility`; may enable `auth-guard` after review.
 
-A Profile resolves Skill dependencies and quality gates. It does not execute Skills because different capabilities currently consume different reviewed inputs.
+A Profile resolves Skill dependencies and quality gates. `ProfileExecutionPlanner` keeps composition reviewable, while `ProfileExecutor` runs only a fully reviewed plan and maps explicit provider paths plus reviewed artifact bindings into each Skill input.
 
 
 ## Execution Context and artifact binding
@@ -65,7 +65,7 @@ component-ownership
       -> api-responsibility input.components
 ```
 
-Bindings are explicit and reviewed. The Context does not infer fields from names and does not execute an entire Profile automatically.
+Bindings are explicit and reviewed. The Context does not infer fields from names. Profile-level execution is performed only by `ProfileExecutor` after the complete plan passes review; the Context remains responsible for one Skill execution at a time.
 
 ## Responsibility graph sidecar
 
@@ -109,6 +109,15 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 The first complete plan is `data-backed-spa`. With reviewed providers for `html-path`, `project-source-root`, `sfc-script-source`, and `spa-router-contract-config`, the plan can connect `component-ownership.components` to `api-responsibility.components` and mark every step ready. Missing or unreviewed inputs remain explicit blockers.
 
+`ProfileExecutor` consumes that reviewed plan and preserves four separate result channels for every Skill:
+
+- raw output;
+- `SkillExecutionEvidence`;
+- published artifact references;
+- optional `ResponsibilityGraphDelta`.
+
+External providers must declare an explicit input path and value; contract names are never converted into object fields by naming heuristics. A blocked plan executes no Skill. A runtime failure records the failing Skill evidence and blocks all remaining downstream execution. Each execution receives a fresh Context by default so artifacts do not leak across Profile runs.
+
 ## Target source layout
 
 The intended structure is:
@@ -124,7 +133,8 @@ src-ts/
 │   ├── profiles/
 │   │   ├── contract.ts
 │   │   ├── registry.ts
-│   │   └── execution-plan.ts
+│   │   ├── execution-plan.ts
+│   │   └── executor.ts
 │   ├── artifacts/
 │   │   ├── contract.ts
 │   │   ├── binding.ts
