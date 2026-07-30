@@ -4,8 +4,10 @@ import { mkdtemp, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { analyzeHtml } from "../analysis/analyzer.js";
-import { defineSkill, SkillExecutionError } from "../core/skills/contract.js";
+import { defineSkill } from "../core/skills/contract.js";
+import { SkillExecutionError } from "../core/skills/evidence.js";
 import { ResponsibilityGraphStore } from "../core/responsibility/store.js";
+import { ProfileExecutionPlanner } from "../core/profiles/execution-plan.js";
 import { SkillExecutionContext } from "../core/skills/execution-context.js";
 import { SkillRegistry } from "../core/skills/registry.js";
 import type { SpaRouterContractConfig, SpaRouterContractReport } from "../evaluation/spa-router.js";
@@ -15,6 +17,7 @@ import {
   type ApiFixtureResponsibilityGraph,
 } from "../planning/api-fixture-responsibility.js";
 import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
+import { createDefaultReviewedBindingRegistry } from "../profiles/default-bindings.js";
 import { createDefaultTaskProfileRegistry } from "../profiles/default-profiles.js";
 import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
@@ -109,7 +112,7 @@ test("Skill Execution Context binds component artifacts into API responsibility 
   const apiRun = await context.executeBound<ApiResponsibilitySkillInput, ApiFixtureResponsibilityGraph>(
     "api-responsibility",
     { sourceRoot: directory, config, components: [] },
-    [{ inputPath: "components", artifactContract: "sfc-visual-responsibility-graph", outputPath: "components" }],
+    [{ consumerSkillId: "api-responsibility", inputContract: "sfc-visual-responsibility-graph", inputPath: "components", artifactContract: "sfc-visual-responsibility-graph", outputPath: "components", reviewed: true }],
   );
   assert.equal(apiRun.output.metrics.componentsScanned, componentRun.output.components.length);
   assert.equal(apiRun.artifacts[0]?.contract, "api-fixture-responsibility-graph");
@@ -193,6 +196,7 @@ test("executeWithEvidence keeps execution evidence separate from raw output", as
     manifest: {
       id: "evidence-probe", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Evidence probe",
       stages: ["analyze"], consumes: ["probe-input"], produces: ["probe-output"], requires: [], optionalDependencies: [], qualityGates: ["probe-gate"], sideEffects: ["none"],
+      optionalConsumes: [],
     },
     async execute() { return output; },
   }));
@@ -211,6 +215,7 @@ test("failed evidence execution throws an auditable SkillExecutionError", async 
     manifest: {
       id: "failure-probe", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "Failure probe",
       stages: ["analyze"], consumes: [], produces: [], requires: [], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+      optionalConsumes: [],
     },
     async execute(): Promise<never> { throw new Error("expected failure"); },
   }));
@@ -242,6 +247,48 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
 
 
 
+
+
+test("Profile Execution Plan resolves reviewed providers and component-to-API artifact binding", () => {
+  const skills = createDefaultSkillRegistry();
+  const profiles = createDefaultTaskProfileRegistry(skills);
+  const bindings = createDefaultReviewedBindingRegistry(skills);
+  const planner = new ProfileExecutionPlanner(profiles, bindings);
+  const plan = planner.plan("data-backed-spa", {
+    inputProviders: [
+      { contract: "html-path", providerId: "reference-html", reviewed: true },
+      { contract: "project-source-root", providerId: "frozen-source", reviewed: true },
+      { contract: "sfc-script-source", providerId: "reviewed-sfc-script", reviewed: true },
+      { contract: "spa-router-contract-config", providerId: "frozen-spa-config", reviewed: true },
+    ],
+  });
+  assert.equal(plan.ready, true);
+  assert.deepEqual(plan.blockers, []);
+  const source = plan.steps.find((step) => step.skillId === "source-structure");
+  assert.equal(source?.inputs.find((input) => input.contract === "source-analysis-options")?.required, false);
+  assert.equal(source?.inputs.find((input) => input.contract === "source-analysis-options")?.source, "missing");
+  const api = plan.steps.find((step) => step.skillId === "api-responsibility");
+  const componentBinding = api?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph");
+  assert.equal(componentBinding?.source, "artifact");
+  assert.equal(componentBinding?.binding?.outputPath, "components");
+});
+
+test("Profile Execution Plan blocks missing and unreviewed external inputs", () => {
+  const skills = createDefaultSkillRegistry();
+  const planner = new ProfileExecutionPlanner(createDefaultTaskProfileRegistry(skills), createDefaultReviewedBindingRegistry(skills));
+  const plan = planner.plan("data-backed-spa", {
+    inputProviders: [
+      { contract: "html-path", providerId: "reference-html", reviewed: true },
+      { contract: "project-source-root", providerId: "frozen-source", reviewed: true },
+      { contract: "spa-router-contract-config", providerId: "draft-config", reviewed: false },
+    ],
+  });
+  assert.equal(plan.ready, false);
+  assert.equal(plan.blockers.includes("state-responsibility is missing input contract sfc-script-source"), true);
+  assert.equal(plan.blockers.includes("spa-router has unreviewed input contract spa-router-contract-config"), true);
+  assert.equal(plan.blockers.some((blocker) => blocker.includes("api-responsibility is blocked by dependency state-responsibility")), true);
+});
+
 test("Responsibility Graph Store blocks conflicting ownership nodes instead of overwriting them", () => {
   const store = new ResponsibilityGraphStore();
   const delta = (detail: string) => ({
@@ -262,6 +309,7 @@ test("Skill Registry rejects duplicates, missing dependencies, and dependency cy
     manifest: {
       id: "skill-a", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "A",
       stages: ["analyze"], consumes: [], produces: [], requires: ["skill-b"], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+      optionalConsumes: [],
     },
     async execute(input: string) { return input; },
   });
@@ -269,6 +317,7 @@ test("Skill Registry rejects duplicates, missing dependencies, and dependency cy
     manifest: {
       id: "skill-b", version: "1.0.0", contractVersion: "1.0", kind: "analysis", summary: "B",
       stages: ["analyze"], consumes: [], produces: [], requires: ["skill-a"], optionalDependencies: [], qualityGates: [], sideEffects: ["none"],
+      optionalConsumes: [],
     },
     async execute(input: string) { return input; },
   });

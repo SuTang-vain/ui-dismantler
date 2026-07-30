@@ -95,3 +95,67 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 5. Register data-surface, lifecycle, and visual capabilities as orthogonal Skills.
 6. Move shared source/AST helpers under Core one family at a time.
 7. Introduce framework Adapters only where structural evidence proves ownership.
+
+## Profile execution planning
+
+`ProfileExecutionPlanner` converts a resolved Task Profile into a reviewable execution plan without automatically running the whole task. It evaluates:
+
+- reviewed external input providers;
+- required versus optional input contracts;
+- required Skill dependency readiness;
+- existing artifact contracts;
+- reviewed artifact-to-input bindings;
+- downstream blockers caused by an unavailable upstream Skill.
+
+The first complete plan is `data-backed-spa`. With reviewed providers for `html-path`, `project-source-root`, `sfc-script-source`, and `spa-router-contract-config`, the plan can connect `component-ownership.components` to `api-responsibility.components` and mark every step ready. Missing or unreviewed inputs remain explicit blockers.
+
+## Target source layout
+
+The intended structure is:
+
+```text
+src-ts/
+├── core/
+│   ├── skills/
+│   │   ├── contract.ts
+│   │   ├── registry.ts
+│   │   ├── evidence.ts
+│   │   └── execution-context.ts
+│   ├── profiles/
+│   │   ├── contract.ts
+│   │   ├── registry.ts
+│   │   └── execution-plan.ts
+│   ├── artifacts/
+│   │   ├── contract.ts
+│   │   ├── binding.ts
+│   │   ├── registry.ts
+│   │   └── store.ts
+│   ├── responsibility/
+│   │   ├── graph.ts
+│   │   └── store.ts
+│   ├── source/       # created when shared file/import/source-location code is migrated
+│   ├── ast/          # created when shared AST walking/static-value code is migrated
+│   └── evaluation/   # created when browser/runtime evaluation is physically extracted
+├── skills/
+├── adapters/
+└── profiles/
+```
+
+Three deliberate differences from a simpler proposed tree are retained:
+
+1. Profiles remain under `core/profiles`, not `core/skills`, because task composition is not a Skill capability.
+2. The normalized graph is named `responsibility`, not generic `graph`, so it is not confused with router, layout, dependency, or ECharts graphs.
+3. `source`, `ast`, `evaluation`, and framework adapter directories are created only when real implementations move into them; empty architectural placeholders are not committed.
+
+Current Skill modules remain single files while they contain one wrapper and one projector. A Skill moves to its own directory when it gains multiple implementation units, for example:
+
+```text
+skills/component-ownership/
+├── skill.ts
+├── projector.ts
+└── contracts.ts
+```
+
+This avoids directory ceremony while preserving the long-term modular boundary.
+
+Profiles are added only when their required capabilities exist. `admin-dashboard` and `canvas` are therefore target Profiles, not empty current declarations.

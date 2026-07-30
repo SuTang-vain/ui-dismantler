@@ -80,6 +80,7 @@ export function createApiResponsibilitySkill(analyzer: ApiResponsibilityAnalyzer
       summary: "Compatibility wrapper for API endpoint, response-flow, reviewed fixture, and template-consumer responsibility analysis.",
       stages: ["analyze"],
       consumes: ["project-source-root", "spa-router-contract-config", "sfc-visual-responsibility-graph"],
+      optionalConsumes: [],
       produces: ["api-fixture-responsibility-graph"],
       requires: ["source-structure", "component-ownership", "transport-proxy", "state-responsibility"],
       optionalDependencies: ["spa-router"],

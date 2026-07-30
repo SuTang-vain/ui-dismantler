@@ -20,6 +20,7 @@ export function createTransportProxySkill(analyzer: TransportProxyAnalyzer = ana
       summary: "Compatibility wrapper for scoped Vite and Webpack proxy transport responsibility analysis.",
       stages: ["analyze"],
       consumes: ["project-source-root"],
+      optionalConsumes: [],
       produces: ["transport-proxy-responsibility-graph"],
       requires: ["source-structure"],
       optionalDependencies: [],

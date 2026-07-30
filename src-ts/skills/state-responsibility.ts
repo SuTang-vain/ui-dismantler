@@ -20,6 +20,7 @@ export function createStateResponsibilitySkill(analyzer: StateResponsibilityAnal
       summary: "Compatibility wrapper for structural SFC handler, state-write, and display dependency analysis.",
       stages: ["analyze"],
       consumes: ["sfc-script-source"],
+      optionalConsumes: [],
       produces: ["sfc-state-responsibility"],
       requires: ["source-structure"],
       optionalDependencies: [],

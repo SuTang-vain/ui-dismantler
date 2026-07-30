@@ -2,13 +2,15 @@ import { performance } from "node:perf_hooks";
 import type { ResponsibilityGraphDelta } from "../responsibility/graph.js";
 import {
   SKILL_CONTRACT_VERSION,
-  SKILL_EXECUTION_EVIDENCE_VERSION,
-  SkillExecutionError,
   type DismantlingSkill,
-  type SkillExecutionEvidence,
-  type SkillExecutionResult,
   type SkillManifest,
 } from "./contract.js";
+import {
+  SKILL_EXECUTION_EVIDENCE_VERSION,
+  SkillExecutionError,
+  type SkillExecutionEvidence,
+  type SkillExecutionResult,
+} from "./evidence.js";
 
 interface RegisteredSkill {
   manifest: SkillManifest;
@@ -39,6 +41,7 @@ function assertManifest(manifest: SkillManifest): void {
   const uniqueFields: Array<[string, readonly string[]]> = [
     ["stages", manifest.stages],
     ["consumes", manifest.consumes],
+    ["optional consumes", manifest.optionalConsumes],
     ["produces", manifest.produces],
     ["required dependencies", manifest.requires],
     ["optional dependencies", manifest.optionalDependencies],
@@ -48,6 +51,9 @@ function assertManifest(manifest: SkillManifest): void {
   for (const [label, values] of uniqueFields) {
     if (new Set(values).size !== values.length) throw new Error(`skill ${manifest.id} declares duplicate ${label}`);
   }
+  const requiredConsumes = new Set(manifest.consumes);
+  const consumeOverlap = manifest.optionalConsumes.find((contract) => requiredConsumes.has(contract));
+  if (consumeOverlap) throw new Error(`skill ${manifest.id} declares ${consumeOverlap} as both required and optional input`);
   const required = new Set(manifest.requires);
   const overlap = manifest.optionalDependencies.find((dependency) => required.has(dependency));
   if (overlap) throw new Error(`skill ${manifest.id} declares ${overlap} as both required and optional`);
@@ -140,6 +146,7 @@ export class SkillRegistry {
       durationMs: roundedDuration(startedAt),
       stages: skill.manifest.stages,
       consumes: skill.manifest.consumes,
+      optionalConsumes: skill.manifest.optionalConsumes,
       produces: skill.manifest.produces,
       resolvedDependencies: dependencyIds,
       qualityGates: skill.manifest.qualityGates,

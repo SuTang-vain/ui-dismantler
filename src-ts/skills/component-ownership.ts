@@ -85,6 +85,7 @@ export function createComponentOwnershipSkill(analyzer: ComponentOwnershipAnalyz
       summary: "Compatibility wrapper for Vue SFC component, template, style, state, data-cardinality, and visual ownership analysis.",
       stages: ["analyze"],
       consumes: ["project-source-root"],
+      optionalConsumes: [],
       produces: ["sfc-visual-responsibility-graph"],
       requires: ["source-structure"],
       optionalDependencies: [],

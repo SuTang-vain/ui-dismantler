@@ -25,6 +25,7 @@ export function createSpaRouterSkill(evaluator: SpaRouterEvaluator = evaluateSpa
       summary: "Compatibility wrapper for the existing reference/generated SPA route contract evaluator.",
       stages: ["validate"],
       consumes: ["spa-router-contract-config"],
+      optionalConsumes: [],
       produces: ["spa-router-contract-report"],
       requires: [],
       optionalDependencies: ["source-structure"],

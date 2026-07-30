@@ -20,6 +20,7 @@ export function createAuthGuardSkill(analyzer: AuthGuardAnalyzer = analyzeSpaAut
       summary: "Compatibility wrapper for storage, login, dynamic-route, and navigation-guard responsibility analysis.",
       stages: ["analyze"],
       consumes: ["spa-source-root"],
+      optionalConsumes: [],
       produces: ["spa-auth-guard-responsibility"],
       requires: ["source-structure", "state-responsibility"],
       optionalDependencies: ["spa-router"],
