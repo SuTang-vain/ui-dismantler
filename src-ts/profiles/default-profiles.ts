@@ -24,7 +24,7 @@ export const dataBackedSpaProfile = defineTaskProfile({
   id: "data-backed-spa",
   contractVersion: "1.0",
   summary: "Compose reviewed SPA route, transport proxy, API response-flow, and optional authentication responsibilities.",
-  requiredSkills: ["source-structure", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"],
+  requiredSkills: ["source-structure", "component-ownership", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"],
   optionalSkills: ["auth-guard"],
   qualityGates: ["navigation-integrity", "browser-request-prefix-preserved", "reviewed-fixture-only", "runtime-network-stability", "blocking-handles"],
 });

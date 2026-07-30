@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { defineSkill, SkillExecutionError } from "../core/skills/contract.js";
+import { ResponsibilityGraphStore } from "../core/responsibility/store.js";
+import { SkillExecutionContext } from "../core/skills/execution-context.js";
 import { SkillRegistry } from "../core/skills/registry.js";
 import type { SpaRouterContractConfig, SpaRouterContractReport } from "../evaluation/spa-router.js";
 import type { SpaAuthGuardResponsibilityAnalysis } from "../planning/spa-auth-guard-responsibility.js";
@@ -14,8 +16,9 @@ import {
 } from "../planning/api-fixture-responsibility.js";
 import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
 import { createDefaultTaskProfileRegistry } from "../profiles/default-profiles.js";
-import { createApiResponsibilitySkill, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
+import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
+import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
 import { createSourceStructureSkill, sourceStructureSkill, type SourceStructureAnalyzer } from "../skills/source-structure.js";
 import { createSpaRouterSkill } from "../skills/spa-router.js";
@@ -25,7 +28,7 @@ import type { Manifest } from "../types.js";
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -74,6 +77,78 @@ test("auth-guard wrapper forwards source ownership input without transforming ou
 
 
 
+
+
+test("component-ownership wrapper preserves SFC analysis and emits a sidecar responsibility delta", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-component-skill-"));
+  await writeFile(join(directory, "ProfileCard.vue"), `<template><article class="profile-card"><h2>{{ title }}</h2><button @click="open = true">Edit</button></article></template><script setup>import { ref } from "vue"; const title = "Profile"; const open = ref(false)</script><style scoped>.profile-card{display:grid}</style>`, "utf8");
+  const expected = (await import("../planning/sfc-visual-responsibility.js")).analyzeSfcVisualResponsibilities(directory);
+  const actual = await componentOwnershipSkill.execute({ sourceRoot: directory });
+  const normalizedExpected = structuredClone(expected);
+  const normalizedActual = structuredClone(actual);
+  normalizedExpected.metrics.scanMs = 0;
+  normalizedActual.metrics.scanMs = 0;
+  normalizedExpected.echarts.metrics.scanMs = 0;
+  normalizedActual.echarts.metrics.scanMs = 0;
+  assert.deepEqual(normalizedActual, normalizedExpected);
+  const delta = componentOwnershipSkill.projectResponsibilityGraph?.(actual);
+  assert.equal(delta?.skillId, "component-ownership");
+  assert.equal(delta?.nodes.length, actual.components.length);
+  assert.equal(delta?.nodes[0]?.kind, "component-owner");
+});
+
+test("Skill Execution Context binds component artifacts into API responsibility input", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-context-"));
+  await writeFile(join(directory, "Profiles.vue"), `<template><main><h1>Profiles</h1></main></template><script setup>const title = "Profiles"</script><style scoped>main{display:block}</style>`, "utf8");
+  const registry = createDefaultSkillRegistry();
+  const context = new SkillExecutionContext(registry);
+  const componentRun = await context.execute<ComponentOwnershipSkillInput, Awaited<ReturnType<typeof componentOwnershipSkill.execute>>>("component-ownership", { sourceRoot: directory });
+  assert.equal(componentRun.artifacts[0]?.contract, "sfc-visual-responsibility-graph");
+  assert.equal(componentRun.graphDelta?.nodes.length, componentRun.output.components.length);
+  const config = { reference: { baseUrl: "http://reference.test" }, generated: { baseUrl: "http://generated.test" }, scenarios: [], fixtures: [] } as unknown as SpaRouterContractConfig;
+  const apiRun = await context.executeBound<ApiResponsibilitySkillInput, ApiFixtureResponsibilityGraph>(
+    "api-responsibility",
+    { sourceRoot: directory, config, components: [] },
+    [{ inputPath: "components", artifactContract: "sfc-visual-responsibility-graph", outputPath: "components" }],
+  );
+  assert.equal(apiRun.output.metrics.componentsScanned, componentRun.output.components.length);
+  assert.equal(apiRun.artifacts[0]?.contract, "api-fixture-responsibility-graph");
+  assert.equal(apiRun.graphDelta?.sourceGraphKind, "api-fixture-responsibility-graph");
+  assert.equal(context.outputs.get("sfc-visual-responsibility-graph").producerSkillId, "component-ownership");
+  const responsibilitySnapshot = context.responsibilities.snapshot();
+  assert.equal(responsibilitySnapshot.deltas.length, 2);
+  assert.equal(responsibilitySnapshot.nodes.some((node) => node.kind === "component-owner"), true);
+});
+
+test("API responsibility projection links component owners to reviewed API responsibilities", () => {
+  const graph: ApiFixtureResponsibilityGraph = {
+    schemaVersion: "1.0",
+    kind: "api-fixture-responsibility-graph",
+    reviewRequired: true,
+    sourceRoot: "/tmp/source",
+    responsibilities: [{
+      id: "api-fixture:profiles:listProfiles",
+      componentId: "profiles",
+      componentName: "Profiles",
+      componentFile: "src/views/Profiles.vue",
+      apiCall: { localName: "listProfiles", exportedName: "listProfiles", importSource: "../api/profiles", moduleFile: "src/api/profiles.ts", method: "GET", path: "/profiles", transportPrefixes: [{ value: "/api", source: "env" }], transportPathCandidates: ["/api/profiles"], runtimeSelections: [], proxyRoutes: [] },
+      consumption: { targetBinding: "profiles", responsePath: "data" },
+      renderedFields: [{ field: "name", filters: [], tagged: false }],
+      filterValueMaps: {},
+      fixture: { index: 0, requestPath: "/api/profiles", reviewed: true, bodyHash: "hash", responseValue: [{ name: "One" }], materializedValue: [{ name: "One" }] },
+      confidence: "high",
+      reviewReasons: [],
+    }],
+    candidates: [], responseFlows: [], unresolved: [],
+    metrics: { componentsScanned: 1, importedApiCalls: 1, apiCandidates: 1, actualApiWrappers: 1, frameworkComposables: 0, localStateStoreHelpers: 0, utilityFunctions: 0, unresolvedLocalTransports: 0, responseFlows: 0, dynamicRouteFlows: 0, matchedEndpoints: 1, matchedFixtures: 1, materializedBindings: 1, renderedFields: 1, transportPrefixesInferred: 1, runtimeSelectionsInferred: 0, proxyRoutesInferred: 0, proxyTargetsInferred: 0, proxyRewriteRulesInferred: 0, proxyAstRoutesInferred: 0, proxyFallbackRoutesInferred: 0, proxyParseDiagnostics: 0 },
+    reviewReasons: [],
+  };
+  const delta = projectApiResponsibilityDelta(graph);
+  assert.equal(delta.nodes[0]?.id, "api-responsibility:api-fixture:profiles:listProfiles");
+  assert.equal(delta.edges[0]?.from, "component:profiles");
+  assert.equal(delta.edges[0]?.relation, "consumes-api");
+});
+
 test("transport-proxy wrapper preserves scoped browser-prefix and upstream audit evidence", async () => {
   const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-proxy-skill-"));
   await writeFile(join(directory, "vite.config.ts"), `import { defineConfig } from "vite"; export default defineConfig({ server: { proxy: { "/api": { target: "http://127.0.0.1:9000", changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, "") } } } });`, "utf8");
@@ -95,7 +170,7 @@ test("api-responsibility wrapper forwards reviewed config and visual owners with
   const output = await skill.execute({ sourceRoot: "/tmp/spa-source", config, components });
   assert.equal(output, marker);
   assert.deepEqual(calls, [{ sourceRoot: "/tmp/spa-source", receivedConfig: config, receivedComponents: components }]);
-  assert.deepEqual(skill.manifest.requires, ["source-structure", "transport-proxy", "state-responsibility"]);
+  assert.deepEqual(skill.manifest.requires, ["source-structure", "component-ownership", "transport-proxy", "state-responsibility"]);
 });
 
 test("spa-router wrapper forwards config and returns the evaluator report by identity", async () => {
@@ -157,12 +232,28 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   assert.deepEqual(authenticated.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "auth-guard"]);
   assert.equal(authenticated.qualityGates.includes("fresh-authentication-required"), true);
   const dataBacked = profiles.resolve("data-backed-spa");
-  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
+  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
   assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);
   assert.equal(dataBacked.qualityGates.includes("reviewed-fixture-only"), true);
   const authenticatedData = profiles.resolve("data-backed-spa", ["auth-guard"]);
   assert.equal(authenticatedData.skills.at(-1)?.id, "auth-guard");
   assert.throws(() => profiles.resolve("spa-application", ["unknown-skill"]), /does not declare optional skill/);
+});
+
+
+
+test("Responsibility Graph Store blocks conflicting ownership nodes instead of overwriting them", () => {
+  const store = new ResponsibilityGraphStore();
+  const delta = (detail: string) => ({
+    schemaVersion: "1.0" as const,
+    skillId: "ownership-probe",
+    sourceGraphKind: "probe-graph",
+    nodes: [{ id: "component:shared", kind: "component-owner", attributes: { detail }, evidence: [], reviewRequired: false }],
+    edges: [], unresolved: [], reviewRequired: false,
+  });
+  store.publish(delta("first"));
+  store.publish(delta("second"));
+  assert.throws(() => store.snapshot(), /conflicting responsibility node/);
 });
 
 test("Skill Registry rejects duplicates, missing dependencies, and dependency cycles", async () => {

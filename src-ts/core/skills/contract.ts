@@ -1,3 +1,5 @@
+import type { ResponsibilityGraphDelta } from "../responsibility/graph.js";
+
 export const SKILL_CONTRACT_VERSION = "1.0" as const;
 export const SKILL_EXECUTION_EVIDENCE_VERSION = "1.0" as const;
 
@@ -24,6 +26,7 @@ export interface SkillManifest {
 export interface DismantlingSkill<Input, Output> {
   readonly manifest: SkillManifest;
   execute(input: Input): Promise<Output>;
+  projectResponsibilityGraph?(output: Output): ResponsibilityGraphDelta;
 }
 
 export interface SkillExecutionEvidence {

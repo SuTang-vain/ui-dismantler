@@ -1,4 +1,5 @@
 import { performance } from "node:perf_hooks";
+import type { ResponsibilityGraphDelta } from "../responsibility/graph.js";
 import {
   SKILL_CONTRACT_VERSION,
   SKILL_EXECUTION_EVIDENCE_VERSION,
@@ -12,6 +13,7 @@ import {
 interface RegisteredSkill {
   manifest: SkillManifest;
   execute(input: unknown): Promise<unknown>;
+  projectResponsibilityGraph?: (output: unknown) => ResponsibilityGraphDelta;
 }
 
 function assertIdentifier(value: string, label: string): void {
@@ -67,6 +69,7 @@ export class SkillRegistry {
     this.skills.set(skill.manifest.id, {
       manifest: skill.manifest,
       execute: (input: unknown) => skill.execute(input as Input),
+      ...(skill.projectResponsibilityGraph ? { projectResponsibilityGraph: (output: unknown) => skill.projectResponsibilityGraph!(output as Output) } : {}),
     });
     return this;
   }
@@ -113,6 +116,12 @@ export class SkillRegistry {
     const skill = this.skills.get(id);
     if (!skill) throw new Error(`unknown skill: ${id}`);
     return await skill.execute(input) as Output;
+  }
+
+  projectResponsibilityGraph<Output>(id: string, output: Output): ResponsibilityGraphDelta | null {
+    const skill = this.skills.get(id);
+    if (!skill) throw new Error(`unknown skill: ${id}`);
+    return skill.projectResponsibilityGraph ? skill.projectResponsibilityGraph(output) : null;
   }
 
   async executeWithEvidence<Input, Output>(id: string, input: Input): Promise<SkillExecutionResult<Output>> {
