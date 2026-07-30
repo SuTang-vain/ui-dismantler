@@ -21,7 +21,7 @@ import { analyzeSfcVisualResponsibilities, type SfcVisualResponsibilityGraph } f
 import { generateVisualTargetPlan, type VisualTargetPlan } from "./planning/visual-target-plan.js";
 import { generateVisualTargetArtifact } from "./planning/visual-target-generator.js";
 import { generateGeneratedTargetAutoV2 } from "./planning/generated-target-auto-v2.js";
-import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities } from "./planning/api-fixture-responsibility.js";
+import { analyzeApiFixtureResponsibilities, analyzeTransportProxyResponsibilities, type ApiFixtureResponsibilityGraph } from "./planning/api-fixture-responsibility.js";
 import { linkApiRouteOwnership } from "./planning/api-route-ownership.js";
 import { analyzeSpaAuthResponsibilities } from "./planning/spa-auth-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
@@ -30,6 +30,8 @@ import { createDefaultSkillRegistry } from "./skills/default-registry.js";
 import type { SourceStructureSkillInput } from "./skills/source-structure.js";
 import type { SpaRouterSkillInput } from "./skills/spa-router.js";
 import type { Manifest } from "./types.js";
+import { assertDataSurfaceManifest, serializeDataSurfaceManifest, validateDataSurfaceManifest, type DataSurfaceManifest, type DataSurfaceManifestInput } from "./skills/data-surface-manifest/index.js";
+import type { DataCardinalityResponsibilityGraph, DataCardinalitySkillInput } from "./skills/data-cardinality.js";
 
 const skillRegistry = createDefaultSkillRegistry();
 
@@ -56,7 +58,8 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   return value;
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
+  data-surface-validate <data-surface.manifest.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -237,6 +240,49 @@ async function main(argv: string[]): Promise<number> {
       console.log(`  components=${graph.metrics.components}，interactive=${graph.metrics.interactiveComponents}，charts=${graph.metrics.chartComponents}，apiWrappers=${graph.apiFixtures?.metrics.actualApiWrappers ?? 0}，apiFixtures=${graph.apiFixtures?.metrics.matchedFixtures ?? 0}，apiFlows=${graph.apiFixtures?.metrics.responseFlows ?? 0}，dynamicRouteFlows=${graph.apiFixtures?.metrics.dynamicRouteFlows ?? 0}，stateHandlers=${graph.metrics.stateHandlers}，stateWrites=${graph.metrics.stateWrites}，displayFunctions=${graph.metrics.displayFunctions}，unresolvedStateWrites=${graph.metrics.unresolvedStateWrites}，mediaQueries=${graph.metrics.mediaQueries}，blocked=${graph.blockers.length > 0}`);
       for (const reason of graph.blockers) console.log(`  [BLOCKED] ${reason}`);
       return graph.blockers.length > 0 ? 1 : 0;
+    }
+    if (command === "data-surface") {
+      const sfcPath = args[0], cardinalityPath = flag(args, "--cardinality"), apiPath = flag(args, "--api"), out = flag(args, "--out");
+      if (!sfcPath || !out) throw new Error("data-surface 需要 <sfc-visual.graph.json> 和 --out");
+      const sfcGraph = JSON.parse(await readFile(resolve(sfcPath), "utf8")) as { kind?: string; components?: DataSurfaceManifestInput["components"]; apiFixtures?: ApiFixtureResponsibilityGraph };
+      if (sfcGraph.kind !== "sfc-visual-responsibility-graph" || !Array.isArray(sfcGraph.components)) throw new Error("data-surface 的 SFC 输入必须是 sfc-visual-responsibility-graph");
+      const cardinality = cardinalityPath
+        ? JSON.parse(await readFile(resolve(cardinalityPath), "utf8")) as DataCardinalityResponsibilityGraph
+        : await skillRegistry.execute<DataCardinalitySkillInput, DataCardinalityResponsibilityGraph>("data-cardinality", { components: sfcGraph.components });
+      const api = apiPath ? JSON.parse(await readFile(resolve(apiPath), "utf8")) as ApiFixtureResponsibilityGraph : sfcGraph.apiFixtures;
+      if (cardinality.kind !== "data-cardinality-responsibility-graph") throw new Error("data-surface 的 cardinality 输入必须是 data-cardinality-responsibility-graph");
+      if (!api || api.kind !== "api-fixture-responsibility-graph") throw new Error("data-surface 需要 --api 或 SFC graph.apiFixtures");
+      if (!flag(args, "--source-root") && api.sourceRoot === "<external-source>") throw new Error("data-surface 输入使用了外部源占位符，必须提供 --source-root");
+      const sourceHash = flag(args, "--source-hash");
+      const identity = {
+        ...(flag(args, "--source-root") ? { sourceRoot: resolve(flag(args, "--source-root")!) } : {}),
+        ...(sourceHash ? { sourceHash, sourceHashKind: "source-content" as const } : {}),
+        ...(flag(args, "--source-commit") ? { sourceCommit: flag(args, "--source-commit") } : {}),
+        ...(flag(args, "--fixture-hash") ? { fixtureHash: flag(args, "--fixture-hash"), fixtureHashKind: "fixture-content" as const } : {}),
+        ...(flag(args, "--config-hash") ? { configurationHash: flag(args, "--config-hash"), configurationHashKind: "configuration-content" as const } : {}),
+        ...(flag(args, "--generated-at") ? { generatedAt: flag(args, "--generated-at") } : {}),
+      };
+      const manifest = await skillRegistry.execute<DataSurfaceManifestInput, DataSurfaceManifest>("data-surface-manifest", {
+        components: sfcGraph.components,
+        cardinality,
+        api,
+        ...(Object.keys(identity).length ? { identity } : {}),
+      });
+      assertDataSurfaceManifest(manifest);
+      await writeFile(resolve(out), serializeDataSurfaceManifest(manifest), "utf8");
+      console.log(`✓ 已生成 Data Surface Manifest: ${resolve(out)}`);
+      console.log(`  surfaces=${manifest.metrics.surfaces}，api=${manifest.metrics.apiSurfaces}，static=${manifest.metrics.staticSurfaces}，unresolved=${manifest.metrics.unresolved}，reviewRequired=${manifest.reviewRequired}`);
+      console.log(`  sourceHash=${manifest.identity.sourceHash}，fixtureHash=${manifest.identity.fixtureHash}，configurationHash=${manifest.identity.configurationHash}`);
+      return 0;
+    }
+    if (command === "data-surface-validate") {
+      const manifestPath = args[0];
+      if (!manifestPath) throw new Error("data-surface-validate 需要 <data-surface.manifest.json>");
+      const manifest = JSON.parse(await readFile(resolve(manifestPath), "utf8"));
+      const report = validateDataSurfaceManifest(manifest);
+      for (const item of report.issues) console.log(`[${report.valid ? "PASS" : "FAIL"}] ${item.path}: ${item.message}`);
+      console.log(`Data Surface Manifest: ${report.valid ? "PASS" : "FAIL"}`);
+      return report.valid ? 0 : 1;
     }
     if (command === "visual-target-auto-v2") {
       const planPath = args[0], routeShellPath = flag(args, "--route-shell"), routerSfcPath = flag(args, "--router-sfc");

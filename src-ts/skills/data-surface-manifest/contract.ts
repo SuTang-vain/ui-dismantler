@@ -1,6 +1,33 @@
 export type DataSurfaceShapeKind = "collection" | "record" | "scalar" | "unknown";
 export type DataSurfaceItemKind = "record" | "scalar" | "mixed" | "unknown";
 
+export interface DataSurfaceManifestIdentity {
+  readonly contractVersion: "1.0";
+  readonly sourceRoot: string;
+  readonly sourceHash: string;
+  readonly sourceHashKind: "responsibility-graph" | "source-content";
+  readonly sourceCommit?: string;
+  readonly fixtureHash: string;
+  readonly fixtureHashKind: "responsibility-graph" | "fixture-content";
+  readonly configurationHash: string;
+  readonly configurationHashKind: "responsibility-graph" | "configuration-content";
+  readonly skillVersions: Readonly<Record<string, string>>;
+  readonly generatedAt?: string;
+}
+
+export interface DataSurfaceManifestIdentityInput {
+  readonly sourceRoot?: string;
+  readonly sourceHash?: string;
+  readonly sourceHashKind?: "responsibility-graph" | "source-content";
+  readonly sourceCommit?: string;
+  readonly fixtureHash?: string;
+  readonly fixtureHashKind?: "responsibility-graph" | "fixture-content";
+  readonly configurationHash?: string;
+  readonly configurationHashKind?: "responsibility-graph" | "configuration-content";
+  readonly skillVersions?: Readonly<Record<string, string>>;
+  readonly generatedAt?: string;
+}
+
 export interface DataSurfaceLibrary {
   readonly sourceRoot: string;
   readonly framework: "vue-sfc";
@@ -103,6 +130,7 @@ export interface DataSurfaceManifestUnresolved {
 export interface DataSurfaceManifest {
   readonly schemaVersion: "1.0";
   readonly kind: "data-surface-manifest";
+  readonly identity: DataSurfaceManifestIdentity;
   readonly library: DataSurfaceLibrary;
   readonly surfaces: readonly DataSurface[];
   readonly unresolved: readonly DataSurfaceManifestUnresolved[];

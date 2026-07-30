@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { hashCanonicalValue } from "./serializer.js";
 import type { JsonValue } from "../../types.js";
 import type { ApiFixtureResponsibilityGraph, ApiFixtureResponsibility } from "../../planning/api-fixture-responsibility.js";
 import type { StaticExpressionValue } from "../../planning/static-expression.js";
@@ -13,12 +13,14 @@ import type {
   DataSurfaceManifestUnresolved,
   DataSurfaceReference,
   DataSurfaceShape,
+  DataSurfaceManifestIdentityInput,
 } from "./contract.js";
 
 export interface DataSurfaceManifestInput {
   readonly components: readonly SfcVisualComponentResponsibility[];
   readonly cardinality: DataCardinalityResponsibilityGraph;
   readonly api: ApiFixtureResponsibilityGraph;
+  readonly identity?: DataSurfaceManifestIdentityInput;
 }
 
 function unique(values: readonly string[]): string[] {
@@ -26,7 +28,7 @@ function unique(values: readonly string[]): string[] {
 }
 
 function valueHash(value: JsonValue | StaticExpressionValue): string {
-  return createHash("sha256").update(JSON.stringify(value)).digest("hex");
+  return hashCanonicalValue(value);
 }
 
 function isReferenceValue(value: StaticExpressionValue): value is { $reference: string } {
@@ -225,7 +227,35 @@ function staticSurfaceBindings(cardinality: ComponentDataCardinalityResponsibili
   return [...bindings].sort();
 }
 
+function deriveIdentity(input: DataSurfaceManifestInput): DataSurfaceManifest["identity"] {
+  const overrides = input.identity ?? {};
+  const sourceRoot = overrides.sourceRoot ?? input.api.sourceRoot;
+  const sourceHash = overrides.sourceHash ?? hashCanonicalValue(input.components.map((component) => ({ id: component.id, file: component.file, dataCardinality: component.dataCardinality, state: component.stateResponsibility })));
+  const fixtureHash = overrides.fixtureHash ?? hashCanonicalValue(input.api.responsibilities.map((responsibility) => ({ id: responsibility.id, bodyHash: responsibility.fixture.bodyHash, requestPath: responsibility.fixture.requestPath })));
+  const configurationHash = overrides.configurationHash ?? hashCanonicalValue(input.api.responsibilities.map((responsibility) => ({ id: responsibility.id, method: responsibility.apiCall.method, path: responsibility.apiCall.path, responsePath: responsibility.consumption.responsePath, targetBinding: responsibility.consumption.targetBinding, transportPrefixes: responsibility.apiCall.transportPrefixes })));
+  return {
+    contractVersion: "1.0",
+    sourceRoot,
+    sourceHash,
+    sourceHashKind: overrides.sourceHashKind ?? (overrides.sourceHash ? "source-content" : "responsibility-graph"),
+    ...(overrides.sourceCommit ? { sourceCommit: overrides.sourceCommit } : {}),
+    fixtureHash,
+    fixtureHashKind: overrides.fixtureHashKind ?? (overrides.fixtureHash ? "fixture-content" : "responsibility-graph"),
+    configurationHash,
+    configurationHashKind: overrides.configurationHashKind ?? (overrides.configurationHash ? "configuration-content" : "responsibility-graph"),
+    skillVersions: {
+      "component-ownership": "1.0.0",
+      "data-cardinality": "1.0.0",
+      "api-responsibility": "1.0.0",
+      "data-surface-manifest": "1.0.0",
+      ...(overrides.skillVersions ?? {}),
+    },
+    ...(overrides.generatedAt ? { generatedAt: overrides.generatedAt } : {}),
+  };
+}
+
 export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataSurfaceManifest {
+  const identity = deriveIdentity(input);
   const components = new Map(input.components.map((component) => [component.id, component]));
   const cardinalities = new Map(input.cardinality.components.map((component) => [component.componentId, component]));
   const consumedStaticBindings = new Set<string>();
@@ -272,7 +302,8 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
   return {
     schemaVersion: "1.0",
     kind: "data-surface-manifest",
-    library: { sourceRoot: input.api.sourceRoot, framework: "vue-sfc" },
+    identity,
+    library: { sourceRoot: identity.sourceRoot, framework: "vue-sfc" },
     surfaces,
     unresolved,
     metrics: {

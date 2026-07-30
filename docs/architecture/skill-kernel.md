@@ -82,6 +82,17 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 `data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
 
+The Manifest identity records `sourceHash`, `fixtureHash`, `configurationHash`, their hash kinds, optional `sourceCommit`, the producer Skill versions, and optional explicitly supplied `generatedAt`. If no timestamp is supplied, canonical serialization is byte-stable for identical inputs. A deliverable Manifest may not retain `<external-source>` as its source root.
+
+The standalone commands are:
+
+```text
+ui-dismantler data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> --source-root <frozen-source-root>
+ui-dismantler data-surface-validate <data-surface.manifest.json>
+```
+
+If `--cardinality` is omitted, the command executes the registered `data-cardinality` Skill against the reviewed SFC components. If `--api` is omitted, it consumes `sfc-visual.graph.apiFixtures`. The command remains an emitter/validator only: it does not invoke `sg-data-pack`, write `data.json`, patch a component library, or alter existing CLI command output.
+
 ## Dependency policy
 
 - Required dependencies are resolved in deterministic topological order.
