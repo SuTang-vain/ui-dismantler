@@ -3,11 +3,10 @@ import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
-import { analyzeHtml } from "./analysis/analyzer.js";
 import { generateScenarios } from "./evaluation/scenarios.js";
 import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
 import { evaluateRoundtrip } from "./evaluation/roundtrip.js";
-import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "./evaluation/spa-router.js";
+import type { SpaRouterContractConfig, SpaRouterContractReport } from "./evaluation/spa-router.js";
 import { formatSpaRouterVisualDiagnostics } from "./evaluation/spa-router-report.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "./validation/library.js";
 import { planComponents, writeComponentPlanningReport, writeComponentSpecs } from "./planning/components.js";
@@ -27,6 +26,12 @@ import { linkApiRouteOwnership } from "./planning/api-route-ownership.js";
 import { analyzeSpaAuthResponsibilities } from "./planning/spa-auth-responsibility.js";
 import type { SpaRouteShellPlan } from "./planning/spa-route-shell.js";
 import { runQualityGate, writeManifest, writeScenarioDocument } from "./workflow/pipeline.js";
+import { createDefaultSkillRegistry } from "./skills/default-registry.js";
+import type { SourceStructureSkillInput } from "./skills/source-structure.js";
+import type { SpaRouterSkillInput } from "./skills/spa-router.js";
+import type { Manifest } from "./types.js";
+
+const skillRegistry = createDefaultSkillRegistry();
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
 function has(args: string[], name: string): boolean { return args.includes(name); }
@@ -67,7 +72,7 @@ async function main(argv: string[]): Promise<number> {
     if (command === "analyze") {
       const html = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
       if (!html || !out) throw new Error("analyze 需要 <html> 和 --out");
-      const manifest = analyzeHtml(html, { profile: flag(args, "--profile"), minimal: has(args, "--minimal") });
+      const manifest = await skillRegistry.execute<SourceStructureSkillInput, Manifest>("source-structure", { htmlPath: html, options: { profile: flag(args, "--profile"), minimal: has(args, "--minimal") } });
       await writeManifest(out, manifest);
       console.log(`✓ 已生成 manifest: ${resolve(out)}`);
       console.log(`  视图: ${manifest.structure.views.map((view) => view.type).join(", ") || "generic"}`);
@@ -81,7 +86,7 @@ async function main(argv: string[]): Promise<number> {
       if (!html || !out) throw new Error("plan 需要 <html> 和 --out");
       const rawBudget = flag(args, "--line-budget");
       const lineBudget = rawBudget === undefined ? undefined : Number(rawBudget);
-      const manifest = analyzeHtml(html, { profile: flag(args, "--profile"), minimal: has(args, "--minimal") });
+      const manifest = await skillRegistry.execute<SourceStructureSkillInput, Manifest>("source-structure", { htmlPath: html, options: { profile: flag(args, "--profile"), minimal: has(args, "--minimal") } });
       const report = planComponents(manifest, { lineBudget });
       await writeComponentPlanningReport(out, report);
       const specDir = flag(args, "--spec-dir");
@@ -417,7 +422,7 @@ Run Semantic navigation before visual Gold+. Formal measured iterations and rema
     if (command === "spa-router") {
       const configPath = args[0]; if (!configPath) throw new Error("spa-router 需要 <config.json>");
       const config = JSON.parse(await readFile(resolve(configPath), "utf8")) as SpaRouterContractConfig;
-      const report = await evaluateSpaRouterContract(config);
+      const report = await skillRegistry.execute<SpaRouterSkillInput, SpaRouterContractReport>("spa-router", { config });
       const serialized = `${JSON.stringify(report, null, 2)}\n`;
       const out = flag(args, "--out"); if (out) await writeFile(resolve(out), serialized, "utf8");
       const lifecycleOut = flag(args, "--lifecycle-out");
