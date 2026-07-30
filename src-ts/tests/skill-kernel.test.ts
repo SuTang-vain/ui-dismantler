@@ -25,16 +25,18 @@ import { ReviewedBindingRegistry } from "../core/artifacts/registry.js";
 import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
+import { dataCardinalitySkill, extractDataCardinalityResponsibilities, projectDataCardinalityDelta } from "../skills/data-cardinality.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
 import { createSourceStructureSkill, sourceStructureSkill, type SourceStructureAnalyzer } from "../skills/source-structure.js";
 import { createSpaRouterSkill } from "../skills/spa-router.js";
 import { stateResponsibilitySkill } from "../skills/state-responsibility.js";
 import { transportProxySkill } from "../skills/transport-proxy.js";
 import type { Manifest } from "../types.js";
+import type { SfcVisualComponentResponsibility } from "../planning/sfc-visual-responsibility.js";
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "data-cardinality", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -155,6 +157,35 @@ test("API responsibility projection links component owners to reviewed API respo
   assert.equal(delta.edges[0]?.relation, "consumes-api");
 });
 
+test("data-cardinality Skill extracts component-owned evidence and projects unresolved repeats", async () => {
+  const component = {
+    id: "profiles",
+    file: "src/views/Profiles.vue",
+    componentName: "Profiles",
+    dataCardinality: {
+      staticBindings: { profiles: [{ name: "One" }, { name: "Two" }] },
+      cardinalities: [
+        { path: "profiles", count: 2, source: "module-static-binding" as const },
+        { path: "templateRepeat[0]:profile in remoteProfiles", count: -1, source: "template-repeat" as const },
+      ],
+      sliceLimits: [],
+      templateRepeats: ["profile in remoteProfiles"],
+      unresolvedReferences: ["remoteProfiles"],
+    },
+  } as unknown as SfcVisualComponentResponsibility;
+  const expected = extractDataCardinalityResponsibilities([component]);
+  const actual = await dataCardinalitySkill.execute({ components: [component] });
+  assert.deepEqual(actual, expected);
+  assert.equal(actual.metrics.cardinalityEvidence, 2);
+  assert.equal(actual.metrics.unresolvedReferences, 1);
+  assert.equal(actual.reviewRequired, true);
+  const delta = projectDataCardinalityDelta(actual);
+  assert.equal(delta.nodes[0]?.attributes.count, 2);
+  assert.equal(delta.edges[0]?.from, "component:profiles");
+  assert.deepEqual(delta.unresolved, [{ owner: "component:profiles", source: "src/views/Profiles.vue", reason: "unresolved repeated data reference: remoteProfiles" }]);
+  assert.equal(delta.reviewRequired, true);
+});
+
 test("transport-proxy wrapper preserves scoped browser-prefix and upstream audit evidence", async () => {
   const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-proxy-skill-"));
   await writeFile(join(directory, "vite.config.ts"), `import { defineConfig } from "vite"; export default defineConfig({ server: { proxy: { "/api": { target: "http://127.0.0.1:9000", changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, "") } } } });`, "utf8");
@@ -240,9 +271,10 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   assert.deepEqual(authenticated.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "auth-guard"]);
   assert.equal(authenticated.qualityGates.includes("fresh-authentication-required"), true);
   const dataBacked = profiles.resolve("data-backed-spa");
-  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
+  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
   assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);
   assert.equal(dataBacked.qualityGates.includes("reviewed-fixture-only"), true);
+  assert.equal(dataBacked.qualityGates.includes("cardinality-structural-evidence"), true);
   const authenticatedData = profiles.resolve("data-backed-spa", ["auth-guard"]);
   assert.equal(authenticatedData.skills.at(-1)?.id, "auth-guard");
   assert.throws(() => profiles.resolve("spa-application", ["unknown-skill"]), /does not declare optional skill/);
@@ -274,6 +306,10 @@ test("Profile Execution Plan resolves reviewed providers and component-to-API ar
   const componentBinding = api?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph");
   assert.equal(componentBinding?.source, "artifact");
   assert.equal(componentBinding?.binding?.outputPath, "components");
+  const cardinality = plan.steps.find((step) => step.skillId === "data-cardinality");
+  const cardinalityBinding = cardinality?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph");
+  assert.equal(cardinalityBinding?.source, "artifact");
+  assert.equal(cardinalityBinding?.binding?.outputPath, "components");
 });
 
 test("Profile Execution Plan blocks missing and unreviewed external inputs", () => {

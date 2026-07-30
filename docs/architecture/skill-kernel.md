@@ -47,7 +47,7 @@ The initial profiles are intentionally small:
 
 - `source-page`: requires `source-structure`; may enable `state-responsibility`.
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
-- `data-backed-spa`: adds `component-ownership`, `transport-proxy`, and `api-responsibility`; may enable `auth-guard` after review.
+- `data-backed-spa`: adds `component-ownership`, `data-cardinality`, `transport-proxy`, and `api-responsibility`; may enable `auth-guard` after review.
 
 A Profile resolves Skill dependencies and quality gates. `ProfileExecutionPlanner` keeps composition reviewable, while `ProfileExecutor` runs only a fully reviewed plan and maps explicit provider paths plus reviewed artifact bindings into each Skill input.
 
@@ -77,6 +77,8 @@ Historical graphs remain authoritative outputs. Skills may additionally implemen
 - `api-responsibility`: API responsibility nodes and `component -> consumes-api` edges.
 
 The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixtureResponsibilityGraph`.
+
+`data-cardinality` consumes the reviewed component list from `component-ownership` and emits a dedicated cardinality graph plus sidecar delta. It preserves static array, slice-limit, and template-repeat evidence without re-parsing a case or introducing component-name rules. Unresolved repeated data references remain review-required.
 
 ## Dependency policy
 
