@@ -47,7 +47,7 @@ The initial profiles are intentionally small:
 
 - `source-page`: requires `source-structure`; may enable `state-responsibility`.
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
-- `data-backed-spa`: adds `component-ownership`, `data-cardinality`, `transport-proxy`, and `api-responsibility`; may enable `auth-guard` after review.
+- `data-backed-spa`: adds `component-ownership`, `data-cardinality`, `transport-proxy`, `api-responsibility`, and `data-surface-manifest`; may enable `auth-guard` after review.
 
 A Profile resolves Skill dependencies and quality gates. `ProfileExecutionPlanner` keeps composition reviewable, while `ProfileExecutor` runs only a fully reviewed plan and maps explicit provider paths plus reviewed artifact bindings into each Skill input.
 
@@ -79,6 +79,8 @@ Historical graphs remain authoritative outputs. Skills may additionally implemen
 The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixtureResponsibilityGraph`.
 
 `data-cardinality` consumes the reviewed component list from `component-ownership` and emits a dedicated cardinality graph plus sidecar delta. It preserves static array, slice-limit, and template-repeat evidence without re-parsing a case or introducing component-name rules. Unresolved repeated data references remain review-required.
+
+`data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
 
 ## Dependency policy
 
@@ -159,7 +161,7 @@ Three deliberate differences from a simpler proposed tree are retained:
 2. The normalized graph is named `responsibility`, not generic `graph`, so it is not confused with router, layout, dependency, or ECharts graphs.
 3. `source`, `ast`, `evaluation`, and framework adapter directories are created only when real implementations move into them; empty architectural placeholders are not committed.
 
-Current Skill modules remain single files while they contain one wrapper and one projector. A Skill moves to its own directory when it gains multiple implementation units, for example:
+Current Skill modules remain single files while they contain one wrapper and one projector. `data-surface-manifest` uses a directory because its contract, deterministic builder, responsibility projector, and Skill wrapper are independent implementation units. A Skill moves to its own directory when it gains multiple implementation units, for example:
 
 ```text
 skills/component-ownership/

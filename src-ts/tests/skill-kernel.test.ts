@@ -26,6 +26,7 @@ import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiRe
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
 import { dataCardinalitySkill, extractDataCardinalityResponsibilities, projectDataCardinalityDelta } from "../skills/data-cardinality.js";
+import { buildDataSurfaceManifest, dataSurfaceManifestSkill, projectDataSurfaceManifestDelta } from "../skills/data-surface-manifest/index.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
 import { createSourceStructureSkill, sourceStructureSkill, type SourceStructureAnalyzer } from "../skills/source-structure.js";
 import { createSpaRouterSkill } from "../skills/spa-router.js";
@@ -36,7 +37,7 @@ import type { SfcVisualComponentResponsibility } from "../planning/sfc-visual-re
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "data-cardinality", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "data-cardinality", "data-surface-manifest", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -186,6 +187,77 @@ test("data-cardinality Skill extracts component-owned evidence and projects unre
   assert.equal(delta.reviewRequired, true);
 });
 
+test("data-surface-manifest Skill joins reviewed API cardinality and component evidence without generating a Data Pack", async () => {
+  const component = {
+    id: "profiles",
+    file: "src/views/Profiles.vue",
+    componentName: "Profiles",
+    dataCardinality: {
+      staticBindings: {
+        profiles: [{ name: "Fallback", status: "active" }],
+        filters: [{ label: "Active", value: { $reference: "statuses.active" } }],
+        statuses: { active: "active" },
+      },
+      cardinalities: [
+        { path: "profiles", count: 1, source: "module-static-binding" as const },
+        { path: "filters", count: 1, source: "module-static-binding" as const },
+      ],
+      sliceLimits: [1], templateRepeats: [], unresolvedReferences: [],
+    },
+    stateResponsibility: {
+      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript",
+      initialState: { profiles: [] }, handlers: [], displayFunctions: [], unresolvedWrites: [],
+      metrics: { initialBindings: 1, handlers: 0, handlersWithWrites: 0, stateWrites: 0, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+    },
+  } as unknown as SfcVisualComponentResponsibility;
+  const cardinality = extractDataCardinalityResponsibilities([component]);
+  const api = {
+    schemaVersion: "1.0", kind: "api-fixture-responsibility-graph", reviewRequired: true, sourceRoot: "/tmp/library",
+    responsibilities: [{
+      id: "api-fixture:profiles:listProfiles", componentId: "profiles", componentName: "Profiles", componentFile: "src/views/Profiles.vue",
+      apiCall: { localName: "listProfiles", exportedName: "listProfiles", importSource: "@/api/profiles", moduleFile: "src/api/profiles.ts", method: "GET", path: "/profiles", transportPrefixes: [{ value: "/api", source: "vite.config.ts" }], transportPathCandidates: ["/api/profiles"], runtimeSelections: [], proxyRoutes: [] },
+      consumption: { targetBinding: "profiles", responsePath: "data", sliceLimit: 1 },
+      renderedFields: [{ field: "name", filters: [], tagged: false }], filterValueMaps: {},
+      fixture: { index: 0, requestPath: "/api/profiles", reviewed: true, bodyHash: "fixture-hash", responseValue: { data: [{ name: "One", status: "active" }, { name: "Two", status: "disabled" }] }, materializedValue: [{ name: "One", status: "active" }, { name: "Two", status: "disabled" }] },
+      confidence: "high", reviewReasons: [],
+    }],
+    candidates: [], responseFlows: [], unresolved: [],
+    metrics: { componentsScanned: 1, importedApiCalls: 1, apiCandidates: 1, actualApiWrappers: 1, frameworkComposables: 0, localStateStoreHelpers: 0, utilityFunctions: 0, unresolvedLocalTransports: 0, responseFlows: 0, dynamicRouteFlows: 0, matchedEndpoints: 1, matchedFixtures: 1, materializedBindings: 1, renderedFields: 1, transportPrefixesInferred: 1, runtimeSelectionsInferred: 0, proxyRoutesInferred: 0, proxyTargetsInferred: 0, proxyRewriteRulesInferred: 0, proxyAstRoutesInferred: 0, proxyFallbackRoutesInferred: 0, proxyParseDiagnostics: 0 },
+    reviewReasons: [],
+  } as ApiFixtureResponsibilityGraph;
+  const expected = buildDataSurfaceManifest({ components: [component], cardinality, api });
+  const actual = await dataSurfaceManifestSkill.execute({ components: [component], cardinality, api });
+  assert.deepEqual(actual, expected);
+  assert.equal(actual.library.sourceRoot, "/tmp/library");
+  assert.equal(actual.metrics.apiSurfaces, 1);
+  assert.equal(actual.metrics.staticSurfaces, 1);
+  assert.deepEqual(actual.surfaces.map((surface) => surface.id), ["api:api-fixture:profiles:listProfiles", "static:profiles:filters"]);
+  const apiSurface = actual.surfaces[0];
+  assert.equal(apiSurface?.shape.kind, "collection");
+  assert.equal(apiSurface?.shape.cardinality, 1);
+  assert.deepEqual(apiSurface?.fields.map((field) => field.path), ["name", "status"]);
+  assert.equal(apiSurface?.source.static?.binding, "profiles");
+  assert.equal(apiSurface?.source.stateInitial?.binding, "profiles");
+  assert.equal(apiSurface?.injection.kind, "state-binding");
+  const staticSurface = actual.surfaces[1];
+  assert.equal(staticSurface?.references[0]?.target, "statuses.active");
+  assert.equal(staticSurface?.references[0]?.resolved, true);
+  assert.equal("entities" in actual, false);
+  assert.equal(JSON.stringify(actual).includes("Fallback"), false);
+  assert.equal(JSON.stringify(actual).includes('"Active"'), false);
+  assert.equal(actual.reviewRequired, false);
+  const delta = projectDataSurfaceManifestDelta(actual);
+  assert.equal(delta.nodes[0]?.id, "data-surface:api:api-fixture:profiles:listProfiles");
+  assert.equal(delta.edges.some((edge) => edge.from === "api-responsibility:api-fixture:profiles:listProfiles" && edge.relation === "materializes-data-surface"), true);
+
+  const unlinkedFlow = buildDataSurfaceManifest({
+    components: [component], cardinality,
+    api: { ...api, responseFlows: [{ id: "flow:routes", apiLocalName: "getRoutes", exportedName: "getRoutes", importSource: "@/api/routes", apiModuleFile: "src/api/routes.ts", endpoint: { method: "GET", path: "/routes" }, consumerFile: "src/store/routes.ts", responseSymbol: "response", responsePath: "data", targetBinding: "routes", flowKind: "dynamic-route-injection", routeMutationEvidence: ["router.addRoute"], routeMutations: ["addRoute"], confidence: "high", reviewReasons: [] }] },
+  });
+  assert.equal(unlinkedFlow.reviewRequired, true);
+  assert.equal(unlinkedFlow.unresolved.some((item) => item.reason.includes("has no reviewed fixture-backed data surface")), true);
+});
+
 test("transport-proxy wrapper preserves scoped browser-prefix and upstream audit evidence", async () => {
   const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-proxy-skill-"));
   await writeFile(join(directory, "vite.config.ts"), `import { defineConfig } from "vite"; export default defineConfig({ server: { proxy: { "/api": { target: "http://127.0.0.1:9000", changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, "") } } } });`, "utf8");
@@ -271,10 +343,11 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   assert.deepEqual(authenticated.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "auth-guard"]);
   assert.equal(authenticated.qualityGates.includes("fresh-authentication-required"), true);
   const dataBacked = profiles.resolve("data-backed-spa");
-  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
+  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility", "data-surface-manifest"]);
   assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);
   assert.equal(dataBacked.qualityGates.includes("reviewed-fixture-only"), true);
   assert.equal(dataBacked.qualityGates.includes("cardinality-structural-evidence"), true);
+  assert.equal(dataBacked.qualityGates.includes("manifest-consumer-separation"), true);
   const authenticatedData = profiles.resolve("data-backed-spa", ["auth-guard"]);
   assert.equal(authenticatedData.skills.at(-1)?.id, "auth-guard");
   assert.throws(() => profiles.resolve("spa-application", ["unknown-skill"]), /does not declare optional skill/);
@@ -310,6 +383,12 @@ test("Profile Execution Plan resolves reviewed providers and component-to-API ar
   const cardinalityBinding = cardinality?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph");
   assert.equal(cardinalityBinding?.source, "artifact");
   assert.equal(cardinalityBinding?.binding?.outputPath, "components");
+  const dataSurface = plan.steps.find((step) => step.skillId === "data-surface-manifest");
+  assert.deepEqual(dataSurface?.inputs.map((input) => [input.contract, input.source]), [
+    ["sfc-visual-responsibility-graph", "artifact"],
+    ["data-cardinality-responsibility-graph", "artifact"],
+    ["api-fixture-responsibility-graph", "artifact"],
+  ]);
 });
 
 test("Profile Execution Plan blocks missing and unreviewed external inputs", () => {
