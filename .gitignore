@@ -22,3 +22,6 @@ examples/**/*.zip
 node_modules/
 
 /dist-ts/
+
+# Runtime regression evidence belongs in UI_DISMANTLER_ARTIFACT_ROOT or system temp.
+examples/**/artifacts-regression/

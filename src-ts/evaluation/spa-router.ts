@@ -7,6 +7,7 @@ import { performance } from "node:perf_hooks";
 import { chromium, type Browser, type BrowserContext, type BrowserServer, type Locator, type Page, type Request } from "playwright-core";
 import { compareComputedStyles, comparePixels, COMPUTED_STYLE_PROPERTIES } from "./browser.js";
 import type { ComputedStyleSnapshot, JsonValue, PixelDiffReport, QualityViewport, StyleComparisonReport } from "../types.js";
+import { resolveRuntimeArtifactDirectory, type RuntimeArtifactDirectory } from "../core/artifacts/runtime-root.js";
 
 export interface SpaRouterFixtureReview {
   reviewed: true;
@@ -2352,9 +2353,20 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
   const timing = { browserLaunchMs: 0, contractMs: 0, comparisonMs: 0, visualMatrixMs: 0, browserCloseMs: 0, browserDisconnectMs: 0, browserProcessCloseMs: 0, reportReadyMs: 0, totalMs: 0 };
   const elapsed = (startedAt: number): number => Number((performance.now() - startedAt).toFixed(3));
   const resolved = validateConfig(config);
+  let runtimeArtifacts: RuntimeArtifactDirectory | undefined;
+  if (config.visualMatrix?.artifactDir) {
+    runtimeArtifacts = resolveRuntimeArtifactDirectory(config.visualMatrix.artifactDir, "spa-router", { repositoryRoot: process.cwd() });
+    config = { ...config, visualMatrix: { ...config.visualMatrix, artifactDir: runtimeArtifacts.path } };
+  }
   let phaseStartedAt = performance.now();
   const requestedFastShutdown = config.execution?.browserShutdown === "fast-kill";
-  const launched = await launchSpaBrowser(options.executablePath, requestedFastShutdown);
+  let launched: Awaited<ReturnType<typeof launchSpaBrowser>>;
+  try {
+    launched = await launchSpaBrowser(options.executablePath, requestedFastShutdown);
+  } catch (error) {
+    runtimeArtifacts?.cleanup();
+    throw error;
+  }
   const browser = launched.browser;
   let allowFastShutdown = false;
   let fastShutdownConfirmed = false;
@@ -2481,5 +2493,6 @@ export async function evaluateSpaRouterContract(config: SpaRouterContractConfig,
       completedReport.telemetry.activeHandlesAfterClose = handlesAfterClose;
       completedReport.telemetry.browserShutdownMode = completedReport.telemetry.fastShutdownUsed && fastShutdownConfirmed ? "fast-kill" : requestedFastShutdown ? "graceful-fallback" : launched.server ? "profiled-graceful" : "graceful";
     }
+    runtimeArtifacts?.cleanup();
   }
 }

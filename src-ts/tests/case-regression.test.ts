@@ -10,6 +10,7 @@ import { analyzeHtml } from "../analysis/analyzer.js";
 import { planComponents } from "../planning/components.js";
 import { evaluateSpaRouterContract, type SpaRouterContractConfig } from "../evaluation/spa-router.js";
 import { runQualityGate } from "../workflow/pipeline.js";
+import { createRegressionArtifactDirectory } from "../core/artifacts/runtime-root.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 
@@ -721,8 +722,10 @@ test("Starmap live Semantic and Strict Gold+ regression preserves the frozen gen
   }
 });
 
-test("BLACKPINK Gold+ regression preserves initial and critical interaction matrices", { skip: !runGoldRegression, timeout: 600_000 }, async () => {
+test("BLACKPINK Gold+ regression preserves initial and critical interaction matrices", { skip: !runGoldRegression, timeout: 600_000 }, async (context) => {
   const caseDir = `${root}examples/cases/blackpink-star-group-ts`;
+  const artifacts = createRegressionArtifactDirectory("blackpink-star-group-ts");
+  context.after(() => artifacts.cleanup());
   const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
   const browserConcurrency = Number(process.env.UI_DISMANTLER_BROWSER_CONCURRENCY ?? "1");
   const browserResourceCache = (process.env.UI_DISMANTLER_BROWSER_RESOURCE_CACHE ?? "off") as "off" | "run-local";
@@ -732,7 +735,7 @@ test("BLACKPINK Gold+ regression preserves initial and critical interaction matr
     libDir: `${caseDir}/lib`,
     manifestPath: `${caseDir}/manifest.json`,
     scenarioPath: `${caseDir}/scenarios.json`,
-    visualArtifactsDir: `${caseDir}/artifacts-regression`,
+    visualArtifactsDir: artifacts.path,
     browserMode,
     browserConcurrency,
     browserResourceCache,
@@ -766,8 +769,10 @@ test("BLACKPINK Gold+ regression preserves initial and critical interaction matr
   if (browserResourceCache === "run-local") assert.ok((report.telemetry.browser?.workload.resourceCacheHits ?? 0) > 0);
 });
 
-test("Babelo Gold+ regression preserves structured coverage and critical visual matrices", { skip: !runGoldRegression, timeout: 900_000 }, async () => {
+test("Babelo Gold+ regression preserves structured coverage and critical visual matrices", { skip: !runGoldRegression, timeout: 900_000 }, async (context) => {
   const caseDir = `${root}examples/dispatch-experiments/babelo-landing`;
+  const artifacts = createRegressionArtifactDirectory("babelo-landing");
+  context.after(() => artifacts.cleanup());
   const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
   const browserConcurrency = Number(process.env.UI_DISMANTLER_BROWSER_CONCURRENCY ?? "1");
   const browserResourceCache = (process.env.UI_DISMANTLER_BROWSER_RESOURCE_CACHE ?? "off") as "off" | "run-local";
@@ -777,7 +782,7 @@ test("Babelo Gold+ regression preserves structured coverage and critical visual 
     libDir: `${caseDir}/lib`,
     manifestPath: `${caseDir}/manifest.json`,
     scenarioPath: `${caseDir}/scenarios.json`,
-    visualArtifactsDir: `${caseDir}/artifacts-regression`,
+    visualArtifactsDir: artifacts.path,
     browserMode,
     browserConcurrency,
     browserResourceCache,
@@ -824,8 +829,10 @@ test("Babelo Gold+ regression preserves structured coverage and critical visual 
 });
 
 
-test("Warp Gold+ regression preserves large snapshot fidelity and reviewed search interaction", { skip: !runGoldRegression, timeout: 900_000 }, async () => {
+test("Warp Gold+ regression preserves large snapshot fidelity and reviewed search interaction", { skip: !runGoldRegression, timeout: 900_000 }, async (context) => {
   const caseDir = `${root}examples/dispatch-experiments/warp-homepage`;
+  const artifacts = createRegressionArtifactDirectory("warp-homepage");
+  context.after(() => artifacts.cleanup());
   const browserMode = (process.env.UI_DISMANTLER_BROWSER_MODE ?? "legacy") as "legacy" | "shared-browser";
   const browserConcurrency = Number(process.env.UI_DISMANTLER_BROWSER_CONCURRENCY ?? "1");
   const browserResourceCache = (process.env.UI_DISMANTLER_BROWSER_RESOURCE_CACHE ?? "off") as "off" | "run-local";
@@ -835,7 +842,7 @@ test("Warp Gold+ regression preserves large snapshot fidelity and reviewed searc
     libDir: `${caseDir}/lib`,
     manifestPath: `${caseDir}/manifest.json`,
     scenarioPath: `${caseDir}/scenarios.json`,
-    visualArtifactsDir: `${caseDir}/artifacts-regression`,
+    visualArtifactsDir: artifacts.path,
     browserMode,
     browserConcurrency,
     browserResourceCache,
