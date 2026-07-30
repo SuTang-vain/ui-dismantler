@@ -20,8 +20,18 @@ export const spaApplicationProfile = defineTaskProfile({
   qualityGates: ["navigation-integrity", "runtime-network-stability", "blocking-handles"],
 });
 
+export const dataBackedSpaProfile = defineTaskProfile({
+  id: "data-backed-spa",
+  contractVersion: "1.0",
+  summary: "Compose reviewed SPA route, transport proxy, API response-flow, and optional authentication responsibilities.",
+  requiredSkills: ["source-structure", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"],
+  optionalSkills: ["auth-guard"],
+  qualityGates: ["navigation-integrity", "browser-request-prefix-preserved", "reviewed-fixture-only", "runtime-network-stability", "blocking-handles"],
+});
+
 export function createDefaultTaskProfileRegistry(skills: SkillRegistry): TaskProfileRegistry {
   return new TaskProfileRegistry(skills)
     .register(sourcePageProfile)
-    .register(spaApplicationProfile);
+    .register(spaApplicationProfile)
+    .register(dataBackedSpaProfile);
 }

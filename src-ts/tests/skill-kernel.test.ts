@@ -8,18 +8,24 @@ import { defineSkill, SkillExecutionError } from "../core/skills/contract.js";
 import { SkillRegistry } from "../core/skills/registry.js";
 import type { SpaRouterContractConfig, SpaRouterContractReport } from "../evaluation/spa-router.js";
 import type { SpaAuthGuardResponsibilityAnalysis } from "../planning/spa-auth-guard-responsibility.js";
+import {
+  analyzeTransportProxyResponsibilities,
+  type ApiFixtureResponsibilityGraph,
+} from "../planning/api-fixture-responsibility.js";
 import { analyzeSfcStateResponsibilities, type SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
 import { createDefaultTaskProfileRegistry } from "../profiles/default-profiles.js";
+import { createApiResponsibilitySkill, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
 import { createSourceStructureSkill, sourceStructureSkill, type SourceStructureAnalyzer } from "../skills/source-structure.js";
 import { createSpaRouterSkill } from "../skills/spa-router.js";
 import { stateResponsibilitySkill } from "../skills/state-responsibility.js";
+import { transportProxySkill } from "../skills/transport-proxy.js";
 import type { Manifest } from "../types.js";
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["auth-guard", "source-structure", "spa-router", "state-responsibility"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -64,6 +70,32 @@ test("auth-guard wrapper forwards source ownership input without transforming ou
   const output = await skill.execute({ sourceRoot: "/tmp/spa-source" });
   assert.equal(output, marker);
   assert.deepEqual(calls, ["/tmp/spa-source"]);
+});
+
+
+
+test("transport-proxy wrapper preserves scoped browser-prefix and upstream audit evidence", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-proxy-skill-"));
+  await writeFile(join(directory, "vite.config.ts"), `import { defineConfig } from "vite"; export default defineConfig({ server: { proxy: { "/api": { target: "http://127.0.0.1:9000", changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, "") } } } });`, "utf8");
+  const expected = analyzeTransportProxyResponsibilities(directory);
+  const actual = await transportProxySkill.execute({ sourceRoot: directory });
+  assert.deepEqual(actual, expected);
+  assert.equal(transportProxySkill.manifest.qualityGates.includes("upstream-rewrite-audit-only"), true);
+});
+
+test("api-responsibility wrapper forwards reviewed config and visual owners without transforming output", async () => {
+  const marker = { responsibilities: [], unresolved: [], marker: true } as unknown as ApiFixtureResponsibilityGraph;
+  const config = { reference: { baseUrl: "http://reference.test" }, generated: { baseUrl: "http://generated.test" }, scenarios: [] } as unknown as SpaRouterContractConfig;
+  const components: ApiResponsibilitySkillInput["components"] = [];
+  const calls: unknown[] = [];
+  const skill = createApiResponsibilitySkill((sourceRoot, receivedConfig, receivedComponents) => {
+    calls.push({ sourceRoot, receivedConfig, receivedComponents });
+    return marker;
+  });
+  const output = await skill.execute({ sourceRoot: "/tmp/spa-source", config, components });
+  assert.equal(output, marker);
+  assert.deepEqual(calls, [{ sourceRoot: "/tmp/spa-source", receivedConfig: config, receivedComponents: components }]);
+  assert.deepEqual(skill.manifest.requires, ["source-structure", "transport-proxy", "state-responsibility"]);
 });
 
 test("spa-router wrapper forwards config and returns the evaluator report by identity", async () => {
@@ -118,12 +150,18 @@ test("failed evidence execution throws an auditable SkillExecutionError", async 
 test("Task Profile resolves required and reviewed optional Skills in dependency order", () => {
   const skills = createDefaultSkillRegistry();
   const profiles = createDefaultTaskProfileRegistry(skills);
-  assert.deepEqual(profiles.list().map((profile) => profile.id), ["source-page", "spa-application"]);
+  assert.deepEqual(profiles.list().map((profile) => profile.id), ["data-backed-spa", "source-page", "spa-application"]);
   const base = profiles.resolve("spa-application");
   assert.deepEqual(base.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router"]);
   const authenticated = profiles.resolve("spa-application", ["auth-guard"]);
   assert.deepEqual(authenticated.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "auth-guard"]);
   assert.equal(authenticated.qualityGates.includes("fresh-authentication-required"), true);
+  const dataBacked = profiles.resolve("data-backed-spa");
+  assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility"]);
+  assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);
+  assert.equal(dataBacked.qualityGates.includes("reviewed-fixture-only"), true);
+  const authenticatedData = profiles.resolve("data-backed-spa", ["auth-guard"]);
+  assert.equal(authenticatedData.skills.at(-1)?.id, "auth-guard");
   assert.throws(() => profiles.resolve("spa-application", ["unknown-skill"]), /does not declare optional skill/);
 });
 

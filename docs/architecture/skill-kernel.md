@@ -34,6 +34,8 @@ Failures throw `SkillExecutionError` with failed execution evidence. Existing CL
 - `source-structure`: delegates to `analyzeHtml` and returns the existing `Manifest` unchanged.
 - `state-responsibility`: delegates to `analyzeSfcStateResponsibilities` and returns existing handler/state responsibility output unchanged.
 - `auth-guard`: delegates to `analyzeSpaAuthGuardResponsibilities` and preserves storage/login/dynamic-route/guard evidence.
+- `transport-proxy`: delegates to `analyzeTransportProxyResponsibilities`, preserving browser request prefixes while keeping upstream rewrites as audit-only evidence.
+- `api-responsibility`: delegates to `analyzeApiFixtureResponsibilities` and preserves reviewed endpoint, response-flow, fixture, and template-consumer evidence.
 - `spa-router`: delegates to `evaluateSpaRouterContract` and returns the existing `SpaRouterContractReport` unchanged.
 
 The existing `analyze`, `plan`, and `spa-router` CLI commands dispatch through the default registry. Serialization, exit codes, lifecycle reporting, and quality thresholds remain unchanged.
@@ -44,6 +46,7 @@ The initial profiles are intentionally small:
 
 - `source-page`: requires `source-structure`; may enable `state-responsibility`.
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
+- `data-backed-spa`: adds `transport-proxy` and `api-responsibility`; may enable `auth-guard` after review.
 
 A Profile resolves Skill dependencies and quality gates. It does not execute Skills because different capabilities currently consume different reviewed inputs.
 
@@ -60,6 +63,6 @@ A Profile resolves Skill dependencies and quality gates. It does not execute Ski
 1. Keep wrapper output identity under regression.
 2. Add execution evidence through the separate evidence API.
 3. Use Task Profiles to review capability composition.
-4. Register auth, state, proxy, data, visual, and lifecycle capabilities as orthogonal Skills.
+4. Continue registering data-surface, visual, and lifecycle capabilities as orthogonal Skills.
 5. Move shared source/AST helpers under Core one family at a time.
 6. Introduce framework Adapters only where structural evidence proves ownership.
