@@ -2,7 +2,7 @@
 
 ## Status
 
-Initial compatibility architecture. The Kernel introduces typed Skill and Task Profile contracts without changing existing analyzer, planner, generator, CLI serialization, or quality-report semantics.
+The compatibility Kernel is stable enough for controlled Skill increments. It introduces typed Skill and Task Profile contracts without changing existing analyzer, planner, generator, CLI serialization, or quality-report semantics. The first evaluation Skill now formalizes component-library validation without changing the historical validator output.
 
 The architecture name intentionally uses no generational version suffix. Machine-readable contracts retain independent semantic versions such as `contractVersion: "1.0"` for compatibility checks.
 
@@ -29,7 +29,7 @@ Registry `execute()` returns the wrapped algorithm output directly. It does not 
 
 Failures throw `SkillExecutionError` with failed execution evidence. Existing CLI commands use `execute()` and therefore preserve their current public outputs.
 
-## Initial Skills
+## Registered Skills
 
 - `source-structure`: delegates to `analyzeHtml` and returns the existing `Manifest` unchanged.
 - `state-responsibility`: delegates to `analyzeSfcStateResponsibilities` and returns existing handler/state responsibility output unchanged.
@@ -38,6 +38,7 @@ Failures throw `SkillExecutionError` with failed execution evidence. Existing CL
 - `transport-proxy`: delegates to `analyzeTransportProxyResponsibilities`, preserving browser request prefixes while keeping upstream rewrites as audit-only evidence.
 - `api-responsibility`: delegates to `analyzeApiFixtureResponsibilities` and preserves reviewed endpoint, response-flow, fixture, and template-consumer evidence.
 - `spa-router`: delegates to `evaluateSpaRouterContract` and returns the existing `SpaRouterContractReport` unchanged.
+- `component-library-validation`: delegates to `validateLibrary` and returns the existing `ValidationReport` unchanged; package-boundary verification remains a separate reviewed check.
 
 The existing `analyze`, `plan`, and `spa-router` CLI commands dispatch through the default registry. Serialization, exit codes, lifecycle reporting, and quality thresholds remain unchanged.
 
@@ -50,11 +51,12 @@ The configuration only supplies source paths, configuration objects, or reviewed
 
 ## Task Profiles
 
-The initial profiles are intentionally small:
+The registered profiles remain intentionally small:
 
 - `source-page`: requires `source-structure`; may enable `state-responsibility`.
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
 - `data-backed-spa`: adds `component-ownership`, `data-cardinality`, `transport-proxy`, `api-responsibility`, and `data-surface-manifest`; may enable `auth-guard` after review.
+- `component-library`: requires `component-library-validation` and validates an existing generated library without importing demo fixtures or business data.
 
 A Profile resolves Skill dependencies and quality gates. `ProfileExecutionPlanner` keeps composition reviewable, while `ProfileExecutor` runs only a fully reviewed plan and maps explicit provider paths plus reviewed artifact bindings into each Skill input.
 

@@ -29,8 +29,29 @@ export const dataBackedSpaProfile = defineTaskProfile({
   qualityGates: ["navigation-integrity", "browser-request-prefix-preserved", "reviewed-fixture-only", "runtime-network-stability", "blocking-handles"],
 });
 
+
+export const componentLibraryProfile = defineTaskProfile({
+  id: "component-library",
+  contractVersion: "1.0",
+  summary: "Validate a generated standard component library without importing demo fixtures or business data into the publishable runtime.",
+  requiredSkills: ["component-library-validation"],
+  optionalSkills: [],
+  qualityGates: [
+    "naming",
+    "variables",
+    "data-separation",
+    "responsive",
+    "a11y",
+    "theme",
+    "no-deps",
+    "docs",
+    "class-alignment",
+  ],
+});
+
 export function createDefaultTaskProfileRegistry(skills: SkillRegistry): TaskProfileRegistry {
   return new TaskProfileRegistry(skills)
+    .register(componentLibraryProfile)
     .register(sourcePageProfile)
     .register(spaApplicationProfile)
     .register(dataBackedSpaProfile);

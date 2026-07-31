@@ -26,6 +26,7 @@ import { ReviewedBindingRegistry } from "../core/artifacts/registry.js";
 import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiResponsibilitySkillInput } from "../skills/api-responsibility.js";
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
+import { componentLibraryValidationSkill, createComponentLibraryValidationSkill, type ComponentLibraryValidator } from "../skills/component-library-validation.js";
 import { dataCardinalitySkill, extractDataCardinalityResponsibilities, projectDataCardinalityDelta } from "../skills/data-cardinality.js";
 import { buildDataSurfaceManifest, dataSurfaceManifestSkill, projectDataSurfaceManifestDelta } from "../skills/data-surface-manifest/index.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
@@ -41,7 +42,7 @@ const root = new URL("../../", import.meta.url).pathname;
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-ownership", "data-cardinality", "data-surface-manifest", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -54,6 +55,28 @@ test("source-structure wrapper preserves the existing analyzer output", async ()
   const expected = analyzeHtml(htmlPath, { profile: "skill-test" });
   const actual = await sourceStructureSkill.execute({ htmlPath, options: { profile: "skill-test" } });
   assert.deepEqual(actual, expected);
+});
+
+test("component-library-validation wrapper preserves the existing ValidationReport", async () => {
+  const libraryRoot = join(root, "benchmark/lib");
+  const actual = await componentLibraryValidationSkill.execute({ libraryRoot });
+  assert.equal(actual.ok, true);
+  assert.equal(actual.failed, 0);
+  assert.equal(actual.total, 9);
+  assert.equal(actual.results.some((result) => result.id === "data-separation" && result.passed), true);
+});
+
+test("component-library-validation factory forwards the library root without transforming output", async () => {
+  const marker = { target: "/tmp/library", passed: 1, failed: 0, total: 1, ok: true, results: [] };
+  const calls: string[] = [];
+  const validator: ComponentLibraryValidator = (libraryRoot) => {
+    calls.push(libraryRoot);
+    return marker;
+  };
+  const skill = createComponentLibraryValidationSkill(validator);
+  const output = await skill.execute({ libraryRoot: "/tmp/library" });
+  assert.equal(output, marker);
+  assert.deepEqual(calls, ["/tmp/library"]);
 });
 
 test("source-structure factory forwards inputs without transforming output", async () => {
@@ -341,7 +364,15 @@ test("failed evidence execution throws an auditable SkillExecutionError", async 
 test("Task Profile resolves required and reviewed optional Skills in dependency order", () => {
   const skills = createDefaultSkillRegistry();
   const profiles = createDefaultTaskProfileRegistry(skills);
-  assert.deepEqual(profiles.list().map((profile) => profile.id), ["data-backed-spa", "source-page", "spa-application"]);
+  assert.deepEqual(profiles.list().map((profile) => profile.id), ["component-library", "data-backed-spa", "source-page", "spa-application"]);
+  const componentLibrary = profiles.resolve("component-library");
+  assert.deepEqual(componentLibrary.skills.map((skill) => skill.id), ["component-library-validation"]);
+  assert.equal(componentLibrary.qualityGates.includes("data-separation"), true);
+  const componentPlan = new ProfileExecutionPlanner(profiles, createDefaultReviewedBindingRegistry(skills)).plan("component-library", {
+    inputProviders: [{ contract: "component-library-root", providerId: "benchmark-library", reviewed: true }],
+  });
+  assert.equal(componentPlan.ready, true);
+  assert.deepEqual(componentPlan.steps.map((step) => step.skillId), ["component-library-validation"]);
   const base = profiles.resolve("spa-application");
   assert.deepEqual(base.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router"]);
   const authenticated = profiles.resolve("spa-application", ["auth-guard"]);
@@ -575,6 +606,37 @@ test("Profile configuration is explicit and rejects ambiguous providers while pr
       { contract: "html-path", providerId: "draft", reviewed: false, inputPath: "htmlPath" },
     ],
   }), /value is required/);
+});
+
+test("component-library validation Skill and Profile CLI execute the reviewed package boundary", async (context) => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-component-library-cli-"));
+  context.after(async () => { await rm(directory, { recursive: true, force: true }); });
+  const inputPath = join(directory, "skill-input.json");
+  const skillOutputPath = join(directory, "skill-output.json");
+  const profilePath = join(directory, "profile.json");
+  const planPath = join(directory, "plan.json");
+  const reportPath = join(directory, "report.json");
+  const libraryRoot = join(root, "benchmark/lib");
+  await writeFile(inputPath, JSON.stringify({ libraryRoot }), "utf8");
+  await writeFile(profilePath, JSON.stringify({
+    schemaVersion: "1.0",
+    profileId: "component-library",
+    enabledOptionalSkills: [],
+    inputProviders: [{ contract: "component-library-root", providerId: "benchmark-library", reviewed: true, inputPath: "libraryRoot", value: libraryRoot }],
+  }), "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "skill-run", "component-library-validation", "--input", inputPath, "--out", skillOutputPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-plan", profilePath, "--out", planPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-run", profilePath, "--out", reportPath], { cwd: root, encoding: "utf8" });
+  const skillOutput = JSON.parse(await readFile(skillOutputPath, "utf8")) as { ok: boolean; total: number };
+  const plan = JSON.parse(await readFile(planPath, "utf8")) as { ready: boolean; steps: Array<{ skillId: string }> };
+  const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; steps: Array<{ status: string; output?: { ok?: boolean; total?: number } }> };
+  assert.deepEqual(skillOutput, await componentLibraryValidationSkill.execute({ libraryRoot }));
+  assert.equal(plan.ready, true);
+  assert.deepEqual(plan.steps.map((step) => step.skillId), ["component-library-validation"]);
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.steps[0]?.status, "succeeded");
+  assert.equal(report.steps[0]?.output?.ok, true);
+  assert.equal(report.steps[0]?.output?.total, 9);
 });
 
 test("profile-plan and profile-run CLI execute the reviewed source profile without changing source output", async (context) => {
