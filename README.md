@@ -280,7 +280,7 @@ node dist-ts/cli.js spa-auth-analyze /absolute/project-root \
 - 交互、状态和生命周期可验证；
 - 数据接口与业务数据内容分离；
 - reference/generated 使用独立运行上下文；
-- unresolved 与 review 状态可审计。
+- unresolved 与 review 状态可审计；真正 blocker 与 policy notice 分开保存。
 
 ## 质量门禁
 

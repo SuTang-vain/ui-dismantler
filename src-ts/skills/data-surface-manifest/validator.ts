@@ -43,6 +43,7 @@ function validateSurface(value: unknown, index: number, issues: DataSurfaceManif
   }
   if (!Array.isArray(surface.references)) issue(issues, `${path}.references`, "references must be an array");
   else if (surface.references.some((reference) => !reference.target?.trim())) issue(issues, `${path}.references`, "reference target must not be empty");
+  if (surface.policyNotices !== undefined && !Array.isArray(surface.policyNotices)) issue(issues, `${path}.policyNotices`, "policyNotices must be an array when present");
   if (surface.injection?.reviewed && (surface.unresolved?.length ?? 0) > 0) issue(issues, `${path}.injection.reviewed`, "injection cannot be reviewed while the surface has unresolved evidence");
 }
 
@@ -89,11 +90,20 @@ export function validateDataSurfaceManifest(value: unknown): DataSurfaceManifest
       reviewedFixtures: validSurfaces.filter((surface) => surface.source?.api?.reviewed === true).length,
       fields: validSurfaces.reduce((total, surface) => total + (Array.isArray(surface.fields) ? surface.fields.length : 0), 0),
       references: validSurfaces.reduce((total, surface) => total + (Array.isArray(surface.references) ? surface.references.length : 0), 0),
-      unresolved: manifest.unresolved.length + validSurfaces.reduce((total, surface) => total + (Array.isArray(surface.unresolved) ? surface.unresolved.length : 0), 0),
+      unresolved: manifest.unresolved.length,
     };
     for (const [key, value] of Object.entries(expected)) if ((metrics as Record<string, unknown>)[key] !== value) issue(issues, `metrics.${key}`, `metric must equal ${value}`);
     const expectedReview = manifest.unresolved.length > 0 || validSurfaces.some((surface) => surface.reviewRequired === true);
     if (manifest.reviewRequired !== expectedReview) issue(issues, "reviewRequired", `reviewRequired must equal ${expectedReview}`);
+    if (manifest.review !== undefined) {
+      if (typeof manifest.review !== "object" || Array.isArray(manifest.review)) issue(issues, "review", "review must be an object");
+      else {
+        const review = manifest.review as DataSurfaceManifest["review"];
+        if (!Array.isArray(review?.blockers)) issue(issues, "review.blockers", "review blockers must be an array");
+        else if (review.blockers.length !== manifest.unresolved.length) issue(issues, "review.blockers", "review blockers must match top-level unresolved evidence");
+        if (!Array.isArray(review?.policyNotices)) issue(issues, "review.policyNotices", "review policyNotices must be an array");
+      }
+    }
   }
   return { valid: issues.length === 0, issues };
 }

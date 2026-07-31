@@ -258,8 +258,9 @@ test("data-surface-manifest Skill joins reviewed API cardinality and component e
     components: [component], cardinality,
     api: { ...api, responseFlows: [{ id: "flow:routes", apiLocalName: "getRoutes", exportedName: "getRoutes", importSource: "@/api/routes", apiModuleFile: "src/api/routes.ts", endpoint: { method: "GET", path: "/routes" }, consumerFile: "src/store/routes.ts", responseSymbol: "response", responsePath: "data", targetBinding: "routes", flowKind: "dynamic-route-injection", routeMutationEvidence: ["router.addRoute"], routeMutations: ["addRoute"], confidence: "high", reviewReasons: [] }] },
   });
-  assert.equal(unlinkedFlow.reviewRequired, true);
-  assert.equal(unlinkedFlow.unresolved.some((item) => item.reason.includes("has no reviewed fixture-backed data surface")), true);
+  assert.equal(unlinkedFlow.reviewRequired, false);
+  assert.equal(unlinkedFlow.unresolved.some((item) => item.reason.includes("has no reviewed fixture-backed data surface")), false);
+  assert.equal(unlinkedFlow.review?.policyNotices.some((item) => item.reason.includes("project-level response flow")), true);
 });
 
 test("transport-proxy wrapper preserves scoped browser-prefix and upstream audit evidence", async () => {

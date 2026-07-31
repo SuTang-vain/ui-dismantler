@@ -83,15 +83,19 @@
     "data-surface-manifest"
   ],
   "dataSurfaceMetrics": {
-    "surfaces": 1,
+    "surfaces": 4,
     "apiSurfaces": 1,
-    "staticSurfaces": 0,
+    "staticSurfaces": 3,
     "reviewedFixtures": 1,
-    "fields": 8,
+    "fields": 14,
     "references": 0,
-    "unresolved": 28
+    "unresolved": 12
   },
   "dataSurfaceReviewRequired": true,
+  "dataSurfaceReview": {
+    "blockers": 12,
+    "policyNotices": 11
+  },
   "dataSurfaceIdentity": {
     "sourceRoot": "blind-cases/vue-xs-admin",
     "sourceHash": "cd55b2ae99e56264f4efec834bed54e553b7fd23fbcccb21cc0315cc9e2edfeb",

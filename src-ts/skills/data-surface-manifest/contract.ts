@@ -118,6 +118,8 @@ export interface DataSurface {
   readonly references: readonly DataSurfaceReference[];
   readonly evidence: readonly DataSurfaceEvidence[];
   readonly unresolved: readonly string[];
+  /** Non-blocking contract/policy notices retained separately from unresolved evidence. */
+  readonly policyNotices?: readonly string[];
   readonly reviewRequired: boolean;
 }
 
@@ -127,6 +129,11 @@ export interface DataSurfaceManifestUnresolved {
   readonly reason: string;
 }
 
+export interface DataSurfaceManifestReview {
+  readonly blockers: readonly DataSurfaceManifestUnresolved[];
+  readonly policyNotices: readonly DataSurfaceManifestUnresolved[];
+}
+
 export interface DataSurfaceManifest {
   readonly schemaVersion: "1.0";
   readonly kind: "data-surface-manifest";
@@ -134,6 +141,8 @@ export interface DataSurfaceManifest {
   readonly library: DataSurfaceLibrary;
   readonly surfaces: readonly DataSurface[];
   readonly unresolved: readonly DataSurfaceManifestUnresolved[];
+  /** Additive review classification; omitted only by legacy manifests. */
+  readonly review?: DataSurfaceManifestReview;
   readonly metrics: {
     readonly surfaces: number;
     readonly apiSurfaces: number;

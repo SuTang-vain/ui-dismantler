@@ -66,7 +66,7 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
 }
 function usage(): void {
   console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
-  data-surface-validate <data-surface.manifest.json>
+  data-surface-validate <data-surface.manifest.json> [--require-ready]
   skill-list [--out <skill-catalog.json>]
   skill-run <skill-id> --input <input.json> --out <output.json> [--evidence-out <evidence.json>]
   profile-list [--out <profile-catalog.json>]
@@ -344,11 +344,18 @@ async function main(argv: string[]): Promise<number> {
     if (command === "data-surface-validate") {
       const manifestPath = args[0];
       if (!manifestPath) throw new Error("data-surface-validate 需要 <data-surface.manifest.json>");
-      const manifest = JSON.parse(await readFile(resolve(manifestPath), "utf8"));
+      const manifest = JSON.parse(await readFile(resolve(manifestPath), "utf8")) as DataSurfaceManifest;
       const report = validateDataSurfaceManifest(manifest);
       for (const item of report.issues) console.log(`[${report.valid ? "PASS" : "FAIL"}] ${item.path}: ${item.message}`);
       console.log(`Data Surface Manifest: ${report.valid ? "PASS" : "FAIL"}`);
-      return report.valid ? 0 : 1;
+      if (report.valid) {
+        const blockers = manifest.review?.blockers.length ?? manifest.unresolved?.length ?? 0;
+        const policyNotices = manifest.review?.policyNotices.length ?? 0;
+        console.log(`  surfaces=${manifest.metrics.surfaces}，blockers=${blockers}，policyNotices=${policyNotices}，handoff=${manifest.reviewRequired ? "REVIEW_REQUIRED" : "READY"}`);
+      }
+      if (!report.valid) return 1;
+      if (has(args, "--require-ready") && manifest.reviewRequired) return 1;
+      return 0;
     }
     if (command === "visual-target-auto-v2") {
       const planPath = args[0], routeShellPath = flag(args, "--route-shell"), routerSfcPath = flag(args, "--router-sfc");

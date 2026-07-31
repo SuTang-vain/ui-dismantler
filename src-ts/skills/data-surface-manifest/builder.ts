@@ -121,8 +121,8 @@ function apiSurface(
   const fixture = responsibility.fixture.materializedValue;
   const shape = applySliceLimit(shapeOfJson(fixture, `reviewed fixture ${responsibility.fixture.bodyHash}`), responsibility);
   const references = staticValue === undefined ? [] : referencesIn(staticValue, target, staticBindings);
+  const policyNotices = unique(responsibility.reviewReasons);
   const unresolved = unique([
-    ...responsibility.reviewReasons,
     ...(staticValue === undefined ? [] : unresolvedStatic(staticValue, target)),
     ...references.filter((reference) => !reference.resolved).map((reference) => `unresolved static reference: ${reference.target}`),
     ...(shape.kind === "unknown" ? ["reviewed fixture shape is unknown"] : []),
@@ -174,6 +174,7 @@ function apiSurface(
     references,
     evidence,
     unresolved,
+    policyNotices,
     reviewRequired: unresolved.length > 0 || responsibility.confidence !== "high" || component === undefined,
   };
 }
@@ -278,26 +279,53 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
   }
 
   surfaces.sort((left, right) => left.id.localeCompare(right.id));
+  const componentFiles = new Set(input.components.map((component) => component.file));
   const linkedResponseFlows = new Set(input.api.responseFlows.filter((flow) => input.api.responsibilities.some((responsibility) =>
     responsibility.componentFile === flow.consumerFile
     && responsibility.consumption.targetBinding === flow.targetBinding
     && responsibility.apiCall.method === flow.endpoint.method
     && responsibility.apiCall.path === flow.endpoint.path,
   )).map((flow) => flow.id));
-  const unresolved: DataSurfaceManifestUnresolved[] = [
+  const blockers: DataSurfaceManifestUnresolved[] = [
     ...input.api.unresolved.map((item): DataSurfaceManifestUnresolved => ({ owner: `component:${item.componentId}`, reason: `${item.apiLocalName}: ${item.reason}` })),
-    ...input.api.responseFlows.filter((flow) => !linkedResponseFlows.has(flow.id)).map((flow): DataSurfaceManifestUnresolved => ({
+    ...input.api.responseFlows.filter((flow) => !linkedResponseFlows.has(flow.id) && componentFiles.has(flow.consumerFile)).map((flow) => ({
       source: flow.consumerFile,
-      reason: `response flow ${flow.id} has no reviewed fixture-backed data surface`,
+      reason: `component response flow ${flow.id} has no reviewed fixture-backed data surface`,
     })),
-    ...input.api.reviewReasons.map((reason): DataSurfaceManifestUnresolved => ({ source: input.api.sourceRoot, reason })),
     ...input.cardinality.components.flatMap((component) => component.responsibility.unresolvedReferences.map((reference): DataSurfaceManifestUnresolved => ({
       owner: `component:${component.componentId}`,
       source: component.componentFile,
       reason: `unresolved repeated data reference: ${reference}`,
     }))),
+    ...surfaces.flatMap((surface) => surface.unresolved.map((reason): DataSurfaceManifestUnresolved => ({
+      owner: `component:${surface.owner.componentId}`,
+      source: surface.owner.componentFile,
+      reason: `${surface.id}: ${reason}`,
+    }))),
   ];
-  unresolved.sort((left, right) => `${left.owner ?? ""}:${left.reason}`.localeCompare(`${right.owner ?? ""}:${right.reason}`));
+  const policyNotices: DataSurfaceManifestUnresolved[] = [
+    ...input.api.reviewReasons.map((reason): DataSurfaceManifestUnresolved => ({ source: input.api.sourceRoot, reason })),
+    ...input.api.responseFlows.filter((flow) => !linkedResponseFlows.has(flow.id) && !componentFiles.has(flow.consumerFile)).map((flow) => ({
+      source: flow.consumerFile,
+      reason: `project-level response flow ${flow.id} is retained as routing/store evidence, not a component Data Surface`,
+    })),
+    ...surfaces.flatMap((surface) => (surface.policyNotices ?? []).map((reason): DataSurfaceManifestUnresolved => ({
+      owner: `component:${surface.owner.componentId}`,
+      source: surface.owner.componentFile,
+      reason: `${surface.id}: ${reason}`,
+    }))),
+  ];
+  const dedupe = (items: readonly DataSurfaceManifestUnresolved[]): DataSurfaceManifestUnresolved[] => {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      const key = `${item.owner ?? ""}|${item.source ?? ""}|${item.reason}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).sort((left, right) => `${left.owner ?? ""}:${left.source ?? ""}:${left.reason}`.localeCompare(`${right.owner ?? ""}:${right.source ?? ""}:${right.reason}`));
+  };
+  const unresolved = dedupe(blockers);
+  const review = { blockers: unresolved, policyNotices: dedupe(policyNotices) };
 
   return {
     schemaVersion: "1.0",
@@ -306,6 +334,7 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
     library: { sourceRoot: identity.sourceRoot, framework: "vue-sfc" },
     surfaces,
     unresolved,
+    review,
     metrics: {
       surfaces: surfaces.length,
       apiSurfaces: surfaces.filter((surface) => surface.source.primary === "reviewed-api-fixture").length,
@@ -313,7 +342,7 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
       reviewedFixtures: surfaces.filter((surface) => surface.source.api?.reviewed).length,
       fields: surfaces.reduce((total, surface) => total + surface.fields.length, 0),
       references: surfaces.reduce((total, surface) => total + surface.references.length, 0),
-      unresolved: unresolved.length + surfaces.reduce((total, surface) => total + surface.unresolved.length, 0),
+      unresolved: unresolved.length,
     },
     reviewRequired: unresolved.length > 0 || surfaces.some((surface) => surface.reviewRequired),
   };

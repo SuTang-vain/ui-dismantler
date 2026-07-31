@@ -570,6 +570,7 @@ export const router = { addRoute: (_route: unknown) => undefined }`);
     assert.equal(routeFlow?.targetBinding, "handleRouteList");
     assert.equal(routeFlow?.routeMutationEvidence.some((item) => item.includes("addRoute")), true);
     assert.deepEqual(routeFlow?.routeMutations, ["addRoute"]);
+    assert.equal(routeFlow?.componentId, undefined);
     const routerGraph = analyzeRouterToSfcResponsibilities(root);
     const routeOwnership = linkApiRouteOwnership(api, routerGraph, config);
     assert.equal(routeOwnership.metrics.routeLinks, 1);
@@ -849,6 +850,9 @@ test("Composition API await assignments and Axios method helpers bind reviewed f
       fixtures: [{ path: "/profiles", pathMode: "transport-suffix", method: "GET", body: { success: true, data: [{ id: "reviewed", name: "Reviewed Profile" }] } }],
     };
     const api = analyzeApiFixtureResponsibilities(root, config, graph.components);
+    const profileFlow = api.responseFlows.find((flow) => flow.consumerFile === "src/views/Profiles.vue");
+    assert.equal(profileFlow?.componentId, graph.components.find((component) => component.file === "src/views/Profiles.vue")?.id);
+    assert.equal(profileFlow?.componentName, "Profiles");
     assert.equal(api.metrics.importedApiCalls, 5);
     assert.equal(api.metrics.matchedEndpoints, 2);
     assert.equal(api.metrics.matchedFixtures, 2);
@@ -884,5 +888,24 @@ test("visual target root ownership uses reviewed source structure for root and c
     assert.deepEqual(plan.boundaries.map((boundary) => [boundary.route, plan.owners.find((owner) => owner.id === boundary.rootOwnerId)?.componentName]), [
       ["/", "ThemeInput"], ["/profiles", "ModelProfiles"],
     ]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("TypeScript script-setup static collections bind to v-for cardinality", () => {
+  const root = mkdtempSync(join(tmpdir(), "ui-dismantler-static-collection-"));
+  try {
+    mkdirSync(join(root, "src"), { recursive: true });
+    writeFileSync(join(root, "src", "Welcome.vue"), `<script setup lang="ts">
+const speedList = [{ title: 'Todo', online: 24, total: 70 }, { title: 'Task', online: 39, total: 100 }, { title: 'Plan', online: 5, total: 10 }, { title: 'Comments', online: 10, total: 40 }];
+const percentage = (online: number, total: number): number => Math.round((online / total) * 100);
+</script>
+<template><section><article v-for="(item, index) in speedList" :key="index">{{ item.title }} {{ percentage(item.online, item.total) }}</article></section></template>`);
+    const graph = analyzeSfcVisualResponsibilities(root);
+    const component = graph.components.find((item) => item.file === "src/Welcome.vue");
+    assert.ok(component);
+    const speedList = component.dataCardinality.staticBindings.speedList;
+    assert.equal(Array.isArray(speedList) ? speedList.length : -1, 4);
+    assert.deepEqual(component.dataCardinality.cardinalities.find((item) => item.path === "speedList"), { path: "speedList", count: 4, source: "module-static-binding" });
+    assert.equal(component.dataCardinality.unresolvedReferences.includes("speedList"), false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

@@ -1,4 +1,5 @@
 import { parse, parseExpressionAt } from "acorn";
+import { eraseTypeScriptStateSyntax } from "./sfc-state-responsibility.js";
 
 export type StaticExpressionValue =
   | null
@@ -84,20 +85,27 @@ export function parseStaticExpression(source: string): StaticExpressionValue | u
 }
 
 export function extractTopLevelStaticBindings(script: string): Record<string, StaticExpressionValue> {
+  let source = script;
+  let program: any;
   try {
-    const program = parse(script, { ecmaVersion: "latest", sourceType: "module" }) as any;
-    const output: Record<string, StaticExpressionValue> = {};
-    for (const statement of program.body ?? []) {
-      if (statement.type !== "VariableDeclaration") continue;
-      for (const declaration of statement.declarations ?? []) {
-        if (declaration.id?.type !== "Identifier" || !declaration.init) continue;
-        output[declaration.id.name] = encodeNode(declaration.init, script);
-      }
-    }
-    return output;
+    program = parse(source, { ecmaVersion: "latest", sourceType: "module" }) as any;
   } catch {
-    return {};
+    try {
+      source = eraseTypeScriptStateSyntax(script);
+      program = parse(source, { ecmaVersion: "latest", sourceType: "module" }) as any;
+    } catch {
+      return {};
+    }
   }
+  const output: Record<string, StaticExpressionValue> = {};
+  for (const statement of program.body ?? []) {
+    if (statement.type !== "VariableDeclaration") continue;
+    for (const declaration of statement.declarations ?? []) {
+      if (declaration.id?.type !== "Identifier" || !declaration.init) continue;
+      output[declaration.id.name] = encodeNode(declaration.init, source);
+    }
+  }
+  return output;
 }
 
 export function collectStaticReferences(value: StaticExpressionValue | undefined): string[] {

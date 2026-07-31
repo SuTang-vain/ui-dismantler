@@ -46,6 +46,9 @@ export interface ApiResponseFlowEvidence {
   apiModuleFile: string;
   endpoint: { method: string; path: string };
   consumerFile: string;
+  /** Set when the response consumer is a scanned SFC; absent for project-level store/router/config consumers. */
+  componentId?: string;
+  componentName?: string;
   responseSymbol: string;
   responsePath: string;
   targetBinding: string;
@@ -1383,7 +1386,11 @@ export function analyzeApiFixtureResponsibilities(
       });
     }
   }
-  const responseFlows = listProjectSourceFiles(sourceRoot).flatMap((file) => responseFlowFor(sourceRoot, file));
+  const componentOwners = new Map(components.map((component) => [component.file, component]));
+  const responseFlows = listProjectSourceFiles(sourceRoot).flatMap((file) => responseFlowFor(sourceRoot, file)).map((flow) => {
+    const component = componentOwners.get(flow.consumerFile);
+    return component ? { ...flow, componentId: component.id, componentName: component.componentName } : flow;
+  });
   return {
     schemaVersion: "1.0", kind: "api-fixture-responsibility-graph", reviewRequired: true, sourceRoot,
     responsibilities, candidates, responseFlows, unresolved,
