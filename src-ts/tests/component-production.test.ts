@@ -7,6 +7,7 @@ import {
   componentPlanningReportToBuildPlan,
   createComponentLibraryBuildPlan,
   enrichComponentLibraryBuildPlan,
+  executeReviewedStateWrite,
   materializeComponentLibrary,
   primitiveDomCompilationToBuildPlan,
   runComponentLibraryBuild,
@@ -259,6 +260,8 @@ test("State and Data Surface evidence enrich a Build Plan without embedding valu
     assert.equal(enriched.interactions.length, 1);
     assert.equal(enriched.interactions[0]?.target, "open");
     assert.equal(enriched.interactions[0]?.materialized, false);
+    assert.equal(enriched.interactions[0]?.executionEvidence?.status, "verified");
+    assert.equal(enriched.interactions[0]?.executionEvidence?.transitionKind, "set-literal");
     assert.equal(enriched.dataBindings.length, 1);
     assert.equal(enriched.dataBindings[0]?.externalOnly, true);
     assert.equal(JSON.stringify(enriched).includes('"value"'), false);
@@ -268,4 +271,21 @@ test("State and Data Surface evidence enrich a Build Plan without embedding valu
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+
+test("Reviewed interaction executor supports only auditable state transitions without eval", () => {
+  const set = executeReviewedStateWrite({ path: "dialog.open", value: true, expression: "dialog.open = true", sourceLine: 1, confidence: "high" }, { dialog: { open: false } });
+  assert.equal(set.status, "materialized");
+  assert.equal((set.state.dialog as { open: boolean }).open, true);
+  assert.equal(set.transition?.kind, "set-literal");
+  const toggle = executeReviewedStateWrite({ path: "dialog.open", expression: "dialog.open = !dialog.open", sourceLine: 2, confidence: "high" }, { dialog: { open: true } });
+  assert.equal(toggle.status, "materialized");
+  assert.equal((toggle.state.dialog as { open: boolean }).open, false);
+  const increment = executeReviewedStateWrite({ path: "index", expression: "index++", sourceLine: 3, confidence: "high" }, { index: 1 });
+  assert.equal(increment.status, "materialized");
+  assert.equal(increment.state.index, 2);
+  const blocked = executeReviewedStateWrite({ path: "dialog.open", expression: "dialog.open = computeVisibility()", sourceLine: 4, confidence: "high" }, { dialog: { open: false } });
+  assert.equal(blocked.status, "blocked");
+  assert.equal(blocked.blockers.some((reason) => reason.includes("unsupported state expression")), true);
 });

@@ -34,6 +34,7 @@ export interface ComponentLibraryInteractionBinding {
   readonly target: string;
   readonly reviewed: boolean;
   readonly materialized: boolean;
+  readonly executionEvidence?: { readonly status: "verified" | "blocked"; readonly transitionKind?: string; readonly mutationTarget?: string; readonly blockers: readonly string[] };
   readonly provenance: readonly ComponentLibraryFileProvenance[];
 }
 

@@ -4,6 +4,7 @@ import type { ComponentPlanningReport } from "../../planning/components.js";
 import type { VisualTargetPlan } from "../../planning/visual-target-plan.js";
 import type { SfcStateResponsibility } from "../../planning/sfc-state-responsibility.js";
 import type { DataSurfaceManifest } from "../../skills/data-surface-manifest/contract.js";
+import { executeReviewedStateWrite } from "./interaction-executor.js";
 import { materializeOwnerSourceStyles } from "../../planning/scoped-style-materializer.js";
 import { compilePrimitiveDom } from "../../planning/primitive-dom-compiler.js";
 import type { PrimitiveDomCompilationGraph } from "../../skills/primitive-dom.js";
@@ -187,6 +188,7 @@ export function enrichComponentLibraryBuildPlan(
     unresolved.push(...evidence.state.unresolvedWrites.map((write) => `state-responsibility unresolved write ${write.handler}:${write.path}`));
     for (const handler of evidence.state.handlers) {
       for (const write of handler.writes) {
+        const execution = executeReviewedStateWrite(write, evidence.state.initialState);
         interactions.push({
           id: `state:${handler.handler}:${write.path}`,
           event: "state-write",
@@ -194,6 +196,12 @@ export function enrichComponentLibraryBuildPlan(
           target: write.path,
           reviewed: write.confidence === "high",
           materialized: false,
+          executionEvidence: {
+            status: execution.status === "materialized" ? "verified" : "blocked",
+            ...(execution.transition ? { transitionKind: execution.transition.kind } : {}),
+            ...(execution.mutationTarget ? { mutationTarget: execution.mutationTarget } : {}),
+            blockers: execution.blockers,
+          },
           provenance: [{ kind: "state-responsibility", reference: `handler:${handler.handler}:line:${handler.sourceLine}` }],
         });
       }
