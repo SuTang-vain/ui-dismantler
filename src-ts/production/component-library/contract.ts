@@ -1,3 +1,4 @@
+import type { JsonValue } from "../../types.js";
 import { createHash } from "node:crypto";
 
 export const COMPONENT_LIBRARY_BUILD_PLAN_SCHEMA_VERSION = "1.0" as const;
@@ -34,7 +35,7 @@ export interface ComponentLibraryInteractionBinding {
   readonly target: string;
   readonly reviewed: boolean;
   readonly materialized: boolean;
-  readonly executionEvidence?: { readonly status: "verified" | "blocked"; readonly transitionKind?: string; readonly mutationTarget?: string; readonly blockers: readonly string[] };
+  readonly executionEvidence?: { readonly status: "verified" | "blocked"; readonly transitionKind?: string; readonly mutationTarget?: string; readonly transitionValue?: JsonValue; readonly blockers: readonly string[] };
   readonly provenance: readonly ComponentLibraryFileProvenance[];
 }
 

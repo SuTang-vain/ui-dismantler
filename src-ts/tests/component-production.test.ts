@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import test from "node:test";
+import { JSDOM } from "jsdom";
 import {
   componentPlanningReportToBuildPlan,
   createComponentLibraryBuildPlan,
@@ -288,4 +289,57 @@ test("Reviewed interaction executor supports only auditable state transitions wi
   const blocked = executeReviewedStateWrite({ path: "dialog.open", expression: "dialog.open = computeVisibility()", sourceLine: 4, confidence: "high" }, { dialog: { open: false } });
   assert.equal(blocked.status, "blocked");
   assert.equal(blocked.blockers.some((reason) => reason.includes("unsupported state expression")), true);
+});
+
+
+test("Reviewed primitive interaction bindings materialize into runtime state transitions", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-interaction-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0",
+    kind: "primitive-dom-compilation-graph",
+    components: [{
+      componentId: "component:button",
+      componentName: "StateButton",
+      componentFile: "StateButton.vue",
+      reviewRequired: false,
+      compilation: {
+        schemaVersion: "1.0",
+        kind: "primitive-dom-compilation",
+        roots: ["node:button"],
+        nodes: [{ id: "node:button", sourceNodeId: "source:button", order: 0, sourceTag: "button", componentName: "StateButton", renderTag: "button", renderStrategy: "button", classes: ["sg-state-button"], attributes: { type: "button" }, inlineStyle: {}, content: [{ kind: "text", value: "Open" }], conditions: [], loops: [] }],
+        styleRules: [{ sourceNodeId: "source:button", selector: "[data-primitive-node=\\\"node:button\\\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }],
+        interactions: [{ sourceNodeId: "source:button", event: "click", expression: "openEditor", modifiers: [], target: "[data-primitive-node=\\\"source:button\\\"]" }],
+        metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 1, unsupportedPrimitiveNodes: 0 },
+        reviewReasons: [],
+      },
+    }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 1, unsupportedPrimitiveNodes: 0 },
+    reviewReasons: [],
+    reviewRequired: false,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "State Components", packageName: "state-components" });
+  assert.equal(validateComponentLibraryBuildPlan(basePlan).ready, false);
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, {
+    state: {
+      schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript", initialState: { open: false },
+      handlers: [{ handler: "openEditor", writes: [{ path: "open", value: true, expression: "open.value = true", sourceLine: 2, confidence: "high" }], helperCalls: [], sourceLine: 2 }],
+      displayFunctions: [], unresolvedWrites: [], metrics: { initialBindings: 1, handlers: 1, handlersWithWrites: 1, stateWrites: 1, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+    },
+  });
+  assert.equal(enriched.interactions[0]?.materialized, true);
+  assert.equal(enriched.reviewRequired, false);
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const outputRoot = join(directory, "library");
+  const report = await runComponentLibraryBuild(enriched, outputRoot);
+  assert.equal(report.status, "succeeded");
+  const runtimeFile = enriched.files.find((file) => file.role === "runtime")!;
+  const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtimeFile.content);
+  const api = (dom.window as unknown as { StateComponents: { mount: (host: Element, options: unknown) => { state: { open: boolean }; unmount: () => void } } }).StateComponents;
+  const instance = api.mount(dom.window.document.getElementById("mount")!, {});
+  dom.window.document.querySelector<HTMLButtonElement>("[data-primitive-node='node:button']")!.click();
+  assert.equal(instance.state.open, true);
+  instance.unmount();
+  dom.window.close();
 });
