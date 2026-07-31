@@ -64,12 +64,12 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
 (function (global) {
   "use strict";
   var COMPONENTS = JSON.parse(${JSON.stringify(JSON.stringify(components))});
-  var INTERACTION_CONFIG = { initialState: {}, bindings: [] }; /*__UI_DISMANTLER_INTERACTION_CONFIG__*/
+  var INTERACTION_CONFIG = { initialState: {}, bindings: [], dataBindings: [] }; /*__UI_DISMANTLER_INTERACTION_CONFIG__*/
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function pathParts(path) { return String(path || "").replace(/^this\\./, "").replace(/\\.value$/, "").split(".").filter(Boolean); }
   function readPath(state, path) {
-    var current = state;
-    for (var i = 0; i < pathParts(path).length; i += 1) { if (!current || typeof current !== "object") return undefined; current = current[pathParts(path)[i]]; }
+    var current = state; var parts = pathParts(path);
+    for (var i = 0; i < parts.length; i += 1) { if (!current || typeof current !== "object") return undefined; current = current[parts[i]]; }
     return current;
   }
   function writePath(state, path, value) {
@@ -78,52 +78,62 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
     for (var i = 0; i < parts.length - 1; i += 1) { if (!current[parts[i]] || typeof current[parts[i]] !== "object") current[parts[i]] = {}; current = current[parts[i]]; }
     current[parts[parts.length - 1]] = value;
   }
-  function literal(value) {
-    if (value === true || value === false || value === null || typeof value === "number") return value;
-    if (typeof value !== "string") return undefined;
-    return value;
+  function resolveValue(expression, state, data) {
+    var value = String(expression || "").trim();
+    if ((value.charAt(0) === "\\\"" && value.charAt(value.length - 1) === "\\\"") || (value.charAt(0) === "'" && value.charAt(value.length - 1) === "'")) return value.slice(1, -1);
+    var dataValue = readPath(data || {}, value); if (dataValue !== undefined) return dataValue;
+    return readPath(state || {}, value);
   }
-  function evaluate(expression, state) {
+  function evaluate(expression, state, data) {
     var value = String(expression || "").trim();
     if (!value) return true;
-    if (value.charAt(0) === "!") return !evaluate(value.slice(1), state);
+    if (value.charAt(0) === "!") return !evaluate(value.slice(1), state, data);
     var equality = value.match(/^(.+?)\\s*(!==|===|!=|==)\\s*(true|false|null|-?\\d+(?:\\.\\d+)?|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*')$/);
-    if (equality) { var left = readPath(state, equality[1].trim()); var rightText = equality[3]; var right = rightText === "true" ? true : rightText === "false" ? false : rightText === "null" ? null : /^-?\\d/.test(rightText) ? Number(rightText) : rightText.slice(1, -1); return equality[2] === "===" || equality[2] === "==" ? left === right : left !== right; }
-    if (/\\s+&&\\s+/.test(value)) return value.split(/\\s+&&\\s+/).every(function (part) { return evaluate(part, state); });
-    if (/\\s+\\|\\|\\s+/.test(value)) return value.split(/\\s+\\|\\|\\s+/).some(function (part) { return evaluate(part, state); });
-    return Boolean(readPath(state, value));
+    if (equality) { var left = resolveValue(equality[1], state, data); var rightText = equality[3]; var right = rightText === "true" ? true : rightText === "false" ? false : rightText === "null" ? null : /^-?\\d/.test(rightText) ? Number(rightText) : rightText.slice(1, -1); return equality[2] === "===" || equality[2] === "==" ? left === right : left !== right; }
+    if (/\\s+&&\\s+/.test(value)) return value.split(/\\s+&&\\s+/).every(function (part) { return evaluate(part, state, data); });
+    if (/\\s+\\|\\|\\s+/.test(value)) return value.split(/\\s+\\|\\|\\s+/).some(function (part) { return evaluate(part, state, data); });
+    return Boolean(resolveValue(value, state, data));
   }
-  function setAttributes(element, attributes, state) {
+  function interpolate(text, state, data) { return String(text).replace(/\\{\\{\\s*([^}]+?)\\s*\\}\\}/g, function (_match, expression) { var value = resolveValue(expression, state, data); return value === undefined || value === null ? "" : String(value); }); }
+  function setAttributes(element, attributes, state, data) {
     Object.keys(attributes || {}).forEach(function (name) {
-      if (name.indexOf("@") === 0 || name.indexOf(":") === 0 || name.indexOf("v-") === 0 || name.indexOf("#") === 0) return;
       var value = attributes[name];
+      if (name.indexOf("@") === 0 || name.indexOf("v-") === 0 || name.indexOf("#") === 0) {
+        if (name === "v-model") { var model = resolveValue(value, state, data); if (model !== undefined && "value" in element) element.value = String(model); }
+        return;
+      }
+      if (name.indexOf(":") === 0) {
+        var dynamicName = name.slice(1); var dynamicValue = resolveValue(value, state, data);
+        if (dynamicValue === undefined || dynamicValue === null || dynamicValue === false) return;
+        if (dynamicName === "class" && typeof dynamicValue === "string") dynamicValue.split(/\\s+/).forEach(function (className) { if (className) element.classList.add(className); });
+        else if (dynamicValue === true) element.setAttribute(dynamicName, "");
+        else if (["string", "number", "boolean"].includes(typeof dynamicValue)) element.setAttribute(dynamicName, String(dynamicValue));
+        return;
+      }
       if (name === "class" || name === "className") return;
       if (value === true) element.setAttribute(name, "");
       else if (value !== false && value != null) element.setAttribute(name, String(value));
     });
   }
-  function render(spec, state) {
+  function render(spec, state, data) {
     var directive = spec.conditionDirective;
-    if (directive && directive.expression && (directive.kind === "if" || directive.kind === "else-if") && !evaluate(directive.expression, state)) return null;
+    if (directive && directive.expression && (directive.kind === "if" || directive.kind === "else-if") && !evaluate(directive.expression, state, data)) return null;
     var element = document.createElement(spec.renderTag || "div");
     element.setAttribute("data-primitive-node", spec.id);
     (spec.classes || []).forEach(function (name) { element.classList.add(name); });
-    setAttributes(element, spec.attributes, state);
+    setAttributes(element, spec.attributes, state, data);
     Object.keys(spec.inlineStyle || {}).forEach(function (name) { element.style.setProperty(name, spec.inlineStyle[name]); });
-    if (directive && directive.kind === "show" && directive.expression && !evaluate(directive.expression, state)) element.hidden = true;
-    (spec.content || []).forEach(function (token) { element.appendChild(document.createTextNode(token.value)); });
-    (spec.children || []).forEach(function (child) { var rendered = render(child, state); if (rendered) element.appendChild(rendered); });
+    if (directive && directive.kind === "show" && directive.expression && !evaluate(directive.expression, state, data)) element.hidden = true;
+    (spec.content || []).forEach(function (token) { element.appendChild(document.createTextNode(interpolate(token.value, state, data))); });
+    (spec.children || []).forEach(function (child) { var rendered = render(child, state, data); if (rendered) element.appendChild(rendered); });
     return element;
   }
-  function resolveComponent(options) {
-    var requested = options && options.componentId;
-    return COMPONENTS.filter(function (component) { return !requested || component.id === requested; })[0] || COMPONENTS[0];
-  }
+  function resolveComponent(options) { var requested = options && options.componentId; return COMPONENTS.filter(function (component) { return !requested || component.id === requested; })[0] || COMPONENTS[0]; }
   function applyTransition(instance, binding) {
     var transition = binding.executionEvidence;
     if (!transition || transition.status !== "verified" || !transition.transitionKind || !transition.mutationTarget) return false;
     var current = readPath(instance.state, transition.mutationTarget);
-    if (transition.transitionKind === "set-literal") writePath(instance.state, transition.mutationTarget, literal(transition.transitionValue));
+    if (transition.transitionKind === "set-literal") writePath(instance.state, transition.mutationTarget, transition.transitionValue);
     else if (transition.transitionKind === "toggle-boolean" && typeof current === "boolean") writePath(instance.state, transition.mutationTarget, !current);
     else if (transition.transitionKind === "increment" && typeof current === "number") writePath(instance.state, transition.mutationTarget, current + 1);
     else if (transition.transitionKind === "decrement" && typeof current === "number") writePath(instance.state, transition.mutationTarget, current - 1);
@@ -147,31 +157,19 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   function renderInto(instance) {
     var component = instance.component;
     while (instance.root.firstChild) instance.root.removeChild(instance.root.firstChild);
-    if (component) component.roots.forEach(function (child) { var rendered = render(child, instance.state); if (rendered) instance.root.appendChild(rendered); });
+    if (component) component.roots.forEach(function (child) { var rendered = render(child, instance.state, instance.data); if (rendered) instance.root.appendChild(rendered); });
     bindInteractions(instance);
   }
   function create(options) {
-    var settings = options || {};
-    var component = resolveComponent(settings);
-    var root = document.createElement("section");
-    root.className = "sg-component-library";
-    root.setAttribute("data-component-id", component ? component.id : "unresolved");
-    var instance = { root: root, component: component, state: clone(INTERACTION_CONFIG.initialState || {}) };
+    var settings = options || {}; var component = resolveComponent(settings); var root = document.createElement("section");
+    root.className = "sg-component-library"; root.setAttribute("data-component-id", component ? component.id : "unresolved");
+    var instance = { root: root, component: component, state: clone(INTERACTION_CONFIG.initialState || {}), data: settings.data || {} };
     if (settings.state && typeof settings.state === "object") Object.keys(settings.state).forEach(function (key) { instance.state[key] = settings.state[key]; });
     renderInto(instance);
     instance.unmount = function () { if (root.parentNode) root.parentNode.removeChild(root); };
     return instance;
   }
-  var API = {
-    components: COMPONENTS.map(function (component) { return { id: component.id, name: component.name }; }),
-    create: create,
-    mount: function (container, options) {
-      if (!container) throw new Error("mount requires a container");
-      var instance = create(options || {});
-      container.appendChild(instance.root);
-      return instance;
-    }
-  };
+  var API = { components: COMPONENTS.map(function (component) { return { id: component.id, name: component.name }; }), create: create, mount: function (container, options) { if (!container) throw new Error("mount requires a container"); var instance = create(options || {}); container.appendChild(instance.root); return instance; } };
   global.${namespace} = API;
 })(window);
 `;
@@ -274,19 +272,26 @@ function scalarStateForBindings(state: SfcStateResponsibility["initialState"], b
 function injectInteractionRuntime(
   plan: ComponentLibraryBuildPlan,
   interactions: readonly ComponentLibraryInteractionBinding[],
-  state: SfcStateResponsibility,
-): { files: ComponentLibraryBuildPlan["files"]; interactions: ComponentLibraryInteractionBinding[]; runtimePatched: boolean } {
+  dataBindings: readonly ComponentLibraryDataBinding[],
+  state: SfcStateResponsibility["initialState"],
+): { files: ComponentLibraryBuildPlan["files"]; interactions: ComponentLibraryInteractionBinding[]; dataBindings: ComponentLibraryDataBinding[]; runtimePatched: boolean } {
   const runtimeIndex = plan.files.findIndex((file) => file.role === "runtime" && file.content.includes("/*__UI_DISMANTLER_INTERACTION_CONFIG__*/"));
-  if (runtimeIndex < 0) return { files: plan.files, interactions: [...interactions], runtimePatched: false };
-  const materializable = interactions.filter((binding) => binding.sourceNodeId && binding.executionEvidence?.status === "verified" && binding.reviewed);
-  if (materializable.length === 0) return { files: plan.files, interactions: [...interactions], runtimePatched: false };
-  const materialized = interactions.map((binding) => materializable.includes(binding) ? { ...binding, materialized: true } : binding);
-  const config = { initialState: scalarStateForBindings(state.initialState, materialized), bindings: materialized.filter((binding) => binding.materialized) };
+  if (runtimeIndex < 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
+  const materializableInteractions = interactions.filter((binding) => binding.sourceNodeId && binding.executionEvidence?.status === "verified" && binding.reviewed);
+  const materializableData = dataBindings.filter((binding) => binding.sourceKind === "component-prop" && binding.reviewed && !binding.materialized);
+  if (materializableInteractions.length === 0 && materializableData.length === 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
+  const materializedInteractions = interactions.map((binding) => materializableInteractions.includes(binding) ? { ...binding, materialized: true } : binding);
+  const materializedDataBindings = dataBindings.map((binding) => materializableData.includes(binding) ? { ...binding, materialized: true } : binding);
+  const config = {
+    initialState: scalarStateForBindings(state, materializedInteractions),
+    bindings: materializedInteractions.filter((binding) => binding.materialized),
+    dataBindings: materializedDataBindings.filter((binding) => binding.materialized).map((binding) => ({ id: binding.id, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind })),
+  };
   const files = [...plan.files];
   const runtime = files[runtimeIndex];
-  const content = runtime.content.replace(/var INTERACTION_CONFIG = \{ initialState: \{\}, bindings: \[\] \}; \/\*__UI_DISMANTLER_INTERACTION_CONFIG__\*\//, `var INTERACTION_CONFIG = JSON.parse(${JSON.stringify(JSON.stringify(config))}); /*__UI_DISMANTLER_INTERACTION_CONFIG__*/`);
+  const content = runtime.content.replace(/var INTERACTION_CONFIG = \{ initialState: \{\}, bindings: \[\], dataBindings: \[\] \}; \/\*__UI_DISMANTLER_INTERACTION_CONFIG__\*\//, `var INTERACTION_CONFIG = JSON.parse(${JSON.stringify(JSON.stringify(config))}); /*__UI_DISMANTLER_INTERACTION_CONFIG__*/`);
   files[runtimeIndex] = { ...runtime, content, contentHash: sha256(content) };
-  return { files, interactions: materialized, runtimePatched: content !== runtime.content };
+  return { files, interactions: materializedInteractions, dataBindings: materializedDataBindings, runtimePatched: content !== runtime.content };
 }
 
 export function enrichComponentLibraryBuildPlan(
@@ -346,12 +351,6 @@ export function enrichComponentLibraryBuildPlan(
         });
       }
     }
-    const injected = injectInteractionRuntime(plan, interactions, evidence.state);
-    files = [...injected.files];
-    interactions = injected.interactions;
-    if (interactions.length > 0 && interactions.every((binding) => binding.materialized)) {
-      unresolved = unresolved.filter((reason) => !reason.includes("interaction bindings require state transition execution evidence"));
-    }
   }
   if (evidence.dataSurface) {
     unresolved.push(...evidence.dataSurface.unresolved.map((item) => `data-surface: ${item.reason}`));
@@ -366,10 +365,19 @@ export function enrichComponentLibraryBuildPlan(
         fields: surface.fields.map((field) => field.path),
         shape: { kind: surface.shape.kind, itemKind: surface.shape.itemKind, cardinality: surface.shape.cardinality },
         reviewed: !surface.reviewRequired && surface.injection.reviewed,
-        materialized: false,
+        materialized: surface.source.primary === "component-prop" && !surface.reviewRequired && surface.injection.reviewed,
         externalOnly: true,
         provenance: [{ kind: "data-surface-manifest", reference: surface.id }],
       });
+    }
+  }
+  if (evidence.state || evidence.dataSurface) {
+    const injected = injectInteractionRuntime(plan, interactions, dataBindings, evidence.state?.initialState ?? {});
+    files = [...injected.files];
+    interactions = injected.interactions;
+    dataBindings.splice(0, dataBindings.length, ...injected.dataBindings);
+    if (interactions.length > 0 && interactions.every((binding) => binding.materialized)) {
+      unresolved = unresolved.filter((reason) => !reason.includes("interaction bindings require state transition execution evidence"));
     }
   }
   const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized);

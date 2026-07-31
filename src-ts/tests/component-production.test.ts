@@ -265,10 +265,9 @@ test("State and Data Surface evidence enrich a Build Plan without embedding valu
     assert.equal(enriched.interactions[0]?.executionEvidence?.transitionKind, "set-literal");
     assert.equal(enriched.dataBindings.length, 1);
     assert.equal(enriched.dataBindings[0]?.externalOnly, true);
-    assert.equal(JSON.stringify(enriched).includes('"value"'), false);
+    assert.equal(enriched.dataBindings.every((binding) => !("value" in binding)), true);
     assert.equal(validation.ready, false);
     assert.equal(validation.blockers.some((issue) => issue.message.includes("metadata-only")), true);
-    assert.equal(validation.blockers.some((issue) => issue.message.includes("not materialized")), true);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -340,6 +339,39 @@ test("Reviewed primitive interaction bindings materialize into runtime state tra
   const instance = api.mount(dom.window.document.getElementById("mount")!, {});
   dom.window.document.querySelector<HTMLButtonElement>("[data-primitive-node='node:button']")!.click();
   assert.equal(instance.state.open, true);
+  instance.unmount();
+  dom.window.close();
+});
+
+
+test("Reviewed component-prop Data Surface binds external options without embedding business values", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-data-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:label", componentName: "DataLabel", componentFile: "DataLabel.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:label"],
+      nodes: [{ id: "node:label", sourceNodeId: "source:label", order: 0, sourceTag: "span", componentName: "DataLabel", renderTag: "span", renderStrategy: "native", classes: ["sg-data-label"], attributes: { ":aria-label": "title" }, inlineStyle: {}, content: [{ kind: "text", value: "{{ title }}" }], conditions: [], loops: [] }],
+      styleRules: [{ sourceNodeId: "source:label", selector: "[data-primitive-node=\\\"node:label\\\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }], interactions: [],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Data Components", packageName: "data-components" });
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, { dataSurface: {
+    unresolved: [], reviewRequired: false, surfaces: [{ id: "prop:label:title", owner: { componentId: "component:label", componentName: "DataLabel", componentFile: "DataLabel.vue" }, source: { primary: "component-prop", prop: { binding: "title", evidence: ["template-prop"] } }, shape: { kind: "scalar", itemKind: "scalar", cardinality: null, evidence: ["prop"] }, fields: [{ path: "title", consumers: ["component:label"], evidence: ["rendered-field"] }], consumers: [{ componentId: "component:label", componentName: "DataLabel", componentFile: "DataLabel.vue", targetBinding: "title", renderedFields: ["title"] }], injection: { kind: "component-prop", target: "title", reviewed: true }, references: [], evidence: [{ source: "template", detail: "title prop", confidence: "high" }], unresolved: [], reviewRequired: false }],
+  } as never });
+  assert.equal(enriched.dataBindings[0]?.materialized, true);
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { DataComponents: { mount: (host: Element, options: unknown) => { unmount: () => void } } }).DataComponents;
+  const instance = api.mount(dom.window.document.getElementById("mount")!, { data: { title: "Injected title" } });
+  const label = dom.window.document.querySelector("[data-primitive-node='node:label']")!;
+  assert.equal(label.getAttribute("aria-label"), "Injected title");
+  assert.equal(label.textContent, "Injected title");
+  assert.equal(runtime.includes("Injected title"), false);
   instance.unmount();
   dom.window.close();
 });
