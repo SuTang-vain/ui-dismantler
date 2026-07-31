@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { defineSkill } from "../core/skills/contract.js";
@@ -34,6 +35,9 @@ import { stateResponsibilitySkill } from "../skills/state-responsibility.js";
 import { transportProxySkill } from "../skills/transport-proxy.js";
 import type { Manifest } from "../types.js";
 import type { SfcVisualComponentResponsibility } from "../planning/sfc-visual-responsibility.js";
+import { parseProfileRunConfiguration } from "../profiles/profile-config.js";
+
+const root = new URL("../../", import.meta.url).pathname;
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
@@ -548,4 +552,53 @@ test("Profile Executor records failed evidence and blocks downstream Skills", as
   assert.deepEqual(report.steps[2]?.blockedBy, ["failed-skill:failing-step"]);
   assert.equal(downstreamExecutions, 0);
   assert.deepEqual(report.artifacts.map((artifact) => artifact.contract), ["successful-output"]);
+});
+
+
+test("Profile configuration is explicit and rejects ambiguous providers while preserving review state", () => {
+  const config = parseProfileRunConfiguration({
+    schemaVersion: "1.0",
+    profileId: "source-page",
+    enabledOptionalSkills: [],
+    inputProviders: [{ contract: "html-path", providerId: "fixture", reviewed: true, inputPath: "htmlPath", value: "/tmp/page.html" }],
+  });
+  assert.equal(config.profileId, "source-page");
+  assert.throws(() => parseProfileRunConfiguration({
+    schemaVersion: "1.0", profileId: "source-page", inputProviders: [
+      { contract: "html-path", providerId: "a", reviewed: true, inputPath: "htmlPath", value: "/tmp/a.html" },
+      { contract: "html-path", providerId: "b", reviewed: true, inputPath: "htmlPath", value: "/tmp/b.html" },
+    ],
+  }), /duplicate contracts/);
+  assert.throws(() => parseProfileRunConfiguration({
+    schemaVersion: "1.0", profileId: "source-page", inputProviders: [
+      { contract: "html-path", providerId: "draft", reviewed: false, inputPath: "htmlPath" },
+    ],
+  }), /value is required/);
+});
+
+test("profile-plan and profile-run CLI execute the reviewed source profile without changing source output", async (context) => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-profile-cli-"));
+  context.after(async () => { await rm(directory, { recursive: true, force: true }); });
+  const htmlPath = join(directory, "source.html");
+  const configPath = join(directory, "profile.json");
+  const planPath = join(directory, "plan.json");
+  const reportPath = join(directory, "report.json");
+  await writeFile(htmlPath, "<!doctype html><html><body><main><h1>Profile CLI</h1></main></body></html>", "utf8");
+  await writeFile(configPath, JSON.stringify({
+    schemaVersion: "1.0",
+    profileId: "source-page",
+    enabledOptionalSkills: [],
+    inputProviders: [{ contract: "html-path", providerId: "reviewed-source", reviewed: true, inputPath: "htmlPath", value: htmlPath }],
+  }), "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-plan", configPath, "--out", planPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-run", configPath, "--out", reportPath], { cwd: root, encoding: "utf8" });
+  const plan = JSON.parse(await readFile(planPath, "utf8")) as { ready: boolean; profileId: string; steps: Array<{ skillId: string }> };
+  const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; profileId: string; steps: Array<{ status: string; output?: { schemaVersion?: string } }> };
+  assert.equal(plan.ready, true);
+  assert.equal(plan.profileId, "source-page");
+  assert.deepEqual(plan.steps.map((step) => step.skillId), ["source-structure"]);
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.profileId, "source-page");
+  assert.equal(report.steps[0]?.status, "succeeded");
+  assert.equal(report.steps[0]?.output?.schemaVersion, "1.0");
 });

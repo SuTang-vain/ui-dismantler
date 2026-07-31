@@ -41,6 +41,13 @@ Failures throw `SkillExecutionError` with failed execution evidence. Existing CL
 
 The existing `analyze`, `plan`, and `spa-router` CLI commands dispatch through the default registry. Serialization, exit codes, lifecycle reporting, and quality thresholds remain unchanged.
 
+The generic Profile entry points are explicit and review-gated:
+
+- `profile-plan <profile.config.json> --out <profile.plan.json>` validates provider contracts and writes a deterministic execution plan.
+- `profile-run <profile.config.json> --out <profile.report.json>` executes the reviewed plan and records per-Skill raw output, evidence, artifacts, and graph deltas.
+
+The configuration only supplies source paths, configuration objects, or reviewed graph artifacts. It does not define business entities or generate Data Packs; that boundary remains documented in `docs/architecture/data-boundary.md`.
+
 ## Task Profiles
 
 The initial profiles are intentionally small:

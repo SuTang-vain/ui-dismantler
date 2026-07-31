@@ -32,8 +32,15 @@ import type { SpaRouterSkillInput } from "./skills/spa-router.js";
 import type { Manifest } from "./types.js";
 import { assertDataSurfaceManifest, serializeDataSurfaceManifest, validateDataSurfaceManifest, type DataSurfaceManifest, type DataSurfaceManifestInput } from "./skills/data-surface-manifest/index.js";
 import type { DataCardinalityResponsibilityGraph, DataCardinalitySkillInput } from "./skills/data-cardinality.js";
+import { createDefaultTaskProfileRegistry } from "./profiles/default-profiles.js";
+import { createDefaultReviewedBindingRegistry } from "./profiles/default-bindings.js";
+import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
+import { ProfileExecutor } from "./core/profiles/executor.js";
+import { readProfileRunConfiguration } from "./profiles/profile-config.js";
 
 const skillRegistry = createDefaultSkillRegistry();
+const taskProfileRegistry = createDefaultTaskProfileRegistry(skillRegistry);
+const reviewedBindingRegistry = createDefaultReviewedBindingRegistry(skillRegistry);
 
 function flag(args: string[], name: string): string | undefined { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; }
 function has(args: string[], name: string): boolean { return args.includes(name); }
@@ -60,6 +67,8 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
 function usage(): void {
   console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
   data-surface-validate <data-surface.manifest.json>
+  profile-plan <profile.config.json> --out <profile.plan.json>
+  profile-run <profile.config.json> --out <profile.report.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -72,6 +81,32 @@ async function main(argv: string[]): Promise<number> {
   const [command, ...args] = argv;
   if (!command || command === "help" || command === "--help") { usage(); return command ? 0 : 2; }
   try {
+    if (command === "profile-plan") {
+      const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!configPath || !out) throw new Error("profile-plan 需要 <profile.config.json> 和 --out");
+      const config = await readProfileRunConfiguration(configPath);
+      const plan = new ProfileExecutionPlanner(taskProfileRegistry, reviewedBindingRegistry).plan(config.profileId, {
+        enabledOptionalSkills: config.enabledOptionalSkills,
+        inputProviders: config.inputProviders.map(({ contract, providerId, reviewed }) => ({ contract, providerId, reviewed })),
+      });
+      await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      console.log(`${plan.ready ? "✓" : "✗"} Profile 计划: ${plan.profileId} (${plan.steps.filter((step) => step.ready).length}/${plan.steps.length} Skills ready)`);
+      for (const blocker of plan.blockers) console.log(`  - ${blocker}`);
+      return plan.ready ? 0 : 1;
+    }
+    if (command === "profile-run") {
+      const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!configPath || !out) throw new Error("profile-run 需要 <profile.config.json> 和 --out");
+      const config = await readProfileRunConfiguration(configPath);
+      const report = await new ProfileExecutor(skillRegistry, taskProfileRegistry, reviewedBindingRegistry).execute(config.profileId, {
+        enabledOptionalSkills: config.enabledOptionalSkills,
+        inputProviders: config.inputProviders,
+      });
+      await writeFile(resolve(out), `${JSON.stringify(report, null, 2)}\n`, "utf8");
+      console.log(`${report.status === "succeeded" ? "✓" : "✗"} Profile 执行: ${report.profileId} (${report.steps.filter((step) => step.status === "succeeded").length}/${report.steps.length} Skills succeeded)`);
+      for (const blocker of report.blockers) console.log(`  - ${blocker}`);
+      return report.status === "succeeded" ? 0 : 1;
+    }
     if (command === "analyze") {
       const html = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
       if (!html || !out) throw new Error("analyze 需要 <html> 和 --out");
