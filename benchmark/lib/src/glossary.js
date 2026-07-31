@@ -42,106 +42,24 @@
   function isMobile() { return global.innerWidth <= 500; }
   function isExtremeSmall() { return global.innerWidth <= 320 || global.innerHeight <= 380; }
 
-  /* ---------- Default data (mirrors original.html script + body) ---------- */
-  var DEFAULTS = {
-    ariaLabel: 'Technical Glossary Explorer',
-    tablistLabel: 'Glossary sections',
-    tabs: [
-      { id: 'quiz', label: 'Quiz' },
-      { id: 'comparison', label: 'Compare' },
-      { id: 'graph', label: 'Graph' },
-      { id: 'nav', label: 'Topics' },
-      { id: 'cause', label: 'Causal' }
-    ],
-    splash: {
-      eyebrow: 'Glossary Explorer',
-      title: 'Master Technical Concepts',
-      sub: 'Interactive quizzes, comparisons, and relationship maps',
-      question: 'Which area interests you most?',
-      options: [
-        { value: 0, label: 'Frontend Patterns' },
-        { value: 1, label: 'Data Structures' },
-        { value: 2, label: 'Algorithms' }
-      ],
-      cta: 'Start Exploring',
-      hint: 'Choose a topic or just start exploring'
-    },
+  /* ---------- Neutral component state ---------- */
+  // The publishable runtime contains structure and behavior only. Domain/demo
+  // records must be supplied through mount/create options by the host app.
+  var EMPTY_STATE = {
+    ariaLabel: 'Component',
+    tablistLabel: 'Sections',
+    tabs: [],
+    splash: { eyebrow: '', title: '', sub: '', question: '', options: [], cta: '', hint: '' },
     quiz: {
-      title: 'Concept Quiz',
-      sub: 'Test your understanding of frontend patterns',
-      nextLabel: 'Next Question',
-      resultMessage: 'You completed the quiz!',
-      correctPrefix: 'Correct! ',
-      wrongPrefix: 'Not quite. The answer is: ',
-      questionPrefix: 'Question ',
-      questionSeparator: ' of ',
-      scoreSeparator: ' / ',
-      questions: [
-        { q: 'What does CSS specificity determine?',
-          opts: ['Which property value wins when multiple rules apply', 'The rendering order of CSS files', 'Whether a selector is valid', 'The performance cost of a rule'],
-          correct: 0 },
-        { q: 'Which CSS property creates a stacking context?',
-          opts: ['z-index (always)', 'position + z-index', 'opacity < 1', 'Both B and C'],
-          correct: 3 },
-        { q: "What does 'cascade' mean in CSS?",
-          opts: ['Styles flow top-down', 'Multiple rules can apply to one element', 'CSS files must be ordered', 'Inheritance is automatic'],
-          correct: 1 }
-      ]
+      title: '', sub: '', nextLabel: '', resultMessage: '', correctPrefix: '', wrongPrefix: '',
+      questionPrefix: '', questionSeparator: '', scoreSeparator: '', questions: []
     },
-    comparison: {
-      title: 'Pattern Comparison',
-      sub: 'Compare real-world vs alternative approaches',
-      toggleLabel: 'Switch perspective',
-      cards: [
-        { variant: 'real', tag: 'Real', title: 'CSS Custom Properties',
-          desc: 'Runtime-evaluated variables defined in :root. Inherited, overridable, and JavaScript-accessible.' },
-        { variant: 'alt', tag: 'Alternative', title: 'Sass Variables',
-          desc: 'Compile-time substitution. No runtime overhead but cannot be changed dynamically or accessed via JS.' }
-      ]
-    },
-    graph: {
-      title: 'Concept Relationship Map',
-      sub: 'Click a node to learn more',
-      info: 'Click a node to see details',
-      viewBox: '0 0 600 300',
-      edgeColor: '#e5e7eb',
-      edgeWidth: 2,
-      nodes: [
-        { id: 'css', label: 'CSS', x: 300, y: 150, r: 40, fill: '#4f46e5', center: true, desc: 'The core styling language of the web' },
-        { id: 'specificity', label: 'Specificity', x: 150, y: 60, r: 32, fill: '#fff', desc: 'Determines which rule wins when multiple apply' },
-        { id: 'variables', label: 'Variables', x: 450, y: 60, r: 32, fill: '#fff', desc: 'Custom properties evaluated at runtime' },
-        { id: 'flexbox', label: 'Flexbox', x: 120, y: 240, r: 32, fill: '#fff', desc: 'One-dimensional layout model' },
-        { id: 'grid', label: 'Grid', x: 480, y: 240, r: 32, fill: '#fff', desc: 'Two-dimensional layout system' }
-      ],
-      edges: [
-        { x1: 300, y1: 150, x2: 150, y2: 60 },
-        { x1: 300, y1: 150, x2: 450, y2: 60 },
-        { x1: 300, y1: 150, x2: 120, y2: 240 },
-        { x1: 300, y1: 150, x2: 480, y2: 240 }
-      ]
-    },
-    nav: {
-      title: 'Topic Navigator',
-      sub: 'Browse related concepts',
-      items: [
-        { id: 'p1', label: 'Layout', heading: 'Layout Systems', desc: 'Flexbox for 1D, Grid for 2D, both designed for responsive design from the ground up.' },
-        { id: 'p2', label: 'Colors', heading: 'Color Models', desc: 'Hex, RGB, HSL, LCH. Modern CSS also supports color-mix() and relative color syntax.' },
-        { id: 'p3', label: 'Typography', heading: 'Type Systems', desc: 'Variable fonts, font-display, clamp() for fluid typography, and logical properties.' }
-      ]
-    },
-    causeChain: {
-      title: 'Causal Chain: CSS Evolution',
-      sub: 'How CSS problems led to new features',
-      whatifQuestion: 'What if floats never existed?',
-      whatifResult: 'Without floats, early web would have relied entirely on tables and positioning, delaying CSS-based layouts by years.',
-      events: [
-        { title: 'Float Era', desc: 'Before flexbox, layouts used floats and clearfix hacks, causing fragile code.' },
-        { title: 'Flexbox', desc: 'Solved 1D layout problems: alignment, distribution, reordering.' },
-        { title: 'Grid', desc: 'Brought native 2D layout to CSS, replacing frameworks for many use cases.' },
-        { title: 'Container Queries', desc: 'Components can respond to their container size, not just viewport.' }
-      ]
-    },
-    theme: {}
+    comparison: { title: '', sub: '', toggleLabel: '', cards: [] },
+    graph: { title: '', sub: '', info: '', viewBox: '0 0 0 0', edgeColor: 'currentColor', edgeWidth: 1, nodes: [], edges: [] },
+    nav: { title: '', sub: '', items: [] },
+    causeChain: { title: '', sub: '', whatifQuestion: '', whatifResult: '', events: [] },
+    theme: {},
+    state: { status: 'empty', message: '' }
   };
 
   /* ---------- utils ---------- */
@@ -172,7 +90,11 @@
 
   /* ---------- constructor ---------- */
   function GlossaryExplorer(options) {
-    this.opts = deepMerge({}, DEFAULTS, options || {});
+    this.opts = deepMerge({}, EMPTY_STATE, options || {});
+    var status = this.opts.state && this.opts.state.status;
+    if (status !== 'ready' && status !== 'loading' && status !== 'error' && status !== 'empty') {
+      this.opts.state = deepMerge({}, EMPTY_STATE.state);
+    }
     this.root = null;
     this._splash = null;
     this._qIdx = 0;
@@ -181,8 +103,17 @@
   }
 
   GlossaryExplorer.prototype.create = function () {
-    var frame = el('main', PREFIX + '-frame', { role: 'region', 'aria-label': this.opts.ariaLabel });
+    var state = this.opts.state || EMPTY_STATE.state;
+    var frameAttrs = { role: 'region', 'aria-label': this.opts.ariaLabel, 'data-state': state.status };
+    if (state.status === 'loading') frameAttrs['aria-busy'] = 'true';
+    var frame = el('main', PREFIX + '-frame', frameAttrs);
     applyTheme(frame, this.opts.theme);
+    if (state.message) {
+      frame.appendChild(el('p', PREFIX + '-status', {
+        role: state.status === 'error' ? 'alert' : 'status',
+        text: state.message
+      }));
+    }
     frame.appendChild(this._buildSplash());
     frame.appendChild(this._buildTabBar());
     frame.appendChild(this._buildViewStack());
@@ -278,10 +209,11 @@
     section.appendChild(this._sectionHead(q.title, q.sub));
 
     var top = el('div', PREFIX + '-qz-top');
+    var firstQuestion = q.questions[0] || { q: '' };
     top.appendChild(el('div', PREFIX + '-qno', {
-      text: q.questionPrefix + '1' + q.questionSeparator + q.questions.length
+      text: q.questions.length ? q.questionPrefix + '1' + q.questionSeparator + q.questions.length : ''
     }));
-    top.appendChild(el('div', PREFIX + '-qt', { text: q.questions[0].q }));
+    top.appendChild(el('div', PREFIX + '-qt', { text: firstQuestion.q }));
     section.appendChild(top);
 
     var body = el('div', PREFIX + '-qz-body');
@@ -301,6 +233,11 @@
 
     this._qEls = { top: top, opts: opts, fb: fb, next: nextBtn, result: result,
       score: result.firstChild, body: body };
+    if (!q.questions.length) {
+      top.style.display = 'none';
+      body.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
     return section;
   };
 
@@ -441,8 +378,9 @@
     section.appendChild(timeline);
 
     var content = el('div', PREFIX + '-cause-chain-content', { id: PREFIX + '-cause-content' });
-    content.appendChild(el('div', PREFIX + '-event-title', { text: c.events[0].title }));
-    content.appendChild(el('div', PREFIX + '-event-desc', { text: c.events[0].desc }));
+    var firstEvent = c.events[0] || { title: '', desc: '' };
+    content.appendChild(el('div', PREFIX + '-event-title', { text: firstEvent.title }));
+    content.appendChild(el('div', PREFIX + '-event-desc', { text: firstEvent.desc }));
     var whatifBtn = el('button', PREFIX + '-whatif-btn', { type: 'button', text: c.whatifQuestion });
     content.appendChild(whatifBtn);
     var whatifResult = el('div', PREFIX + '-whatif-result', { text: c.whatifResult });
@@ -560,6 +498,7 @@
     btn.classList.add('active');
     this._evIdx = parseInt(btn.getAttribute('data-event'), 10);
     var ev = this.opts.causeChain.events[this._evIdx];
+    if (!ev) return;
     this._cEls.title.textContent = ev.title;
     this._cEls.desc.textContent = ev.desc;
     this._cEls.whatifResult.classList.remove('show');
@@ -577,7 +516,7 @@
 
     // Quiz: next button + initial render
     on(this._qEls.next, 'click', function () { self._nextQuestion(); });
-    this._renderQuestion();
+    if (this.opts.quiz.questions.length) this._renderQuestion();
 
     // Comparison toggle (alternates opacity 1 / 0.5 on each card)
     on(this._cmpEls.toggle, 'click', function () {

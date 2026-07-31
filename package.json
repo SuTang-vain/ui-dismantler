@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "python3 scripts/tests/run.py",
-    "verify": "python3 src/skill/scripts/validate_lib.py benchmark/lib && python3 scripts/roundtrip.py benchmark/original.html --lib benchmark/lib",
+    "verify": "python3 src/skill/scripts/validate_lib.py benchmark/lib && python3 scripts/roundtrip.py benchmark/original.html --lib benchmark/lib && node scripts/verify_component_boundary.mjs",
     "verify:all": "python3 scripts/verify_all.py --lib-dir benchmark/lib",
     "build:ts": "tsc",
     "typecheck:ts": "tsc --noEmit",
@@ -38,7 +38,8 @@
     "profile:run:ts": "npm run build:ts && node dist-ts/cli.js profile-run",
     "skills:ts": "npm run build:ts && node dist-ts/cli.js skill-list",
     "skill:run:ts": "npm run build:ts && node dist-ts/cli.js skill-run",
-    "profiles:ts": "npm run build:ts && node dist-ts/cli.js profile-list"
+    "profiles:ts": "npm run build:ts && node dist-ts/cli.js profile-list",
+    "verify:component-boundary": "node scripts/verify_component_boundary.mjs"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",

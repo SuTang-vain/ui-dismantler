@@ -708,3 +708,12 @@ body {
     transition: none;
   }
 }
+
+
+/* Host-owned lifecycle state; data remains external to the package. */
+.sg-status {
+  margin: 12px 20px;
+  color: var(--sg-muted);
+  font-size: 0.85rem;
+}
+.sg-frame[data-state="error"] .sg-status { color: var(--sg-error); }

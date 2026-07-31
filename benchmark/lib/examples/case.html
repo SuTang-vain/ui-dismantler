@@ -8,9 +8,10 @@
 </head>
 <body>
 <div id="mount"></div>
+<script src="../../fixtures/glossary-demo.js"></script>
 <script src="../src/glossary.js"></script>
 <script>
-GlossaryExplorer.mount(document.getElementById('mount'), {});
+GlossaryExplorer.mount(document.getElementById('mount'), window.GlossaryDemoFixture);
 </script>
 </body>
 </html>
