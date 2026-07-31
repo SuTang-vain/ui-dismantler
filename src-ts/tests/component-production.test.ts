@@ -4,13 +4,17 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import {
+  componentPlanningReportToBuildPlan,
   createComponentLibraryBuildPlan,
   materializeComponentLibrary,
+  primitiveDomCompilationToBuildPlan,
   runComponentLibraryBuild,
   runComponentLibraryRuntimeSmoke,
   validateComponentLibraryBuildPlan,
   type ComponentLibraryBuildPlanInput,
 } from "../production/component-library/index.js";
+import type { PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
+import type { ComponentPlanningReport } from "../planning/components.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 const benchmarkRoot = resolve(root, "benchmark/lib");
@@ -127,4 +131,59 @@ test("component-build CLI materializes a reviewed plan without publishing exampl
   const packageJson = JSON.parse(await readFile(join(outputRoot, "package.json"), "utf8")) as { files?: string[] };
   assert.equal(packageJson.files?.some((entry) => entry.startsWith("examples")), false);
   assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "build-report.json"), "utf8")).status, "succeeded");
+});
+
+
+test("Primitive DOM adapter projects reviewed static evidence into a runnable Build Plan", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-primitive-build-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0",
+    kind: "primitive-dom-compilation-graph",
+    components: [{
+      componentId: "component:demo",
+      componentName: "DemoCard",
+      componentFile: "DemoCard.vue",
+      reviewRequired: false,
+      compilation: {
+        schemaVersion: "1.0",
+        kind: "primitive-dom-compilation",
+        roots: ["node:root"],
+        nodes: [{ id: "node:root", sourceNodeId: "source:root", order: 0, sourceTag: "div", componentName: "DemoCard", renderTag: "section", renderStrategy: "native", classes: ["sg-demo-card"], attributes: { role: "region" }, inlineStyle: {}, content: [{ kind: "text", value: "Reviewed component" }], conditions: [], loops: [] }],
+        styleRules: [{ sourceNodeId: "source:root", selector: "[data-primitive-node=\\\"node:root\\\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }],
+        interactions: [],
+        metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 },
+        reviewReasons: [],
+      },
+    }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 },
+    reviewReasons: [],
+    reviewRequired: false,
+  };
+  const plan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Reviewed Components", packageName: "reviewed-components" });
+  assert.equal(plan.reviewRequired, false);
+  assert.equal(validateComponentLibraryBuildPlan(plan).ready, true);
+  const report = await runComponentLibraryBuild(plan, join(directory, "library"));
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.smoke?.passed, true);
+  assert.equal(report.validation?.ok, true);
+});
+
+test("Component Planning adapter preserves missing executable evidence as a review blocker", async () => {
+  const report: ComponentPlanningReport = {
+    schemaVersion: "1.0",
+    generatedFrom: "/tmp/source.html",
+    generatedAt: "2026-07-31T00:00:00.000Z",
+    lineBudget: 150,
+    components: [],
+    issues: [],
+    summary: { components: 0, overBudget: 0, errors: 0, warnings: 0, interactions: 0, ownedInteractions: 0, unownedInteractions: 0, ready: false },
+  };
+  const plan = await componentPlanningReportToBuildPlan(report, { sourceRoot: "/tmp/source.html", libraryName: "Review Required", packageName: "review-required" });
+  const validation = validateComponentLibraryBuildPlan(plan);
+  assert.equal(plan.reviewRequired, true);
+  assert.equal(validation.valid, true);
+  assert.equal(validation.ready, false);
+  assert.equal(validation.blockers.some((issue) => issue.message.includes("executable DOM topology")), true);
+  assert.equal(validation.blockers.some((issue) => issue.message.includes("missing required runtime")), true);
 });

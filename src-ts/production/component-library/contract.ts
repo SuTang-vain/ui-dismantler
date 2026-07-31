@@ -93,6 +93,7 @@ export interface ComponentLibraryBuildPlanValidationReport {
   readonly valid: boolean;
   readonly ready: boolean;
   readonly issues: readonly ComponentLibraryBuildPlanValidationIssue[];
+  readonly blockers: readonly ComponentLibraryBuildPlanValidationIssue[];
 }
 
 export function sha256(value: string): string {
@@ -110,7 +111,9 @@ function safeRelativePath(path: string): boolean {
 
 export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPlan): ComponentLibraryBuildPlanValidationReport {
   const issues: ComponentLibraryBuildPlanValidationIssue[] = [];
+  const blockers: ComponentLibraryBuildPlanValidationIssue[] = [];
   const add = (path: string, message: string): void => { issues.push({ path, message }); };
+  const block = (path: string, message: string): void => { blockers.push({ path, message }); };
   if (plan.schemaVersion !== COMPONENT_LIBRARY_BUILD_PLAN_SCHEMA_VERSION) add("schemaVersion", `must be ${COMPONENT_LIBRARY_BUILD_PLAN_SCHEMA_VERSION}`);
   if (plan.kind !== "component-library-build-plan") add("kind", "must be component-library-build-plan");
   if (!plan.identity.sourceRoot.trim()) add("identity.sourceRoot", "must not be empty");
@@ -127,19 +130,21 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
     if (file.contentHash !== sha256(file.content)) add(`${path}.contentHash`, "does not match content");
     if (file.provenance.length === 0) add(`${path}.provenance`, "must contain at least one evidence reference");
     if (file.role === "fixture" && file.publish) add(`${path}.publish`, "fixture files cannot be publishable");
-    if (["runtime", "style", "package-metadata", "documentation"].includes(file.role) && !file.reviewed) add(`${path}.reviewed`, "publishable library files must be reviewed");
+    if (["runtime", "style", "package-metadata", "documentation"].includes(file.role) && !file.reviewed) block(`${path}.reviewed`, "publishable library files must be reviewed");
   }
   for (const requiredRole of ["runtime", "style", "package-metadata", "documentation"] as const) {
-    if (!plan.files.some((file) => file.role === requiredRole)) add("files", `missing required ${requiredRole} file`);
+    if (!plan.files.some((file) => file.role === requiredRole)) block("files", `missing required ${requiredRole} file`);
   }
   if (!safeRelativePath(plan.smoke.runtimePath)) add("smoke.runtimePath", "must be a safe relative path");
-  if (!plan.files.some((file) => file.path === plan.smoke.runtimePath && file.role === "runtime")) add("smoke.runtimePath", "must reference a planned runtime file");
+  if (!plan.files.some((file) => file.path === plan.smoke.runtimePath && file.role === "runtime")) block("smoke.runtimePath", "must reference a planned runtime file");
   if (!plan.smoke.globalName.trim()) add("smoke.globalName", "must not be empty");
   if (!plan.smoke.mountMethod.trim()) add("smoke.mountMethod", "must not be empty");
   if (!plan.smoke.hostSelector.trim()) add("smoke.hostSelector", "must not be empty");
-  const computedReviewRequired = plan.unresolved.length > 0 || plan.files.some((file) => !file.reviewed);
+  for (const unresolved of plan.unresolved) block("unresolved", unresolved);
+  if (plan.reviewRequired && plan.unresolved.length === 0 && !plan.files.some((file) => !file.reviewed)) block("reviewRequired", "plan declares reviewRequired without an unresolved or unreviewed source");
+  const computedReviewRequired = plan.unresolved.length > 0 || plan.files.some((file) => !file.reviewed) || blockers.length > 0;
   if (plan.reviewRequired !== computedReviewRequired) add("reviewRequired", `must equal derived review state ${computedReviewRequired}`);
-  return { valid: issues.length === 0, ready: issues.length === 0 && !plan.reviewRequired, issues };
+  return { valid: issues.length === 0, ready: issues.length === 0 && blockers.length === 0 && !plan.reviewRequired, issues, blockers };
 }
 
 export function assertComponentLibraryBuildPlan(plan: ComponentLibraryBuildPlan): void {

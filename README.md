@@ -132,7 +132,18 @@ node dist-ts/cli.js component-build \
 
 Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可以写入构建目录，但不能标记为 publishable。`Runtime Smoke` 在浏览器质量门之前检查模块加载、`mount()`、首屏节点、运行时错误、本地资源和可选清理合同。
 
-该流水线当前首先标准化已有生成结果和 reviewed 文件；后续再将 `ComponentPlan`、`PrimitiveDomCompilation` 和旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
+
+```bash
+node dist-ts/cli.js primitive-dom-build-plan \
+  /absolute/path/to/primitive-dom.graph.json \
+  --source-root /absolute/path/to/source \
+  --name "Reviewed Components" \
+  --package-name reviewed-components \
+  --out /tmp/primitive-dom.build-plan.json
+```
+
+`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 

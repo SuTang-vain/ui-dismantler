@@ -48,7 +48,8 @@ export async function runComponentLibraryBuild(
       plan: planValidation,
       blockers: [
         ...planValidation.issues.map((issue) => `${issue.path}: ${issue.message}`),
-        ...(plan.reviewRequired ? ["component-library-build-plan requires review"] : []),
+        ...planValidation.blockers.map((issue) => `${issue.path}: ${issue.message}`),
+        ...(plan.reviewRequired && planValidation.blockers.length === 0 ? ["component-library-build-plan requires review"] : []),
       ],
       timing: { ...timing, totalMs: elapsed(startedAt) },
     };
