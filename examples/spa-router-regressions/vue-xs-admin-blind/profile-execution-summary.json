@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "profile-execution-summary",
+  "profileId": "data-backed-spa",
+  "status": "succeeded",
+  "sourceRoot": "blind-cases/vue-xs-admin",
+  "sourceCommit": "99027d176d3c23643bd4c25ba00ec77d2b72bb56",
+  "scenarioIds": [
+    "login-reviewed-region"
+  ],
+  "steps": [
+    {
+      "skillId": "source-structure",
+      "status": "succeeded",
+      "artifactContracts": [
+        "source-manifest@1.0"
+      ]
+    },
+    {
+      "skillId": "component-ownership",
+      "status": "succeeded",
+      "artifactContracts": [
+        "sfc-visual-responsibility-graph"
+      ]
+    },
+    {
+      "skillId": "data-cardinality",
+      "status": "succeeded",
+      "artifactContracts": [
+        "data-cardinality-responsibility-graph"
+      ]
+    },
+    {
+      "skillId": "state-responsibility",
+      "status": "succeeded",
+      "artifactContracts": [
+        "sfc-state-responsibility"
+      ]
+    },
+    {
+      "skillId": "spa-router",
+      "status": "succeeded",
+      "artifactContracts": [
+        "spa-router-contract-report"
+      ]
+    },
+    {
+      "skillId": "transport-proxy",
+      "status": "succeeded",
+      "artifactContracts": [
+        "transport-proxy-responsibility-graph"
+      ]
+    },
+    {
+      "skillId": "api-responsibility",
+      "status": "succeeded",
+      "artifactContracts": [
+        "api-fixture-responsibility-graph"
+      ]
+    },
+    {
+      "skillId": "data-surface-manifest",
+      "status": "succeeded",
+      "artifactContracts": [
+        "data-surface-manifest"
+      ]
+    }
+  ],
+  "artifactContracts": [
+    "source-manifest@1.0",
+    "sfc-visual-responsibility-graph",
+    "data-cardinality-responsibility-graph",
+    "sfc-state-responsibility",
+    "spa-router-contract-report",
+    "transport-proxy-responsibility-graph",
+    "api-fixture-responsibility-graph",
+    "data-surface-manifest"
+  ],
+  "responsibilityDeltaSkills": [
+    "component-ownership",
+    "data-cardinality",
+    "api-responsibility",
+    "data-surface-manifest"
+  ],
+  "dataSurfaceMetrics": {
+    "surfaces": 1,
+    "apiSurfaces": 1,
+    "staticSurfaces": 0,
+    "reviewedFixtures": 1,
+    "fields": 8,
+    "references": 0,
+    "unresolved": 28
+  },
+  "dataSurfaceReviewRequired": true,
+  "dataSurfaceIdentity": {
+    "sourceRoot": "blind-cases/vue-xs-admin",
+    "sourceHash": "cd55b2ae99e56264f4efec834bed54e553b7fd23fbcccb21cc0315cc9e2edfeb",
+    "sourceHashKind": "source-content",
+    "sourceCommit": "99027d176d3c23643bd4c25ba00ec77d2b72bb56",
+    "fixtureHash": "2755e165dc0b7ccbfc47cdf24781272fe372224bb71b21bdbf9e99fe697cf767",
+    "fixtureHashKind": "fixture-content",
+    "configurationHash": "c65dfcaec943866f469126dfb75e3cbff3d233064b45eb68e206a041e6a4254b",
+    "configurationHashKind": "configuration-content"
+  }
+}

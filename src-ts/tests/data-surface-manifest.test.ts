@@ -61,3 +61,20 @@ test("data-surface CLI emits and validates a deterministic manifest", (context) 
   assert.equal(first.includes("generatedAt"), false);
   execFileSync(process.execPath, ["dist-ts/cli.js", "data-surface-validate", join(directory, "first.json")], { cwd: root, encoding: "utf8" });
 });
+
+test("frozen Vue XS Admin Data Surface Manifest is portable, deterministic, and review-gated", () => {
+  const path = join(root, "examples/spa-router-regressions/vue-xs-admin-blind/data-surface.manifest.json");
+  const serialized = readFileSync(path, "utf8");
+  const manifest = JSON.parse(serialized) as DataSurfaceManifest;
+  const report = validateDataSurfaceManifest(manifest);
+  assert.equal(report.valid, true);
+  assert.equal(manifest.identity.sourceRoot, "blind-cases/vue-xs-admin");
+  assert.equal(manifest.identity.sourceCommit, "99027d176d3c23643bd4c25ba00ec77d2b72bb56");
+  assert.equal(manifest.metrics.surfaces, 1);
+  assert.equal(manifest.metrics.apiSurfaces, 1);
+  assert.equal(manifest.metrics.reviewedFixtures, 1);
+  assert.equal(manifest.reviewRequired, true);
+  assert.equal(serializeDataSurfaceManifest(manifest), serialized);
+  assert.equal("entities" in (manifest as unknown as Record<string, unknown>), false);
+  assert.equal("aliases" in (manifest as unknown as Record<string, unknown>), false);
+});

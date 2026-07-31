@@ -1,0 +1,281 @@
+{
+  "identity": {
+    "configurationHash": "c65dfcaec943866f469126dfb75e3cbff3d233064b45eb68e206a041e6a4254b",
+    "configurationHashKind": "configuration-content",
+    "contractVersion": "1.0",
+    "fixtureHash": "2755e165dc0b7ccbfc47cdf24781272fe372224bb71b21bdbf9e99fe697cf767",
+    "fixtureHashKind": "fixture-content",
+    "skillVersions": {
+      "api-responsibility": "1.0.0",
+      "component-ownership": "1.0.0",
+      "data-cardinality": "1.0.0",
+      "data-surface-manifest": "1.0.0"
+    },
+    "sourceCommit": "99027d176d3c23643bd4c25ba00ec77d2b72bb56",
+    "sourceHash": "cd55b2ae99e56264f4efec834bed54e553b7fd23fbcccb21cc0315cc9e2edfeb",
+    "sourceHashKind": "source-content",
+    "sourceRoot": "blind-cases/vue-xs-admin"
+  },
+  "kind": "data-surface-manifest",
+  "library": {
+    "framework": "vue-sfc",
+    "sourceRoot": "blind-cases/vue-xs-admin"
+  },
+  "metrics": {
+    "apiSurfaces": 1,
+    "fields": 8,
+    "references": 0,
+    "reviewedFixtures": 1,
+    "staticSurfaces": 0,
+    "surfaces": 1,
+    "unresolved": 28
+  },
+  "reviewRequired": true,
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "consumers": [
+        {
+          "componentFile": "src/views/login/compoontne/form.vue",
+          "componentId": "sfc:63",
+          "componentName": "form",
+          "renderedFields": [],
+          "responsePath": "data",
+          "targetBinding": "useUserInfoStoreHook().setUserInfo"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "high",
+          "detail": "POST /mock_api/login writes useUserInfoStoreHook().setUserInfo",
+          "source": "src/views/login/compoontne/form.vue"
+        },
+        {
+          "confidence": "high",
+          "detail": "fixture 584f2d3262db56d587e6c3ecde363d318aa5ff3269f5051ac93499ce75acf464 materializes data",
+          "source": "src/views/login/compoontne/form.vue"
+        }
+      ],
+      "fields": [
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "email"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "introduction"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "name"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "role"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "signature"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "title"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "token"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "fixture-shape"
+          ],
+          "path": "userid"
+        }
+      ],
+      "id": "api:api-fixture:sfc:63:getUserInfo",
+      "injection": {
+        "kind": "state-binding",
+        "reviewed": false,
+        "sourcePath": "data",
+        "target": "useUserInfoStoreHook().setUserInfo"
+      },
+      "owner": {
+        "componentFile": "src/views/login/compoontne/form.vue",
+        "componentId": "sfc:63",
+        "componentName": "form"
+      },
+      "references": [],
+      "reviewRequired": true,
+      "shape": {
+        "cardinality": 1,
+        "evidence": [
+          "reviewed fixture 584f2d3262db56d587e6c3ecde363d318aa5ff3269f5051ac93499ce75acf464"
+        ],
+        "itemKind": "record",
+        "kind": "record"
+      },
+      "source": {
+        "api": {
+          "bodyHash": "584f2d3262db56d587e6c3ecde363d318aa5ff3269f5051ac93499ce75acf464",
+          "method": "POST",
+          "path": "/mock_api/login",
+          "requestPath": "/mock_api/login",
+          "responsePath": "data",
+          "responsibilityId": "api-fixture:sfc:63:getUserInfo",
+          "reviewed": true,
+          "transportPrefixes": []
+        },
+        "primary": "reviewed-api-fixture"
+      },
+      "unresolved": [
+        "fixture response body is consumed only after explicit reviewed-config matching",
+        "runtime source code is not executed during extraction"
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "reason": "API candidates are classified by framework/package, local module, transport, endpoint and store evidence instead of variable-name allowlists",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "API ownership is established from import, request endpoint, response assignment, template field, and reviewed fixture evidence",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "dev-server proxy targets and path rewrites are retained as auditable transport evidence and never treated as browser request paths",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "proxy target, router, rewrite, and hook evidence is bound to one scope-aware AST proxy entry; unsupported or malformed config shapes use an explicit diagnostic fallback",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "response flow api-flow:src/config/index.ts:getConfigInfo has no reviewed fixture-backed data surface",
+      "source": "src/config/index.ts"
+    },
+    {
+      "reason": "response flow api-flow:src/router/utils.ts:getRouteApi has no reviewed fixture-backed data surface",
+      "source": "src/router/utils.ts"
+    },
+    {
+      "reason": "response flows are reported independently from reviewed fixture materialization so route/store consumers remain auditable when fixtures are incomplete",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "transport prefixes are inferred only from the imported request client and concrete environment assignments",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "reason": "unresolved calls remain explicit and are never replaced with guessed data",
+      "source": "/Users/tangyaoyue/DEV/Baidu/ui-dismantler-blind-cases/vue-xs-admin"
+    },
+    {
+      "owner": "component:sfc:12",
+      "reason": "unresolved repeated data reference: Object",
+      "source": "src/components/Table/index.vue"
+    },
+    {
+      "owner": "component:sfc:12",
+      "reason": "unresolved repeated data reference: option",
+      "source": "src/components/Table/index.vue"
+    },
+    {
+      "owner": "component:sfc:17",
+      "reason": "unresolved repeated data reference: multiTabs",
+      "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+    },
+    {
+      "owner": "component:sfc:17",
+      "reason": "unresolved repeated data reference: rightClickTags",
+      "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+    },
+    {
+      "owner": "component:sfc:18",
+      "reason": "unresolved repeated data reference: levelList",
+      "source": "src/layouts/page-layouts/components/Breadcrumb/index.vue"
+    },
+    {
+      "owner": "component:sfc:20",
+      "reason": "unresolved repeated data reference: colorList",
+      "source": "src/layouts/page-layouts/components/Seting/ThemeSettings/index.vue"
+    },
+    {
+      "owner": "component:sfc:21",
+      "reason": "unresolved repeated data reference: sidebarSeting",
+      "source": "src/layouts/page-layouts/components/Seting/index.vue"
+    },
+    {
+      "owner": "component:sfc:26",
+      "reason": "unresolved repeated data reference: usePermissionStoreHook",
+      "source": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue"
+    },
+    {
+      "owner": "component:sfc:27",
+      "reason": "unresolved repeated data reference: item",
+      "source": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue"
+    },
+    {
+      "owner": "component:sfc:28",
+      "reason": "unresolved repeated data reference: menuData",
+      "source": "src/layouts/page-layouts/components/Sidebar/index.vue"
+    },
+    {
+      "owner": "component:sfc:3",
+      "reason": "unresolved repeated data reference: localesList",
+      "source": "src/components/Application/AppLocale.vue"
+    },
+    {
+      "owner": "component:sfc:32",
+      "reason": "unresolved repeated data reference: item",
+      "source": "src/views/about/index.vue"
+    },
+    {
+      "owner": "component:sfc:38",
+      "reason": "unresolved repeated data reference: listData",
+      "source": "src/views/components/seamless-scroll/index.vue"
+    },
+    {
+      "owner": "component:sfc:62",
+      "reason": "unresolved repeated data reference: speedList",
+      "source": "src/views/index/index.vue"
+    },
+    {
+      "owner": "component:sfc:7",
+      "reason": "unresolved repeated data reference: f",
+      "source": "src/components/Form/index.vue"
+    },
+    {
+      "owner": "component:sfc:7",
+      "reason": "unresolved repeated data reference: formOption",
+      "source": "src/components/Form/index.vue"
+    },
+    {
+      "owner": "component:sfc:7",
+      "reason": "unresolved repeated data reference: Object",
+      "source": "src/components/Form/index.vue"
+    }
+  ]
+}
