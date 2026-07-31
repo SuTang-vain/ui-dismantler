@@ -49,9 +49,20 @@ export const componentLibraryProfile = defineTaskProfile({
   ],
 });
 
+
+export const primitiveDomProfile = defineTaskProfile({
+  id: "primitive-dom",
+  contractVersion: "1.0",
+  summary: "Compile reviewed SFC component structures into provenance-preserving primitive DOM candidates.",
+  requiredSkills: ["primitive-dom"],
+  optionalSkills: ["state-responsibility", "data-cardinality"],
+  qualityGates: ["primitive-source-provenance", "unsupported-primitive-review", "conditional-state-review"],
+});
+
 export function createDefaultTaskProfileRegistry(skills: SkillRegistry): TaskProfileRegistry {
   return new TaskProfileRegistry(skills)
     .register(componentLibraryProfile)
+    .register(primitiveDomProfile)
     .register(sourcePageProfile)
     .register(spaApplicationProfile)
     .register(dataBackedSpaProfile);

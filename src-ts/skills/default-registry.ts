@@ -5,6 +5,7 @@ import { componentOwnershipSkill } from "./component-ownership.js";
 import { componentLibraryValidationSkill } from "./component-library-validation.js";
 import { dataCardinalitySkill } from "./data-cardinality.js";
 import { dataSurfaceManifestSkill } from "./data-surface-manifest/skill.js";
+import { primitiveDomSkill } from "./primitive-dom.js";
 import { sourceStructureSkill } from "./source-structure.js";
 import { spaRouterSkill } from "./spa-router.js";
 import { stateResponsibilitySkill } from "./state-responsibility.js";
@@ -19,6 +20,7 @@ export function createDefaultSkillRegistry(): SkillRegistry {
     .register(componentLibraryValidationSkill)
     .register(dataCardinalitySkill)
     .register(dataSurfaceManifestSkill)
+    .register(primitiveDomSkill)
     .register(transportProxySkill)
     .register(apiResponsibilitySkill)
     .register(authGuardSkill);

@@ -4,6 +4,13 @@ import type { SkillRegistry } from "../core/skills/registry.js";
 export function createDefaultReviewedBindingRegistry(skills: SkillRegistry): ReviewedBindingRegistry {
   return new ReviewedBindingRegistry(skills)
     .register({
+      consumerSkillId: "primitive-dom",
+      inputContract: "sfc-visual-responsibility-graph",
+      inputPath: "graph",
+      artifactContract: "sfc-visual-responsibility-graph",
+      reviewed: true,
+    })
+    .register({
       consumerSkillId: "data-surface-manifest",
       inputContract: "sfc-visual-responsibility-graph",
       inputPath: "components",

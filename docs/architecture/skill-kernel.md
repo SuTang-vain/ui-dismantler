@@ -39,6 +39,7 @@ Failures throw `SkillExecutionError` with failed execution evidence. Existing CL
 - `api-responsibility`: delegates to `analyzeApiFixtureResponsibilities` and preserves reviewed endpoint, response-flow, fixture, and template-consumer evidence.
 - `spa-router`: delegates to `evaluateSpaRouterContract` and returns the existing `SpaRouterContractReport` unchanged.
 - `component-library-validation`: delegates to `validateLibrary` and returns the existing `ValidationReport` unchanged; package-boundary verification remains a separate reviewed check.
+- `primitive-dom`: delegates to `compilePrimitiveDom` for every reviewed component owner and preserves source-node, style-rule, interaction-binding, unsupported-node, and review-reason provenance.
 
 The existing `analyze`, `plan`, and `spa-router` CLI commands dispatch through the default registry. Serialization, exit codes, lifecycle reporting, and quality thresholds remain unchanged.
 
@@ -57,6 +58,7 @@ The registered profiles remain intentionally small:
 - `spa-application`: requires `source-structure`, `state-responsibility`, and `spa-router`; may enable `auth-guard` after review.
 - `data-backed-spa`: adds `component-ownership`, `data-cardinality`, `transport-proxy`, `api-responsibility`, and `data-surface-manifest`; may enable `auth-guard` after review.
 - `component-library`: requires `component-library-validation` and validates an existing generated library without importing demo fixtures or business data.
+- `primitive-dom`: resolves `component-ownership` and compiles its reviewed component template structures through the explicit `sfc-visual-responsibility-graph` artifact binding.
 
 A Profile resolves Skill dependencies and quality gates. `ProfileExecutionPlanner` keeps composition reviewable, while `ProfileExecutor` runs only a fully reviewed plan and maps explicit provider paths plus reviewed artifact bindings into each Skill input.
 

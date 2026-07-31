@@ -27,6 +27,7 @@ import { createApiResponsibilitySkill, projectApiResponsibilityDelta, type ApiRe
 import { createAuthGuardSkill } from "../skills/auth-guard.js";
 import { componentOwnershipSkill, type ComponentOwnershipSkillInput } from "../skills/component-ownership.js";
 import { componentLibraryValidationSkill, createComponentLibraryValidationSkill, type ComponentLibraryValidator } from "../skills/component-library-validation.js";
+import { primitiveDomSkill, createPrimitiveDomSkill, type PrimitiveDomCompiler } from "../skills/primitive-dom.js";
 import { dataCardinalitySkill, extractDataCardinalityResponsibilities, projectDataCardinalityDelta } from "../skills/data-cardinality.js";
 import { buildDataSurfaceManifest, dataSurfaceManifestSkill, projectDataSurfaceManifestDelta } from "../skills/data-surface-manifest/index.js";
 import { createDefaultSkillRegistry } from "../skills/default-registry.js";
@@ -36,13 +37,15 @@ import { stateResponsibilitySkill } from "../skills/state-responsibility.js";
 import { transportProxySkill } from "../skills/transport-proxy.js";
 import type { Manifest } from "../types.js";
 import type { SfcVisualComponentResponsibility } from "../planning/sfc-visual-responsibility.js";
+import { analyzeSfcTemplateStructure } from "../planning/sfc-template-structure.js";
+import type { PrimitiveDomCompilation } from "../planning/primitive-dom-compiler.js";
 import { parseProfileRunConfiguration } from "../profiles/profile-config.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "primitive-dom", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -77,6 +80,40 @@ test("component-library-validation factory forwards the library root without tra
   const output = await skill.execute({ libraryRoot: "/tmp/library" });
   assert.equal(output, marker);
   assert.deepEqual(calls, ["/tmp/library"]);
+});
+
+test("primitive-dom Skill preserves compiler provenance and review reasons across component owners", async () => {
+  const component = {
+    id: "sfc:login",
+    file: "src/Login.vue",
+    componentName: "Login",
+    templateStructure: analyzeSfcTemplateStructure(`<template><el-form><el-input v-model="form.name"/><el-button @click="submit">Submit</el-button></el-form></template>`),
+    reviewReasons: [],
+  } as unknown as SfcVisualComponentResponsibility;
+  const graph = { components: [component], reviewRequired: false, reviewReasons: [] } as unknown as import("../planning/sfc-visual-responsibility.js").SfcVisualResponsibilityGraph;
+  const output = await primitiveDomSkill.execute({ graph });
+  assert.equal(output.kind, "primitive-dom-compilation-graph");
+  assert.equal(output.metrics.components, 1);
+  assert.equal(output.metrics.compiledNodes, component.templateStructure.nodes.length);
+  assert.equal(output.components[0]?.compilation.nodes[0]?.sourceNodeId, component.templateStructure.nodes[0]?.id);
+  assert.equal(output.components[0]?.compilation.interactions[0]?.expression, "submit");
+  assert.equal(output.reviewRequired, false);
+  const reviewedGraph = { components: [component], reviewRequired: true, reviewReasons: ["graph blocker"] } as unknown as import("../planning/sfc-visual-responsibility.js").SfcVisualResponsibilityGraph;
+  const reviewed = await primitiveDomSkill.execute({ graph: reviewedGraph });
+  assert.equal(reviewed.reviewRequired, true);
+  assert.deepEqual(reviewed.reviewReasons.slice(0, 1), ["component-ownership: graph blocker"]);
+});
+
+test("primitive-dom Skill factory forwards the component set and compiler scope", async () => {
+  const structure = analyzeSfcTemplateStructure(`<template><div><el-tag>Tag</el-tag></div></template>`);
+  const component = { id: "sfc:tag", file: "Tag.vue", componentName: "Tag", templateStructure: structure, reviewReasons: [] } as unknown as SfcVisualComponentResponsibility;
+  const marker = { schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: [], nodes: [], styleRules: [], interactions: [], metrics: { sourceNodes: 0, compiledNodes: 0, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [] } satisfies PrimitiveDomCompilation;
+  const calls: Array<{ nodes: number; scope: string }> = [];
+  const compiler: PrimitiveDomCompiler = (received, scope) => { calls.push({ nodes: received.nodes.length, scope }); return marker; };
+  const graph = { components: [component], reviewRequired: false, reviewReasons: [] } as unknown as import("../planning/sfc-visual-responsibility.js").SfcVisualResponsibilityGraph;
+  const output = await createPrimitiveDomSkill(compiler).execute({ graph });
+  assert.equal(output.components[0]?.compilation, marker);
+  assert.deepEqual(calls, [{ nodes: structure.nodes.length, scope: "sfc:tag" }]);
 });
 
 test("source-structure factory forwards inputs without transforming output", async () => {
@@ -364,7 +401,19 @@ test("failed evidence execution throws an auditable SkillExecutionError", async 
 test("Task Profile resolves required and reviewed optional Skills in dependency order", () => {
   const skills = createDefaultSkillRegistry();
   const profiles = createDefaultTaskProfileRegistry(skills);
-  assert.deepEqual(profiles.list().map((profile) => profile.id), ["component-library", "data-backed-spa", "source-page", "spa-application"]);
+  assert.deepEqual(profiles.list().map((profile) => profile.id), ["component-library", "data-backed-spa", "primitive-dom", "source-page", "spa-application"]);
+  const primitiveProfile = profiles.resolve("primitive-dom");
+  assert.deepEqual(primitiveProfile.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "primitive-dom"]);
+  assert.equal(primitiveProfile.qualityGates.includes("primitive-source-provenance"), true);
+  const primitivePlan = new ProfileExecutionPlanner(profiles, createDefaultReviewedBindingRegistry(skills)).plan("primitive-dom", {
+    inputProviders: [
+      { contract: "html-path", providerId: "reviewed-html", reviewed: true },
+      { contract: "project-source-root", providerId: "reviewed-source", reviewed: true },
+    ],
+  });
+  assert.equal(primitivePlan.ready, true);
+  const primitiveStep = primitivePlan.steps.find((step) => step.skillId === "primitive-dom");
+  assert.equal(primitiveStep?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph" && input.binding?.inputPath === "graph")?.source, "artifact");
   const componentLibrary = profiles.resolve("component-library");
   assert.deepEqual(componentLibrary.skills.map((skill) => skill.id), ["component-library-validation"]);
   assert.equal(componentLibrary.qualityGates.includes("data-separation"), true);
@@ -637,6 +686,53 @@ test("component-library validation Skill and Profile CLI execute the reviewed pa
   assert.equal(report.steps[0]?.status, "succeeded");
   assert.equal(report.steps[0]?.output?.ok, true);
   assert.equal(report.steps[0]?.output?.total, 9);
+});
+
+test("primitive-dom Skill CLI preserves the reviewed compilation graph contract", async (context) => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-primitive-dom-cli-"));
+  context.after(async () => { await rm(directory, { recursive: true, force: true }); });
+  const structure = analyzeSfcTemplateStructure(`<template><el-form><el-input v-model="form.name"/><el-button @click="submit">Submit</el-button></el-form></template>`);
+  const component = { id: "sfc:login", file: "src/Login.vue", componentName: "Login", templateStructure: structure, reviewReasons: [] };
+  const inputPath = join(directory, "input.json");
+  const outputPath = join(directory, "output.json");
+  await writeFile(inputPath, JSON.stringify({ graph: { components: [component], reviewRequired: false, reviewReasons: [] } }), "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "skill-run", "primitive-dom", "--input", inputPath, "--out", outputPath], { cwd: root, encoding: "utf8" });
+  const output = JSON.parse(await readFile(outputPath, "utf8")) as { kind: string; metrics: { components: number; compiledNodes: number }; components: Array<{ compilation: { nodes: unknown[]; interactions: Array<{ expression: string }> } }> };
+  assert.equal(output.kind, "primitive-dom-compilation-graph");
+  assert.equal(output.metrics.components, 1);
+  assert.equal(output.metrics.compiledNodes, structure.nodes.length);
+  assert.equal(output.components[0]?.compilation.interactions[0]?.expression, "submit");
+});
+
+test("primitive-dom Profile executes source ownership and reviewed artifact binding end to end", async (context) => {
+  const directory = await mkdtemp(join(tmpdir(), "ui-dismantler-primitive-profile-cli-"));
+  context.after(async () => { await rm(directory, { recursive: true, force: true }); });
+  const htmlPath = join(directory, "source.html");
+  const sfcPath = join(directory, "Login.vue");
+  const profilePath = join(directory, "profile.json");
+  const planPath = join(directory, "plan.json");
+  const reportPath = join(directory, "report.json");
+  await writeFile(htmlPath, "<!doctype html><html lang=\"en\"><body><main><h1>Primitive profile</h1></main></body></html>", "utf8");
+  await writeFile(sfcPath, `<template><el-form><el-input v-model=\"form.name\"/><el-button @click=\"submit\">Submit</el-button></el-form></template><script setup>const form = { name: \"\" }; function submit() { return form.name; }</script>`, "utf8");
+  await writeFile(profilePath, JSON.stringify({
+    schemaVersion: "1.0",
+    profileId: "primitive-dom",
+    enabledOptionalSkills: [],
+    inputProviders: [
+      { contract: "html-path", providerId: "reviewed-html", reviewed: true, inputPath: "htmlPath", value: htmlPath },
+      { contract: "project-source-root", providerId: "reviewed-source", reviewed: true, inputPath: "sourceRoot", value: directory },
+    ],
+  }), "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-plan", profilePath, "--out", planPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-run", profilePath, "--out", reportPath], { cwd: root, encoding: "utf8" });
+  const plan = JSON.parse(await readFile(planPath, "utf8")) as { ready: boolean; steps: Array<{ skillId: string }> };
+  const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; steps: Array<{ skillId: string; status: string; output?: { kind?: string; components?: unknown[] } }> };
+  assert.equal(plan.ready, true);
+  assert.deepEqual(plan.steps.map((step) => step.skillId), ["source-structure", "component-ownership", "primitive-dom"]);
+  assert.equal(report.status, "succeeded");
+  assert.deepEqual(report.steps.map((step) => step.status), ["succeeded", "succeeded", "succeeded"]);
+  assert.equal(report.steps[2]?.output?.kind, "primitive-dom-compilation-graph");
+  assert.equal(report.steps[2]?.output?.components?.length, 1);
 });
 
 test("profile-plan and profile-run CLI execute the reviewed source profile without changing source output", async (context) => {

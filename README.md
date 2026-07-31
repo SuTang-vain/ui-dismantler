@@ -96,6 +96,7 @@ Profile 将多个 Skill 组合为一种拆解任务：
 | `spa-application` | SPA 路由、状态与可选认证分析 | `source-structure`、`state-responsibility`、`spa-router` |
 | `data-backed-spa` | 带 API 和组件数据接口的 SPA | component、proxy、API、cardinality、Data Surface |
 | `component-library` | 已生成组件库的规范与数据边界验证 | `component-library-validation` |
+| `primitive-dom` | 将 reviewed SFC 组件结构编译为可追溯 Primitive DOM 候选 | `component-ownership`、`primitive-dom` |
 
 Profile 只有在完整执行计划通过 reviewed input 检查后才会运行。
 
@@ -109,6 +110,7 @@ Profile 只有在完整执行计划通过 reviewed input 检查后才会运行�
 | `auth-guard` | storage、token、登录、路由守卫和认证责任 |
 | `component-ownership` | SFC 组件、模板、样式和视觉 ownership |
 | `component-library-validation` | 已生成组件库的命名、数据分离、响应式、A11y、主题、依赖、文档和类名合同 |
+| `primitive-dom` | SFC 模板到 Primitive DOM、样式规则和交互绑定的 provenance-preserving 编译 |
 | `transport-proxy` | Vite/Webpack proxy、prefix、target 和 rewrite 证据 |
 | `api-responsibility` | API wrapper、endpoint、response consumer 和 fixture 边界 |
 | `data-cardinality` | 组件集合基数、slice 和重复区域证据 |
@@ -261,6 +263,12 @@ node dist-ts/cli.js skill-run component-library-validation \
 # 通过 component-library Profile 执行 reviewed 组件库验证
 node dist-ts/cli.js profile-run /tmp/component-library.profile.json \
   --out /tmp/component-library.profile.report.json
+
+# 通过 primitive-dom Skill 编译 reviewed 组件责任图中的模板结构
+node dist-ts/cli.js skill-run primitive-dom \
+  --input /tmp/primitive-dom.input.json \
+  --out /tmp/primitive-dom.compilation.json \
+  --evidence-out /tmp/primitive-dom.compilation.evidence.json
 ```
 
 项目级责任图仍可独立生成，例如：
