@@ -100,6 +100,40 @@ Profile 将多个 Skill 组合为一种拆解任务：
 
 Profile 只有在完整执行计划通过 reviewed input 检查后才会运行。
 
+### 组件库生产流水线
+
+当前组件库生产主链使用独立的 `ComponentLibraryBuildPlan`，将既有组件规划、生成文件、样式、交互和证据统一交给物化器，再进入 Runtime Smoke、静态验证和可选 Gold+：
+
+```text
+ComponentLibraryBuildPlan
+  → Materializer
+  → Runtime Smoke
+  → component-library-validation
+  → Roundtrip / Gold+
+  → ComponentLibraryBuildReport
+```
+
+先从配置生成确定性 Build Plan：
+
+```bash
+node dist-ts/cli.js component-build-plan \
+  /absolute/path/to/component-build.config.json \
+  --out /tmp/component-library.build-plan.json
+```
+
+再执行物化、冒烟和组件库验证：
+
+```bash
+node dist-ts/cli.js component-build \
+  /tmp/component-library.build-plan.json \
+  --out-dir /tmp/generated-component-library \
+  --report /tmp/component-library.build-report.json
+```
+
+Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可以写入构建目录，但不能标记为 publishable。`Runtime Smoke` 在浏览器质量门之前检查模块加载、`mount()`、首屏节点、运行时错误、本地资源和可选清理合同。
+
+该流水线当前首先标准化已有生成结果和 reviewed 文件；后续再将 `ComponentPlan`、`PrimitiveDomCompilation` 和旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+
 ## 当前内置 Skill
 
 | Skill | 责任 |

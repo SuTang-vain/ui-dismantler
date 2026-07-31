@@ -39,7 +39,9 @@
     "skills:ts": "npm run build:ts && node dist-ts/cli.js skill-list",
     "skill:run:ts": "npm run build:ts && node dist-ts/cli.js skill-run",
     "profiles:ts": "npm run build:ts && node dist-ts/cli.js profile-list",
-    "verify:component-boundary": "node scripts/verify_component_boundary.mjs"
+    "verify:component-boundary": "node scripts/verify_component_boundary.mjs",
+    "component:build-plan:ts": "npm run build:ts && node dist-ts/cli.js component-build-plan",
+    "component:build:ts": "npm run build:ts && node dist-ts/cli.js component-build"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",

@@ -202,3 +202,26 @@ skills/component-ownership/
 This avoids directory ceremony while preserving the long-term modular boundary.
 
 Profiles are added only when their required capabilities exist. `admin-dashboard` and `canvas` are therefore target Profiles, not empty current declarations.
+
+## Component library production boundary
+
+Skill execution and component production are related but separate layers. The production layer consumes reviewed outputs from Skills and materializes a publishable component library without changing the raw Skill outputs.
+
+```text
+ComponentPlan / PrimitiveDomCompilation / reviewed files
+  → ComponentLibraryBuildPlan
+  → Materializer
+  → Runtime Smoke
+  → component-library-validation
+  → existing Roundtrip / Gold+ gates
+```
+
+The production implementation is under `src-ts/production/component-library/`:
+
+- `contract.ts` defines file provenance, publishability, smoke, identity, and review state;
+- `planner.ts` freezes source files into a deterministic plan with content hashes;
+- `materializer.ts` writes only safe relative paths and preserves examples/fixtures as non-publishable files;
+- `smoke.ts` checks runtime loading, mount, rendered nodes, console/runtime errors, local resources, and optional cleanup;
+- `pipeline.ts` writes `ComponentLibraryBuildReport` and invokes existing static validation and optional quality gates.
+
+This is an orchestration boundary, not a new case-specific Skill. The first implementation accepts reviewed generated files so that old planners and generators can be adapted incrementally. A plan with unresolved evidence is blocked before materialization.

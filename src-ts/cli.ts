@@ -37,6 +37,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
+import { createComponentLibraryBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./production/component-library/index.js";
 
 const skillRegistry = createDefaultSkillRegistry();
 const taskProfileRegistry = createDefaultTaskProfileRegistry(skillRegistry);
@@ -72,6 +73,8 @@ function usage(): void {
   profile-list [--out <profile-catalog.json>]
   profile-plan <profile.config.json> --out <profile.plan.json>
   profile-run <profile.config.json> --out <profile.report.json>
+  component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
+  component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -111,6 +114,27 @@ async function main(argv: string[]): Promise<number> {
       if (out) await writeFile(resolve(out), serialized, "utf8");
       console.log(catalog.profiles.map((profile) => `${profile.id}: ${profile.summary}`).join("\n"));
       return 0;
+    }
+    if (command === "component-build-plan") {
+      const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!configPath || !out) throw new Error("component-build-plan 需要 <component-build.config.json> 和 --out");
+      const input = JSON.parse(await readFile(resolve(configPath), "utf8")) as ComponentLibraryBuildPlanInput;
+      const plan = await createComponentLibraryBuildPlan(input, configPath);
+      await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      const validation = validateComponentLibraryBuildPlan(plan);
+      console.log(`${validation.ready ? "✓" : "✗"} Component Library Build Plan: ${resolve(out)}`);
+      console.log(`  files=${plan.files.length}，publishable=${plan.files.filter((file) => file.publish).length}，reviewRequired=${plan.reviewRequired}`);
+      return validation.ready ? 0 : 1;
+    }
+    if (command === "component-build") {
+      const planPath = args[0]; const outDir = flag(args, "--out-dir");
+      if (!planPath || !outDir) throw new Error("component-build 需要 <component-library.build-plan.json> 和 --out-dir");
+      const plan = JSON.parse(await readFile(resolve(planPath), "utf8")) as ComponentLibraryBuildPlan;
+      const report = await runComponentLibraryBuild(plan, outDir, { overwrite: has(args, "--overwrite"), reportPath: flag(args, "--report") });
+      console.log(`${report.status === "succeeded" ? "✓" : "✗"} Component Library Build: ${report.status}`);
+      console.log(`  output=${report.outputRoot}，smoke=${report.smoke?.passed ?? false}，validation=${report.validation?.ok ?? false}，quality=${report.quality?.passed ?? "not-run"}`);
+      for (const blocker of report.blockers) console.log(`  - ${blocker}`);
+      return report.status === "succeeded" ? 0 : 1;
     }
     if (command === "profile-plan") {
       const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
