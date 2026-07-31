@@ -67,6 +67,9 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
 function usage(): void {
   console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
   data-surface-validate <data-surface.manifest.json>
+  skill-list [--out <skill-catalog.json>]
+  skill-run <skill-id> --input <input.json> --out <output.json> [--evidence-out <evidence.json>]
+  profile-list [--out <profile-catalog.json>]
   profile-plan <profile.config.json> --out <profile.plan.json>
   profile-run <profile.config.json> --out <profile.report.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
@@ -81,6 +84,34 @@ async function main(argv: string[]): Promise<number> {
   const [command, ...args] = argv;
   if (!command || command === "help" || command === "--help") { usage(); return command ? 0 : 2; }
   try {
+    if (command === "skill-list") {
+      const catalog = { schemaVersion: "1.0", kind: "skill-catalog", skills: skillRegistry.list() };
+      const out = flag(args, "--out") ?? flag(args, "-o");
+      const serialized = `${JSON.stringify(catalog, null, 2)}\n`;
+      if (out) await writeFile(resolve(out), serialized, "utf8");
+      console.log(catalog.skills.map((skill) => `${skill.id}@${skill.version}`).join("\n"));
+      return 0;
+    }
+    if (command === "skill-run") {
+      const skillId = args[0]; const inputPath = flag(args, "--input"); const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!skillId || !inputPath || !out) throw new Error("skill-run 需要 <skill-id>、--input 和 --out");
+      const input = JSON.parse(await readFile(resolve(inputPath), "utf8")) as unknown;
+      if (input === null || typeof input !== "object" || Array.isArray(input)) throw new Error("skill-run input 必须是 JSON 对象");
+      const result = await skillRegistry.executeWithEvidence<unknown, unknown>(skillId, input);
+      await writeFile(resolve(out), `${JSON.stringify(result.output, null, 2)}\n`, "utf8");
+      const evidenceOut = flag(args, "--evidence-out");
+      if (evidenceOut) await writeFile(resolve(evidenceOut), `${JSON.stringify(result.evidence, null, 2)}\n`, "utf8");
+      console.log(`✓ Skill 执行: ${skillId} (${result.evidence.durationMs}ms)`);
+      return 0;
+    }
+    if (command === "profile-list") {
+      const catalog = { schemaVersion: "1.0", kind: "profile-catalog", profiles: taskProfileRegistry.list() };
+      const out = flag(args, "--out") ?? flag(args, "-o");
+      const serialized = `${JSON.stringify(catalog, null, 2)}\n`;
+      if (out) await writeFile(resolve(out), serialized, "utf8");
+      console.log(catalog.profiles.map((profile) => `${profile.id}: ${profile.summary}`).join("\n"));
+      return 0;
+    }
     if (command === "profile-plan") {
       const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
       if (!configPath || !out) throw new Error("profile-plan 需要 <profile.config.json> 和 --out");

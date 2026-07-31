@@ -35,7 +35,10 @@
     "test:gold": "node scripts/check_regression_tier.mjs gold && npm run build:ts && UI_DISMANTLER_GOLD_REGRESSION=1 UI_DISMANTLER_BROWSER_MODE=shared-browser UI_DISMANTLER_BROWSER_CONCURRENCY=1 UI_DISMANTLER_BROWSER_RESOURCE_CACHE=run-local UI_DISMANTLER_BROWSER_STABILITY=adaptive node --test dist-ts/tests/case-regression.test.js",
     "test:nightly": "node scripts/check_regression_tier.mjs nightly && npm run test:pr && npm run test:gold && npm run benchmark:quality:ts -- --runs 3 --out /tmp/ui-dismantler-nightly-quality-baseline.json",
     "profile:plan:ts": "npm run build:ts && node dist-ts/cli.js profile-plan",
-    "profile:run:ts": "npm run build:ts && node dist-ts/cli.js profile-run"
+    "profile:run:ts": "npm run build:ts && node dist-ts/cli.js profile-run",
+    "skills:ts": "npm run build:ts && node dist-ts/cli.js skill-list",
+    "skill:run:ts": "npm run build:ts && node dist-ts/cli.js skill-run",
+    "profiles:ts": "npm run build:ts && node dist-ts/cli.js profile-list"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",

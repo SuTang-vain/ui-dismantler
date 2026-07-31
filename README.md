@@ -1,182 +1,367 @@
 # ui-dismantler
 
-> 将自包含 HTML 案例页拆解为可复用组件库的工具集。
+> 将静态 HTML、SFC 和 SPA 拆解为可复用、可审查、可验证的标准前端组件库。
 
-核心诉求：**根据 HTML 创建对应的组件库以便复用**。Agent 阅读 HTML、理解其主题色语义与交互模式、产出完整的数据驱动组件库（对标 benchmark 组件库质量）。Python 脚本作为确定性工具，辅助提取与校验。
+`ui-dismantler` 的目标不是复制页面截图，也不是为单个案例堆叠规则，而是建立一条可复现的组件生产链：
 
-## 架构：agent 驱动 + 工具辅助
-
-```
-用户给 HTML
-    │
-    ▼
-Agent（主控）──────────────────────────────────────┐
-   │ 1. 读 HTML，理解结构/样式/交互                  │  工具层（确定性，可复现）
-   │ 2. 调工具拿确定性数据（主题色/变量/CSS 规则）     │  - analyze_html.py（提取主题色/CSS，含语义角色）
-   │ 3. 产出组件库各文件（css/js/html/docs）         │  - validate_lib.py（8 项强约束校验）
-   │ 4. 自检：调 validate + roundtrip 验证           │  - roundtrip.py（往返等价度）
-   │ 5. 不达标则按决策表修订                          │  - _common.py（颜色/CSS/数据契约工具函数）
-    └───────────────────────────────────────────────┘
+```text
+原始页面 / 前端项目
+    → 结构、组件、状态、交互、路由与 API 责任分析
+    → 组件规划与标准组件候选生成
+    → Semantic / Strict / runtime / visual 质量验证
+    → 可复用组件库与数据接口合同
 ```
 
-- **agent 做理解和创作**：理解 HTML 结构、设计渲染逻辑、写代码
-- **工具做确定性提取和校验**：颜色解析、CSS 拆分、约束校验、往返测试
-- **往返测试当裁判**：agent 产出的库必须通过往返测试，低分则修订
+当前项目已经具备组件拆解、规划、候选生成和 Gold+ 验证能力；现阶段重点是稳定端到端组件库生产闭环，新的 Skill 只在出现可复现的通用缺口后增量加入。
 
-通用化分支将领域信息降级为可选 `profile`，视图识别由可注册 detector 完成。Detector 同时给出中立结构类型、语义类型、置信度和证据；manifest v1 输出保持兼容。
+## 项目边界
 
-**已识别范式**（10 种，按注册顺序）：
+### `ui-dismantler` 负责
 
-| 范式 | structural_type | 识别信号 | 典型案例 |
-|---|---|---|---|
-| `carousel-3d` | collection | carousel 位置类 + perspective | carousel 3D 作品轮播 |
-| `cause-chain` | sequence | timeline-nav + causeChain/whatIf 数据 | 黄月英、奢香夫人 |
-| `nav-panel` | content-region | nav + ≥2 triggers (data-p/data-tab) + ≥2 panels | 纸上谈兵 |
-| `graph` | collection | svg 连线 / node 类名 + 图谱 JS 数据 | 庆余年、谢天子关系图 |
-| `timeline` | sequence | timeline/tl-item 类名 | glossary 时间线 |
-| `member-grid` | collection | member-grid/member-list 类名 | member grid 成员网格 |
-| `detail-panel` | content-region | detail-panel/aria-live:polite | 资料面板 |
-| `quiz` | form | qz-body/quiz/opt 类名 | 问答测试 |
-| `comparison` | content-region | whatif-card/cmp-btn 类名 | 对比辨析 |
-| `splash` | overlay | splash-cta/splash-opt 类名 | 开场解锁屏 |
+- HTML、DOM、CSS、资源和响应式结构分析；
+- Vue SFC 组件、slot、状态、交互和视觉责任分析；
+- SPA 路由、认证守卫、代理和 API 消费边界分析；
+- 组件规划、组件候选生成和组件库质量验证；
+- 输出 Data Surface Manifest，描述组件需要的数据形状、字段、消费者和注入边界。
 
-cause-chain/nav-panel/graph 是**页面级范式**（需要全局视角），`_analyze_views` 会对 body 整体跑 detector，命中后作为唯一 view 返回。其余 7 种是 panel 级范式。
+### `ui-dismantler` 不负责
 
-## 产出标准
+- 业务实体标准化；
+- aliases、relations、stages、contents 等领域数据建模；
+- Data Pack 和数据适配器生成；
+- 将静态 HTML 中的业务记录直接复制到组件合同。
 
-对标 benchmark 组件库（1346 行，6 范式覆盖，完整 A11y + 设计令牌 + 数据驱动）：
+上述数据层能力由独立项目 `sg-data-pack` 负责。Data Surface Manifest 是两个项目之间的接口合同，不是业务数据包。详见 [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md)。
 
+## 架构
+
+```mermaid
+flowchart LR
+  A["HTML / SFC / SPA"] --> B["Skill Registry"]
+  B --> C["Task Profile"]
+  C --> D["Responsibility Graphs"]
+  D --> E["Component Planning / Generation"]
+  E --> F["Standard Component Library"]
+  F --> G["Semantic / Strict / Gold+ Evaluation"]
+  D --> H["Data Surface Manifest"]
+  H --> I["sg-data-pack"]
 ```
-<库名>/
-├── README.md                 介绍 + 快速开始 + API + 数据契约 + 主题定制
-├── docs/设计规范.md           主题色系统 / Tab 结构 / 交互模式 / 逻辑设置 / 响应式
+
+### Core
+
+Core 只负责稳定、通用的运行基础设施：
+
+```text
+src-ts/core/
+├── skills/          Skill 合同、注册、依赖解析和执行证据
+├── profiles/        Task Profile、执行计划和执行器
+├── artifacts/       Skill 输出、reviewed binding 和运行产物根目录
+└── responsibility/  统一责任图增量与冲突阻断
+```
+
+### Skill
+
+每个 Skill 声明统一的 `SkillManifest`：
+
+```text
+id
+version
+contractVersion
+kind
+summary
+stages
+consumes / optionalConsumes
+produces
+requires / optionalDependencies
+qualityGates
+sideEffects
+```
+
+Skill 必须满足：
+
+- 使用小写 kebab-case ID；
+- 显式声明输入、输出和依赖；
+- 原始算法输出保持不变；
+- execution evidence 与 raw output 分离；
+- unresolved 证据不能静默升级为已证明责任；
+- 案例名、组件名、函数名和可见文本不得成为泛化规则白名单。
+
+### Task Profile
+
+Profile 将多个 Skill 组合为一种拆解任务：
+
+| Profile | 用途 | 主要 Skill |
+|---|---|---|
+| `source-page` | 静态页面结构与可选状态分析 | `source-structure`、可选 `state-responsibility` |
+| `spa-application` | SPA 路由、状态与可选认证分析 | `source-structure`、`state-responsibility`、`spa-router` |
+| `data-backed-spa` | 带 API 和组件数据接口的 SPA | component、proxy、API、cardinality、Data Surface |
+
+Profile 只有在完整执行计划通过 reviewed input 检查后才会运行。
+
+## 当前内置 Skill
+
+| Skill | 责任 |
+|---|---|
+| `source-structure` | HTML 基础结构、主题、交互和资源事实 |
+| `state-responsibility` | SFC state、handler 和 state-write 责任 |
+| `spa-router` | SPA Semantic/Strict 路由合同与导航验证 |
+| `auth-guard` | storage、token、登录、路由守卫和认证责任 |
+| `component-ownership` | SFC 组件、模板、样式和视觉 ownership |
+| `transport-proxy` | Vite/Webpack proxy、prefix、target 和 rewrite 证据 |
+| `api-responsibility` | API wrapper、endpoint、response consumer 和 fixture 边界 |
+| `data-cardinality` | 组件集合基数、slice 和重复区域证据 |
+| `data-surface-manifest` | 组件数据接口合同，不生成 Data Pack |
+
+Skill Kernel 设计详见 [`docs/architecture/skill-kernel.md`](docs/architecture/skill-kernel.md)。
+
+## 安装与构建
+
+```bash
+npm install
+npm run typecheck:ts
+npm run build:ts
+```
+
+项目仍保留 Python 兼容工具链；使用旧分析和往返脚本时安装：
+
+```bash
+pip install --user beautifulsoup4
+```
+
+## 标准 CLI
+
+统一 CLI 入口：
+
+```bash
+node dist-ts/cli.js <command>
+```
+
+### Skill 发现与执行
+
+```bash
+# 查看全部已注册 Skill
+node dist-ts/cli.js skill-list
+node dist-ts/cli.js skill-list --out /tmp/skill-catalog.json
+
+# 直接运行单个 Skill；output 与 evidence 分离
+node dist-ts/cli.js skill-run source-structure \
+  --input /tmp/source-structure.input.json \
+  --out /tmp/source-manifest.json \
+  --evidence-out /tmp/source-structure.evidence.json
+```
+
+`source-structure.input.json` 示例：
+
+```json
+{
+  "htmlPath": "/absolute/path/to/page.html",
+  "options": {
+    "minimal": true
+  }
+}
+```
+
+`skill-run` 是单能力调试入口，不会自动执行依赖 Skill。正式多能力任务应使用 Profile。
+
+### Profile 发现、计划与执行
+
+```bash
+node dist-ts/cli.js profile-list
+node dist-ts/cli.js profile-list --out /tmp/profile-catalog.json
+
+node dist-ts/cli.js profile-plan /tmp/profile.config.json \
+  --out /tmp/profile.plan.json
+
+node dist-ts/cli.js profile-run /tmp/profile.config.json \
+  --out /tmp/profile.report.json
+```
+
+Profile 配置示例：
+
+```json
+{
+  "schemaVersion": "1.0",
+  "profileId": "source-page",
+  "enabledOptionalSkills": [],
+  "inputProviders": [
+    {
+      "contract": "html-path",
+      "providerId": "reviewed-source",
+      "reviewed": true,
+      "inputPath": "htmlPath",
+      "value": "/absolute/path/to/page.html"
+    }
+  ]
+}
+```
+
+Profile 报告分别保留：
+
+```text
+raw output
+SkillExecutionEvidence
+artifact references
+ResponsibilityGraphDelta
+blockers
+quality gates
+```
+
+### 组件拆解与质量命令
+
+现有命令保持兼容，不因 Skill Kernel 接入而改变参数、输出或退出码：
+
+```bash
+# HTML → manifest
+node dist-ts/cli.js analyze <page.html> --out /tmp/manifest.json --minimal
+
+# manifest evidence → 组件计划与组件规格
+node dist-ts/cli.js plan <page.html> \
+  --out /tmp/component-plan.json \
+  --spec-dir /tmp/component-specs
+
+# 组件库静态验证
+node dist-ts/cli.js validate <component-lib-dir>
+
+# 原页面与组件库往返验证
+node dist-ts/cli.js roundtrip <page.html> --lib <component-lib-dir> \
+  --out /tmp/roundtrip-report.json
+
+# Gold+ 浏览器质量验证
+node dist-ts/cli.js quality <page.html> --lib <component-lib-dir> \
+  --visual-artifacts /tmp/ui-dismantler-visual \
+  --out /tmp/quality-report.json
+```
+
+项目级责任图仍可独立生成，例如：
+
+```bash
+node dist-ts/cli.js sfc-visual-analyze /absolute/project-root \
+  --out /tmp/sfc-visual.graph.json
+
+node dist-ts/cli.js transport-proxy-analyze /absolute/project-root \
+  --out /tmp/transport-proxy.graph.json
+
+node dist-ts/cli.js spa-auth-analyze /absolute/project-root \
+  --out /tmp/spa-auth.graph.json
+```
+
+### CLI 约定
+
+- 命令和 ID 使用 kebab-case；
+- JSON 输入使用 `--input` 或显式配置文件；
+- 正式 JSON 结果使用 `--out`；
+- execution evidence 使用独立 `--evidence-out`，不包装或改变 raw output；
+- `0` 表示成功，`1` 表示质量失败或 reviewed plan 被阻断，`2` 表示参数或执行错误；
+- 旧命令继续保持兼容，新能力优先通过 `skill-*` 和 `profile-*` 入口暴露。
+
+## 组件库产出标准
+
+标准产物至少包括：
+
+```text
+<library>/
+├── README.md
+├── docs/
 ├── src/
-│   ├── <lib>.css             参数化样式（sg-* 前缀，--sg-* 变量，三档响应式）
-│   └── <lib>.js              渲染引擎（mount/create API，数据驱动，A11y）
-└── examples/
-    ├── <案例>.html           用组件库复刻原案例（填入原数据）
-    └── template.html         空白复用模板（带示例数据）
+│   ├── components/
+│   ├── styles/
+│   └── index.*
+├── examples/
+├── data-surface.manifest.json
+├── component-plan.json
+├── component-specs/
+└── quality-summary.json
 ```
 
-**质量门槛**：validate 8 项全 PASS + node --check 通过 + roundtrip 综合 ≥ 0.85（结构 ≥ 0.7 / 文本 ≥ 0.8）。
+具体文件形态可以随目标框架变化，但必须保持：
 
-## 工具层
+- 组件边界有结构证据；
+- 样式使用可复用 token 和响应式规则；
+- 交互、状态和生命周期可验证；
+- 数据接口与业务数据内容分离；
+- reference/generated 使用独立运行上下文；
+- unresolved 与 review 状态可审计。
 
-### CLI 脚本
+## 质量门禁
 
-| 脚本 | 用途 |
+质量体系包含：
+
+```text
+静态组件库约束
+DOM / 文本往返等价
+Semantic route contract
+Strict route contract
+navigation integrity
+computed style
+reviewed-region pixel diff
+runtime / network / resource stability
+Canvas stability
+blocking handles
+```
+
+分层回归：
+
+```bash
+# PR：类型检查、构建、单元测试和冻结证据
+npm run test:pr
+
+# 合并前：完整关键场景与浏览器 Gold+
+UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
+  npm run test:gold
+
+# Nightly：PR + Gold+ + 多轮性能基线
+UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
+  npm run test:nightly
+```
+
+正式回归不会通过降低像素、稳定性、网络、字体、生命周期或 BrowserContext 隔离要求换取速度。运行截图和原始性能报告默认写入系统临时目录或 `UI_DISMANTLER_ARTIFACT_ROOT`，避免污染案例源目录。
+
+## Python 兼容工具
+
+旧工具链继续保留用于历史案例和兼容验证：
+
+| 工具 | 用途 |
 |---|---|
-| `src/skill/scripts/analyze_html.py` | HTML -> manifest.json（提取主题色令牌含语义角色 + 结构清单） |
-| `src/skill/scripts/validate_lib.py` | 8 项强约束校验（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档） |
-| `scripts/roundtrip.py` | 往返等价度（原页面运行后 DOM ⇄ 库渲染 DOM；失败回退会显式报告） |
-| `scripts/generate_scenarios.py` | 从 manifest 生成待审阅的交互场景候选 |
-| `scripts/verify_all.py` | 批量验证全案例（回归用，汇总通过率与平均分） |
-| `node --check` | JS 语法检查 |
+| `src/skill/scripts/analyze_html.py` | HTML → 兼容 manifest |
+| `src/skill/scripts/validate_lib.py` | 组件库静态约束校验 |
+| `scripts/roundtrip.py` | 原页面与组件库往返等价 |
+| `scripts/generate_scenarios.py` | 生成待审阅交互场景候选 |
+| `scripts/verify_all.py` | 批量历史回归 |
 
-### Python 工具函数（`src/skill/scripts/_common.py`）
-
-| 函数 | 用途 |
-|---|---|
-| `infer_color_roles(css, var)` | 推断 --var 被用作什么角色（text/background/border/shadow/icon-fill） |
-| `query_rules(css, ...)` | 按选择器/属性/值过滤 CSS 规则 |
-| `extract_data_contracts(scripts)` | 扫描 JS 提取数据契约速览（变量名/类型/字段） |
-| `parse_color` / `to_hex` | 颜色值解析与归一化 |
-| `extract_root_vars` / `split_media_blocks` / `extract_gradients` | CSS 解析 |
-
-工具层有 276 个单元测试覆盖边界（`python3 scripts/tests/run.py`），含静态/运行态双黄金快照、技术特征矩阵、交互状态矩阵和架构守护断言。
-
-交互状态矩阵可在独立页面实例中对称执行 `click/input/key/wait`，通过确定性 assertions 确认状态达成后逐状态评分。协议见 `docs/architecture/interaction-scenarios.md`。
-manifest 交互清单可以通过 `--manifest` 接入 roundtrip，报告声明、执行和已验证三层 `interaction_coverage`；显式传入 `--coverage-threshold` 后，`verifiedCoverage.rate` 不足会阻断门禁。
-
-## 当前能力与基线
-
-| 案例 | 结构 | 文本 | 综合 | 状态 |
-|---|---|---|---|---|
-| Benchmark（运行态参照）| 0.997 | 0.983 | 0.990 | ✅ 主通用质量基线（6 范式覆盖）|
-| Benchmark（历史静态参照）| 0.947 | 0.750 | 0.849 | ✅ 兼容性基线 |
-
-> v1 链路（generate_lib 模板）的 baseline 已归档至 `docs/baselines/archive-v1/`，不可复现。
-> 运行态主基线：`docs/baselines/roundtrip_benchmark_rendered.json`；历史静态兼容基线：`roundtrip_benchmark_static.json`。
-> Benchmark 覆盖 6 种范式（quiz/comparison/graph/nav-panel/cause-chain/splash），是 domain-neutral 的通用质量标杆和回归 fixture。
+旧脚本中的数据契约扫描仅提供组件接口分析线索，不承担业务数据规范化或 Data Pack 生成。
 
 ## 目录
 
-```
-src/skill/              ZCode Skill（SKILL.md + scripts + references）
-  ├── SKILL.md          agent 驱动拆解指南（5 步工作流 + 自检决策表）
-  ├── scripts/          工具脚本（analyze/validate + _common.py）
-  └── references/       spec.md（8 项强约束）/ patterns.md / manifest_schema.md
-benchmark/               通用 benchmark（6 范式覆盖）
-scripts/                roundtrip + verify_all + tests
-docs/                   ROADMAP + baselines
-```
+```text
+src-ts/
+├── core/          Skill Kernel、Profile、Artifact 和责任图基础设施
+├── skills/        可组合的拆解能力
+├── profiles/      默认 Task Profile 和 reviewed bindings
+├── planning/      组件、路由、视觉和生成规划算法
+├── evaluation/    Semantic、Strict、Gold+ 和浏览器质量验证
+└── tests/         单元、集成和冻结回归
 
-## 快速开始
-
-```bash
-# 装依赖
-pip install --user --break-system-packages beautifulsoup4
-
-# 1. 分析 HTML（拿主题色/结构参考）
-python3 src/skill/scripts/analyze_html.py benchmark/original.html --out /tmp/mf.json --minimal
-
-# 2. 校验组件库（8 项强约束）
-python3 src/skill/scripts/validate_lib.py <组件库目录>
-
-# 3. 往返等价度
-python3 scripts/roundtrip.py benchmark/original.html --lib <组件库目录>
-
-# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
-python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
-
-# 3b. 交互状态矩阵（Tab / Dialog / 表单 / viewport）
-python3 scripts/roundtrip.py <原页面> --lib <组件库目录> --scenarios <场景.json>
-
-# 4. 批量回归验证
-python3 scripts/verify_all.py
+src/skill/         Python/ZCode 兼容 Skill 与脚本
+benchmark/         通用历史 benchmark
+examples/          冻结案例及其正式配置；运行产物不应写入此目录
+docs/              架构、协议、基线和研究记录
+scripts/           回归、转译和质量运行脚本
 ```
 
-agent 拆解工作流详见 [src/skill/SKILL.md](src/skill/SKILL.md)，规划详见 [docs/ROADMAP.md](docs/ROADMAP.md)。
+## 开发原则
 
-## 依赖
+1. 先证明责任，再生成组件；
+2. 先运行未经人工修复的 baseline，再决定算法缺口；
+3. 案例只作为验证证据，不进入通用规则；
+4. 不使用截图硬猜 DOM，不用可见文本替代 ownership；
+5. 不降低 Gold+、Strict、runtime、network 或 stability 门禁；
+6. 一个 Skill 一套清晰合同、依赖、证据和测试；
+7. 先稳定组件库生产主链，后续再按通用缺口增加 Skill。
 
-- Python 3.8+（beautifulsoup4）
-- Node.js（用于 `node --check` 和 roundtrip 的 jsdom 渲染）
+## 更多文档
 
-## TypeScript 试运行框架
-
-仓库现在提供独立的 TypeScript 实现，保留原有“Agent 理解与创作 + 确定性工具校验 + 往返质量裁判”的核心架构。详见 [`docs/TYPESCRIPT_MIGRATION.md`](docs/TYPESCRIPT_MIGRATION.md)。
-
-```bash
-npm run test:ts
-node dist-ts/cli.js quality <original.html> --lib <component-lib-dir> \
-  --visual-artifacts /tmp/ui-dismantler-visual
-```
-
-TypeScript `quality` 默认启用 Gold+：真实 Chrome 选择器命中、计算样式和截图像素差异都会成为独立失败门禁。
-
-### 分层回归命令
-
-TypeScript 工具链将回归成本分为三层，所有层级保持同一套 Gold+ 阈值，不通过降低视觉、稳定性、网络或生命周期要求换取速度：
-
-```bash
-# PR：类型、构建、单元测试、冻结 artifact/hash 与离线 Semantic 证据
-npm run test:pr
-
-# 合并前 Gold+：完整关键交互和浏览器矩阵
-UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin npm run test:gold
-
-# Nightly：PR + Gold+ + 四案例三轮性能基线，原始性能报告写入 /tmp
-UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin npm run test:nightly
-```
-
-`test:gold` 与 `test:nightly` 会先核对 Vue Element Admin 外部只读源是否处于 `source-lock.json` 固定 commit；缺少源目录或 commit 不一致会直接失败，避免正式 Gold+ 在跳过真实 SPA 案例后被误报为完整通过。性能基线输出到 `/tmp`，默认不向 Git 仓库写入大体积原始证据。
-
-项目级 Vite/Webpack/Vue CLI 代理责任可以独立分析，不要求组件 API fixture 已经匹配：
-
-```bash
-node dist-ts/cli.js transport-proxy-analyze /absolute/project-root \
-  --out /tmp/transport-proxy.graph.json
-```
-
-该图会保留环境、浏览器请求前缀、target、rewrite、router/bypass 分支及 AST/fallback 诊断。动态模板前缀只使用具体 `.env*` 赋值物化；upstream 路径和 bypass 返回值不会自动成为浏览器 fixture path。`spa-vue-router-analyze` 同时接受 Vue/Vite 项目根目录或其 `src/` 目录。
+- [`docs/architecture/skill-kernel.md`](docs/architecture/skill-kernel.md)
+- [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md)
+- [`docs/TYPESCRIPT_MIGRATION.md`](docs/TYPESCRIPT_MIGRATION.md)
+- [`docs/ROADMAP.md`](docs/ROADMAP.md)
+- [`src/skill/SKILL.md`](src/skill/SKILL.md)

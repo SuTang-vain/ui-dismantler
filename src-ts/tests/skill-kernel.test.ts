@@ -583,6 +583,11 @@ test("profile-plan and profile-run CLI execute the reviewed source profile witho
   const configPath = join(directory, "profile.json");
   const planPath = join(directory, "plan.json");
   const reportPath = join(directory, "report.json");
+  const skillCatalogPath = join(directory, "skills.json");
+  const profileCatalogPath = join(directory, "profiles.json");
+  const skillInputPath = join(directory, "skill-input.json");
+  const skillOutputPath = join(directory, "skill-output.json");
+  const skillEvidencePath = join(directory, "skill-evidence.json");
   await writeFile(htmlPath, "<!doctype html><html><body><main><h1>Profile CLI</h1></main></body></html>", "utf8");
   await writeFile(configPath, JSON.stringify({
     schemaVersion: "1.0",
@@ -590,10 +595,25 @@ test("profile-plan and profile-run CLI execute the reviewed source profile witho
     enabledOptionalSkills: [],
     inputProviders: [{ contract: "html-path", providerId: "reviewed-source", reviewed: true, inputPath: "htmlPath", value: htmlPath }],
   }), "utf8");
+  await writeFile(skillInputPath, JSON.stringify({ htmlPath }), "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "skill-list", "--out", skillCatalogPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "profile-list", "--out", profileCatalogPath], { cwd: root, encoding: "utf8" });
+  execFileSync(process.execPath, ["dist-ts/cli.js", "skill-run", "source-structure", "--input", skillInputPath, "--out", skillOutputPath, "--evidence-out", skillEvidencePath], { cwd: root, encoding: "utf8" });
   execFileSync(process.execPath, ["dist-ts/cli.js", "profile-plan", configPath, "--out", planPath], { cwd: root, encoding: "utf8" });
   execFileSync(process.execPath, ["dist-ts/cli.js", "profile-run", configPath, "--out", reportPath], { cwd: root, encoding: "utf8" });
+  const skillCatalog = JSON.parse(await readFile(skillCatalogPath, "utf8")) as { kind: string; skills: Array<{ id: string }> };
+  const profileCatalog = JSON.parse(await readFile(profileCatalogPath, "utf8")) as { kind: string; profiles: Array<{ id: string }> };
+  const skillOutput = JSON.parse(await readFile(skillOutputPath, "utf8")) as { schemaVersion?: string };
+  const skillEvidence = JSON.parse(await readFile(skillEvidencePath, "utf8")) as { status: string; skillId: string };
   const plan = JSON.parse(await readFile(planPath, "utf8")) as { ready: boolean; profileId: string; steps: Array<{ skillId: string }> };
   const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; profileId: string; steps: Array<{ status: string; output?: { schemaVersion?: string } }> };
+  assert.equal(skillCatalog.kind, "skill-catalog");
+  assert.equal(skillCatalog.skills.some((skill) => skill.id === "source-structure"), true);
+  assert.equal(profileCatalog.kind, "profile-catalog");
+  assert.equal(profileCatalog.profiles.some((profile) => profile.id === "source-page"), true);
+  assert.equal(skillOutput.schemaVersion, "1.0");
+  assert.equal(skillEvidence.status, "succeeded");
+  assert.equal(skillEvidence.skillId, "source-structure");
   assert.equal(plan.ready, true);
   assert.equal(plan.profileId, "source-page");
   assert.deepEqual(plan.steps.map((step) => step.skillId), ["source-structure"]);
