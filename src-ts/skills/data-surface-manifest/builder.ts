@@ -218,6 +218,40 @@ function staticSurface(
   };
 }
 
+function propSurface(component: SfcVisualComponentResponsibility, binding: string): DataSurface {
+  return {
+    id: `prop:${component.id}:${binding}`,
+    owner: { componentId: component.id, componentName: component.componentName, componentFile: component.file },
+    source: { primary: "component-prop", prop: { binding, evidence: [`defineProps declares repeat source ${binding}`] } },
+    shape: { kind: "collection", itemKind: "unknown", cardinality: null, evidence: [`template repeat consumes component prop ${binding}`] },
+    fields: [],
+    consumers: [{ componentId: component.id, componentName: component.componentName, componentFile: component.file, targetBinding: binding, renderedFields: [] }],
+    injection: { kind: "component-prop", target: binding, reviewed: true },
+    references: [],
+    evidence: [{ source: component.file, detail: `${binding} is a source-proven component prop repeat boundary`, confidence: "high" }],
+    unresolved: [],
+    policyNotices: ["component prop values remain caller-owned and are not embedded business data"],
+    reviewRequired: false,
+  };
+}
+function runtimeSurface(component: SfcVisualComponentResponsibility, binding: string): DataSurface {
+  return {
+    id: `runtime:${component.id}:${binding}`,
+    owner: { componentId: component.id, componentName: component.componentName, componentFile: component.file },
+    source: { primary: "runtime-binding", runtime: { binding, evidence: [`template repeat source ${binding} is imported or computed in component scope`] } },
+    shape: { kind: "unknown", itemKind: "unknown", cardinality: null, evidence: [`runtime binding ${binding} requires reviewed shape evidence`] },
+    fields: [],
+    consumers: [{ componentId: component.id, componentName: component.componentName, componentFile: component.file, targetBinding: binding, renderedFields: [] }],
+    injection: { kind: "runtime-binding", target: binding, reviewed: false },
+    references: [],
+    evidence: [{ source: component.file, detail: `${binding} is a component runtime/store/composable binding`, confidence: "medium" }],
+    unresolved: [`runtime binding ${binding} shape requires reviewed source evidence`],
+    policyNotices: ["runtime binding is retained as a component boundary; no business value is copied"],
+    reviewRequired: true,
+  };
+}
+
+
 function staticSurfaceBindings(cardinality: ComponentDataCardinalityResponsibility): string[] {
   const bindings = new Set<string>();
   for (const evidence of cardinality.responsibility.cardinalities) {
@@ -276,6 +310,8 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
       const value = cardinality.responsibility.staticBindings[binding];
       if (value !== undefined) surfaces.push(staticSurface(component, cardinality, binding, value));
     }
+    for (const binding of cardinality.responsibility.propBindings ?? []) surfaces.push(propSurface(component, binding));
+    for (const binding of cardinality.responsibility.runtimeBindings ?? []) surfaces.push(runtimeSurface(component, binding));
   }
 
   surfaces.sort((left, right) => left.id.localeCompare(right.id));
@@ -339,6 +375,8 @@ export function buildDataSurfaceManifest(input: DataSurfaceManifestInput): DataS
       surfaces: surfaces.length,
       apiSurfaces: surfaces.filter((surface) => surface.source.primary === "reviewed-api-fixture").length,
       staticSurfaces: surfaces.filter((surface) => surface.source.primary === "module-static-binding").length,
+      propSurfaces: surfaces.filter((surface) => surface.source.primary === "component-prop").length,
+      runtimeSurfaces: surfaces.filter((surface) => surface.source.primary === "runtime-binding").length,
       reviewedFixtures: surfaces.filter((surface) => surface.source.api?.reviewed).length,
       fields: surfaces.reduce((total, surface) => total + surface.fields.length, 0),
       references: surfaces.reduce((total, surface) => total + surface.references.length, 0),

@@ -83,18 +83,20 @@
     "data-surface-manifest"
   ],
   "dataSurfaceMetrics": {
-    "surfaces": 4,
+    "surfaces": 12,
     "apiSurfaces": 1,
-    "staticSurfaces": 3,
+    "staticSurfaces": 4,
+    "propSurfaces": 3,
+    "runtimeSurfaces": 4,
     "reviewedFixtures": 1,
-    "fields": 14,
+    "fields": 16,
     "references": 0,
-    "unresolved": 12
+    "unresolved": 4
   },
   "dataSurfaceReviewRequired": true,
   "dataSurfaceReview": {
-    "blockers": 12,
-    "policyNotices": 11
+    "blockers": 4,
+    "policyNotices": 18
   },
   "dataSurfaceIdentity": {
     "sourceRoot": "blind-cases/vue-xs-admin",

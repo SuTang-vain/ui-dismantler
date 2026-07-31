@@ -31,7 +31,9 @@ function validateSurface(value: unknown, index: number, issues: DataSurfaceManif
   }
   if (surface.source.primary === "reviewed-api-fixture" && !surface.source.api) issue(issues, `${path}.source.api`, "reviewed API surface must declare API source");
   if (surface.source.primary === "module-static-binding" && !surface.source.static) issue(issues, `${path}.source.static`, "static surface must declare static source");
-  if (surface.source.primary !== "reviewed-api-fixture" && surface.source.primary !== "module-static-binding") issue(issues, `${path}.source.primary`, "source primary is invalid");
+  if (surface.source.primary === "component-prop" && !surface.source.prop) issue(issues, `${path}.source.prop`, "component prop surface must declare prop source");
+  if (surface.source.primary === "runtime-binding" && !surface.source.runtime) issue(issues, `${path}.source.runtime`, "runtime surface must declare runtime source");
+  if (!(["reviewed-api-fixture", "module-static-binding", "component-prop", "runtime-binding"] as const).includes(surface.source.primary)) issue(issues, `${path}.source.primary`, "source primary is invalid");
   if (surface.source.api && surface.source.api.reviewed !== true) issue(issues, `${path}.source.api.reviewed`, "API source must be reviewed");
   if (surface.source.static && "value" in (surface.source.static as unknown as Record<string, unknown>)) issue(issues, `${path}.source.static.value`, "raw static values are forbidden in a Data Surface Manifest");
   if (!surface.shape || typeof surface.shape !== "object") issue(issues, `${path}.shape`, "shape is required");
@@ -87,6 +89,8 @@ export function validateDataSurfaceManifest(value: unknown): DataSurfaceManifest
       surfaces: surfaces.length,
       apiSurfaces: validSurfaces.filter((surface) => surface.source?.primary === "reviewed-api-fixture").length,
       staticSurfaces: validSurfaces.filter((surface) => surface.source?.primary === "module-static-binding").length,
+      propSurfaces: validSurfaces.filter((surface) => surface.source?.primary === "component-prop").length,
+      runtimeSurfaces: validSurfaces.filter((surface) => surface.source?.primary === "runtime-binding").length,
       reviewedFixtures: validSurfaces.filter((surface) => surface.source?.api?.reviewed === true).length,
       fields: validSurfaces.reduce((total, surface) => total + (Array.isArray(surface.fields) ? surface.fields.length : 0), 0),
       references: validSurfaces.reduce((total, surface) => total + (Array.isArray(surface.references) ? surface.references.length : 0), 0),

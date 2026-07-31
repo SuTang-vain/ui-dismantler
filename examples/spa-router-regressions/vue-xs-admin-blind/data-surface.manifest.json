@@ -23,74 +23,36 @@
   },
   "metrics": {
     "apiSurfaces": 1,
-    "fields": 14,
+    "fields": 16,
+    "propSurfaces": 3,
     "references": 0,
     "reviewedFixtures": 1,
-    "staticSurfaces": 3,
-    "surfaces": 4,
-    "unresolved": 12
+    "runtimeSurfaces": 4,
+    "staticSurfaces": 4,
+    "surfaces": 12,
+    "unresolved": 4
   },
   "review": {
     "blockers": [
       {
-        "owner": "component:sfc:12",
-        "reason": "unresolved repeated data reference: Object",
-        "source": "src/components/Table/index.vue"
-      },
-      {
-        "owner": "component:sfc:12",
-        "reason": "unresolved repeated data reference: option",
-        "source": "src/components/Table/index.vue"
-      },
-      {
         "owner": "component:sfc:17",
-        "reason": "unresolved repeated data reference: multiTabs",
+        "reason": "runtime:sfc:17:multiTabs: runtime binding multiTabs shape requires reviewed source evidence",
         "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
       },
       {
         "owner": "component:sfc:17",
-        "reason": "unresolved repeated data reference: rightClickTags",
+        "reason": "runtime:sfc:17:rightClickTags: runtime binding rightClickTags shape requires reviewed source evidence",
         "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
-      },
-      {
-        "owner": "component:sfc:21",
-        "reason": "unresolved repeated data reference: sidebarSeting",
-        "source": "src/layouts/page-layouts/components/Seting/index.vue"
       },
       {
         "owner": "component:sfc:26",
-        "reason": "unresolved repeated data reference: usePermissionStoreHook",
+        "reason": "runtime:sfc:26:usePermissionStoreHook: runtime binding usePermissionStoreHook shape requires reviewed source evidence",
         "source": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue"
       },
       {
-        "owner": "component:sfc:27",
-        "reason": "unresolved repeated data reference: item",
-        "source": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue"
-      },
-      {
         "owner": "component:sfc:3",
-        "reason": "unresolved repeated data reference: localesList",
+        "reason": "runtime:sfc:3:localesList: runtime binding localesList shape requires reviewed source evidence",
         "source": "src/components/Application/AppLocale.vue"
-      },
-      {
-        "owner": "component:sfc:32",
-        "reason": "unresolved repeated data reference: item",
-        "source": "src/views/about/index.vue"
-      },
-      {
-        "owner": "component:sfc:7",
-        "reason": "unresolved repeated data reference: f",
-        "source": "src/components/Form/index.vue"
-      },
-      {
-        "owner": "component:sfc:7",
-        "reason": "unresolved repeated data reference: formOption",
-        "source": "src/components/Form/index.vue"
-      },
-      {
-        "owner": "component:sfc:7",
-        "reason": "unresolved repeated data reference: Object",
-        "source": "src/components/Form/index.vue"
       }
     ],
     "policyNotices": [
@@ -131,6 +93,36 @@
         "source": "src/router/utils.ts"
       },
       {
+        "owner": "component:sfc:12",
+        "reason": "prop:sfc:12:option: component prop values remain caller-owned and are not embedded business data",
+        "source": "src/components/Table/index.vue"
+      },
+      {
+        "owner": "component:sfc:17",
+        "reason": "runtime:sfc:17:multiTabs: runtime binding is retained as a component boundary; no business value is copied",
+        "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+      },
+      {
+        "owner": "component:sfc:17",
+        "reason": "runtime:sfc:17:rightClickTags: runtime binding is retained as a component boundary; no business value is copied",
+        "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+      },
+      {
+        "owner": "component:sfc:26",
+        "reason": "runtime:sfc:26:usePermissionStoreHook: runtime binding is retained as a component boundary; no business value is copied",
+        "source": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue"
+      },
+      {
+        "owner": "component:sfc:27",
+        "reason": "prop:sfc:27:item: component prop values remain caller-owned and are not embedded business data",
+        "source": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue"
+      },
+      {
+        "owner": "component:sfc:3",
+        "reason": "runtime:sfc:3:localesList: runtime binding is retained as a component boundary; no business value is copied",
+        "source": "src/components/Application/AppLocale.vue"
+      },
+      {
         "owner": "component:sfc:63",
         "reason": "api:api-fixture:sfc:63:getUserInfo: fixture response body is consumed only after explicit reviewed-config matching",
         "source": "src/views/login/compoontne/form.vue"
@@ -139,6 +131,11 @@
         "owner": "component:sfc:63",
         "reason": "api:api-fixture:sfc:63:getUserInfo: runtime source code is not executed during extraction",
         "source": "src/views/login/compoontne/form.vue"
+      },
+      {
+        "owner": "component:sfc:7",
+        "reason": "prop:sfc:7:formOption: component prop values remain caller-owned and are not embedded business data",
+        "source": "src/components/Form/index.vue"
       }
     ]
   },
@@ -270,6 +267,385 @@
     {
       "consumers": [
         {
+          "componentFile": "src/components/Table/index.vue",
+          "componentId": "sfc:12",
+          "componentName": "Table",
+          "renderedFields": [],
+          "targetBinding": "option"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "high",
+          "detail": "option is a source-proven component prop repeat boundary",
+          "source": "src/components/Table/index.vue"
+        }
+      ],
+      "fields": [],
+      "id": "prop:sfc:12:option",
+      "injection": {
+        "kind": "component-prop",
+        "reviewed": true,
+        "target": "option"
+      },
+      "owner": {
+        "componentFile": "src/components/Table/index.vue",
+        "componentId": "sfc:12",
+        "componentName": "Table"
+      },
+      "policyNotices": [
+        "component prop values remain caller-owned and are not embedded business data"
+      ],
+      "references": [],
+      "reviewRequired": false,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "template repeat consumes component prop option"
+        ],
+        "itemKind": "unknown",
+        "kind": "collection"
+      },
+      "source": {
+        "primary": "component-prop",
+        "prop": {
+          "binding": "option",
+          "evidence": [
+            "defineProps declares repeat source option"
+          ]
+        }
+      },
+      "unresolved": []
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue",
+          "componentId": "sfc:27",
+          "componentName": "SidebarItem",
+          "renderedFields": [],
+          "targetBinding": "item"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "high",
+          "detail": "item is a source-proven component prop repeat boundary",
+          "source": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue"
+        }
+      ],
+      "fields": [],
+      "id": "prop:sfc:27:item",
+      "injection": {
+        "kind": "component-prop",
+        "reviewed": true,
+        "target": "item"
+      },
+      "owner": {
+        "componentFile": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue",
+        "componentId": "sfc:27",
+        "componentName": "SidebarItem"
+      },
+      "policyNotices": [
+        "component prop values remain caller-owned and are not embedded business data"
+      ],
+      "references": [],
+      "reviewRequired": false,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "template repeat consumes component prop item"
+        ],
+        "itemKind": "unknown",
+        "kind": "collection"
+      },
+      "source": {
+        "primary": "component-prop",
+        "prop": {
+          "binding": "item",
+          "evidence": [
+            "defineProps declares repeat source item"
+          ]
+        }
+      },
+      "unresolved": []
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/components/Form/index.vue",
+          "componentId": "sfc:7",
+          "componentName": "Form",
+          "renderedFields": [],
+          "targetBinding": "formOption"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "high",
+          "detail": "formOption is a source-proven component prop repeat boundary",
+          "source": "src/components/Form/index.vue"
+        }
+      ],
+      "fields": [],
+      "id": "prop:sfc:7:formOption",
+      "injection": {
+        "kind": "component-prop",
+        "reviewed": true,
+        "target": "formOption"
+      },
+      "owner": {
+        "componentFile": "src/components/Form/index.vue",
+        "componentId": "sfc:7",
+        "componentName": "Form"
+      },
+      "policyNotices": [
+        "component prop values remain caller-owned and are not embedded business data"
+      ],
+      "references": [],
+      "reviewRequired": false,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "template repeat consumes component prop formOption"
+        ],
+        "itemKind": "unknown",
+        "kind": "collection"
+      },
+      "source": {
+        "primary": "component-prop",
+        "prop": {
+          "binding": "formOption",
+          "evidence": [
+            "defineProps declares repeat source formOption"
+          ]
+        }
+      },
+      "unresolved": []
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/layouts/page-layouts/components/AppTabs/index.vue",
+          "componentId": "sfc:17",
+          "componentName": "AppTabs",
+          "renderedFields": [],
+          "targetBinding": "multiTabs"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "medium",
+          "detail": "multiTabs is a component runtime/store/composable binding",
+          "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+        }
+      ],
+      "fields": [],
+      "id": "runtime:sfc:17:multiTabs",
+      "injection": {
+        "kind": "runtime-binding",
+        "reviewed": false,
+        "target": "multiTabs"
+      },
+      "owner": {
+        "componentFile": "src/layouts/page-layouts/components/AppTabs/index.vue",
+        "componentId": "sfc:17",
+        "componentName": "AppTabs"
+      },
+      "policyNotices": [
+        "runtime binding is retained as a component boundary; no business value is copied"
+      ],
+      "references": [],
+      "reviewRequired": true,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "runtime binding multiTabs requires reviewed shape evidence"
+        ],
+        "itemKind": "unknown",
+        "kind": "unknown"
+      },
+      "source": {
+        "primary": "runtime-binding",
+        "runtime": {
+          "binding": "multiTabs",
+          "evidence": [
+            "template repeat source multiTabs is imported or computed in component scope"
+          ]
+        }
+      },
+      "unresolved": [
+        "runtime binding multiTabs shape requires reviewed source evidence"
+      ]
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/layouts/page-layouts/components/AppTabs/index.vue",
+          "componentId": "sfc:17",
+          "componentName": "AppTabs",
+          "renderedFields": [],
+          "targetBinding": "rightClickTags"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "medium",
+          "detail": "rightClickTags is a component runtime/store/composable binding",
+          "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
+        }
+      ],
+      "fields": [],
+      "id": "runtime:sfc:17:rightClickTags",
+      "injection": {
+        "kind": "runtime-binding",
+        "reviewed": false,
+        "target": "rightClickTags"
+      },
+      "owner": {
+        "componentFile": "src/layouts/page-layouts/components/AppTabs/index.vue",
+        "componentId": "sfc:17",
+        "componentName": "AppTabs"
+      },
+      "policyNotices": [
+        "runtime binding is retained as a component boundary; no business value is copied"
+      ],
+      "references": [],
+      "reviewRequired": true,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "runtime binding rightClickTags requires reviewed shape evidence"
+        ],
+        "itemKind": "unknown",
+        "kind": "unknown"
+      },
+      "source": {
+        "primary": "runtime-binding",
+        "runtime": {
+          "binding": "rightClickTags",
+          "evidence": [
+            "template repeat source rightClickTags is imported or computed in component scope"
+          ]
+        }
+      },
+      "unresolved": [
+        "runtime binding rightClickTags shape requires reviewed source evidence"
+      ]
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue",
+          "componentId": "sfc:26",
+          "componentName": "MinSidebar",
+          "renderedFields": [],
+          "targetBinding": "usePermissionStoreHook"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "medium",
+          "detail": "usePermissionStoreHook is a component runtime/store/composable binding",
+          "source": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue"
+        }
+      ],
+      "fields": [],
+      "id": "runtime:sfc:26:usePermissionStoreHook",
+      "injection": {
+        "kind": "runtime-binding",
+        "reviewed": false,
+        "target": "usePermissionStoreHook"
+      },
+      "owner": {
+        "componentFile": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue",
+        "componentId": "sfc:26",
+        "componentName": "MinSidebar"
+      },
+      "policyNotices": [
+        "runtime binding is retained as a component boundary; no business value is copied"
+      ],
+      "references": [],
+      "reviewRequired": true,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "runtime binding usePermissionStoreHook requires reviewed shape evidence"
+        ],
+        "itemKind": "unknown",
+        "kind": "unknown"
+      },
+      "source": {
+        "primary": "runtime-binding",
+        "runtime": {
+          "binding": "usePermissionStoreHook",
+          "evidence": [
+            "template repeat source usePermissionStoreHook is imported or computed in component scope"
+          ]
+        }
+      },
+      "unresolved": [
+        "runtime binding usePermissionStoreHook shape requires reviewed source evidence"
+      ]
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/components/Application/AppLocale.vue",
+          "componentId": "sfc:3",
+          "componentName": "AppLocale",
+          "renderedFields": [],
+          "targetBinding": "localesList"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "medium",
+          "detail": "localesList is a component runtime/store/composable binding",
+          "source": "src/components/Application/AppLocale.vue"
+        }
+      ],
+      "fields": [],
+      "id": "runtime:sfc:3:localesList",
+      "injection": {
+        "kind": "runtime-binding",
+        "reviewed": false,
+        "target": "localesList"
+      },
+      "owner": {
+        "componentFile": "src/components/Application/AppLocale.vue",
+        "componentId": "sfc:3",
+        "componentName": "AppLocale"
+      },
+      "policyNotices": [
+        "runtime binding is retained as a component boundary; no business value is copied"
+      ],
+      "references": [],
+      "reviewRequired": true,
+      "shape": {
+        "cardinality": null,
+        "evidence": [
+          "runtime binding localesList requires reviewed shape evidence"
+        ],
+        "itemKind": "unknown",
+        "kind": "unknown"
+      },
+      "source": {
+        "primary": "runtime-binding",
+        "runtime": {
+          "binding": "localesList",
+          "evidence": [
+            "template repeat source localesList is imported or computed in component scope"
+          ]
+        }
+      },
+      "unresolved": [
+        "runtime binding localesList shape requires reviewed source evidence"
+      ]
+    },
+    {
+      "consumers": [
+        {
           "componentFile": "src/layouts/page-layouts/components/Seting/ThemeSettings/index.vue",
           "componentId": "sfc:20",
           "componentName": "ThemeSettings",
@@ -311,6 +687,69 @@
         "static": {
           "binding": "colorList",
           "valueHash": "2051470d015bb035e558da33c01a8f1e02cb51cfa5383a16578e331a67368506"
+        }
+      },
+      "unresolved": []
+    },
+    {
+      "consumers": [
+        {
+          "componentFile": "src/layouts/page-layouts/components/Seting/index.vue",
+          "componentId": "sfc:21",
+          "componentName": "Seting",
+          "renderedFields": [],
+          "targetBinding": "sidebarSeting"
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "high",
+          "detail": "sidebarSeting is a component-owned static data collection",
+          "source": "src/layouts/page-layouts/components/Seting/index.vue"
+        }
+      ],
+      "fields": [
+        {
+          "consumers": [],
+          "evidence": [
+            "static-shape"
+          ],
+          "path": "label"
+        },
+        {
+          "consumers": [],
+          "evidence": [
+            "static-shape"
+          ],
+          "path": "value"
+        }
+      ],
+      "id": "static:sfc:21:sidebarSeting",
+      "injection": {
+        "kind": "component-static-binding",
+        "reviewed": true,
+        "target": "sidebarSeting"
+      },
+      "owner": {
+        "componentFile": "src/layouts/page-layouts/components/Seting/index.vue",
+        "componentId": "sfc:21",
+        "componentName": "Seting"
+      },
+      "references": [],
+      "reviewRequired": false,
+      "shape": {
+        "cardinality": 3,
+        "evidence": [
+          "module static binding sidebarSeting"
+        ],
+        "itemKind": "record",
+        "kind": "collection"
+      },
+      "source": {
+        "primary": "module-static-binding",
+        "static": {
+          "binding": "sidebarSeting",
+          "valueHash": "8c95af35e51047c1428a8f428bc8de4734258a071d297bea7e83a62a113c834c"
         }
       },
       "unresolved": []
@@ -458,64 +897,24 @@
   ],
   "unresolved": [
     {
-      "owner": "component:sfc:12",
-      "reason": "unresolved repeated data reference: Object",
-      "source": "src/components/Table/index.vue"
-    },
-    {
-      "owner": "component:sfc:12",
-      "reason": "unresolved repeated data reference: option",
-      "source": "src/components/Table/index.vue"
-    },
-    {
       "owner": "component:sfc:17",
-      "reason": "unresolved repeated data reference: multiTabs",
+      "reason": "runtime:sfc:17:multiTabs: runtime binding multiTabs shape requires reviewed source evidence",
       "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
     },
     {
       "owner": "component:sfc:17",
-      "reason": "unresolved repeated data reference: rightClickTags",
+      "reason": "runtime:sfc:17:rightClickTags: runtime binding rightClickTags shape requires reviewed source evidence",
       "source": "src/layouts/page-layouts/components/AppTabs/index.vue"
-    },
-    {
-      "owner": "component:sfc:21",
-      "reason": "unresolved repeated data reference: sidebarSeting",
-      "source": "src/layouts/page-layouts/components/Seting/index.vue"
     },
     {
       "owner": "component:sfc:26",
-      "reason": "unresolved repeated data reference: usePermissionStoreHook",
+      "reason": "runtime:sfc:26:usePermissionStoreHook: runtime binding usePermissionStoreHook shape requires reviewed source evidence",
       "source": "src/layouts/page-layouts/components/Sidebar/MinSidebar.vue"
     },
     {
-      "owner": "component:sfc:27",
-      "reason": "unresolved repeated data reference: item",
-      "source": "src/layouts/page-layouts/components/Sidebar/SidebarItem.vue"
-    },
-    {
       "owner": "component:sfc:3",
-      "reason": "unresolved repeated data reference: localesList",
+      "reason": "runtime:sfc:3:localesList: runtime binding localesList shape requires reviewed source evidence",
       "source": "src/components/Application/AppLocale.vue"
-    },
-    {
-      "owner": "component:sfc:32",
-      "reason": "unresolved repeated data reference: item",
-      "source": "src/views/about/index.vue"
-    },
-    {
-      "owner": "component:sfc:7",
-      "reason": "unresolved repeated data reference: f",
-      "source": "src/components/Form/index.vue"
-    },
-    {
-      "owner": "component:sfc:7",
-      "reason": "unresolved repeated data reference: formOption",
-      "source": "src/components/Form/index.vue"
-    },
-    {
-      "owner": "component:sfc:7",
-      "reason": "unresolved repeated data reference: Object",
-      "source": "src/components/Form/index.vue"
     }
   ]
 }

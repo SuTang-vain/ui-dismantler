@@ -337,7 +337,7 @@ async function main(argv: string[]): Promise<number> {
       assertDataSurfaceManifest(manifest);
       await writeFile(resolve(out), serializeDataSurfaceManifest(manifest), "utf8");
       console.log(`✓ 已生成 Data Surface Manifest: ${resolve(out)}`);
-      console.log(`  surfaces=${manifest.metrics.surfaces}，api=${manifest.metrics.apiSurfaces}，static=${manifest.metrics.staticSurfaces}，unresolved=${manifest.metrics.unresolved}，reviewRequired=${manifest.reviewRequired}`);
+      console.log(`  surfaces=${manifest.metrics.surfaces}，api=${manifest.metrics.apiSurfaces}，static=${manifest.metrics.staticSurfaces}，prop=${manifest.metrics.propSurfaces}，runtime=${manifest.metrics.runtimeSurfaces}，unresolved=${manifest.metrics.unresolved}，reviewRequired=${manifest.reviewRequired}`);
       console.log(`  sourceHash=${manifest.identity.sourceHash}，fixtureHash=${manifest.identity.fixtureHash}，configurationHash=${manifest.identity.configurationHash}`);
       return 0;
     }

@@ -87,7 +87,7 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 `data-cardinality` consumes the reviewed component list from `component-ownership` and emits a dedicated cardinality graph plus sidecar delta. It preserves static array, slice-limit, and template-repeat evidence without re-parsing a case or introducing component-name rules. Unresolved repeated data references remain review-required.
 
-`data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
+`data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, component props, runtime/store bindings, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
 
 The Manifest separates two kinds of review evidence:
 

@@ -898,8 +898,9 @@ test("TypeScript script-setup static collections bind to v-for cardinality", () 
     writeFileSync(join(root, "src", "Welcome.vue"), `<script setup lang="ts">
 const speedList = [{ title: 'Todo', online: 24, total: 70 }, { title: 'Task', online: 39, total: 100 }, { title: 'Plan', online: 5, total: 10 }, { title: 'Comments', online: 10, total: 40 }];
 const percentage = (online: number, total: number): number => Math.round((online / total) * 100);
+const sidebarSeting: { label: string; value: string }[] = [{ label: 'Vertical', value: 'vertical' }, { label: 'Horizontal', value: 'horizontal' }];
 </script>
-<template><section><article v-for="(item, index) in speedList" :key="index">{{ item.title }} {{ percentage(item.online, item.total) }}</article></section></template>`);
+<template><section><article v-for="(item, index) in speedList" :key="index">{{ item.title }} {{ percentage(item.online, item.total) }}</article><button v-for="item in sidebarSeting" :key="item.value">{{ item.label }}</button></section></template>`);
     const graph = analyzeSfcVisualResponsibilities(root);
     const component = graph.components.find((item) => item.file === "src/Welcome.vue");
     assert.ok(component);
@@ -907,5 +908,8 @@ const percentage = (online: number, total: number): number => Math.round((online
     assert.equal(Array.isArray(speedList) ? speedList.length : -1, 4);
     assert.deepEqual(component.dataCardinality.cardinalities.find((item) => item.path === "speedList"), { path: "speedList", count: 4, source: "module-static-binding" });
     assert.equal(component.dataCardinality.unresolvedReferences.includes("speedList"), false);
+    const sidebarSeting = component.dataCardinality.staticBindings.sidebarSeting;
+    assert.equal(Array.isArray(sidebarSeting) ? sidebarSeting.length : -1, 2);
+    assert.equal(component.dataCardinality.unresolvedReferences.includes("sidebarSeting"), false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

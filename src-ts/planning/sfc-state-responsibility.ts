@@ -303,6 +303,7 @@ export function eraseTypeScriptStateSyntax(source: string): string {
     .replace(/\s+as\s+(?:const|[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)/g, (value) => preserveLines(value))
     .replace(/([A-Za-z_$][\w$]*)\s*\??:\s*\{[A-Za-z0-9_$?:,\s\[\]|]*(?:\{[A-Za-z0-9_$?:,\s\[\]|]*\}[A-Za-z0-9_$?:,\s\[\]|]*)*\}(?=\s*[,)=])/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
     .replace(/([A-Za-z_$][\w$]*|\))\s*\??:\s*(?:[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)(?=\s*(?:=(?!>)|=>|[,;){}]))/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
+    .replace(/([A-Za-z_$][\w$]*)\s*\??:\s*\{(?:[^{}]|\{[^{}]*\})*\}\s*(?:\[\])?(?=\s*=)/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
     .replace(/(\))\s*:\s*(?:[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Za-z_$][\w$]*))*)\s*(?=\{)/g, (value, prefix: string) => `${prefix}${preserveLines(value.slice(prefix.length))}`)
     .replace(/\s+satisfies\s+[A-Za-z_$][\w$]*(?:\s*<[^;=(){}]+>)?/g, preserveLines);
 }

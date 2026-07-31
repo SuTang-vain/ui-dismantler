@@ -54,10 +54,22 @@ export interface DataSurfaceStateInitialSource {
   readonly valueHash: string;
 }
 
+export interface DataSurfacePropSource {
+  readonly binding: string;
+  readonly evidence: readonly string[];
+}
+
+export interface DataSurfaceRuntimeSource {
+  readonly binding: string;
+  readonly evidence: readonly string[];
+}
+
 export interface DataSurfaceSource {
-  readonly primary: "reviewed-api-fixture" | "module-static-binding";
+  readonly primary: "reviewed-api-fixture" | "module-static-binding" | "component-prop" | "runtime-binding";
   readonly api?: DataSurfaceApiSource;
   readonly static?: DataSurfaceStaticSource;
+  readonly prop?: DataSurfacePropSource;
+  readonly runtime?: DataSurfaceRuntimeSource;
   readonly stateInitial?: DataSurfaceStateInitialSource;
 }
 
@@ -84,7 +96,7 @@ export interface DataSurfaceConsumer {
 }
 
 export interface DataSurfaceInjection {
-  readonly kind: "state-binding" | "component-static-binding";
+  readonly kind: "state-binding" | "component-static-binding" | "component-prop" | "runtime-binding";
   readonly target: string;
   readonly sourcePath?: string;
   readonly reviewed: boolean;
@@ -147,6 +159,8 @@ export interface DataSurfaceManifest {
     readonly surfaces: number;
     readonly apiSurfaces: number;
     readonly staticSurfaces: number;
+    readonly propSurfaces: number;
+    readonly runtimeSurfaces: number;
     readonly reviewedFixtures: number;
     readonly fields: number;
     readonly references: number;
