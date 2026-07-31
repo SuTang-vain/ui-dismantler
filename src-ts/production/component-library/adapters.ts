@@ -1,7 +1,9 @@
-import { sha256, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./contract.js";
+import { sha256, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryDataBinding, type ComponentLibraryInteractionBinding } from "./contract.js";
 import { createComponentLibraryBuildPlan } from "./planner.js";
 import type { ComponentPlanningReport } from "../../planning/components.js";
 import type { VisualTargetPlan } from "../../planning/visual-target-plan.js";
+import type { SfcStateResponsibility } from "../../planning/sfc-state-responsibility.js";
+import type { DataSurfaceManifest } from "../../skills/data-surface-manifest/contract.js";
 import { materializeOwnerSourceStyles } from "../../planning/scoped-style-materializer.js";
 import { compilePrimitiveDom } from "../../planning/primitive-dom-compiler.js";
 import type { PrimitiveDomCompilationGraph } from "../../skills/primitive-dom.js";
@@ -149,6 +151,16 @@ export async function primitiveDomCompilationToBuildPlan(
     sourceRoot: options.sourceRoot,
     sourceHash: sha256(JSON.stringify(graph)),
     library: { name: options.libraryName, packageName: options.packageName },
+    interactions: graph.components.flatMap((component) => component.compilation.interactions.map((binding): ComponentLibraryInteractionBinding => ({
+      id: `${component.componentName}:${binding.sourceNodeId}:${binding.event}`,
+      sourceNodeId: binding.sourceNodeId,
+      event: binding.event,
+      expression: binding.expression,
+      target: binding.target,
+      reviewed: false,
+      materialized: false,
+      provenance: [{ kind: "primitive-dom", reference: "primitive-dom-interaction-binding" }],
+    }))),
     files: [
       { path: "package.json", role: "package-metadata", content: JSON.stringify({ name: options.packageName, version: "0.0.0", private: true, main: `src/${fileBase}.js`, style: `src/${fileBase}.css`, files: ["src", "README.md", "docs"] }, null, 2) + "\n", publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: `src/${fileBase}.js`, role: "runtime", content: primitiveRuntime(namespace, graph), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-dom-compilation-graph" }] },
@@ -161,6 +173,60 @@ export async function primitiveDomCompilationToBuildPlan(
     unresolved,
   };
   return await createComponentLibraryBuildPlan(input, options.sourceRoot);
+}
+
+export function enrichComponentLibraryBuildPlan(
+  plan: ComponentLibraryBuildPlan,
+  evidence: { readonly state?: SfcStateResponsibility; readonly dataSurface?: DataSurfaceManifest },
+): ComponentLibraryBuildPlan {
+  const interactions: ComponentLibraryInteractionBinding[] = [...plan.interactions];
+  const dataBindings: ComponentLibraryDataBinding[] = [...plan.dataBindings];
+  const unresolved = [...plan.unresolved];
+  if (evidence.state) {
+    unresolved.push(...evidence.state.reviewReasons.map((reason) => `state-responsibility: ${reason}`));
+    unresolved.push(...evidence.state.unresolvedWrites.map((write) => `state-responsibility unresolved write ${write.handler}:${write.path}`));
+    for (const handler of evidence.state.handlers) {
+      for (const write of handler.writes) {
+        interactions.push({
+          id: `state:${handler.handler}:${write.path}`,
+          event: "state-write",
+          expression: write.expression,
+          target: write.path,
+          reviewed: write.confidence === "high",
+          materialized: false,
+          provenance: [{ kind: "state-responsibility", reference: `handler:${handler.handler}:line:${handler.sourceLine}` }],
+        });
+      }
+    }
+  }
+  if (evidence.dataSurface) {
+    unresolved.push(...evidence.dataSurface.unresolved.map((item) => `data-surface: ${item.reason}`));
+    unresolved.push(...evidence.dataSurface.surfaces.flatMap((surface) => surface.unresolved.map((reason) => `data-surface:${surface.id}: ${reason}`)));
+    for (const surface of evidence.dataSurface.surfaces) {
+      const sourceKind = surface.source.stateInitial ? "state-initial" : surface.source.primary;
+      dataBindings.push({
+        id: surface.id,
+        ownerId: surface.owner.componentId,
+        sourceKind,
+        targetBinding: surface.injection.target,
+        fields: surface.fields.map((field) => field.path),
+        shape: { kind: surface.shape.kind, itemKind: surface.shape.itemKind, cardinality: surface.shape.cardinality },
+        reviewed: !surface.reviewRequired && surface.injection.reviewed,
+        materialized: false,
+        externalOnly: true,
+        provenance: [{ kind: "data-surface-manifest", reference: surface.id }],
+      });
+    }
+  }
+  const configurationHash = sha256(JSON.stringify({ base: plan.identity.configurationHash, interactions, dataBindings, unresolved }));
+  return {
+    ...plan,
+    identity: { ...plan.identity, configurationHash },
+    interactions,
+    dataBindings,
+    unresolved,
+    reviewRequired: plan.reviewRequired || unresolved.length > 0 || interactions.some((binding) => !binding.reviewed || !binding.materialized) || dataBindings.some((binding) => !binding.reviewed || !binding.materialized),
+  };
 }
 
 export async function visualTargetPlanToBuildPlan(

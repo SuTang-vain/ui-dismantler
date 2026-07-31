@@ -6,6 +6,7 @@ import test from "node:test";
 import {
   componentPlanningReportToBuildPlan,
   createComponentLibraryBuildPlan,
+  enrichComponentLibraryBuildPlan,
   materializeComponentLibrary,
   primitiveDomCompilationToBuildPlan,
   runComponentLibraryBuild,
@@ -214,4 +215,57 @@ test("Visual Target Plan adapter consumes scoped source style evidence and remai
   assert.equal(validation.ready, false);
   assert.equal(buildPlan.files.find((file) => file.role === "style")?.content.includes("data-visual-owner"), true);
   assert.equal(validation.blockers.some((issue) => issue.message.includes("VisualTargetPlan is review-only")), true);
+});
+
+
+test("State and Data Surface evidence enrich a Build Plan without embedding values or bypassing review", async () => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-build-evidence-"));
+  try {
+    const configPath = join(directory, "config.json");
+    await writeFile(configPath, "{}", "utf8");
+    const basePlan = await createComponentLibraryBuildPlan(benchmarkInput(), configPath);
+    const enriched = enrichComponentLibraryBuildPlan(basePlan, {
+      state: {
+        schemaVersion: "1.0",
+        kind: "sfc-state-responsibility",
+        parsed: true,
+        parseMode: "javascript",
+        initialState: { open: false },
+        handlers: [{ handler: "openEditor", writes: [{ path: "open", expression: "open.value = true", sourceLine: 4, confidence: "high" }], helperCalls: [], sourceLine: 4 }],
+        displayFunctions: [],
+        unresolvedWrites: [],
+        metrics: { initialBindings: 1, handlers: 1, handlersWithWrites: 1, stateWrites: 1, displayFunctions: 0, unresolvedWrites: 0 },
+        reviewReasons: [],
+      },
+      dataSurface: {
+        unresolved: [],
+        reviewRequired: false,
+        surfaces: [{
+          id: "prop:demo:items",
+          owner: { componentId: "component:demo", componentName: "Demo", componentFile: "Demo.vue" },
+          source: { primary: "component-prop", prop: { binding: "items", evidence: ["template-prop"] } },
+          shape: { kind: "collection", itemKind: "record", cardinality: null, evidence: ["prop-shape"] },
+          fields: [{ path: "id", consumers: ["component:demo"], evidence: ["rendered-field"] }],
+          consumers: [{ componentId: "component:demo", componentName: "Demo", componentFile: "Demo.vue", targetBinding: "items", renderedFields: ["id"] }],
+          injection: { kind: "component-prop", target: "items", reviewed: true },
+          references: [],
+          evidence: [{ source: "template", detail: "items prop", confidence: "high" }],
+          unresolved: [],
+          reviewRequired: false,
+        }],
+      } as never,
+    });
+    const validation = validateComponentLibraryBuildPlan(enriched);
+    assert.equal(enriched.interactions.length, 1);
+    assert.equal(enriched.interactions[0]?.target, "open");
+    assert.equal(enriched.interactions[0]?.materialized, false);
+    assert.equal(enriched.dataBindings.length, 1);
+    assert.equal(enriched.dataBindings[0]?.externalOnly, true);
+    assert.equal(JSON.stringify(enriched).includes('"value"'), false);
+    assert.equal(validation.ready, false);
+    assert.equal(validation.blockers.some((issue) => issue.message.includes("metadata-only")), true);
+    assert.equal(validation.blockers.some((issue) => issue.message.includes("not materialized")), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });

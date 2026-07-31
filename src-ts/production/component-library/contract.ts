@@ -12,7 +12,7 @@ export type ComponentLibraryFileRole =
   | "evidence";
 
 export interface ComponentLibraryFileProvenance {
-  readonly kind: "component-plan" | "primitive-dom" | "visual-target" | "source-style" | "reviewed-file" | "generated-metadata";
+  readonly kind: "component-plan" | "primitive-dom" | "visual-target" | "source-style" | "reviewed-file" | "generated-metadata" | "state-responsibility" | "data-surface-manifest";
   readonly reference: string;
 }
 
@@ -23,6 +23,30 @@ export interface ComponentLibraryBuildFile {
   readonly contentHash: string;
   readonly publish: boolean;
   readonly reviewed: boolean;
+  readonly provenance: readonly ComponentLibraryFileProvenance[];
+}
+
+export interface ComponentLibraryInteractionBinding {
+  readonly id: string;
+  readonly sourceNodeId?: string;
+  readonly event: string;
+  readonly expression: string;
+  readonly target: string;
+  readonly reviewed: boolean;
+  readonly materialized: boolean;
+  readonly provenance: readonly ComponentLibraryFileProvenance[];
+}
+
+export interface ComponentLibraryDataBinding {
+  readonly id: string;
+  readonly ownerId: string;
+  readonly sourceKind: "reviewed-api-fixture" | "module-static-binding" | "component-prop" | "runtime-binding" | "state-initial";
+  readonly targetBinding: string;
+  readonly fields: readonly string[];
+  readonly shape: { readonly kind: string; readonly itemKind: string; readonly cardinality: number | null };
+  readonly reviewed: boolean;
+  readonly materialized: boolean;
+  readonly externalOnly: true;
   readonly provenance: readonly ComponentLibraryFileProvenance[];
 }
 
@@ -57,6 +81,8 @@ export interface ComponentLibraryBuildPlan {
     readonly packageName: string;
   };
   readonly files: readonly ComponentLibraryBuildFile[];
+  readonly interactions: readonly ComponentLibraryInteractionBinding[];
+  readonly dataBindings: readonly ComponentLibraryDataBinding[];
   readonly smoke: ComponentLibraryRuntimeSmokeContract;
   readonly quality?: ComponentLibraryQualityContract;
   readonly unresolved: readonly string[];
@@ -79,6 +105,8 @@ export interface ComponentLibraryBuildPlanInput {
   readonly sourceHash?: string;
   readonly library: ComponentLibraryBuildPlan["library"];
   readonly files: readonly ComponentLibraryBuildFileInput[];
+  readonly interactions?: readonly ComponentLibraryInteractionBinding[];
+  readonly dataBindings?: readonly ComponentLibraryDataBinding[];
   readonly smoke: ComponentLibraryRuntimeSmokeContract;
   readonly quality?: ComponentLibraryQualityContract;
   readonly unresolved?: readonly string[];
@@ -140,9 +168,22 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
   if (!plan.smoke.globalName.trim()) add("smoke.globalName", "must not be empty");
   if (!plan.smoke.mountMethod.trim()) add("smoke.mountMethod", "must not be empty");
   if (!plan.smoke.hostSelector.trim()) add("smoke.hostSelector", "must not be empty");
+  for (const [index, binding] of plan.interactions.entries()) {
+    if (!binding.id.trim() || !binding.event.trim() || !binding.expression.trim() || !binding.target.trim()) add(`interactions[${index}]`, "id, event, expression, and target are required");
+    if (!binding.materialized) block(`interactions[${index}]`, "interaction binding is metadata-only and requires a reviewed executor");
+    if (!binding.reviewed) block(`interactions[${index}]`, "interaction binding is not reviewed");
+    if (binding.provenance.length === 0) add(`interactions[${index}].provenance`, "must contain evidence");
+  }
+  for (const [index, binding] of plan.dataBindings.entries()) {
+    if (!binding.id.trim() || !binding.ownerId.trim() || !binding.targetBinding.trim()) add(`dataBindings[${index}]`, "id, ownerId, and targetBinding are required");
+    if (!binding.externalOnly) add(`dataBindings[${index}].externalOnly`, "must remain true");
+    if (!binding.materialized) block(`dataBindings[${index}]`, "data binding is not materialized by the current runtime");
+    if (!binding.reviewed) block(`dataBindings[${index}]`, "data binding is not reviewed");
+    if (binding.provenance.length === 0) add(`dataBindings[${index}].provenance`, "must contain evidence");
+  }
   for (const unresolved of plan.unresolved) block("unresolved", unresolved);
   if (plan.reviewRequired && plan.unresolved.length === 0 && !plan.files.some((file) => !file.reviewed)) block("reviewRequired", "plan declares reviewRequired without an unresolved or unreviewed source");
-  const computedReviewRequired = plan.unresolved.length > 0 || plan.files.some((file) => !file.reviewed) || blockers.length > 0;
+  const computedReviewRequired = plan.unresolved.length > 0 || plan.files.some((file) => !file.reviewed) || plan.interactions.some((binding) => !binding.reviewed || !binding.materialized) || plan.dataBindings.some((binding) => !binding.reviewed || !binding.materialized) || blockers.length > 0;
   if (plan.reviewRequired !== computedReviewRequired) add("reviewRequired", `must equal derived review state ${computedReviewRequired}`);
   return { valid: issues.length === 0, ready: issues.length === 0 && blockers.length === 0 && !plan.reviewRequired, issues, blockers };
 }

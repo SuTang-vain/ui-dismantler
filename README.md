@@ -143,7 +143,17 @@ node dist-ts/cli.js primitive-dom-build-plan \
   --out /tmp/primitive-dom.build-plan.json
 ```
 
-`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。`visual-target-build-plan` 会消费旧 `VisualTargetPlan` 和 scoped source styles，但由于 Visual Target 本身是 review-only、`generatedCode: false`，生成的 Build Plan 仍然保持阻断状态。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。`visual-target-build-plan` 会消费旧 `VisualTargetPlan` 和 scoped source styles，但由于 Visual Target 本身是 review-only、`generatedCode: false`，生成的 Build Plan 仍然保持阻断状态。后续可以用 `component-build-enrich` 追加 reviewed State Responsibility 与 Data Surface 证据：
+
+```bash
+node dist-ts/cli.js component-build-enrich \
+  /tmp/component-library.build-plan.json \
+  --state /tmp/sfc-state.json \
+  --data-surface /tmp/data-surface.manifest.json \
+  --out /tmp/component-library.reviewed-build-plan.json
+```
+
+当前交互绑定和数据绑定只进入审查合同，不会执行未审查表达式，也不会将业务数据值写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 

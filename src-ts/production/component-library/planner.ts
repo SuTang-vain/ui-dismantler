@@ -41,6 +41,8 @@ export async function createComponentLibraryBuildPlan(input: ComponentLibraryBui
     files: files.map(({ path, role, contentHash, publish, reviewed, provenance }) => ({ path, role, contentHash, publish, reviewed, provenance })),
     smoke: input.smoke,
     quality: input.quality ?? null,
+    interactions: input.interactions ?? [],
+    dataBindings: input.dataBindings ?? [],
     unresolved,
   });
   const plan: ComponentLibraryBuildPlan = {
@@ -53,10 +55,12 @@ export async function createComponentLibraryBuildPlan(input: ComponentLibraryBui
     },
     library: input.library,
     files,
+    interactions: input.interactions ?? [],
+    dataBindings: input.dataBindings ?? [],
     smoke: input.smoke,
     ...(input.quality ? { quality: input.quality } : {}),
     unresolved,
-    reviewRequired: unresolved.length > 0 || files.some((file) => !file.reviewed),
+    reviewRequired: unresolved.length > 0 || files.some((file) => !file.reviewed) || (input.interactions ?? []).some((binding) => !binding.reviewed || !binding.materialized) || (input.dataBindings ?? []).some((binding) => !binding.reviewed || !binding.materialized),
   };
   assertComponentLibraryBuildPlan(plan);
   return plan;
