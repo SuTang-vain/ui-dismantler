@@ -1,6 +1,9 @@
 import { sha256, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./contract.js";
 import { createComponentLibraryBuildPlan } from "./planner.js";
 import type { ComponentPlanningReport } from "../../planning/components.js";
+import type { VisualTargetPlan } from "../../planning/visual-target-plan.js";
+import { materializeOwnerSourceStyles } from "../../planning/scoped-style-materializer.js";
+import { compilePrimitiveDom } from "../../planning/primitive-dom-compiler.js";
 import type { PrimitiveDomCompilationGraph } from "../../skills/primitive-dom.js";
 import type { PrimitiveDomNode } from "../../planning/primitive-dom-compiler.js";
 
@@ -8,6 +11,11 @@ export interface ComponentLibraryProjectionOptions {
   readonly sourceRoot: string;
   readonly libraryName: string;
   readonly packageName: string;
+}
+
+export interface PrimitiveDomProjectionOptions extends ComponentLibraryProjectionOptions {
+  readonly additionalStyleCss?: string;
+  readonly additionalReviewReasons?: readonly string[];
 }
 
 function packageSlug(value: string): string {
@@ -100,7 +108,7 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
 `;
 }
 
-function primitiveStyles(graph: PrimitiveDomCompilationGraph): string {
+function primitiveStyles(graph: PrimitiveDomCompilationGraph, additionalStyleCss = ""): string {
   const rules = graph.components.flatMap((component) => component.compilation.styleRules).map((rule) => {
     const declarations = Object.entries(rule.declarations).map(([name, value]) => `${name}:${value}`).join(";");
     return `${rule.selector}{${declarations}}${rule.media ? `@media ${rule.media}{${rule.selector}{${declarations}}}` : ""}`;
@@ -109,6 +117,7 @@ function primitiveStyles(graph: PrimitiveDomCompilationGraph): string {
 .sg-component-library{box-sizing:border-box;color:var(--sg-ink);background:var(--sg-paper);font-family:Arial,sans-serif;min-width:0}
 .sg-component-library *{box-sizing:border-box}
 ${rules.join("\n")}
+${additionalStyleCss}
 @media (max-width:500px){.sg-component-library{max-width:100%;overflow-x:auto}}
 @media (max-width:320px){.sg-component-library{font-size:14px}}
 `;
@@ -124,11 +133,11 @@ function primitiveReadme(name: string, namespace: string): string {
 
 export async function primitiveDomCompilationToBuildPlan(
   graph: PrimitiveDomCompilationGraph,
-  options: ComponentLibraryProjectionOptions,
+  options: PrimitiveDomProjectionOptions,
 ): Promise<ComponentLibraryBuildPlan> {
   const namespace = options.libraryName.replace(/[^A-Za-z0-9_$]/g, "") || "ComponentLibrary";
   const fileBase = packageSlug(namespace);
-  const unresolved = [...graph.reviewReasons];
+  const unresolved = [...graph.reviewReasons, ...(options.additionalReviewReasons ?? [])];
   for (const component of graph.components) {
     for (const node of component.compilation.nodes) {
       if (node.conditions.length || node.loops.length) unresolved.push(`${component.componentName}:${node.id} conditional or repeated region requires state/data materialization`);
@@ -143,7 +152,7 @@ export async function primitiveDomCompilationToBuildPlan(
     files: [
       { path: "package.json", role: "package-metadata", content: JSON.stringify({ name: options.packageName, version: "0.0.0", private: true, main: `src/${fileBase}.js`, style: `src/${fileBase}.css`, files: ["src", "README.md", "docs"] }, null, 2) + "\n", publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: `src/${fileBase}.js`, role: "runtime", content: primitiveRuntime(namespace, graph), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-dom-compilation-graph" }] },
-      { path: `src/${fileBase}.css`, role: "style", content: primitiveStyles(graph), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-style-rules" }] },
+      { path: `src/${fileBase}.css`, role: "style", content: primitiveStyles(graph, options.additionalStyleCss), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-style-rules" }] },
       { path: "README.md", role: "documentation", content: primitiveReadme(options.libraryName, namespace), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: "docs/设计规范.md", role: "documentation", content: "# 设计规范\n\n## 主题色\n\n组件使用 `--sg-*` 主题变量。\n", publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: "examples/template.html", role: "example", content: primitiveExample(namespace), publish: false, reviewed: true, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
@@ -152,6 +161,53 @@ export async function primitiveDomCompilationToBuildPlan(
     unresolved,
   };
   return await createComponentLibraryBuildPlan(input, options.sourceRoot);
+}
+
+export async function visualTargetPlanToBuildPlan(
+  plan: VisualTargetPlan,
+  options: ComponentLibraryProjectionOptions,
+): Promise<ComponentLibraryBuildPlan> {
+  const styleReports = plan.owners.map((owner) => materializeOwnerSourceStyles(owner));
+  const compilationComponents = plan.owners.map((owner) => {
+    const compilation = compilePrimitiveDom(owner.templateStructure, owner.id);
+    return {
+      componentId: owner.componentId,
+      componentName: owner.componentName,
+      componentFile: owner.sourceFile,
+      compilation,
+      reviewRequired: true,
+    };
+  });
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0",
+    kind: "primitive-dom-compilation-graph",
+    components: compilationComponents,
+    metrics: {
+      components: compilationComponents.length,
+      sourceNodes: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.sourceNodes, 0),
+      compiledNodes: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.compiledNodes, 0),
+      primitiveNodes: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.primitiveNodes, 0),
+      inlineStyleRules: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.inlineStyleRules, 0),
+      responsiveRules: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.responsiveRules, 0),
+      interactionBindings: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.interactionBindings, 0),
+      unsupportedPrimitiveNodes: compilationComponents.reduce((sum, item) => sum + item.compilation.metrics.unsupportedPrimitiveNodes, 0),
+    },
+    reviewReasons: [
+      "VisualTargetPlan is review-only and generatedCode is false",
+      ...plan.reviewReasons,
+      ...plan.owners.flatMap((owner) => owner.reviewReasons.map((reason) => `${owner.componentName}: ${reason}`)),
+      ...styleReports.flatMap((report) => report.reviewReasons),
+    ],
+    reviewRequired: true,
+  };
+  return await primitiveDomCompilationToBuildPlan(graph, {
+    ...options,
+    additionalStyleCss: styleReports.map((report) => report.css).filter(Boolean).join("\n"),
+    additionalReviewReasons: [
+      `visual target plan contains ${plan.boundaries.length} reviewed route boundary/boundaries`,
+      `visual target plan contains ${plan.owners.length} visual owner(s)`,
+    ],
+  });
 }
 
 export async function componentPlanningReportToBuildPlan(

@@ -9,12 +9,15 @@ import {
   materializeComponentLibrary,
   primitiveDomCompilationToBuildPlan,
   runComponentLibraryBuild,
+  visualTargetPlanToBuildPlan,
   runComponentLibraryRuntimeSmoke,
   validateComponentLibraryBuildPlan,
   type ComponentLibraryBuildPlanInput,
 } from "../production/component-library/index.js";
 import type { PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
 import type { ComponentPlanningReport } from "../planning/components.js";
+import type { VisualTargetPlan } from "../planning/visual-target-plan.js";
+import { analyzeSfcTemplateStructure } from "../planning/sfc-template-structure.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 const benchmarkRoot = resolve(root, "benchmark/lib");
@@ -186,4 +189,29 @@ test("Component Planning adapter preserves missing executable evidence as a revi
   assert.equal(validation.ready, false);
   assert.equal(validation.blockers.some((issue) => issue.message.includes("executable DOM topology")), true);
   assert.equal(validation.blockers.some((issue) => issue.message.includes("missing required runtime")), true);
+});
+
+
+test("Visual Target Plan adapter consumes scoped source style evidence and remains review-gated", async () => {
+  const templateStructure = analyzeSfcTemplateStructure(`<section class="panel"><h2>Reviewed visual owner</h2></section>`);
+  const plan = {
+    schemaVersion: "1.0",
+    kind: "visual-target-plan",
+    reviewRequired: true,
+    generatedCode: false,
+    source: { sfcGraphKind: "sfc-visual-responsibility-graph", routePlanKind: "spa-route-shell-plan", sourceRoot: "/tmp/source", graphComponents: 1, graphChartComponents: 0 },
+    selectorPolicy: { implementationSelectorsIndependent: true, acceptanceSelectorsPreserved: true, implementationAttribute: "data-visual-owner" },
+    boundaries: [{ id: "boundary:/reviewed", route: "/reviewed", scenarioIds: [], rootOwnerId: "owner:reviewed", acceptance: { visibleSelectors: [], visibleText: [], screenshotAnchors: [], screenshotRegions: [], styleTargets: [], viewports: ["desktop"] }, ownerIds: ["owner:reviewed"], resourceProfileProposal: { profile: "dom", confidence: 1, evidence: [], reviewRequired: true }, reviewRequired: true, reviewReasons: ["route state requires review"] }],
+    owners: [{ id: "owner:reviewed", componentId: "owner:reviewed", componentName: "ReviewedPanel", sourceFile: "src/ReviewedPanel.vue", kind: "component", implementationSelector: "[data-visual-owner=owner:reviewed]", acceptanceSelectors: [], childComponents: [], templateStructure, dataCardinality: { collections: [], unresolved: [] }, stateResponsibility: { state: [], handlers: [], unresolved: [] }, apiFixtures: [], interactions: { events: [], models: [], conditions: [], loops: [] }, lifecycle: [], responsiveMediaQueries: [], sourceStyleSheets: [{ index: 0, scoped: true, compiledCss: ".panel{color:var(--sg-ink)}", compileStatus: "compiled" }], runtimeDependencies: [], confidence: "high", reviewReasons: [] }],
+    unresolved: [],
+    metrics: { visualRoutes: 1, boundaries: 1, owners: 1, chartOwners: 0, responsiveOwners: 0, interactiveOwners: 0, apiFixtureOwners: 0, canvasProfileProposals: 0, domProfileProposals: 1, unresolvedRoutes: 0 },
+    measurementTemplate: { modelCalls: 0, generationMs: 0, reviewMs: null, generatedLines: null, manualEdits: null, manualEditedLines: null, repairIterations: null, semanticRuns: null, visualRuns: null },
+    reviewReasons: ["visual target plan is review-only"],
+  } as unknown as VisualTargetPlan;
+  const buildPlan = await visualTargetPlanToBuildPlan(plan, { sourceRoot: "/tmp/source", libraryName: "Reviewed Visual", packageName: "reviewed-visual" });
+  const validation = validateComponentLibraryBuildPlan(buildPlan);
+  assert.equal(buildPlan.reviewRequired, true);
+  assert.equal(validation.ready, false);
+  assert.equal(buildPlan.files.find((file) => file.role === "style")?.content.includes("data-visual-owner"), true);
+  assert.equal(validation.blockers.some((issue) => issue.message.includes("VisualTargetPlan is review-only")), true);
 });

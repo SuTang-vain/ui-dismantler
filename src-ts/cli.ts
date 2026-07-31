@@ -37,7 +37,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { PrimitiveDomCompilationGraph } from "./skills/primitive-dom.js";
 
@@ -79,6 +79,7 @@ function usage(): void {
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
   primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
   component-plan-build-plan <component-plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
+  visual-target-build-plan <visual-target.plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -138,6 +139,17 @@ async function main(argv: string[]): Promise<number> {
       await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(plan);
       console.log(`✗ Component Plan Build Plan requires review: ${resolve(out)}`);
+      for (const blocker of validation.blockers) console.log(`  - ${blocker.path}: ${blocker.message}`);
+      return 1;
+    }
+    if (command === "visual-target-build-plan") {
+      const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");
+      if (!planPath || !out || !sourceRoot || !libraryName || !packageName) throw new Error("visual-target-build-plan 需要 visual-target.plan、--source-root、--name、--package-name 和 --out");
+      const visualPlan = JSON.parse(await readFile(resolve(planPath), "utf8")) as VisualTargetPlan;
+      const plan = await visualTargetPlanToBuildPlan(visualPlan, { sourceRoot, libraryName, packageName });
+      await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      const validation = validateComponentLibraryBuildPlan(plan);
+      console.log(`✗ Visual Target Build Plan remains review-gated: ${resolve(out)}`);
       for (const blocker of validation.blockers) console.log(`  - ${blocker.path}: ${blocker.message}`);
       return 1;
     }

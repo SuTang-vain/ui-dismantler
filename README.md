@@ -143,7 +143,7 @@ node dist-ts/cli.js primitive-dom-build-plan \
   --out /tmp/primitive-dom.build-plan.json
 ```
 
-`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。`visual-target-build-plan` 会消费旧 `VisualTargetPlan` 和 scoped source styles，但由于 Visual Target 本身是 review-only、`generatedCode: false`，生成的 Build Plan 仍然保持阻断状态。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 
