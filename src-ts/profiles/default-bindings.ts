@@ -54,5 +54,12 @@ export function createDefaultReviewedBindingRegistry(skills: SkillRegistry): Rev
       artifactContract: "sfc-visual-responsibility-graph",
       outputPath: "components",
       reviewed: true,
+    })
+    .register({
+      consumerSkillId: "lifecycle-polling",
+      inputContract: "api-fixture-responsibility-graph",
+      inputPath: "api",
+      artifactContract: "api-fixture-responsibility-graph",
+      reviewed: true,
     });
 }

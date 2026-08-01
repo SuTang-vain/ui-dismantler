@@ -40,6 +40,8 @@ Failures throw `SkillExecutionError` with failed execution evidence. Existing CL
 - `spa-router`: delegates to `evaluateSpaRouterContract` and returns the existing `SpaRouterContractReport` unchanged.
 - `component-library-validation`: delegates to `validateLibrary` and returns the existing `ValidationReport` unchanged; package-boundary verification remains a separate reviewed check.
 - `primitive-dom`: delegates to `compilePrimitiveDom` for every reviewed component owner and preserves source-node, style-rule, interaction-binding, unsupported-node, and review-reason provenance.
+- `lifecycle-polling`: extracts lifecycle-owned timers and links callback API calls and route transitions only when reviewed API and Router-to-SFC artifacts are supplied.
+- `data-cardinality`, `data-surface-manifest`, and `visual-evaluation`: remain independent reviewed Skills for cardinality evidence, Data Surface handoff, and quality evaluation.
 
 The existing `analyze`, `plan`, and `spa-router` CLI commands dispatch through the default registry. Serialization, exit codes, lifecycle reporting, and quality thresholds remain unchanged.
 
@@ -93,7 +95,7 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 `data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, component props, runtime/store bindings, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
 
-`lifecycle-polling` consumes the reviewed SFC ownership graph and reopens the owned source files only for structural lifecycle analysis. It records Composition API and Options API hooks, `setInterval`/`setTimeout`/`useIntervalFn` creation, static interval evidence, callback call ownership, terminal self-stop, and unmount/destroy cleanup. Intervals without a lifecycle owner, stable handle/control, static interval, resolved callback, or cleanup remain review-required. It does not execute timers, fabricate API responses, or generate route transitions.
+`lifecycle-polling` consumes the reviewed SFC ownership graph and reopens the owned source files only for structural lifecycle analysis. It records Composition API and Options API hooks, `setInterval`/`setTimeout`/`useIntervalFn` creation, static interval evidence, callback call ownership, terminal self-stop, and unmount/destroy cleanup. Intervals without a lifecycle owner, stable handle/control, static interval, resolved callback, or cleanup remain review-required. When optional reviewed `api-fixture-responsibility-graph` and `router-sfc-responsibility-graph` artifacts are supplied, it links callback calls to component-owned API responsibilities and `router.push`/`router.replace` targets to reviewed visual routes. Missing, ambiguous, or unreviewed matches remain review-blocked; the Skill never executes timers or route transitions, fabricates API responses, or generates fixtures.
 
 `visual-evaluation` is a compatibility-preserving evaluation Skill over the existing formal `QualityGateReport`. It always enables visual evaluation and forwards only reviewed viewport and browser execution settings; it does not expose threshold overrides. The raw Quality Gate output remains unchanged, while execution evidence and a sidecar evaluation delta record failed gates, computed-style/pixel results, runtime/stability failures, and browser workload. Component production may still invoke the same Quality Gate directly; the Skill exists for Profile composition and auditability, not to duplicate the evaluator.
 
@@ -129,7 +131,7 @@ If `--cardinality` is omitted, the command executes the registered `data-cardina
 2. Add execution evidence through the separate evidence API.
 3. Use Task Profiles to review capability composition.
 4. Expand reviewed artifact bindings and responsibility projections without replacing historical graphs.
-5. Keep Data Surface, lifecycle/polling, and visual evaluation registered as orthogonal Skills while preserving their historical raw outputs.
+5. Keep Data Surface, lifecycle/polling, and visual evaluation registered as orthogonal Skills while preserving their historical raw outputs; optional cross-Skill links must remain artifact-bound and fail closed.
 6. Continue moving shared source/AST helpers under Core one family at a time; the JavaScript/TypeScript parser is the first completed AST extraction.
 7. Introduce framework Adapters only where structural evidence proves ownership.
 

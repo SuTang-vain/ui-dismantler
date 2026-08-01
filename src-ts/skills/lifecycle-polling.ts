@@ -2,13 +2,18 @@ import type { ResponsibilityGraphDelta, ResponsibilityNode } from "../core/respo
 import { defineSkill, type DismantlingSkill } from "../core/skills/contract.js";
 import {
   analyzeLifecyclePollingResponsibilities,
+  linkLifecyclePollingResponsibilities,
   type LifecyclePollingResponsibilityGraph,
 } from "../planning/lifecycle-polling-responsibility.js";
+import type { ApiFixtureResponsibilityGraph } from "../planning/api-fixture-responsibility.js";
+import type { RouterSfcResponsibilityGraph } from "../planning/router-sfc-responsibility.js";
 import type { SfcVisualResponsibilityGraph } from "../planning/sfc-visual-responsibility.js";
 import type { JsonValue } from "../types.js";
 
 export interface LifecyclePollingSkillInput {
   readonly graph: SfcVisualResponsibilityGraph;
+  readonly api?: ApiFixtureResponsibilityGraph;
+  readonly router?: RouterSfcResponsibilityGraph;
 }
 
 export type LifecyclePollingAnalyzer = (graph: SfcVisualResponsibilityGraph) => LifecyclePollingResponsibilityGraph;
@@ -33,6 +38,8 @@ export function projectLifecyclePollingDelta(graph: LifecyclePollingResponsibili
       startHooks: [...timer.startHooks],
       cleanupHooks: [...timer.cleanupHooks],
       terminalStopProven: timer.terminalStopProven,
+      apiResponsibilities: timer.apiResponsibilities.map((link) => ({ id: link.responsibilityId, method: link.method, path: link.path, confidence: link.confidence })),
+      routeTransitions: timer.routeTransitions.map((transition) => ({ method: transition.method, targetPattern: transition.targetPattern, targetName: transition.targetName, resolution: transition.resolution, matchedRoutePath: transition.matchedRoutePath ?? null })),
     } satisfies Record<string, JsonValue>,
     evidence: [{ source: component.componentFile, detail: `${timer.kind} ${timer.callback} interval=${timer.intervalMs ?? "dynamic"}`, confidence: timer.confidence }],
     confidence: timer.confidence,
@@ -69,7 +76,7 @@ export function createLifecyclePollingSkill(analyzer: LifecyclePollingAnalyzer =
       summary: "Extract lifecycle-owned timers, polling callbacks, terminal stops, and cleanup responsibilities from reviewed Vue SFC ownership.",
       stages: ["analyze"],
       consumes: ["sfc-visual-responsibility-graph"],
-      optionalConsumes: [],
+      optionalConsumes: ["api-fixture-responsibility-graph", "router-sfc-responsibility-graph"],
       produces: ["lifecycle-polling-responsibility-graph"],
       requires: ["source-structure", "component-ownership", "state-responsibility"],
       optionalDependencies: ["api-responsibility", "spa-router"],
@@ -77,7 +84,8 @@ export function createLifecyclePollingSkill(analyzer: LifecyclePollingAnalyzer =
       sideEffects: ["filesystem"],
     },
     async execute(input) {
-      return analyzer(input.graph);
+      const graph = analyzer(input.graph);
+      return linkLifecyclePollingResponsibilities(graph, { ...(input.api ? { api: input.api } : {}), ...(input.router ? { router: input.router } : {}) });
     },
     projectResponsibilityGraph: projectLifecyclePollingDelta,
   });

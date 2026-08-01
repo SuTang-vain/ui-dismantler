@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { ApiFixtureResponsibilityGraph } from "./api-fixture-responsibility.js";
+import type { RouterSfcResponsibilityGraph, RouterSfcRouteBinding } from "./router-sfc-responsibility.js";
 import type { SfcVisualResponsibilityGraph } from "./sfc-visual-responsibility.js";
 import { parseJavaScriptOrTypeScriptErased } from "../core/ast/typescript-erasure.js";
 
@@ -12,6 +14,33 @@ export interface LifecycleHookResponsibility {
   readonly callback: string;
   readonly sourceLine: number;
   readonly reachableFunctions: readonly string[];
+}
+
+export interface LifecycleCallbackCallResponsibility {
+  readonly callee: string;
+  readonly arguments: readonly string[];
+  readonly sourceLine: number;
+}
+
+export interface LifecycleRouteTransitionResponsibility {
+  readonly method: "push" | "replace";
+  readonly expression: string;
+  readonly targetPattern: string | null;
+  readonly targetName: string | null;
+  readonly sourceLine: number;
+  readonly resolution: "unreviewed" | "resolved" | "unresolved" | "ambiguous";
+  readonly matchedRoutePath?: string;
+  readonly matchedSfcFile?: string;
+  readonly reviewReasons: readonly string[];
+}
+
+export interface LifecycleApiResponsibilityLink {
+  readonly responsibilityId: string;
+  readonly localName: string;
+  readonly method: string;
+  readonly path: string;
+  readonly confidence: "high" | "medium";
+  readonly reviewReasons: readonly string[];
 }
 
 export interface LifecycleCleanupResponsibility {
@@ -28,6 +57,9 @@ export interface LifecycleTimerResponsibility {
   readonly controls: readonly string[];
   readonly callback: string;
   readonly callbackCalls: readonly string[];
+  readonly callbackCallEvidence: readonly LifecycleCallbackCallResponsibility[];
+  readonly apiResponsibilities: readonly LifecycleApiResponsibilityLink[];
+  readonly routeTransitions: readonly LifecycleRouteTransitionResponsibility[];
   readonly intervalMs: number | null;
   readonly startHooks: readonly LifecycleHookName[];
   readonly cleanupHooks: readonly LifecycleHookName[];
@@ -71,6 +103,10 @@ export interface LifecyclePollingResponsibilityGraph {
     readonly timersWithTerminalStop: number;
     readonly unresolved: number;
     readonly reviewReasons: number;
+    readonly apiLinks: number;
+    readonly routeTransitions: number;
+    readonly resolvedRouteTransitions: number;
+    readonly unresolvedLinks: number;
   };
   readonly reviewRequired: boolean;
 }
@@ -344,17 +380,73 @@ function cleanupFromCall(call: any, hook: LifecycleHookName | undefined, source:
   return { operation: base as "pause" | "stop" | "dispose", target, ...(hook ? { hook } : {}), sourceLine: lineAt(source, call.start ?? 0) };
 }
 
-function callbackCalls(callbackNode: any, functions: ReadonlyMap<string, any>): string[] {
+function callbackCallEvidence(callbackNode: any, functions: ReadonlyMap<string, any>, source: string): LifecycleCallbackCallResponsibility[] {
   if (!callbackNode) return [];
-  const calls: string[] = [];
+  const calls: LifecycleCallbackCallResponsibility[] = [];
+  const seen = new Set<string>();
   walkReachable(callbackNode, functions, (node) => {
     if (node.type !== "CallExpression") return;
-    const path = calleePath(node);
+    const path = calleePath(node)?.replace(/^this\./, "");
     const base = calleeBase(node);
     if (!path || ["setInterval", "setTimeout", "useIntervalFn", "clearInterval", "clearTimeout", "pause", "stop", "dispose"].includes(base ?? "")) return;
-    calls.push(path.replace(/^this\./, ""));
+    const item = { callee: path, arguments: (node.arguments ?? []).map((argument: any) => sourceSlice(source, argument)), sourceLine: lineAt(source, node.start ?? 0) };
+    const key = `${item.callee}|${item.sourceLine}|${item.arguments.join("|")}`;
+    if (!seen.has(key)) { seen.add(key); calls.push(item); }
   });
-  return unique(calls);
+  return calls.sort((left, right) => left.sourceLine - right.sourceLine || left.callee.localeCompare(right.callee));
+}
+
+function routeTargetPattern(node: any): { pattern: string | null; name: string | null } {
+  if (!node) return { pattern: null, name: null };
+  if (node.type === "Literal" && typeof node.value === "string") return { pattern: node.value, name: null };
+  if (node.type === "TemplateLiteral") {
+    let pattern = "";
+    for (let index = 0; index < (node.quasis?.length ?? 0); index += 1) {
+      pattern += node.quasis[index]?.value?.cooked ?? "";
+      if (index < (node.expressions?.length ?? 0)) pattern += ":dynamic";
+    }
+    return { pattern, name: null };
+  }
+  if (node.type === "BinaryExpression" && node.operator === "+") {
+    const left = routeTargetPattern(node.left).pattern ?? ":dynamic";
+    const right = routeTargetPattern(node.right).pattern ?? ":dynamic";
+    return { pattern: `${left}${right}`, name: null };
+  }
+  if (node.type === "ObjectExpression") {
+    let pattern: string | null = null, name: string | null = null;
+    for (const property of node.properties ?? []) {
+      const key = propertyName(property);
+      const value = property.value;
+      if (key === "path") pattern = routeTargetPattern(value).pattern;
+      if (key === "name" && value?.type === "Literal" && typeof value.value === "string") name = value.value;
+    }
+    return { pattern, name };
+  }
+  return { pattern: ":dynamic", name: null };
+}
+
+function callbackRouteTransitions(callbackNode: any, functions: ReadonlyMap<string, any>, source: string): LifecycleRouteTransitionResponsibility[] {
+  if (!callbackNode) return [];
+  const transitions: LifecycleRouteTransitionResponsibility[] = [];
+  walkReachable(callbackNode, functions, (node) => {
+    if (node.type !== "CallExpression") return;
+    const path = calleePath(node)?.replace(/^this\./, "");
+    const parts = path?.split(".") ?? [];
+    const method = parts.at(-1);
+    const owner = parts.at(-2);
+    if (!(method === "push" || method === "replace") || !(owner === "router" || owner === "$router")) return;
+    const target = routeTargetPattern(node.arguments?.[0]);
+    transitions.push({
+      method,
+      expression: sourceSlice(source, node.arguments?.[0]),
+      targetPattern: target.pattern,
+      targetName: target.name,
+      sourceLine: lineAt(source, node.start ?? 0),
+      resolution: "unreviewed",
+      reviewReasons: ["route transition requires reviewed Router-to-SFC ownership"],
+    });
+  });
+  return transitions.sort((left, right) => left.sourceLine - right.sourceLine);
 }
 
 function analyzeScript(component: SfcVisualResponsibilityGraph["components"][number], source: string): ComponentLifecyclePollingResponsibility {
@@ -420,6 +512,8 @@ function analyzeScript(component: SfcVisualResponsibilityGraph["components"][num
           if (cleanup && targets.includes(cleanup.target)) terminalOperations.push(cleanup);
         });
       }
+      const callEvidence = callbackCallEvidence(timer.callbackNode, functions, analysisSource);
+      const routeTransitions = callbackRouteTransitions(timer.callbackNode, functions, analysisSource);
       const reviewReasons: string[] = [];
       if (!timer.callbackNode) reviewReasons.push("timer callback ownership is unresolved");
       if (timer.intervalMs === null) reviewReasons.push("timer interval requires reviewed static evidence");
@@ -427,13 +521,17 @@ function analyzeScript(component: SfcVisualResponsibilityGraph["components"][num
       if (timer.startHooks.size === 0) reviewReasons.push("timer creation is not owned by a reviewed lifecycle hook");
       if (["interval", "vueuse-interval"].includes(timer.kind) && cleanupOperations.length === 0) reviewReasons.push("polling timer has no lifecycle cleanup responsibility");
       if (targets.length === 0 && ["interval", "vueuse-interval"].includes(timer.kind)) reviewReasons.push("polling timer handle/control ownership is unresolved");
+      reviewReasons.push(...routeTransitions.flatMap((transition) => transition.reviewReasons));
       return {
         id: `timer:${component.id}:${timer.kind}:${timer.sourceLine}`,
         kind: timer.kind,
         ...(timer.handle ? { handle: timer.handle } : {}),
         controls: unique(timer.controls),
         callback: timer.callback,
-        callbackCalls: callbackCalls(timer.callbackNode, functions),
+        callbackCalls: unique(callEvidence.map((call) => call.callee)),
+        callbackCallEvidence: callEvidence,
+        apiResponsibilities: [],
+        routeTransitions,
         intervalMs: timer.intervalMs,
         startHooks: [...timer.startHooks].sort(),
         cleanupHooks: unique(cleanupOperations.flatMap((cleanup) => cleanup.hook ? [cleanup.hook] : [])) as LifecycleHookName[],
@@ -480,14 +578,69 @@ function analyzeScript(component: SfcVisualResponsibilityGraph["components"][num
   }
 }
 
-export function analyzeLifecyclePollingResponsibilities(graph: SfcVisualResponsibilityGraph): LifecyclePollingResponsibilityGraph {
-  const components = graph.components.map((component): ComponentLifecyclePollingResponsibility => {
-    const file = resolve(graph.sourceRoot, component.file);
-    if (!existsSync(file)) {
-      return { componentId: component.id, componentName: component.componentName, componentFile: component.file, parsed: false, parseMode: "failed", hooks: [], timers: [], unresolved: ["component source file is unavailable"], reviewReasons: [], reviewRequired: true };
-    }
-    return analyzeScript(component, extractScript(readFileSync(file, "utf8")));
+
+function normalizeRoutePath(value: string): string {
+  const path = value.split(/[?#]/)[0].replace(/\/+/g, "/");
+  if (!path) return "/";
+  const rooted = path.startsWith("/") ? path : `/${path}`;
+  return rooted.length > 1 ? rooted.replace(/\/$/, "") : rooted;
+}
+
+function routePatternMatches(targetPattern: string, routePath: string): boolean {
+  const target = normalizeRoutePath(targetPattern).split("/").filter(Boolean);
+  const route = normalizeRoutePath(routePath).split("/").filter(Boolean);
+  if (target.length !== route.length) return false;
+  return target.every((segment, index) => {
+    const routeSegment = route[index] ?? "";
+    if (segment === ":dynamic") return routeSegment.startsWith(":") || routeSegment.includes("*");
+    return routeSegment.startsWith(":") || routeSegment.includes("*") || segment === routeSegment;
   });
+}
+
+function eligibleRoute(route: RouterSfcRouteBinding): boolean {
+  return route.resolution !== "unresolved" && route.visualOwnerProven && route.reviewReasons.length === 0;
+}
+
+function resolveRouteTransition(transition: LifecycleRouteTransitionResponsibility, router: RouterSfcResponsibilityGraph): LifecycleRouteTransitionResponsibility {
+  const candidates = router.routes.filter((route) => {
+    if (!eligibleRoute(route)) return false;
+    if (transition.targetName) return route.name === transition.targetName;
+    return transition.targetPattern ? routePatternMatches(transition.targetPattern, route.path) : false;
+  });
+  if (candidates.length === 1) {
+    const route = candidates[0];
+    return { ...transition, resolution: "resolved", matchedRoutePath: route.path, ...(route.sfcFile ? { matchedSfcFile: route.sfcFile } : {}), reviewReasons: [] };
+  }
+  if (candidates.length > 1) return { ...transition, resolution: "ambiguous", reviewReasons: [`route transition matches multiple reviewed routes: ${candidates.map((route) => route.path).join(", ")}`] };
+  return { ...transition, resolution: "unresolved", reviewReasons: [`route transition has no reviewed Router-to-SFC match: ${transition.targetName ?? transition.targetPattern ?? transition.expression}`] };
+}
+
+function linkTimerApiResponsibilities(
+  componentId: string,
+  timer: LifecycleTimerResponsibility,
+  api: ApiFixtureResponsibilityGraph,
+): { links: LifecycleApiResponsibilityLink[]; reviewReasons: string[] } {
+  const links: LifecycleApiResponsibilityLink[] = [];
+  const reviewReasons: string[] = [];
+  const responsibilities = api.responsibilities.filter((responsibility) => responsibility.componentId === componentId);
+  for (const call of timer.callbackCallEvidence) {
+    const base = call.callee.split(".").pop() ?? call.callee;
+    const candidates = responsibilities.filter((responsibility) => responsibility.apiCall.localName === base || responsibility.apiCall.exportedName === base);
+    if (candidates.length === 1) {
+      const responsibility = candidates[0];
+      const reasons = [...responsibility.reviewReasons];
+      links.push({ responsibilityId: responsibility.id, localName: responsibility.apiCall.localName, method: responsibility.apiCall.method, path: responsibility.apiCall.path, confidence: reasons.length === 0 ? "high" : "medium", reviewReasons: reasons });
+      reviewReasons.push(...reasons.map((reason) => `API responsibility ${responsibility.id}: ${reason}`));
+    } else if (candidates.length > 1) {
+      const reason = `callback call ${call.callee} matches multiple API responsibilities: ${candidates.map((candidate) => candidate.id).join(", ")}`;
+      reviewReasons.push(reason);
+      for (const responsibility of candidates) links.push({ responsibilityId: responsibility.id, localName: responsibility.apiCall.localName, method: responsibility.apiCall.method, path: responsibility.apiCall.path, confidence: "medium", reviewReasons: [reason] });
+    }
+  }
+  return { links, reviewReasons };
+}
+
+function lifecycleGraphFromComponents(sourceRoot: string, components: readonly ComponentLifecyclePollingResponsibility[]): LifecyclePollingResponsibilityGraph {
   const unresolved = components.flatMap((component) => component.unresolved.map((reason) => {
     const delimiter = reason.indexOf(": ");
     const timerId = reason.startsWith("timer:") && delimiter > 0 ? reason.slice(0, delimiter) : undefined;
@@ -498,7 +651,7 @@ export function analyzeLifecyclePollingResponsibilities(graph: SfcVisualResponsi
   return {
     schemaVersion: "1.0",
     kind: "lifecycle-polling-responsibility-graph",
-    sourceRoot: graph.sourceRoot,
+    sourceRoot,
     components,
     unresolved,
     reviewReasons,
@@ -514,7 +667,42 @@ export function analyzeLifecyclePollingResponsibilities(graph: SfcVisualResponsi
       timersWithTerminalStop: timers.filter((timer) => timer.terminalStopProven).length,
       unresolved: unresolved.length,
       reviewReasons: reviewReasons.length,
+      apiLinks: timers.reduce((sum, timer) => sum + timer.apiResponsibilities.length, 0),
+      routeTransitions: timers.reduce((sum, timer) => sum + timer.routeTransitions.length, 0),
+      resolvedRouteTransitions: timers.reduce((sum, timer) => sum + timer.routeTransitions.filter((transition) => transition.resolution === "resolved").length, 0),
+      unresolvedLinks: timers.reduce((sum, timer) => sum + timer.routeTransitions.filter((transition) => transition.resolution !== "resolved").length + timer.apiResponsibilities.filter((link) => link.reviewReasons.length > 0).length, 0),
     },
     reviewRequired: components.some((component) => component.reviewRequired) || unresolved.length > 0 || reviewReasons.length > 0,
   };
+}
+
+export function linkLifecyclePollingResponsibilities(
+  graph: LifecyclePollingResponsibilityGraph,
+  options: { readonly api?: ApiFixtureResponsibilityGraph; readonly router?: RouterSfcResponsibilityGraph } = {},
+): LifecyclePollingResponsibilityGraph {
+  if (!options.api && !options.router) return graph;
+  const components = graph.components.map((component): ComponentLifecyclePollingResponsibility => {
+    const timers = component.timers.map((timer): LifecycleTimerResponsibility => {
+      const routeTransitions = options.router ? timer.routeTransitions.map((transition) => resolveRouteTransition(transition, options.router!)) : timer.routeTransitions;
+      const api = options.api ? linkTimerApiResponsibilities(component.componentId, timer, options.api) : { links: timer.apiResponsibilities, reviewReasons: [] };
+      const baseReasons = timer.reviewReasons.filter((reason) => reason !== "route transition requires reviewed Router-to-SFC ownership" && !reason.startsWith("API responsibility ") && !reason.startsWith("callback call "));
+      const reviewReasons = unique([...baseReasons, ...routeTransitions.flatMap((transition) => transition.reviewReasons), ...api.reviewReasons]);
+      return { ...timer, apiResponsibilities: api.links, routeTransitions, confidence: reviewReasons.length === 0 && component.parseMode === "javascript" ? "high" : "medium", reviewReasons };
+    });
+    const nonTimerUnresolved = component.unresolved.filter((reason) => !reason.startsWith("timer:"));
+    const unresolved = [...nonTimerUnresolved, ...timers.flatMap((timer) => timer.reviewReasons.map((reason) => `${timer.id}: ${reason}`))];
+    return { ...component, timers, unresolved, reviewRequired: unresolved.length > 0 || component.reviewReasons.length > 0 };
+  });
+  return lifecycleGraphFromComponents(graph.sourceRoot, components);
+}
+
+export function analyzeLifecyclePollingResponsibilities(graph: SfcVisualResponsibilityGraph): LifecyclePollingResponsibilityGraph {
+  const components = graph.components.map((component): ComponentLifecyclePollingResponsibility => {
+    const file = resolve(graph.sourceRoot, component.file);
+    if (!existsSync(file)) {
+      return { componentId: component.id, componentName: component.componentName, componentFile: component.file, parsed: false, parseMode: "failed", hooks: [], timers: [], unresolved: ["component source file is unavailable"], reviewReasons: [], reviewRequired: true };
+    }
+    return analyzeScript(component, extractScript(readFileSync(file, "utf8")));
+  });
+  return lifecycleGraphFromComponents(graph.sourceRoot, components);
 }

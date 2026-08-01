@@ -453,6 +453,19 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   });
   assert.equal(pollingPlan.ready, true);
   assert.equal(pollingPlan.steps.find((step) => step.skillId === "lifecycle-polling")?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph")?.source, "artifact");
+  const dataPollingPlan = new ProfileExecutionPlanner(profiles, createDefaultReviewedBindingRegistry(skills)).plan("data-backed-spa", {
+    enabledOptionalSkills: ["lifecycle-polling"],
+    inputProviders: [
+      { contract: "html-path", providerId: "reviewed-html", reviewed: true },
+      { contract: "sfc-script-source", providerId: "reviewed-script", reviewed: true },
+      { contract: "spa-router-contract-config", providerId: "reviewed-router", reviewed: true },
+      { contract: "project-source-root", providerId: "reviewed-source", reviewed: true },
+    ],
+  });
+  assert.equal(dataPollingPlan.ready, true);
+  const dataPolling = dataPollingPlan.steps.find((step) => step.skillId === "lifecycle-polling");
+  assert.equal(dataPolling?.inputs.find((input) => input.contract === "api-fixture-responsibility-graph")?.source, "artifact");
+  assert.equal(dataPolling?.inputs.find((input) => input.contract === "router-sfc-responsibility-graph")?.source, "missing");
   const dataBacked = profiles.resolve("data-backed-spa");
   assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility", "data-surface-manifest"]);
   assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);

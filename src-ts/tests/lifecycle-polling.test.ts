@@ -5,8 +5,11 @@ import { join } from "node:path";
 import test from "node:test";
 import {
   analyzeLifecyclePollingResponsibilities,
+  linkLifecyclePollingResponsibilities,
   type LifecyclePollingResponsibilityGraph,
 } from "../planning/lifecycle-polling-responsibility.js";
+import type { ApiFixtureResponsibilityGraph } from "../planning/api-fixture-responsibility.js";
+import type { RouterSfcResponsibilityGraph } from "../planning/router-sfc-responsibility.js";
 import type { SfcVisualResponsibilityGraph } from "../planning/sfc-visual-responsibility.js";
 import { createLifecyclePollingSkill, projectLifecyclePollingDelta } from "../skills/lifecycle-polling.js";
 
@@ -56,9 +59,11 @@ onUnmounted(() => clearInterval(timer))
   assert.equal(timer.terminalStopProven, true);
   assert.equal(timer.callbackCalls.includes("getStatus"), true);
   assert.equal(timer.callbackCalls.includes("router.push"), true);
-  assert.equal(timer.reviewReasons.length, 0);
+  assert.equal(timer.routeTransitions.length, 1);
+  assert.equal(timer.routeTransitions[0]?.resolution, "unreviewed");
+  assert.equal(timer.reviewReasons.includes("route transition requires reviewed Router-to-SFC ownership"), true);
   assert.equal(component.hooks.find((hook) => hook.hook === "mounted")?.reachableFunctions.includes("poll"), true);
-  assert.equal(graph.metrics.unresolved, 0);
+  assert.equal(graph.metrics.unresolved, 1);
   assert.equal(graph.metrics.reviewReasons, 1);
   assert.equal(component.reviewReasons.length, 1);
   assert.equal(graph.reviewRequired, true, "TypeScript erasure remains explicit review evidence");
@@ -72,6 +77,153 @@ onUnmounted(() => clearInterval(timer))
   const result = await skill.execute({ graph: graphFor(root, []) });
   assert.strictEqual(result, graph);
   assert.equal(skill.manifest.requires.includes("component-ownership"), true);
+});
+
+
+function reviewedApiGraph(sourceRoot: string): ApiFixtureResponsibilityGraph {
+  return {
+    schemaVersion: "1.0",
+    kind: "api-fixture-responsibility-graph",
+    reviewRequired: true,
+    sourceRoot,
+    responsibilities: [{
+      id: "api-fixture:progress:getStatus",
+      componentId: "component:progress",
+      componentName: "GenerationProgress",
+      componentFile: "Progress.vue",
+      apiCall: {
+        localName: "getStatus",
+        exportedName: "getStatus",
+        importSource: "./api",
+        moduleFile: "api.ts",
+        method: "GET",
+        path: "/tasks/:taskId/status",
+        transportPrefixes: [],
+        transportPathCandidates: [],
+        runtimeSelections: [],
+        proxyRoutes: [],
+      },
+      consumption: { targetBinding: "status", responsePath: "data" },
+      renderedFields: [],
+      filterValueMaps: {},
+      fixture: {
+        index: 0,
+        requestPath: "/tasks/:taskId/status",
+        reviewed: true,
+        bodyHash: "reviewed-status-fixture",
+        responseValue: { data: { status: "completed" } },
+        materializedValue: { status: "completed" },
+      },
+      confidence: "high",
+      reviewReasons: [],
+    }],
+    candidates: [],
+    responseFlows: [],
+    unresolved: [],
+    metrics: {
+      componentsScanned: 1,
+      importedApiCalls: 1,
+      apiCandidates: 1,
+      actualApiWrappers: 1,
+      frameworkComposables: 0,
+      localStateStoreHelpers: 0,
+      utilityFunctions: 0,
+      unresolvedLocalTransports: 0,
+      responseFlows: 0,
+      dynamicRouteFlows: 0,
+      matchedEndpoints: 1,
+      matchedFixtures: 1,
+      materializedBindings: 1,
+      renderedFields: 0,
+      transportPrefixesInferred: 0,
+      runtimeSelectionsInferred: 0,
+      proxyRoutesInferred: 0,
+      proxyTargetsInferred: 0,
+      proxyRewriteRulesInferred: 0,
+      proxyAstRoutesInferred: 0,
+      proxyFallbackRoutesInferred: 0,
+      proxyParseDiagnostics: 0,
+    },
+    reviewReasons: [],
+  };
+}
+
+function reviewedRouterGraph(sourceRoot: string): RouterSfcResponsibilityGraph {
+  return {
+    schemaVersion: "1.0",
+    kind: "router-to-sfc-responsibility-graph",
+    reviewRequired: true,
+    sourceRoot,
+    framework: { view: "vue", router: "vue-router", routerMajor: 4 },
+    routes: [{
+      path: "/review/:taskId",
+      recordPath: "/review/:taskId",
+      name: "review",
+      routeFile: "router.ts",
+      routeRecords: ["router.ts"],
+      parentPath: null,
+      layoutChain: [],
+      routeKind: "visual-leaf",
+      ownershipRoles: ["visual-leaf"],
+      parentOnly: false,
+      visualOwnerProven: true,
+      componentExpression: "Review",
+      resolution: "static-import",
+      importBinding: "Review",
+      sfcFile: "Review.vue",
+      dynamic: true,
+      confidence: "high",
+      evidence: [],
+      reviewReasons: [],
+    }],
+    unresolved: [],
+    metrics: {
+      filesScanned: 1,
+      routerFiles: 1,
+      routeBindings: 1,
+      resolvedRoutes: 1,
+      dynamicImports: 0,
+      unresolvedRoutes: 0,
+      routeGroups: 0,
+      redirectOnlyParents: 0,
+      layoutOwners: 0,
+      visualLeaves: 1,
+      evidenceCount: 0,
+      scanMs: 0,
+    },
+    reviewReasons: [],
+  };
+}
+
+test("lifecycle linker resolves reviewed API calls and dynamic route transitions", (context) => {
+  const root = mkdtempSync(join("/tmp", "ui-dismantler-lifecycle-linker-"));
+  context.after(() => rmSync(root, { recursive: true, force: true }));
+  writeFileSync(join(root, "Progress.vue"), `<script setup>
+function poll() {
+  const response = getStatus(taskId)
+  if (response.data.status === "completed") router.push("/review/" + taskId)
+}
+let timer
+onMounted(() => { timer = setInterval(poll, 2000) })
+onUnmounted(() => clearInterval(timer))
+</script>`, "utf8");
+  const analyzed = analyzeLifecyclePollingResponsibilities(graphFor(root, [{ id: "component:progress", file: "Progress.vue", name: "GenerationProgress" }]));
+  const linked = linkLifecyclePollingResponsibilities(analyzed, {
+    api: reviewedApiGraph(root),
+    router: reviewedRouterGraph(root),
+  });
+  const timer = linked.components[0]?.timers[0];
+  assert.equal(linked.metrics.apiLinks, 1);
+  assert.equal(linked.metrics.routeTransitions, 1);
+  assert.equal(linked.metrics.resolvedRouteTransitions, 1);
+  assert.equal(linked.metrics.unresolvedLinks, 0);
+  assert.equal(timer?.apiResponsibilities[0]?.path, "/tasks/:taskId/status");
+  assert.equal(timer?.apiResponsibilities[0]?.confidence, "high");
+  assert.equal(timer?.routeTransitions[0]?.resolution, "resolved");
+  assert.equal(timer?.routeTransitions[0]?.matchedRoutePath, "/review/:taskId");
+  assert.equal(timer?.routeTransitions[0]?.matchedSfcFile, "Review.vue");
+  assert.deepEqual(timer?.reviewReasons, []);
+  assert.equal(linked.reviewRequired, false);
 });
 
 test("lifecycle polling analysis supports Options API methods and fails closed without cleanup", (context) => {
