@@ -2,578 +2,228 @@
   <img src="docs/readme-hero.svg" alt="ui-dismantler：将 HTML、SFC 与 SPA 转换为经过验证的组件库" width="100%" />
 
   <p><a href="README.md">English</a> · <strong>简体中文</strong></p>
+
+  <p>
+    <img alt="Node.js 18 或更高版本" src="https://img.shields.io/badge/Node.js-%E2%89%A518-25D9E8?style=flat-square&labelColor=0D152A" />
+    <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-B99CFF?style=flat-square&labelColor=0D152A" />
+    <img alt="测试等级" src="https://img.shields.io/badge/quality-PR%20%C2%B7%20Gold%20%C2%B7%20Nightly-F3B562?style=flat-square&labelColor=0D152A" />
+  </p>
+
+  <strong>将 HTML、Vue SFC 和 SPA 转换为可复用、可审查、可验证的组件库产物。</strong>
 </div>
 
-# ui-dismantler
+`ui-dismantler` 是一套证据优先的前端分析与组件生产工具。它先分析结构、状态、交互、路由、API 和数据边界，再规划并生成组件，最后通过确定性的质量门禁验证结果。
 
-> 将静态 HTML、SFC 和 SPA 拆解为可复用、可审查、可验证的标准前端组件库。
+## 为什么使用 ui-dismantler？
 
-`ui-dismantler` 的目标不是复制页面截图，也不是为单个案例堆叠规则，而是建立一条可复现的组件生产链：
+<table>
+<tr>
+<td width="33%">
 
-```text
-原始页面 / 前端项目
-    → 结构、组件、状态、交互、路由与 API 责任分析
-    → 组件规划与标准组件候选生成
-    → Semantic / Strict / runtime / visual 质量验证
-    → 可复用组件库与数据接口合同
-```
+### 🧭 证据优先
 
-当前项目已经具备组件拆解、规划、候选生成和 Gold+ 验证能力；现阶段重点是稳定端到端组件库生产闭环，新的 Skill 只在出现可复现的通用缺口后增量加入。
+责任、依赖、阻断项和输出均保持显式、可追溯和可审计。
 
-## 项目边界
+</td>
+<td width="33%">
 
-### `ui-dismantler` 负责
+### 🧩 可组合
 
-- HTML、DOM、CSS、资源和响应式结构分析；
-- Vue SFC 组件、slot、状态、交互和视觉责任分析；
-- SPA 路由、认证守卫、代理和 API 消费边界分析；
-- 组件规划、组件候选生成和组件库质量验证；
-- 输出 Data Surface Manifest，描述组件需要的数据形状、字段、消费者和注入边界。
+Skill 提供单一能力，Task Profile 将它们组合成可审阅的工作流。
 
-### `ui-dismantler` 不负责
+</td>
+<td width="33%">
 
-- 业务实体标准化；
-- aliases、relations、stages、contents 等领域数据建模；
-- Data Pack 和数据适配器生成；
-- 将静态 HTML 中的业务记录直接复制到组件合同。
+### 🛡️ 可验证
 
-上述数据层能力由独立项目 `sg-data-pack` 负责。Data Surface Manifest 是两个项目之间的接口合同，不是业务数据包。详见 [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md)。
+通过静态、运行时、往返、路由、视觉和 Gold+ 门禁保护生成结果。
 
-## 架构
+</td>
+</tr>
+</table>
 
-```mermaid
-flowchart LR
-  A["HTML / SFC / SPA"] --> B["Skill Registry"]
-  B --> C["Task Profile"]
-  C --> D["Responsibility Graphs"]
-  D --> E["Component Planning / Generation"]
-  E --> F["Standard Component Library"]
-  F --> G["Semantic / Strict / Gold+ Evaluation"]
-  D --> H["Data Surface Manifest"]
-  H --> I["sg-data-pack"]
-```
+## 工作流程
 
-### Core
-
-Core 只负责稳定、通用的运行基础设施：
+<img src="docs/readme-pipeline.svg" alt="ui-dismantler 的分析、建模、规划、生产和验证流程" width="100%" />
 
 ```text
-src-ts/core/
-├── skills/          Skill 合同、注册、依赖解析和执行证据
-├── profiles/        Task Profile、执行计划和执行器
-├── artifacts/       Skill 输出、reviewed binding 和运行产物根目录
-├── ast/             共享 JavaScript/TypeScript line-preserving 解析边界
-└── responsibility/  统一责任图增量与冲突阻断
+HTML / SFC / SPA
+  → 分析结构与责任
+  → 建立证据并解析 Task Profile
+  → 规划和物化可复用组件
+  → 验证运行时、语义、视觉与稳定性
 ```
 
-### Skill
+## 安装
 
-每个 Skill 声明统一的 `SkillManifest`：
+<img src="docs/readme-install.svg" alt="ui-dismantler 推荐安装流程" width="760" />
 
-```text
-id
-version
-contractVersion
-kind
-summary
-stages
-consumes / optionalConsumes
-produces
-requires / optionalDependencies
-qualityGates
-sideEffects
+项目当前被标记为私有 npm 包，因此推荐从源码安装：
+
+```bash
+git clone https://github.com/SuTang-vain/ui-dismantler.git
+cd ui-dismantler
+
+npm install
+npm run build:ts
+node dist-ts/cli.js --help
 ```
 
-Skill 必须满足：
+环境要求：
 
-- 使用小写 kebab-case ID；
-- 显式声明输入、输出和依赖；
-- 原始算法输出保持不变；
-- execution evidence 与 raw output 分离；
-- unresolved 证据不能静默升级为已证明责任；
-- 案例名、组件名、函数名和可见文本不得成为泛化规则白名单。
+- Node.js 18 或更高版本；
+- npm；
+- 仅在使用旧 Python 兼容工具时需要 Python 3 和 `beautifulsoup4`。
 
-### Task Profile
+CI 环境推荐使用锁文件精确安装：
 
-Profile 将多个 Skill 组合为一种拆解任务：
-
-| Profile | 用途 | 主要 Skill |
-|---|---|---|
-| `source-page` | 静态页面结构与可选状态分析 | `source-structure`、可选 `state-responsibility` |
-| `spa-application` | SPA 路由、状态及可选认证/轮询生命周期分析 | `source-structure`、`state-responsibility`、`spa-router`、可选 `auth-guard` / `lifecycle-polling` |
-| `data-backed-spa` | 带 API 和组件数据接口的 SPA | component、proxy、API、cardinality、Data Surface |
-| `component-library` | 已生成组件库的规范、数据边界及可选多视口视觉验证 | `component-library-validation`、可选 `visual-evaluation` |
-| `primitive-dom` | 将 reviewed SFC 组件结构编译为可追溯 Primitive DOM 候选 | `component-ownership`、`primitive-dom` |
-
-Profile 只有在完整执行计划通过 reviewed input 检查后才会运行。
-
-### 组件库生产流水线
-
-当前组件库生产主链使用独立的 `ComponentLibraryBuildPlan`，将既有组件规划、生成文件、样式、交互和证据统一交给物化器，再进入 Runtime Smoke、静态验证和可选 Gold+：
-
-```text
-ComponentLibraryBuildPlan
-  → Materializer
-  → Runtime Smoke
-  → component-library-validation
-  → Roundtrip / Gold+
-  → ComponentLibraryBuildReport
+```bash
+npm ci
+npm run test:pr
 ```
 
-先从配置生成确定性 Build Plan：
+## 快速开始
+
+查看可用的 Skill 和 Profile：
+
+```bash
+node dist-ts/cli.js skill-list
+node dist-ts/cli.js profile-list
+```
+
+分析页面并生成组件规划：
+
+```bash
+node dist-ts/cli.js analyze ./page.html \
+  --out /tmp/ui-dismantler/manifest.json \
+  --minimal
+
+node dist-ts/cli.js plan ./page.html \
+  --out /tmp/ui-dismantler/component-plan.json \
+  --spec-dir /tmp/ui-dismantler/component-specs
+```
+
+验证已经生成的组件库：
+
+```bash
+node dist-ts/cli.js validate /absolute/path/to/component-library
+```
+
+执行 reviewed 组件库构建：
 
 ```bash
 node dist-ts/cli.js component-build-plan \
   /absolute/path/to/component-build.config.json \
   --out /tmp/component-library.build-plan.json
-```
 
-再执行物化、冒烟和组件库验证：
-
-```bash
 node dist-ts/cli.js component-build \
   /tmp/component-library.build-plan.json \
   --out-dir /tmp/generated-component-library \
   --report /tmp/component-library.build-report.json
 ```
 
-Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可以写入构建目录，但不能标记为 publishable。`Runtime Smoke` 在浏览器质量门之前检查模块加载、`mount()`、首屏节点、运行时错误、本地资源、外部 adapter readiness 和可选清理合同。
+运行 `node dist-ts/cli.js --help` 查看完整命令和参数。
 
-当 reviewed artifacts 已经准备好时，可以用一个配置直接运行完整生产链，而不再手工串联 plan、enrich 和 build：
+## 架构
 
-```json
-{
-  "schemaVersion": "1.0",
-  "sourceRoot": "./source",
-  "library": {
-    "name": "Reviewed Components",
-    "packageName": "reviewed-components"
-  },
-  "artifacts": {
-    "primitiveDom": "./artifacts/primitive-dom.graph.json",
-    "stateMap": "./artifacts/component-state.map.json",
-    "style": "./artifacts/reviewed-component-style.artifact.json",
-    "dataSurfaceArtifact": "./artifacts/reviewed-component-data-surface.artifact.json",
-    "runtimeOptions": "./artifacts/runtime-options.json"
-  },
-  "quality": {
-    "originalHtmlPath": "./original.html",
-    "visual": true,
-    "viewports": [
-      { "id": "desktop", "label": "Desktop", "width": 1024, "height": 768 },
-      { "id": "tablet", "label": "Tablet", "width": 768, "height": 1024 },
-      { "id": "mobile", "label": "Mobile", "width": 390, "height": 844 }
-    ],
-    "browserMode": "shared-browser",
-    "browserConcurrency": 2,
-    "browserResourceCache": "run-local",
-    "browserStability": "adaptive"
-  }
-}
+```mermaid
+flowchart LR
+  A["HTML / SFC / SPA"] --> B["Skills"]
+  B --> C["Task Profile"]
+  C --> D["Responsibility Graphs"]
+  D --> E["Component Plan / Build"]
+  E --> F["Verified Component Library"]
+  D --> G["Data Surface Manifest"]
+  G --> H["sg-data-pack"]
 ```
 
-SFC responsibility graph 中的 state 和 compiled styles 先生成 review-only candidate；候选中的每个 owner/entry 必须有人审查，不能由命令自动标记为 reviewed：
-
-```bash
-node dist-ts/cli.js component-state-candidate \
-  /absolute/path/to/sfc-visual.graph.json \
-  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
-  --out /tmp/component-state.map.json
-
-node dist-ts/cli.js component-style-candidate \
-  /absolute/path/to/sfc-visual.graph.json \
-  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
-  --out /tmp/reviewed-component-style.artifact.json
-
-node dist-ts/cli.js component-data-surface-candidate \
-  /absolute/path/to/data-surface.manifest.json \
-  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
-  --out /tmp/reviewed-component-data-surface.artifact.json
-```
-
-```bash
-node dist-ts/cli.js component-produce \
-  /absolute/path/to/component-production.config.json \
-  --out-dir /tmp/generated-component-library \
-  --plan /tmp/component-library.build-plan.json \
-  --report /tmp/component-library.build-report.json \
-  --result /tmp/component-library.production-result.json
-```
-
-`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。质量合同可以冻结视口与浏览器执行策略，但不能从生产配置降低现有 Strict/Gold+ 阈值。浏览器由可追踪的 `BrowserServer` 托管；graceful disconnect/process close 均有上限，超时后会记录 `graceful-fallback` 并执行受锁保护的进程终止，避免测试句柄长期残留。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
-
-该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
-
-```bash
-node dist-ts/cli.js primitive-dom-build-plan \
-  /absolute/path/to/primitive-dom.graph.json \
-  --source-root /absolute/path/to/source \
-  --name "Reviewed Components" \
-  --package-name reviewed-components \
-  --quality-html /absolute/path/to/original.html \
-  --quality-scenarios /absolute/path/to/scenarios.json \
-  --out /tmp/primitive-dom.build-plan.json
-```
-
-`component-plan-build-plan` 也可以生成一个 review-gated 计划；当 `ComponentPlanningReport` 没有可执行 DOM 拓扑或样式物化证据时，命令会明确阻断，而不是生成空壳组件。`visual-target-build-plan` 会消费旧 `VisualTargetPlan` 和 scoped source styles，但由于 Visual Target 本身是 review-only、`generatedCode: false`，生成的 Build Plan 仍然保持阻断状态。后续可以用 `component-build-enrich` 追加 reviewed State Responsibility 与 Data Surface 证据：
-
-```bash
-node dist-ts/cli.js component-build-enrich \
-  /tmp/component-library.build-plan.json \
-  --state /tmp/sfc-state.json \
-  --data-surface /tmp/data-surface.manifest.json \
-  --primitive-dom /tmp/primitive-dom.graph.json \
-  --runtime-options /tmp/component-runtime-options.json \
-  --out /tmp/component-library.reviewed-build-plan.json
-```
-
-单组件可以继续使用 `--state`。多组件 Build Plan 必须改用 `--state-map`，以 `componentId` 明确绑定每个 `SfcStateResponsibility`；同名 handler 和相同 state path 不会跨 owner 共享。未限定 owner 的 state evidence 在多组件计划中会保持阻断。
-
-```json
-{
-  "schemaVersion": "1.0",
-  "kind": "component-state-evidence-map",
-  "entries": [
-    {
-      "ownerId": "component:alpha",
-      "responsibility": {},
-      "reviewed": true,
-      "evidence": ["reviewed SFC state ownership"]
-    }
-  ],
-  "unresolved": [],
-  "reviewRequired": false
-}
-```
-
-Source style 通过独立 `reviewed-component-style-artifact` 交接。owner 样式会自动限定到生成组件的 `[data-component-id]` 边界，显式 global 样式保持全局；CSS 语法、Primitive graph hash、owner identity、evidence 和 review state 任一不成立都会阻断生产。这样完整 SFC CSS 不再依赖页面级手写字符串，也不会泄漏到其他生成组件。
-
-当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化。reviewed API Data Surface 不会把 endpoint、fixture 或业务值写进发布运行时，而是生成以 surface id 为 `adapterKey` 的外部 adapter contract；`sg-data-pack` 或调用方通过 `mount(..., { adapters })` / `--runtime-options` 提供经过规范化的数据。缺少 adapter、adapter 抛错、shape/cardinality/field 不匹配都会在 Runtime Smoke 中失败。静态业务 binding、未知 runtime binding 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-model` 也必须绑定到 reviewed initial state，运行时才会执行输入状态更新、依赖 DOM 重渲染和焦点恢复。`v-else`/`v-else-if`、`v-model` modifiers、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
-
-## 当前内置 Skill
-
-| Skill | 责任 |
+| 层级 | 责任 |
 |---|---|
-| `source-structure` | HTML 基础结构、主题、交互和资源事实 |
-| `state-responsibility` | SFC state、handler 和 state-write 责任 |
-| `spa-router` | SPA Semantic/Strict 路由合同与导航验证 |
-| `auth-guard` | storage、token、登录、路由守卫和认证责任 |
-| `lifecycle-polling` | Vue Composition/Options 生命周期、轮询 timer、callback、terminal stop 与 cleanup ownership |
-| `component-ownership` | SFC 组件、模板、样式和视觉 ownership |
-| `component-library-validation` | 已生成组件库的命名、数据分离、响应式、A11y、主题、依赖、文档和类名合同 |
-| `visual-evaluation` | 既有正式 Quality Gate 的多视口、computed style、pixel、runtime、resource、navigation 与 font 验证 |
-| `primitive-dom` | SFC 模板到 Primitive DOM、样式规则和交互绑定的 provenance-preserving 编译 |
-| `transport-proxy` | Vite/Webpack proxy、prefix、target 和 rewrite 证据 |
-| `api-responsibility` | API wrapper、endpoint、response consumer 和 fixture 边界 |
-| `data-cardinality` | 组件集合基数、slice 和重复区域证据 |
-| `data-surface-manifest` | 组件数据接口合同，不生成 Data Pack |
+| Core | Skill 合同、Profile、Artifact、执行证据和责任图 |
+| Skills | 源码、状态、组件、路由、API、生命周期、数据接口和视觉能力 |
+| Planning | 组件、SPA Shell、路由、视觉目标和构建规划 |
+| Production | reviewed 组件库物化和 Runtime Smoke |
+| Evaluation | Semantic、Strict、往返、视觉、网络和稳定性验证 |
 
-Skill Kernel 设计详见 [`docs/architecture/skill-kernel.md`](docs/architecture/skill-kernel.md)。
+### 项目边界
 
-## 安装与构建
+`ui-dismantler` 负责组件分析、规划、生产、验证和 **Data Surface Manifest** 合同，不负责业务实体标准化或 Data Pack 生成；相关数据层能力属于 `sg-data-pack`。
 
-```bash
-npm install
-npm run typecheck:ts
-npm run build:ts
-```
+完整边界参见 [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md)。
 
-项目仍保留 Python 兼容工具链；使用旧分析和往返脚本时安装：
+## CLI 导航
 
-```bash
-pip install --user beautifulsoup4
-```
+| 范围 | 主要命令 |
+|---|---|
+| 发现 | `skill-list`、`profile-list` |
+| 执行 | `skill-run`、`profile-plan`、`profile-run` |
+| 分析 | `analyze`、`plan`、`sfc-visual-analyze`、`spa-vue-router-analyze` |
+| SPA 与数据 | `spa-router`、`spa-auth-analyze`、`transport-proxy-analyze`、`data-surface` |
+| 生产 | `component-build-plan`、`component-build-enrich`、`component-build`、`component-produce` |
+| 验证 | `validate`、`roundtrip`、`quality` |
 
-## 标准 CLI
-
-统一 CLI 入口：
-
-```bash
-node dist-ts/cli.js <command>
-```
-
-### Skill 发现与执行
-
-```bash
-# 查看全部已注册 Skill
-node dist-ts/cli.js skill-list
-node dist-ts/cli.js skill-list --out /tmp/skill-catalog.json
-
-# 直接运行单个 Skill；output 与 evidence 分离
-node dist-ts/cli.js skill-run source-structure \
-  --input /tmp/source-structure.input.json \
-  --out /tmp/source-manifest.json \
-  --evidence-out /tmp/source-structure.evidence.json
-```
-
-`source-structure.input.json` 示例：
-
-```json
-{
-  "htmlPath": "/absolute/path/to/page.html",
-  "options": {
-    "minimal": true
-  }
-}
-```
-
-`skill-run` 是单能力调试入口，不会自动执行依赖 Skill。正式多能力任务应使用 Profile。
-
-### Profile 发现、计划与执行
-
-```bash
-node dist-ts/cli.js profile-list
-node dist-ts/cli.js profile-list --out /tmp/profile-catalog.json
-
-node dist-ts/cli.js profile-plan /tmp/profile.config.json \
-  --out /tmp/profile.plan.json
-
-node dist-ts/cli.js profile-run /tmp/profile.config.json \
-  --out /tmp/profile.report.json
-```
-
-Profile 配置示例：
-
-```json
-{
-  "schemaVersion": "1.0",
-  "profileId": "source-page",
-  "enabledOptionalSkills": [],
-  "inputProviders": [
-    {
-      "contract": "html-path",
-      "providerId": "reviewed-source",
-      "reviewed": true,
-      "inputPath": "htmlPath",
-      "value": "/absolute/path/to/page.html"
-    }
-  ]
-}
-```
-
-组件库 Profile 的最小配置：
-
-```json
-{
-  "schemaVersion": "1.0",
-  "profileId": "component-library",
-  "enabledOptionalSkills": [],
-  "inputProviders": [
-    {
-      "contract": "component-library-root",
-      "providerId": "reviewed-library",
-      "reviewed": true,
-      "inputPath": "libraryRoot",
-      "value": "/absolute/path/to/component-library"
-    }
-  ]
-}
-```
-
-Profile 报告分别保留：
-
-```text
-raw output
-SkillExecutionEvidence
-artifact references
-ResponsibilityGraphDelta
-blockers
-quality gates
-```
-
-### 组件拆解与质量命令
-
-现有命令保持兼容，不因 Skill Kernel 接入而改变参数、输出或退出码：
-
-```bash
-# HTML → manifest
-node dist-ts/cli.js analyze <page.html> --out /tmp/manifest.json --minimal
-
-# manifest evidence → 组件计划与组件规格
-node dist-ts/cli.js plan <page.html> \
-  --out /tmp/component-plan.json \
-  --spec-dir /tmp/component-specs
-
-# 组件库静态验证
-node dist-ts/cli.js validate <component-lib-dir>
-
-# 原页面与组件库往返验证
-node dist-ts/cli.js roundtrip <page.html> --lib <component-lib-dir> \
-  --out /tmp/roundtrip-report.json
-
-# Gold+ 浏览器质量验证
-node dist-ts/cli.js quality <page.html> --lib <component-lib-dir> \
-  --visual-artifacts /tmp/ui-dismantler-visual \
-  --out /tmp/quality-report.json
-
-# 通过 Skill Registry 验证已生成的组件库（raw output 与 evidence 分离）
-node dist-ts/cli.js skill-run component-library-validation \
-  --input /tmp/component-library.input.json \
-  --out /tmp/component-library.validation.json \
-  --evidence-out /tmp/component-library.validation.evidence.json
-
-# 通过 component-library Profile 执行 reviewed 组件库验证
-node dist-ts/cli.js profile-run /tmp/component-library.profile.json \
-  --out /tmp/component-library.profile.report.json
-
-# 对 reviewed reference/component library 执行正式视觉质量门
-node dist-ts/cli.js skill-run visual-evaluation \
-  --input /tmp/visual-evaluation.input.json \
-  --out /tmp/visual-quality.report.json \
-  --evidence-out /tmp/visual-quality.evidence.json
-
-# 提取 reviewed SFC graph 中的轮询与清理责任
-node dist-ts/cli.js skill-run lifecycle-polling \
-  --input /tmp/lifecycle-polling.input.json \
-  --out /tmp/lifecycle-polling.graph.json \
-  --evidence-out /tmp/lifecycle-polling.evidence.json
-
-# 通过 primitive-dom Skill 编译 reviewed 组件责任图中的模板结构
-node dist-ts/cli.js skill-run primitive-dom \
-  --input /tmp/primitive-dom.input.json \
-  --out /tmp/primitive-dom.compilation.json \
-  --evidence-out /tmp/primitive-dom.compilation.evidence.json
-```
-
-项目级责任图仍可独立生成，例如：
-
-```bash
-node dist-ts/cli.js sfc-visual-analyze /absolute/project-root \
-  --out /tmp/sfc-visual.graph.json
-
-node dist-ts/cli.js transport-proxy-analyze /absolute/project-root \
-  --out /tmp/transport-proxy.graph.json
-
-node dist-ts/cli.js spa-auth-analyze /absolute/project-root \
-  --out /tmp/spa-auth.graph.json
-```
-
-### CLI 约定
-
-- 命令和 ID 使用 kebab-case；
-- JSON 输入使用 `--input` 或显式配置文件；
-- 正式 JSON 结果使用 `--out`；
-- execution evidence 使用独立 `--evidence-out`，不包装或改变 raw output；
-- `0` 表示成功，`1` 表示质量失败或 reviewed plan 被阻断，`2` 表示参数或执行错误；
-- 旧命令继续保持兼容，新能力优先通过 `skill-*` 和 `profile-*` 入口暴露。
-
-## 组件库产出标准
-
-标准产物至少包括：
-
-```text
-<library>/
-├── README.md
-├── docs/
-├── src/
-│   ├── components/
-│   ├── styles/
-│   └── index.*
-├── examples/
-├── data-surface.manifest.json
-├── component-plan.json
-├── component-specs/
-└── quality-summary.json
-```
-
-具体文件形态可以随目标框架变化，但必须保持：
-
-- 组件边界有结构证据；
-- 样式使用可复用 token 和响应式规则；
-- 交互、状态和生命周期可验证；
-- 数据接口与业务数据内容分离；
-- reference/generated 使用独立运行上下文；
-- unresolved 与 review 状态可审计；真正 blocker 与 policy notice 分开保存。
+CLI 会分别保存原始输出、执行证据、Artifact、阻断项和质量门禁结果。截图和运行报告应写入系统临时目录或 `UI_DISMANTLER_ARTIFACT_ROOT`，不要写入受管理的源案例。
 
 ## 质量门禁
 
-质量体系包含：
-
-```text
-静态组件库约束
-DOM / 文本往返等价
-Semantic route contract
-Strict route contract
-navigation integrity
-computed style
-reviewed-region pixel diff
-runtime / network / resource stability
-Canvas stability
-blocking handles
-```
-
-分层回归：
+<img src="docs/readme-quality.svg" alt="PR、Gold 和 Nightly 质量等级" width="100%" />
 
 ```bash
-# 案例、Benchmark 与 Evidence Registry 完整性
-npm run catalog:validate
-npm run evidence:audit
-
-# PR：Catalog、类型检查、构建、单元测试和冻结证据
+# PR 质量等级
 npm run test:pr
 
-# 合并前：完整关键场景与浏览器 Gold+
-UI_DISMANTLER_STARMAP_SOURCE=/absolute/path/to/locked-starmap-frontend \
-UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
-  npm run test:gold
+# Reviewed 浏览器 Gold 回归
+npm run test:gold
 
-# Nightly：PR + Gold+ + 多轮性能基线
-UI_DISMANTLER_STARMAP_SOURCE=/absolute/path/to/locked-starmap-frontend \
-UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
-  npm run test:nightly
+# PR + Gold + 性能基线
+npm run test:nightly
 ```
 
-正式回归不会通过降低像素、稳定性、网络、字体、生命周期或 BrowserContext 隔离要求换取速度。运行截图和原始性能报告默认写入系统临时目录或 `UI_DISMANTLER_ARTIFACT_ROOT`，避免污染案例源目录。
+常用开发命令：
 
-## Python 兼容工具
+```bash
+npm run catalog:validate
+npm run evidence:audit
+npm run typecheck:ts
+npm run build:ts
+npm run test:all
+npm run verify:component-boundary
+```
 
-旧工具链继续保留用于历史案例和兼容验证：
+不得通过降低 Strict、Gold、运行时、网络、视觉或稳定性门禁让案例通过。
 
-| 工具 | 用途 |
-|---|---|
-| `src/skill/scripts/analyze_html.py` | HTML → 兼容 manifest |
-| `src/skill/scripts/validate_lib.py` | 组件库静态约束校验 |
-| `scripts/roundtrip.py` | 原页面与组件库往返等价 |
-| `scripts/generate_scenarios.py` | 生成待审阅交互场景候选 |
-| `scripts/verify_all.py` | 批量历史回归 |
-
-旧脚本中的数据契约扫描仅提供组件接口分析线索，不承担业务数据规范化或 Data Pack 生成。
-
-## 目录
+## 仓库目录
 
 ```text
-src-ts/
-├── core/          Skill Kernel、Profile、Artifact 和责任图基础设施
-├── skills/        可组合的拆解能力
-├── profiles/      默认 Task Profile 和 reviewed bindings
-├── planning/      组件、路由、视觉和生成规划算法
-├── evaluation/    Semantic、Strict、Gold+ 和浏览器质量验证
-└── tests/         单元、集成和冻结回归
+src-ts/core/        Skill Kernel、Profile、Artifact 和责任基础设施
+src-ts/skills/      可组合分析能力
+src-ts/planning/    组件、路由、视觉和生成规划
+src-ts/production/  组件库物化
+src-ts/evaluation/  浏览器和质量验证
+src-ts/validation/  组件库验证
+src-ts/tests/       单元、集成和冻结回归
 
-src/skill/         Python/ZCode 兼容 Skill 与脚本
-benchmark/         兼容历史参考组件库
-cases/             冻结案例的逻辑 Catalog，不移动历史物理路径
-benchmarks/        PR、Gold、Nightly 的协议 Registry
-evidence/          冻结证据保留策略、体积预算和超大文件身份
-examples/          冻结案例及其正式配置；运行产物不应写入此目录
-docs/              架构、协议、基线和研究记录
-scripts/           回归、转译和质量运行脚本
+cases/              受管理的案例 Catalog
+benchmarks/         PR、Gold 和 Nightly 协议
+evidence/           reviewed evidence 保留策略和预算
+docs/               架构和项目文档
+scripts/            验证与回归工具
 ```
 
-## 开发原则
+## 文档
 
-1. 先证明责任，再生成组件；
-2. 先运行未经人工修复的 baseline，再决定算法缺口；
-3. 案例只作为验证证据，不进入通用规则；
-4. 不使用截图硬猜 DOM，不用可见文本替代 ownership；
-5. 不降低 Gold+、Strict、runtime、network 或 stability 门禁；
-6. 一个 Skill 一套清晰合同、依赖、证据和测试；
-7. 先稳定组件库生产主链，后续再按通用缺口增加 Skill。
+- [Skill Kernel](docs/architecture/skill-kernel.md)
+- [数据边界](docs/architecture/data-boundary.md)
+- [通用分析规则](docs/architecture/generic-analysis.md)
+- [仓库治理](docs/architecture/repository-governance.md)
+- [TypeScript 迁移](docs/TYPESCRIPT_MIGRATION.md)
+- [路线图](docs/ROADMAP.md)
+- [案例](cases/README.md) · [Benchmark](benchmarks/README.md) · [Evidence](evidence/README.md)
 
-## 更多文档
+---
 
-- [`docs/architecture/skill-kernel.md`](docs/architecture/skill-kernel.md)
-- [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md)
-- [`docs/TYPESCRIPT_MIGRATION.md`](docs/TYPESCRIPT_MIGRATION.md)
-- [`docs/ROADMAP.md`](docs/ROADMAP.md)
-- [`src/skill/SKILL.md`](src/skill/SKILL.md)
+<div align="center">
+  <strong>分析责任，生产可复用组件，验证最终结果。</strong>
+  <br />
+  <sub><a href="README.md">Read in English</a></sub>
+</div>
