@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import { generateScenarios } from "./evaluation/scenarios.js";
 import { evaluateBrowserQuality, evaluateLibrarySelectorCoverage, resolveQualityViewports } from "./evaluation/browser.js";
@@ -38,9 +38,23 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
+
+interface ReviewedComponentProductionConfig {
+  readonly schemaVersion: "1.0";
+  readonly sourceRoot: string;
+  readonly library: { readonly name: string; readonly packageName: string };
+  readonly artifacts: {
+    readonly primitiveDom: string;
+    readonly state?: string;
+    readonly stateMap?: string;
+    readonly dataSurface?: string;
+    readonly runtimeOptions?: string;
+  };
+  readonly quality?: ComponentLibraryQualityContract;
+}
 
 const skillRegistry = createDefaultSkillRegistry();
 const taskProfileRegistry = createDefaultTaskProfileRegistry(skillRegistry);
@@ -96,6 +110,7 @@ function usage(): void {
   profile-list [--out <profile-catalog.json>]
   profile-plan <profile.config.json> --out <profile.plan.json>
   profile-run <profile.config.json> --out <profile.report.json>
+  component-produce <component-production.config.json> --out-dir <dir> [--plan <component-library.build-plan.json>] [--report <component-library.build-report.json>] [--result <component-library.production-result.json>] [--overwrite]
   component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
   primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
@@ -141,6 +156,41 @@ async function main(argv: string[]): Promise<number> {
       if (out) await writeFile(resolve(out), serialized, "utf8");
       console.log(catalog.profiles.map((profile) => `${profile.id}: ${profile.summary}`).join("\n"));
       return 0;
+    }
+    if (command === "component-produce") {
+      const configPath = args[0]; const outDir = flag(args, "--out-dir");
+      if (!configPath || !outDir) throw new Error("component-produce 需要 <component-production.config.json> 和 --out-dir");
+      const absoluteConfigPath = resolve(configPath); const configRoot = dirname(absoluteConfigPath);
+      const config = JSON.parse(await readFile(absoluteConfigPath, "utf8")) as ReviewedComponentProductionConfig;
+      if (config.schemaVersion !== "1.0" || !config.sourceRoot || !config.library?.name || !config.library?.packageName || !config.artifacts?.primitiveDom) throw new Error("component production config 缺少必需字段或 schemaVersion 不是 1.0");
+      if (config.artifacts.state && config.artifacts.stateMap) throw new Error("component production config 的 state 与 stateMap 不能同时使用");
+      const readJson = async <T>(path: string | undefined): Promise<T | undefined> => path ? JSON.parse(await readFile(resolve(configRoot, path), "utf8")) as T : undefined;
+      const primitiveGraph = await readJson<PrimitiveDomCompilationGraph>(config.artifacts.primitiveDom) as PrimitiveDomCompilationGraph;
+      const state = await readJson<SfcStateResponsibility>(config.artifacts.state);
+      const stateMap = await readJson<ComponentLibraryStateEvidenceMap>(config.artifacts.stateMap);
+      const dataSurface = await readJson<DataSurfaceManifest>(config.artifacts.dataSurface);
+      const runtimeOptions = await readJson<unknown>(config.artifacts.runtimeOptions);
+      const quality = config.quality ? {
+        ...config.quality,
+        originalHtmlPath: resolve(configRoot, config.quality.originalHtmlPath),
+        ...(config.quality.manifestPath ? { manifestPath: resolve(configRoot, config.quality.manifestPath) } : {}),
+        ...(config.quality.scenarioPath ? { scenarioPath: resolve(configRoot, config.quality.scenarioPath) } : {}),
+        ...(config.quality.spaRouterConfigPath ? { spaRouterConfigPath: resolve(configRoot, config.quality.spaRouterConfigPath) } : {}),
+        ...(config.quality.visualArtifactsDir ? { visualArtifactsDir: resolve(configRoot, config.quality.visualArtifactsDir) } : {}),
+      } : undefined;
+      const result = await runReviewedComponentLibraryProduction({
+        primitiveGraph,
+        projection: { sourceRoot: resolve(configRoot, config.sourceRoot), libraryName: config.library.name, packageName: config.library.packageName, ...(quality ? { quality } : {}) },
+        ...(state ? { state } : {}), ...(stateMap ? { stateMap } : {}), ...(dataSurface ? { dataSurface } : {}), ...(runtimeOptions !== undefined ? { runtimeOptions } : {}),
+      }, outDir, { overwrite: has(args, "--overwrite"), reportPath: flag(args, "--report") });
+      const planPath = flag(args, "--plan"); if (planPath) await writeFile(resolve(planPath), `${JSON.stringify(result.plan, null, 2)}
+`, "utf8");
+      const resultPath = flag(args, "--result"); if (resultPath) await writeFile(resolve(resultPath), `${JSON.stringify(result, null, 2)}
+`, "utf8");
+      console.log(`${result.build.status === "succeeded" ? "✓" : "✗"} Reviewed Component Production: ${result.build.status}`);
+      console.log(`  output=${result.build.outputRoot}，reviewRequired=${result.plan.reviewRequired}，smoke=${result.build.smoke?.passed ?? false}，quality=${result.build.quality?.passed ?? "not-run"}`);
+      for (const blocker of result.build.blockers) console.log(`  - ${blocker}`);
+      return result.build.status === "succeeded" ? 0 : 1;
     }
     if (command === "primitive-dom-build-plan") {
       const graphPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");

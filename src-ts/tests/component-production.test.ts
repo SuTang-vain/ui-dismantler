@@ -700,3 +700,35 @@ test("Reviewed API Data Surface materializes only an external adapter contract",
   invalid.unmount();
   dom.window.close();
 });
+
+test("component-produce CLI runs the reviewed artifact chain as one deterministic build", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-component-produce-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:notice", componentName: "NoticeCard", componentFile: "NoticeCard.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:notice"],
+      nodes: [{ id: "node:notice", sourceNodeId: "source:notice", order: 0, sourceTag: "section", componentName: "NoticeCard", renderTag: "section", renderStrategy: "native", classes: ["sg-notice-card"], attributes: { role: "status" }, inlineStyle: {}, content: [{ kind: "text", value: "Reviewed production" }], conditions: [], loops: [] }],
+      styleRules: [{ sourceNodeId: "source:notice", selector: ".sg-notice-card", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }], interactions: [],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  await writeFile(join(directory, "primitive.json"), `${JSON.stringify(graph, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "production.json"), `${JSON.stringify({ schemaVersion: "1.0", sourceRoot: ".", library: { name: "Produced Components", packageName: "produced-components" }, artifacts: { primitiveDom: "primitive.json" } }, null, 2)}\n`, "utf8");
+  const outputRoot = join(directory, "library");
+  const planPath = join(directory, "plan.json");
+  const reportPath = join(directory, "report.json");
+  const resultPath = join(directory, "result.json");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", outputRoot, "--plan", planPath, "--report", reportPath, "--result", resultPath], { cwd: root, encoding: "utf8" });
+  const plan = JSON.parse(await readFile(planPath, "utf8")) as { kind: string; reviewRequired: boolean };
+  const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; smoke?: { passed: boolean }; validation?: { ok: boolean } };
+  const result = JSON.parse(await readFile(resultPath, "utf8")) as { kind: string; build: { status: string } };
+  assert.equal(plan.kind, "component-library-build-plan");
+  assert.equal(plan.reviewRequired, false);
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.smoke?.passed, true);
+  assert.equal(report.validation?.ok, true);
+  assert.equal(result.kind, "reviewed-component-library-production-result");
+  assert.equal(result.build.status, "succeeded");
+});

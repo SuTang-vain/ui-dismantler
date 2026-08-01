@@ -130,7 +130,37 @@ node dist-ts/cli.js component-build \
   --report /tmp/component-library.build-report.json
 ```
 
-Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可以写入构建目录，但不能标记为 publishable。`Runtime Smoke` 在浏览器质量门之前检查模块加载、`mount()`、首屏节点、运行时错误、本地资源和可选清理合同。
+Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可以写入构建目录，但不能标记为 publishable。`Runtime Smoke` 在浏览器质量门之前检查模块加载、`mount()`、首屏节点、运行时错误、本地资源、外部 adapter readiness 和可选清理合同。
+
+当 reviewed artifacts 已经准备好时，可以用一个配置直接运行完整生产链，而不再手工串联 plan、enrich 和 build：
+
+```json
+{
+  "schemaVersion": "1.0",
+  "sourceRoot": "./source",
+  "library": {
+    "name": "Reviewed Components",
+    "packageName": "reviewed-components"
+  },
+  "artifacts": {
+    "primitiveDom": "./artifacts/primitive-dom.graph.json",
+    "stateMap": "./artifacts/component-state.map.json",
+    "dataSurface": "./artifacts/data-surface.manifest.json",
+    "runtimeOptions": "./artifacts/runtime-options.json"
+  }
+}
+```
+
+```bash
+node dist-ts/cli.js component-produce \
+  /absolute/path/to/component-production.config.json \
+  --out-dir /tmp/generated-component-library \
+  --plan /tmp/component-library.build-plan.json \
+  --report /tmp/component-library.build-report.json \
+  --result /tmp/component-library.production-result.json
+```
+
+`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
 
 该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
 
