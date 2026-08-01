@@ -4,11 +4,12 @@ import type { SfcStateResponsibility } from "../../planning/sfc-state-responsibi
 import {
   enrichComponentLibraryBuildPlan,
   primitiveDomCompilationToBuildPlan,
-  type ComponentLibraryStateEvidenceMap,
   type PrimitiveDomProjectionOptions,
 } from "./adapters.js";
 import { runComponentLibraryBuild, type ComponentLibraryBuildReport } from "./pipeline.js";
 import type { ComponentLibraryBuildPlan } from "./contract.js";
+import type { ReviewedComponentStyleArtifact } from "./style-artifact.js";
+import type { ComponentLibraryStateEvidenceMap } from "./state-artifact.js";
 
 export interface ReviewedComponentLibraryProductionInput {
   readonly primitiveGraph: PrimitiveDomCompilationGraph;
@@ -17,6 +18,7 @@ export interface ReviewedComponentLibraryProductionInput {
   readonly stateMap?: ComponentLibraryStateEvidenceMap;
   readonly dataSurface?: DataSurfaceManifest;
   readonly runtimeOptions?: unknown;
+  readonly styleArtifact?: ReviewedComponentStyleArtifact;
 }
 
 export interface ReviewedComponentLibraryProductionResult {
@@ -32,7 +34,7 @@ export async function runReviewedComponentLibraryProduction(
   options: { readonly overwrite?: boolean; readonly reportPath?: string } = {},
 ): Promise<ReviewedComponentLibraryProductionResult> {
   if (input.state && input.stateMap) throw new Error("Reviewed component production accepts either state or stateMap, not both");
-  const basePlan = await primitiveDomCompilationToBuildPlan(input.primitiveGraph, input.projection);
+  const basePlan = await primitiveDomCompilationToBuildPlan(input.primitiveGraph, { ...input.projection, ...(input.styleArtifact ? { styleArtifact: input.styleArtifact } : {}) });
   const plan = enrichComponentLibraryBuildPlan(basePlan, {
     primitiveGraph: input.primitiveGraph,
     ...(input.state ? { state: input.state } : {}),

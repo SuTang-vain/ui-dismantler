@@ -9,6 +9,8 @@ import { materializeOwnerSourceStyles } from "../../planning/scoped-style-materi
 import { compilePrimitiveDom } from "../../planning/primitive-dom-compiler.js";
 import type { PrimitiveDomCompilationGraph } from "../../skills/primitive-dom.js";
 import type { PrimitiveDomNode } from "../../planning/primitive-dom-compiler.js";
+import { materializeReviewedComponentStyles, type ReviewedComponentStyleArtifact } from "./style-artifact.js";
+import type { ComponentLibraryStateEvidenceMap } from "./state-artifact.js";
 
 export interface ComponentLibraryProjectionOptions {
   readonly sourceRoot: string;
@@ -20,17 +22,7 @@ export interface ComponentLibraryProjectionOptions {
 export interface PrimitiveDomProjectionOptions extends ComponentLibraryProjectionOptions {
   readonly additionalStyleCss?: string;
   readonly additionalReviewReasons?: readonly string[];
-}
-
-export interface ComponentLibraryStateEvidenceEntry {
-  readonly ownerId: string;
-  readonly responsibility: SfcStateResponsibility;
-}
-
-export interface ComponentLibraryStateEvidenceMap {
-  readonly schemaVersion: "1.0";
-  readonly kind: "component-state-evidence-map";
-  readonly entries: readonly ComponentLibraryStateEvidenceEntry[];
+  readonly styleArtifact?: ReviewedComponentStyleArtifact;
 }
 
 export interface ComponentLibraryEnrichmentEvidence {
@@ -341,7 +333,8 @@ export async function primitiveDomCompilationToBuildPlan(
 ): Promise<ComponentLibraryBuildPlan> {
   const namespace = options.libraryName.replace(/[^A-Za-z0-9_$]/g, "") || "ComponentLibrary";
   const fileBase = packageSlug(namespace);
-  const unresolved = [...graph.reviewReasons, ...(options.additionalReviewReasons ?? [])];
+  const reviewedStyles = options.styleArtifact ? materializeReviewedComponentStyles(graph, options.styleArtifact) : undefined;
+  const unresolved = [...graph.reviewReasons, ...(options.additionalReviewReasons ?? []), ...(reviewedStyles?.reviewReasons ?? [])];
   for (const component of graph.components) {
     for (const node of component.compilation.nodes) {
       if (node.conditions.length) unresolved.push(`${component.componentName}:${node.id} conditional region requires state materialization`);
@@ -369,7 +362,7 @@ export async function primitiveDomCompilationToBuildPlan(
     files: [
       { path: "package.json", role: "package-metadata", content: JSON.stringify({ name: options.packageName, version: "0.0.0", private: true, main: `src/${fileBase}.js`, style: `src/${fileBase}.css`, files: ["src", "README.md", "docs"] }, null, 2) + "\n", publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: `src/${fileBase}.js`, role: "runtime", content: primitiveRuntime(namespace, graph), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-dom-compilation-graph" }] },
-      { path: `src/${fileBase}.css`, role: "style", content: primitiveStyles(graph, options.additionalStyleCss), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-style-rules" }] },
+      { path: `src/${fileBase}.css`, role: "style", content: primitiveStyles(graph, [options.additionalStyleCss, reviewedStyles?.css].filter(Boolean).join("\n")), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "primitive-dom", reference: "primitive-style-rules" }, ...(options.additionalStyleCss ? [{ kind: "source-style" as const, reference: "reviewed-additional-style-css" }] : []), ...(reviewedStyles?.provenance ?? [])] },
       { path: "README.md", role: "documentation", content: primitiveReadme(options.libraryName, namespace), publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: "docs/设计规范.md", role: "documentation", content: "# 设计规范\n\n## 主题色\n\n组件使用 `--sg-*` 主题变量。\n", publish: true, reviewed: unresolved.length === 0, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
       { path: "examples/template.html", role: "example", content: primitiveExample(namespace), publish: false, reviewed: true, provenance: [{ kind: "generated-metadata", reference: "primitive-dom-compilation" }] },
@@ -468,7 +461,7 @@ function primitiveStateEvidence(graph: PrimitiveDomCompilationGraph, states: Rea
     const modelNodes = component.compilation.nodes.filter((node) => Object.keys(node.attributes).some((name) => name.startsWith("v-model")));
     if (conditionalNodes.length === 0 && modelNodes.length === 0) continue;
     const state = states.get(component.componentId);
-    const stateReady = Boolean(state?.parsed && state.reviewReasons.length === 0 && state.unresolvedWrites.length === 0);
+    const stateReady = Boolean(state?.parsed && state.unresolvedWrites.length === 0);
     if (!stateReady || !state) {
       if (conditionalNodes.length > 0) conditionsReady = false;
       if (modelNodes.length > 0) modelsReady = false;
@@ -506,6 +499,7 @@ function resolveOwnerStates(
   primitiveGraphMatchesPlan: boolean,
 ): { states: Map<string, SfcStateResponsibility>; blockers: string[] } {
   const states = new Map<string, SfcStateResponsibility>();
+  const reviewedOwners = new Set<string>();
   const blockers: string[] = [];
   if (evidence.state && evidence.stateMap) blockers.push("state-responsibility: provide either state or stateMap, not both");
   const knownOwners = new Set<string>();
@@ -516,12 +510,18 @@ function resolveOwnerStates(
       blockers.push("state-responsibility: invalid component state evidence map contract");
       return { states, blockers };
     }
+    blockers.push(...(evidence.stateMap.unresolved ?? []).map((reason) => `state-responsibility unresolved: ${reason}`));
+    const derivedReviewRequired = (evidence.stateMap.unresolved?.length ?? 0) > 0 || evidence.stateMap.entries.some((entry) => !entry?.reviewed);
+    if (evidence.stateMap.reviewRequired !== derivedReviewRequired) blockers.push(`state-responsibility: state map reviewRequired must equal derived state ${derivedReviewRequired}`);
     for (const entry of evidence.stateMap.entries) {
       if (!entry || !entry.responsibility) { blockers.push("state-responsibility: state map entry requires responsibility"); continue; }
       if (!entry.ownerId.trim()) { blockers.push("state-responsibility: state map ownerId must not be empty"); continue; }
+      if (!entry.reviewed) { blockers.push(`state-responsibility: state map owner requires review ${entry.ownerId}`); continue; }
+      if (!Array.isArray(entry.evidence) || entry.evidence.length === 0 || entry.evidence.some((item: string) => !item.trim())) { blockers.push(`state-responsibility: state map evidence is missing ${entry.ownerId}`); continue; }
       if (states.has(entry.ownerId)) { blockers.push(`state-responsibility: duplicate state owner ${entry.ownerId}`); continue; }
       if (knownOwners.size > 0 && !knownOwners.has(entry.ownerId)) { blockers.push(`state-responsibility: unknown state owner ${entry.ownerId}`); continue; }
       states.set(entry.ownerId, entry.responsibility);
+      reviewedOwners.add(entry.ownerId);
     }
   } else if (evidence.state) {
     if (knownOwners.size === 1) states.set([...knownOwners][0], evidence.state);
@@ -529,7 +529,8 @@ function resolveOwnerStates(
     else blockers.push(`state-responsibility: unscoped state evidence is ambiguous across ${knownOwners.size || plan.interactions.length} owners; provide stateMap`);
   }
   for (const [ownerId, state] of states) {
-    blockers.push(...state.reviewReasons.map((reason) => `state-responsibility:${ownerId}: ${reason}`));
+    if (!state.parsed) blockers.push(`state-responsibility:${ownerId}: state responsibility is not parsed`);
+    if (!reviewedOwners.has(ownerId)) blockers.push(...state.reviewReasons.map((reason) => `state-responsibility:${ownerId}: ${reason}`));
     blockers.push(...state.unresolvedWrites.map((write) => `state-responsibility:${ownerId} unresolved write ${write.handler}:${write.path}`));
   }
   return { states, blockers };

@@ -386,6 +386,7 @@ test("primitive DOM compiler maps Element UI structure utility classes interacti
   const structure = analyzeSfcTemplateStructure(`<template><el-form class="login-form"><el-form-item><el-input v-model="form.name" placeholder="Name" /></el-form-item><el-checkbox v-model="remember" label="Remember"/><el-button type="primary" style="width:100%" @click.native.prevent="submit">Login</el-button><div className="mb-10 flex items-center justify-center"><img class="h-[44px] w-[44px]"></div><div class="container mx-auto"></div><el-row><el-col :xs="24" :lg="8"><el-tag type="info">A</el-tag></el-col></el-row></el-form></template>`);
   const compilation = compilePrimitiveDom(structure);
   assert.equal(compilation.metrics.compiledNodes, structure.nodes.length);
+  assert.deepEqual(compilation.roots, structure.roots.map((root) => `component:${root}`));
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "form")?.renderTag, "form");
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "input")?.renderStrategy, "input");
   assert.equal(compilation.nodes.find((node) => node.primitiveKind === "checkbox")?.renderStrategy, "checkbox");

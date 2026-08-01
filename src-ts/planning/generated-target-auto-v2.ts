@@ -343,7 +343,7 @@ function inferReviewedFixtureSelections(owner: VisualTargetOwnerPlan, compilatio
 }
 
 function renderPrimitiveCompilation(compilation: PrimitiveDomCompilation, owner: VisualTargetOwnerPlan): { html: string; css: string; nodes: number; interactions: number; runtime: AutoV2OwnerRuntime; metrics: AutoV2RenderMetrics } {
-  const nodes = new Map(compilation.nodes.map((node) => [node.sourceNodeId, node]));
+  const nodes = new Map(compilation.nodes.flatMap((node) => [[node.sourceNodeId, node] as const, [node.id, node] as const]));
   const children = new Map<string, PrimitiveDomNode[]>();
   for (const node of compilation.nodes) {
     if (!node.parentId) continue;

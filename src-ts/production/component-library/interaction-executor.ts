@@ -70,7 +70,8 @@ function sameStatePath(left: string, right: string): boolean {
 function transitionFor(write: SfcStateWriteResponsibility): ReviewedStateTransition | undefined {
   const expression = write.expression.replace(/\s+/g, " ").trim();
   const path = normalizePath(write.path);
-  const literal = write.value ?? literalFromExpression(expression);
+  if (write.value !== undefined) return { kind: "set-literal", path, value: write.value, sourceExpression: write.expression };
+  const literal = literalFromExpression(expression);
   if (literal !== undefined && new RegExp(`^(?:this\\.)?${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\.value)?\\s*=`).test(expression)) {
     return { kind: "set-literal", path, value: literal, sourceExpression: write.expression };
   }

@@ -184,7 +184,7 @@ export function compilePrimitiveDom(structure: SfcTemplateStructure, scope = "co
   const interactions = structure.nodes.flatMap(eventBinding);
   const unsupportedPrimitiveNodes = structure.nodes.filter((node) => node.primitive && !strategyByPrimitive[node.primitive.kind]).length;
   return {
-    schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: structure.roots, nodes, styleRules, interactions,
+    schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: structure.roots.map((root) => `${scope}:${root}`), nodes, styleRules, interactions,
     metrics: {
       sourceNodes: structure.nodes.length, compiledNodes: nodes.length, primitiveNodes: nodes.filter((node) => node.primitiveKind).length,
       inlineStyleRules: styleRules.filter((rule) => rule.provenance === "source-inline-style").length,

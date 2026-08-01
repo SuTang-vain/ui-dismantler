@@ -11,19 +11,23 @@ import {
   executeReviewedStateWrite,
   materializeComponentLibrary,
   primitiveDomCompilationToBuildPlan,
+  primitiveGraphHash,
   runComponentLibraryBuild,
+  runReviewedComponentLibraryProduction,
   visualTargetPlanToBuildPlan,
   runComponentLibraryRuntimeSmoke,
   validateComponentLibraryBuildPlan,
   type ComponentLibraryBuildPlanInput,
   type ComponentLibraryStateEvidenceMap,
+  type ReviewedComponentStyleArtifact,
 } from "../production/component-library/index.js";
-import type { PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
+import { compilePrimitiveDomResponsibilities, type PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
 import type { ComponentPlanningReport } from "../planning/components.js";
 import type { VisualTargetPlan } from "../planning/visual-target-plan.js";
 import { analyzeSfcTemplateStructure } from "../planning/sfc-template-structure.js";
 import type { SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
 import { analyzeHtml } from "../analysis/analyzer.js";
+import { analyzeSfcVisualResponsibilities } from "../planning/sfc-visual-responsibility.js";
 import { interactionFingerprint } from "../evaluation/scenarios.js";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -279,6 +283,9 @@ test("Reviewed interaction executor supports only auditable state transitions wi
   assert.equal(set.status, "materialized");
   assert.equal((set.state.dialog as { open: boolean }).open, true);
   assert.equal(set.transition?.kind, "set-literal");
+  const analyzerLiteral = executeReviewedStateWrite({ path: "open", value: true, expression: "true", sourceLine: 1, confidence: "high" }, { open: false });
+  assert.equal(analyzerLiteral.status, "materialized");
+  assert.equal(analyzerLiteral.state.open, true);
   const toggle = executeReviewedStateWrite({ path: "dialog.open", expression: "dialog.open = !dialog.open", sourceLine: 2, confidence: "high" }, { dialog: { open: true } });
   assert.equal(toggle.status, "materialized");
   assert.equal((toggle.state.dialog as { open: boolean }).open, false);
@@ -617,7 +624,11 @@ test("Owner-scoped state evidence isolates same-named handlers across generated 
 
   const stateMap: ComponentLibraryStateEvidenceMap = {
     schemaVersion: "1.0", kind: "component-state-evidence-map",
-    entries: [{ ownerId: "component:a", responsibility: alphaState }, { ownerId: "component:b", responsibility: betaState }],
+    entries: [
+      { ownerId: "component:a", responsibility: alphaState, reviewed: true, evidence: ["reviewed Alpha state"] },
+      { ownerId: "component:b", responsibility: betaState, reviewed: true, evidence: ["reviewed Beta state"] },
+    ],
+    unresolved: [], reviewRequired: false,
   };
   const enriched = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: graph, stateMap });
   assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
@@ -714,8 +725,19 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
     } }],
     metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
   };
+  const styleArtifact: ReviewedComponentStyleArtifact = {
+    schemaVersion: "1.0", kind: "reviewed-component-style-artifact", primitiveGraphHash: primitiveGraphHash(graph), reviewRequired: false,
+    entries: [
+      { id: "style:notice", scope: "owner", ownerId: "component:notice", sourceFile: "NoticeCard.vue?style=0", compiledCss: ".sg-notice-card{padding:13px}@media (max-width:600px){.sg-notice-card{padding:7px}}", reviewed: true, evidence: ["compiled reviewed SFC style"] },
+      { id: "style:theme", scope: "global", sourceFile: "src/styles/theme.css", compiledCss: ":root{--sg-notice-gap:13px}", reviewed: true, evidence: ["reviewed global theme style"] },
+    ],
+  };
+  const invalidStylePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Invalid Style Components", packageName: "invalid-style-components", styleArtifact: { ...styleArtifact, primitiveGraphHash: "0".repeat(64), reviewRequired: true } });
+  assert.equal(invalidStylePlan.reviewRequired, true);
+  assert.equal(invalidStylePlan.unresolved.some((reason) => reason.includes("primitiveGraphHash")), true);
   await writeFile(join(directory, "primitive.json"), `${JSON.stringify(graph, null, 2)}\n`, "utf8");
-  await writeFile(join(directory, "production.json"), `${JSON.stringify({ schemaVersion: "1.0", sourceRoot: ".", library: { name: "Produced Components", packageName: "produced-components" }, artifacts: { primitiveDom: "primitive.json" } }, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "styles.json"), `${JSON.stringify(styleArtifact, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "production.json"), `${JSON.stringify({ schemaVersion: "1.0", sourceRoot: ".", library: { name: "Produced Components", packageName: "produced-components" }, artifacts: { primitiveDom: "primitive.json", style: "styles.json" } }, null, 2)}\n`, "utf8");
   const outputRoot = join(directory, "library");
   const planPath = join(directory, "plan.json");
   const reportPath = join(directory, "report.json");
@@ -724,6 +746,9 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
   const plan = JSON.parse(await readFile(planPath, "utf8")) as { kind: string; reviewRequired: boolean };
   const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; smoke?: { passed: boolean }; validation?: { ok: boolean } };
   const result = JSON.parse(await readFile(resultPath, "utf8")) as { kind: string; build: { status: string } };
+  const css = await readFile(join(outputRoot, "src", "ProducedComponents.css"), "utf8");
+  assert.equal(css.includes('[data-component-id="component:notice"] .sg-notice-card{padding:13px}'), true);
+  assert.equal(css.includes(":root{--sg-notice-gap:13px}"), true);
   assert.equal(plan.kind, "component-library-build-plan");
   assert.equal(plan.reviewRequired, false);
   assert.equal(report.status, "succeeded");
@@ -731,4 +756,59 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
   assert.equal(report.validation?.ok, true);
   assert.equal(result.kind, "reviewed-component-library-production-result");
   assert.equal(result.build.status, "succeeded");
+});
+
+test("Reviewed SFC style responsibility flows through candidate review into component production", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-sfc-style-production-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  await writeFile(join(directory, "StyledCard.vue"), `<template><section class="sg-real-card" role="region"><button class="sg-toggle" type="button" @click="showDetails">Show details</button><p class="sg-detail" v-show="open">Source styled component</p></section></template><script setup>import { ref } from 'vue'; const open = ref(false); function showDetails(){ open.value = true }</script><style scoped>.sg-real-card{padding:17px;color:var(--sg-ink)}.sg-toggle{color:var(--sg-ink)}.sg-detail{margin:0}@media (max-width:500px){.sg-real-card{padding:9px}}</style>`, "utf8");
+  const visualGraph = analyzeSfcVisualResponsibilities(directory);
+  const extractedPrimitiveGraph = compilePrimitiveDomResponsibilities(visualGraph.components);
+  assert.equal(extractedPrimitiveGraph.reviewRequired, true);
+  const primitiveGraph: PrimitiveDomCompilationGraph = { ...extractedPrimitiveGraph, components: extractedPrimitiveGraph.components.map((component) => ({ ...component, reviewRequired: false })), reviewReasons: [], reviewRequired: false };
+  await writeFile(join(directory, "sfc-visual.json"), `${JSON.stringify(visualGraph, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "primitive.json"), `${JSON.stringify(primitiveGraph, null, 2)}\n`, "utf8");
+  const candidatePath = join(directory, "style-candidate.json");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-style-candidate", join(directory, "sfc-visual.json"), "--primitive-dom", join(directory, "primitive.json"), "--out", candidatePath], { cwd: root, encoding: "utf8" });
+  const candidate = JSON.parse(await readFile(candidatePath, "utf8")) as ReviewedComponentStyleArtifact;
+  assert.equal(candidate.reviewRequired, true);
+  assert.equal(candidate.entries.length, 1);
+  assert.equal(candidate.entries[0]?.reviewed, false);
+  assert.equal(candidate.entries[0]?.compiledCss.includes("padding:17px"), true);
+  const stateCandidatePath = join(directory, "state-candidate.json");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-state-candidate", join(directory, "sfc-visual.json"), "--primitive-dom", join(directory, "primitive.json"), "--out", stateCandidatePath], { cwd: root, encoding: "utf8" });
+  const stateCandidate = JSON.parse(await readFile(stateCandidatePath, "utf8")) as ComponentLibraryStateEvidenceMap;
+  assert.equal(stateCandidate.reviewRequired, true);
+  assert.equal(stateCandidate.entries[0]?.reviewed, false);
+  assert.equal(stateCandidate.entries[0]?.responsibility.initialState.open, false);
+  const reviewedState: ComponentLibraryStateEvidenceMap = { ...stateCandidate, entries: stateCandidate.entries.map((entry) => ({ ...entry, reviewed: true })), unresolved: [], reviewRequired: false };
+  const candidateStateResult = await runReviewedComponentLibraryProduction({
+    primitiveGraph,
+    projection: { sourceRoot: directory, libraryName: "Candidate State Components", packageName: "candidate-state-components" },
+    stateMap: stateCandidate,
+  }, join(directory, "candidate-state-library"));
+  assert.equal(candidateStateResult.build.status, "blocked");
+  assert.equal(candidateStateResult.build.blockers.some((reason) => reason.includes("requires review")), true);
+  const reviewed: ReviewedComponentStyleArtifact = { ...candidate, entries: candidate.entries.map((entry) => ({ ...entry, reviewed: true })), unresolved: [], reviewRequired: false };
+  const result = await runReviewedComponentLibraryProduction({
+    primitiveGraph,
+    projection: { sourceRoot: directory, libraryName: "SFC Styled Components", packageName: "sfc-styled-components" },
+    styleArtifact: reviewed,
+    stateMap: reviewedState,
+  }, join(directory, "library"));
+  assert.equal(result.build.status, "succeeded", JSON.stringify(result.build.blockers));
+  const css = await readFile(join(directory, "library", "src", "SFCStyledComponents.css"), "utf8");
+  assert.equal(css.includes(`[data-component-id="${primitiveGraph.components[0].componentId}"] .sg-real-card{padding:17px`), true);
+  assert.equal(css.includes(`@media (max-width:500px){[data-component-id="${primitiveGraph.components[0].componentId}"] .sg-real-card{padding:9px}}`), true);
+  const runtime = await readFile(join(directory, "library", "src", "SFCStyledComponents.js"), "utf8");
+  const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { SFCStyledComponents: { mount: (host: Element, options: unknown) => { state: { open: boolean }; unmount: () => void } } }).SFCStyledComponents;
+  const instance = api.mount(dom.window.document.getElementById("mount")!, {});
+  assert.equal(dom.window.document.querySelector<HTMLElement>(".sg-detail")?.hidden, true);
+  dom.window.document.querySelector<HTMLButtonElement>(".sg-toggle")!.click();
+  assert.equal(instance.state.open, true);
+  assert.equal(dom.window.document.querySelector<HTMLElement>(".sg-detail")?.hidden, false);
+  instance.unmount(); dom.window.close();
+  assert.equal(result.plan.files.find((file) => file.role === "style")?.provenance.some((item) => item.kind === "source-style"), true);
 });

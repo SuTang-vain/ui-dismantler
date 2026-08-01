@@ -197,7 +197,7 @@ function generatedApp(plan: VisualTargetPlan, routePlan: SpaRouteShellPlan): str
     submenu('nested','Nested Routes',submenu('menu1','Menu 1',link('/nested/menu1/menu1-1','Menu 1-1'))) + '</ul></aside>';
   const primitivePages = ${JSON.stringify(compiledPages)};
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]));
-  const primitiveNodeMap = (compilation) => new Map(compilation.nodes.map((node) => [node.sourceNodeId, node]));
+  const primitiveNodeMap = (compilation) => new Map(compilation.nodes.flatMap((node) => [[node.sourceNodeId, node], [node.id, node]]));
   const expressionValue = (expression, context) => expression.split('.').reduce((value, key) => value == null ? undefined : value[key], context);
   const materializeStatic = (value, context = {}) => {
     if (Array.isArray(value)) return value.map((item) => materializeStatic(item, context));

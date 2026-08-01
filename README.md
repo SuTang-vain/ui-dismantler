@@ -145,10 +145,25 @@ Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可�
   "artifacts": {
     "primitiveDom": "./artifacts/primitive-dom.graph.json",
     "stateMap": "./artifacts/component-state.map.json",
+    "style": "./artifacts/reviewed-component-style.artifact.json",
     "dataSurface": "./artifacts/data-surface.manifest.json",
     "runtimeOptions": "./artifacts/runtime-options.json"
   }
 }
+```
+
+SFC responsibility graph 中的 state 和 compiled styles 先生成 review-only candidate；候选中的每个 owner/entry 必须有人审查，不能由命令自动标记为 reviewed：
+
+```bash
+node dist-ts/cli.js component-state-candidate \
+  /absolute/path/to/sfc-visual.graph.json \
+  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
+  --out /tmp/component-state.map.json
+
+node dist-ts/cli.js component-style-candidate \
+  /absolute/path/to/sfc-visual.graph.json \
+  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
+  --out /tmp/reviewed-component-style.artifact.json
 ```
 
 ```bash
@@ -194,11 +209,19 @@ node dist-ts/cli.js component-build-enrich \
   "schemaVersion": "1.0",
   "kind": "component-state-evidence-map",
   "entries": [
-    { "ownerId": "component:alpha", "responsibility": {} },
-    { "ownerId": "component:beta", "responsibility": {} }
-  ]
+    {
+      "ownerId": "component:alpha",
+      "responsibility": {},
+      "reviewed": true,
+      "evidence": ["reviewed SFC state ownership"]
+    }
+  ],
+  "unresolved": [],
+  "reviewRequired": false
 }
 ```
+
+Source style 通过独立 `reviewed-component-style-artifact` 交接。owner 样式会自动限定到生成组件的 `[data-component-id]` 边界，显式 global 样式保持全局；CSS 语法、Primitive graph hash、owner identity、evidence 和 review state 任一不成立都会阻断生产。这样完整 SFC CSS 不再依赖页面级手写字符串，也不会泄漏到其他生成组件。
 
 当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化。reviewed API Data Surface 不会把 endpoint、fixture 或业务值写进发布运行时，而是生成以 surface id 为 `adapterKey` 的外部 adapter contract；`sg-data-pack` 或调用方通过 `mount(..., { adapters })` / `--runtime-options` 提供经过规范化的数据。缺少 adapter、adapter 抛错、shape/cardinality/field 不匹配都会在 Runtime Smoke 中失败。静态业务 binding、未知 runtime binding 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-model` 也必须绑定到 reviewed initial state，运行时才会执行输入状态更新、依赖 DOM 重渲染和焦点恢复。`v-else`/`v-else-if`、`v-model` modifiers、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 

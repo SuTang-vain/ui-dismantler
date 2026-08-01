@@ -38,7 +38,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, createComponentStateEvidenceMapCandidate, createComponentStyleArtifactCandidate, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap, type ReviewedComponentStyleArtifact } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
@@ -52,6 +52,7 @@ interface ReviewedComponentProductionConfig {
     readonly stateMap?: string;
     readonly dataSurface?: string;
     readonly runtimeOptions?: string;
+    readonly style?: string;
   };
   readonly quality?: ComponentLibraryQualityContract;
 }
@@ -110,6 +111,8 @@ function usage(): void {
   profile-list [--out <profile-catalog.json>]
   profile-plan <profile.config.json> --out <profile.plan.json>
   profile-run <profile.config.json> --out <profile.report.json>
+  component-state-candidate <sfc-visual.graph.json> --primitive-dom <primitive-dom.graph.json> --out <component-state.map.json>
+  component-style-candidate <sfc-visual.graph.json> --primitive-dom <primitive-dom.graph.json> --out <reviewed-component-style.artifact.json>
   component-produce <component-production.config.json> --out-dir <dir> [--plan <component-library.build-plan.json>] [--report <component-library.build-report.json>] [--result <component-library.production-result.json>] [--overwrite]
   component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
@@ -157,6 +160,28 @@ async function main(argv: string[]): Promise<number> {
       console.log(catalog.profiles.map((profile) => `${profile.id}: ${profile.summary}`).join("\n"));
       return 0;
     }
+    if (command === "component-state-candidate") {
+      const visualGraphPath = args[0]; const primitivePath = flag(args, "--primitive-dom"); const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!visualGraphPath || !primitivePath || !out) throw new Error("component-state-candidate 需要 <sfc-visual.graph.json>、--primitive-dom 和 --out");
+      const visualGraph = JSON.parse(await readFile(resolve(visualGraphPath), "utf8")) as SfcVisualResponsibilityGraph;
+      const primitiveGraph = JSON.parse(await readFile(resolve(primitivePath), "utf8")) as PrimitiveDomCompilationGraph;
+      const artifact = createComponentStateEvidenceMapCandidate(visualGraph, primitiveGraph);
+      await writeFile(resolve(out), `${JSON.stringify(artifact, null, 2)}
+`, "utf8");
+      console.log(`✓ Component State Candidate: ${resolve(out)} (entries=${artifact.entries.length}，unresolved=${artifact.unresolved?.length ?? 0}，reviewRequired=${artifact.reviewRequired})`);
+      return 0;
+    }
+    if (command === "component-style-candidate") {
+      const visualGraphPath = args[0]; const primitivePath = flag(args, "--primitive-dom"); const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!visualGraphPath || !primitivePath || !out) throw new Error("component-style-candidate 需要 <sfc-visual.graph.json>、--primitive-dom 和 --out");
+      const visualGraph = JSON.parse(await readFile(resolve(visualGraphPath), "utf8")) as SfcVisualResponsibilityGraph;
+      const primitiveGraph = JSON.parse(await readFile(resolve(primitivePath), "utf8")) as PrimitiveDomCompilationGraph;
+      const artifact = createComponentStyleArtifactCandidate(visualGraph, primitiveGraph);
+      await writeFile(resolve(out), `${JSON.stringify(artifact, null, 2)}
+`, "utf8");
+      console.log(`✓ Component Style Candidate: ${resolve(out)} (entries=${artifact.entries.length}，unresolved=${artifact.unresolved?.length ?? 0}，reviewRequired=${artifact.reviewRequired})`);
+      return 0;
+    }
     if (command === "component-produce") {
       const configPath = args[0]; const outDir = flag(args, "--out-dir");
       if (!configPath || !outDir) throw new Error("component-produce 需要 <component-production.config.json> 和 --out-dir");
@@ -170,6 +195,7 @@ async function main(argv: string[]): Promise<number> {
       const stateMap = await readJson<ComponentLibraryStateEvidenceMap>(config.artifacts.stateMap);
       const dataSurface = await readJson<DataSurfaceManifest>(config.artifacts.dataSurface);
       const runtimeOptions = await readJson<unknown>(config.artifacts.runtimeOptions);
+      const styleArtifact = await readJson<ReviewedComponentStyleArtifact>(config.artifacts.style);
       const quality = config.quality ? {
         ...config.quality,
         originalHtmlPath: resolve(configRoot, config.quality.originalHtmlPath),
@@ -181,7 +207,7 @@ async function main(argv: string[]): Promise<number> {
       const result = await runReviewedComponentLibraryProduction({
         primitiveGraph,
         projection: { sourceRoot: resolve(configRoot, config.sourceRoot), libraryName: config.library.name, packageName: config.library.packageName, ...(quality ? { quality } : {}) },
-        ...(state ? { state } : {}), ...(stateMap ? { stateMap } : {}), ...(dataSurface ? { dataSurface } : {}), ...(runtimeOptions !== undefined ? { runtimeOptions } : {}),
+        ...(state ? { state } : {}), ...(stateMap ? { stateMap } : {}), ...(dataSurface ? { dataSurface } : {}), ...(runtimeOptions !== undefined ? { runtimeOptions } : {}), ...(styleArtifact ? { styleArtifact } : {}),
       }, outDir, { overwrite: has(args, "--overwrite"), reportPath: flag(args, "--report") });
       const planPath = flag(args, "--plan"); if (planPath) await writeFile(resolve(planPath), `${JSON.stringify(result.plan, null, 2)}
 `, "utf8");

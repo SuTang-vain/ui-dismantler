@@ -71,6 +71,52 @@ function scopeSelector(selector: string, ownerSelector: string): string {
   return `${ownerSelector} ${normalized}`;
 }
 
+export interface CompiledCssMaterialization {
+  readonly css: string;
+  readonly materialized: boolean;
+  readonly ruleCount: number;
+  readonly selectorCount: number;
+  readonly keyframeRuleCount: number;
+  readonly error?: string;
+}
+
+export function materializeCompiledCssForSelector(source: string, ownerSelector: string, scopeSelectors = true): CompiledCssMaterialization {
+  try {
+    const ast = cssTree.parse(source, { positions: true });
+    const replacements: Array<{ start: number; end: number; value: string }> = [];
+    let keyframeDepth = 0;
+    let ruleCount = 0;
+    let selectorCount = 0;
+    let keyframeRuleCount = 0;
+    cssTree.walk(ast, {
+      enter(node) {
+        if (node.type === "Atrule" && /(?:^|-)keyframes$/i.test(node.name ?? "")) keyframeDepth += 1;
+        if (node.type !== "Rule" || node.prelude?.type !== "SelectorList") return;
+        if (keyframeDepth > 0) { keyframeRuleCount += 1; return; }
+        const selectors: string[] = [];
+        node.prelude.children?.forEach((child) => selectors.push(cssTree.generate(child)));
+        if (selectors.length === 0 || !node.prelude.loc) return;
+        if (scopeSelectors) {
+          const value = selectors.map((selector) => scopeSelector(selector, ownerSelector)).join(",");
+          cssTree.parse(value, { context: "selectorList" });
+          replacements.push({ start: node.prelude.loc.start.offset, end: node.prelude.loc.end.offset, value });
+        }
+        ruleCount += 1;
+        selectorCount += selectors.length;
+      },
+      leave(node) {
+        if (node.type === "Atrule" && /(?:^|-)keyframes$/i.test(node.name ?? "")) keyframeDepth -= 1;
+      },
+    });
+    const css = scopeSelectors
+      ? replacements.sort((left, right) => right.start - left.start).reduce((value, replacement) => `${value.slice(0, replacement.start)}${replacement.value}${value.slice(replacement.end)}`, source)
+      : source;
+    return { css, materialized: true, ruleCount, selectorCount, keyframeRuleCount };
+  } catch (error) {
+    return { css: "", materialized: false, ruleCount: 0, selectorCount: 0, keyframeRuleCount: 0, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
 function materializeSheet(ownerSelector: string, sheet: VisualTargetOwnerPlan["sourceStyleSheets"][number]): { css: string; report: MaterializedOwnerStyleSheet } {
   if (!sheet.compiledCss || sheet.compileStatus === "failed") {
     return {
@@ -87,59 +133,20 @@ function materializeSheet(ownerSelector: string, sheet: VisualTargetOwnerPlan["s
       },
     };
   }
-  try {
-    const ast = cssTree.parse(sheet.compiledCss, { positions: true });
-    const replacements: Array<{ start: number; end: number; value: string }> = [];
-    let keyframeDepth = 0;
-    let ruleCount = 0;
-    let selectorCount = 0;
-    let keyframeRuleCount = 0;
-    cssTree.walk(ast, {
-      enter(node) {
-        if (node.type === "Atrule" && /(?:^|-)keyframes$/i.test(node.name ?? "")) keyframeDepth += 1;
-        if (node.type !== "Rule" || node.prelude?.type !== "SelectorList") return;
-        if (keyframeDepth > 0) { keyframeRuleCount += 1; return; }
-        const selectors: string[] = [];
-        node.prelude.children?.forEach((child) => selectors.push(cssTree.generate(child)));
-        if (selectors.length === 0 || !node.prelude.loc) return;
-        const value = selectors.map((selector) => scopeSelector(selector, ownerSelector)).join(",");
-        cssTree.parse(value, { context: "selectorList" });
-        replacements.push({ start: node.prelude.loc.start.offset, end: node.prelude.loc.end.offset, value });
-        ruleCount += 1;
-        selectorCount += selectors.length;
-      },
-      leave(node) {
-        if (node.type === "Atrule" && /(?:^|-)keyframes$/i.test(node.name ?? "")) keyframeDepth -= 1;
-      },
-    });
-    const css = replacements.sort((left, right) => right.start - left.start).reduce((value, replacement) => `${value.slice(0, replacement.start)}${replacement.value}${value.slice(replacement.end)}`, sheet.compiledCss);
-    return {
-      css,
-      report: {
-        index: sheet.index,
-        sourceScoped: sheet.scoped,
-        compileStatus: sheet.compileStatus,
-        materialized: true,
-        ruleCount,
-        selectorCount,
-        keyframeRuleCount,
-      },
-    };
-  } catch (error) {
-    return {
-      css: "",
-      report: {
-        index: sheet.index,
-        sourceScoped: sheet.scoped,
-        compileStatus: sheet.compileStatus,
-        materialized: false,
-        ruleCount: 0,
-        selectorCount: 0,
-        keyframeRuleCount: 0,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    };
-  }
+  const result = materializeCompiledCssForSelector(sheet.compiledCss, ownerSelector, true);
+  return {
+    css: result.css,
+    report: {
+      index: sheet.index,
+      sourceScoped: sheet.scoped,
+      compileStatus: sheet.compileStatus,
+      materialized: result.materialized,
+      ruleCount: result.ruleCount,
+      selectorCount: result.selectorCount,
+      keyframeRuleCount: result.keyframeRuleCount,
+      ...(result.error ? { error: result.error } : {}),
+    },
+  };
 }
 
 export function materializeOwnerSourceStyles(owner: Pick<VisualTargetOwnerPlan, "id" | "sourceStyleSheets">): OwnerSourceStyleMaterialization {
