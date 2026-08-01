@@ -32,6 +32,7 @@ import type { SpaRouterSkillInput } from "./skills/spa-router.js";
 import type { Manifest } from "./types.js";
 import { assertDataSurfaceManifest, serializeDataSurfaceManifest, validateDataSurfaceManifest, type DataSurfaceManifest, type DataSurfaceManifestInput } from "./skills/data-surface-manifest/index.js";
 import type { DataCardinalityResponsibilityGraph, DataCardinalitySkillInput } from "./skills/data-cardinality.js";
+import type { PrimitiveDomCompilationGraph } from "./skills/primitive-dom.js";
 import { createDefaultTaskProfileRegistry } from "./profiles/default-profiles.js";
 import { createDefaultReviewedBindingRegistry } from "./profiles/default-bindings.js";
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
@@ -39,7 +40,6 @@ import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
 import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
-import type { PrimitiveDomCompilationGraph } from "./skills/primitive-dom.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
 const skillRegistry = createDefaultSkillRegistry();
@@ -156,12 +156,13 @@ async function main(argv: string[]): Promise<number> {
       return 1;
     }
     if (command === "component-build-enrich") {
-      const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const statePath = flag(args, "--state"); const dataSurfacePath = flag(args, "--data-surface");
-      if (!planPath || !out || (!statePath && !dataSurfacePath)) throw new Error("component-build-enrich 需要 plan、至少一个 --state/--data-surface 和 --out");
+      const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const statePath = flag(args, "--state"); const dataSurfacePath = flag(args, "--data-surface"); const primitiveGraphPath = flag(args, "--primitive-dom");
+      if (!planPath || !out || (!statePath && !dataSurfacePath && !primitiveGraphPath)) throw new Error("component-build-enrich 需要 plan、至少一个 --state/--data-surface/--primitive-dom 和 --out");
       const plan = JSON.parse(await readFile(resolve(planPath), "utf8")) as ComponentLibraryBuildPlan;
       const state = statePath ? JSON.parse(await readFile(resolve(statePath), "utf8")) as SfcStateResponsibility : undefined;
       const dataSurface = dataSurfacePath ? JSON.parse(await readFile(resolve(dataSurfacePath), "utf8")) as DataSurfaceManifest : undefined;
-      const enriched = enrichComponentLibraryBuildPlan(plan, { state, dataSurface });
+      const primitiveGraph = primitiveGraphPath ? JSON.parse(await readFile(resolve(primitiveGraphPath), "utf8")) as PrimitiveDomCompilationGraph : undefined;
+      const enriched = enrichComponentLibraryBuildPlan(plan, { state, dataSurface, primitiveGraph });
       await writeFile(resolve(out), `${JSON.stringify(enriched, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(enriched);
       console.log(`${validation.ready ? "✓" : "✗"} Component evidence projection: ${resolve(out)} (reviewRequired=${enriched.reviewRequired})`);

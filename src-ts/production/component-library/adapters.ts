@@ -49,6 +49,7 @@ function serializedNode(node: PrimitiveDomNode, nodes: readonly PrimitiveDomNode
     inlineStyle: node.inlineStyle,
     conditions: node.conditions,
     conditionDirective: node.conditionDirective,
+    loops: node.loops,
     content: node.content.filter((token): token is { kind: "text"; value: string } => token.kind === "text"),
     children: nodeChildren(nodes, node).map((child) => serializedNode(child, nodes)),
   };
@@ -78,32 +79,37 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
     for (var i = 0; i < parts.length - 1; i += 1) { if (!current[parts[i]] || typeof current[parts[i]] !== "object") current[parts[i]] = {}; current = current[parts[i]]; }
     current[parts[parts.length - 1]] = value;
   }
-  function resolveValue(expression, state, data) {
-    var value = String(expression || "").trim();
+  function resolveValue(expression, state, data, scope) {
+    var value = String(expression || "").trim().replace(/^\\+/, "");
     if ((value.charAt(0) === "\\\"" && value.charAt(value.length - 1) === "\\\"") || (value.charAt(0) === "'" && value.charAt(value.length - 1) === "'")) return value.slice(1, -1);
+    if (value === "true") return true;
+    if (value === "false") return false;
+    if (value === "null") return null;
+    if (/^-?\\d+(?:\\.\\d+)?$/.test(value)) return Number(value);
+    var scopeValue = readPath(scope || {}, value); if (scopeValue !== undefined) return scopeValue;
     var dataValue = readPath(data || {}, value); if (dataValue !== undefined) return dataValue;
     return readPath(state || {}, value);
   }
-  function evaluate(expression, state, data) {
+  function evaluate(expression, state, data, scope) {
     var value = String(expression || "").trim();
     if (!value) return true;
-    if (value.charAt(0) === "!") return !evaluate(value.slice(1), state, data);
+    if (value.charAt(0) === "!") return !evaluate(value.slice(1), state, data, scope);
     var equality = value.match(/^(.+?)\\s*(!==|===|!=|==)\\s*(true|false|null|-?\\d+(?:\\.\\d+)?|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*')$/);
-    if (equality) { var left = resolveValue(equality[1], state, data); var rightText = equality[3]; var right = rightText === "true" ? true : rightText === "false" ? false : rightText === "null" ? null : /^-?\\d/.test(rightText) ? Number(rightText) : rightText.slice(1, -1); return equality[2] === "===" || equality[2] === "==" ? left === right : left !== right; }
-    if (/\\s+&&\\s+/.test(value)) return value.split(/\\s+&&\\s+/).every(function (part) { return evaluate(part, state, data); });
-    if (/\\s+\\|\\|\\s+/.test(value)) return value.split(/\\s+\\|\\|\\s+/).some(function (part) { return evaluate(part, state, data); });
-    return Boolean(resolveValue(value, state, data));
+    if (equality) { var left = resolveValue(equality[1], state, data, scope); var rightText = equality[3]; var right = rightText === "true" ? true : rightText === "false" ? false : rightText === "null" ? null : /^-?\\d/.test(rightText) ? Number(rightText) : rightText.slice(1, -1); return equality[2] === "===" || equality[2] === "==" ? left === right : left !== right; }
+    if (/\\s+&&\\s+/.test(value)) return value.split(/\\s+&&\\s+/).every(function (part) { return evaluate(part, state, data, scope); });
+    if (/\\s+\\|\\|\\s+/.test(value)) return value.split(/\\s+\\|\\|\\s+/).some(function (part) { return evaluate(part, state, data, scope); });
+    return Boolean(resolveValue(value, state, data, scope));
   }
-  function interpolate(text, state, data) { return String(text).replace(/\\{\\{\\s*([^}]+?)\\s*\\}\\}/g, function (_match, expression) { var value = resolveValue(expression, state, data); return value === undefined || value === null ? "" : String(value); }); }
-  function setAttributes(element, attributes, state, data) {
+  function interpolate(text, state, data, scope) { return String(text).replace(/\\{\\{\\s*([^}]+?)\\s*\\}\\}/g, function (_match, expression) { var value = resolveValue(expression, state, data, scope); return value === undefined || value === null ? "" : String(value); }); }
+  function setAttributes(element, attributes, state, data, scope) {
     Object.keys(attributes || {}).forEach(function (name) {
       var value = attributes[name];
       if (name.indexOf("@") === 0 || name.indexOf("v-") === 0 || name.indexOf("#") === 0) {
-        if (name === "v-model") { var model = resolveValue(value, state, data); if (model !== undefined && "value" in element) element.value = String(model); }
+        if (name === "v-model") { var model = resolveValue(value, state, data, scope); if (model !== undefined && "value" in element) element.value = String(model); }
         return;
       }
       if (name.indexOf(":") === 0) {
-        var dynamicName = name.slice(1); var dynamicValue = resolveValue(value, state, data);
+        var dynamicName = name.slice(1); var dynamicValue = resolveValue(value, state, data, scope);
         if (dynamicValue === undefined || dynamicValue === null || dynamicValue === false) return;
         if (dynamicName === "class" && typeof dynamicValue === "string") dynamicValue.split(/\\s+/).forEach(function (className) { if (className) element.classList.add(className); });
         else if (dynamicValue === true) element.setAttribute(dynamicName, "");
@@ -115,18 +121,43 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
       else if (value !== false && value != null) element.setAttribute(name, String(value));
     });
   }
-  function render(spec, state, data) {
+  function renderOne(spec, state, data, scope) {
     var directive = spec.conditionDirective;
-    if (directive && directive.expression && (directive.kind === "if" || directive.kind === "else-if") && !evaluate(directive.expression, state, data)) return null;
+    if (directive && directive.expression && (directive.kind === "if" || directive.kind === "else-if") && !evaluate(directive.expression, state, data, scope)) return null;
     var element = document.createElement(spec.renderTag || "div");
     element.setAttribute("data-primitive-node", spec.id);
     (spec.classes || []).forEach(function (name) { element.classList.add(name); });
-    setAttributes(element, spec.attributes, state, data);
+    setAttributes(element, spec.attributes, state, data, scope);
     Object.keys(spec.inlineStyle || {}).forEach(function (name) { element.style.setProperty(name, spec.inlineStyle[name]); });
-    if (directive && directive.kind === "show" && directive.expression && !evaluate(directive.expression, state, data)) element.hidden = true;
-    (spec.content || []).forEach(function (token) { element.appendChild(document.createTextNode(interpolate(token.value, state, data))); });
-    (spec.children || []).forEach(function (child) { var rendered = render(child, state, data); if (rendered) element.appendChild(rendered); });
+    if (directive && directive.kind === "show" && directive.expression && !evaluate(directive.expression, state, data, scope)) element.hidden = true;
+    (spec.content || []).forEach(function (token) { element.appendChild(document.createTextNode(interpolate(token.value, state, data, scope))); });
+    (spec.children || []).forEach(function (child) { render(child, state, data, scope).forEach(function (rendered) { element.appendChild(rendered); }); });
     return element;
+  }
+  function parseLoop(value) {
+    var match = String(value || "").match(/^\\s*(?:\\(\\s*([A-Za-z_$][\\w$]*)(?:\\s*,\\s*([A-Za-z_$][\\w$]*))?(?:\\s*,\\s*([A-Za-z_$][\\w$]*))?\\s*\\)|([A-Za-z_$][\\w$]*))\\s+(?:in|of)\\s+(.+?)\\s*$/);
+    if (!match) return null;
+    var source = match[5].trim();
+    if (!/^\\+?(?:-?\\d+(?:\\.\\d+)?|(?:this\\.)?[A-Za-z_$][\\w$]*(?:\\.value)?(?:\\.[A-Za-z_$][\\w$]*)*)$/.test(source)) return null;
+    return { item: match[1] || match[4], second: match[2] || null, third: match[3] || null, source: source };
+  }
+  function collection(value) {
+    if (Array.isArray(value)) return value.map(function (item, index) { return { value: item, index: index, key: index, kind: "array" }; });
+    if (typeof value === "number" && Number.isFinite(value) && value >= 0) return Array.from({ length: Math.floor(value) }, function (_unused, index) { return { value: index + 1, index: index, key: index, kind: "number" }; });
+    if (value && typeof value === "object") return Object.keys(value).map(function (key, index) { return { value: value[key], index: index, key: key, kind: "object" }; });
+    return [];
+  }
+  function render(spec, state, data, scope) {
+    var loopValues = spec.loops || [];
+    var loop = loopValues.length === 1 ? parseLoop(loopValues[0]) : null;
+    if (!loop) { if (loopValues.length) return []; var single = renderOne(spec, state, data, scope || {}); return single ? [single] : []; }
+    var source = resolveValue(loop.source, state, data, scope || {});
+    return collection(source).flatMap(function (entry) {
+      var local = Object.assign({}, scope || {}); local[loop.item] = entry.value;
+      if (loop.second) local[loop.second] = entry.kind === "object" ? entry.key : entry.index;
+      if (loop.third) local[loop.third] = entry.index;
+      var rendered = renderOne(spec, state, data, local); return rendered ? [rendered] : [];
+    });
   }
   function resolveComponent(options) { var requested = options && options.componentId; return COMPONENTS.filter(function (component) { return !requested || component.id === requested; })[0] || COMPONENTS[0]; }
   function applyTransition(instance, binding) {
@@ -157,7 +188,7 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   function renderInto(instance) {
     var component = instance.component;
     while (instance.root.firstChild) instance.root.removeChild(instance.root.firstChild);
-    if (component) component.roots.forEach(function (child) { var rendered = render(child, instance.state, instance.data); if (rendered) instance.root.appendChild(rendered); });
+    if (component) component.roots.forEach(function (child) { render(child, instance.state, instance.data, {}).forEach(function (rendered) { instance.root.appendChild(rendered); }); });
     bindInteractions(instance);
   }
   function create(options) {
@@ -207,7 +238,8 @@ export async function primitiveDomCompilationToBuildPlan(
   const unresolved = [...graph.reviewReasons, ...(options.additionalReviewReasons ?? [])];
   for (const component of graph.components) {
     for (const node of component.compilation.nodes) {
-      if (node.conditions.length || node.loops.length) unresolved.push(`${component.componentName}:${node.id} conditional or repeated region requires state/data materialization`);
+      if (node.conditions.length) unresolved.push(`${component.componentName}:${node.id} conditional region requires state materialization`);
+      if (node.loops.length) unresolved.push(`${component.componentName}:${node.id} repeated region requires reviewed collection binding`);
     }
     if (component.compilation.interactions.length) unresolved.push(`${component.componentName} interaction bindings require state transition execution evidence`);
   }
@@ -238,6 +270,43 @@ export async function primitiveDomCompilationToBuildPlan(
     unresolved,
   };
   return await createComponentLibraryBuildPlan(input, options.sourceRoot);
+}
+
+interface ParsedCollectionLoop {
+  readonly aliases: readonly string[];
+  readonly source: string;
+  readonly normalizedSource: string;
+  readonly literalCardinality: boolean;
+}
+
+function parseCollectionLoop(loop: string): ParsedCollectionLoop | undefined {
+  const match = loop.match(/^\s*(?:\(\s*([A-Za-z_$][\w$]*)(?:\s*,\s*([A-Za-z_$][\w$]*))?(?:\s*,\s*([A-Za-z_$][\w$]*))?\s*\)|([A-Za-z_$][\w$]*))\s+(?:in|of)\s+(.+?)\s*$/);
+  if (!match) return undefined;
+  const source = match[5].trim();
+  const literalCardinality = /^\+?\d+(?:\.\d+)?$/.test(source);
+  const pathSource = /^\+?(?:this\.)?[A-Za-z_$][\w$]*(?:\.value)?(?:\.[A-Za-z_$][\w$]*)*$/.test(source);
+  if (!literalCardinality && !pathSource) return undefined;
+  return {
+    aliases: [match[1] ?? match[4], match[2], match[3]].filter((alias): alias is string => Boolean(alias)),
+    source,
+    normalizedSource: source.replace(/^\+/, "").replace(/^this\./, "").replace(/\.value(?=\.|$)/, ""),
+    literalCardinality,
+  };
+}
+
+function collectionBindingsCoverLoops(graph: PrimitiveDomCompilationGraph, bindings: readonly ComponentLibraryDataBinding[]): boolean {
+  const loops = graph.components.flatMap((component) => component.compilation.nodes.flatMap((node) => node.loops.map((loop) => ({ componentId: component.componentId, loop: parseCollectionLoop(loop) }))));
+  if (loops.length === 0) return true;
+  const reviewedProps = bindings.filter((binding) => binding.materialized && binding.reviewed && binding.sourceKind === "component-prop");
+  return loops.every(({ componentId, loop }) => {
+    if (!loop) return false;
+    if (loop.literalCardinality) return true;
+    return reviewedProps.some((binding) => {
+      if (binding.ownerId !== componentId) return false;
+      const target = binding.targetBinding.replace(/^this\./, "").replace(/\.value(?=\.|$)/, "");
+      return loop.normalizedSource === target || loop.normalizedSource.startsWith(`${target}.`);
+    });
+  });
 }
 
 function handlerName(expression: string): string | undefined {
@@ -296,7 +365,7 @@ function injectInteractionRuntime(
 
 export function enrichComponentLibraryBuildPlan(
   plan: ComponentLibraryBuildPlan,
-  evidence: { readonly state?: SfcStateResponsibility; readonly dataSurface?: DataSurfaceManifest },
+  evidence: { readonly state?: SfcStateResponsibility; readonly dataSurface?: DataSurfaceManifest; readonly primitiveGraph?: PrimitiveDomCompilationGraph },
 ): ComponentLibraryBuildPlan {
   let interactions: ComponentLibraryInteractionBinding[] = [...plan.interactions];
   const dataBindings: ComponentLibraryDataBinding[] = [...plan.dataBindings];
@@ -380,7 +449,11 @@ export function enrichComponentLibraryBuildPlan(
       unresolved = unresolved.filter((reason) => !reason.includes("interaction bindings require state transition execution evidence"));
     }
   }
-  const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized);
+  const primitiveGraphMatchesPlan = evidence.primitiveGraph ? plan.identity.sourceHash === sha256(JSON.stringify(evidence.primitiveGraph)) : false;
+  if (evidence.primitiveGraph && !primitiveGraphMatchesPlan) unresolved.push("primitive-dom: graph identity does not match build plan sourceHash");
+  const loopsReady = evidence.primitiveGraph ? primitiveGraphMatchesPlan && collectionBindingsCoverLoops(evidence.primitiveGraph, dataBindings) : true;
+  if (loopsReady) unresolved = unresolved.filter((reason) => !reason.includes("repeated region requires reviewed collection binding") && !reason.includes("v-for cardinality requires data-source evidence"));
+  const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized) && loopsReady;
   const reviewRequired = unresolved.length > 0 || !bindingsReady;
   if (!reviewRequired) files = files.map((file) => ["runtime", "style", "package-metadata", "documentation"].includes(file.role) ? { ...file, reviewed: true } : file);
   const configurationHash = sha256(JSON.stringify({ base: plan.identity.configurationHash, files: files.map((file) => ({ path: file.path, contentHash: file.contentHash, reviewed: file.reviewed })), interactions, dataBindings, unresolved }));

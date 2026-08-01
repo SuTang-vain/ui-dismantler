@@ -150,10 +150,11 @@ node dist-ts/cli.js component-build-enrich \
   /tmp/component-library.build-plan.json \
   --state /tmp/sfc-state.json \
   --data-surface /tmp/data-surface.manifest.json \
+  --primitive-dom /tmp/primitive-dom.graph.json \
   --out /tmp/component-library.reviewed-build-plan.json
 ```
 
-当前交互绑定和数据绑定只进入审查合同，不会执行未审查表达式，也不会将业务数据值写入 publishable runtime。状态责任还可以通过无 `eval` 的 reviewed state-transition executor 验证字面量赋值、布尔切换和数值增减；这只是执行证据，不代表已进入组件运行时。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化；静态 binding、API fixture 和 unresolved collection 仍然阻断。当前交互绑定和数据绑定只进入审查合同，不会执行未审查表达式，也不会将业务数据值写入 publishable runtime。状态责任还可以通过无 `eval` 的 reviewed state-transition executor 验证字面量赋值、布尔切换和数值增减；这只是执行证据，不代表已进入组件运行时。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 

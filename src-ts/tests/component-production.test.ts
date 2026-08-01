@@ -375,3 +375,107 @@ test("Reviewed component-prop Data Surface binds external options without embedd
   instance.unmount();
   dom.window.close();
 });
+
+test("Reviewed collection Data Surface materializes repeated DOM from external options", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-collection-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:item"],
+      nodes: [{ id: "node:item", sourceNodeId: "source:item", order: 0, sourceTag: "article", componentName: "ItemList", renderTag: "article", renderStrategy: "native", classes: ["sg-item"], attributes: { ":data-index": "index" }, inlineStyle: {}, content: [{ kind: "text", value: "{{ index }}:{{ item.name }}" }], conditions: [], loops: ["(item, index) in items"] }],
+      styleRules: [{ sourceNodeId: "source:item", selector: "[data-primitive-node=\\\"node:item\\\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }], interactions: [],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 },
+    reviewReasons: ["v-for cardinality requires data-source evidence"], reviewRequired: true,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Collection Components", packageName: "collection-components" });
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, {
+    primitiveGraph: graph,
+    dataSurface: {
+      unresolved: [], reviewRequired: false, surfaces: [{ id: "prop:list:items", owner: { componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue" }, source: { primary: "component-prop", prop: { binding: "items", evidence: ["template-repeat"] } }, shape: { kind: "collection", itemKind: "record", cardinality: null, evidence: ["template repeat consumes component prop items"] }, fields: [{ path: "name", consumers: ["component:list"], evidence: ["rendered-field"] }], consumers: [{ componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue", targetBinding: "items", renderedFields: ["name"] }], injection: { kind: "component-prop", target: "items", reviewed: true }, references: [], evidence: [{ source: "template", detail: "items collection", confidence: "high" }], unresolved: [], reviewRequired: false }],
+    } as never,
+  });
+  assert.equal(enriched.dataBindings[0]?.materialized, true);
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const report = await runComponentLibraryBuild(enriched, join(directory, "library"));
+  assert.equal(report.status, "succeeded");
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { CollectionComponents: { mount: (host: Element, options: unknown) => { unmount: () => void } } }).CollectionComponents;
+  const instance = api.mount(dom.window.document.getElementById("mount")!, { data: { items: [{ name: "One" }, { name: "Two" }] } });
+  assert.deepEqual([...dom.window.document.querySelectorAll("[data-primitive-node='node:item']")].map((node) => ({ text: node.textContent, index: node.getAttribute("data-index") })), [{ text: "0:One", index: "0" }, { text: "1:Two", index: "1" }]);
+  instance.unmount();
+  dom.window.close();
+});
+
+
+test("Reviewed collection runtime preserves Vue aliases for object and literal numeric loops", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-loop-alias-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [
+      { componentId: "component:object-list", componentName: "ObjectList", componentFile: "ObjectList.vue", reviewRequired: false, compilation: {
+        schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:object-item"],
+        nodes: [{ id: "node:object-item", sourceNodeId: "source:object-item", order: 0, sourceTag: "article", componentName: "ObjectList", renderTag: "article", renderStrategy: "native", classes: [], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ index }}:{{ key }}={{ item.name }}" }], conditions: [], loops: ["(item, key, index) in items"] }],
+        styleRules: [], interactions: [], metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+      } },
+      { componentId: "component:count-list", componentName: "CountList", componentFile: "CountList.vue", reviewRequired: false, compilation: {
+        schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:count-item"],
+        nodes: [{ id: "node:count-item", sourceNodeId: "source:count-item", order: 0, sourceTag: "span", componentName: "CountList", renderTag: "span", renderStrategy: "native", classes: [], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ n }}" }], conditions: [], loops: ["n in +3"] }],
+        styleRules: [], interactions: [], metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+      } },
+    ],
+    metrics: { components: 2, sourceNodes: 2, compiledNodes: 2, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 },
+    reviewReasons: ["v-for cardinality requires data-source evidence"], reviewRequired: true,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Loop Components", packageName: "loop-components" });
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, {
+    primitiveGraph: graph,
+    dataSurface: {
+      unresolved: [], reviewRequired: false, surfaces: [{ id: "prop:object-list:items", owner: { componentId: "component:object-list", componentName: "ObjectList", componentFile: "ObjectList.vue" }, source: { primary: "component-prop", prop: { binding: "items", evidence: ["template-repeat"] } }, shape: { kind: "collection", itemKind: "record", cardinality: null, evidence: ["template repeat consumes component prop items"] }, fields: [{ path: "name", consumers: ["component:object-list"], evidence: ["rendered-field"] }], consumers: [{ componentId: "component:object-list", componentName: "ObjectList", componentFile: "ObjectList.vue", targetBinding: "items", renderedFields: ["name"] }], injection: { kind: "component-prop", target: "items", reviewed: true }, references: [], evidence: [{ source: "template", detail: "items object", confidence: "high" }], unresolved: [], reviewRequired: false }],
+    } as never,
+  });
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  const dom = new JSDOM(`<!doctype html><div id="object"></div><div id="count"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { LoopComponents: { mount: (host: Element, options: unknown) => { unmount: () => void } } }).LoopComponents;
+  const objectInstance = api.mount(dom.window.document.getElementById("object")!, { componentId: "component:object-list", data: { items: { alpha: { name: "One" }, beta: { name: "Two" } } } });
+  const countInstance = api.mount(dom.window.document.getElementById("count")!, { componentId: "component:count-list" });
+  assert.deepEqual([...dom.window.document.querySelectorAll("#object [data-primitive-node='node:object-item']")].map((node) => node.textContent), ["0:alpha=One", "1:beta=Two"]);
+  assert.deepEqual([...dom.window.document.querySelectorAll("#count [data-primitive-node='node:count-item']")].map((node) => node.textContent), ["1", "2", "3"]);
+  objectInstance.unmount();
+  countInstance.unmount();
+  dom.window.close();
+});
+
+test("Collection review lifting is scoped to the matching Primitive graph and component owner", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-loop-review-scope-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:list", componentName: "ScopedList", componentFile: "ScopedList.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:item"],
+      nodes: [{ id: "node:item", sourceNodeId: "source:item", order: 0, sourceTag: "div", componentName: "ScopedList", renderTag: "div", renderStrategy: "native", classes: [], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ item.name }}" }], conditions: [], loops: ["item in items"] }],
+      styleRules: [], interactions: [], metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: ["v-for cardinality requires data-source evidence"], reviewRequired: true,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Scoped Loop Components", packageName: "scoped-loop-components" });
+  const wrongOwner = enrichComponentLibraryBuildPlan(basePlan, {
+    primitiveGraph: graph,
+    dataSurface: { unresolved: [], reviewRequired: false, surfaces: [{ id: "prop:other:items", owner: { componentId: "component:other", componentName: "Other", componentFile: "Other.vue" }, source: { primary: "component-prop", prop: { binding: "items", evidence: ["template-repeat"] } }, shape: { kind: "collection", itemKind: "record", cardinality: null, evidence: ["template repeat"] }, fields: [], consumers: [{ componentId: "component:other", componentName: "Other", componentFile: "Other.vue", targetBinding: "items", renderedFields: [] }], injection: { kind: "component-prop", target: "items", reviewed: true }, references: [], evidence: [{ source: "template", detail: "other items", confidence: "high" }], unresolved: [], reviewRequired: false }] } as never,
+  });
+  assert.equal(wrongOwner.reviewRequired, true);
+  assert.equal(wrongOwner.unresolved.some((reason) => reason.includes("repeated region requires reviewed collection binding")), true);
+
+  const foreignGraph = JSON.parse(JSON.stringify(graph)) as PrimitiveDomCompilationGraph;
+  (foreignGraph.components[0] as { componentFile: string }).componentFile = "Foreign.vue";
+  const wrongIdentity = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: foreignGraph });
+  assert.equal(wrongIdentity.reviewRequired, true);
+  assert.equal(wrongIdentity.unresolved.includes("primitive-dom: graph identity does not match build plan sourceHash"), true);
+});
