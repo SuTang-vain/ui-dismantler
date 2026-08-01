@@ -499,8 +499,9 @@ blocking handles
 分层回归：
 
 ```bash
-# 案例与 Benchmark Registry 完整性
+# 案例、Benchmark 与 Evidence Registry 完整性
 npm run catalog:validate
+npm run evidence:audit
 
 # PR：Catalog、类型检查、构建、单元测试和冻结证据
 npm run test:pr
@@ -547,6 +548,7 @@ src/skill/         Python/ZCode 兼容 Skill 与脚本
 benchmark/         兼容历史参考组件库
 cases/             冻结案例的逻辑 Catalog，不移动历史物理路径
 benchmarks/        PR、Gold、Nightly 的协议 Registry
+evidence/          冻结证据保留策略、体积预算和超大文件身份
 examples/          冻结案例及其正式配置；运行产物不应写入此目录
 docs/              架构、协议、基线和研究记录
 scripts/           回归、转译和质量运行脚本

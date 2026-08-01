@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "evidence-registry",
+  "caseCatalog": "cases/catalog.json",
+  "artifactRootEnvironment": "UI_DISMANTLER_ARTIFACT_ROOT",
+  "prohibitedTrackedFragments": [
+    "artifacts-regression/",
+    ".DS_Store",
+    "__pycache__/"
+  ],
+  "oversizedEvidenceThresholdBytes": 2097152,
+  "classes": [
+    {
+      "id": "case-artifacts",
+      "description": "Legacy frozen reference/generated/diff captures under examples case artifact directories. No new growth is allowed before migration.",
+      "match": {
+        "contains": "/artifacts/"
+      },
+      "retention": "legacy-frozen",
+      "budget": {
+        "maxFiles": 336,
+        "maxBytes": 46690683
+      }
+    },
+    {
+      "id": "visual-artifacts",
+      "description": "Reviewed SPA visual matrices retained as representative frozen evidence.",
+      "match": {
+        "contains": "/visual-artifacts/"
+      },
+      "retention": "representative-visual",
+      "budget": {
+        "maxFiles": 261,
+        "maxBytes": 10871905
+      }
+    },
+    {
+      "id": "raw-reports",
+      "description": "Historical quality and result reports. New repeated raw runs belong in CI artifacts.",
+      "match": {
+        "fileNamePatterns": [
+          "quality-report",
+          "*.results.json",
+          "results.json"
+        ]
+      },
+      "retention": "legacy-report",
+      "budget": {
+        "maxFiles": 90,
+        "maxBytes": 30337469
+      }
+    },
+    {
+      "id": "identities",
+      "description": "Source locks and frozen artifact identities required for reviewed reproduction.",
+      "match": {
+        "fileNamePatterns": [
+          "source-identity",
+          "source-lock",
+          "frozen-artifact"
+        ]
+      },
+      "retention": "permanent-identity",
+      "budget": {
+        "maxFiles": 7,
+        "maxBytes": 16607
+      }
+    }
+  ],
+  "oversizedExceptions": [
+    {
+      "path": "examples/cases/blackpink-star-group-ts/quality-report.json",
+      "sha256": "6b5f96a88f09744695c39fb43993da0a91c3223537ce36ee407b1d6d7e39d0ea",
+      "reason": "Legacy frozen full report; retain until a reviewed compact summary replaces every test dependency."
+    },
+    {
+      "path": "examples/cases/ciyu-scrollbar-ts/quality-report.json",
+      "sha256": "500faaedb33b64eb639ee2a783046bba1cad5fe5fa73d7a9871d7b62292d3116",
+      "reason": "Legacy frozen full report; retain until a reviewed compact summary replaces every test dependency."
+    },
+    {
+      "path": "examples/cases/liu-haocun-0722-ts/quality-report.json",
+      "sha256": "b562d4a9b715fe929ef9862270f215595a1a46c49a859b8e8a96f9a14a41068c",
+      "reason": "Legacy frozen full report; retain until a reviewed compact summary replaces every test dependency."
+    },
+    {
+      "path": "examples/dispatch-experiments/warp-homepage/results.json",
+      "sha256": "cf439684e7c1858e7b634ca8222ce444e553bbbeca00b2633ee381a7fc88c9f4",
+      "reason": "Legacy frozen full report; retain until a reviewed compact summary replaces every test dependency."
+    }
+  ],
+  "policyNotices": [
+    "Budgets are upper bounds, not targets; decreases are allowed without rewriting the baseline.",
+    "New raw screenshots, traces, and repeated reports must be written to CI artifacts or UI_DISMANTLER_ARTIFACT_ROOT.",
+    "Physical deletion or movement of frozen evidence requires a separate reviewed change proving that no test, hash, or external reference depends on it."
+  ]
+}

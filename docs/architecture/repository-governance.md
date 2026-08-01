@@ -29,12 +29,20 @@ The catalog describes test evidence only. It must not introduce component-genera
 
 Raw screenshots, traces, and repeated reports belong in `UI_DISMANTLER_ARTIFACT_ROOT` or CI artifacts. Git retains reviewed identities, final summaries, and explicitly frozen representative evidence.
 
+
+## Evidence retention
+
+`evidence/registry.json` classifies tracked case artifacts, reviewed visual matrices, historical reports, and permanent source identities. The current counts and bytes are treated as upper bounds: evidence may shrink, but new raw growth fails `npm run evidence:audit`. Oversized legacy reports require an explicit SHA-256 exception and review reason.
+
+The audit prohibits tracked `artifacts-regression/`, `.DS_Store`, and `__pycache__/` paths. It also reports duplicate blob groups for migration planning; duplicate paths are telemetry rather than automatic deletion candidates because Git already deduplicates blob storage and runtime references may require both paths.
+
 ## Enforcement
 
 Run:
 
 ```bash
 npm run catalog:validate
+npm run evidence:audit
 ```
 
 The validator fails when:
@@ -45,4 +53,4 @@ The validator fails when:
 - a protocol references an unknown or undeclared case;
 - protocol inheritance points to an unknown protocol.
 
-`npm run test:pr` executes this validation before TypeScript compilation and tests.
+`npm run test:pr` executes these validations before TypeScript compilation and tests. Deterministic test files may run in parallel, while the reviewed browser-heavy files run serially through `scripts/run_pr_tests.mjs`; this prevents cross-file Browser/CPU contention from being mistaken for an algorithm regression without weakening any browser quality threshold.

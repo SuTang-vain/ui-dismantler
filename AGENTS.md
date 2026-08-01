@@ -6,16 +6,17 @@
 - `src-ts/tests/` contains Node tests named `*.test.ts`.
 - `src/skill/` and `src/ui_dismantler/` retain the legacy Python validation boundary; preserve compatibility during migration.
 - `scripts/` contains verification tools, `benchmark/` stores the legacy reference library, and `examples/` stores historical case files—not new runtime artifacts.
-- `cases/catalog.json` inventories every managed case; `benchmarks/registry.json` and `benchmarks/protocols/` define PR, Gold, and nightly evidence tiers without moving historical paths.
+- `cases/catalog.json` inventories every managed case; `benchmarks/registry.json` and `benchmarks/protocols/` define PR, Gold, and nightly tiers; `evidence/registry.json` enforces tracked-evidence retention and no-growth budgets.
 - Record architectural decisions in `docs/architecture/`.
 
 ## Build, Test, and Development Commands
 
 ```bash
 npm run catalog:validate         # validate case and benchmark registries
+npm run evidence:audit           # enforce evidence retention and size budgets
 npm run typecheck:ts              # strict TypeScript check
 npm run build:ts                  # compile src-ts/ to dist-ts/
-npm run test:pr                   # typecheck, build, all TypeScript tests
+npm run test:pr                   # registries, typecheck, build, deterministic + serial browser tests
 npm test                          # legacy Python suite
 npm run test:all                  # Python and TypeScript suites
 npm run verify:component-boundary # enforce ownership boundaries

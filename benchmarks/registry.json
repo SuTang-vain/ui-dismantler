@@ -15,5 +15,6 @@
       "id": "nightly",
       "path": "benchmarks/protocols/nightly.json"
     }
-  ]
+  ],
+  "evidenceRegistry": "evidence/registry.json"
 }

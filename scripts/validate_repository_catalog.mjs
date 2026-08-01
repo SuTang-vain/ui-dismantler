@@ -93,6 +93,8 @@ function validateBenchmarkRegistry(registry, cases) {
   if (!registry) return;
   if (registry.schemaVersion !== "1.0" || registry.kind !== "benchmark-registry") fail("benchmarks/registry.json has an unsupported contract");
   if (registry.caseCatalog !== "cases/catalog.json") fail("benchmark registry must bind the canonical case catalog");
+  if (registry.evidenceRegistry !== "evidence/registry.json") fail("benchmark registry must bind the canonical evidence registry");
+  else if (!existsSync(resolve(repositoryRoot, registry.evidenceRegistry))) fail(`evidence registry is unavailable: ${registry.evidenceRegistry}`);
   if (!Array.isArray(registry.protocols)) { fail("benchmark registry protocols must be an array"); return; }
   const protocolIds = new Set();
   for (const reference of registry.protocols) {
