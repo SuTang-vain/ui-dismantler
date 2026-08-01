@@ -38,6 +38,7 @@ export interface ComponentLibraryEnrichmentEvidence {
   readonly stateMap?: ComponentLibraryStateEvidenceMap;
   readonly dataSurface?: DataSurfaceManifest;
   readonly primitiveGraph?: PrimitiveDomCompilationGraph;
+  readonly runtimeOptions?: unknown;
 }
 
 function packageSlug(value: string): string {
@@ -101,6 +102,12 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   function writePath(state, path, value) {
     var parts = statePathParts(path); if (!parts.length) return;
     var current = state;
+    for (var i = 0; i < parts.length - 1; i += 1) { if (!current[parts[i]] || typeof current[parts[i]] !== "object") current[parts[i]] = {}; current = current[parts[i]]; }
+    current[parts[parts.length - 1]] = value;
+  }
+  function writeDataPath(data, path, value) {
+    var parts = pathParts(path); if (!parts.length) return;
+    var current = data;
     for (var i = 0; i < parts.length - 1; i += 1) { if (!current[parts[i]] || typeof current[parts[i]] !== "object") current[parts[i]] = {}; current = current[parts[i]]; }
     current[parts[parts.length - 1]] = value;
   }
@@ -251,17 +258,55 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
     bindInteractions(instance);
     bindModels(instance);
   }
+  function adapterValueError(binding, value) {
+    var shape = binding.shape || {}; var kind = shape.kind;
+    if (kind === "collection" && (!value || typeof value !== "object")) return "expected collection";
+    if (kind === "record" && (!value || typeof value !== "object" || Array.isArray(value))) return "expected record";
+    if (kind === "scalar" && value !== null && typeof value === "object") return "expected scalar";
+    if (kind === "collection" && typeof shape.cardinality === "number") {
+      var size = Array.isArray(value) ? value.length : Object.keys(value).length;
+      if (size !== shape.cardinality) return "expected cardinality " + shape.cardinality + " but received " + size;
+    }
+    var records = kind === "collection" ? (Array.isArray(value) ? value : Object.keys(value || {}).map(function (key) { return value[key]; })) : [value];
+    for (var i = 0; i < records.length; i += 1) {
+      for (var j = 0; j < (binding.fields || []).length; j += 1) if (readPath(records[i], binding.fields[j]) === undefined) return "missing field " + binding.fields[j];
+    }
+    return null;
+  }
+  function applyAdapters(instance, settings) {
+    var adapters = settings.adapters && typeof settings.adapters === "object" ? settings.adapters : {};
+    var bindings = (INTERACTION_CONFIG.dataBindings || []).filter(function (binding) { return binding.sourceKind === "reviewed-api-fixture" && (!binding.ownerId || !instance.component || binding.ownerId === instance.component.id); });
+    var pending = [];
+    bindings.forEach(function (binding) {
+      var key = binding.adapterKey || binding.id;
+      if (!Object.prototype.hasOwnProperty.call(adapters, key)) { instance.missingAdapters.push(key); return; }
+      function accept(value) {
+        var error = adapterValueError(binding, value);
+        if (error) { instance.adapterErrors.push(key + ": " + error); return; }
+        writeDataPath(instance.data, binding.targetBinding, value);
+      }
+      try {
+        var provided = typeof adapters[key] === "function" ? adapters[key]({ id: binding.id, ownerId: binding.ownerId, targetBinding: binding.targetBinding, shape: binding.shape, fields: binding.fields || [] }) : adapters[key];
+        if (provided && typeof provided.then === "function") {
+          pending.push(Promise.resolve(provided).then(accept).catch(function (error) { instance.adapterErrors.push(String(error && error.message || error)); }));
+        } else accept(provided);
+      } catch (error) { instance.adapterErrors.push(String(error && error.message || error)); }
+    });
+    return pending;
+  }
   function create(options) {
     var settings = options || {}; var component = resolveComponent(settings); var root = document.createElement("section");
     root.className = "sg-component-library"; root.setAttribute("data-component-id", component ? component.id : "unresolved");
     var ownerState = component && INTERACTION_CONFIG.initialStateByOwner ? INTERACTION_CONFIG.initialStateByOwner[component.id] : undefined;
-    var instance = { root: root, component: component, state: clone(ownerState || INTERACTION_CONFIG.initialState || {}), data: settings.data || {} };
+    var instance = { root: root, component: component, state: clone(ownerState || INTERACTION_CONFIG.initialState || {}), data: clone(settings.data || {}), missingAdapters: [], adapterErrors: [] };
     if (settings.state && typeof settings.state === "object") Object.keys(settings.state).forEach(function (key) { instance.state[key] = settings.state[key]; });
+    var pendingAdapters = applyAdapters(instance, settings);
     renderInto(instance);
+    instance.ready = pendingAdapters.length ? Promise.all(pendingAdapters).then(function () { renderInto(instance); return instance; }) : Promise.resolve(instance);
     instance.unmount = function () { if (root.parentNode) root.parentNode.removeChild(root); };
     return instance;
   }
-  var API = { components: COMPONENTS.map(function (component) { return { id: component.id, name: component.name }; }), create: create, mount: function (container, options) { if (!container) throw new Error("mount requires a container"); var instance = create(options || {}); container.appendChild(instance.root); return instance; } };
+  var API = { components: COMPONENTS.map(function (component) { return { id: component.id, name: component.name }; }), dataBindings: (INTERACTION_CONFIG.dataBindings || []).map(function (binding) { return { id: binding.id, ownerId: binding.ownerId, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind, adapterKey: binding.adapterKey || null, fields: binding.fields || [], shape: binding.shape || null }; }), create: create, mount: function (container, options) { if (!container) throw new Error("mount requires a container"); var instance = create(options || {}); container.appendChild(instance.root); return instance; } };
   global.${namespace} = API;
 })(window);
 `;
@@ -361,7 +406,7 @@ function parseCollectionLoop(loop: string): ParsedCollectionLoop | undefined {
 function collectionBindingsCoverLoops(graph: PrimitiveDomCompilationGraph, bindings: readonly ComponentLibraryDataBinding[]): boolean {
   const loops = graph.components.flatMap((component) => component.compilation.nodes.flatMap((node) => node.loops.map((loop) => ({ componentId: component.componentId, loop: parseCollectionLoop(loop) }))));
   if (loops.length === 0) return true;
-  const reviewedProps = bindings.filter((binding) => binding.materialized && binding.reviewed && binding.sourceKind === "component-prop");
+  const reviewedProps = bindings.filter((binding) => binding.materialized && binding.reviewed && ((binding.sourceKind === "component-prop" && binding.runtimeInput === "data") || (binding.sourceKind === "reviewed-api-fixture" && binding.runtimeInput === "adapter")));
   return loops.every(({ componentId, loop }) => {
     if (!loop) return false;
     if (loop.literalCardinality) return true;
@@ -531,7 +576,7 @@ function injectInteractionRuntime(
   const runtimeIndex = plan.files.findIndex((file) => file.role === "runtime" && file.content.includes("/*__UI_DISMANTLER_INTERACTION_CONFIG__*/"));
   if (runtimeIndex < 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
   const materializableInteractions = interactions.filter((binding) => binding.sourceNodeId && binding.executionEvidence?.status === "verified" && binding.reviewed);
-  const materializableData = dataBindings.filter((binding) => binding.sourceKind === "component-prop" && binding.reviewed && !binding.materialized);
+  const materializableData = dataBindings.filter((binding) => ["component-prop", "reviewed-api-fixture"].includes(binding.sourceKind) && binding.reviewed && !binding.materialized);
   const statePathCount = [...statePathsByOwner.values()].reduce((sum, paths) => sum + paths.length, 0);
   if (materializableInteractions.length === 0 && materializableData.length === 0 && statePathCount === 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
   const materializedInteractions = interactions.map((binding) => materializableInteractions.includes(binding) ? { ...binding, materialized: true } : binding);
@@ -546,7 +591,7 @@ function injectInteractionRuntime(
     initialState: stateEntries.length === 1 ? stateEntries[0][1] : {},
     initialStateByOwner: Object.fromEntries(stateEntries.filter(([ownerId]) => ownerId !== LEGACY_STATE_OWNER)),
     bindings: materializedInteractions.filter((binding) => binding.materialized),
-    dataBindings: materializedDataBindings.filter((binding) => binding.materialized).map((binding) => ({ id: binding.id, ownerId: binding.ownerId, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind })),
+    dataBindings: materializedDataBindings.filter((binding) => binding.materialized).map((binding) => ({ id: binding.id, ownerId: binding.ownerId, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind, runtimeInput: binding.runtimeInput, adapterKey: binding.adapterKey, fields: binding.fields, shape: binding.shape })),
   };
   const files = [...plan.files];
   const runtime = files[runtimeIndex];
@@ -564,6 +609,7 @@ export function enrichComponentLibraryBuildPlan(
   const dataBindings: ComponentLibraryDataBinding[] = [...plan.dataBindings];
   let unresolved = [...plan.unresolved];
   let files = [...plan.files];
+  const smoke = evidence.runtimeOptions === undefined ? plan.smoke : { ...plan.smoke, options: evidence.runtimeOptions };
   const primitiveGraphMatchesPlan = evidence.primitiveGraph ? plan.identity.sourceHash === sha256(JSON.stringify(evidence.primitiveGraph)) : false;
   if (evidence.primitiveGraph && !primitiveGraphMatchesPlan) unresolved.push("primitive-dom: graph identity does not match build plan sourceHash");
   const ownerStates = resolveOwnerStates(plan, evidence, primitiveGraphMatchesPlan);
@@ -607,6 +653,8 @@ export function enrichComponentLibraryBuildPlan(
     unresolved.push(...evidence.dataSurface.surfaces.flatMap((surface) => surface.unresolved.map((reason) => `data-surface:${surface.id}: ${reason}`)));
     for (const surface of evidence.dataSurface.surfaces) {
       const sourceKind = surface.source.stateInitial ? "state-initial" : surface.source.primary;
+      const runtimeInput = surface.source.primary === "component-prop" ? "data" : surface.source.primary === "reviewed-api-fixture" ? "adapter" : undefined;
+      const sourceReviewed = surface.source.primary !== "reviewed-api-fixture" || surface.source.api?.reviewed === true;
       dataBindings.push({
         id: surface.id,
         ownerId: surface.owner.componentId,
@@ -614,8 +662,10 @@ export function enrichComponentLibraryBuildPlan(
         targetBinding: surface.injection.target,
         fields: surface.fields.map((field) => field.path),
         shape: { kind: surface.shape.kind, itemKind: surface.shape.itemKind, cardinality: surface.shape.cardinality },
-        reviewed: !surface.reviewRequired && surface.injection.reviewed,
+        reviewed: !surface.reviewRequired && surface.injection.reviewed && sourceReviewed,
         materialized: false,
+        ...(runtimeInput ? { runtimeInput } : {}),
+        ...(runtimeInput === "adapter" ? { adapterKey: surface.id } : {}),
         externalOnly: true,
         provenance: [{ kind: "data-surface-manifest", reference: surface.id }],
       });
@@ -645,13 +695,14 @@ export function enrichComponentLibraryBuildPlan(
   const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized) && loopsReady && conditionsReady && modelsReady;
   const reviewRequired = unresolved.length > 0 || !bindingsReady;
   if (!reviewRequired) files = files.map((file) => ["runtime", "style", "package-metadata", "documentation"].includes(file.role) ? { ...file, reviewed: true } : file);
-  const configurationHash = sha256(JSON.stringify({ base: plan.identity.configurationHash, files: files.map((file) => ({ path: file.path, contentHash: file.contentHash, reviewed: file.reviewed })), interactions, dataBindings, unresolved }));
+  const configurationHash = sha256(JSON.stringify({ base: plan.identity.configurationHash, files: files.map((file) => ({ path: file.path, contentHash: file.contentHash, reviewed: file.reviewed })), interactions, dataBindings, smoke, unresolved }));
   return {
     ...plan,
     identity: { ...plan.identity, configurationHash },
     files,
     interactions,
     dataBindings,
+    smoke,
     unresolved,
     reviewRequired,
   };

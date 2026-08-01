@@ -49,6 +49,8 @@ export interface ComponentLibraryDataBinding {
   readonly shape: { readonly kind: string; readonly itemKind: string; readonly cardinality: number | null };
   readonly reviewed: boolean;
   readonly materialized: boolean;
+  readonly runtimeInput?: "data" | "adapter";
+  readonly adapterKey?: string;
   readonly externalOnly: true;
   readonly provenance: readonly ComponentLibraryFileProvenance[];
 }
@@ -181,6 +183,9 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
   for (const [index, binding] of plan.dataBindings.entries()) {
     if (!binding.id.trim() || !binding.ownerId.trim() || !binding.targetBinding.trim()) add(`dataBindings[${index}]`, "id, ownerId, and targetBinding are required");
     if (!binding.externalOnly) add(`dataBindings[${index}].externalOnly`, "must remain true");
+    if (binding.runtimeInput === "adapter" && !binding.adapterKey?.trim()) add(`dataBindings[${index}].adapterKey`, "adapter runtime input requires a non-empty key");
+    if (binding.sourceKind === "reviewed-api-fixture" && binding.materialized && binding.runtimeInput !== "adapter") add(`dataBindings[${index}].runtimeInput`, "reviewed API bindings must materialize through an external adapter");
+    if (binding.sourceKind === "component-prop" && binding.materialized && binding.runtimeInput !== "data") add(`dataBindings[${index}].runtimeInput`, "component props must materialize through caller data");
     if (!binding.materialized) block(`dataBindings[${index}]`, "data binding is not materialized by the current runtime");
     if (!binding.reviewed) block(`dataBindings[${index}]`, "data binding is not reviewed");
     if (binding.provenance.length === 0) add(`dataBindings[${index}].provenance`, "must contain evidence");

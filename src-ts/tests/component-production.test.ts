@@ -638,3 +638,65 @@ test("Owner-scoped state evidence isolates same-named handlers across generated 
   beta.unmount();
   dom.window.close();
 });
+
+test("Reviewed API Data Surface materializes only an external adapter contract", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-api-adapter-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:records", componentName: "RecordList", componentFile: "RecordList.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:record"],
+      nodes: [{ id: "node:record", sourceNodeId: "source:record", order: 0, sourceTag: "article", componentName: "RecordList", renderTag: "article", renderStrategy: "native", classes: ["sg-record"], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ record.name }}" }], conditions: [], loops: ["record in items"] }],
+      styleRules: [{ sourceNodeId: "source:record", selector: ".sg-record", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" }], interactions: [], metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: ["v-for cardinality requires data-source evidence"], reviewRequired: true,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "API Adapter Components", packageName: "api-adapter-components" });
+  const surfaceId = "api:records:list";
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, {
+    primitiveGraph: graph,
+    dataSurface: {
+      unresolved: [], reviewRequired: false, surfaces: [{
+        id: surfaceId,
+        owner: { componentId: "component:records", componentName: "RecordList", componentFile: "RecordList.vue" },
+        source: { primary: "reviewed-api-fixture", api: { responsibilityId: "api:list-records", method: "GET", path: "/api/records", requestPath: "/api/records", responsePath: "data", bodyHash: "0".repeat(64), reviewed: true, transportPrefixes: ["/api"] } },
+        shape: { kind: "collection", itemKind: "record", cardinality: 2, evidence: ["reviewed fixture shape"] },
+        fields: [{ path: "name", consumers: ["component:records"], evidence: ["rendered-field", "fixture-shape"] }],
+        consumers: [{ componentId: "component:records", componentName: "RecordList", componentFile: "RecordList.vue", targetBinding: "items", responsePath: "data", renderedFields: ["name"] }],
+        injection: { kind: "state-binding", target: "items", sourcePath: "data", reviewed: true }, references: [], evidence: [{ source: "api-fixture", detail: "reviewed records response", confidence: "high" }], unresolved: [], reviewRequired: false,
+      }],
+    } as never,
+  });
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  assert.equal(enriched.dataBindings[0]?.runtimeInput, "adapter");
+  assert.equal(enriched.dataBindings[0]?.adapterKey, surfaceId);
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  assert.equal(runtime.includes("/api/records"), false);
+  assert.equal(runtime.includes("Injected API record"), false);
+  const dom = new JSDOM(`<!doctype html><div id="missing"></div><div id="resolved"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { APIAdapterComponents: { dataBindings: Array<{ adapterKey: string }>; mount: (host: Element, options: unknown) => { ready: Promise<unknown>; missingAdapters: string[]; adapterErrors: string[]; unmount: () => void } } }).APIAdapterComponents;
+  assert.equal(api.dataBindings[0]?.adapterKey, surfaceId);
+  const missing = api.mount(dom.window.document.getElementById("missing")!, {});
+  assert.deepEqual([...missing.missingAdapters], [surfaceId]);
+  const resolved = api.mount(dom.window.document.getElementById("resolved")!, { adapters: { [surfaceId]: async () => [{ name: "Injected API record" }, { name: "Second record" }] } });
+  await resolved.ready;
+  assert.deepEqual([...dom.window.document.querySelectorAll("#resolved .sg-record")].map((node) => node.textContent), ["Injected API record", "Second record"]);
+  assert.deepEqual([...resolved.adapterErrors], []);
+  const invalid = api.mount(dom.window.document.createElement("div"), { adapters: { [surfaceId]: [{ unexpected: true }] } });
+  await invalid.ready;
+  assert.equal(invalid.adapterErrors.some((error) => error.includes("expected cardinality") || error.includes("missing field")), true);
+
+  const missingBuild = await runComponentLibraryBuild(enriched, join(directory, "missing-adapter-library"));
+  assert.equal(missingBuild.status, "failed");
+  assert.deepEqual(missingBuild.smoke?.missingAdapters, [surfaceId]);
+  const supplied = enrichComponentLibraryBuildPlan(enriched, { runtimeOptions: { componentId: "component:records", adapters: { [surfaceId]: [{ name: "Smoke record" }, { name: "Second smoke record" }] } } });
+  const suppliedBuild = await runComponentLibraryBuild(supplied, join(directory, "supplied-adapter-library"));
+  assert.equal(suppliedBuild.status, "succeeded");
+  assert.deepEqual(suppliedBuild.smoke?.missingAdapters, []);
+  assert.equal(supplied.files.find((file) => file.role === "runtime")?.content.includes("Smoke record"), false);
+  missing.unmount();
+  resolved.unmount();
+  invalid.unmount();
+  dom.window.close();
+});

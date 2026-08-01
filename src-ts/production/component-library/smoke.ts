@@ -16,6 +16,8 @@ export interface ComponentLibraryRuntimeSmokeReport {
   readonly runtimeErrors: readonly string[];
   readonly consoleErrors: readonly string[];
   readonly missingLocalResources: readonly string[];
+  readonly missingAdapters: readonly string[];
+  readonly adapterErrors: readonly string[];
   readonly notices: readonly string[];
   readonly durationMs: number;
   readonly passed: boolean;
@@ -39,6 +41,8 @@ export async function runComponentLibraryRuntimeSmoke(plan: ComponentLibraryBuil
   const consoleErrors: string[] = [];
   const notices: string[] = [];
   const missingLocalResources: string[] = [];
+  const missingAdapters: string[] = [];
+  const adapterErrors: string[] = [];
   const runtimePath = resolve(outputRoot, plan.smoke.runtimePath);
   const virtualConsole = new VirtualConsole();
   virtualConsole.on("jsdomError", (error) => runtimeErrors.push(errorMessage(error)));
@@ -95,6 +99,20 @@ export async function runComponentLibraryRuntimeSmoke(plan: ComponentLibraryBuil
     if (mountedNodeCount === 0) runtimeErrors.push("mount completed without rendering any descendant nodes");
     if (instance && typeof instance === "object") {
       const record = instance as Record<string, unknown>;
+      if (record.ready && typeof (record.ready as { then?: unknown }).then === "function") {
+        let timeoutId: number | undefined;
+        try {
+          await Promise.race([
+            Promise.resolve(record.ready),
+            new Promise((_, reject) => { timeoutId = originalSetTimeout(() => reject(new Error("runtime adapter readiness timed out after 1000ms")), 1000); }),
+          ]);
+        } finally { if (timeoutId !== undefined) originalClearTimeout(timeoutId); }
+      }
+      if (Array.isArray(record.missingAdapters)) missingAdapters.push(...record.missingAdapters.map(String));
+      if (Array.isArray(record.adapterErrors)) adapterErrors.push(...record.adapterErrors.map(String));
+      if (missingAdapters.length > 0) runtimeErrors.push(`missing runtime adapter(s): ${missingAdapters.join(", ")}`);
+      if (adapterErrors.length > 0) runtimeErrors.push(...adapterErrors.map((error) => `runtime adapter error: ${error}`));
+      mountedNodeCount = host.querySelectorAll("*").length;
       for (const method of ["unmount", "destroy", "dispose"]) {
         if (typeof record[method] !== "function") continue;
         (record[method] as () => void).call(instance);
@@ -140,6 +158,8 @@ export async function runComponentLibraryRuntimeSmoke(plan: ComponentLibraryBuil
     runtimeErrors,
     consoleErrors,
     missingLocalResources,
+    missingAdapters,
+    adapterErrors,
     notices,
     durationMs: Number((performance.now() - startedAt).toFixed(3)),
     passed,

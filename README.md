@@ -153,6 +153,7 @@ node dist-ts/cli.js component-build-enrich \
   --state /tmp/sfc-state.json \
   --data-surface /tmp/data-surface.manifest.json \
   --primitive-dom /tmp/primitive-dom.graph.json \
+  --runtime-options /tmp/component-runtime-options.json \
   --out /tmp/component-library.reviewed-build-plan.json
 ```
 
@@ -169,7 +170,7 @@ node dist-ts/cli.js component-build-enrich \
 }
 ```
 
-当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化；静态 binding、API fixture 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-model` 也必须绑定到 reviewed initial state，运行时才会执行输入状态更新、依赖 DOM 重渲染和焦点恢复。`v-else`/`v-else-if`、`v-model` modifiers、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化。reviewed API Data Surface 不会把 endpoint、fixture 或业务值写进发布运行时，而是生成以 surface id 为 `adapterKey` 的外部 adapter contract；`sg-data-pack` 或调用方通过 `mount(..., { adapters })` / `--runtime-options` 提供经过规范化的数据。缺少 adapter、adapter 抛错、shape/cardinality/field 不匹配都会在 Runtime Smoke 中失败。静态业务 binding、未知 runtime binding 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-model` 也必须绑定到 reviewed initial state，运行时才会执行输入状态更新、依赖 DOM 重渲染和焦点恢复。`v-else`/`v-else-if`、`v-model` modifiers、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 
