@@ -532,3 +532,56 @@ test("Reviewed conditional interaction runs through the configured component qua
   assert.equal(report.quality?.scenarios?.[0]?.passed, true);
   assert.equal(report.quality?.coverage?.verifiedRate, 1);
 });
+
+test("Reviewed v-model binding updates state and dependent DOM without unreviewed execution", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-model-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:model", componentName: "ModelField", componentFile: "ModelField.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:input", "node:output"],
+      nodes: [
+        { id: "node:input", sourceNodeId: "source:input", order: 0, sourceTag: "input", componentName: "ModelField", renderTag: "input", renderStrategy: "input", classes: ["sg-name-input"], attributes: { type: "text", "v-model": "name.value", "aria-label": "Name" }, inlineStyle: {}, content: [], conditions: [], loops: [] },
+        { id: "node:output", sourceNodeId: "source:output", order: 1, sourceTag: "output", componentName: "ModelField", renderTag: "output", renderStrategy: "native", classes: ["sg-name-output"], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ name }}" }], conditions: [], loops: [] },
+      ],
+      styleRules: [], interactions: [], metrics: { sourceNodes: 2, compiledNodes: 2, primitiveNodes: 1, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 2, compiledNodes: 2, primitiveNodes: 1, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Model Components", packageName: "model-components" });
+  assert.equal(basePlan.unresolved.some((reason) => reason.includes("model binding requires reviewed state materialization")), true);
+  const state: SfcStateResponsibility = {
+    schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript", initialState: { name: "" }, handlers: [], displayFunctions: [], unresolvedWrites: [],
+    metrics: { initialBindings: 1, handlers: 0, handlersWithWrites: 0, stateWrites: 0, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+  };
+  const missingPrimitiveEvidence = enrichComponentLibraryBuildPlan(basePlan, { state });
+  assert.equal(missingPrimitiveEvidence.reviewRequired, true);
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: graph, state });
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { ModelComponents: { mount: (host: Element, options: unknown) => { state: { name: string }; unmount: () => void } } }).ModelComponents;
+  const instance = api.mount(dom.window.document.getElementById("mount")!, {});
+  const input = dom.window.document.querySelector<HTMLInputElement>(".sg-name-input")!;
+  input.focus();
+  input.value = "Ada Lovelace";
+  input.setSelectionRange(input.value.length, input.value.length);
+  input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+  const replacement = dom.window.document.querySelector<HTMLInputElement>(".sg-name-input")!;
+  assert.equal(instance.state.name, "Ada Lovelace");
+  assert.equal(dom.window.document.querySelector(".sg-name-output")?.textContent, "Ada Lovelace");
+  assert.equal(replacement.value, "Ada Lovelace");
+  assert.equal(dom.window.document.activeElement, replacement);
+  instance.unmount();
+  dom.window.close();
+
+  const modifierGraph = JSON.parse(JSON.stringify(graph)) as PrimitiveDomCompilationGraph;
+  const modifierAttributes = modifierGraph.components[0].compilation.nodes[0].attributes;
+  delete modifierAttributes["v-model"];
+  modifierAttributes["v-model.trim"] = "name.value";
+  const modifierPlan = await primitiveDomCompilationToBuildPlan(modifierGraph, { sourceRoot: directory, libraryName: "Modifier Model Components", packageName: "modifier-model-components" });
+  const blockedModifier = enrichComponentLibraryBuildPlan(modifierPlan, { primitiveGraph: modifierGraph, state });
+  assert.equal(blockedModifier.reviewRequired, true);
+  assert.equal(blockedModifier.unresolved.some((reason) => reason.includes("model binding requires reviewed state materialization")), true);
+});

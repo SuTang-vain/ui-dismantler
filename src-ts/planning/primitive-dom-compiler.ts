@@ -102,7 +102,7 @@ function eventBinding(node: SfcTemplateNode): PrimitiveInteractionBinding[] {
 }
 function mappedAttributes(node: SfcTemplateNode): Record<string, string | true> {
   const allowed = new Set(["accept", "action", "alt", "autocomplete", "checked", "clearable", "show-password", "link", "class-name", "cols", "content", "disabled", "download", "for", "form", "height", "href", "id", "label", "manual", "max", "maxlength", "method", "min", "minlength", "multiple", "name", "pattern", "placeholder", "placement", "poster", "prop", "readonly", "ref", "rel", "required", "role", "rows", "selected", "size", "src", "step", "tabindex", "target", "title", "type", "value", "width"]);
-  return Object.fromEntries(Object.entries(node.attributes).filter(([name]) => allowed.has(name) || name.startsWith(":") || name.startsWith("aria-") || name.startsWith("data-") || name === "v-model" || name === "v-permission"));
+  return Object.fromEntries(Object.entries(node.attributes).filter(([name]) => allowed.has(name) || name.startsWith(":") || name.startsWith("aria-") || name.startsWith("data-") || name.startsWith("v-model") || name === "v-permission"));
 }
 function nodeStrategy(node: SfcTemplateNode): PrimitiveRenderStrategy {
   if (node.primitive) return strategyByPrimitive[node.primitive.kind] ?? "native";

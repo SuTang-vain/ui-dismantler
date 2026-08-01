@@ -109,10 +109,11 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   }
   function interpolate(text, state, data, scope) { return String(text).replace(/\\{\\{\\s*([^}]+?)\\s*\\}\\}/g, function (_match, expression) { var value = resolveValue(expression, state, data, scope); return value === undefined || value === null ? "" : String(value); }); }
   function setAttributes(element, attributes, state, data, scope) {
+    var modelPath = null;
     Object.keys(attributes || {}).forEach(function (name) {
       var value = attributes[name];
       if (name.indexOf("@") === 0 || name.indexOf("v-") === 0 || name.indexOf("#") === 0) {
-        if (name === "v-model") { var model = resolveValue(value, state, data, scope); if (model !== undefined && "value" in element) element.value = String(model); }
+        if (name === "v-model") modelPath = String(value || "").trim();
         return;
       }
       if (name.indexOf(":") === 0) {
@@ -127,6 +128,12 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
       if (value === true) element.setAttribute(name, "");
       else if (value !== false && value != null) element.setAttribute(name, String(value));
     });
+    if (modelPath) {
+      var model = resolveValue(modelPath, state, data, scope);
+      element.setAttribute("data-ui-dismantler-model", modelPath);
+      if ((element.type === "checkbox" || element.type === "radio") && "checked" in element) element.checked = Boolean(model);
+      else if (model !== undefined && model !== null && "value" in element) element.value = String(model);
+    }
   }
   function renderOne(spec, state, data, scope) {
     var directive = spec.conditionDirective;
@@ -178,6 +185,32 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
     else return false;
     return true;
   }
+  function bindModels(instance) {
+    if (instance.modelsBound) return;
+    instance.modelsBound = true;
+    function update(event) {
+      var target = event.target;
+      if (!target || !target.getAttribute || !instance.root.contains(target)) return;
+      var path = target.getAttribute("data-ui-dismantler-model");
+      if (!path) return;
+      var value = target.type === "checkbox" || target.type === "radio" ? Boolean(target.checked) : target.value;
+      var nodeId = target.getAttribute("data-primitive-node");
+      var selectionStart = typeof target.selectionStart === "number" ? target.selectionStart : null;
+      var selectionEnd = typeof target.selectionEnd === "number" ? target.selectionEnd : null;
+      writePath(instance.state, path, value);
+      renderInto(instance);
+      if (nodeId) {
+        var replacement = instance.root.querySelector('[data-primitive-node="' + nodeId.replace(/"/g, '\\"') + '"]');
+        if (replacement && replacement.focus) {
+          replacement.focus();
+          if (selectionStart !== null && selectionEnd !== null && replacement.setSelectionRange) replacement.setSelectionRange(selectionStart, selectionEnd);
+        }
+      }
+      instance.root.dispatchEvent(new CustomEvent("ui-dismantler:state-change", { detail: { target: path, source: "v-model" } }));
+    }
+    instance.root.addEventListener("input", update);
+    instance.root.addEventListener("change", update);
+  }
   function bindInteractions(instance) {
     (INTERACTION_CONFIG.bindings || []).forEach(function (binding) {
       if (!binding.sourceNodeId || !binding.event) return;
@@ -197,6 +230,7 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
     while (instance.root.firstChild) instance.root.removeChild(instance.root.firstChild);
     if (component) component.roots.forEach(function (child) { render(child, instance.state, instance.data, {}).forEach(function (rendered) { instance.root.appendChild(rendered); }); });
     bindInteractions(instance);
+    bindModels(instance);
   }
   function create(options) {
     var settings = options || {}; var component = resolveComponent(settings); var root = document.createElement("section");
@@ -246,6 +280,7 @@ export async function primitiveDomCompilationToBuildPlan(
   for (const component of graph.components) {
     for (const node of component.compilation.nodes) {
       if (node.conditions.length) unresolved.push(`${component.componentName}:${node.id} conditional region requires state materialization`);
+      if (Object.keys(node.attributes).some((name) => name.startsWith("v-model"))) unresolved.push(`${component.componentName}:${node.id} model binding requires reviewed state materialization`);
       if (node.loops.length) unresolved.push(`${component.componentName}:${node.id} repeated region requires reviewed collection binding`);
     }
     if (component.compilation.interactions.length) unresolved.push(`${component.componentName} interaction bindings require state transition execution evidence`);
@@ -352,19 +387,37 @@ function hasInitialStatePath(state: SfcStateResponsibility["initialState"], path
   return true;
 }
 
-function conditionalStateEvidence(graph: PrimitiveDomCompilationGraph, state: SfcStateResponsibility | undefined): { ready: boolean; paths: string[] } {
-  const conditionalNodes = graph.components.flatMap((component) => component.compilation.nodes.filter((node) => node.conditions.length > 0));
-  if (conditionalNodes.length === 0) return { ready: true, paths: [] };
-  if (!state || !state.parsed || state.reviewReasons.length > 0 || state.unresolvedWrites.length > 0) return { ready: false, paths: [] };
+interface PrimitiveStateEvidence {
+  readonly conditionsReady: boolean;
+  readonly modelsReady: boolean;
+  readonly paths: string[];
+}
+
+function primitiveStateEvidence(graph: PrimitiveDomCompilationGraph, state: SfcStateResponsibility | undefined): PrimitiveStateEvidence {
+  const nodes = graph.components.flatMap((component) => component.compilation.nodes);
+  const conditionalNodes = nodes.filter((node) => node.conditions.length > 0);
+  const modelNodes = nodes.filter((node) => Object.keys(node.attributes).some((name) => name.startsWith("v-model")));
+  if (conditionalNodes.length === 0 && modelNodes.length === 0) return { conditionsReady: true, modelsReady: true, paths: [] };
+  const stateReady = Boolean(state?.parsed && state.reviewReasons.length === 0 && state.unresolvedWrites.length === 0);
+  if (!stateReady || !state) return { conditionsReady: conditionalNodes.length === 0, modelsReady: modelNodes.length === 0, paths: [] };
   const paths = new Set<string>();
+  let conditionsReady = true;
   for (const node of conditionalNodes) {
     const directive = node.conditionDirective;
-    if (!directive || !["if", "show"].includes(directive.kind) || !directive.expression) return { ready: false, paths: [] };
+    if (!directive || !["if", "show"].includes(directive.kind) || !directive.expression) { conditionsReady = false; break; }
     const dependencies = conditionDependencies(directive.expression);
-    if (!dependencies || dependencies.some((path) => !hasInitialStatePath(state.initialState, path))) return { ready: false, paths: [] };
+    if (!dependencies || dependencies.some((path) => !hasInitialStatePath(state.initialState, path))) { conditionsReady = false; break; }
     dependencies.forEach((path) => paths.add(path));
   }
-  return { ready: true, paths: [...paths].sort() };
+  let modelsReady = true;
+  for (const node of modelNodes) {
+    const bindings = Object.entries(node.attributes).filter(([name]) => name.startsWith("v-model"));
+    if (bindings.length !== 1 || bindings[0][0] !== "v-model" || typeof bindings[0][1] !== "string") { modelsReady = false; break; }
+    const path = simpleRuntimePath(bindings[0][1]);
+    if (!path || !hasInitialStatePath(state.initialState, path)) { modelsReady = false; break; }
+    paths.add(path);
+  }
+  return { conditionsReady, modelsReady, paths: [...paths].sort() };
 }
 
 function handlerName(expression: string): string | undefined {
@@ -501,9 +554,9 @@ export function enrichComponentLibraryBuildPlan(
   }
   const primitiveGraphMatchesPlan = evidence.primitiveGraph ? plan.identity.sourceHash === sha256(JSON.stringify(evidence.primitiveGraph)) : false;
   if (evidence.primitiveGraph && !primitiveGraphMatchesPlan) unresolved.push("primitive-dom: graph identity does not match build plan sourceHash");
-  const conditionEvidence = evidence.primitiveGraph && primitiveGraphMatchesPlan ? conditionalStateEvidence(evidence.primitiveGraph, evidence.state) : { ready: true, paths: [] };
-  if (evidence.state || evidence.dataSurface || conditionEvidence.paths.length > 0) {
-    const injected = injectInteractionRuntime(plan, interactions, dataBindings, evidence.state?.initialState ?? {}, conditionEvidence.ready ? conditionEvidence.paths : []);
+  const stateEvidence = evidence.primitiveGraph && primitiveGraphMatchesPlan ? primitiveStateEvidence(evidence.primitiveGraph, evidence.state) : { conditionsReady: true, modelsReady: true, paths: [] };
+  if (evidence.state || evidence.dataSurface || stateEvidence.paths.length > 0) {
+    const injected = injectInteractionRuntime(plan, interactions, dataBindings, evidence.state?.initialState ?? {}, stateEvidence.paths);
     files = [...injected.files];
     interactions = injected.interactions;
     dataBindings.splice(0, dataBindings.length, ...injected.dataBindings);
@@ -515,9 +568,12 @@ export function enrichComponentLibraryBuildPlan(
   const loopsReady = !hasLoopBlockers || Boolean(evidence.primitiveGraph && primitiveGraphMatchesPlan && collectionBindingsCoverLoops(evidence.primitiveGraph, dataBindings));
   if (loopsReady) unresolved = unresolved.filter((reason) => !reason.includes("repeated region requires reviewed collection binding") && !reason.includes("v-for cardinality requires data-source evidence"));
   const hasConditionBlockers = unresolved.some((reason) => reason.includes("conditional region requires state materialization"));
-  const conditionsReady = !hasConditionBlockers || Boolean(evidence.primitiveGraph && primitiveGraphMatchesPlan && conditionEvidence.ready);
+  const conditionsReady = !hasConditionBlockers || Boolean(evidence.primitiveGraph && primitiveGraphMatchesPlan && stateEvidence.conditionsReady);
   if (conditionsReady) unresolved = unresolved.filter((reason) => !reason.includes("conditional region requires state materialization"));
-  const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized) && loopsReady && conditionsReady;
+  const hasModelBlockers = unresolved.some((reason) => reason.includes("model binding requires reviewed state materialization"));
+  const modelsReady = !hasModelBlockers || Boolean(evidence.primitiveGraph && primitiveGraphMatchesPlan && stateEvidence.modelsReady);
+  if (modelsReady) unresolved = unresolved.filter((reason) => !reason.includes("model binding requires reviewed state materialization"));
+  const bindingsReady = interactions.every((binding) => binding.reviewed && binding.materialized) && dataBindings.every((binding) => binding.reviewed && binding.materialized) && loopsReady && conditionsReady && modelsReady;
   const reviewRequired = unresolved.length > 0 || !bindingsReady;
   if (!reviewRequired) files = files.map((file) => ["runtime", "style", "package-metadata", "documentation"].includes(file.role) ? { ...file, reviewed: true } : file);
   const configurationHash = sha256(JSON.stringify({ base: plan.identity.configurationHash, files: files.map((file) => ({ path: file.path, contentHash: file.contentHash, reviewed: file.reviewed })), interactions, dataBindings, unresolved }));
