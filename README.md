@@ -146,7 +146,7 @@ Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可�
     "primitiveDom": "./artifacts/primitive-dom.graph.json",
     "stateMap": "./artifacts/component-state.map.json",
     "style": "./artifacts/reviewed-component-style.artifact.json",
-    "dataSurface": "./artifacts/data-surface.manifest.json",
+    "dataSurfaceArtifact": "./artifacts/reviewed-component-data-surface.artifact.json",
     "runtimeOptions": "./artifacts/runtime-options.json"
   }
 }
@@ -164,6 +164,11 @@ node dist-ts/cli.js component-style-candidate \
   /absolute/path/to/sfc-visual.graph.json \
   --primitive-dom /absolute/path/to/primitive-dom.graph.json \
   --out /tmp/reviewed-component-style.artifact.json
+
+node dist-ts/cli.js component-data-surface-candidate \
+  /absolute/path/to/data-surface.manifest.json \
+  --primitive-dom /absolute/path/to/primitive-dom.graph.json \
+  --out /tmp/reviewed-component-data-surface.artifact.json
 ```
 
 ```bash
@@ -175,7 +180,7 @@ node dist-ts/cli.js component-produce \
   --result /tmp/component-library.production-result.json
 ```
 
-`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
+`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
 
 该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
 

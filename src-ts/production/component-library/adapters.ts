@@ -11,6 +11,7 @@ import type { PrimitiveDomCompilationGraph } from "../../skills/primitive-dom.js
 import type { PrimitiveDomNode } from "../../planning/primitive-dom-compiler.js";
 import { materializeReviewedComponentStyles, type ReviewedComponentStyleArtifact } from "./style-artifact.js";
 import type { ComponentLibraryStateEvidenceMap } from "./state-artifact.js";
+import type { ReviewedComponentDataSurfaceArtifact } from "./data-surface-artifact.js";
 
 export interface ComponentLibraryProjectionOptions {
   readonly sourceRoot: string;
@@ -29,6 +30,7 @@ export interface ComponentLibraryEnrichmentEvidence {
   readonly state?: SfcStateResponsibility;
   readonly stateMap?: ComponentLibraryStateEvidenceMap;
   readonly dataSurface?: DataSurfaceManifest;
+  readonly dataSurfaceArtifact?: Pick<ReviewedComponentDataSurfaceArtifact, "primitiveGraphHash" | "evidence">;
   readonly primitiveGraph?: PrimitiveDomCompilationGraph;
   readonly runtimeOptions?: unknown;
 }
@@ -668,7 +670,10 @@ export function enrichComponentLibraryBuildPlan(
         ...(runtimeInput ? { runtimeInput } : {}),
         ...(runtimeInput === "adapter" ? { adapterKey: surface.id } : {}),
         externalOnly: true,
-        provenance: [{ kind: "data-surface-manifest", reference: surface.id }],
+        provenance: [
+          { kind: "data-surface-manifest", reference: surface.id },
+          ...(evidence.dataSurfaceArtifact ? [{ kind: "reviewed-data-surface-artifact" as const, reference: `primitive-graph:${evidence.dataSurfaceArtifact.primitiveGraphHash}` }] : []),
+        ],
       });
     }
   }

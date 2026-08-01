@@ -38,7 +38,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, createComponentStateEvidenceMapCandidate, createComponentStyleArtifactCandidate, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap, type ReviewedComponentStyleArtifact } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentDataSurfaceArtifactCandidate, createComponentLibraryBuildPlan, createComponentStateEvidenceMapCandidate, createComponentStyleArtifactCandidate, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap, type ReviewedComponentDataSurfaceArtifact, type ReviewedComponentStyleArtifact } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
@@ -51,6 +51,7 @@ interface ReviewedComponentProductionConfig {
     readonly state?: string;
     readonly stateMap?: string;
     readonly dataSurface?: string;
+    readonly dataSurfaceArtifact?: string;
     readonly runtimeOptions?: string;
     readonly style?: string;
   };
@@ -113,6 +114,7 @@ function usage(): void {
   profile-run <profile.config.json> --out <profile.report.json>
   component-state-candidate <sfc-visual.graph.json> --primitive-dom <primitive-dom.graph.json> --out <component-state.map.json>
   component-style-candidate <sfc-visual.graph.json> --primitive-dom <primitive-dom.graph.json> --out <reviewed-component-style.artifact.json>
+  component-data-surface-candidate <data-surface.manifest.json> --primitive-dom <primitive-dom.graph.json> --out <reviewed-component-data-surface.artifact.json>
   component-produce <component-production.config.json> --out-dir <dir> [--plan <component-library.build-plan.json>] [--report <component-library.build-report.json>] [--result <component-library.production-result.json>] [--overwrite]
   component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
@@ -182,6 +184,16 @@ async function main(argv: string[]): Promise<number> {
       console.log(`✓ Component Style Candidate: ${resolve(out)} (entries=${artifact.entries.length}，unresolved=${artifact.unresolved?.length ?? 0}，reviewRequired=${artifact.reviewRequired})`);
       return 0;
     }
+    if (command === "component-data-surface-candidate") {
+      const manifestPath = args[0]; const primitivePath = flag(args, "--primitive-dom"); const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!manifestPath || !primitivePath || !out) throw new Error("component-data-surface-candidate 需要 <data-surface.manifest.json>、--primitive-dom 和 --out");
+      const manifest = JSON.parse(await readFile(resolve(manifestPath), "utf8")) as DataSurfaceManifest;
+      const primitiveGraph = JSON.parse(await readFile(resolve(primitivePath), "utf8")) as PrimitiveDomCompilationGraph;
+      const artifact = createComponentDataSurfaceArtifactCandidate(manifest, primitiveGraph);
+      await writeFile(resolve(out), `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
+      console.log(`✓ Component Data Surface Candidate: ${resolve(out)} (surfaces=${manifest?.surfaces?.length ?? 0}，unresolved=${artifact.unresolved?.length ?? 0}，reviewRequired=${artifact.reviewRequired})`);
+      return 0;
+    }
     if (command === "component-produce") {
       const configPath = args[0]; const outDir = flag(args, "--out-dir");
       if (!configPath || !outDir) throw new Error("component-produce 需要 <component-production.config.json> 和 --out-dir");
@@ -189,11 +201,13 @@ async function main(argv: string[]): Promise<number> {
       const config = JSON.parse(await readFile(absoluteConfigPath, "utf8")) as ReviewedComponentProductionConfig;
       if (config.schemaVersion !== "1.0" || !config.sourceRoot || !config.library?.name || !config.library?.packageName || !config.artifacts?.primitiveDom) throw new Error("component production config 缺少必需字段或 schemaVersion 不是 1.0");
       if (config.artifacts.state && config.artifacts.stateMap) throw new Error("component production config 的 state 与 stateMap 不能同时使用");
+      if (config.artifacts.dataSurface && config.artifacts.dataSurfaceArtifact) throw new Error("component production config 的 dataSurface 与 dataSurfaceArtifact 不能同时使用");
       const readJson = async <T>(path: string | undefined): Promise<T | undefined> => path ? JSON.parse(await readFile(resolve(configRoot, path), "utf8")) as T : undefined;
       const primitiveGraph = await readJson<PrimitiveDomCompilationGraph>(config.artifacts.primitiveDom) as PrimitiveDomCompilationGraph;
       const state = await readJson<SfcStateResponsibility>(config.artifacts.state);
       const stateMap = await readJson<ComponentLibraryStateEvidenceMap>(config.artifacts.stateMap);
       const dataSurface = await readJson<DataSurfaceManifest>(config.artifacts.dataSurface);
+      const dataSurfaceArtifact = await readJson<ReviewedComponentDataSurfaceArtifact>(config.artifacts.dataSurfaceArtifact);
       const runtimeOptions = await readJson<unknown>(config.artifacts.runtimeOptions);
       const styleArtifact = await readJson<ReviewedComponentStyleArtifact>(config.artifacts.style);
       const quality = config.quality ? {
@@ -207,7 +221,7 @@ async function main(argv: string[]): Promise<number> {
       const result = await runReviewedComponentLibraryProduction({
         primitiveGraph,
         projection: { sourceRoot: resolve(configRoot, config.sourceRoot), libraryName: config.library.name, packageName: config.library.packageName, ...(quality ? { quality } : {}) },
-        ...(state ? { state } : {}), ...(stateMap ? { stateMap } : {}), ...(dataSurface ? { dataSurface } : {}), ...(runtimeOptions !== undefined ? { runtimeOptions } : {}), ...(styleArtifact ? { styleArtifact } : {}),
+        ...(state ? { state } : {}), ...(stateMap ? { stateMap } : {}), ...(dataSurface ? { dataSurface } : {}), ...(dataSurfaceArtifact ? { dataSurfaceArtifact } : {}), ...(runtimeOptions !== undefined ? { runtimeOptions } : {}), ...(styleArtifact ? { styleArtifact } : {}),
       }, outDir, { overwrite: has(args, "--overwrite"), reportPath: flag(args, "--report") });
       const planPath = flag(args, "--plan"); if (planPath) await writeFile(resolve(planPath), `${JSON.stringify(result.plan, null, 2)}
 `, "utf8");

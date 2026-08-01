@@ -10,6 +10,7 @@ import { runComponentLibraryBuild, type ComponentLibraryBuildReport } from "./pi
 import type { ComponentLibraryBuildPlan } from "./contract.js";
 import type { ReviewedComponentStyleArtifact } from "./style-artifact.js";
 import type { ComponentLibraryStateEvidenceMap } from "./state-artifact.js";
+import { resolveReviewedComponentDataSurfaceArtifact, type ReviewedComponentDataSurfaceArtifact } from "./data-surface-artifact.js";
 
 export interface ReviewedComponentLibraryProductionInput {
   readonly primitiveGraph: PrimitiveDomCompilationGraph;
@@ -17,6 +18,7 @@ export interface ReviewedComponentLibraryProductionInput {
   readonly state?: SfcStateResponsibility;
   readonly stateMap?: ComponentLibraryStateEvidenceMap;
   readonly dataSurface?: DataSurfaceManifest;
+  readonly dataSurfaceArtifact?: ReviewedComponentDataSurfaceArtifact;
   readonly runtimeOptions?: unknown;
   readonly styleArtifact?: ReviewedComponentStyleArtifact;
 }
@@ -34,12 +36,19 @@ export async function runReviewedComponentLibraryProduction(
   options: { readonly overwrite?: boolean; readonly reportPath?: string } = {},
 ): Promise<ReviewedComponentLibraryProductionResult> {
   if (input.state && input.stateMap) throw new Error("Reviewed component production accepts either state or stateMap, not both");
-  const basePlan = await primitiveDomCompilationToBuildPlan(input.primitiveGraph, { ...input.projection, ...(input.styleArtifact ? { styleArtifact: input.styleArtifact } : {}) });
+  if (input.dataSurface && input.dataSurfaceArtifact) throw new Error("Reviewed component production accepts either dataSurface or dataSurfaceArtifact, not both");
+  const dataSurfaceResolution = input.dataSurfaceArtifact
+    ? resolveReviewedComponentDataSurfaceArtifact(input.primitiveGraph, input.dataSurfaceArtifact)
+    : undefined;
+  const projectedPlan = await primitiveDomCompilationToBuildPlan(input.primitiveGraph, { ...input.projection, ...(input.styleArtifact ? { styleArtifact: input.styleArtifact } : {}) });
+  const basePlan = dataSurfaceResolution?.reviewReasons.length
+    ? { ...projectedPlan, unresolved: [...projectedPlan.unresolved, ...dataSurfaceResolution.reviewReasons], reviewRequired: true }
+    : projectedPlan;
   const plan = enrichComponentLibraryBuildPlan(basePlan, {
     primitiveGraph: input.primitiveGraph,
     ...(input.state ? { state: input.state } : {}),
     ...(input.stateMap ? { stateMap: input.stateMap } : {}),
-    ...(input.dataSurface ? { dataSurface: input.dataSurface } : {}),
+    ...(dataSurfaceResolution?.manifest ? { dataSurface: dataSurfaceResolution.manifest, dataSurfaceArtifact: input.dataSurfaceArtifact } : input.dataSurface ? { dataSurface: input.dataSurface } : {}),
     ...(input.runtimeOptions !== undefined ? { runtimeOptions: input.runtimeOptions } : {}),
   });
   const build = await runComponentLibraryBuild(plan, outputRoot, options);

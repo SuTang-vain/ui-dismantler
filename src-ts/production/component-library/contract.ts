@@ -13,7 +13,7 @@ export type ComponentLibraryFileRole =
   | "evidence";
 
 export interface ComponentLibraryFileProvenance {
-  readonly kind: "component-plan" | "primitive-dom" | "visual-target" | "source-style" | "reviewed-file" | "generated-metadata" | "state-responsibility" | "data-surface-manifest";
+  readonly kind: "component-plan" | "primitive-dom" | "visual-target" | "source-style" | "reviewed-file" | "generated-metadata" | "state-responsibility" | "data-surface-manifest" | "reviewed-data-surface-artifact";
   readonly reference: string;
 }
 

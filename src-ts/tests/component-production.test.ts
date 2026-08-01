@@ -6,12 +6,14 @@ import test from "node:test";
 import { JSDOM } from "jsdom";
 import {
   componentPlanningReportToBuildPlan,
+  createComponentDataSurfaceArtifactCandidate,
   createComponentLibraryBuildPlan,
   enrichComponentLibraryBuildPlan,
   executeReviewedStateWrite,
   materializeComponentLibrary,
   primitiveDomCompilationToBuildPlan,
   primitiveGraphHash,
+  resolveReviewedComponentDataSurfaceArtifact,
   runComponentLibraryBuild,
   runReviewedComponentLibraryProduction,
   visualTargetPlanToBuildPlan,
@@ -19,6 +21,7 @@ import {
   validateComponentLibraryBuildPlan,
   type ComponentLibraryBuildPlanInput,
   type ComponentLibraryStateEvidenceMap,
+  type ReviewedComponentDataSurfaceArtifact,
   type ReviewedComponentStyleArtifact,
 } from "../production/component-library/index.js";
 import { compilePrimitiveDomResponsibilities, type PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
@@ -29,6 +32,7 @@ import type { SfcStateResponsibility } from "../planning/sfc-state-responsibilit
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { analyzeSfcVisualResponsibilities } from "../planning/sfc-visual-responsibility.js";
 import { interactionFingerprint } from "../evaluation/scenarios.js";
+import type { DataSurfaceManifest } from "../skills/data-surface-manifest/index.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 const benchmarkRoot = resolve(root, "benchmark/lib");
@@ -418,6 +422,80 @@ test("Reviewed collection Data Surface materializes repeated DOM from external o
   dom.window.close();
 });
 
+
+test("reviewed Data Surface artifacts bind manifest ownership to the Primitive graph", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-data-surface-artifact-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:item"],
+      nodes: [{ id: "node:item", sourceNodeId: "source:item", order: 0, sourceTag: "article", componentName: "ItemList", renderTag: "article", renderStrategy: "native", classes: ["sg-item"], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ item.name }}" }], conditions: [], loops: ["item in items"] }],
+      styleRules: [], interactions: [],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 },
+    reviewReasons: ["v-for cardinality requires data-source evidence"], reviewRequired: true,
+  };
+  const manifest: DataSurfaceManifest = {
+    schemaVersion: "1.0", kind: "data-surface-manifest",
+    identity: { contractVersion: "1.0", sourceRoot: directory, sourceHash: "1".repeat(64), sourceHashKind: "responsibility-graph", fixtureHash: "2".repeat(64), fixtureHashKind: "responsibility-graph", configurationHash: "3".repeat(64), configurationHashKind: "responsibility-graph", skillVersions: { "data-surface-manifest": "1.0" } },
+    library: { sourceRoot: directory, framework: "vue-sfc" },
+    surfaces: [{
+      id: "prop:list:items", owner: { componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue" },
+      source: { primary: "component-prop", prop: { binding: "items", evidence: ["template-repeat"] } },
+      shape: { kind: "collection", itemKind: "record", cardinality: null, evidence: ["reviewed component prop collection"] },
+      fields: [{ path: "name", consumers: ["component:list"], evidence: ["rendered-field"] }],
+      consumers: [{ componentId: "component:list", componentName: "ItemList", componentFile: "ItemList.vue", targetBinding: "items", renderedFields: ["name"] }],
+      injection: { kind: "component-prop", target: "items", reviewed: true }, references: [],
+      evidence: [{ source: "template", detail: "v-for item in items", confidence: "high" }], unresolved: [], reviewRequired: false,
+    }],
+    unresolved: [], review: { blockers: [], policyNotices: [] },
+    metrics: { surfaces: 1, apiSurfaces: 0, staticSurfaces: 0, propSurfaces: 1, runtimeSurfaces: 0, reviewedFixtures: 0, fields: 1, references: 0, unresolved: 0 },
+    reviewRequired: false,
+  };
+  const candidate = createComponentDataSurfaceArtifactCandidate(manifest, graph);
+  assert.equal(candidate.reviewRequired, true);
+  assert.equal(candidate.reviewed, false);
+  assert.deepEqual(candidate.unresolved, []);
+  assert.equal(resolveReviewedComponentDataSurfaceArtifact(graph, candidate).manifest, undefined);
+  const blocked = await runReviewedComponentLibraryProduction({
+    primitiveGraph: graph, projection: { sourceRoot: directory, libraryName: "Blocked Data Components", packageName: "blocked-data-components" },
+    dataSurfaceArtifact: candidate, runtimeOptions: { data: { items: [{ name: "One" }] } },
+  }, join(directory, "blocked-library"));
+  assert.equal(blocked.build.status, "blocked");
+  assert.equal(blocked.plan.unresolved.some((reason) => reason.includes("artifact requires review")), true);
+
+  const reviewed: ReviewedComponentDataSurfaceArtifact = { ...candidate, reviewed: true, reviewRequired: false };
+  const resolution = resolveReviewedComponentDataSurfaceArtifact(graph, reviewed);
+  assert.equal(resolution.reviewReasons.length, 0);
+  assert.equal(resolution.metrics.matchedOwners, 1);
+  const result = await runReviewedComponentLibraryProduction({
+    primitiveGraph: graph, projection: { sourceRoot: directory, libraryName: "Reviewed Data Components", packageName: "reviewed-data-components" },
+    dataSurfaceArtifact: reviewed, runtimeOptions: { data: { items: [{ name: "External business record alpha" }, { name: "External business record beta" }] } },
+  }, join(directory, "library"));
+  assert.equal(result.build.status, "succeeded", JSON.stringify(result.build.blockers));
+  assert.equal(result.plan.dataBindings[0]?.materialized, true);
+  assert.equal(result.plan.dataBindings[0]?.provenance.some((item) => item.kind === "reviewed-data-surface-artifact"), true);
+  assert.equal(result.plan.files.find((file) => file.role === "runtime")?.content.includes("External business record alpha"), false);
+
+  await writeFile(join(directory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "primitive.json"), `${JSON.stringify(graph, null, 2)}\n`, "utf8");
+  const candidatePath = join(directory, "candidate.json");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-data-surface-candidate", join(directory, "manifest.json"), "--primitive-dom", join(directory, "primitive.json"), "--out", candidatePath], { cwd: root, encoding: "utf8" });
+  const cliCandidate = JSON.parse(await readFile(candidatePath, "utf8")) as ReviewedComponentDataSurfaceArtifact;
+  assert.deepEqual(cliCandidate, candidate);
+  await writeFile(join(directory, "reviewed-data-surface.json"), `${JSON.stringify(reviewed, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "runtime-options.json"), `${JSON.stringify({ data: { items: [{ name: "CLI external item" }] } }, null, 2)}\n`, "utf8");
+  await writeFile(join(directory, "production.json"), `${JSON.stringify({ schemaVersion: "1.0", sourceRoot: ".", library: { name: "CLI Data Components", packageName: "cli-data-components" }, artifacts: { primitiveDom: "primitive.json", dataSurfaceArtifact: "reviewed-data-surface.json", runtimeOptions: "runtime-options.json" } }, null, 2)}\n`, "utf8");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "cli-library"), "--result", join(directory, "cli-result.json")], { cwd: root, encoding: "utf8" });
+  const cliResult = JSON.parse(await readFile(join(directory, "cli-result.json"), "utf8")) as { build: { status: string }; plan: { dataBindings: readonly unknown[] } };
+  assert.equal(cliResult.build.status, "succeeded");
+  assert.equal(cliResult.plan.dataBindings.length, 1);
+
+  const mismatched = createComponentDataSurfaceArtifactCandidate({ ...manifest, surfaces: [{ ...manifest.surfaces[0], owner: { ...manifest.surfaces[0].owner, componentId: "component:other" } }] }, graph);
+  assert.equal(mismatched.unresolved?.some((reason) => reason.includes("owner is not present")), true);
+});
 
 test("Reviewed collection runtime preserves Vue aliases for object and literal numeric loops", async (context) => {
   const directory = await mkdtemp(join("/tmp", "ui-dismantler-loop-alias-runtime-"));

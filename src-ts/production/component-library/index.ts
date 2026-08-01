@@ -9,3 +9,4 @@ export * from "./interaction-executor.js";
 export * from "./production.js";
 export * from "./style-artifact.js";
 export * from "./state-artifact.js";
+export * from "./data-surface-artifact.js";
