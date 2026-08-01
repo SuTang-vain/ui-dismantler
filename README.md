@@ -56,6 +56,7 @@ src-ts/core/
 ├── skills/          Skill 合同、注册、依赖解析和执行证据
 ├── profiles/        Task Profile、执行计划和执行器
 ├── artifacts/       Skill 输出、reviewed binding 和运行产物根目录
+├── ast/             共享 JavaScript/TypeScript line-preserving 解析边界
 └── responsibility/  统一责任图增量与冲突阻断
 ```
 
@@ -93,7 +94,7 @@ Profile 将多个 Skill 组合为一种拆解任务：
 | Profile | 用途 | 主要 Skill |
 |---|---|---|
 | `source-page` | 静态页面结构与可选状态分析 | `source-structure`、可选 `state-responsibility` |
-| `spa-application` | SPA 路由、状态与可选认证分析 | `source-structure`、`state-responsibility`、`spa-router` |
+| `spa-application` | SPA 路由、状态及可选认证/轮询生命周期分析 | `source-structure`、`state-responsibility`、`spa-router`、可选 `auth-guard` / `lifecycle-polling` |
 | `data-backed-spa` | 带 API 和组件数据接口的 SPA | component、proxy、API、cardinality、Data Surface |
 | `component-library` | 已生成组件库的规范与数据边界验证 | `component-library-validation` |
 | `primitive-dom` | 将 reviewed SFC 组件结构编译为可追溯 Primitive DOM 候选 | `component-ownership`、`primitive-dom` |
@@ -251,6 +252,7 @@ Source style 通过独立 `reviewed-component-style-artifact` 交接。owner 样
 | `state-responsibility` | SFC state、handler 和 state-write 责任 |
 | `spa-router` | SPA Semantic/Strict 路由合同与导航验证 |
 | `auth-guard` | storage、token、登录、路由守卫和认证责任 |
+| `lifecycle-polling` | Vue Composition/Options 生命周期、轮询 timer、callback、terminal stop 与 cleanup ownership |
 | `component-ownership` | SFC 组件、模板、样式和视觉 ownership |
 | `component-library-validation` | 已生成组件库的命名、数据分离、响应式、A11y、主题、依赖、文档和类名合同 |
 | `primitive-dom` | SFC 模板到 Primitive DOM、样式规则和交互绑定的 provenance-preserving 编译 |
@@ -406,6 +408,12 @@ node dist-ts/cli.js skill-run component-library-validation \
 # 通过 component-library Profile 执行 reviewed 组件库验证
 node dist-ts/cli.js profile-run /tmp/component-library.profile.json \
   --out /tmp/component-library.profile.report.json
+
+# 提取 reviewed SFC graph 中的轮询与清理责任
+node dist-ts/cli.js skill-run lifecycle-polling \
+  --input /tmp/lifecycle-polling.input.json \
+  --out /tmp/lifecycle-polling.graph.json \
+  --evidence-out /tmp/lifecycle-polling.evidence.json
 
 # 通过 primitive-dom Skill 编译 reviewed 组件责任图中的模板结构
 node dist-ts/cli.js skill-run primitive-dom \

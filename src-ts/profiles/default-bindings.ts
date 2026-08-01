@@ -11,6 +11,13 @@ export function createDefaultReviewedBindingRegistry(skills: SkillRegistry): Rev
       reviewed: true,
     })
     .register({
+      consumerSkillId: "lifecycle-polling",
+      inputContract: "sfc-visual-responsibility-graph",
+      inputPath: "graph",
+      artifactContract: "sfc-visual-responsibility-graph",
+      reviewed: true,
+    })
+    .register({
       consumerSkillId: "data-surface-manifest",
       inputContract: "sfc-visual-responsibility-graph",
       inputPath: "components",

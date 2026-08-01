@@ -16,7 +16,7 @@ export const spaApplicationProfile = defineTaskProfile({
   contractVersion: "1.0",
   summary: "Compose source, state, route-contract, and optional authentication responsibility capabilities for SPA tasks.",
   requiredSkills: ["source-structure", "state-responsibility", "spa-router"],
-  optionalSkills: ["auth-guard"],
+  optionalSkills: ["auth-guard", "lifecycle-polling"],
   qualityGates: ["navigation-integrity", "runtime-network-stability", "blocking-handles"],
 });
 
@@ -25,7 +25,7 @@ export const dataBackedSpaProfile = defineTaskProfile({
   contractVersion: "1.0",
   summary: "Compose reviewed SPA route, transport proxy, API response-flow, data cardinality, Data Surface Manifest, and optional authentication responsibilities.",
   requiredSkills: ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility", "data-surface-manifest"],
-  optionalSkills: ["auth-guard"],
+  optionalSkills: ["auth-guard", "lifecycle-polling"],
   qualityGates: ["navigation-integrity", "browser-request-prefix-preserved", "reviewed-fixture-only", "runtime-network-stability", "blocking-handles"],
 });
 

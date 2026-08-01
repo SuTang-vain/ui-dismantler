@@ -93,6 +93,8 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 `data-surface-manifest` joins reviewed component ownership, cardinality, and API fixture artifacts. It describes source, shape, fields, consumers, injection boundaries, static references, component props, runtime/store bindings, evidence, and unresolved responsibilities. It does not emit entities, relations, stages, adapters, or runtime patches. `ui-dismantler` owns Manifest production; `sg-data-pack` remains an independent consumer that may convert a reviewed Manifest into a Data Pack.
 
+`lifecycle-polling` consumes the reviewed SFC ownership graph and reopens the owned source files only for structural lifecycle analysis. It records Composition API and Options API hooks, `setInterval`/`setTimeout`/`useIntervalFn` creation, static interval evidence, callback call ownership, terminal self-stop, and unmount/destroy cleanup. Intervals without a lifecycle owner, stable handle/control, static interval, resolved callback, or cleanup remain review-required. It does not execute timers, fabricate API responses, or generate route transitions.
+
 The Manifest separates two kinds of review evidence:
 
 - `unresolved` / `review.blockers`: evidence gaps that block a reviewed Data Surface or downstream Data Pack generation;
@@ -125,8 +127,8 @@ If `--cardinality` is omitted, the command executes the registered `data-cardina
 2. Add execution evidence through the separate evidence API.
 3. Use Task Profiles to review capability composition.
 4. Expand reviewed artifact bindings and responsibility projections without replacing historical graphs.
-5. Register data-surface, lifecycle, and visual capabilities as orthogonal Skills.
-6. Move shared source/AST helpers under Core one family at a time.
+5. Register the remaining visual evaluation capabilities as orthogonal Skills; Data Surface and lifecycle/polling are already registered.
+6. Continue moving shared source/AST helpers under Core one family at a time; the JavaScript/TypeScript parser is the first completed AST extraction.
 7. Introduce framework Adapters only where structural evidence proves ownership.
 
 ## Profile execution planning
@@ -177,7 +179,7 @@ src-ts/
 │   │   ├── graph.ts
 │   │   └── store.ts
 │   ├── source/       # created when shared file/import/source-location code is migrated
-│   ├── ast/          # created when shared AST walking/static-value code is migrated
+│   ├── ast/          # shared JavaScript parsing and line-preserving TypeScript erasure
 │   └── evaluation/   # created when browser/runtime evaluation is physically extracted
 ├── skills/
 ├── adapters/
@@ -188,7 +190,7 @@ Three deliberate differences from a simpler proposed tree are retained:
 
 1. Profiles remain under `core/profiles`, not `core/skills`, because task composition is not a Skill capability.
 2. The normalized graph is named `responsibility`, not generic `graph`, so it is not confused with router, layout, dependency, or ECharts graphs.
-3. `source`, `ast`, `evaluation`, and framework adapter directories are created only when real implementations move into them; empty architectural placeholders are not committed.
+3. `ast` now exists because state and lifecycle analysis share a real line-preserving parser. `source`, `evaluation`, and framework adapter directories are still created only when implementations actually move into them; empty architectural placeholders are not committed.
 
 Current Skill modules remain single files while they contain one wrapper and one projector. `data-surface-manifest` uses a directory because its contract, deterministic builder, responsibility projector, and Skill wrapper are independent implementation units. A Skill moves to its own directory when it gains multiple implementation units, for example:
 

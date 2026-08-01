@@ -45,7 +45,7 @@ const root = new URL("../../", import.meta.url).pathname;
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "primitive-dom", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "lifecycle-polling", "primitive-dom", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -427,6 +427,20 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   const authenticated = profiles.resolve("spa-application", ["auth-guard"]);
   assert.deepEqual(authenticated.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "auth-guard"]);
   assert.equal(authenticated.qualityGates.includes("fresh-authentication-required"), true);
+  const polling = profiles.resolve("spa-application", ["lifecycle-polling"]);
+  assert.deepEqual(polling.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router", "component-ownership", "lifecycle-polling"]);
+  assert.equal(polling.qualityGates.includes("lifecycle-cleanup-ownership"), true);
+  const pollingPlan = new ProfileExecutionPlanner(profiles, createDefaultReviewedBindingRegistry(skills)).plan("spa-application", {
+    enabledOptionalSkills: ["lifecycle-polling"],
+    inputProviders: [
+      { contract: "html-path", providerId: "reviewed-html", reviewed: true },
+      { contract: "sfc-script-source", providerId: "reviewed-script", reviewed: true },
+      { contract: "spa-router-contract-config", providerId: "reviewed-router", reviewed: true },
+      { contract: "project-source-root", providerId: "reviewed-source", reviewed: true },
+    ],
+  });
+  assert.equal(pollingPlan.ready, true);
+  assert.equal(pollingPlan.steps.find((step) => step.skillId === "lifecycle-polling")?.inputs.find((input) => input.contract === "sfc-visual-responsibility-graph")?.source, "artifact");
   const dataBacked = profiles.resolve("data-backed-spa");
   assert.deepEqual(dataBacked.skills.map((skill) => skill.id), ["source-structure", "component-ownership", "data-cardinality", "state-responsibility", "spa-router", "transport-proxy", "api-responsibility", "data-surface-manifest"]);
   assert.equal(dataBacked.qualityGates.includes("upstream-rewrite-audit-only"), true);
