@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "benchmark-protocol",
+  "id": "gold",
+  "commands": [
+    "npm run test:gold"
+  ],
+  "caseIds": [
+    "starmap",
+    "vue-element-admin"
+  ],
+  "requiresExternalSources": true,
+  "externalInputs": [
+    "UI_DISMANTLER_STARMAP_SOURCE",
+    "UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE"
+  ],
+  "retention": "final-summary-and-ci-artifact"
+}

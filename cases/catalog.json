@@ -1,0 +1,376 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "case-catalog",
+  "root": "examples",
+  "cases": [
+    {
+      "id": "blackpink-star-group-ts",
+      "path": "examples/cases/blackpink-star-group-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "blackpink",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "blackpink-v10",
+      "path": "examples/cases/blackpink-v10",
+      "status": "archived",
+      "role": "historical-source",
+      "protocols": [],
+      "source": {
+        "entry": "original.html"
+      }
+    },
+    {
+      "id": "ciyu-scrollbar-ts",
+      "path": "examples/cases/ciyu-scrollbar-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "interactive-encyclopedia",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "roundtrip-report.json"
+      ]
+    },
+    {
+      "id": "diegovz-home-0722-ts",
+      "path": "examples/cases/diegovz-home-0722-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "portfolio",
+      "source": {
+        "entry": "planning-fixture.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "component-plan.json"
+      ]
+    },
+    {
+      "id": "liu-haocun-0721-ts",
+      "path": "examples/cases/liu-haocun-0721-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [],
+      "analysisProfile": "liu-haocun-0721",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "liu-haocun-0722-ts",
+      "path": "examples/cases/liu-haocun-0722-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "liu-haocun-0722",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "roundtrip-report.json"
+      ]
+    },
+    {
+      "id": "qingyu-nian-graph-ts",
+      "path": "examples/cases/qingyu-nian-graph-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "historical-drama",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "qinshihuang-0716-ts",
+      "path": "examples/cases/qinshihuang-0716-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "graph",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "sandadui-graph-ts",
+      "path": "examples/cases/sandadui-graph-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "generic",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "sun-wukong-0722-ts",
+      "path": "examples/cases/sun-wukong-0722-ts",
+      "status": "frozen",
+      "role": "planning-regression",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "sun-wukong",
+      "source": {
+        "entry": "original.html",
+        "identity": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "quality-report.json",
+        "roundtrip-report.json"
+      ]
+    },
+    {
+      "id": "babelo-landing",
+      "path": "examples/dispatch-experiments/babelo-landing",
+      "status": "frozen",
+      "role": "dispatch-experiment",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "generic",
+      "source": {
+        "entry": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "results.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "qinshihuang-dispatch",
+      "path": "examples/dispatch-experiments/qinshihuang-0716",
+      "status": "archived",
+      "role": "dispatch-experiment",
+      "protocols": [],
+      "analysisProfile": "graph",
+      "source": {
+        "entry": "README.md"
+      },
+      "frozenEvidence": [
+        "RESULTS.md",
+        "quality-report.json"
+      ]
+    },
+    {
+      "id": "warp-homepage",
+      "path": "examples/dispatch-experiments/warp-homepage",
+      "status": "frozen",
+      "role": "dispatch-experiment",
+      "protocols": [
+        "pr"
+      ],
+      "analysisProfile": "generic",
+      "source": {
+        "entry": "manifest.json"
+      },
+      "frozenEvidence": [
+        "manifest.json",
+        "results.json",
+        "scenarios.json"
+      ]
+    },
+    {
+      "id": "starmap",
+      "path": "examples/spa-router-regressions/starmap",
+      "status": "frozen",
+      "role": "spa-gold",
+      "protocols": [
+        "pr",
+        "gold",
+        "nightly"
+      ],
+      "source": {
+        "entry": "source-identity.json",
+        "externalRootEnv": "UI_DISMANTLER_STARMAP_SOURCE"
+      },
+      "frozenEvidence": [
+        "source-identity.json",
+        "frozen-artifact.json",
+        "semantic-gold.final.results.json",
+        "strict-route-contract.final.results.json"
+      ]
+    },
+    {
+      "id": "todomvc-framework-matrix",
+      "path": "examples/spa-router-regressions/todomvc-framework-matrix",
+      "status": "frozen",
+      "role": "spa-framework-matrix",
+      "protocols": [],
+      "source": {
+        "entry": "matrix-summary.json"
+      },
+      "frozenEvidence": [
+        "matrix-summary.json",
+        "RESULTS.md"
+      ]
+    },
+    {
+      "id": "todomvc-react",
+      "path": "examples/spa-router-regressions/todomvc-react",
+      "status": "frozen",
+      "role": "spa-contract",
+      "protocols": [],
+      "source": {
+        "entry": "contract.config.json"
+      },
+      "frozenEvidence": [
+        "contract-results.json",
+        "dual-control-results.json",
+        "RESULTS.md"
+      ]
+    },
+    {
+      "id": "vue-element-admin",
+      "path": "examples/spa-router-regressions/vue-element-admin",
+      "status": "frozen",
+      "role": "spa-gold",
+      "protocols": [
+        "pr",
+        "gold",
+        "nightly"
+      ],
+      "source": {
+        "entry": "source-lock.json",
+        "externalRootEnv": "UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE"
+      },
+      "frozenEvidence": [
+        "source-lock.json",
+        "frozen-artifact.json",
+        "reference-generated-semantic.results.json",
+        "reference-generated-strict.results.json"
+      ]
+    },
+    {
+      "id": "vue-xs-admin-blind",
+      "path": "examples/spa-router-regressions/vue-xs-admin-blind",
+      "status": "frozen",
+      "role": "blind-spa",
+      "protocols": [
+        "pr"
+      ],
+      "source": {
+        "entry": "source-identity.json"
+      },
+      "frozenEvidence": [
+        "source-identity.json",
+        "profile-execution-summary.json",
+        "data-surface.manifest.json",
+        "generated-semantic.results.json"
+      ]
+    },
+    {
+      "id": "yesplaymusic",
+      "path": "examples/spa-router-regressions/yesplaymusic",
+      "status": "frozen",
+      "role": "spa-contract",
+      "protocols": [
+        "pr"
+      ],
+      "source": {
+        "entry": "contract.config.json"
+      },
+      "frozenEvidence": [
+        "automated-results.json",
+        "dual-control-results.json",
+        "RESULTS.md"
+      ]
+    },
+    {
+      "id": "yesplaymusic-generated",
+      "path": "examples/spa-router-regressions/yesplaymusic-generated",
+      "status": "frozen",
+      "role": "spa-generated",
+      "protocols": [
+        "pr"
+      ],
+      "source": {
+        "entry": "semantic-gold.config.json"
+      },
+      "frozenEvidence": [
+        "frozen-artifact.json",
+        "semantic-results.json",
+        "strict-results.json",
+        "RESULTS.md"
+      ]
+    },
+    {
+      "id": "browser-matrix-reuse",
+      "path": "examples/performance-experiments/browser-matrix-reuse",
+      "status": "archived",
+      "role": "performance-experiment",
+      "protocols": [
+        "nightly"
+      ],
+      "source": {
+        "entry": "results.json"
+      },
+      "frozenEvidence": [
+        "results.json",
+        "RESULTS.md"
+      ]
+    }
+  ]
+}

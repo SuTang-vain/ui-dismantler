@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "benchmark-protocol",
+  "id": "pr",
+  "commands": [
+    "npm run test:pr",
+    "npm run verify:component-boundary"
+  ],
+  "caseIds": [
+    "blackpink-star-group-ts",
+    "ciyu-scrollbar-ts",
+    "diegovz-home-0722-ts",
+    "liu-haocun-0722-ts",
+    "qingyu-nian-graph-ts",
+    "qinshihuang-0716-ts",
+    "sandadui-graph-ts",
+    "sun-wukong-0722-ts",
+    "babelo-landing",
+    "warp-homepage",
+    "starmap",
+    "vue-element-admin",
+    "vue-xs-admin-blind",
+    "yesplaymusic",
+    "yesplaymusic-generated"
+  ],
+  "requiresExternalSources": false,
+  "retention": "summary"
+}

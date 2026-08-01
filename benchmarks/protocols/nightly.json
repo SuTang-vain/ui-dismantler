@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "benchmark-protocol",
+  "id": "nightly",
+  "extends": [
+    "pr",
+    "gold"
+  ],
+  "commands": [
+    "npm run test:nightly"
+  ],
+  "caseIds": [
+    "starmap",
+    "vue-element-admin",
+    "browser-matrix-reuse"
+  ],
+  "requiresExternalSources": true,
+  "retention": "summary-and-ci-artifact"
+}

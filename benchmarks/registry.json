@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "benchmark-registry",
+  "caseCatalog": "cases/catalog.json",
+  "protocols": [
+    {
+      "id": "pr",
+      "path": "benchmarks/protocols/pr.json"
+    },
+    {
+      "id": "gold",
+      "path": "benchmarks/protocols/gold.json"
+    },
+    {
+      "id": "nightly",
+      "path": "benchmarks/protocols/nightly.json"
+    }
+  ]
+}

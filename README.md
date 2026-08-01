@@ -499,14 +499,19 @@ blocking handles
 分层回归：
 
 ```bash
-# PR：类型检查、构建、单元测试和冻结证据
+# 案例与 Benchmark Registry 完整性
+npm run catalog:validate
+
+# PR：Catalog、类型检查、构建、单元测试和冻结证据
 npm run test:pr
 
 # 合并前：完整关键场景与浏览器 Gold+
+UI_DISMANTLER_STARMAP_SOURCE=/absolute/path/to/locked-starmap-frontend \
 UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
   npm run test:gold
 
 # Nightly：PR + Gold+ + 多轮性能基线
+UI_DISMANTLER_STARMAP_SOURCE=/absolute/path/to/locked-starmap-frontend \
 UI_DISMANTLER_VUE_ELEMENT_ADMIN_SOURCE=/absolute/path/to/vue-element-admin \
   npm run test:nightly
 ```
@@ -539,7 +544,9 @@ src-ts/
 └── tests/         单元、集成和冻结回归
 
 src/skill/         Python/ZCode 兼容 Skill 与脚本
-benchmark/         通用历史 benchmark
+benchmark/         兼容历史参考组件库
+cases/             冻结案例的逻辑 Catalog，不移动历史物理路径
+benchmarks/        PR、Gold、Nightly 的协议 Registry
 examples/          冻结案例及其正式配置；运行产物不应写入此目录
 docs/              架构、协议、基线和研究记录
 scripts/           回归、转译和质量运行脚本

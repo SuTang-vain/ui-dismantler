@@ -5,12 +5,14 @@
 - `src-ts/` is the TypeScript implementation: shared contracts in `core/`, composable capabilities in `skills/`, analysis/planning in `analysis/` and `planning/`, component output in `production/`, and quality logic in `evaluation/` and `validation/`.
 - `src-ts/tests/` contains Node tests named `*.test.ts`.
 - `src/skill/` and `src/ui_dismantler/` retain the legacy Python validation boundary; preserve compatibility during migration.
-- `scripts/` contains verification tools, `benchmark/` stores frozen inputs, and `examples/` stores historical cases—not runtime artifacts.
+- `scripts/` contains verification tools, `benchmark/` stores the legacy reference library, and `examples/` stores historical case files—not new runtime artifacts.
+- `cases/catalog.json` inventories every managed case; `benchmarks/registry.json` and `benchmarks/protocols/` define PR, Gold, and nightly evidence tiers without moving historical paths.
 - Record architectural decisions in `docs/architecture/`.
 
 ## Build, Test, and Development Commands
 
 ```bash
+npm run catalog:validate         # validate case and benchmark registries
 npm run typecheck:ts              # strict TypeScript check
 npm run build:ts                  # compile src-ts/ to dist-ts/
 npm run test:pr                   # typecheck, build, all TypeScript tests
