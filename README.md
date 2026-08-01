@@ -140,6 +140,8 @@ node dist-ts/cli.js primitive-dom-build-plan \
   --source-root /absolute/path/to/source \
   --name "Reviewed Components" \
   --package-name reviewed-components \
+  --quality-html /absolute/path/to/original.html \
+  --quality-scenarios /absolute/path/to/scenarios.json \
   --out /tmp/primitive-dom.build-plan.json
 ```
 
@@ -154,7 +156,7 @@ node dist-ts/cli.js component-build-enrich \
   --out /tmp/component-library.reviewed-build-plan.json
 ```
 
-当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化；静态 binding、API fixture 和 unresolved collection 仍然阻断。当前交互绑定和数据绑定只进入审查合同，不会执行未审查表达式，也不会将业务数据值写入 publishable runtime。状态责任还可以通过无 `eval` 的 reviewed state-transition executor 验证字面量赋值、布尔切换和数值增减；这只是执行证据，不代表已进入组件运行时。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
+当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化；静态 binding、API fixture 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-else`/`v-else-if`、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill
 

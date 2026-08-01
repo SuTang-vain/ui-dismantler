@@ -21,6 +21,9 @@ import type { PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
 import type { ComponentPlanningReport } from "../planning/components.js";
 import type { VisualTargetPlan } from "../planning/visual-target-plan.js";
 import { analyzeSfcTemplateStructure } from "../planning/sfc-template-structure.js";
+import type { SfcStateResponsibility } from "../planning/sfc-state-responsibility.js";
+import { analyzeHtml } from "../analysis/analyzer.js";
+import { interactionFingerprint } from "../evaluation/scenarios.js";
 
 const root = new URL("../../", import.meta.url).pathname;
 const benchmarkRoot = resolve(root, "benchmark/lib");
@@ -420,7 +423,7 @@ test("Reviewed collection runtime preserves Vue aliases for object and literal n
     components: [
       { componentId: "component:object-list", componentName: "ObjectList", componentFile: "ObjectList.vue", reviewRequired: false, compilation: {
         schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:object-item"],
-        nodes: [{ id: "node:object-item", sourceNodeId: "source:object-item", order: 0, sourceTag: "article", componentName: "ObjectList", renderTag: "article", renderStrategy: "native", classes: [], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ index }}:{{ key }}={{ item.name }}" }], conditions: [], loops: ["(item, key, index) in items"] }],
+        nodes: [{ id: "node:object-item", sourceNodeId: "source:object-item", order: 0, sourceTag: "article", componentName: "ObjectList", renderTag: "article", renderStrategy: "native", classes: [], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "{{ index }}:{{ key }}={{ item.name }}/{{ item.value }}" }], conditions: [], loops: ["(item, key, index) in items"] }],
         styleRules: [], interactions: [], metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
       } },
       { componentId: "component:count-list", componentName: "CountList", componentFile: "CountList.vue", reviewRequired: false, compilation: {
@@ -444,9 +447,9 @@ test("Reviewed collection runtime preserves Vue aliases for object and literal n
   const dom = new JSDOM(`<!doctype html><div id="object"></div><div id="count"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
   dom.window.eval(runtime);
   const api = (dom.window as unknown as { LoopComponents: { mount: (host: Element, options: unknown) => { unmount: () => void } } }).LoopComponents;
-  const objectInstance = api.mount(dom.window.document.getElementById("object")!, { componentId: "component:object-list", data: { items: { alpha: { name: "One" }, beta: { name: "Two" } } } });
+  const objectInstance = api.mount(dom.window.document.getElementById("object")!, { componentId: "component:object-list", data: { items: { alpha: { name: "One", value: "A" }, beta: { name: "Two", value: "B" } } } });
   const countInstance = api.mount(dom.window.document.getElementById("count")!, { componentId: "component:count-list" });
-  assert.deepEqual([...dom.window.document.querySelectorAll("#object [data-primitive-node='node:object-item']")].map((node) => node.textContent), ["0:alpha=One", "1:beta=Two"]);
+  assert.deepEqual([...dom.window.document.querySelectorAll("#object [data-primitive-node='node:object-item']")].map((node) => node.textContent), ["0:alpha=One/A", "1:beta=Two/B"]);
   assert.deepEqual([...dom.window.document.querySelectorAll("#count [data-primitive-node='node:count-item']")].map((node) => node.textContent), ["1", "2", "3"]);
   objectInstance.unmount();
   countInstance.unmount();
@@ -478,4 +481,54 @@ test("Collection review lifting is scoped to the matching Primitive graph and co
   const wrongIdentity = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: foreignGraph });
   assert.equal(wrongIdentity.reviewRequired, true);
   assert.equal(wrongIdentity.unresolved.includes("primitive-dom: graph identity does not match build plan sourceHash"), true);
+});
+
+
+test("Reviewed conditional interaction runs through the configured component quality contract", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-component-quality-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const originalPath = join(directory, "original.html");
+  const scenarioPath = join(directory, "scenarios.json");
+  await writeFile(originalPath, `<!doctype html><html lang="en"><body><section class="sg-component-library" data-component-id="component:toggle"><button class="sg-toggle" type="button">Toggle details</button><div class="sg-panel" hidden>Details content</div></section><script>const button=document.querySelector('.sg-toggle');const panel=document.querySelector('.sg-panel');button.addEventListener('click',()=>{panel.hidden=!panel.hidden;});</script></body></html>`, "utf8");
+  const manifest = analyzeHtml(originalPath);
+  await writeFile(scenarioPath, `${JSON.stringify({ schemaVersion: "1.0", scenarios: [{ id: "toggle-details", label: "Toggle reviewed conditional region", covers: manifest.interactions.map(interactionFingerprint), steps: [{ action: "click", target: { reference: ".sg-toggle", library: ".sg-toggle" } }], assertions: [{ target: { reference: ".sg-panel", library: ".sg-panel" }, visible: true, text: "Details content" }] }] }, null, 2)}\n`, "utf8");
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:toggle", componentName: "ToggleDetails", componentFile: "ToggleDetails.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:button", "node:panel"],
+      nodes: [
+        { id: "node:button", sourceNodeId: "source:button", order: 0, sourceTag: "button", componentName: "ToggleDetails", renderTag: "button", renderStrategy: "button", classes: ["sg-toggle"], attributes: { type: "button" }, inlineStyle: {}, content: [{ kind: "text", value: "Toggle details" }], conditions: [], loops: [] },
+        { id: "node:panel", sourceNodeId: "source:panel", order: 1, sourceTag: "div", componentName: "ToggleDetails", renderTag: "div", renderStrategy: "native", classes: ["sg-panel"], attributes: {}, inlineStyle: {}, content: [{ kind: "text", value: "Details content" }], conditions: ["open"], conditionDirective: { kind: "show", expression: "open" }, loops: [] },
+      ],
+      styleRules: [
+        { sourceNodeId: "source:button", selector: "[data-primitive-node=\"node:button\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" },
+        { sourceNodeId: "source:panel", selector: "[data-primitive-node=\"node:panel\"]", declarations: { color: "var(--sg-ink)" }, provenance: "source-inline-style" },
+      ],
+      interactions: [{ sourceNodeId: "source:button", event: "click", expression: "toggleDetails", modifiers: [], target: ".sg-toggle" }],
+      metrics: { sourceNodes: 2, compiledNodes: 2, primitiveNodes: 1, inlineStyleRules: 2, responsiveRules: 0, interactionBindings: 1, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 2, compiledNodes: 2, primitiveNodes: 1, inlineStyleRules: 2, responsiveRules: 0, interactionBindings: 1, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, {
+    sourceRoot: directory,
+    libraryName: "Conditional Components",
+    packageName: "conditional-components",
+    quality: { originalHtmlPath: originalPath, scenarioPath, visual: false },
+  });
+  assert.equal(basePlan.unresolved.some((reason) => reason.includes("conditional region requires state materialization")), true);
+  const state: SfcStateResponsibility = {
+    schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript", initialState: { open: false },
+    handlers: [{ handler: "toggleDetails", writes: [{ path: "open", expression: "open.value = !open.value", sourceLine: 2, confidence: "high" }], helperCalls: [], sourceLine: 2 }],
+    displayFunctions: [], unresolvedWrites: [], metrics: { initialBindings: 1, handlers: 1, handlersWithWrites: 1, stateWrites: 1, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+  };
+  const missingPrimitiveEvidence = enrichComponentLibraryBuildPlan(basePlan, { state });
+  assert.equal(missingPrimitiveEvidence.unresolved.some((reason) => reason.includes("conditional region requires state materialization")), true);
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: graph, state });
+  assert.equal(enriched.unresolved.some((reason) => reason.includes("conditional region requires state materialization")), false);
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  const report = await runComponentLibraryBuild(enriched, join(directory, "library"));
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.quality?.passed, true);
+  assert.equal(report.quality?.scenarios?.[0]?.passed, true);
+  assert.equal(report.quality?.coverage?.verifiedRate, 1);
 });

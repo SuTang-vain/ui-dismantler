@@ -38,7 +38,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
@@ -68,6 +68,26 @@ function optionalThreshold(args: string[], name: string): number | null | undefi
   if (!Number.isFinite(value) || value < 0 || value > 1) throw new Error(`${name} 必须是 0..1 的数字，或 off`);
   return value;
 }
+function componentQualityContract(args: string[]): ComponentLibraryQualityContract | undefined {
+  const originalHtmlPath = flag(args, "--quality-html");
+  const manifestPath = flag(args, "--quality-manifest");
+  const scenarioPath = flag(args, "--quality-scenarios");
+  const spaRouterConfigPath = flag(args, "--quality-spa-router");
+  const visualArtifactsDir = flag(args, "--quality-artifacts");
+  const qualityFlagsPresent = [manifestPath, scenarioPath, spaRouterConfigPath, visualArtifactsDir].some(Boolean) || has(args, "--quality-visual");
+  if (!originalHtmlPath) {
+    if (qualityFlagsPresent) throw new Error("组件质量合同使用 --quality-* 参数时必须提供 --quality-html");
+    return undefined;
+  }
+  return {
+    originalHtmlPath: resolve(originalHtmlPath),
+    ...(manifestPath ? { manifestPath: resolve(manifestPath) } : {}),
+    ...(scenarioPath ? { scenarioPath: resolve(scenarioPath) } : {}),
+    ...(spaRouterConfigPath ? { spaRouterConfigPath: resolve(spaRouterConfigPath) } : {}),
+    visual: has(args, "--quality-visual"),
+    ...(visualArtifactsDir ? { visualArtifactsDir: resolve(visualArtifactsDir) } : {}),
+  };
+}
 function usage(): void {
   console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
   data-surface-validate <data-surface.manifest.json> [--require-ready]
@@ -78,10 +98,10 @@ function usage(): void {
   profile-run <profile.config.json> --out <profile.report.json>
   component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
-  primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
-  component-plan-build-plan <component-plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
-  visual-target-build-plan <visual-target.plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json>
-  component-build-enrich <component-library.build-plan.json> [--state <sfc-state.json>] [--data-surface <data-surface.manifest.json>] --out <component-library.reviewed-build-plan.json>
+  primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
+  component-plan-build-plan <component-plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
+  visual-target-build-plan <visual-target.plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
+  component-build-enrich <component-library.build-plan.json> [--state <sfc-state.json>] [--data-surface <data-surface.manifest.json>] [--primitive-dom <primitive-dom.graph.json>] --out <component-library.reviewed-build-plan.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -126,7 +146,7 @@ async function main(argv: string[]): Promise<number> {
       const graphPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");
       if (!graphPath || !out || !sourceRoot || !libraryName || !packageName) throw new Error("primitive-dom-build-plan 需要 graph、--source-root、--name、--package-name 和 --out");
       const graph = JSON.parse(await readFile(resolve(graphPath), "utf8")) as PrimitiveDomCompilationGraph;
-      const plan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot, libraryName, packageName });
+      const plan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot, libraryName, packageName, quality: componentQualityContract(args) });
       await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(plan);
       console.log(`${validation.ready ? "✓" : "✗"} Primitive DOM Build Plan: ${resolve(out)} (reviewRequired=${plan.reviewRequired})`);
@@ -137,7 +157,7 @@ async function main(argv: string[]): Promise<number> {
       const reportPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");
       if (!reportPath || !out || !sourceRoot || !libraryName || !packageName) throw new Error("component-plan-build-plan 需要 component-plan、--source-root、--name、--package-name 和 --out");
       const report = JSON.parse(await readFile(resolve(reportPath), "utf8")) as ComponentPlanningReport;
-      const plan = await componentPlanningReportToBuildPlan(report, { sourceRoot, libraryName, packageName });
+      const plan = await componentPlanningReportToBuildPlan(report, { sourceRoot, libraryName, packageName, quality: componentQualityContract(args) });
       await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(plan);
       console.log(`✗ Component Plan Build Plan requires review: ${resolve(out)}`);
@@ -148,7 +168,7 @@ async function main(argv: string[]): Promise<number> {
       const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");
       if (!planPath || !out || !sourceRoot || !libraryName || !packageName) throw new Error("visual-target-build-plan 需要 visual-target.plan、--source-root、--name、--package-name 和 --out");
       const visualPlan = JSON.parse(await readFile(resolve(planPath), "utf8")) as VisualTargetPlan;
-      const plan = await visualTargetPlanToBuildPlan(visualPlan, { sourceRoot, libraryName, packageName });
+      const plan = await visualTargetPlanToBuildPlan(visualPlan, { sourceRoot, libraryName, packageName, quality: componentQualityContract(args) });
       await writeFile(resolve(out), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(plan);
       console.log(`✗ Visual Target Build Plan remains review-gated: ${resolve(out)}`);
