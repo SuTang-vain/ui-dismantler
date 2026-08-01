@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import { JSDOM } from "jsdom";
 import {
+  acceptComponentLibrary,
   componentPlanningReportToBuildPlan,
   createComponentDataSurfaceArtifactCandidate,
   createComponentLibraryBuildPlan,
@@ -16,6 +17,7 @@ import {
   resolveReviewedComponentDataSurfaceArtifact,
   runComponentLibraryBuild,
   runReviewedComponentLibraryProduction,
+  assessComponentLibrarySourceReadiness,
   visualTargetPlanToBuildPlan,
   runComponentLibraryRuntimeSmoke,
   validateComponentLibraryBuildPlan,
@@ -36,6 +38,34 @@ import type { DataSurfaceManifest } from "../skills/data-surface-manifest/index.
 
 const root = new URL("../../", import.meta.url).pathname;
 const benchmarkRoot = resolve(root, "benchmark/lib");
+
+async function createNeutralAcceptanceFixture(directory: string): Promise<{ sourcePath: string; libraryRoot: string }> {
+  const libraryRoot = join(directory, "library");
+  await mkdir(join(libraryRoot, "src"), { recursive: true });
+  await mkdir(join(libraryRoot, "examples"), { recursive: true });
+  await mkdir(join(libraryRoot, "docs"), { recursive: true });
+  await writeFile(join(libraryRoot, "src/demo.css"), `:root{--sg-primary:#2457d6;--sg-ink:#172033;--sg-muted:#667085;--sg-line:#d0d5dd;--sg-paper:#fff}
+.sg-card{width:320px;padding:24px;color:var(--sg-ink);background:var(--sg-paper);border:1px solid var(--sg-line)}
+.sg-title{margin:0;color:var(--sg-primary)}
+.sg-copy{margin:8px 0 0;color:var(--sg-muted)}
+@media (max-width:500px){.sg-card{width:280px;padding:16px}}
+@media (max-width:320px){.sg-card{width:240px;padding:12px}}
+`, "utf8");
+  await writeFile(join(libraryRoot, "src/demo.js"), `(function(global){'use strict';var DEFAULT_OPTIONS={title:'',copy:''};function create(options){var value=Object.assign({},DEFAULT_OPTIONS,options||{});var root=document.createElement('article');root.className='sg-card';var title=document.createElement('h1');title.className='sg-title';title.textContent=value.title;var copy=document.createElement('p');copy.className='sg-copy';copy.textContent=value.copy;root.append(title,copy);return root;}global.SgDemo={create:create,mount:function(container,options){var node=create(options);container.appendChild(node);return node;}};})(window);
+`, "utf8");
+  const example = `<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../src/demo.css"></head><body><div id="mount"></div><script src="../src/demo.js"></script><script>window.SgDemo.mount(document.getElementById('mount'),{title:'Neutral title',copy:'Neutral reusable component'});</script></body></html>
+`;
+  await writeFile(join(libraryRoot, "examples/case.html"), example, "utf8");
+  await writeFile(join(libraryRoot, "examples/template.html"), example, "utf8");
+  await writeFile(join(libraryRoot, "README.md"), "# Neutral Component\n\nUse `SgDemo.mount(container, options)` to mount the component.\n", "utf8");
+  await writeFile(join(libraryRoot, "docs/设计规范.md"), "# 设计规范\n\n## 主题色\n\nTheme colors are controlled by `--sg-*` variables.\n", "utf8");
+  await writeFile(join(libraryRoot, "package.json"), `${JSON.stringify({ name: "neutral-component", version: "1.0.0", files: ["src", "README.md", "docs"] }, null, 2)}
+`, "utf8");
+  const sourcePath = join(directory, "source.html");
+  await writeFile(sourcePath, `<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="./library/src/demo.css"></head><body><div id="mount"></div><script src="./library/src/demo.js"></script><script>window.SgDemo.mount(document.getElementById('mount'),{title:'Neutral title',copy:'Neutral reusable component'});</script></body></html>
+`, "utf8");
+  return { sourcePath, libraryRoot };
+}
 
 function benchmarkInput(): ComponentLibraryBuildPlanInput {
   const file = (path: string, role: ComponentLibraryBuildPlanInput["files"][number]["role"], publish: boolean) => ({
@@ -101,7 +131,9 @@ test("Component Library Materializer runs Runtime Smoke before structural valida
     assert.equal(smoke.mountCalled, true);
     assert.ok(smoke.mountedNodeCount > 0);
     const report = await runComponentLibraryBuild(plan, join(directory, "pipeline"));
-    assert.equal(report.status, "succeeded");
+    assert.equal(report.status, "review-required");
+    assert.equal(report.receipt.accepted, false);
+    assert.equal(report.receipt.phases.quality, "review-required");
     assert.equal(report.smoke?.passed, true);
     assert.equal(report.validation?.ok, true);
     assert.equal(JSON.parse(await readFile(join(directory, "pipeline", ".ui-dismantler", "build-report.json"), "utf8")).kind, "component-library-build-report");
@@ -140,7 +172,135 @@ test("Component Library Build Plan blocks unsafe paths, publishable fixtures, an
   }
 });
 
-test("component-build CLI materializes a reviewed plan without publishing examples", async (context) => {
+test("Source Readiness blocks unresolved runtime shells and requires reviewed canvas profiles", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-source-readiness-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const shellPath = join(directory, "shell.html");
+  await writeFile(shellPath, `<!doctype html><html><head><link rel="stylesheet" href="./missing.css"></head><body><div id="app"></div><script type="module" src="https://example.invalid/app.js"></script></body></html>`, "utf8");
+  const shell = await assessComponentLibrarySourceReadiness({ originalHtmlPath: shellPath, visual: true });
+  assert.equal(shell.status, "blocked");
+  assert.equal(shell.issues.some((issue) => issue.id === "runtime-shell"), true);
+  assert.equal(shell.issues.some((issue) => issue.id === "missing-local-resource"), true);
+
+  const bootstrappedShellPath = join(directory, "bootstrapped-shell.html");
+  await writeFile(bootstrappedShellPath, `<!doctype html><html><head><link rel="stylesheet" href="https://example.invalid/app.css"></head><body><div id="app"></div><canvas></canvas><script>${"window.__BOOTSTRAP__ = {};".repeat(100)}</script><script type="module" src="https://example.invalid/app.js"></script></body></html>`, "utf8");
+  const bootstrappedShell = await assessComponentLibrarySourceReadiness({ originalHtmlPath: bootstrappedShellPath, visual: true, resourceProfile: "canvas" });
+  assert.equal(bootstrappedShell.metrics.inlineScriptBytes > 512, true);
+  assert.equal(bootstrappedShell.status, "blocked");
+  assert.equal(bootstrappedShell.issues.some((issue) => issue.id === "runtime-shell"), true);
+
+  const localShellPath = join(directory, "local-shell.html");
+  await writeFile(join(directory, "local.css"), "body{color:#111}", "utf8");
+  await writeFile(join(directory, "local.js"), "document.getElementById('app').textContent='Frozen local runtime';", "utf8");
+  await writeFile(localShellPath, `<!doctype html><html><head><link rel="stylesheet" href="./local.css"></head><body><div id="app"></div><script src="./local.js"></script></body></html>`, "utf8");
+  const localShell = await assessComponentLibrarySourceReadiness({ originalHtmlPath: localShellPath, visual: true });
+  assert.equal(localShell.status, "ready");
+  assert.equal(localShell.metrics.missingLocalResources, 0);
+
+  const canvasPath = join(directory, "canvas.html");
+  await writeFile(canvasPath, `<!doctype html><html><head><style>canvas{width:320px;height:180px}</style></head><body><main><h1>Reviewed canvas component reference with enough visible source content for deterministic production readiness.</h1><canvas id="scene"></canvas></main><script>document.querySelector('canvas').getContext('2d');</script></body></html>`, "utf8");
+  const unreviewedCanvas = await assessComponentLibrarySourceReadiness({ originalHtmlPath: canvasPath, visual: true, resourceProfile: "dom" });
+  assert.equal(unreviewedCanvas.status, "review-required");
+  assert.equal(unreviewedCanvas.issues.some((issue) => issue.id === "canvas-profile-required"), true);
+  const reviewedCanvas = await assessComponentLibrarySourceReadiness({ originalHtmlPath: canvasPath, visual: true, resourceProfile: "canvas" });
+  assert.equal(reviewedCanvas.status, "ready");
+});
+
+test("Component acceptance accepts a source-equivalent neutral library through the formal Gold+ gate", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-accept-pass-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const fixture = await createNeutralAcceptanceFixture(directory);
+  const report = await acceptComponentLibrary(fixture.sourcePath, fixture.libraryRoot, {
+    viewports: [{ id: "desktop", label: "Desktop", width: 1440, height: 900 }],
+    browserMode: "shared-browser",
+    browserStability: "adaptive",
+    browserResourceCache: "run-local",
+  });
+  assert.equal(report.status, "accepted");
+  assert.equal(report.quality?.passed, true);
+  assert.equal(report.receipt.accepted, true);
+  assert.equal(JSON.parse(await readFile(join(fixture.libraryRoot, ".ui-dismantler/acceptance-receipt.json"), "utf8")).accepted, true);
+});
+
+test("Component acceptance rejects non-neutral defaults and unmanaged lifecycle effects with deterministic identity", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-accept-reject-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const fixture = await createNeutralAcceptanceFixture(directory);
+  const runtimePath = join(fixture.libraryRoot, "src/demo.js");
+  const runtime = await readFile(runtimePath, "utf8");
+  await writeFile(runtimePath, runtime
+    .replace("var DEFAULT_OPTIONS={title:'',copy:''}", "var DEFAULT_OPTIONS={title:'Acme enterprise intelligence platform',copy:''}")
+    .replace("global.SgDemo=", "setInterval(function(){},1000);global.SgDemo="), "utf8");
+  const first = await acceptComponentLibrary(fixture.sourcePath, fixture.libraryRoot);
+  const second = await acceptComponentLibrary(fixture.sourcePath, fixture.libraryRoot);
+  assert.equal(first.status, "quality-failed");
+  assert.equal(first.quality, undefined);
+  assert.equal(first.validation?.results.find((result) => result.id === "data-separation")?.passed, false);
+  assert.equal(first.validation?.results.find((result) => result.id === "lifecycle-cleanup")?.passed, false);
+  assert.deepEqual(first.receipt.identity, second.receipt.identity);
+  assert.equal(first.receipt.identity.libraryHash?.length, 64);
+});
+
+test("Component acceptance records an execution-failed receipt when reviewed evidence files are unavailable", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-accept-evidence-missing-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const fixture = await createNeutralAcceptanceFixture(directory);
+  const report = await acceptComponentLibrary(fixture.sourcePath, fixture.libraryRoot, { manifestPath: join(directory, "missing-manifest.json") });
+  assert.equal(report.status, "execution-failed");
+  assert.equal(report.receipt.accepted, false);
+  assert.equal(report.receipt.phases.sourceReadiness, "not-run");
+  assert.equal(report.blockers.some((blocker) => blocker.startsWith("identity:")), true);
+  assert.equal(JSON.parse(await readFile(join(fixture.libraryRoot, ".ui-dismantler/acceptance-receipt.json"), "utf8")).status, "execution-failed");
+});
+
+test("Component acceptance blocks unresolved runtime shells before library quality execution", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-accept-blocked-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const fixture = await createNeutralAcceptanceFixture(directory);
+  const shellPath = join(directory, "runtime-shell.html");
+  await writeFile(shellPath, `<!doctype html><html><body><div id="app"></div><script type="module" src="https://example.invalid/runtime.js"></script></body></html>`, "utf8");
+  const report = await acceptComponentLibrary(shellPath, fixture.libraryRoot);
+  assert.equal(report.status, "blocked");
+  assert.equal(report.validation, undefined);
+  assert.equal(report.quality, undefined);
+  assert.equal(report.receipt.phases.sourceReadiness, "blocked");
+});
+
+test("component-accept CLI exits non-zero and writes a blocked receipt for an unresolved source shell", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-accept-cli-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const fixture = await createNeutralAcceptanceFixture(directory);
+  const shellPath = join(directory, "shell.html");
+  await writeFile(shellPath, `<!doctype html><html><body><div id="app"></div><script src="https://example.invalid/runtime.js"></script></body></html>`, "utf8");
+  const readinessPath = join(directory, "source-readiness.json");
+  const readiness = spawnSync(process.execPath, ["dist-ts/cli.js", "component-source-readiness", shellPath, "--out", readinessPath], { cwd: root, encoding: "utf8" });
+  assert.equal(readiness.status, 1, readiness.stderr);
+  assert.equal(JSON.parse(await readFile(readinessPath, "utf8")).status, "blocked");
+  const execution = spawnSync(process.execPath, ["dist-ts/cli.js", "component-accept", shellPath, "--lib", fixture.libraryRoot], { cwd: root, encoding: "utf8" });
+  assert.equal(execution.status, 1, execution.stderr);
+  const receipt = JSON.parse(await readFile(join(fixture.libraryRoot, ".ui-dismantler/acceptance-receipt.json"), "utf8")) as { status: string; accepted: boolean };
+  assert.equal(receipt.status, "blocked");
+  assert.equal(receipt.accepted, false);
+});
+
+test("Component production blocks before materialization when the reference source is not ready", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-source-blocked-build-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const sourcePath = join(directory, "source.html");
+  await writeFile(sourcePath, `<!doctype html><html><body><div id="app"></div><script type="module" src="./missing-app.js"></script></body></html>`, "utf8");
+  const configPath = join(directory, "config.json");
+  await writeFile(configPath, "{}", "utf8");
+  const plan = await createComponentLibraryBuildPlan({ ...benchmarkInput(), quality: { originalHtmlPath: sourcePath, visual: false } }, configPath);
+  const outputRoot = join(directory, "library");
+  const report = await runComponentLibraryBuild(plan, outputRoot, { reportPath: join(directory, "report.json") });
+  assert.equal(report.status, "blocked");
+  assert.equal(report.sourceReadiness?.status, "blocked");
+  assert.equal(report.materialization, undefined);
+  assert.equal(report.receipt.phases.sourceReadiness, "blocked");
+  assert.equal(report.receipt.accepted, false);
+});
+
+test("component-build CLI materializes a reviewed plan but refuses release acceptance without quality evidence", async (context) => {
   const directory = await mkdtemp(join("/tmp", "ui-dismantler-build-cli-"));
   context.after(() => rm(directory, { recursive: true, force: true }));
   const configPath = join(directory, "config.json");
@@ -149,10 +309,12 @@ test("component-build CLI materializes a reviewed plan without publishing exampl
   const input = benchmarkInput();
   await writeFile(configPath, JSON.stringify(input), "utf8");
   execFileSync(process.execPath, ["dist-ts/cli.js", "component-build-plan", configPath, "--out", planPath], { cwd: root, encoding: "utf8" });
-  execFileSync(process.execPath, ["dist-ts/cli.js", "component-build", planPath, "--out-dir", outputRoot], { cwd: root, encoding: "utf8" });
+  const execution = spawnSync(process.execPath, ["dist-ts/cli.js", "component-build", planPath, "--out-dir", outputRoot], { cwd: root, encoding: "utf8" });
+  assert.equal(execution.status, 1, execution.stderr);
   const packageJson = JSON.parse(await readFile(join(outputRoot, "package.json"), "utf8")) as { files?: string[] };
   assert.equal(packageJson.files?.some((entry) => entry.startsWith("examples")), false);
-  assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "build-report.json"), "utf8")).status, "succeeded");
+  assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "build-report.json"), "utf8")).status, "review-required");
+  assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "production-receipt.json"), "utf8")).accepted, false);
 });
 
 
@@ -186,7 +348,7 @@ test("Primitive DOM adapter projects reviewed static evidence into a runnable Bu
   assert.equal(plan.reviewRequired, false);
   assert.equal(validateComponentLibraryBuildPlan(plan).ready, true);
   const report = await runComponentLibraryBuild(plan, join(directory, "library"));
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "review-required");
   assert.equal(report.smoke?.passed, true);
   assert.equal(report.validation?.ok, true);
 });
@@ -346,7 +508,7 @@ test("Reviewed primitive interaction bindings materialize into runtime state tra
   assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
   const outputRoot = join(directory, "library");
   const report = await runComponentLibraryBuild(enriched, outputRoot);
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "review-required");
   const runtimeFile = enriched.files.find((file) => file.role === "runtime")!;
   const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
   dom.window.eval(runtimeFile.content);
@@ -415,7 +577,7 @@ test("Reviewed collection Data Surface materializes repeated DOM from external o
   assert.equal(enriched.dataBindings[0]?.materialized, true);
   assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
   const report = await runComponentLibraryBuild(enriched, join(directory, "library"));
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "review-required");
   const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
   const dom = new JSDOM(`<!doctype html><div id="mount"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
   dom.window.eval(runtime);
@@ -478,7 +640,7 @@ test("reviewed Data Surface artifacts bind manifest ownership to the Primitive g
     primitiveGraph: graph, projection: { sourceRoot: directory, libraryName: "Reviewed Data Components", packageName: "reviewed-data-components" },
     dataSurfaceArtifact: reviewed, runtimeOptions: { data: { items: [{ name: "External business record alpha" }, { name: "External business record beta" }] } },
   }, join(directory, "library"));
-  assert.equal(result.build.status, "succeeded", JSON.stringify(result.build.blockers));
+  assert.equal(result.build.status, "review-required", JSON.stringify(result.build.blockers));
   assert.equal(result.plan.dataBindings[0]?.materialized, true);
   assert.equal(result.plan.dataBindings[0]?.provenance.some((item) => item.kind === "reviewed-data-surface-artifact"), true);
   assert.equal(result.plan.files.find((file) => file.role === "runtime")?.content.includes("External business record alpha"), false);
@@ -492,9 +654,10 @@ test("reviewed Data Surface artifacts bind manifest ownership to the Primitive g
   await writeFile(join(directory, "reviewed-data-surface.json"), `${JSON.stringify(reviewed, null, 2)}\n`, "utf8");
   await writeFile(join(directory, "runtime-options.json"), `${JSON.stringify({ data: { items: [{ name: "CLI external item" }] } }, null, 2)}\n`, "utf8");
   await writeFile(join(directory, "production.json"), `${JSON.stringify({ schemaVersion: "1.0", sourceRoot: ".", library: { name: "CLI Data Components", packageName: "cli-data-components" }, artifacts: { primitiveDom: "primitive.json", dataSurfaceArtifact: "reviewed-data-surface.json", runtimeOptions: "runtime-options.json" } }, null, 2)}\n`, "utf8");
-  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "cli-library"), "--result", join(directory, "cli-result.json")], { cwd: root, encoding: "utf8" });
+  const cliExecution = spawnSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "cli-library"), "--result", join(directory, "cli-result.json")], { cwd: root, encoding: "utf8" });
+  assert.equal(cliExecution.status, 1, cliExecution.stderr);
   const cliResult = JSON.parse(await readFile(join(directory, "cli-result.json"), "utf8")) as { build: { status: string }; plan: { dataBindings: readonly unknown[] } };
-  assert.equal(cliResult.build.status, "succeeded");
+  assert.equal(cliResult.build.status, "review-required");
   assert.equal(cliResult.plan.dataBindings.length, 1);
 
   const mismatched = createComponentDataSurfaceArtifactCandidate({ ...manifest, surfaces: [{ ...manifest.surfaces[0], owner: { ...manifest.surfaces[0].owner, componentId: "component:other" } }] }, graph);
@@ -613,8 +776,9 @@ test("Reviewed conditional interaction runs through the configured component qua
   assert.equal(enriched.unresolved.some((reason) => reason.includes("conditional region requires state materialization")), false);
   assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
   const report = await runComponentLibraryBuild(enriched, join(directory, "library"));
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "review-required");
   assert.equal(report.quality?.passed, true);
+  assert.equal(report.blockers.some((blocker) => blocker.includes("visual Gold+")), true);
   assert.equal(report.quality?.scenarios?.[0]?.passed, true);
   assert.equal(report.quality?.coverage?.verifiedRate, 1);
 });
@@ -781,11 +945,11 @@ test("Reviewed API Data Surface materializes only an external adapter contract",
   assert.equal(invalid.adapterErrors.some((error) => error.includes("expected cardinality") || error.includes("missing field")), true);
 
   const missingBuild = await runComponentLibraryBuild(enriched, join(directory, "missing-adapter-library"));
-  assert.equal(missingBuild.status, "failed");
+  assert.equal(missingBuild.status, "execution-failed");
   assert.deepEqual(missingBuild.smoke?.missingAdapters, [surfaceId]);
   const supplied = enrichComponentLibraryBuildPlan(enriched, { runtimeOptions: { componentId: "component:records", adapters: { [surfaceId]: [{ name: "Smoke record" }, { name: "Second smoke record" }] } } });
   const suppliedBuild = await runComponentLibraryBuild(supplied, join(directory, "supplied-adapter-library"));
-  assert.equal(suppliedBuild.status, "succeeded");
+  assert.equal(suppliedBuild.status, "review-required");
   assert.deepEqual(suppliedBuild.smoke?.missingAdapters, []);
   assert.equal(supplied.files.find((file) => file.role === "runtime")?.content.includes("Smoke record"), false);
   missing.unmount();
@@ -824,7 +988,8 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
   const planPath = join(directory, "plan.json");
   const reportPath = join(directory, "report.json");
   const resultPath = join(directory, "result.json");
-  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", outputRoot, "--plan", planPath, "--report", reportPath, "--result", resultPath], { cwd: root, encoding: "utf8" });
+  const execution = spawnSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", outputRoot, "--plan", planPath, "--report", reportPath, "--result", resultPath], { cwd: root, encoding: "utf8" });
+  assert.equal(execution.status, 1, execution.stderr);
   const plan = JSON.parse(await readFile(planPath, "utf8")) as { kind: string; reviewRequired: boolean };
   const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; smoke?: { passed: boolean }; validation?: { ok: boolean } };
   const result = JSON.parse(await readFile(resultPath, "utf8")) as { kind: string; build: { status: string } };
@@ -833,11 +998,13 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
   assert.equal(css.includes(":root{--sg-notice-gap:13px}"), true);
   assert.equal(plan.kind, "component-library-build-plan");
   assert.equal(plan.reviewRequired, false);
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "review-required");
   assert.equal(report.smoke?.passed, true);
   assert.equal(report.validation?.ok, true);
+  assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "build-report.json"), "utf8")).status, "review-required");
+  assert.equal(JSON.parse(await readFile(join(outputRoot, ".ui-dismantler", "production-receipt.json"), "utf8")).accepted, false);
   assert.equal(result.kind, "reviewed-component-library-production-result");
-  assert.equal(result.build.status, "succeeded");
+  assert.equal(result.build.status, "review-required");
 });
 
 test("component-produce forwards a reviewed multi-viewport visual quality contract", async (context) => {
@@ -869,9 +1036,10 @@ test("component-produce forwards a reviewed multi-viewport visual quality contra
     quality: { originalHtmlPath: "original.html", visual: true, visualArtifactsDir: "visual-artifacts", viewports, browserMode: "shared-browser", browserConcurrency: 2, browserResourceCache: "run-local", browserStability: "adaptive", browserShutdown: "graceful" },
   }, null, 2)}\n`, "utf8");
   const reportPath = join(directory, "report.json");
-  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "library"), "--report", reportPath], { cwd: root, encoding: "utf8", timeout: 60_000 });
+  const execution = spawnSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "library"), "--report", reportPath], { cwd: root, encoding: "utf8", timeout: 60_000 });
+  assert.equal(execution.status, 0, `${execution.stdout}\n${execution.stderr}`);
   const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; quality?: { passed: boolean; browserMatrix?: { viewports: Array<{ id: string; passed: boolean }>; worstComputedStyle: number; worstPixelDiff: number }; telemetry: { workload: { viewports: number }; browser?: { mode: string; concurrency: number } } } };
-  assert.equal(report.status, "succeeded");
+  assert.equal(report.status, "accepted");
   assert.equal(report.quality?.passed, true);
   assert.deepEqual(report.quality?.browserMatrix?.viewports.map((viewport) => viewport.id), viewports.map((viewport) => viewport.id));
   assert.equal(report.quality?.browserMatrix?.viewports.every((viewport) => viewport.passed), true);
@@ -920,7 +1088,7 @@ test("Reviewed SFC style responsibility flows through candidate review into comp
     styleArtifact: reviewed,
     stateMap: reviewedState,
   }, join(directory, "library"));
-  assert.equal(result.build.status, "succeeded", JSON.stringify(result.build.blockers));
+  assert.equal(result.build.status, "review-required", JSON.stringify(result.build.blockers));
   const css = await readFile(join(directory, "library", "src", "SFCStyledComponents.css"), "utf8");
   assert.equal(css.includes(`[data-component-id="${primitiveGraph.components[0].componentId}"] .sg-real-card{padding:17px`), true);
   assert.equal(css.includes(`@media (max-width:500px){[data-component-id="${primitiveGraph.components[0].componentId}"] .sg-real-card{padding:9px}}`), true);

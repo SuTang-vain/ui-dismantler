@@ -42,6 +42,9 @@
     "verify:component-boundary": "node scripts/verify_component_boundary.mjs",
     "component:build-plan:ts": "npm run build:ts && node dist-ts/cli.js component-build-plan",
     "component:build:ts": "npm run build:ts && node dist-ts/cli.js component-build",
+    "component:source-readiness:ts": "npm run build:ts && node dist-ts/cli.js component-source-readiness",
+    "component:accept:ts": "npm run build:ts && node dist-ts/cli.js component-accept",
+    "skill:install": "npm run build:ts && node scripts/install_skill.mjs",
     "catalog:validate": "node scripts/validate_repository_catalog.mjs",
     "evidence:audit": "node scripts/audit_repository_evidence.mjs",
     "test:pr:node": "node scripts/run_pr_tests.mjs"

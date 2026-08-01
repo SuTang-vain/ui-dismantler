@@ -1,7 +1,7 @@
-"""Library validation: 8-item strict constraint checks.
+"""Library validation: 10-item strict constraint checks.
 
-检查生成组件库是否符合 references/spec.md 的 8 项强约束
-（命名/变量/数据分离/响应式/A11y/主题/零依赖/文档）。
+检查生成组件库是否符合 references/spec.md 的强约束
+（命名/变量/数据分离/生命周期/响应式/A11y/主题/零依赖/文档/类名对齐）。
 
 业务逻辑层：本模块只提供 ``LibValidator`` 类，不含 CLI 入口。
 CLI 入口见 ``ui_dismantler.cli.validate_lib``。
@@ -10,9 +10,164 @@ CLI 入口见 ``ui_dismantler.cli.validate_lib``。
 from __future__ import annotations
 import json
 import re
+import sys
 from pathlib import Path
 
 from ui_dismantler.core.common import extract_root_vars, split_media_blocks, parse_rules
+
+
+CONTENT_DEFAULT_KEYS = {
+    "brand", "title", "headline", "description", "copy", "body", "kicker",
+    "eyebrow", "announcement", "copyright", "logo", "logotext", "wordmark",
+}
+SEMANTIC_BASE_CLASSES = {
+    "sg-arrow", "sg-prev", "sg-next", "sg-dots", "sg-dot", "sg-tl-prev",
+    "sg-tl-next", "sg-tl-dot", "sg-tl-dots",
+}
+DYNAMIC_PREFIXES = (
+    "sg-is-", "sg-tab-", "sg-panel-", "sg-rel-", "sg-mdm-",
+    "sg-member-modal-", "sg-tl-page-label", "sg-work-story-",
+)
+
+
+def _balanced_slice(source: str, start: int, opening: str, closing: str) -> str | None:
+    """Return one balanced JS object/array while ignoring strings and comments."""
+    depth = 0
+    quote = None
+    escaped = False
+    line_comment = False
+    block_comment = False
+    index = start
+    while index < len(source):
+        char = source[index]
+        nxt = source[index + 1] if index + 1 < len(source) else ""
+        if line_comment:
+            if char == "\n":
+                line_comment = False
+            index += 1
+            continue
+        if block_comment:
+            if char == "*" and nxt == "/":
+                block_comment = False
+                index += 2
+            else:
+                index += 1
+            continue
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            index += 1
+            continue
+        if char == "/" and nxt == "/":
+            line_comment = True
+            index += 2
+            continue
+        if char == "/" and nxt == "*":
+            block_comment = True
+            index += 2
+            continue
+        if char in "'\"`":
+            quote = char
+            index += 1
+            continue
+        if char == opening:
+            depth += 1
+        elif char == closing:
+            depth -= 1
+            if depth == 0:
+                return source[start:index + 1]
+        index += 1
+    return None
+
+
+def _string_literals(source: str):
+    """Yield (value, start, end) for simple JS string/template literals."""
+    index = 0
+    while index < len(source):
+        quote = source[index]
+        if quote not in "'\"`":
+            index += 1
+            continue
+        start = index
+        index += 1
+        value = []
+        escaped = False
+        while index < len(source):
+            char = source[index]
+            if escaped:
+                value.append(char)
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                yield "".join(value), start, index + 1
+                index += 1
+                break
+            else:
+                value.append(char)
+            index += 1
+
+
+def _non_neutral_default_issues(js: str) -> list[str]:
+    """Find business-bearing strings in DEFAULT/EMPTY/INITIAL runtime objects."""
+    issues: list[str] = []
+    declaration = re.compile(
+        r"\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+        r"(?:Object\.freeze\s*\(\s*)?\{",
+        re.I,
+    )
+    for match in declaration.finditer(js):
+        name = match.group(1)
+        if not re.search(r"(?:DEFAULT|EMPTY|INITIAL)(?:_.*)?(?:STATE|OPTIONS|DATA|S)?$", name, re.I):
+            continue
+        block = _balanced_slice(js, match.end() - 1, "{", "}")
+        if not block:
+            continue
+        literals = list(_string_literals(block))
+        for value, _, end in literals:
+            text = value.strip()
+            if not text:
+                continue
+            suffix = block[end:]
+            if re.match(r"\s*:", suffix):
+                continue  # quoted property name, not a value
+            neutral_placeholder = bool(re.match(r"^(?:#|/|about:blank)$", text, re.I))
+            long_copy = len(text) >= 48
+            business_url = bool(re.match(r"^https?://", text, re.I)) and not re.search(r"example\.(?:test|invalid)|w3\.org", text, re.I)
+            if (not neutral_placeholder and long_copy) or business_url:
+                preview = text[:48] + ("…" if len(text) > 48 else "")
+                issues.append(f"{name} 含非中性默认内容「{preview}」")
+                if len(issues) >= 5:
+                    return list(dict.fromkeys(issues))
+        key_pattern = re.compile(r"(?:^|[,{])\s*(?:['\"]([^'\"]+)['\"]|([A-Za-z_$][\w$]*))\s*:")
+        for key_match in key_pattern.finditer(block):
+            key = (key_match.group(1) or key_match.group(2) or "").lower()
+            if key not in CONTENT_DEFAULT_KEYS:
+                continue
+            value_start = key_match.end()
+            while value_start < len(block) and block[value_start].isspace():
+                value_start += 1
+            candidate = block[value_start:]
+            if value_start < len(block) and block[value_start] in "{[":
+                closing = "}" if block[value_start] == "{" else "]"
+                candidate = _balanced_slice(block, value_start, block[value_start], closing) or candidate
+            first_value = next((
+                value.strip()
+                for value, _, end in _string_literals(candidate)
+                if value.strip()
+                and not re.match(r"\s*:", candidate[end:])
+                and not re.match(r"^(?:#|/|about:blank)$", value.strip(), re.I)
+            ), "")
+            if first_value:
+                preview = first_value[:48] + ("…" if len(first_value) > 48 else "")
+                issues.append(f"{name}.{key} 含非中性默认内容「{preview}」")
+                if len(issues) >= 5:
+                    return list(dict.fromkeys(issues))
+    return list(dict.fromkeys(issues))
 
 
 # ============================================================
@@ -103,6 +258,7 @@ class LibValidator:
     # ---------- 3. 数据分离 ----------
     def check_data_separation(self):
         issues = []
+        issues.extend(_non_neutral_default_issues(self.js))
         # 1) JS 中不应硬编码业务 URL（http）
         # 排除注释和模板字符串里的 src 拼接
         for m in re.finditer(r'https?://[^\s"\'`]+', self.js):
@@ -144,9 +300,36 @@ class LibValidator:
                 issues.append(f"{html.name}: DOM 硬编码长描述「{d[:20]}...」（应走 options）")
             if len(issues) >= 5:
                 break
-        self.record("3. 数据分离", not issues, "；".join(issues[:3]) if issues else "JS 无硬编码业务数据，examples HTML 业务文案经 options 传入")
+        self.record("3. 数据分离", not issues, "；".join(issues[:5]) if issues else "渲染逻辑接受外部数据且默认状态保持中性")
 
-    # ---------- 4. 响应式三档 ----------
+    # ---------- 4. 生命周期清理 ----------
+    def check_lifecycle_cleanup(self):
+        effects = []
+        patterns = (
+            ("setInterval", r"\bsetInterval\s*\("),
+            ("requestAnimationFrame", r"\brequestAnimationFrame\s*\("),
+            ("document listener", r"\bdocument\.addEventListener\s*\("),
+            ("window listener", r"\b(?:window|global)\.addEventListener\s*\("),
+        )
+        for label, pattern in patterns:
+            if re.search(pattern, self.js):
+                effects.append(label)
+        cleanup = bool(re.search(
+            r"(?:prototype\.)?(?:destroy|unmount|dispose)\s*=\s*function"
+            r"|\b(?:destroy|unmount|dispose)\s*:\s*function"
+            r"|\breturn\s*\{[\s\S]{0,400}\b(?:destroy|unmount|dispose)\b",
+            self.js,
+        ))
+        passed = not effects or cleanup
+        if passed and effects:
+            detail = f"{'、'.join(effects)} 均有 destroy/unmount/dispose 边界"
+        elif passed:
+            detail = "未发现需要清理的长生命周期副作用"
+        else:
+            detail = f"检测到 {'、'.join(effects)}，但未暴露 destroy/unmount/dispose"
+        self.record("4. 生命周期清理", passed, detail)
+
+    # ---------- 5. 响应式三档 ----------
     def check_responsive(self):
         issues = []
         media_queries = [q for q, _ in split_media_blocks(self.css)]
@@ -166,9 +349,9 @@ class LibValidator:
         if not has_extreme:
             issues.append("缺少极端断点（max-width ≤ 320px 或 max-height ≤ 380px）")
         detail = f"含 {len(media_queries)} 个 @media 断点（max-width 值: {sorted(set(all_mw))}）"
-        self.record("4. 响应式三档", not issues, "；".join(issues) if issues else detail)
+        self.record("5. 响应式三档", not issues, "；".join(issues) if issues else detail)
 
-    # ---------- 5. A11y ----------
+    # ---------- 6. A11y ----------
     def check_a11y(self):
         issues = []
         blob = self.css + "\n" + self.js
@@ -225,11 +408,11 @@ class LibValidator:
         if _has_modal():
             detail_parts.append("dialog/ESC")
         detail_parts.extend(["aria-live", "aria-label"])
-        self.record("5. A11y", not issues,
+        self.record("6. A11y", not issues,
                     "；".join(issues[:3]) if issues else
                     f"A11y 达标（按需检查 {'/'.join(detail_parts)}）")
 
-    # ---------- 6. 主题可定制 ----------
+    # ---------- 7. 主题可定制 ----------
     def check_theme(self):
         issues = []
         # 扫描 CSS 中硬编码 #hex，排除：:root{...} 块内、var() fallback、rgba() 内、注释
@@ -260,9 +443,9 @@ class LibValidator:
                     break
             if len(issues) >= 5:
                 break
-        self.record("6. 主题可定制", not issues, "；".join(issues[:3]) if issues else "所有颜色经变量，无硬编码 #hex（:root 与 var fallback 除外）")
+        self.record("7. 主题可定制", not issues, "；".join(issues[:3]) if issues else "所有颜色经变量，无硬编码 #hex（:root 与 var fallback 除外）")
 
-    # ---------- 7. 零依赖 ----------
+    # ---------- 8. 零依赖 ----------
     def check_no_deps(self):
         issues = []
         # HTML 中不应有外部 <script src> 或 <link href=https>
@@ -276,9 +459,9 @@ class LibValidator:
                 url = m.group(1)
                 if "font" not in url.lower() and "googleapis" not in url.lower():
                     issues.append(f"{html.name}: 外部样式 {url[:50]}")
-        self.record("7. 零依赖", not issues, "；".join(issues[:3]) if issues else "无外部 JS/CSS 依赖（字体 CDN 除外）")
+        self.record("8. 零依赖", not issues, "；".join(issues[:3]) if issues else "无外部 JS/CSS 依赖（字体 CDN 除外）")
 
-    # ---------- 8. 文档完备 ----------
+    # ---------- 9. 文档完备 ----------
     def check_docs(self):
         issues = []
         readme = self.dir / "README.md"
@@ -291,7 +474,33 @@ class LibValidator:
             issues.append("缺少 docs/设计规范.md")
         elif "主题色" not in spec.read_text(encoding="utf-8", errors="replace"):
             issues.append("设计规范.md 缺少主题色章节")
-        self.record("8. 文档完备", not issues, "；".join(issues) if issues else "README.md + docs/设计规范.md 齐全")
+        self.record("9. 文档完备", not issues, "；".join(issues) if issues else "README.md + docs/设计规范.md 齐全")
+
+    # ---------- 10. 类名对齐 ----------
+    def check_class_alignment(self):
+        defined = set(re.findall(r"\.(sg-[a-z][\w-]*)", self.css, re.I))
+        used = set()
+        patterns = (
+            r"el\(\s*['\"][a-z]+['\"]\s*,\s*['\"]([^'\"]*sg-[\w-]+[^'\"]*)['\"]",
+            r"class\s*=\s*['\"]([^'\"]*sg-[\w-]+[^'\"]*)['\"]",
+            r"classList\.(?:add|remove|toggle)\(\s*['\"]([^'\"]*)['\"]",
+            r"querySelector(?:All)?\(\s*['\"]\.([^'\".\s]+)['\"]",
+            r"className\s*[:=]\s*['\"]([^'\"]*sg-[\w-]+[^'\"]*)['\"]",
+            r"setAttribute\(\s*['\"]class['\"]\s*,\s*['\"]([^'\"]*)['\"]",
+        )
+        for pattern in patterns:
+            for match in re.finditer(pattern, self.js):
+                for token in re.split(r"\s+", match.group(1)):
+                    if re.fullmatch(r"sg-[a-z][\w-]*", token, re.I):
+                        used.add(token)
+        orphans = sorted(
+            name for name in used
+            if name not in defined
+            and name not in SEMANTIC_BASE_CLASSES
+            and not any(name.startswith(prefix) for prefix in DYNAMIC_PREFIXES)
+        )
+        detail = "；".join(f"JS 引用 .{name} 但 CSS 未定义" for name in orphans[:5]) if orphans else "JS 引用的 sg-* 类名均在 CSS 中定义"
+        self.record("10. 类名对齐", not orphans, detail)
 
     # ---------- 运行 ----------
     def run(self) -> int:
@@ -304,11 +513,13 @@ class LibValidator:
         self.check_naming()
         self.check_vars()
         self.check_data_separation()
+        self.check_lifecycle_cleanup()
         self.check_responsive()
         self.check_a11y()
         self.check_theme()
         self.check_no_deps()
         self.check_docs()
+        self.check_class_alignment()
         # 输出
         print(f"校验目标: {self.dir}\n")
         passed = 0

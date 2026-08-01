@@ -66,6 +66,7 @@ export interface ComponentLibraryRuntimeSmokeContract {
 
 export interface ComponentLibraryQualityContract {
   readonly originalHtmlPath: string;
+  readonly resourceProfile?: "dom" | "canvas";
   readonly manifestPath?: string;
   readonly scenarioPath?: string;
   readonly spaRouterConfigPath?: string;
@@ -181,6 +182,7 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
   if (!plan.smoke.hostSelector.trim()) add("smoke.hostSelector", "must not be empty");
   if (plan.quality) {
     if (!plan.quality.originalHtmlPath.trim()) add("quality.originalHtmlPath", "must not be empty");
+    if (plan.quality.resourceProfile !== undefined && !["dom", "canvas"].includes(plan.quality.resourceProfile)) add("quality.resourceProfile", "must be dom or canvas");
     if (plan.quality.viewports !== undefined) {
       if (!Array.isArray(plan.quality.viewports) || plan.quality.viewports.length === 0) add("quality.viewports", "must contain at least one reviewed viewport when provided");
       else {

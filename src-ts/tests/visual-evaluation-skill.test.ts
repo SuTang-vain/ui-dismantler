@@ -72,7 +72,7 @@ test("visual-evaluation Skill runs the reviewed browser matrix through the gener
   const plan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Visual Skill Components", packageName: "visual-skill-components" });
   const libraryRoot = join(directory, "library");
   const build = await runComponentLibraryBuild(plan, libraryRoot);
-  assert.equal(build.status, "succeeded");
+  assert.equal(build.status, "review-required");
   const css = plan.files.find((file) => file.role === "style")!.content;
   const htmlPath = join(directory, "original.html");
   await writeFile(htmlPath, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body><div id="mount"><section class="sg-component-library" data-component-id="component:visual"><article data-primitive-node="node:visual" class="sg-visual-card" role="article">Reviewed visual Skill</article></section></div></body></html>`, "utf8");

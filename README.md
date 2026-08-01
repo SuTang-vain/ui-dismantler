@@ -67,6 +67,9 @@ cd ui-dismantler
 npm install
 npm run build:ts
 node dist-ts/cli.js --help
+
+# Optional: install the portable Codex Skill wrapper
+npm run skill:install -- --target ~/.codex/skills/ui-dismantler --force
 ```
 
 Requirements:
@@ -122,6 +125,23 @@ node dist-ts/cli.js component-build \
   --report /tmp/component-library.build-report.json
 ```
 
+Component production is fail-closed. Only report status `accepted` returns exit code 0 and is releasable. A build without a reviewed quality contract is materialized for inspection but returns `review-required`. Materialized outputs include `.ui-dismantler/production-receipt.json`, which records source, configuration, plan, output, and quality-contract hashes. Source readiness blocks unresolved runtime shells, missing critical local assets, and unreviewed WebGL inputs before materialization.
+
+Agent-authored or externally materialized libraries must use the same release boundary through `component-accept`:
+
+```bash
+node dist-ts/cli.js component-accept /absolute/path/to/original.html \
+  --lib /absolute/path/to/component-library \
+  --scenarios /absolute/path/to/scenarios.json \
+  --viewports desktop,tablet,mobile \
+  --browser-mode shared-browser \
+  --browser-resource-cache run-local \
+  --browser-stability adaptive \
+  --visual-artifacts /tmp/ui-dismantler-artifacts/run-id
+```
+
+This command does not accept threshold overrides. It runs source readiness, static validation, roundtrip, scenarios, browser visual/runtime/stability gates, then writes `.ui-dismantler/quality-report.json` and `.ui-dismantler/acceptance-receipt.json`. Manual QA or a static-only pass cannot substitute for `accepted=true`.
+
 Run `node dist-ts/cli.js --help` for the full CLI reference.
 
 ## Architecture
@@ -160,7 +180,7 @@ See [`docs/architecture/data-boundary.md`](docs/architecture/data-boundary.md) f
 | Analyze | `analyze`, `plan`, `sfc-visual-analyze`, `spa-vue-router-analyze` |
 | SPA and data | `spa-router`, `spa-auth-analyze`, `transport-proxy-analyze`, `data-surface` |
 | Produce | `component-build-plan`, `component-build-enrich`, `component-build`, `component-produce` |
-| Verify | `validate`, `roundtrip`, `quality` |
+| Verify | `validate`, `roundtrip`, `quality`, `component-accept` |
 
 CLI outputs keep raw results, execution evidence, artifacts, blockers, and quality gates separate. Generated screenshots and reports should go to the system temporary directory or `UI_DISMANTLER_ARTIFACT_ROOT`, not managed source cases.
 

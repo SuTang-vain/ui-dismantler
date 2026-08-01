@@ -65,7 +65,7 @@ test("component-library-validation wrapper preserves the existing ValidationRepo
   const actual = await componentLibraryValidationSkill.execute({ libraryRoot });
   assert.equal(actual.ok, true);
   assert.equal(actual.failed, 0);
-  assert.equal(actual.total, 9);
+  assert.equal(actual.total, 10);
   assert.equal(actual.results.some((result) => result.id === "data-separation" && result.passed), true);
 });
 
@@ -724,7 +724,7 @@ test("component-library validation Skill and Profile CLI execute the reviewed pa
   assert.equal(report.status, "succeeded");
   assert.equal(report.steps[0]?.status, "succeeded");
   assert.equal(report.steps[0]?.output?.ok, true);
-  assert.equal(report.steps[0]?.output?.total, 9);
+  assert.equal(report.steps[0]?.output?.total, 10);
 });
 
 test("primitive-dom Skill CLI preserves the reviewed compilation graph contract", async (context) => {

@@ -29,9 +29,9 @@ test("TypeScript analyzer emits the compatible manifest contract", () => {
   assert.ok(Array.isArray(manifest.data.contracts));
 });
 
-test("TypeScript validator preserves the 9 quality checks", () => {
+test("TypeScript validator preserves the 10 quality checks", () => {
   const report = validateLibrary(library);
-  assert.equal(report.total, 9);
+  assert.equal(report.total, 10);
   assert.equal(report.failed, 0);
   assert.equal(report.ok, true);
 });
@@ -760,4 +760,25 @@ test("validator handles minified selectors theme tokens and tabindex without fal
   ]);
   const report = validateLibrary(dir);
   for (const id of ["variables", "a11y", "theme", "class-alignment"]) assert.equal(report.results.find((item) => item.id === id)?.passed, true, JSON.stringify(report, null, 2));
+});
+
+test("validator rejects business-bearing runtime defaults and long-lived effects without cleanup", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-ts-validator-boundary-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  await Promise.all([
+    mkdir(join(dir, "src"), { recursive: true }),
+    mkdir(join(dir, "examples"), { recursive: true }),
+    mkdir(join(dir, "docs"), { recursive: true }),
+  ]);
+  await Promise.all([
+    writeFile(join(dir, "src", "fixture.css"), `:root{--sg-primary:#6487fa;--sg-ink:#111;--sg-muted:#777;--sg-line:#ddd;--sg-paper:#fff}.sg-app{color:var(--sg-ink)}@media(max-width:500px){.sg-app{font-size:14px}}@media(max-width:320px){.sg-app{font-size:12px}}`),
+    writeFile(join(dir, "src", "fixture.js"), `(function(global){var DEFAULTS={brand:{name:'Source Brand'},hero:{title:'A source-specific product headline that must be injected by the case example'}};function mount(root,options){var state=Object.assign({},DEFAULTS,options||{});root.innerHTML='<div class="sg-app">'+state.hero.title+'</div>';setInterval(function(){},1000);return root}global.BoundaryFixture={mount:mount};})(window);`),
+    writeFile(join(dir, "examples", "fixture.html"), `<!doctype html><html lang="en"><body><div id="mount"></div><script src="../src/fixture.js"></script></body></html>`),
+    writeFile(join(dir, "README.md"), `# Fixture\n\nBoundaryFixture.mount(root)`),
+    writeFile(join(dir, "docs", "设计规范.md"), `# 设计规范\n\n## 主题色`),
+  ]);
+  const report = validateLibrary(dir);
+  assert.equal(report.results.find((item) => item.id === "data-separation")?.passed, false, JSON.stringify(report, null, 2));
+  assert.match(report.results.find((item) => item.id === "data-separation")?.detail ?? "", /DEFAULTS\.brand\.name/);
+  assert.equal(report.results.find((item) => item.id === "lifecycle-cleanup")?.passed, false, JSON.stringify(report, null, 2));
 });

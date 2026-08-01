@@ -135,6 +135,66 @@ GlossaryExplorer.mount(document.getElementById('mount'), {
         v.check_data_separation()
         self.assertFalse(v.results[0][1])
 
+    def test_business_bearing_runtime_defaults_fail(self):
+        """DEFAULT/EMPTY/INITIAL 对象不能携带品牌或长业务文案。"""
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + """
+const DEFAULTS = Object.freeze({
+  brand: { name: 'Warp' },
+  headline: 'A polished business headline bundled into the reusable component runtime.'
+});""",
+            "examples/case.html": '<!doctype html><div id="mount"></div><script src="../src/glossary.js"></script>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_data_separation()
+        self.assertFalse(v.results[0][1])
+        self.assertIn("非中性默认内容", v.results[0][2])
+
+    def test_neutral_runtime_placeholders_pass(self):
+        """空内容和 #、/ 等结构占位不得被误判为业务数据。"""
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + "\nconst DEFAULTS = { brand: { name: '', href: '#' }, title: '' };",
+            "examples/case.html": '<!doctype html><div id="mount"></div>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_data_separation()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
+
+class TestLifecycleCleanup(unittest.TestCase):
+    """长生命周期副作用必须有明确的释放边界。"""
+
+    def test_long_lived_effect_without_cleanup_fails(self):
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + "\nsetInterval(function(){}, 1000);\nwindow.addEventListener('resize', function(){});",
+            "examples/case.html": '<!doctype html><div id="mount"></div>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_lifecycle_cleanup()
+        self.assertFalse(v.results[0][1])
+        self.assertIn("destroy/unmount/dispose", v.results[0][2])
+
+    def test_long_lived_effect_with_cleanup_passes(self):
+        v = _make_validator({
+            "src/glossary.css": _MIN_CSS,
+            "src/glossary.js": _MIN_JS + """
+var timer = setInterval(function(){}, 1000);
+window.GlossaryExplorer.mount = function(){
+  return { unmount: function(){ clearInterval(timer); } };
+};""",
+            "examples/case.html": '<!doctype html><div id="mount"></div>',
+            "README.md": "# Lib\nmount\n",
+            "docs/设计规范.md": "主题色\n",
+        })
+        v.check_lifecycle_cleanup()
+        self.assertTrue(v.results[0][1], v.results[0][2])
+
 
 class TestA11yBlobDetection(unittest.TestCase):
     """check_a11y：从 blob 探测 tab/modal（Sprint 2-1 改造）。"""

@@ -38,7 +38,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentDataSurfaceArtifactCandidate, createComponentLibraryBuildPlan, createComponentStateEvidenceMapCandidate, createComponentStyleArtifactCandidate, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap, type ReviewedComponentDataSurfaceArtifact, type ReviewedComponentStyleArtifact } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, acceptComponentLibrary, assessComponentLibrarySourceReadiness, createComponentDataSurfaceArtifactCandidate, createComponentLibraryBuildPlan, createComponentStateEvidenceMapCandidate, createComponentStyleArtifactCandidate, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, runReviewedComponentLibraryProduction, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap, type ReviewedComponentDataSurfaceArtifact, type ReviewedComponentStyleArtifact } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
@@ -118,6 +118,8 @@ function usage(): void {
   component-produce <component-production.config.json> --out-dir <dir> [--plan <component-library.build-plan.json>] [--report <component-library.build-report.json>] [--result <component-library.production-result.json>] [--overwrite]
   component-build-plan <component-build.config.json> --out <component-library.build-plan.json>
   component-build <component-library.build-plan.json> --out-dir <dir> [--report <component-library.build-report.json>] [--overwrite]
+  component-source-readiness <original.html> [--resource-profile <dom|canvas>] [--out <source-readiness.json>]
+  component-accept <original.html> --lib <component-library> [--manifest <manifest.json>] [--scenarios <scenarios.json>] [--resource-profile <dom|canvas>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--visual-artifacts <dir>] [--report <component-library.acceptance-report.json>]
   primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
   component-plan-build-plan <component-plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
   visual-target-build-plan <visual-target.plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
@@ -227,10 +229,10 @@ async function main(argv: string[]): Promise<number> {
 `, "utf8");
       const resultPath = flag(args, "--result"); if (resultPath) await writeFile(resolve(resultPath), `${JSON.stringify(result, null, 2)}
 `, "utf8");
-      console.log(`${result.build.status === "succeeded" ? "✓" : "✗"} Reviewed Component Production: ${result.build.status}`);
+      console.log(`${result.build.status === "accepted" ? "✓" : "✗"} Reviewed Component Production: ${result.build.status}`);
       console.log(`  output=${result.build.outputRoot}，reviewRequired=${result.plan.reviewRequired}，smoke=${result.build.smoke?.passed ?? false}，quality=${result.build.quality?.passed ?? "not-run"}`);
       for (const blocker of result.build.blockers) console.log(`  - ${blocker}`);
-      return result.build.status === "succeeded" ? 0 : 1;
+      return result.build.status === "accepted" ? 0 : 1;
     }
     if (command === "primitive-dom-build-plan") {
       const graphPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const sourceRoot = flag(args, "--source-root"); const libraryName = flag(args, "--name"); const packageName = flag(args, "--package-name");
@@ -298,10 +300,60 @@ async function main(argv: string[]): Promise<number> {
       if (!planPath || !outDir) throw new Error("component-build 需要 <component-library.build-plan.json> 和 --out-dir");
       const plan = JSON.parse(await readFile(resolve(planPath), "utf8")) as ComponentLibraryBuildPlan;
       const report = await runComponentLibraryBuild(plan, outDir, { overwrite: has(args, "--overwrite"), reportPath: flag(args, "--report") });
-      console.log(`${report.status === "succeeded" ? "✓" : "✗"} Component Library Build: ${report.status}`);
+      console.log(`${report.status === "accepted" ? "✓" : "✗"} Component Library Build: ${report.status}`);
       console.log(`  output=${report.outputRoot}，smoke=${report.smoke?.passed ?? false}，validation=${report.validation?.ok ?? false}，quality=${report.quality?.passed ?? "not-run"}`);
       for (const blocker of report.blockers) console.log(`  - ${blocker}`);
-      return report.status === "succeeded" ? 0 : 1;
+      return report.status === "accepted" ? 0 : 1;
+    }
+    if (command === "component-source-readiness") {
+      const htmlPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");
+      if (!htmlPath) throw new Error("component-source-readiness 需要 <original.html>");
+      const resourceProfile = flag(args, "--resource-profile") ?? "dom";
+      if (!(["dom", "canvas"] as string[]).includes(resourceProfile)) throw new Error("--resource-profile 必须是 dom 或 canvas");
+      const report = await assessComponentLibrarySourceReadiness({ originalHtmlPath: htmlPath, resourceProfile: resourceProfile as "dom" | "canvas", visual: true });
+      if (out) await writeFile(resolve(out), `${JSON.stringify(report, null, 2)}
+`, "utf8");
+      console.log(`${report.status === "ready" ? "✓" : "✗"} Component Source Readiness: ${report.status}`);
+      console.log(`  source=${report.sourcePath}，bytes=${report.metrics.sourceBytes}，critical=${report.metrics.criticalResourceReferences}，missing=${report.metrics.missingLocalResources}，remote=${report.metrics.remoteCriticalResources}`);
+      for (const issue of report.issues) console.log(`  - ${issue.severity}:${issue.id}: ${issue.detail}${issue.reference ? ` (${issue.reference})` : ""}`);
+      return report.status === "ready" ? 0 : 1;
+    }
+    if (command === "component-accept") {
+      const htmlPath = args[0]; const libraryRoot = flag(args, "--lib");
+      if (!htmlPath || !libraryRoot) throw new Error("component-accept 需要 <original.html> 和 --lib");
+      const resourceProfile = flag(args, "--resource-profile") ?? "dom";
+      if (!(["dom", "canvas"] as string[]).includes(resourceProfile)) throw new Error("--resource-profile 必须是 dom 或 canvas");
+      const viewportFlag = flag(args, "--viewports");
+      const viewports = viewportFlag ? resolveQualityViewports(viewportFlag) : undefined;
+      const browserMode = flag(args, "--browser-mode") ?? "legacy";
+      if (!(["legacy", "shared-browser"] as string[]).includes(browserMode)) throw new Error("--browser-mode 必须是 legacy 或 shared-browser");
+      const concurrencyValue = flag(args, "--browser-concurrency");
+      const browserConcurrency = concurrencyValue === undefined ? 1 : Number(concurrencyValue);
+      if (!Number.isInteger(browserConcurrency) || browserConcurrency < 1 || browserConcurrency > 8) throw new Error("--browser-concurrency 必须是 1..8 的整数");
+      const browserResourceCache = flag(args, "--browser-resource-cache") ?? "off";
+      if (!(["off", "run-local"] as string[]).includes(browserResourceCache)) throw new Error("--browser-resource-cache 必须是 off 或 run-local");
+      const browserStability = flag(args, "--browser-stability") ?? "fixed";
+      if (!(["fixed", "adaptive"] as string[]).includes(browserStability)) throw new Error("--browser-stability 必须是 fixed 或 adaptive");
+      const browserShutdown = flag(args, "--browser-shutdown") ?? "graceful";
+      if (!(["graceful", "fast-kill"] as string[]).includes(browserShutdown)) throw new Error("--browser-shutdown 必须是 graceful 或 fast-kill");
+      const report = await acceptComponentLibrary(htmlPath, libraryRoot, {
+        manifestPath: flag(args, "--manifest"),
+        scenarioPath: flag(args, "--scenarios"),
+        spaRouterConfigPath: flag(args, "--spa-router"),
+        resourceProfile: resourceProfile as "dom" | "canvas",
+        visualArtifactsDir: flag(args, "--visual-artifacts"),
+        viewports,
+        browserMode: browserMode as "legacy" | "shared-browser",
+        browserConcurrency,
+        browserResourceCache: browserResourceCache as "off" | "run-local",
+        browserStability: browserStability as "fixed" | "adaptive",
+        browserShutdown: browserShutdown as "graceful" | "fast-kill",
+        reportPath: flag(args, "--report") ?? flag(args, "--out"),
+      });
+      console.log(`${report.status === "accepted" ? "✓" : "✗"} Component Library Acceptance: ${report.status}`);
+      console.log(`  library=${report.libraryRoot}，source=${report.sourceReadiness?.status ?? "not-run"}，validation=${report.validation?.ok ?? false}，quality=${report.quality?.passed ?? "not-run"}`);
+      for (const blocker of report.blockers) console.log(`  - ${blocker}`);
+      return report.status === "accepted" ? 0 : 1;
     }
     if (command === "profile-plan") {
       const configPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o");

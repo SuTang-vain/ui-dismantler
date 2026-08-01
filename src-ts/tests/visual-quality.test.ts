@@ -50,7 +50,7 @@ test("runtime selector gate catches ID/class translation mismatch hidden from DO
   const runtime = await evaluateLibrarySelectorCoverage(item.lib);
   const report = appendRuntimeSelectorCheck(validateLibrary(item.lib), runtime.coverage ?? null);
   const selectorGate = report.results.find((result) => result.id === "selector-runtime");
-  assert.equal(report.total, 10);
+  assert.equal(report.total, 11);
   assert.equal(selectorGate?.passed, false);
 });
 

@@ -30,7 +30,7 @@ Agent（主控）─────────────────────
    │ 1. 读 HTML，理解结构/样式/交互                  │
    │ 2. 调工具拿确定性数据（主题色/变量/CSS 规则）     │  工具层（确定性，可复现）
    │ 3. 产出组件库各文件（css/js/html/docs）         │  - analyze_html.py（提取主题色/CSS）
-   │ 4. 自检：调 validate + roundtrip 验证           │  - validate_lib.py（8 项强约束）
+   │ 4. 自检：调 validate + roundtrip 验证           │  - validate_lib.py（10 项强约束）
    │ 5. 不达标则修订                                │  - roundtrip.py（往返等价度）
     └───────────────────────────────────────────────┘
 ```
@@ -48,7 +48,7 @@ v1 的 Python 脚本不丢弃，转为 agent 的**工具层**：
 |---|---|
 | `_common.py` | 工具：颜色解析、CSS 变量提取、media 拆分（确定性，agent 调用） |
 | `analyze_html.py` | 工具：快速提取主题色令牌、结构清单（给 agent 当参考，不是唯一依据） |
-| `validate_lib.py` | 工具：8 项强约束校验（agent 自检） |
+| `validate_lib.py` | 工具：10 项强约束校验（agent 自检） |
 | `roundtrip.py` | 工具：往返等价度（agent 自检 + 量化质量） |
 | ~~`generate_lib.py` + 模板~~ | **已删除**：agent 直接写代码，不再套模板（v1 模板链路一并移除） |
 | ~~`aggregate_vertical.py`~~ | **已删除**：垂类聚合等单案例稳定后再重做 |
@@ -70,7 +70,7 @@ agent 产出的组件库必须达到 benchmark 的质量：
 ```
 
 **质量门槛**（agent 自检必须全过）：
-1. `validate_lib.py` 8 项强约束全 PASS
+1. `validate_lib.py` 10 项强约束全 PASS
 2. `roundtrip.py` 综合分 ≥ 0.85（结构 ≥ 0.7，文本 ≥ 0.8）
 3. `node --check` JS 语法合法
 4. example.html 用原数据能还原原页面核心内容
@@ -202,3 +202,12 @@ SKILL.md 要包含：
 - **套模板生成（generate_lib + Jinja2）**：已删除。agent 直接写代码，组件库由 agent 产出后用 `roundtrip.py --lib` 验证。
 - **垂类聚合**：已删除（aggregate_vertical.py）。等 agent 单案例拆解能力稳定（P1 前向测试全过）后再重做。
 - **可视化 Playground**：浏览器打开 example.html 即可预览。
+
+
+## Component Acceptance Closure (completed)
+
+- Added a fixed-threshold `component-accept` pipeline for agent-authored and external component libraries.
+- Acceptance now requires source readiness, all static constraints, roundtrip/scenario evidence, browser visual/runtime/stability gates, and an `accepted=true` receipt.
+- Added deterministic source/library/configuration/quality identities; generated reports under `.ui-dismantler/` do not alter library identity.
+- Added a portable installed-Skill runtime locator, preflight, TypeScript runner, and installer so validation no longer depends on repository working directory.
+- Remaining generation-quality work must improve responsibility planning and materialization while preserving this fail-closed acceptance boundary.

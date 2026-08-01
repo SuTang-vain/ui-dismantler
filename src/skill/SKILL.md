@@ -1,426 +1,220 @@
 ---
 name: html-to-component-lib
-description: Dismantle a single HTML case page into a reusable component library (parametric CSS + rendering engine JS + data-driven examples + design spec docs). MUST USE when the user wants to turn an HTML case into a component library / reusable template / extract theme colors and interaction patterns, or mentions "dismantle HTML" / "extract components" / "make a component library" / "standardize for reuse" / "extract theme colors" / "extract interaction patterns" / 「拆解 HTML」「提取组件」「做成组件库」「规范化复用」「提取主题色」「提取交互模式」. Optional `profile` provides domain context only; output follows the sg-* strong-constraint spec.
+description: Dismantle an inspectable HTML page into a reusable, data-driven, source-faithful component library and accept it through fixed static, roundtrip, interaction, visual, runtime, and stability gates. MUST USE for HTML component extraction, reusable templates, theme/interaction extraction, or component-library production.
 ---
 
-# HTML -> Component Library Dismantling Skill
+# HTML to Component Library
 
-Dismantle a self-contained HTML case page (with inline `<style>`/`<script>`) into a structured, reusable, data-driven component library.
+Produce a **general-purpose component library**, not a case-specific page clone. Source evidence determines structure and behavior; fixed project names, component names, routes, classes, and visible-text rules are forbidden.
 
-## Your Role (agent)
+## Responsibility Boundary
 
-**You are the lead dismantler**, not a script dispatcher. Like an engineer reading source code, you must **understand** this HTML -- its theme color semantics, Tab/view structure, interaction patterns, data organization, responsive breakpoints -- and then **personally produce** the complete component library code. The Python scripts are just deterministic tools that help you fetch color values, validate constraints, and quantify equivalence; **understanding and creation are done by you**.
+`ui-dismantler` owns component boundaries, neutral runtime APIs, styles, interactions, lifecycle cleanup, examples, documentation, and formal quality acceptance. It may emit a Data Surface Manifest, but business-data normalization and Data Pack generation belong to `sg-data-pack`.
 
-Benchmark quality: `benchmark/lib` (the domain-neutral benchmark library, 1346 lines, covering 6 patterns with complete A11y + design tokens + data-driven). The library you produce should match this quality bar, not just "it runs".
+Publishable runtime files must not contain source business copy, entity records, private URLs, or credentials. Source data may appear only in non-publishable reproduction examples or reviewed external fixtures.
 
-## When to Use
+## Mandatory Transaction
 
-- The user provides an HTML file (or directory) and asks to "dismantle into a component library", "extract reusable template", or "standardize"
-- The user asks to extract a page's theme colors / Tabs / interaction patterns / logic settings and freeze them for reuse
-- The user provides an optional domain background; treat it as understanding context, don't write it as a core rule branch
-
-## Dismantling Workflow (execute in order)
-
-### Step 1: Read Through the HTML, Build Understanding
-
-**Don't rush to call scripts**. First read the HTML in full (`<head>`'s `<style>`, `<body>`'s structure, `<script>`'s logic), and build the following mental model:
-
-1. **Canvas & layout**: What's the PC size? Is it a fixed frame (like `.pc-card-frame` 788×492) or fluid? What responsive breakpoints exist (`@media max-width: 500/320`)? How do the canvas size and layout change at each breakpoint?
-2. **Theme color semantics**: Which color variables are defined in `:root`? **Which is the brand primary** (used for selected/active states / primary buttons)? **Which is the accent** (used for "other" / story / highlight)? How many gray levels does the text have (ink/muted/subtle)? Background colors (paper = card base / stage = canvas base)? Divider color? You must judge these semantics yourself, not mechanically copy variable names.
-3. **Tab/view structure**: How many Tabs? Is it `role=tablist` or `nav + data-p` association style? What view does each Tab correspond to (member grid / timeline / works carousel / detail panel)? Is there a "more" special Tab at the end?
-4. **Interaction patterns**: Is there auto-play (`setInterval`)? What interval? What interaction stops it? Is there a Modal (`role=dialog`)? Trigger method? Close method (X / overlay / ESC)? Is there a 3D carousel (`perspective`)? A story panel?
-5. **Data organization**: Where is the member/works/timeline data? Is it `<script type=application/json>`, a JS array (`const memberList = [...]`), or written directly into the DOM? What fields exist? Is there image fallback logic? Is there image-source annotation?
-6. **A11y status**: What `role`/`aria-*` does the original page already have? What's missing and needs to be added?
-
-**For anything unclear, read the corresponding CSS rule and JS snippet to confirm**. The quality of this step determines all downstream output.
-
-### Step 2: Call Tools to Fetch Deterministic Data (reference only, not the sole basis)
+Set the installed Skill root to the directory containing this file:
 
 ```bash
-python3 src/skill/scripts/analyze_html.py <html-path> --out <manifest.json> --minimal
+export UI_DISMANTLER_SKILL_ROOT="<absolute directory containing SKILL.md>"
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/tool_preflight.py"
 ```
 
-`--minimal` mode quickly extracts theme color tokens + structure list + pattern recognition, as a **reference**.
+A failed preflight is a hard stop. Never replace unavailable tooling with informal browser inspection.
 
-**Pattern recognition** (`manifest.structure.views[].type`):
+Execute one fail-closed transaction:
 
-The tool recognizes **10 patterns** via a pluggable `ViewDetectorRegistry`. Each detector returns a `semantic_type` + `structural_type` + `confidence` + `evidence` tuple.
+```text
+preflight
+→ source readiness
+→ deterministic analysis and plan
+→ evidence review
+→ component materialization
+→ component-accept
+→ evidence-driven repair (maximum 3 rounds)
+→ accepted receipt
+```
 
-| Pattern | structural_type | Recognition signal | Typical case |
-|---|---|---|---|
-| `carousel-3d` | collection | carousel position class + `perspective` | carousel works |
-| `cause-chain` | sequence | timeline-nav + causeChain/whatIf data | Huang Yueying, She Xiang-furen |
-| `nav-panel` | content-region | nav + ≥2 triggers (data-p/data-tab) + ≥2 panels | Zhi-shang-tan-bing |
-| `graph` | collection | svg lines / node class + graph JS data | Qingyu-nian, Xie-tianzi |
-| `timeline` | sequence | timeline/tl-item class | glossary timeline |
-| `member-grid` | collection | member-grid/member-list class | glossary member grid |
-| `detail-panel` | content-region | detail-panel/aria-live:polite | profile panel |
-| `quiz` | form | qz-body/quiz/opt class | quiz |
-| `comparison` | content-region | whatif-card/cmp-btn class | comparison |
-| `splash` | overlay | splash-cta/splash-opt class | splash unlock screen |
+Only `.ui-dismantler/acceptance-receipt.json` with `accepted=true` means the work is complete.
 
-`cause-chain`/`nav-panel`/`graph` are **page-level patterns** (need a global view); `_analyze_views` runs the detector on the `body` as a whole and returns it as the single view when matched. The other 7 are panel-level patterns.
+## 1. Source Readiness
 
-**View details extraction** (non-minimal mode, per view type):
-- `cause-chain`: `hasTimelineNav` / `hasCauseChainData` / `hasWhatIf` / `navItems`
-- `nav-panel`: `triggerCount` / `panelCount` / `triggers` (up to 10)
-- `graph`: `hasSvg` / `nodeCount` / `dataSource` / `hasEdges`
-  - `dataSource` identifies 6 data-source kinds (`uppercase-const` / `object-property` / `mount-options` / `mount-api` / `runtime-state` / `function-builder`)
-- `quiz` / `comparison` / `splash` / `member-grid` / `timeline` / `carousel-3d` / `detail-panel`: pattern-specific fields (see `references/patterns.md`)
+Run before generating files:
 
-Notes:
-- The tool's extracted theme color **semantics may be inaccurate** (it only matches variable-name patterns); you should correct the normalization based on your Step 1 understanding (e.g., map `--marker-primary` to `--sg-primary`, `--cause-color` to `--sg-accent`)
-- The view types the tool recognizes may be incomplete; you must judge the true structure yourself
-- Items flagged in `manifest.warnings[]` as unrecognized are your dismantling priorities
-
-Tools are crutches; your understanding is your legs. The normalization mapping table is in `references/spec.md` Section 2.
-
-### Step 3: Produce Component Library Files
-
-**Output forms** (default IIFE, can generate other forms as needed):
-
-| Form | File | Usage | Suitable scenario |
-|---|---|---|---|
-| IIFE (default) | `<lib>.js` | `<script src>` + `Lib.mount()` | General-purpose; roundtrip validates this form by default |
-| ESM/UMD | `<lib>.esm.js` | `<script src>` or `import {mount}` | Modern build tools (webpack/vite) |
-| Web Component | `<lib>.wc.js` | `<sg-lib>` tag + JSON | Declarative usage, framework-agnostic |
-
-IIFE is the default output. For other forms, use the adapter generator:
 ```bash
-python3 src/skill/scripts/adapt_output.py src/<lib>.js --esm --out src/<lib>.esm.js
-python3 src/skill/scripts/adapt_output.py src/<lib>.js --wc --name sg-<lib> --out src/<lib>.wc.js
-python3 src/skill/scripts/adapt_output.py src/<lib>.js --all --name sg-<lib> --out-dir src/
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/run_ts.py" component-source-readiness \
+  <original.html> --out /tmp/ui-dismantler/source-readiness.json
 ```
 
-In the user-specified directory (or `/tmp/<lib-name>/`), create the complete component library:
+Use `--resource-profile canvas` only with reviewed Canvas/WebGL evidence. Stop on unresolved runtime shells, missing critical local resources, or unreviewed WebGL responsibility. Frozen local JS/CSS resources are valid inspectable input.
 
+Do not infer DOM from screenshots or from an unavailable remote runtime. Screenshots are acceptance evidence only.
+
+## 2. Analyze and Plan
+
+Read the complete HTML, CSS, scripts, local assets, media queries, and interaction paths. Then generate deterministic evidence:
+
+```bash
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/analyze_html.py" \
+  <original.html> --out /tmp/ui-dismantler/manifest.json
+
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/run_ts.py" plan \
+  <original.html> --out /tmp/ui-dismantler/component-plan.json \
+  --spec-dir /tmp/ui-dismantler/component-specs
 ```
-<lib-name>/
-├── README.md                 Intro + quick start + API + data contract + theming
-├── docs/设计规范.md           Theme color system / Tab structure / interaction patterns / logic settings / responsive
+
+Inventory these responsibilities before coding:
+
+- visual regions and repeated structures;
+- parent/child ownership and slot-like content;
+- source selectors, tokens, inline styles, media queries, pseudo-elements, and assets;
+- events, state writes, conditional regions, form bindings, timers, global listeners, and cleanup;
+- data fields, collection cardinality, props, and external adapter boundaries;
+- accessibility semantics and keyboard behavior.
+
+Unresolved evidence remains explicit. Do not fill gaps with name-based rules or guessed markup.
+
+## 3. Choose Component Boundaries
+
+Create a component when a region has at least one structural reason: repeated topology, independent state, independent lifecycle, reusable style responsibility, or a stable input/output interface. Do not split wrappers that have no independent responsibility, and do not merge unrelated visual/state owners merely to reduce file count.
+
+Preserve a traceable mapping:
+
+```text
+source region → component → runtime input → rendered nodes → style rules → interactions
+```
+
+## 4. Materialize the Library
+
+Required shape:
+
+```text
+<library>/
+├── README.md
+├── docs/设计规范.md
+├── package.json
 ├── src/
-│   ├── <lib-name>.css        Parametric styles (sg-* prefix, --sg-* vars, three-tier responsive)
-│   └── <lib-name>.js         Rendering engine (<LibName>.mount/create API, data-driven, A11y)
+│   ├── <library>.css
+│   └── <library>.js
 └── examples/
-    ├── <case>.html            Reproduce the original case with the lib + original data
-    └── template.html          Blank reuse template (with sample data, must produce)
+    ├── <source-case>.html
+    └── template.html
 ```
 
-#### 3.0 Class Name Contract (CSS-JS single source of truth)
+### Runtime contract
 
-Before writing CSS (3.1) and JS (3.2), first enumerate all `sg-*` class names the component library will use, as a shared contract both sides must follow. This prevents CSS/JS class name drift (the #1 quality regression source).
+- expose `create(options)` and `mount(container, options)`;
+- use neutral defaults; accept variable content through `options.data`, props, or reviewed adapters;
+- keep business data outside publishable runtime;
+- return or expose `destroy`, `unmount`, or `dispose` whenever timers, animation frames, or global listeners exist;
+- use deterministic DOM creation—no `eval`, `document.write`, copied application runtime, or hidden network dependency.
 
-- Write the list as a comment block at the top of `src/<lib-name>.js`:
-  ```js
-  /* Class name contract (CSS-JS shared):
-   * sg-frame, sg-tab-bar, sg-tab, sg-tab-more, sg-view-stack, sg-view,
-   * sg-member-grid, sg-member, sg-avatar, sg-detail-panel, ...
-   */
-  ```
-- **CSS (3.1)**: every `.sg-*` selector must come from this list
-- **JS (3.2)**: every `el(tag, cls)` call must use class names from this list
-- If you add/rename a class during revision, update the contract comment first, then sync both CSS and JS
-- `validate_lib.py` item 9 checks this: JS-referenced `sg-*` classes must have CSS definitions (no orphan classes that produce unstyled elements)
+### Visual contract
 
-#### 3.0.5 Component Slice Plan (manifest-driven CSS segmentation)
+- preserve source DOM topology and source CSS responsibility before refactoring;
+- namespace public classes with `sg-` and variables with `--sg-`;
+- derive tokens from source colors and usages; do not replace source styling with a generic design;
+- materialize all source-owned regions, responsive states, pseudo-elements, local images, SVG geometry, and fonts needed by reviewed views;
+- do not invent framework internals or flatten complex layout/Canvas behavior into placeholder cards;
+- keep every JS-referenced class defined in CSS and every CSS slice reachable in an example.
 
-Before writing the CSS file (3.1), generate a **component slice list** from the Step 2 manifest. This converts "write 1300+ lines in one shot" into "write 10-14 small slices (100-300 lines each) and concatenate" -- faster, less drift, parallelizable.
+### Interaction and accessibility contract
 
-**Decision rules** (read manifest fields -> determine which slices to produce):
+- implement transitions from event → state mutation → affected DOM;
+- generate formal scenarios for every eligible interaction;
+- preserve keyboard, focus, ARIA, dialog, tab, and form behavior;
+- verify cleanup after route/state changes or unmount.
 
-| Slice | Manifest signal | Description |
-|---|---|---|
-| `01-tokens` | `theme.tokens[]` + `theme.gradients[]` | `:root,.sg-frame { --sg-* }` variable block |
-| `02-frame` | `meta.canvas` | `.sg-frame` base + reset |
-| `03-tab-bar` | `structure.tabs[]` non-empty | `.sg-tab-bar/.sg-tab` (include `.sg-tab-more` if any tab has `more=true`) |
-| `04-view-stack` | `structure.views[]` non-empty | `.sg-view-stack/.sg-view` container + `.active` toggle |
-| `05-section-head` | any view with title/sub | `.sg-section-head` shared header atom |
-| `06-carousel-controls` | any view has `paginated`/`hasDots`/`dualArrowStrategy` | `.sg-arrow/.sg-dots/.sg-dot` shared controls |
-| `07-member-grid` | `views[].type == member-grid` | member grid + avatar + member-info |
-| `08-detail-panel` | `views[].type == detail-panel` or paired with member-grid | `.sg-detail-panel` + relation rows |
-| `09-timeline` | `views[].type == timeline` | scroll-snap track + t-item + is-expanded |
-| `10-works-carousel-3d` | `views[].type == carousel-3d` | perspective + 5-tier 3D positions |
-| `11-work-story-panel` | `views[].hasStoryPanel == true` | story overlay panel + keyframes |
-| `12-modal-base` | `structure.modals[]` non-empty | `.sg-modal-overlay/.sg-modal-card` base |
-| `13-member-detail-modal` | `modals[].trigger == member-click` | member detail modal layout |
-| `14-a11y` | optional | `prefers-reduced-motion` if animations exist |
+### Examples and docs
 
-Write the slice list as a comment block in `src/<lib-name>.css` header:
-```css
-/* Component slice plan (from manifest):
- * 01-tokens, 02-frame, 03-tab-bar, 04-view-stack, 05-section-head,
- * 06-carousel-controls, 07-member-grid, 08-detail-panel, 09-timeline,
- * 10-works-carousel-3d, 11-work-story-panel, 12-modal-base, 13-member-detail-modal
- */
-```
+`examples/<source-case>.html` may inject the reviewed source data to reproduce the reference. `examples/template.html` uses neutral sample data and proves reuse. Document API, data schema, theming, lifecycle, accessibility, responsive behavior, and asset requirements.
 
-**Skip slices whose manifest signal is absent** (e.g., no `modals[]` -> skip 12/13; no `hasStoryPanel` -> skip 11). This ensures no dead CSS.
+The 10 static constraints are defined in `references/spec.md`.
 
-#### 3.1 `src/<lib-name>.css` - Parametric Styles (slice-by-slice generation)
+## 5. Generate Interaction Scenarios
 
-Generate the CSS **slice by slice** per the 3.0.5 plan, not in one shot:
-
-1. Write each slice as a `/* ==== N. <name> ==== */` delimited block
-2. **Each slice is self-contained**: includes its own `@media (max-width:500px)` and `@media (max-width:320px)` sub-blocks for its selectors (no centralized responsive section)
-3. Concatenate slices in dependency order: `01-tokens` -> `02-frame` -> containers (`03-06`) -> view components (`07-11`) -> modals (`12-13`) -> `14-a11y`
-4. The final file is a single `src/<lib-name>.css` (still single-file, zero-dep compatible)
-
-**Slice constraints**:
-- All class names use `sg-` prefix, kebab-case (`.sg-frame` `.sg-tab` `.sg-member`)
-- Define all `--sg-*` variables in `01-tokens` (`:root` or `.sg-frame` scope), with semantic comments
-- **Colors always go through variables**; no hardcoded `#hex` in rules (`:root` definitions and `rgba(0,0,0,0.x)` pure-black/white overlays are exceptions)
-- Colors inside gradients also reference variables: `linear-gradient(var(--sg-paper), var(--sg-soft))`
-- Three-tier responsive: PC default + `@media (max-width:500px)` + `@media (max-width:320px)` **inside each slice**. Even if the original case only has PC, you must backfill all three
-- Preserve the original case's layout essence (3D perspective tiers, scroll-snap, grid columns, etc.) -- do not simplify them away
-
-#### 3.2 `src/<lib-name>.js` - Rendering Engine
-
-Benchmark against the `glossary.js` pattern (see `benchmark/lib/src/`):
-
-```js
-(function (global) {
-  'use strict';
-  // Utilities: el(tag, cls, attrs) creates nodes; on(node, evt, fn) binds events
-  function el(tag, cls, attrs) { /* ... */ }
-
-  var DEFAULTS = { /* all configurable options, including tabs/members/timeline/works/theme/autoPlay etc. */ };
-
-  function LibName(options) {
-    this.opts = deepMerge({}, DEFAULTS, options || {});
-    this.root = null;
-    // instance state: timers/indices/selected state
-  }
-  LibName.prototype.create = function () { /* build DOM, return root node */ };
-  LibName.prototype.mount = function (container) { /* create + append + afterMount */ };
-  // _buildTabBar / _buildViewStack / _buildMembers / _buildTimeline / _buildWorks ...
-  // _afterMount: start auto-play, bind interactions, a11y init
-
-  function applyTheme(root, theme) { /* write options.theme into root.style --sg-* */ }
-
-  global.LibName = { mount: function(c,o){return new LibName(o).mount(c);}, create: function(o){return new LibName(o).create();} };
-})(window);
-```
-
-Key points:
-- **Data-driven**: All variable content goes through `options`; **no hardcoded business copy/URLs**
-- **Complete A11y**: tablist/tab/tabpanel + aria-selected/aria-controls/aria-labelledby; dialog + aria-modal + hidden; aria-live announcement region; aria-label on icon buttons; ESC to close
-- **Image fallback**: `load`/`error` event-driven `.is-loaded`/`.is-error`; fallback shows first letter + gradient
-- **Auto-play**: `setInterval` + stop on any interaction (click/touchstart/mouseenter)
-- **Responsive logic**: `isMobile()`/`isExtremeSmall()` to branch small-screen behavior (pop Modal vs inline panel)
-
-#### 3.3 `examples/<case>.html` - Reproduce with Original Data
-
-- Include `src/<lib-name>.css` and `src/<lib-name>.js`
-- Fill the **real data** from the original HTML (members/works/timeline/facts) into `options`
-- Call `LibName.mount(document.getElementById('mount'), {...})`
-- Goal: this page should reproduce the original case's core content (the roundtrip test quantifies this)
-
-#### 3.4 `examples/template.html` - Blank Reuse Template
-
-- Same structure, but with sample/placeholder data
-- Comments annotate the meaning of each data segment, for easy replacement during reuse
-
-#### 3.5 `docs/设计规范.md` - Complete Spec
-
-Benchmark against the structure of `benchmark/lib/docs/设计规范.md`:
-1. **Theme color system**: design token table (Token / Value / Semantic usage) + semantic grouping + gradient overlay
-2. **Tab elements**: structure + attribute conventions + three-tier sizes
-3. **Interaction patterns**: view stack + interaction details for each view (member/timeline/works/detail)
-4. **Logic settings**: responsive breakpoints + auto-play strategy + data-driven + A11y + performance robustness
-5. **Typography**: font stack + heading hierarchy + border-radius system
-6. **Component inventory**: component -> class name -> reuse notes
-
-#### 3.6 `README.md`
-
-Covers:
-- Library intro + quick start (one-line mount)
-- API reference (`mount(container, options)`, `create(options)`, options schema)
-- Data contract (field list + types + required/optional)
-- Theming (how to override `--sg-*` variables, dark mode example)
-- File structure explanation
-
-### Step 4: Self-Check (must all pass)
+When the manifest contains interactions:
 
 ```bash
-# 4a. 8-item strong-constraint validation
-python3 src/skill/scripts/validate_lib.py <component-lib-dir>
-
-# 4b. JS syntax check
-node --check src/<lib-name>.js
-
-# 4c. Roundtrip equivalence (quantifies "how faithful to the original HTML")
-python3 scripts/roundtrip.py <original-html-path> --lib <component-lib-dir> --out <report.json>
-
-# 4d. TypeScript Gold+ 质量门（真实浏览器；默认必须执行）
-npm run quality:ts -- <original-html-path> --lib <component-lib-dir> \
-  --visual-artifacts /tmp/<case>-visual
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/run_ts.py" scenarios \
+  /tmp/ui-dismantler/manifest.json \
+  --out /tmp/ui-dismantler/scenarios.json
 ```
 
-**Quality thresholds** (all must pass to count as complete):
-- `validate_lib.py`: all 9 items PASS；TypeScript runtime 版本再检查第 10 项“选择器实际命中”
-- `node --check`: no syntax errors
-- `roundtrip.py`: defaults to rendered reference; when `reference.fallback=true`, fix the reference rendering or record the compatibility contract with `--reference-mode static`
-- Runtime main threshold: overall ≥ 0.85 (structure ≥ 0.7, text ≥ 0.8)
-- When the page has Tab/Dialog/form interactions, add `--scenarios <scenarios.json>`; each scenario must have assertions proving the state was actually reached
-- Gold+ browser gate: selector coverage = 100%; key computed-style match ≥ 0.98; screenshot pixel diff ≤ 2%; no runtime errors
-- If Gold+ fails, do not accept DOM/text green as sufficient. Inspect `mismatchHints`, `styles.mismatches`, and `pixels.diffRate` before revising
+Review candidates before acceptance. Assertions must prove the target state, not merely that a click occurred. Do not waive interactions because they are difficult to reproduce.
 
-> Threshold basis: the benchmark library has roundtrip overall 0.99;
-> agent dismantling (huang/zhi) 0.97+ GOLD;
-> unsupported patterns (huang-yueying/zhi-shang-tan-bing generic fallback) naturally fall short and are lifted via agent dismantling.
+## 6. Formal Acceptance
 
-**Roundtrip scoring dimensions**:
-- `tag_topology_rate` (weight 40%): DOM tag topology match rate, unaffected by class-naming conventions
-- `class_match_rate` (weight 30%): class semantic similarity (tolerates sg- renames)
-- `node_match_rate` (weight 30%): recursive node match rate
-- `text_match_rate`: text exact + contains match
-- `coverage`: reference coverage (should be close to 100%)
-- `overall = struct_score * 0.5 + text * 0.5`
+First run syntax checking, then the fixed-threshold acceptance pipeline:
 
-> **About Tailwind pages**: Tailwind utility classes (`bg-background text-on-background`) and sg- semantic classes
-> are two valid paradigms; class similarity is naturally low. In this case, tag topology rate (typically 0.95+)
-> and text match rate (1.0) are more faithful measures. overall 0.70+ is acceptable (PASS); don't chase high class-match scores.
+```bash
+node --check <library>/src/<library>.js
 
-### Self-Check Decision Table (failure -> revision action)
-
-After each self-check round, use this table to locate the revision point. After fixing, rerun all three self-checks (don't only rerun the failed item, to avoid introducing new problems):
-
-| Self-check failure | Root cause location | Revision action |
-|---|---|---|
-| validate: 1. naming prefix | CSS rule body contains non-sg-prefixed generic words (tab/member/modal...) | Add `sg-` prefix to offending class names; only change the rule's main selector (rightmost segment). Descendant classes that are data-driven can be left alone |
-| validate: 2. variable normalization | Rules outside `:root` use un-normalized `--original-var` or hardcoded colors | Define `--sg-*` vars in `:root`, switch rules to `var(--sg-xxx)`; normalization mapping in spec.md Section 2 |
-| validate: 3. data separation | examples HTML hardcodes business copy/URLs (non-placeholder) | Move hardcoded content into `<script type="application/json">` or options params |
-| validate: 4. three-tier responsive | Missing `@media (max-width:500px)` or `(max-width:320px)` | Backfill both breakpoints, each with at least canvas size/font-size/layout adjustment |
-| validate: 5. A11y | Has tab but no role=tablist, or has dialog but no ESC | Add A11y attributes as needed (see spec.md Section 5 on-demand table) |
-| validate: 6. theme customizable | Rules hardcode `#hex` or `rgb()` (non-:root, non pure-black/white overlay) | Replace with `var(--sg-xxx)`; colors inside gradients also go through variables |
-| validate: 7. zero deps | examples HTML references external JS/CSS (font CDN excluded) | Remove external references, use local src/ resources |
-| validate: 8. docs complete | Missing README.md or docs/设计规范.md, or README has no API docs | Complete docs; README includes mount/create API, design spec includes theme-color section |
-| validate: 9. class alignment | JS references sg-* classes not defined in CSS | Add the missing CSS rule, or fix the typo in JS el() call. If you renamed a class, update the contract comment in JS (3.0) and sync both CSS and JS |
-| validate: 10. selector runtime | CSS selector exists in source but does not match rendered DOM (`#sg-x` vs `.sg-x`, missing `sg-` modifier, wrong ancestor chain) | Fix the DOM/CSS contract, then rerun `npm run validate:ts -- <lib-dir>`; inspect `mismatchHints` for likely ID/class or prefix errors |
-| Gold+ computed-style | DOM/text pass but display/position/size/background/transform differs | Inspect `styles.mismatches`; fix selector application and init/scale ordering before changing thresholds |
-| Gold+ pixel diff | Screenshot diff > 2% while DOM/text pass | Open the three artifacts under `--visual-artifacts`; compare layout, backgrounds, overlays, SVG positions, and execution order; do not waive the gate without an explicit contract |
-| roundtrip class_coverage < 0.9 | JS renders DOM with classes that have no CSS rule (unstyled elements) | Check the slice plan (3.0.5): a component slice may be missing. Compare `class_coverage.missingClasses` against the slice list, then generate the missing slice per the mapping table in spec.md Section 10 |
-| node --check error | JS syntax error (missing semicolon / unbalanced parens / illegal char) | Locate and fix by line number; common: unclosed template literal, trailing comma in object |
-| roundtrip text score <0.8 | Check report `text.missing`, missing real content (member roles/work titles etc.); `text.extra` is got-side noise (data-driven text like timeline years, not penalized) | Add missing text into `examples/<case>.html` options data; extra needs no action |
-| roundtrip structure score <0.7 | Check `structure.node_match_rate` (with redundancy penalty); compare `node_recall`: high recall but low match_rate means `redundancy_penalty>0` (got nodes > 1.5× ref, redundant DOM); low `node_precision` also signals redundancy | Missing view layer (timeline/works not rendered) / nesting misaligned / modal not mounted -> add view; got redundant DOM (placeholder/debug containers) -> slim rendering, only output structures present in original HTML. The comparator already tolerates sg- prefix and class renames |
-
-**Exit protocol**:
-- All thresholds pass -> dismantling complete, report file paths + self-check results to the user
-- Still not passing after 3 rounds -> stop revising, explain to the user: which items pass, which are short by how much, the gap reason (e.g., "Huang Yueying is a cause-chain pattern, currently unsupported and needs pattern extension"), and suggest next steps
-- Each revision round only touches files related to the failed items, don't rewrite large swaths (to avoid regressions)
-
-### Step 5: Revise (loop if not passing)
-
-Locate revision points using the "Self-Check Decision Table" above. After fixing, rerun all self-checks (4a + 4b + 4c, all three). Loop until passing or hitting the 3-round cap.
-
-## Key Constraints (see references/spec.md for details)
-
-9 strong constraints, validated by `validate_lib.py`:
-
-1. **Naming prefix**: CSS classes `sg-`, variables `--sg-`, JS globals PascalCase, DOM ids `sg-`
-2. **Variable normalization**: Original variable names normalize to `--sg-*` per the table (primary/accent/ink/muted/subtle/line/paper/stage/soft...). Tailwind/Material Design 3 semantic colors are also covered (on-primary/on-secondary->on-accent/surface->paper/on-surface->ink/outline->line/primary-container->soft/...)
-3. **Data separation**: Variable content goes through JSON; no hardcoded business copy/URLs in JS
-4. **Three-tier responsive**: PC + WISE (<=500px) + extreme (<=320px)
-5. **A11y**: tablist/tabpanel, dialog, aria-live, aria-label, ESC to close (as needed)
-6. **Theme customizable**: All colors go through variables; no hardcoded `#hex` (`:root` and pure-black/white overlays are exceptions)
-7. **Zero dependency**: No external JS/CSS (font CDN is the exception)
-8. **Docs complete**: README.md + docs/设计规范.md both present
-9. **Class alignment**: JS-referenced sg-* classes must be defined in CSS (no orphan classes that produce unstyled elements)
-
-## Benchmark Reference
-
-When dismantling, target the quality of the benchmark component library:
-- `benchmark/lib/README.md` - documentation structure template
-- `benchmark/lib/docs/设计规范.md` - spec doc template
-- `benchmark/lib/src/glossary.js` - rendering engine pattern (IIFE + el() + DEFAULTS + create/mount + _buildXxx)
-- `benchmark/lib/src/glossary.css` - parametric style pattern (:root vars + sg- prefix + three-tier responsive)
-
-## Tool Layer (deterministic helpers, you call them)
-
-### CLI Scripts (command-line invocation)
-
-| Script | Purpose | When to call |
-|---|---|---|
-| `src/skill/scripts/analyze_html.py --minimal` | Extract theme color tokens + pattern recognition + structure list | Step 2, fetch reference data |
-| `src/skill/scripts/validate_lib.py` | 8-item strong-constraint validation | Step 4 self-check |
-| `scripts/roundtrip.py` | Roundtrip equivalence (rendered version vs reference + tag topology + class + text three-way comparison) | Step 4 self-check |
-| `src/skill/scripts/adapt_output.py` | Output adapter: IIFE -> ESM/UMD / Web Component | Step 3, generate other forms as needed |
-| `src/skill/scripts/generate_showcase.py` | Extract design tokens from `src/*.css` and generate `showcase.html` design-system showcase page | After Step 3 output, before Step 4 |
-| `scripts/generate_scenarios.py` | Generate reviewable interaction-scenario candidates from manifest | Before Step 4, when page has interactions |
-| `node --check` | JS syntax check | Step 4 self-check |
-| `scripts/verify_all.py` | Batch verification (parallel + cache + incremental) | Regression tests |
-
-**verify_all.py performance capabilities**:
-- **Parallel**: `--workers N` (default CPU cores); runs roundtrip across cases in parallel
-- **Cache**: Reuses results when original HTML + lib hash unchanged (cold start 1.8s -> cached 0.06s, ~28x speedup)
-- **Incremental**: `--changed` only tests changed cases (hash comparison, skips unchanged)
-- Usage: `python3 scripts/verify_all.py --lib-dir out` (full) / `--changed` (incremental) / `--clear-cache` (clear cache)
-
-### Python Utility Functions (import from `ui_dismantler.core.common`, callable on demand during dismantling)
-
-In Step 1 when understanding HTML or Step 2 when fetching reference data, you can write temporary Python snippets calling these deterministic functions to reduce guesswork:
-
-| Function | Purpose | Example scenario |
-|---|---|---|
-| `infer_color_roles(css, var_name)` | Infer what role a `--var` is used as (text/background/border/shadow/icon-fill) | Confirm "is this color a text color or border color" during normalization |
-| `query_rules(css, selector_contains, has_prop, prop_value_contains)` | Filter CSS rules by selector/property/value | Look up `.member`'s layout rules; find 3D tiers with `perspective` |
-| `extract_data_contracts(scripts)` | Scan JS to extract a data-contract overview (var names/types/element counts/fields) | Know what data arrays the page has and their fields |
-| `parse_color(value)` / `to_hex(rgba)` | Color value parsing and normalization | Convert `hsl(...)` to `#hex` to compare and dedupe |
-| `extract_root_vars(css)` | Extract `:root` variables (supports `:root,.sg-frame` selector groups) | Get the theme color list |
-| `split_media_blocks(css)` | Split `@media` blocks (distinguishes keyframes) | Understand responsive breakpoints |
-| `extract_gradients(css)` | Extract gradients (supports nested `rgba()`) | Normalize colors inside gradients to `var()` |
-
-### Package Architecture
-
-Canonical tool source lives in `src/ui_dismantler/` (layered Python package); `src/skill/scripts/` is the compatibility CLI layer (thin bridges ≤16 lines each); tests in `scripts/tests/` (run all via `python3 scripts/tests/run.py`, 296 tests covering unit + architecture-guard + interaction-matrix edge cases).
-
-```
-src/ui_dismantler/
-├── core/common.py        # CSS parsing, color parsing, variable normalization
-├── analysis/
-│   ├── html.py           # HtmlAnalyzer (HTML -> manifest)
-│   └── detectors.py      # ViewDetectorRegistry + 10 pattern detectors
-├── generation/
-│   ├── showcase.py       # design-token showcase page generator
-│   └── adapt_output.py   # IIFE -> ESM/Web Component adapter
-├── validation/library.py # 8-item strict-constraint validator
-└── evaluation/
-    ├── roundtrip.py      # roundtrip equivalence comparator
-    ├── batch.py          # batch verification (parallel + cache)
-    ├── scenario_coverage.py  # interaction coverage calculator
-    └── scenario_generator.py # scenario candidate generator
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/run_ts.py" component-accept \
+  <original.html> \
+  --lib <library> \
+  --scenarios /tmp/ui-dismantler/scenarios.json \
+  --viewports desktop,tablet,mobile \
+  --browser-mode shared-browser \
+  --browser-resource-cache run-local \
+  --browser-stability adaptive \
+  --visual-artifacts /tmp/ui-dismantler-artifacts/<run-id>
 ```
 
-Architecture guards (`scripts/tests/test_architecture.py`, 9 assertions) enforce layering: business modules must not contain CLI code (`argparse`/`sys.exit`/`def main()`); legacy entry points must be ≤16-line thin bridges; core package must never import the compatibility layer (cycle prevention).
+Omit `--scenarios` only when analysis proves there are no interactions. The command exposes no threshold-lowering option.
 
-## Domain Context and Experiment Boundaries
+Acceptance requires:
 
-`--profile` can record the page's domain, helping the agent understand terminology, but cannot change the deterministic core algorithm. Domain-specific detectors must be inserted via the `ViewDetectorRegistry` and must simultaneously provide cross-page false-positive tests.
+- source readiness `ready`;
+- all static constraints and runtime selector coverage;
+- rendered reference and library;
+- roundtrip overall ≥ 0.85, structure ≥ 0.7, text ≥ 0.8;
+- verified interaction coverage ≥ 0.8 when interactions exist;
+- computed-style match ≥ 0.98 and pixel diff ≤ 0.02;
+- no runtime, resource, navigation, network, font, stability, or blocking-handle failure.
 
-Multi-case aggregation, batch vertical generation, and domain assets are not part of this Skill's stable capabilities; they are explored on the `codex/vertical-case-experiments` branch. The stable quality line only accepts reproducible, cross-domain checks and regression samples.
+## 7. Repair by Responsibility
 
-## Dependencies
+Use `.ui-dismantler/quality-report.json`; do not patch by visual intuition alone.
 
-- Python 3.9+ (`beautifulsoup4`, user-level install: `pip install --user --break-system-packages beautifulsoup4`)
-- Node.js 18+ (for `node --check` and `roundtrip.py`'s jsdom rendering)
+| Failure | Repair responsibility |
+|---|---|
+| structure/text | missing or extra DOM topology, source content binding, repeated cardinality |
+| selector coverage | dead CSS, missing state/viewport, class mismatch |
+| computed style | selector context, inheritance, variables, fonts, responsive rule, pseudo-element |
+| pixel diff | geometry, spacing, assets, clipping, Canvas state after style gates pass |
+| scenario/coverage | event execution, mutation target, conditional rendering, assertions |
+| runtime/resource | script error, missing local asset, unsupported external dependency |
+| stability/handles | timer, rAF, animation completion, listener cleanup |
 
-**roundtrip renderer** (`scripts/_roundtrip_render.mjs`) capabilities and limits:
-- Two modes: component-library mode (default, serializes `#mount` subtree) + reference mode (`--ref`, serializes `<body>` subtree)
-- Multi-file support: auto-inlines all `<link>` CSS and `<script src>` JS (in document order)
-- Stub injection: Tailwind/marked/dompurify/mermaid/localStorage/canvas getContext all stubbed, prevents crashes from missing external deps
-- VirtualConsole: silences jsdom's "Not implemented" warnings
-- Large JSON output: >40KB goes through a temp file (prevents pipe truncation)
-- Limits: jsdom has no real layout engine (clientWidth=0), no canvas pixel rendering, limited support for Web Component connectedCallback timing
+Rerun the full acceptance command after each repair. Stop after three failed rounds and report unresolved blockers rather than publishing a low-quality library.
 
-## Failure Handling
+## Completion Report
 
-- `validate_lib.py` reports FAIL: revise the corresponding file per the prompt, rerun self-checks
-- `roundtrip.py` low score: check the report's `missingTexts`/`missingNodes`, fill in missing content
-- `node --check` syntax error: locate by line number and fix
-- Tool script itself errors (not a validation failure): check Python deps, or read `scripts/tests/` to confirm tool behavior
+Return:
 
-## Reference Files
+- library path;
+- source-readiness report path;
+- manifest and component-plan paths;
+- scenario path, if applicable;
+- quality-report and acceptance-receipt paths;
+- acceptance status and repair-round count;
+- remaining blockers, if not accepted.
 
-- `references/spec.md` - detailed spec for the 9 strong constraints + variable normalization mapping table
-- `references/patterns.md` - structure-recognition features (decision rules for Tab/carousel/Modal/cause-chain/nav-panel/graph etc., useful in Step 1 when understanding HTML)
-- `references/manifest_schema.md` - manifest.json field definitions (Step 2 tool output)
+Manual QA may supplement these artifacts, but cannot override them.
+
+## Runtime and References
+
+The installed Skill contains portable wrappers, not duplicated algorithms. Runtime lookup order is `UI_DISMANTLER_RUNTIME_ROOT`, Skill-local locator, user locator, then development checkout. Install or refresh it from a built repository with:
+
+```bash
+npm run skill:install -- --target ~/.codex/skills/ui-dismantler --force
+```
+
+References:
+
+- `references/spec.md` — static and Gold+ quality contract;
+- `references/manifest_schema.md` — analyzer output;
+- `references/patterns.md` — optional structural-detector evidence, never case rules.

@@ -1,6 +1,6 @@
 # 强约束规范（spec.md）
 
-所有由本 skill 生成的组件库必须遵循以下 9 项强约束。`validate_lib.py` 据此校验。
+所有由本 Skill 生成的组件库必须遵循以下 10 项静态强约束，并通过正式 `component-accept` Gold+ 验收。静态校验只是完整验收的一部分。
 
 ## 1. 命名前缀
 
@@ -40,7 +40,13 @@
 
 校验：生成库的 `examples/*.html` 必须能通过替换 JSON 数据生成不同内容卡片。
 
-## 4. 响应式三档
+## 4. 生命周期清理
+
+- 使用 `setInterval`、`requestAnimationFrame`、`document.addEventListener` 或 `window.addEventListener` 时，必须暴露 `destroy`、`unmount` 或 `dispose` 生命周期边界
+- 清理边界必须取消定时器/动画帧并移除全局监听器
+- `mount()` 返回实例时，清理方法应属于该实例；不得只依赖页面刷新回收副作用
+
+## 5. 响应式三档
 
 必须含三档 `@media` 断点（即使原案例只有 PC 也要补全）：
 
@@ -50,7 +56,7 @@
 | WISE | `max-width: 500px` | 380×456 | 单栏、隐藏次要面板、控件缩小 |
 | 极端 | `max-width: 320px, max-height: 380px` | 100%（min 280×340） | 字号缩小、弹窗替代面板、隐藏计数 |
 
-## 5. A11y
+## 6. A11y
 
 | 元素 | 要求 |
 |---|---|
@@ -61,21 +67,21 @@
 | 图标按钮 | `aria-label` |
 | 关闭 | ESC 键 + 点击遮罩 + X 按钮 三选一以上 |
 
-## 6. 主题可定制
+## 7. 主题可定制
 
 - 所有颜色必须经 CSS 变量，**禁止**在样式规则中硬编码 `#hex` 或 `rgb()`
 - 渐变中的颜色也必须引用变量：`linear-gradient(var(--sg-paper), var(--sg-soft))`
 - 唯一例外：纯黑白透明叠加（如 `rgba(0,0,0,0.75)` 蒙版）可硬编码
 - 校验：`grep -E '#[0-9a-fA-F]{3,8}' src/*.css` 只应出现在 `:root` 变量定义和注释中
 
-## 7. 零依赖
+## 8. 零依赖
 
 - 禁止 `<script src="...">` 引入外部 JS（含 CDN）
 - 禁止 `<link rel="stylesheet" href="https://...">` 引入外部 CSS
 - 唯一例外：字体 CDN（`font-family` 引用的 Google Fonts 等）
 - 生成的 `.css`/`.js` 之间可互相引用，但不得依赖第三方库
 
-## 8. 文档完备
+## 9. 文档完备
 
 每个生成的组件库必须含：
 
@@ -84,7 +90,7 @@
 | `README.md` | 快速开始 + API + 数据契约 + 主题定制说明 |
 | `docs/设计规范.md` | 主题色令牌表 + Tab 结构 + 交互模式 + 逻辑设置 |
 
-## 9. 类名对齐
+## 10. 类名对齐
 
 JS 中 `el()` 调用和 `class=` 字面量引用的 `sg-*` 类名，必须在 `src/*.css` 中有对应的 `.sg-*` 规则定义。
 
@@ -94,23 +100,42 @@ JS 中 `el()` 调用和 `class=` 字面量引用的 `sg-*` 类名，必须在 `s
 - 动态拼接的 ID 前缀（`sg-tab-` + tabId、`sg-panel-` + viewId）不是类名，不在此约束范围
 - 语义基类（如 `sg-tl-prev`/`sg-tl-next` 用于组合选择器，CSS 定义带后缀的变体 `sg-tl-prev-pc`/`sg-tl-prev-mobile`）不报
 
-## 校验脚本行为
+## 正式验收行为
 
-`validate_lib.py <组件库目录>` 逐项检查，输出：
+先从安装 Skill 目录运行工具预检，再执行固定阈值验收：
 
+```bash
+export UI_DISMANTLER_SKILL_ROOT="<absolute directory containing SKILL.md>"
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/tool_preflight.py"
+python3 "$UI_DISMANTLER_SKILL_ROOT/scripts/run_ts.py" component-accept \
+  <original.html> --lib <组件库目录> \
+  --scenarios <scenarios.json> \
+  --viewports desktop,tablet,mobile \
+  --visual-artifacts /tmp/ui-dismantler-artifacts/<run-id>
 ```
-[PASS] 1. 命名前缀
-[PASS] 2. CSS 变量归一化
-[FAIL] 3. 数据分离 - examples/example.html 中发现硬编码 URL
-  ↳ src/glossary.js:142  img.src = 'https://...'
-[PASS] 4. 响应式三档
-...
-[PASS] 9. 类名对齐
+
+无交互页面可省略 `--scenarios`；存在交互但缺少正式场景时必须失败。Canvas/WebGL 输入必须显式使用经过审查的 `--resource-profile canvas`。
+
+正式验收要求：
+
+- 10 项静态约束全部通过；
+- runtime selector coverage = 1；
+- roundtrip overall ≥ 0.85、structure ≥ 0.7、text ≥ 0.8；
+- interaction coverage ≥ 0.8；
+- computed style ≥ 0.98、pixel diff ≤ 0.02；
+- runtime、resource、navigation、network、font、stability、blocking handle 均无失败；
+- source readiness 为 `ready`。
+
+成功后必须存在：
+
+```text
+<组件库目录>/.ui-dismantler/quality-report.json
+<组件库目录>/.ui-dismantler/acceptance-receipt.json
 ```
 
-退出码：全过 0，有失败 1。
+只有 receipt 中 `status="accepted"` 且 `accepted=true` 才可交付。工具不可用、人工浏览器检查、静态全绿或 DOM/text 全绿都不能替代该 receipt。
 
-## 10. 组件片映射表（按组件切分生成 CSS）
+## 11. 组件片映射表（按组件切分生成 CSS）
 
 CSS 按"组件边界"切分为独立片，每片 100-300 行，逐片生成后拼接为单文件。`view type -> 组件片`映射规则：
 

@@ -1,5 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { parse } from "acorn";
+import { simple } from "acorn-walk";
 import { extractRootVariables, parseCssRules } from "../core/css.js";
 import type { Manifest, ValidationReport, ValidationResult } from "../types.js";
 
@@ -36,6 +38,64 @@ function classesFromJs(js: string): Set<string> {
   return result;
 }
 
+const CONTENT_DEFAULT_KEYS = new Set(["brand", "title", "headline", "description", "copy", "body", "kicker", "eyebrow", "announcement", "copyright", "logo", "logotext", "wordmark"]);
+
+function staticObject(node: any): any | undefined {
+  if (!node) return undefined;
+  if (node.type === "ObjectExpression") return node;
+  if (node.type === "CallExpression" && node.arguments?.length === 1 && node.callee?.type === "MemberExpression" && node.callee.object?.name === "Object" && node.callee.property?.name === "freeze") return staticObject(node.arguments[0]);
+  return undefined;
+}
+
+function propertyName(node: any): string | undefined {
+  if (!node || node.computed) return undefined;
+  if (node.key?.type === "Identifier") return node.key.name;
+  if (node.key?.type === "Literal" && typeof node.key.value === "string") return node.key.value;
+  return undefined;
+}
+
+function nonNeutralDefaultIssues(js: string): string[] {
+  const issues: string[] = [];
+  try {
+    const ast = parse(js, { ecmaVersion: "latest", sourceType: "script", allowHashBang: true }) as any;
+    simple(ast, {
+      VariableDeclarator(node: any) {
+        const name = node.id?.type === "Identifier" ? node.id.name : "";
+        if (!/(?:DEFAULT|EMPTY|INITIAL)(?:_.*)?(?:STATE|OPTIONS|DATA|S)?$/i.test(name)) return;
+        const root = staticObject(node.init);
+        if (!root) return;
+        const visit = (value: any, path: readonly string[]): void => {
+          if (!value || issues.length >= 5) return;
+          if (value.type === "ObjectExpression") {
+            for (const property of value.properties ?? []) {
+              if (property.type !== "Property") continue;
+              const key = propertyName(property);
+              if (key) visit(property.value, [...path, key]);
+            }
+            return;
+          }
+          if (value.type === "ArrayExpression") {
+            for (const element of value.elements ?? []) visit(element, path);
+            return;
+          }
+          if (value.type !== "Literal" || typeof value.value !== "string" || !value.value.trim()) return;
+          const normalizedPath = path.map((part) => part.toLowerCase());
+          const contentPath = normalizedPath.some((part) => CONTENT_DEFAULT_KEYS.has(part));
+          const text = value.value.trim();
+          const neutralPlaceholder = /^(?:#|\/|about:blank)$/i.test(text);
+          const longCopy = text.length >= 48;
+          const businessUrl = /^https?:\/\//i.test(text) && !/example\.(?:test|invalid)|w3\.org/i.test(text);
+          if ((contentPath && !neutralPlaceholder) || longCopy || businessUrl) issues.push(`${name}.${path.join(".")} 含非中性默认内容「${text.slice(0, 48)}${text.length > 48 ? "…" : ""}」`);
+        };
+        visit(root, []);
+      },
+    });
+  } catch {
+    // Runtime syntax is checked separately. Avoid turning parser incompatibility into a false data-boundary failure.
+  }
+  return [...new Set(issues)];
+}
+
 export class LibraryValidator {
   readonly dir: string;
   readonly cssFiles: string[];
@@ -61,6 +121,7 @@ export class LibraryValidator {
     this.checkNaming();
     this.checkVariables();
     this.checkDataSeparation();
+    this.checkLifecycleCleanup();
     this.checkResponsive();
     this.checkA11y();
     this.checkTheme();
@@ -100,8 +161,22 @@ export class LibraryValidator {
     if (!/(?:mount|create)\s*\([^)]*[,)]/.test(this.js)) issues.push("JS 未体现 mount/create 数据入口");
     const hugeLiteral = /(?:const|let|var)\s+\w+\s*=\s*\[\s*\{[\s\S]{1200,}\]/.test(this.js);
     if (hugeLiteral) issues.push("JS 内含疑似硬编码大数据数组，应从 mount(options.data) 注入");
+    issues.push(...nonNeutralDefaultIssues(this.js));
     if (this.js.includes("document.write")) issues.push("不应使用 document.write 注入数据");
-    this.record("data-separation", "3. 数据与逻辑分离", !issues.length, issues.join("；") || "渲染逻辑接受外部数据且未发现大段内嵌数据");
+    this.record("data-separation", "3. 数据与逻辑分离", !issues.length, issues.slice(0, 5).join("；") || "渲染逻辑接受外部数据且默认状态保持中性");
+  }
+
+  private checkLifecycleCleanup(): void {
+    const longLivedEffects = [
+      ["setInterval", /\bsetInterval\s*\(/],
+      ["requestAnimationFrame", /\brequestAnimationFrame\s*\(/],
+      ["document listener", /\bdocument\.addEventListener\s*\(/],
+      ["window listener", /\b(?:window|global)\.addEventListener\s*\(/],
+    ] as const;
+    const active = longLivedEffects.filter(([, expression]) => expression.test(this.js)).map(([label]) => label);
+    const cleanup = /(?:prototype\.)?(?:destroy|unmount|dispose)\s*=\s*function|\b(?:destroy|unmount|dispose)\s*:\s*function|\breturn\s*\{[\s\S]{0,400}\b(?:destroy|unmount|dispose)\b/.test(this.js);
+    const passed = active.length === 0 || cleanup;
+    this.record("lifecycle-cleanup", "4. 生命周期清理", passed, passed ? active.length ? `${active.join("、")} 均有 destroy/unmount/dispose 边界` : "未发现需要清理的长生命周期副作用" : `检测到 ${active.join("、")}，但未暴露 destroy/unmount/dispose`);
   }
 
   private checkResponsive(): void {
@@ -111,7 +186,7 @@ export class LibraryValidator {
     const hasWise = widths.some((value) => value <= 500);
     const hasExtreme = widths.some((value) => value <= 320) || heights.some((value) => value <= 380);
     const passed = hasWise && hasExtreme;
-    this.record("responsive", "4. 响应式三档", passed, passed ? `含 ${mediaCount} 个 @media 断点（max-width: ${[...new Set(widths)].sort((a, b) => a - b).join(", ")}）` : `${hasWise ? "" : "缺少 WISE 断点（≤500px）"}${!hasWise && !hasExtreme ? "；" : ""}${hasExtreme ? "" : "缺少极端断点（≤320px 或高度≤380px）"}`);
+    this.record("responsive", "5. 响应式三档", passed, passed ? `含 ${mediaCount} 个 @media 断点（max-width: ${[...new Set(widths)].sort((a, b) => a - b).join(", ")}）` : `${hasWise ? "" : "缺少 WISE 断点（≤500px）"}${!hasWise && !hasExtreme ? "；" : ""}${hasExtreme ? "" : "缺少极端断点（≤320px 或高度≤380px）"}`);
   }
 
   private checkA11y(): void {
@@ -126,7 +201,7 @@ export class LibraryValidator {
     const hasTabInteraction = /(?:data-tab|aria-selected|aria-controls|role=["'](?:tab|tabpanel)|\btabpanel\b|[.#]sg-(?:tabs?|tab-[\w-]+))/i.test(accessibilitySource);
     if (hasTabInteraction && !/aria-(?:selected|controls|labelledby)|role=["'](?:tab|tabpanel)/i.test(accessibilitySource)) issues.push("Tab/Panel 交互缺少 ARIA 关联");
     if (/(?:modal|dialog)/i.test(this.js) && !/aria-(?:modal|label|labelledby)|role=["']dialog/i.test(accessibilitySource)) issues.push("Modal 交互缺少 dialog ARIA 语义");
-    this.record("a11y", "5. A11y", !issues.length, issues.join("；") || "发现基础语言、图片、控件与复合交互可访问性标记");
+    this.record("a11y", "6. A11y", !issues.length, issues.join("；") || "发现基础语言、图片、控件与复合交互可访问性标记");
   }
 
   private checkTheme(): void {
@@ -146,14 +221,14 @@ export class LibraryValidator {
       issues.push(`硬编码颜色 ${match[0]}（应走变量）`);
       if (issues.length >= 5) break;
     }
-    this.record("theme", "6. 主题可定制", !issues.length, issues.join("；") || "所有颜色经变量，无硬编码 #hex（:root 与 var fallback 除外）");
+    this.record("theme", "7. 主题可定制", !issues.length, issues.join("；") || "所有颜色经变量，无硬编码 #hex（:root 与 var fallback 除外）");
   }
 
   private checkNoDependencies(): void {
     const issues: string[] = [];
     if (/(?:^|\n)\s*(?:import|require)\s*\(/m.test(this.js) || /(?:^|\n)\s*import\s+.+\s+from\s+["'][^./]/m.test(this.js)) issues.push("src/*.js 含第三方运行时依赖");
     if (this.htmlFiles.some((path) => /<script[^>]+src=["']https?:/i.test(readFileSync(path, "utf8")))) issues.push("example 依赖远程脚本");
-    this.record("no-deps", "7. 零依赖", !issues.length, issues.join("；") || "组件库运行时无需第三方依赖");
+    this.record("no-deps", "8. 零依赖", !issues.length, issues.join("；") || "组件库运行时无需第三方依赖");
   }
 
   private checkDocs(): void {
@@ -162,14 +237,14 @@ export class LibraryValidator {
     const issues: string[] = [];
     if (!existsSync(readme)) issues.push("缺少 README.md"); else if (!readFileSync(readme, "utf8").includes("mount")) issues.push("README.md 缺少 mount API");
     if (!existsSync(spec)) issues.push("缺少 docs/设计规范.md"); else if (!readFileSync(spec, "utf8").includes("主题色")) issues.push("设计规范.md 缺少主题色章节");
-    this.record("docs", "8. 文档完备", !issues.length, issues.join("；") || "README.md + docs/设计规范.md 齐全");
+    this.record("docs", "9. 文档完备", !issues.length, issues.join("；") || "README.md + docs/设计规范.md 齐全");
   }
 
   private checkClassAlignment(): void {
     const defined = classesFromSelectors(this.css);
     const used = classesFromJs(this.js);
     const orphans = [...used].filter((name) => !defined.has(name) && !SEMANTIC_BASE_CLASSES.has(name) && !DYNAMIC_PREFIXES.some((prefix) => name.startsWith(prefix))).sort();
-    this.record("class-alignment", "9. 类名对齐", !orphans.length, orphans.length ? orphans.slice(0, 5).map((name) => `JS 引用 .${name} 但 CSS 未定义`).join("；") : "JS 引用的 sg-* 类名均在 CSS 中定义");
+    this.record("class-alignment", "10. 类名对齐", !orphans.length, orphans.length ? orphans.slice(0, 5).map((name) => `JS 引用 .${name} 但 CSS 未定义`).join("；") : "JS 引用的 sg-* 类名均在 CSS 中定义");
   }
 }
 
@@ -182,7 +257,7 @@ export function appendRuntimeSelectorCheck(
   const result = coverage
     ? {
         id: "selector-runtime",
-        name: "10. 选择器实际命中",
+        name: "11. 选择器实际命中",
         passed: coverage.passed,
         detail: coverage.passed
           ? `所有需匹配的 sg-* DOM 类均有实际规则（${(coverage.coverageRate * 100).toFixed(1)}%）${coverage.exemptClasses.length ? `；运行时状态标记豁免：${coverage.exemptClasses.map((item) => item.selector).join("、")}` : ""}`
@@ -190,7 +265,7 @@ export function appendRuntimeSelectorCheck(
       }
     : {
         id: "selector-runtime",
-        name: "10. 选择器实际命中",
+        name: "11. 选择器实际命中",
         passed: false,
         detail: "未执行真实浏览器选择器命中检查",
       };
