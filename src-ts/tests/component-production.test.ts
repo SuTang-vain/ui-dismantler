@@ -16,6 +16,7 @@ import {
   runComponentLibraryRuntimeSmoke,
   validateComponentLibraryBuildPlan,
   type ComponentLibraryBuildPlanInput,
+  type ComponentLibraryStateEvidenceMap,
 } from "../production/component-library/index.js";
 import type { PrimitiveDomCompilationGraph } from "../skills/primitive-dom.js";
 import type { ComponentPlanningReport } from "../planning/components.js";
@@ -223,7 +224,7 @@ test("Visual Target Plan adapter consumes scoped source style evidence and remai
 });
 
 
-test("State and Data Surface evidence enrich a Build Plan without embedding values or bypassing review", async () => {
+test("State and Data Surface evidence does not invent runtime interactions without Primitive ownership", async () => {
   const directory = await mkdtemp(join("/tmp", "ui-dismantler-build-evidence-"));
   try {
     const configPath = join(directory, "config.json");
@@ -261,16 +262,12 @@ test("State and Data Surface evidence enrich a Build Plan without embedding valu
       } as never,
     });
     const validation = validateComponentLibraryBuildPlan(enriched);
-    assert.equal(enriched.interactions.length, 1);
-    assert.equal(enriched.interactions[0]?.target, "open");
-    assert.equal(enriched.interactions[0]?.materialized, false);
-    assert.equal(enriched.interactions[0]?.executionEvidence?.status, "verified");
-    assert.equal(enriched.interactions[0]?.executionEvidence?.transitionKind, "set-literal");
+    assert.equal(enriched.interactions.length, 0);
     assert.equal(enriched.dataBindings.length, 1);
     assert.equal(enriched.dataBindings[0]?.externalOnly, true);
     assert.equal(enriched.dataBindings.every((binding) => !("value" in binding)), true);
     assert.equal(validation.ready, false);
-    assert.equal(validation.blockers.some((issue) => issue.message.includes("metadata-only")), true);
+    assert.equal(validation.blockers.some((issue) => issue.message.includes("not materialized")), true);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -584,4 +581,60 @@ test("Reviewed v-model binding updates state and dependent DOM without unreviewe
   const blockedModifier = enrichComponentLibraryBuildPlan(modifierPlan, { primitiveGraph: modifierGraph, state });
   assert.equal(blockedModifier.reviewRequired, true);
   assert.equal(blockedModifier.unresolved.some((reason) => reason.includes("model binding requires reviewed state materialization")), true);
+});
+
+test("Owner-scoped state evidence isolates same-named handlers across generated components", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-owner-state-runtime-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const component = (ownerId: string, nodeId: string, name: string) => ({
+    componentId: ownerId, componentName: name, componentFile: `${name}.vue`, reviewRequired: false,
+    compilation: {
+      schemaVersion: "1.0" as const, kind: "primitive-dom-compilation" as const, roots: [nodeId],
+      nodes: [{ id: nodeId, sourceNodeId: `${nodeId}:source`, order: 0, sourceTag: "button", componentName: name, renderTag: "button", renderStrategy: "button" as const, classes: [`sg-${name.toLowerCase()}`], attributes: { type: "button" }, inlineStyle: {}, content: [{ kind: "text" as const, value: name }], conditions: [], loops: [] }],
+      styleRules: [], interactions: [{ sourceNodeId: `${nodeId}:source`, event: "click", expression: "toggle", modifiers: [], target: `[data-primitive-node=\"${nodeId}\"]` }],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 1, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 1, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    },
+  });
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [component("component:a", "node:a", "Alpha"), component("component:b", "node:b", "Beta")],
+    metrics: { components: 2, sourceNodes: 2, compiledNodes: 2, primitiveNodes: 2, inlineStyleRules: 0, responsiveRules: 0, interactionBindings: 2, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  const basePlan = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Owner State Components", packageName: "owner-state-components" });
+  const alphaState: SfcStateResponsibility = {
+    schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript", initialState: { active: false },
+    handlers: [{ handler: "toggle", writes: [{ path: "active", value: true, expression: "active.value = true", sourceLine: 1, confidence: "high" }], helperCalls: [], sourceLine: 1 }], displayFunctions: [], unresolvedWrites: [],
+    metrics: { initialBindings: 1, handlers: 1, handlersWithWrites: 1, stateWrites: 1, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+  };
+  const betaState: SfcStateResponsibility = {
+    schemaVersion: "1.0", kind: "sfc-state-responsibility", parsed: true, parseMode: "javascript", initialState: { active: true },
+    handlers: [{ handler: "toggle", writes: [{ path: "active", value: false, expression: "active.value = false", sourceLine: 1, confidence: "high" }], helperCalls: [], sourceLine: 1 }], displayFunctions: [], unresolvedWrites: [],
+    metrics: { initialBindings: 1, handlers: 1, handlersWithWrites: 1, stateWrites: 1, displayFunctions: 0, unresolvedWrites: 0 }, reviewReasons: [],
+  };
+  const ambiguous = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: graph, state: alphaState });
+  assert.equal(ambiguous.reviewRequired, true);
+  assert.equal(ambiguous.unresolved.some((reason) => reason.includes("unscoped state evidence is ambiguous")), true);
+
+  const stateMap: ComponentLibraryStateEvidenceMap = {
+    schemaVersion: "1.0", kind: "component-state-evidence-map",
+    entries: [{ ownerId: "component:a", responsibility: alphaState }, { ownerId: "component:b", responsibility: betaState }],
+  };
+  const enriched = enrichComponentLibraryBuildPlan(basePlan, { primitiveGraph: graph, stateMap });
+  assert.equal(validateComponentLibraryBuildPlan(enriched).ready, true);
+  assert.equal(enriched.interactions.every((binding) => binding.materialized && binding.ownerId), true);
+  const runtime = enriched.files.find((file) => file.role === "runtime")!.content;
+  const dom = new JSDOM(`<!doctype html><div id="alpha"></div><div id="beta"></div>`, { runScripts: "outside-only", pretendToBeVisual: true });
+  dom.window.eval(runtime);
+  const api = (dom.window as unknown as { OwnerStateComponents: { mount: (host: Element, options: unknown) => { state: { active: boolean }; unmount: () => void } } }).OwnerStateComponents;
+  const alpha = api.mount(dom.window.document.getElementById("alpha")!, { componentId: "component:a" });
+  const beta = api.mount(dom.window.document.getElementById("beta")!, { componentId: "component:b" });
+  assert.equal(alpha.state.active, false);
+  assert.equal(beta.state.active, true);
+  dom.window.document.querySelector<HTMLButtonElement>("#alpha [data-primitive-node='node:a']")!.click();
+  dom.window.document.querySelector<HTMLButtonElement>("#beta [data-primitive-node='node:b']")!.click();
+  assert.equal(alpha.state.active, true);
+  assert.equal(beta.state.active, false);
+  alpha.unmount();
+  beta.unmount();
+  dom.window.close();
 });

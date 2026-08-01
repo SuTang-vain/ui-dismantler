@@ -156,6 +156,19 @@ node dist-ts/cli.js component-build-enrich \
   --out /tmp/component-library.reviewed-build-plan.json
 ```
 
+单组件可以继续使用 `--state`。多组件 Build Plan 必须改用 `--state-map`，以 `componentId` 明确绑定每个 `SfcStateResponsibility`；同名 handler 和相同 state path 不会跨 owner 共享。未限定 owner 的 state evidence 在多组件计划中会保持阻断。
+
+```json
+{
+  "schemaVersion": "1.0",
+  "kind": "component-state-evidence-map",
+  "entries": [
+    { "ownerId": "component:alpha", "responsibility": {} },
+    { "ownerId": "component:beta", "responsibility": {} }
+  ]
+}
+```
+
 当 Data Surface 是 reviewed component-prop 且 Primitive DOM 提供了可解析、与组件 owner 对齐的 `v-for` 证据时，集合可以通过 `mount(..., { data })` 重复物化；静态 binding、API fixture 和 unresolved collection 仍然阻断。`v-if`/`v-show` 仅在 Primitive graph identity 一致、条件表达式属于受限语法、依赖路径存在于 reviewed initial state 时解除阻断；`v-model` 也必须绑定到 reviewed initial state，运行时才会执行输入状态更新、依赖 DOM 重渲染和焦点恢复。`v-else`/`v-else-if`、`v-model` modifiers、函数调用和未知表达式继续 fail-closed。经审核的 state transition 可在运行时触发重新渲染，并通过 `--quality-html`、`--quality-scenarios` 和可选 `--quality-visual` 接入现有 Quality Gate。业务数据值仍不会写入 publishable runtime。后续再将旧 visual target generator 投影为同一个 Build Plan，不新增案例专用生成规则。
 
 ## 当前内置 Skill

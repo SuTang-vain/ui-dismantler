@@ -22,6 +22,24 @@ export interface PrimitiveDomProjectionOptions extends ComponentLibraryProjectio
   readonly additionalReviewReasons?: readonly string[];
 }
 
+export interface ComponentLibraryStateEvidenceEntry {
+  readonly ownerId: string;
+  readonly responsibility: SfcStateResponsibility;
+}
+
+export interface ComponentLibraryStateEvidenceMap {
+  readonly schemaVersion: "1.0";
+  readonly kind: "component-state-evidence-map";
+  readonly entries: readonly ComponentLibraryStateEvidenceEntry[];
+}
+
+export interface ComponentLibraryEnrichmentEvidence {
+  readonly state?: SfcStateResponsibility;
+  readonly stateMap?: ComponentLibraryStateEvidenceMap;
+  readonly dataSurface?: DataSurfaceManifest;
+  readonly primitiveGraph?: PrimitiveDomCompilationGraph;
+}
+
 function packageSlug(value: string): string {
   const normalized = value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   return normalized || "component-library";
@@ -66,7 +84,7 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
 (function (global) {
   "use strict";
   var COMPONENTS = JSON.parse(${JSON.stringify(JSON.stringify(components))});
-  var INTERACTION_CONFIG = { initialState: {}, bindings: [], dataBindings: [] }; /*__UI_DISMANTLER_INTERACTION_CONFIG__*/
+  var INTERACTION_CONFIG = { initialState: {}, initialStateByOwner: {}, bindings: [], dataBindings: [] }; /*__UI_DISMANTLER_INTERACTION_CONFIG__*/
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function pathParts(path) { return String(path || "").replace(/^this\\./, "").split(".").filter(Boolean); }
   function statePathParts(path) { return pathParts(path).filter(function (part) { return part !== "value"; }); }
@@ -214,6 +232,7 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   function bindInteractions(instance) {
     (INTERACTION_CONFIG.bindings || []).forEach(function (binding) {
       if (!binding.sourceNodeId || !binding.event) return;
+      if (binding.ownerId && instance.component && binding.ownerId !== instance.component.id) return;
       instance.root.querySelectorAll('[data-primitive-node="' + binding.sourceNodeId.replace(/"/g, '\\"') + '"]').forEach(function (target) {
         target.addEventListener(binding.event, function (event) {
           if ((binding.modifiers || []).indexOf("prevent") >= 0) event.preventDefault();
@@ -235,7 +254,8 @@ function primitiveRuntime(namespace: string, graph: PrimitiveDomCompilationGraph
   function create(options) {
     var settings = options || {}; var component = resolveComponent(settings); var root = document.createElement("section");
     root.className = "sg-component-library"; root.setAttribute("data-component-id", component ? component.id : "unresolved");
-    var instance = { root: root, component: component, state: clone(INTERACTION_CONFIG.initialState || {}), data: settings.data || {} };
+    var ownerState = component && INTERACTION_CONFIG.initialStateByOwner ? INTERACTION_CONFIG.initialStateByOwner[component.id] : undefined;
+    var instance = { root: root, component: component, state: clone(ownerState || INTERACTION_CONFIG.initialState || {}), data: settings.data || {} };
     if (settings.state && typeof settings.state === "object") Object.keys(settings.state).forEach(function (key) { instance.state[key] = settings.state[key]; });
     renderInto(instance);
     instance.unmount = function () { if (root.parentNode) root.parentNode.removeChild(root); };
@@ -292,6 +312,7 @@ export async function primitiveDomCompilationToBuildPlan(
     library: { name: options.libraryName, packageName: options.packageName },
     interactions: graph.components.flatMap((component) => component.compilation.interactions.map((binding): ComponentLibraryInteractionBinding => ({
       id: `${component.componentName}:${binding.sourceNodeId}:${binding.event}`,
+      ownerId: component.componentId,
       sourceNodeId: component.compilation.nodes.find((node) => node.sourceNodeId === binding.sourceNodeId)?.id ?? binding.sourceNodeId,
       event: binding.event,
       expression: binding.expression,
@@ -390,43 +411,94 @@ function hasInitialStatePath(state: SfcStateResponsibility["initialState"], path
 interface PrimitiveStateEvidence {
   readonly conditionsReady: boolean;
   readonly modelsReady: boolean;
-  readonly paths: string[];
+  readonly pathsByOwner: ReadonlyMap<string, readonly string[]>;
 }
 
-function primitiveStateEvidence(graph: PrimitiveDomCompilationGraph, state: SfcStateResponsibility | undefined): PrimitiveStateEvidence {
-  const nodes = graph.components.flatMap((component) => component.compilation.nodes);
-  const conditionalNodes = nodes.filter((node) => node.conditions.length > 0);
-  const modelNodes = nodes.filter((node) => Object.keys(node.attributes).some((name) => name.startsWith("v-model")));
-  if (conditionalNodes.length === 0 && modelNodes.length === 0) return { conditionsReady: true, modelsReady: true, paths: [] };
-  const stateReady = Boolean(state?.parsed && state.reviewReasons.length === 0 && state.unresolvedWrites.length === 0);
-  if (!stateReady || !state) return { conditionsReady: conditionalNodes.length === 0, modelsReady: modelNodes.length === 0, paths: [] };
-  const paths = new Set<string>();
+function primitiveStateEvidence(graph: PrimitiveDomCompilationGraph, states: ReadonlyMap<string, SfcStateResponsibility>): PrimitiveStateEvidence {
+  const pathsByOwner = new Map<string, readonly string[]>();
   let conditionsReady = true;
-  for (const node of conditionalNodes) {
-    const directive = node.conditionDirective;
-    if (!directive || !["if", "show"].includes(directive.kind) || !directive.expression) { conditionsReady = false; break; }
-    const dependencies = conditionDependencies(directive.expression);
-    if (!dependencies || dependencies.some((path) => !hasInitialStatePath(state.initialState, path))) { conditionsReady = false; break; }
-    dependencies.forEach((path) => paths.add(path));
-  }
   let modelsReady = true;
-  for (const node of modelNodes) {
-    const bindings = Object.entries(node.attributes).filter(([name]) => name.startsWith("v-model"));
-    if (bindings.length !== 1 || bindings[0][0] !== "v-model" || typeof bindings[0][1] !== "string") { modelsReady = false; break; }
-    const path = simpleRuntimePath(bindings[0][1]);
-    if (!path || !hasInitialStatePath(state.initialState, path)) { modelsReady = false; break; }
-    paths.add(path);
+  for (const component of graph.components) {
+    const conditionalNodes = component.compilation.nodes.filter((node) => node.conditions.length > 0);
+    const modelNodes = component.compilation.nodes.filter((node) => Object.keys(node.attributes).some((name) => name.startsWith("v-model")));
+    if (conditionalNodes.length === 0 && modelNodes.length === 0) continue;
+    const state = states.get(component.componentId);
+    const stateReady = Boolean(state?.parsed && state.reviewReasons.length === 0 && state.unresolvedWrites.length === 0);
+    if (!stateReady || !state) {
+      if (conditionalNodes.length > 0) conditionsReady = false;
+      if (modelNodes.length > 0) modelsReady = false;
+      continue;
+    }
+    const paths = new Set<string>();
+    for (const node of conditionalNodes) {
+      const directive = node.conditionDirective;
+      if (!directive || !["if", "show"].includes(directive.kind) || !directive.expression) { conditionsReady = false; continue; }
+      const dependencies = conditionDependencies(directive.expression);
+      if (!dependencies || dependencies.some((path) => !hasInitialStatePath(state.initialState, path))) { conditionsReady = false; continue; }
+      dependencies.forEach((path) => paths.add(path));
+    }
+    for (const node of modelNodes) {
+      const bindings = Object.entries(node.attributes).filter(([name]) => name.startsWith("v-model"));
+      if (bindings.length !== 1 || bindings[0][0] !== "v-model" || typeof bindings[0][1] !== "string") { modelsReady = false; continue; }
+      const path = simpleRuntimePath(bindings[0][1]);
+      if (!path || !hasInitialStatePath(state.initialState, path)) { modelsReady = false; continue; }
+      paths.add(path);
+    }
+    if (paths.size > 0) pathsByOwner.set(component.componentId, [...paths].sort());
   }
-  return { conditionsReady, modelsReady, paths: [...paths].sort() };
+  return { conditionsReady, modelsReady, pathsByOwner };
 }
 
 function handlerName(expression: string): string | undefined {
   return expression.trim().match(/^([A-Za-z_$][\w$]*)\s*(?:\([^)]*\))?$/)?.[1];
 }
 
+const LEGACY_STATE_OWNER = "__legacy__";
+
+function resolveOwnerStates(
+  plan: ComponentLibraryBuildPlan,
+  evidence: ComponentLibraryEnrichmentEvidence,
+  primitiveGraphMatchesPlan: boolean,
+): { states: Map<string, SfcStateResponsibility>; blockers: string[] } {
+  const states = new Map<string, SfcStateResponsibility>();
+  const blockers: string[] = [];
+  if (evidence.state && evidence.stateMap) blockers.push("state-responsibility: provide either state or stateMap, not both");
+  const knownOwners = new Set<string>();
+  if (evidence.primitiveGraph && primitiveGraphMatchesPlan) evidence.primitiveGraph.components.forEach((component) => knownOwners.add(component.componentId));
+  else plan.interactions.forEach((binding) => { if (binding.ownerId) knownOwners.add(binding.ownerId); });
+  if (evidence.stateMap) {
+    if (evidence.stateMap.schemaVersion !== "1.0" || evidence.stateMap.kind !== "component-state-evidence-map" || !Array.isArray(evidence.stateMap.entries)) {
+      blockers.push("state-responsibility: invalid component state evidence map contract");
+      return { states, blockers };
+    }
+    for (const entry of evidence.stateMap.entries) {
+      if (!entry || !entry.responsibility) { blockers.push("state-responsibility: state map entry requires responsibility"); continue; }
+      if (!entry.ownerId.trim()) { blockers.push("state-responsibility: state map ownerId must not be empty"); continue; }
+      if (states.has(entry.ownerId)) { blockers.push(`state-responsibility: duplicate state owner ${entry.ownerId}`); continue; }
+      if (knownOwners.size > 0 && !knownOwners.has(entry.ownerId)) { blockers.push(`state-responsibility: unknown state owner ${entry.ownerId}`); continue; }
+      states.set(entry.ownerId, entry.responsibility);
+    }
+  } else if (evidence.state) {
+    if (knownOwners.size === 1) states.set([...knownOwners][0], evidence.state);
+    else if (knownOwners.size === 0 && plan.interactions.length <= 1) states.set(LEGACY_STATE_OWNER, evidence.state);
+    else blockers.push(`state-responsibility: unscoped state evidence is ambiguous across ${knownOwners.size || plan.interactions.length} owners; provide stateMap`);
+  }
+  for (const [ownerId, state] of states) {
+    blockers.push(...state.reviewReasons.map((reason) => `state-responsibility:${ownerId}: ${reason}`));
+    blockers.push(...state.unresolvedWrites.map((write) => `state-responsibility:${ownerId} unresolved write ${write.handler}:${write.path}`));
+  }
+  return { states, blockers };
+}
+
+function stateForBinding(binding: ComponentLibraryInteractionBinding, states: ReadonlyMap<string, SfcStateResponsibility>): SfcStateResponsibility | undefined {
+  if (binding.ownerId) return states.get(binding.ownerId);
+  if (states.has(LEGACY_STATE_OWNER)) return states.get(LEGACY_STATE_OWNER);
+  return states.size === 1 ? states.values().next().value : undefined;
+}
+
 function scalarStateForRuntime(state: SfcStateResponsibility["initialState"], bindings: readonly ComponentLibraryInteractionBinding[], conditionPaths: readonly string[]): Record<string, import("../../types.js").JsonValue> {
   const output: Record<string, import("../../types.js").JsonValue> = {};
-  const normalize = (path: string): string[] => path.replace(/^this\./, "").replace(/\.value$/, "").split(".").filter(Boolean);
+  const normalize = (path: string): string[] => path.replace(/^this\./, "").split(".").filter((part) => Boolean(part) && part !== "value");
   const read = (path: string): import("../../types.js").JsonValue | undefined => {
     let current: import("../../types.js").JsonValue = state;
     for (const part of normalize(path)) {
@@ -453,85 +525,82 @@ function injectInteractionRuntime(
   plan: ComponentLibraryBuildPlan,
   interactions: readonly ComponentLibraryInteractionBinding[],
   dataBindings: readonly ComponentLibraryDataBinding[],
-  state: SfcStateResponsibility["initialState"],
-  conditionPaths: readonly string[] = [],
+  states: ReadonlyMap<string, SfcStateResponsibility>,
+  statePathsByOwner: ReadonlyMap<string, readonly string[]> = new Map(),
 ): { files: ComponentLibraryBuildPlan["files"]; interactions: ComponentLibraryInteractionBinding[]; dataBindings: ComponentLibraryDataBinding[]; runtimePatched: boolean } {
   const runtimeIndex = plan.files.findIndex((file) => file.role === "runtime" && file.content.includes("/*__UI_DISMANTLER_INTERACTION_CONFIG__*/"));
   if (runtimeIndex < 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
   const materializableInteractions = interactions.filter((binding) => binding.sourceNodeId && binding.executionEvidence?.status === "verified" && binding.reviewed);
   const materializableData = dataBindings.filter((binding) => binding.sourceKind === "component-prop" && binding.reviewed && !binding.materialized);
-  if (materializableInteractions.length === 0 && materializableData.length === 0 && conditionPaths.length === 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
+  const statePathCount = [...statePathsByOwner.values()].reduce((sum, paths) => sum + paths.length, 0);
+  if (materializableInteractions.length === 0 && materializableData.length === 0 && statePathCount === 0) return { files: plan.files, interactions: [...interactions], dataBindings: [...dataBindings], runtimePatched: false };
   const materializedInteractions = interactions.map((binding) => materializableInteractions.includes(binding) ? { ...binding, materialized: true } : binding);
   const materializedDataBindings = dataBindings.map((binding) => materializableData.includes(binding) ? { ...binding, materialized: true } : binding);
+  const initialStateByOwner: Record<string, Record<string, import("../../types.js").JsonValue>> = {};
+  for (const [ownerId, state] of states) {
+    const ownerBindings = materializedInteractions.filter((binding) => binding.ownerId === ownerId || (!binding.ownerId && states.size === 1));
+    initialStateByOwner[ownerId] = scalarStateForRuntime(state.initialState, ownerBindings, statePathsByOwner.get(ownerId) ?? []);
+  }
+  const stateEntries = Object.entries(initialStateByOwner);
   const config = {
-    initialState: scalarStateForRuntime(state, materializedInteractions, conditionPaths),
+    initialState: stateEntries.length === 1 ? stateEntries[0][1] : {},
+    initialStateByOwner: Object.fromEntries(stateEntries.filter(([ownerId]) => ownerId !== LEGACY_STATE_OWNER)),
     bindings: materializedInteractions.filter((binding) => binding.materialized),
-    dataBindings: materializedDataBindings.filter((binding) => binding.materialized).map((binding) => ({ id: binding.id, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind })),
+    dataBindings: materializedDataBindings.filter((binding) => binding.materialized).map((binding) => ({ id: binding.id, ownerId: binding.ownerId, targetBinding: binding.targetBinding, sourceKind: binding.sourceKind })),
   };
   const files = [...plan.files];
   const runtime = files[runtimeIndex];
-  const content = runtime.content.replace(/var INTERACTION_CONFIG = \{ initialState: \{\}, bindings: \[\], dataBindings: \[\] \}; \/\*__UI_DISMANTLER_INTERACTION_CONFIG__\*\//, `var INTERACTION_CONFIG = JSON.parse(${JSON.stringify(JSON.stringify(config))}); /*__UI_DISMANTLER_INTERACTION_CONFIG__*/`);
+  const marker = /var INTERACTION_CONFIG = \{ initialState: \{\}, (?:initialStateByOwner: \{\}, )?bindings: \[\], dataBindings: \[\] \}; \/\*__UI_DISMANTLER_INTERACTION_CONFIG__\*\//;
+  const content = runtime.content.replace(marker, `var INTERACTION_CONFIG = JSON.parse(${JSON.stringify(JSON.stringify(config))}); /*__UI_DISMANTLER_INTERACTION_CONFIG__*/`);
   files[runtimeIndex] = { ...runtime, content, contentHash: sha256(content) };
   return { files, interactions: materializedInteractions, dataBindings: materializedDataBindings, runtimePatched: content !== runtime.content };
 }
 
 export function enrichComponentLibraryBuildPlan(
   plan: ComponentLibraryBuildPlan,
-  evidence: { readonly state?: SfcStateResponsibility; readonly dataSurface?: DataSurfaceManifest; readonly primitiveGraph?: PrimitiveDomCompilationGraph },
+  evidence: ComponentLibraryEnrichmentEvidence,
 ): ComponentLibraryBuildPlan {
   let interactions: ComponentLibraryInteractionBinding[] = [...plan.interactions];
   const dataBindings: ComponentLibraryDataBinding[] = [...plan.dataBindings];
   let unresolved = [...plan.unresolved];
   let files = [...plan.files];
-  if (evidence.state) {
-    unresolved.push(...evidence.state.reviewReasons.map((reason) => `state-responsibility: ${reason}`));
-    unresolved.push(...evidence.state.unresolvedWrites.map((write) => `state-responsibility unresolved write ${write.handler}:${write.path}`));
-    const mappedHandlers = new Set<string>();
-    interactions = interactions.flatMap((binding) => {
+  const primitiveGraphMatchesPlan = evidence.primitiveGraph ? plan.identity.sourceHash === sha256(JSON.stringify(evidence.primitiveGraph)) : false;
+  if (evidence.primitiveGraph && !primitiveGraphMatchesPlan) unresolved.push("primitive-dom: graph identity does not match build plan sourceHash");
+  const ownerStates = resolveOwnerStates(plan, evidence, primitiveGraphMatchesPlan);
+  unresolved.push(...ownerStates.blockers);
+  if (ownerStates.states.size > 0) {
+    interactions = interactions.map((binding): ComponentLibraryInteractionBinding => {
+      const state = stateForBinding(binding, ownerStates.states);
       const name = handlerName(binding.expression);
-      const handler = name ? evidence.state!.handlers.find((candidate) => candidate.handler === name) : undefined;
-      if (!handler) return [binding];
-      mappedHandlers.add(handler.handler);
-      return handler.writes.map((write, index): ComponentLibraryInteractionBinding => {
-        const execution = executeReviewedStateWrite(write, evidence.state!.initialState);
+      const handler = name && state ? state.handlers.find((candidate) => candidate.handler === name) : undefined;
+      if (!state || !handler) return binding;
+      if (handler.writes.length !== 1) {
         return {
           ...binding,
-          id: `${binding.id}:${write.path}:${index}`,
-          target: write.path,
-          reviewed: write.confidence === "high",
+          reviewed: false,
           materialized: false,
-          executionEvidence: {
-            status: execution.status === "materialized" ? "verified" : "blocked",
-            ...(execution.transition ? { transitionKind: execution.transition.kind } : {}),
-            ...(execution.mutationTarget ? { mutationTarget: execution.mutationTarget } : {}),
-            ...(execution.transition?.value !== undefined ? { transitionValue: execution.transition.value } : {}),
-            blockers: execution.blockers,
-          },
-          provenance: [...binding.provenance, { kind: "state-responsibility", reference: `handler:${handler.handler}:line:${handler.sourceLine}` }],
+          executionEvidence: { status: "blocked", blockers: [`handler ${handler.handler} has ${handler.writes.length} state writes; reviewed runtime requires exactly one`] },
+          provenance: [...binding.provenance, { kind: "state-responsibility", reference: `owner:${binding.ownerId ?? LEGACY_STATE_OWNER}:handler:${handler.handler}:line:${handler.sourceLine}` }],
         };
-      });
-    });
-    for (const handler of evidence.state.handlers.filter((candidate) => !mappedHandlers.has(candidate.handler))) {
-      for (const write of handler.writes) {
-        const execution = executeReviewedStateWrite(write, evidence.state.initialState);
-        interactions.push({
-          id: `state:${handler.handler}:${write.path}`,
-          event: "state-write",
-          expression: write.expression,
-          target: write.path,
-          reviewed: write.confidence === "high",
-          materialized: false,
-          executionEvidence: {
-            status: execution.status === "materialized" ? "verified" : "blocked",
-            ...(execution.transition ? { transitionKind: execution.transition.kind } : {}),
-            ...(execution.mutationTarget ? { mutationTarget: execution.mutationTarget } : {}),
-            ...(execution.transition?.value !== undefined ? { transitionValue: execution.transition.value } : {}),
-            blockers: execution.blockers,
-          },
-          provenance: [{ kind: "state-responsibility", reference: `handler:${handler.handler}:line:${handler.sourceLine}` }],
-        });
       }
-    }
+      const write = handler.writes[0];
+      const execution = executeReviewedStateWrite(write, state.initialState);
+      return {
+        ...binding,
+        id: `${binding.id}:${write.path}`,
+        target: write.path,
+        reviewed: write.confidence === "high" && execution.status === "materialized",
+        materialized: false,
+        executionEvidence: {
+          status: execution.status === "materialized" ? "verified" : "blocked",
+          ...(execution.transition ? { transitionKind: execution.transition.kind } : {}),
+          ...(execution.mutationTarget ? { mutationTarget: execution.mutationTarget } : {}),
+          ...(execution.transition?.value !== undefined ? { transitionValue: execution.transition.value } : {}),
+          blockers: execution.blockers,
+        },
+        provenance: [...binding.provenance, { kind: "state-responsibility", reference: `owner:${binding.ownerId ?? LEGACY_STATE_OWNER}:handler:${handler.handler}:line:${handler.sourceLine}` }],
+      };
+    });
   }
   if (evidence.dataSurface) {
     unresolved.push(...evidence.dataSurface.unresolved.map((item) => `data-surface: ${item.reason}`));
@@ -546,17 +615,17 @@ export function enrichComponentLibraryBuildPlan(
         fields: surface.fields.map((field) => field.path),
         shape: { kind: surface.shape.kind, itemKind: surface.shape.itemKind, cardinality: surface.shape.cardinality },
         reviewed: !surface.reviewRequired && surface.injection.reviewed,
-        materialized: surface.source.primary === "component-prop" && !surface.reviewRequired && surface.injection.reviewed,
+        materialized: false,
         externalOnly: true,
         provenance: [{ kind: "data-surface-manifest", reference: surface.id }],
       });
     }
   }
-  const primitiveGraphMatchesPlan = evidence.primitiveGraph ? plan.identity.sourceHash === sha256(JSON.stringify(evidence.primitiveGraph)) : false;
-  if (evidence.primitiveGraph && !primitiveGraphMatchesPlan) unresolved.push("primitive-dom: graph identity does not match build plan sourceHash");
-  const stateEvidence = evidence.primitiveGraph && primitiveGraphMatchesPlan ? primitiveStateEvidence(evidence.primitiveGraph, evidence.state) : { conditionsReady: true, modelsReady: true, paths: [] };
-  if (evidence.state || evidence.dataSurface || stateEvidence.paths.length > 0) {
-    const injected = injectInteractionRuntime(plan, interactions, dataBindings, evidence.state?.initialState ?? {}, stateEvidence.paths);
+  const stateEvidence = evidence.primitiveGraph && primitiveGraphMatchesPlan
+    ? primitiveStateEvidence(evidence.primitiveGraph, ownerStates.states)
+    : { conditionsReady: true, modelsReady: true, pathsByOwner: new Map<string, readonly string[]>() };
+  if (ownerStates.states.size > 0 || evidence.dataSurface || stateEvidence.pathsByOwner.size > 0) {
+    const injected = injectInteractionRuntime(plan, interactions, dataBindings, ownerStates.states, stateEvidence.pathsByOwner);
     files = [...injected.files];
     interactions = injected.interactions;
     dataBindings.splice(0, dataBindings.length, ...injected.dataBindings);

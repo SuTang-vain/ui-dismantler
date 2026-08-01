@@ -29,6 +29,7 @@ export interface ComponentLibraryBuildFile {
 
 export interface ComponentLibraryInteractionBinding {
   readonly id: string;
+  readonly ownerId?: string;
   readonly sourceNodeId?: string;
   readonly event: string;
   readonly expression: string;
@@ -172,6 +173,7 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
   if (!plan.smoke.hostSelector.trim()) add("smoke.hostSelector", "must not be empty");
   for (const [index, binding] of plan.interactions.entries()) {
     if (!binding.id.trim() || !binding.event.trim() || !binding.expression.trim() || !binding.target.trim()) add(`interactions[${index}]`, "id, event, expression, and target are required");
+    if (binding.ownerId !== undefined && !binding.ownerId.trim()) add(`interactions[${index}].ownerId`, "must not be empty when present");
     if (!binding.materialized) block(`interactions[${index}]`, "interaction binding is metadata-only and requires a reviewed executor");
     if (!binding.reviewed) block(`interactions[${index}]`, "interaction binding is not reviewed");
     if (binding.provenance.length === 0) add(`interactions[${index}].provenance`, "must contain evidence");

@@ -38,7 +38,7 @@ import { createDefaultReviewedBindingRegistry } from "./profiles/default-binding
 import { ProfileExecutionPlanner } from "./core/profiles/execution-plan.js";
 import { ProfileExecutor } from "./core/profiles/executor.js";
 import { readProfileRunConfiguration } from "./profiles/profile-config.js";
-import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract } from "./production/component-library/index.js";
+import { componentPlanningReportToBuildPlan, createComponentLibraryBuildPlan, enrichComponentLibraryBuildPlan, primitiveDomCompilationToBuildPlan, runComponentLibraryBuild, validateComponentLibraryBuildPlan, visualTargetPlanToBuildPlan, type ComponentLibraryBuildPlan, type ComponentLibraryBuildPlanInput, type ComponentLibraryQualityContract, type ComponentLibraryStateEvidenceMap } from "./production/component-library/index.js";
 import type { ComponentPlanningReport } from "./planning/components.js";
 import type { SfcStateResponsibility } from "./planning/sfc-state-responsibility.js";
 
@@ -101,7 +101,7 @@ function usage(): void {
   primitive-dom-build-plan <primitive-dom.graph.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
   component-plan-build-plan <component-plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
   visual-target-build-plan <visual-target.plan.json> --source-root <root> --name <library-name> --package-name <package-name> --out <component-library.build-plan.json> [--quality-html <original.html>] [--quality-manifest <manifest.json>] [--quality-scenarios <scenarios.json>] [--quality-spa-router <config.json>] [--quality-visual] [--quality-artifacts <dir>]
-  component-build-enrich <component-library.build-plan.json> [--state <sfc-state.json>] [--data-surface <data-surface.manifest.json>] [--primitive-dom <primitive-dom.graph.json>] --out <component-library.reviewed-build-plan.json>
+  component-build-enrich <component-library.build-plan.json> [--state <sfc-state.json> | --state-map <component-state.map.json>] [--data-surface <data-surface.manifest.json>] [--primitive-dom <primitive-dom.graph.json>] --out <component-library.reviewed-build-plan.json>
   visual-target-auto-v2 <visual-target.plan.json> --route-shell <route-shell.plan.json> --router-sfc <router-sfc.graph.json> --sfc-visual <sfc-visual.graph.json> --spa-auth <spa-auth.graph.json> --transport-proxy <transport-proxy.graph.json> [--api-route-ownership <api-route-ownership.graph.json>] --out-dir <dir> [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edited-lines <n>] [--repair-iterations <n>]\n`);
 }
 function printValidation(report: ReturnType<typeof validateLibrary>): void {
@@ -176,13 +176,15 @@ async function main(argv: string[]): Promise<number> {
       return 1;
     }
     if (command === "component-build-enrich") {
-      const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const statePath = flag(args, "--state"); const dataSurfacePath = flag(args, "--data-surface"); const primitiveGraphPath = flag(args, "--primitive-dom");
-      if (!planPath || !out || (!statePath && !dataSurfacePath && !primitiveGraphPath)) throw new Error("component-build-enrich 需要 plan、至少一个 --state/--data-surface/--primitive-dom 和 --out");
+      const planPath = args[0]; const out = flag(args, "--out") ?? flag(args, "-o"); const statePath = flag(args, "--state"); const stateMapPath = flag(args, "--state-map"); const dataSurfacePath = flag(args, "--data-surface"); const primitiveGraphPath = flag(args, "--primitive-dom");
+      if (!planPath || !out || (!statePath && !stateMapPath && !dataSurfacePath && !primitiveGraphPath)) throw new Error("component-build-enrich 需要 plan、至少一个 --state/--state-map/--data-surface/--primitive-dom 和 --out");
+      if (statePath && stateMapPath) throw new Error("component-build-enrich 的 --state 与 --state-map 不能同时使用");
       const plan = JSON.parse(await readFile(resolve(planPath), "utf8")) as ComponentLibraryBuildPlan;
       const state = statePath ? JSON.parse(await readFile(resolve(statePath), "utf8")) as SfcStateResponsibility : undefined;
+      const stateMap = stateMapPath ? JSON.parse(await readFile(resolve(stateMapPath), "utf8")) as ComponentLibraryStateEvidenceMap : undefined;
       const dataSurface = dataSurfacePath ? JSON.parse(await readFile(resolve(dataSurfacePath), "utf8")) as DataSurfaceManifest : undefined;
       const primitiveGraph = primitiveGraphPath ? JSON.parse(await readFile(resolve(primitiveGraphPath), "utf8")) as PrimitiveDomCompilationGraph : undefined;
-      const enriched = enrichComponentLibraryBuildPlan(plan, { state, dataSurface, primitiveGraph });
+      const enriched = enrichComponentLibraryBuildPlan(plan, { state, stateMap, dataSurface, primitiveGraph });
       await writeFile(resolve(out), `${JSON.stringify(enriched, null, 2)}\n`, "utf8");
       const validation = validateComponentLibraryBuildPlan(enriched);
       console.log(`${validation.ready ? "✓" : "✗"} Component evidence projection: ${resolve(out)} (reviewRequired=${enriched.reviewRequired})`);
