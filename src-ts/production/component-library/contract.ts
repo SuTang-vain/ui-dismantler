@@ -1,4 +1,4 @@
-import type { JsonValue } from "../../types.js";
+import type { JsonValue, QualityViewport } from "../../types.js";
 import { createHash } from "node:crypto";
 
 export const COMPONENT_LIBRARY_BUILD_PLAN_SCHEMA_VERSION = "1.0" as const;
@@ -71,6 +71,12 @@ export interface ComponentLibraryQualityContract {
   readonly spaRouterConfigPath?: string;
   readonly visual: boolean;
   readonly visualArtifactsDir?: string;
+  readonly viewports?: readonly QualityViewport[];
+  readonly browserMode?: "legacy" | "shared-browser";
+  readonly browserConcurrency?: number;
+  readonly browserResourceCache?: "off" | "run-local";
+  readonly browserStability?: "fixed" | "adaptive";
+  readonly browserShutdown?: "graceful" | "fast-kill";
 }
 
 export interface ComponentLibraryBuildPlan {
@@ -173,6 +179,26 @@ export function validateComponentLibraryBuildPlan(plan: ComponentLibraryBuildPla
   if (!plan.smoke.globalName.trim()) add("smoke.globalName", "must not be empty");
   if (!plan.smoke.mountMethod.trim()) add("smoke.mountMethod", "must not be empty");
   if (!plan.smoke.hostSelector.trim()) add("smoke.hostSelector", "must not be empty");
+  if (plan.quality) {
+    if (!plan.quality.originalHtmlPath.trim()) add("quality.originalHtmlPath", "must not be empty");
+    if (plan.quality.viewports !== undefined) {
+      if (!Array.isArray(plan.quality.viewports) || plan.quality.viewports.length === 0) add("quality.viewports", "must contain at least one reviewed viewport when provided");
+      else {
+        const viewportIds = new Set<string>();
+        for (const [index, viewport] of plan.quality.viewports.entries()) {
+          if (!viewport.id.trim() || !viewport.label.trim()) add(`quality.viewports[${index}]`, "id and label must not be empty");
+          if (!Number.isInteger(viewport.width) || viewport.width <= 0 || !Number.isInteger(viewport.height) || viewport.height <= 0) add(`quality.viewports[${index}]`, "width and height must be positive integers");
+          if (viewportIds.has(viewport.id)) add(`quality.viewports[${index}].id`, `duplicates ${viewport.id}`);
+          viewportIds.add(viewport.id);
+        }
+      }
+    }
+    if (plan.quality.browserMode !== undefined && !["legacy", "shared-browser"].includes(plan.quality.browserMode)) add("quality.browserMode", "must be legacy or shared-browser");
+    if (plan.quality.browserConcurrency !== undefined && (!Number.isInteger(plan.quality.browserConcurrency) || plan.quality.browserConcurrency <= 0)) add("quality.browserConcurrency", "must be a positive integer");
+    if (plan.quality.browserResourceCache !== undefined && !["off", "run-local"].includes(plan.quality.browserResourceCache)) add("quality.browserResourceCache", "must be off or run-local");
+    if (plan.quality.browserStability !== undefined && !["fixed", "adaptive"].includes(plan.quality.browserStability)) add("quality.browserStability", "must be fixed or adaptive");
+    if (plan.quality.browserShutdown !== undefined && !["graceful", "fast-kill"].includes(plan.quality.browserShutdown)) add("quality.browserShutdown", "must be graceful or fast-kill");
+  }
   for (const [index, binding] of plan.interactions.entries()) {
     if (!binding.id.trim() || !binding.event.trim() || !binding.expression.trim() || !binding.target.trim()) add(`interactions[${index}]`, "id, event, expression, and target are required");
     if (binding.ownerId !== undefined && !binding.ownerId.trim()) add(`interactions[${index}].ownerId`, "must not be empty when present");

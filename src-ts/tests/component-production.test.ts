@@ -120,6 +120,10 @@ test("Component Library Build Plan blocks unsafe paths, publishable fixtures, an
       ...input,
       files: input.files.map((file, index) => index === 5 ? { ...file, path: "../fixture.js", publish: true, role: "fixture" as const } : file),
     }, configPath), /must be a safe relative path/);
+    await assert.rejects(() => createComponentLibraryBuildPlan({
+      ...input,
+      quality: { originalHtmlPath: "original.html", visual: true, viewports: [{ id: "mobile", label: "Mobile", width: 390, height: 700 }, { id: "mobile", label: "Duplicate", width: 0, height: 700 }], browserConcurrency: 0 },
+    }, configPath), /quality\.viewports|quality\.browserConcurrency/);
     const blocked = await createComponentLibraryBuildPlan({
       ...input,
       unresolved: ["component owner requires review"],
@@ -834,6 +838,48 @@ test("component-produce CLI runs the reviewed artifact chain as one deterministi
   assert.equal(report.validation?.ok, true);
   assert.equal(result.kind, "reviewed-component-library-production-result");
   assert.equal(result.build.status, "succeeded");
+});
+
+test("component-produce forwards a reviewed multi-viewport visual quality contract", async (context) => {
+  const directory = await mkdtemp(join("/tmp", "ui-dismantler-component-visual-production-"));
+  context.after(() => rm(directory, { recursive: true, force: true }));
+  const graph: PrimitiveDomCompilationGraph = {
+    schemaVersion: "1.0", kind: "primitive-dom-compilation-graph",
+    components: [{ componentId: "component:visual-card", componentName: "VisualCard", componentFile: "VisualCard.vue", reviewRequired: false, compilation: {
+      schemaVersion: "1.0", kind: "primitive-dom-compilation", roots: ["node:visual-card"],
+      nodes: [{ id: "node:visual-card", sourceNodeId: "source:visual-card", order: 0, sourceTag: "article", componentName: "VisualCard", renderTag: "article", renderStrategy: "native", classes: ["sg-visual-card"], attributes: { role: "article" }, inlineStyle: {}, content: [{ kind: "text", value: "Reviewed visual component" }], conditions: [], loops: [] }],
+      styleRules: [{ sourceNodeId: "source:visual-card", selector: ".sg-visual-card", declarations: { padding: "18px", border: "1px solid var(--sg-line)", "border-radius": "8px" }, provenance: "source-inline-style" }], interactions: [],
+      metrics: { sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [],
+    } }],
+    metrics: { components: 1, sourceNodes: 1, compiledNodes: 1, primitiveNodes: 0, inlineStyleRules: 1, responsiveRules: 0, interactionBindings: 0, unsupportedPrimitiveNodes: 0 }, reviewReasons: [], reviewRequired: false,
+  };
+  const preview = await primitiveDomCompilationToBuildPlan(graph, { sourceRoot: directory, libraryName: "Visual Quality Components", packageName: "visual-quality-components" });
+  const css = preview.files.find((file) => file.role === "style")!.content;
+  const originalPath = join(directory, "original.html");
+  await writeFile(originalPath, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body><div id="mount"><section class="sg-component-library" data-component-id="component:visual-card"><article data-primitive-node="node:visual-card" class="sg-visual-card" role="article">Reviewed visual component</article></section></div></body></html>`, "utf8");
+  await writeFile(join(directory, "primitive.json"), `${JSON.stringify(graph, null, 2)}\n`, "utf8");
+  const viewports = [
+    { id: "desktop", label: "Desktop", width: 1024, height: 768 },
+    { id: "tablet", label: "Tablet", width: 768, height: 900 },
+    { id: "mobile", label: "Mobile", width: 390, height: 700 },
+  ];
+  await writeFile(join(directory, "production.json"), `${JSON.stringify({
+    schemaVersion: "1.0", sourceRoot: ".", library: { name: "Visual Quality Components", packageName: "visual-quality-components" },
+    artifacts: { primitiveDom: "primitive.json" },
+    quality: { originalHtmlPath: "original.html", visual: true, visualArtifactsDir: "visual-artifacts", viewports, browserMode: "shared-browser", browserConcurrency: 2, browserResourceCache: "run-local", browserStability: "adaptive", browserShutdown: "graceful" },
+  }, null, 2)}\n`, "utf8");
+  const reportPath = join(directory, "report.json");
+  execFileSync(process.execPath, ["dist-ts/cli.js", "component-produce", join(directory, "production.json"), "--out-dir", join(directory, "library"), "--report", reportPath], { cwd: root, encoding: "utf8", timeout: 60_000 });
+  const report = JSON.parse(await readFile(reportPath, "utf8")) as { status: string; quality?: { passed: boolean; browserMatrix?: { viewports: Array<{ id: string; passed: boolean }>; worstComputedStyle: number; worstPixelDiff: number }; telemetry: { workload: { viewports: number }; browser?: { mode: string; concurrency: number } } } };
+  assert.equal(report.status, "succeeded");
+  assert.equal(report.quality?.passed, true);
+  assert.deepEqual(report.quality?.browserMatrix?.viewports.map((viewport) => viewport.id), viewports.map((viewport) => viewport.id));
+  assert.equal(report.quality?.browserMatrix?.viewports.every((viewport) => viewport.passed), true);
+  assert.equal(report.quality?.browserMatrix?.worstComputedStyle, 1);
+  assert.equal(report.quality?.browserMatrix?.worstPixelDiff, 0);
+  assert.equal(report.quality?.telemetry.workload.viewports, 3);
+  assert.equal(report.quality?.telemetry.browser?.mode, "shared-browser");
+  assert.equal(report.quality?.telemetry.browser?.concurrency, 2);
 });
 
 test("Reviewed SFC style responsibility flows through candidate review into component production", async (context) => {

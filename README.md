@@ -148,6 +148,19 @@ Build Plan 要求所有发布文件带有 provenance；fixture 和 examples 可�
     "style": "./artifacts/reviewed-component-style.artifact.json",
     "dataSurfaceArtifact": "./artifacts/reviewed-component-data-surface.artifact.json",
     "runtimeOptions": "./artifacts/runtime-options.json"
+  },
+  "quality": {
+    "originalHtmlPath": "./original.html",
+    "visual": true,
+    "viewports": [
+      { "id": "desktop", "label": "Desktop", "width": 1024, "height": 768 },
+      { "id": "tablet", "label": "Tablet", "width": 768, "height": 1024 },
+      { "id": "mobile", "label": "Mobile", "width": 390, "height": 844 }
+    ],
+    "browserMode": "shared-browser",
+    "browserConcurrency": 2,
+    "browserResourceCache": "run-local",
+    "browserStability": "adaptive"
   }
 }
 ```
@@ -180,7 +193,7 @@ node dist-ts/cli.js component-produce \
   --result /tmp/component-library.production-result.json
 ```
 
-`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
+`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。质量合同可以冻结视口与浏览器执行策略，但不能从生产配置降低现有 Strict/Gold+ 阈值。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
 
 该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
 

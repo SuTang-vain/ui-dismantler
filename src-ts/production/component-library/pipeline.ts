@@ -82,6 +82,12 @@ export async function runComponentLibraryBuild(
         spaRouterConfigPath: plan.quality.spaRouterConfigPath,
         visual: plan.quality.visual,
         visualArtifactsDir: plan.quality.visualArtifactsDir,
+        ...(plan.quality.viewports ? { viewports: plan.quality.viewports.map((viewport) => ({ ...viewport })) } : {}),
+        ...(plan.quality.browserMode ? { browserMode: plan.quality.browserMode } : {}),
+        ...(plan.quality.browserConcurrency !== undefined ? { browserConcurrency: plan.quality.browserConcurrency } : {}),
+        ...(plan.quality.browserResourceCache ? { browserResourceCache: plan.quality.browserResourceCache } : {}),
+        ...(plan.quality.browserStability ? { browserStability: plan.quality.browserStability } : {}),
+        ...(plan.quality.browserShutdown ? { browserShutdown: plan.quality.browserShutdown } : {}),
       });
       timing.qualityMs = elapsed(phaseStartedAt);
       if (!quality.passed) blockers.push(...quality.gates.filter((gate) => !gate.passed).map((gate) => `${gate.id}: ${gate.detail}`));

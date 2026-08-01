@@ -222,7 +222,7 @@ The production implementation is under `src-ts/production/component-library/`:
 - `planner.ts` freezes source files into a deterministic plan with content hashes;
 - `materializer.ts` writes only safe relative paths and preserves examples/fixtures as non-publishable files;
 - `smoke.ts` checks runtime loading, mount, rendered nodes, console/runtime errors, local resources, and optional cleanup;
-- `pipeline.ts` writes `ComponentLibraryBuildReport` and invokes existing static validation and optional quality gates;
+- `pipeline.ts` writes `ComponentLibraryBuildReport` and invokes existing static validation plus reviewed multi-viewport/browser execution settings for the existing quality gates; quality thresholds are not overridable through the component production contract;
 - `state-artifact.ts` projects SFC state responsibilities into owner-scoped, review-only evidence maps;
 - `style-artifact.ts` validates reviewed CSS provenance, Primitive graph identity, owner scoping, global boundaries, and syntax before style materialization;
 - `data-surface-artifact.ts` binds a reviewed Data Surface Manifest to the exact Primitive graph and rejects unknown or identity-mismatched owners and consumers without embedding business values;
