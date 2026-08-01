@@ -455,13 +455,32 @@ async function launchBrowser(executablePath?: string, forceServer = false): Prom
   const candidate = executablePath ?? chromeCandidates().find(existsSync);
   if (!candidate) throw new Error("未找到 Chrome/Chromium；可通过 CHROME_PATH 指定浏览器路径");
   const launchOptions = { executablePath: candidate, headless: true, args: ["--allow-file-access-from-files", "--disable-web-security"] };
-  if (forceServer || process.env.UI_DISMANTLER_BROWSER_SHUTDOWN_PROFILE === "1") {
-    const server = await chromium.launchServer(launchOptions);
-    const browser = await chromium.connect(server.wsEndpoint());
-    profiledBrowserProcesses.set(browser, { server });
-    return browser;
-  }
-  return chromium.launch(launchOptions);
+  // Always retain a BrowserServer handle so graceful shutdown has a bounded, auditable
+  // process-level fallback. `forceServer` remains part of the compatibility signature.
+  void forceServer;
+  const server = await chromium.launchServer(launchOptions);
+  const browser = await chromium.connect(server.wsEndpoint());
+  profiledBrowserProcesses.set(browser, { server });
+  return browser;
+}
+
+const BROWSER_GRACEFUL_DISCONNECT_TIMEOUT_MS = 2_000;
+const BROWSER_GRACEFUL_PROCESS_TIMEOUT_MS = 4_000;
+
+async function completesWithin(work: Promise<unknown>, timeoutMs: number): Promise<boolean> {
+  return await new Promise<boolean>((resolveCompletion) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      resolveCompletion(false);
+    }, timeoutMs);
+    timer.unref?.();
+    work.then(
+      () => { if (!settled) { settled = true; clearTimeout(timer); resolveCompletion(true); } },
+      () => { if (!settled) { settled = true; clearTimeout(timer); resolveCompletion(true); } },
+    );
+  });
 }
 
 async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExecutionTelemetry, requestedFastShutdown = false): Promise<void> {
@@ -470,7 +489,7 @@ async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExe
   if (telemetry) telemetry.activeHandlesBeforeClose = browserActiveHandleSnapshot();
   if (!profiled) {
     const startedAt = performance.now();
-    await browser.close();
+    await completesWithin(browser.close(), BROWSER_GRACEFUL_PROCESS_TIMEOUT_MS);
     if (telemetry) {
       telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
       telemetry.activeHandlesAfterClose = browserActiveHandleSnapshot();
@@ -479,25 +498,39 @@ async function closeBrowser(browser: Browser | undefined, telemetry?: BrowserExe
     return;
   }
   let startedAt = performance.now();
-  let lockAcquired = false, lockWaitMs = 0, fastConfirmed = false;
+  let lockAcquired = false, lockWaitMs = 0, fastConfirmed = false, gracefulFallback = false;
   try {
-    await browser.close();
+    await completesWithin(browser.close(), BROWSER_GRACEFUL_DISCONNECT_TIMEOUT_MS);
     if (telemetry) telemetry.timing.browserDisconnectMs += elapsed(startedAt);
   } finally {
     startedAt = performance.now();
+    const child = profiled.server.process();
     if (requestedFastShutdown) {
       const lock = await withBrowserFastShutdownLock(() => terminateProfiledBrowserFast(profiled.server));
       lockAcquired = lock.acquired; lockWaitMs = lock.waitMs;
       if (lock.acquired && lock.value !== undefined) fastConfirmed = lock.value;
-      else await profiled.server.close();
-    } else await profiled.server.close();
+      else {
+        await completesWithin(profiled.server.close(), BROWSER_GRACEFUL_PROCESS_TIMEOUT_MS);
+        if (child.exitCode === null && child.signalCode === null) fastConfirmed = await terminateProfiledBrowserFast(profiled.server);
+      }
+    } else {
+      const gracefulCompleted = await completesWithin(profiled.server.close(), BROWSER_GRACEFUL_PROCESS_TIMEOUT_MS);
+      const gracefulConfirmed = gracefulCompleted && (child.exitCode !== null || child.signalCode !== null);
+      if (!gracefulConfirmed) {
+        gracefulFallback = true;
+        const lock = await withBrowserFastShutdownLock(() => terminateProfiledBrowserFast(profiled.server));
+        lockAcquired = lock.acquired; lockWaitMs = lock.waitMs;
+        if (lock.acquired && lock.value !== undefined) fastConfirmed = lock.value;
+        else fastConfirmed = await terminateProfiledBrowserFast(profiled.server);
+      }
+    }
     if (telemetry) {
       telemetry.timing.browserProcessCloseMs += elapsed(startedAt);
-      telemetry.fastShutdownUsed = requestedFastShutdown && lockAcquired;
+      telemetry.fastShutdownUsed = (requestedFastShutdown || gracefulFallback) && (lockAcquired || fastConfirmed);
       telemetry.fastShutdownConfirmed = fastConfirmed;
       telemetry.fastShutdownLockAcquired = lockAcquired;
       telemetry.fastShutdownLockWaitMs = lockWaitMs;
-      telemetry.browserShutdown = telemetry.fastShutdownUsed && fastConfirmed ? "fast-kill" : requestedFastShutdown ? "graceful-fallback" : "graceful";
+      telemetry.browserShutdown = requestedFastShutdown && telemetry.fastShutdownUsed && fastConfirmed ? "fast-kill" : gracefulFallback ? "graceful-fallback" : requestedFastShutdown ? "graceful-fallback" : "graceful";
       telemetry.activeHandlesAfterClose = browserActiveHandleSnapshot();
     }
     profiledBrowserProcesses.delete(browser);

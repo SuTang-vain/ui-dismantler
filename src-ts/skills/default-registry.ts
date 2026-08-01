@@ -11,6 +11,7 @@ import { sourceStructureSkill } from "./source-structure.js";
 import { spaRouterSkill } from "./spa-router.js";
 import { stateResponsibilitySkill } from "./state-responsibility.js";
 import { transportProxySkill } from "./transport-proxy.js";
+import { visualEvaluationSkill } from "./visual-evaluation.js";
 
 export function createDefaultSkillRegistry(): SkillRegistry {
   return new SkillRegistry()
@@ -25,5 +26,6 @@ export function createDefaultSkillRegistry(): SkillRegistry {
     .register(primitiveDomSkill)
     .register(transportProxySkill)
     .register(apiResponsibilitySkill)
-    .register(authGuardSkill);
+    .register(authGuardSkill)
+    .register(visualEvaluationSkill);
 }

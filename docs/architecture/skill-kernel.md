@@ -95,6 +95,8 @@ The sidecar graph does not replace `SfcVisualResponsibilityGraph` or `ApiFixture
 
 `lifecycle-polling` consumes the reviewed SFC ownership graph and reopens the owned source files only for structural lifecycle analysis. It records Composition API and Options API hooks, `setInterval`/`setTimeout`/`useIntervalFn` creation, static interval evidence, callback call ownership, terminal self-stop, and unmount/destroy cleanup. Intervals without a lifecycle owner, stable handle/control, static interval, resolved callback, or cleanup remain review-required. It does not execute timers, fabricate API responses, or generate route transitions.
 
+`visual-evaluation` is a compatibility-preserving evaluation Skill over the existing formal `QualityGateReport`. It always enables visual evaluation and forwards only reviewed viewport and browser execution settings; it does not expose threshold overrides. The raw Quality Gate output remains unchanged, while execution evidence and a sidecar evaluation delta record failed gates, computed-style/pixel results, runtime/stability failures, and browser workload. Component production may still invoke the same Quality Gate directly; the Skill exists for Profile composition and auditability, not to duplicate the evaluator.
+
 The Manifest separates two kinds of review evidence:
 
 - `unresolved` / `review.blockers`: evidence gaps that block a reviewed Data Surface or downstream Data Pack generation;
@@ -127,7 +129,7 @@ If `--cardinality` is omitted, the command executes the registered `data-cardina
 2. Add execution evidence through the separate evidence API.
 3. Use Task Profiles to review capability composition.
 4. Expand reviewed artifact bindings and responsibility projections without replacing historical graphs.
-5. Register the remaining visual evaluation capabilities as orthogonal Skills; Data Surface and lifecycle/polling are already registered.
+5. Keep Data Surface, lifecycle/polling, and visual evaluation registered as orthogonal Skills while preserving their historical raw outputs.
 6. Continue moving shared source/AST helpers under Core one family at a time; the JavaScript/TypeScript parser is the first completed AST extraction.
 7. Introduce framework Adapters only where structural evidence proves ownership.
 
@@ -224,7 +226,7 @@ The production implementation is under `src-ts/production/component-library/`:
 - `planner.ts` freezes source files into a deterministic plan with content hashes;
 - `materializer.ts` writes only safe relative paths and preserves examples/fixtures as non-publishable files;
 - `smoke.ts` checks runtime loading, mount, rendered nodes, console/runtime errors, local resources, and optional cleanup;
-- `pipeline.ts` writes `ComponentLibraryBuildReport` and invokes existing static validation plus reviewed multi-viewport/browser execution settings for the existing quality gates; quality thresholds are not overridable through the component production contract;
+- `pipeline.ts` writes `ComponentLibraryBuildReport` and invokes existing static validation plus reviewed multi-viewport/browser execution settings for the existing quality gates; quality thresholds are not overridable through the component production contract; browser processes retain an auditable `BrowserServer` owner and bounded graceful shutdown with locked fast fallback;
 - `state-artifact.ts` projects SFC state responsibilities into owner-scoped, review-only evidence maps;
 - `style-artifact.ts` validates reviewed CSS provenance, Primitive graph identity, owner scoping, global boundaries, and syntax before style materialization;
 - `data-surface-artifact.ts` binds a reviewed Data Surface Manifest to the exact Primitive graph and rejects unknown or identity-mismatched owners and consumers without embedding business values;

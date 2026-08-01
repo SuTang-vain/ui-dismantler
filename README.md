@@ -96,7 +96,7 @@ Profile 将多个 Skill 组合为一种拆解任务：
 | `source-page` | 静态页面结构与可选状态分析 | `source-structure`、可选 `state-responsibility` |
 | `spa-application` | SPA 路由、状态及可选认证/轮询生命周期分析 | `source-structure`、`state-responsibility`、`spa-router`、可选 `auth-guard` / `lifecycle-polling` |
 | `data-backed-spa` | 带 API 和组件数据接口的 SPA | component、proxy、API、cardinality、Data Surface |
-| `component-library` | 已生成组件库的规范与数据边界验证 | `component-library-validation` |
+| `component-library` | 已生成组件库的规范、数据边界及可选多视口视觉验证 | `component-library-validation`、可选 `visual-evaluation` |
 | `primitive-dom` | 将 reviewed SFC 组件结构编译为可追溯 Primitive DOM 候选 | `component-ownership`、`primitive-dom` |
 
 Profile 只有在完整执行计划通过 reviewed input 检查后才会运行。
@@ -194,7 +194,7 @@ node dist-ts/cli.js component-produce \
   --result /tmp/component-library.production-result.json
 ```
 
-`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。质量合同可以冻结视口与浏览器执行策略，但不能从生产配置降低现有 Strict/Gold+ 阈值。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
+`component-produce` 只编排 reviewed artifacts：它不重新分析源项目、不猜测 DOM，也不把 orchestration 伪装成新的 Skill。Data Surface artifact 会把 Manifest 精确绑定到 Primitive graph，并复核 component owner/consumer 身份；旧的 `dataSurface` 配置键仅保留为兼容入口，新生产配置应使用 `dataSurfaceArtifact`。质量合同可以冻结视口与浏览器执行策略，但不能从生产配置降低现有 Strict/Gold+ 阈值。浏览器由可追踪的 `BrowserServer` 托管；graceful disconnect/process close 均有上限，超时后会记录 `graceful-fallback` 并执行受锁保护的进程终止，避免测试句柄长期残留。任一 artifact 仍需 review、adapter 缺失或质量门失败时，统一结果会保持 blocked/failed。
 
 该流水线当前首先标准化已有生成结果和 reviewed 文件。已有中间结果可以通过显式 adapter 投影：
 
@@ -255,6 +255,7 @@ Source style 通过独立 `reviewed-component-style-artifact` 交接。owner 样
 | `lifecycle-polling` | Vue Composition/Options 生命周期、轮询 timer、callback、terminal stop 与 cleanup ownership |
 | `component-ownership` | SFC 组件、模板、样式和视觉 ownership |
 | `component-library-validation` | 已生成组件库的命名、数据分离、响应式、A11y、主题、依赖、文档和类名合同 |
+| `visual-evaluation` | 既有正式 Quality Gate 的多视口、computed style、pixel、runtime、resource、navigation 与 font 验证 |
 | `primitive-dom` | SFC 模板到 Primitive DOM、样式规则和交互绑定的 provenance-preserving 编译 |
 | `transport-proxy` | Vite/Webpack proxy、prefix、target 和 rewrite 证据 |
 | `api-responsibility` | API wrapper、endpoint、response consumer 和 fixture 边界 |
@@ -408,6 +409,12 @@ node dist-ts/cli.js skill-run component-library-validation \
 # 通过 component-library Profile 执行 reviewed 组件库验证
 node dist-ts/cli.js profile-run /tmp/component-library.profile.json \
   --out /tmp/component-library.profile.report.json
+
+# 对 reviewed reference/component library 执行正式视觉质量门
+node dist-ts/cli.js skill-run visual-evaluation \
+  --input /tmp/visual-evaluation.input.json \
+  --out /tmp/visual-quality.report.json \
+  --evidence-out /tmp/visual-quality.evidence.json
 
 # 提取 reviewed SFC graph 中的轮询与清理责任
 node dist-ts/cli.js skill-run lifecycle-polling \

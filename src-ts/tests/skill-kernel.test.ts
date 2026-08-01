@@ -45,7 +45,7 @@ const root = new URL("../../", import.meta.url).pathname;
 
 test("default Skill Registry exposes deterministic capability manifests", () => {
   const registry = createDefaultSkillRegistry();
-  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "lifecycle-polling", "primitive-dom", "source-structure", "spa-router", "state-responsibility", "transport-proxy"]);
+  assert.deepEqual(registry.list().map((manifest) => manifest.id), ["api-responsibility", "auth-guard", "component-library-validation", "component-ownership", "data-cardinality", "data-surface-manifest", "lifecycle-polling", "primitive-dom", "source-structure", "spa-router", "state-responsibility", "transport-proxy", "visual-evaluation"]);
   assert.equal(registry.get("source-structure").contractVersion, "1.0");
   assert.equal(registry.get("spa-router").optionalDependencies.includes("source-structure"), true);
   assert.deepEqual(registry.resolve(["auth-guard"]).map((manifest) => manifest.id), ["source-structure", "state-responsibility", "auth-guard"]);
@@ -422,6 +422,18 @@ test("Task Profile resolves required and reviewed optional Skills in dependency 
   });
   assert.equal(componentPlan.ready, true);
   assert.deepEqual(componentPlan.steps.map((step) => step.skillId), ["component-library-validation"]);
+  const visualComponent = profiles.resolve("component-library", ["visual-evaluation"]);
+  assert.deepEqual(visualComponent.skills.map((skill) => skill.id), ["component-library-validation", "source-structure", "visual-evaluation"]);
+  assert.equal(visualComponent.qualityGates.includes("pixel-diff"), true);
+  const visualComponentPlan = new ProfileExecutionPlanner(profiles, createDefaultReviewedBindingRegistry(skills)).plan("component-library", {
+    enabledOptionalSkills: ["visual-evaluation"],
+    inputProviders: [
+      { contract: "component-library-root", providerId: "reviewed-library", reviewed: true },
+      { contract: "html-path", providerId: "reviewed-html", reviewed: true },
+    ],
+  });
+  assert.equal(visualComponentPlan.ready, true);
+  assert.deepEqual(visualComponentPlan.steps.map((step) => step.skillId), ["component-library-validation", "source-structure", "visual-evaluation"]);
   const base = profiles.resolve("spa-application");
   assert.deepEqual(base.skills.map((skill) => skill.id), ["source-structure", "state-responsibility", "spa-router"]);
   const authenticated = profiles.resolve("spa-application", ["auth-guard"]);

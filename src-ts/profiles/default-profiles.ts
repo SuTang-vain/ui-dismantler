@@ -35,7 +35,7 @@ export const componentLibraryProfile = defineTaskProfile({
   contractVersion: "1.0",
   summary: "Validate a generated standard component library without importing demo fixtures or business data into the publishable runtime.",
   requiredSkills: ["component-library-validation"],
-  optionalSkills: [],
+  optionalSkills: ["visual-evaluation"],
   qualityGates: [
     "naming",
     "variables",
