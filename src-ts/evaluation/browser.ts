@@ -9,6 +9,8 @@ import { PNG } from "pngjs";
 import { chromium, type Browser, type BrowserContext, type BrowserServer, type Page, type Request, type Route } from "playwright-core";
 import type {
   BrowserQualityReport,
+  ComponentBaselineTarget,
+  ComponentVisualBaseline,
   ComputedStyleSnapshot,
   PixelDiffReport,
   BrowserQualityMatrixReport,
@@ -221,6 +223,8 @@ export interface BrowserQualityOptions {
   executablePath?: string;
   stabilityMode?: "fixed" | "adaptive";
   browserShutdown?: "graceful" | "fast-kill";
+  /** 提供时额外采集 full-page 像素与组件级基线（报告用，不进门禁）。 */
+  componentBaselines?: ComponentBaselineTarget[];
 }
 
 export interface BrowserQualityMatrixOptions extends Omit<BrowserQualityOptions, "width" | "height"> {
@@ -1657,7 +1661,17 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       };
     }) : [];
 
-    const nodes = [root, ...root.querySelectorAll("[id], [class], [style]")].slice(0, 500);
+    // Stratified (systematic) sampling: the first 500 candidates of a long page only
+    // cover its top, so the style matrix used to ignore everything below. Keep the
+    // root plus evenly spaced candidates across the full document depth instead.
+    const candidates = [root, ...root.querySelectorAll("[id], [class], [style]")];
+    const snapshotCap = 500;
+    const nodes = candidates.length <= snapshotCap ? candidates : (() => {
+      const rest = candidates.slice(1);
+      const picked = [candidates[0]];
+      for (let i = 0; i < snapshotCap - 1; i += 1) picked.push(rest[Math.round(i * (rest.length - 1) / (snapshotCap - 2))]);
+      return picked;
+    })();
     const styles = nodes.map((element, index) => {
       const computed = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
@@ -1668,6 +1682,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
         tag: element.tagName.toLowerCase(),
         id: element.id,
         classes,
+        text: (element.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 160),
         selector: stableSelector(element),
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
         styles: Object.fromEntries(properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
@@ -1721,16 +1736,54 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
   const used = new Set<number>();
   let propertyCount = 0, matchingProperties = 0, matched = 0;
   const mismatches: StyleComparisonReport["mismatches"] = [];
+  const unresolved: string[] = [];
+  const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
   for (const expected of reference) {
     let bestIndex = -1, bestScore = 0;
     generated.forEach((candidate, index) => {
       if (used.has(index)) return;
-      const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
       const identityScore = expected.id && candidate.id && normalizeIdentity(expected.id) === normalizeIdentity(candidate.id) ? 1.5 : 0;
-      const score = identityScore + classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.35 : 0);
+      // Tag equality alone used to reach the match threshold, pairing unrelated divs and
+      // dragging the computed-style rate down with meaningless comparisons. Tag is a
+      // tiebreaker now; visible text may pair nodes whose class vocabularies differ.
+      const leftText = (expected.text ?? "").trim();
+      const rightText = (candidate.text ?? "").trim();
+      const shorter = Math.min(leftText.length, rightText.length);
+      const longer = Math.max(leftText.length, rightText.length);
+      const comparable = shorter >= 4 && shorter >= longer * 0.5;
+      // Comparable length alone is not content evidence: a <style> element and a page
+      // container both carry long text. Require equality, containment, or a strong
+      // word overlap before text contributes to the score.
+      let textScore = 0;
+      if (comparable) {
+        const leftNorm = leftText.toLowerCase(), rightNorm = rightText.toLowerCase();
+        if (leftNorm === rightNorm) textScore = 1;
+        else if (shorter >= 12 && (rightNorm.includes(leftNorm) || leftNorm.includes(rightNorm))) textScore = 0.8;
+        else {
+          const tokens = (value: string) => new Set(value.split(/[^a-z0-9\u4e00-\u9fff]+/i).filter((token) => token.length >= 2));
+          const leftTokens = tokens(leftNorm), rightTokens = tokens(rightNorm);
+          const union = new Set([...leftTokens, ...rightTokens]).size;
+          const overlap = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+          if (union > 0 && overlap / union >= 0.6) textScore = 0.6;
+        }
+      }
+      const similarity = classSimilarity(expected.classes, candidate.classes);
+      // Size veto: a full-page wrapper must not absorb a small leaf on the strength of
+      // shared text. Only a strong identity (id or class vocabulary) may bridge an
+      // extreme area ratio; text/tag pairs across 10x areas are rejected outright.
+      const expectedArea = expected.rect.width * expected.rect.height;
+      const candidateArea = candidate.rect.width * candidate.rect.height;
+      if (expectedArea > 0 && candidateArea > 0) {
+        const areaRatio = Math.max(expectedArea, candidateArea) / Math.min(expectedArea, candidateArea);
+        if (areaRatio > 10 && identityScore < 1.5 && similarity < 0.6) return;
+      }
+      const score = identityScore + similarity + (expected.tag === candidate.tag ? 0.15 : 0) + textScore;
       if (score > bestScore) { bestScore = score; bestIndex = index; }
     });
-    if (bestIndex < 0 || bestScore < 0.35) continue;
+    if (bestIndex < 0 || bestScore < 0.45) {
+      if (unresolved.length < 100) unresolved.push(expected.selector);
+      continue;
+    }
     used.add(bestIndex); matched += 1;
     const actual = generated[bestIndex];
     for (const property of COMPUTED_STYLE_PROPERTIES) {
@@ -1745,7 +1798,7 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
       else if (mismatches.length < 100) mismatches.push({ key: `${expected.selector} ↔ ${actual.selector}`, property: `rect.${property}`, reference: String(expected.rect[property]), generated: String(actual.rect[property]) });
     }
   }
-  return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, mismatches };
+  return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, unresolvedReferenceSelectors: unresolved, mismatches };
 }
 
 export async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string, telemetry?: BrowserExecutionTelemetry): Promise<PixelDiffReport> {
@@ -1867,6 +1920,8 @@ export function compareFontFaces(reference: FontFaceSnapshot[], generated: FontF
   };
 }
 
+const normalizeNavigationText = (value: string) => value.replace(/\s+/g, " ").trim().toLowerCase();
+
 export function compareNavigationIntegrity(
   reference: NavigationReferenceSnapshot[],
   generated: NavigationReferenceSnapshot[],
@@ -1874,18 +1929,60 @@ export function compareNavigationIntegrity(
   generatedTransitions: NavigationTransitionSnapshot[] = [],
 ): NavigationIntegrityReport {
   const issues: NavigationIntegrityReport["issues"] = [];
-  const staticTotal = Math.max(reference.length, generated.length);
-  const transitionTotal = Math.max(referenceTransitions.length, generatedTransitions.length);
+  // Static references are matched by identity (target/kind/download), never by array
+  // index: reordering a nav or adding one link must not cascade every later entry into
+  // a target-mismatch. Matching is a three-pass greedy over a candidate pool — exact
+  // identity first, then same-text pairs (whose differing target is a real regression),
+  // then same-target pairs with a different kind. Leftovers are genuine extras/misses.
+  const pool = generated.map((entry, generatedIndex) => ({ entry, generatedIndex, used: false }));
   let matched = 0;
-  for (let index = 0; index < staticTotal; index += 1) {
-    const expected = reference[index], actual = generated[index];
-    if (!expected || !actual) { issues.push({ index, reason: "count-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.normalizedTarget !== actual.normalizedTarget) { issues.push({ index, reason: "target-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.download !== actual.download) { issues.push({ index, reason: "download-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); continue; }
-    matched += 1;
+  const take = (candidate: (typeof pool)[number] | undefined) => { if (candidate) candidate.used = true; };
+  const checkPair = (expected: NavigationReferenceSnapshot, actual: NavigationReferenceSnapshot, index: number): boolean => {
+    if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.normalizedTarget !== actual.normalizedTarget) { issues.push({ index, reason: "target-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.download !== actual.download) { issues.push({ index, reason: "download-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); return false; }
+    return true;
+  };
+  const referenceLeftovers: number[] = [];
+  const exactCandidates = (expected: NavigationReferenceSnapshot) => pool.filter((candidate) => !candidate.used
+    && candidate.entry.normalizedTarget === expected.normalizedTarget
+    && candidate.entry.kind === expected.kind
+    && candidate.entry.download === expected.download);
+  // Round A pairs only entries with a same-text exact candidate, so a duplicate target
+  // is claimed by the entry that actually corresponds to it; round B pairs the rest.
+  const deferred: number[] = [];
+  reference.forEach((expected, index) => {
+    const pick = exactCandidates(expected).find((candidate) => normalizeNavigationText(candidate.entry.text) === normalizeNavigationText(expected.text));
+    if (!pick) { deferred.push(index); return; }
+    take(pick);
+    if (checkPair(expected, pick.entry, index)) matched += 1;
+  });
+  for (const index of deferred) {
+    const expected = reference[index];
+    const pick = exactCandidates(expected)[0];
+    if (!pick) { referenceLeftovers.push(index); continue; }
+    take(pick);
+    if (checkPair(expected, pick.entry, index)) matched += 1;
   }
+  // Pass 2: leftover reference entries pair with leftover generated entries that carry
+  // the same visible text — a renamed target on the same link is one issue, not two.
+  const stillLeftover: number[] = [];
+  for (const index of referenceLeftovers) {
+    const expected = reference[index];
+    const byText = pool.find((candidate) => !candidate.used
+      && normalizeNavigationText(candidate.entry.text) === normalizeNavigationText(expected.text)
+      && normalizeNavigationText(expected.text) !== "");
+    if (byText) { take(byText); checkPair(expected, byText.entry, index); continue; }
+    const byTarget = pool.find((candidate) => !candidate.used && candidate.entry.normalizedTarget === expected.normalizedTarget);
+    if (byTarget) { take(byTarget); checkPair(expected, byTarget.entry, index); continue; }
+    stillLeftover.push(index);
+  }
+  for (const index of stillLeftover) issues.push({ index, reason: "count-mismatch", reference: reference[index] });
+  for (const candidate of pool) if (!candidate.used) issues.push({ index: candidate.generatedIndex, reason: "count-mismatch", generated: candidate.entry });
+  const staticTotal = Math.max(reference.length, generated.length);
+  // Transitions are an ordered event stream; index-based comparison is intentional.
+  const transitionTotal = Math.max(referenceTransitions.length, generatedTransitions.length);
   for (let transitionIndex = 0; transitionIndex < transitionTotal; transitionIndex += 1) {
     const index = staticTotal + transitionIndex;
     const expected = referenceTransitions[transitionIndex], actual = generatedTransitions[transitionIndex];
@@ -1897,6 +1994,74 @@ export function compareNavigationIntegrity(
   }
   const total = staticTotal + transitionTotal;
   return { passed: issues.length === 0, total, matched, rate: total ? Number((matched / total).toFixed(4)) : 1, issues: issues.slice(0, 100) };
+}
+
+export interface ComponentRect { x: number; y: number; width: number; height: number }
+
+export function cropPng(image: PNG, rect: ComponentRect): PNG {
+  const x0 = Math.max(0, Math.min(image.width - 1, Math.round(rect.x)));
+  const y0 = Math.max(0, Math.min(image.height - 1, Math.round(rect.y)));
+  const width = Math.max(1, Math.min(image.width - x0, Math.round(rect.width)));
+  const height = Math.max(1, Math.min(image.height - y0, Math.round(rect.height)));
+  const out = new PNG({ width, height });
+  image.data.copy(out.data, 0, 0, 0);
+  for (let y = 0; y < height; y += 1) {
+    image.data.copy(out.data, y * width * 4, ((y0 + y) * image.width + x0) * 4, ((y0 + y) * image.width + x0) * 4 + width * 4);
+  }
+  return out;
+}
+
+/**
+ * 组件级视觉基线：full-page 截图 + 按计划选择器裁剪对比。报告用指标，不进门禁——
+ * 其目的是把“哪里退化了”定位到单个组件，而不是增设新阈值。
+ */
+async function collectComponentBaselines(
+  referencePage: Page,
+  generatedPage: Page,
+  targets: ComponentBaselineTarget[],
+  telemetry?: BrowserExecutionTelemetry,
+): Promise<{ baselines: ComponentVisualBaseline[]; fullPageDiffRate: number | null }> {
+  const rectOf = (page: Page, selector: string): Promise<ComponentRect | null> => page.evaluate((sel) => {
+    const element = document.querySelector(sel);
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x + window.scrollX, y: rect.y + window.scrollY, width: rect.width, height: rect.height };
+  }, selector).catch(() => null);
+  const startedAt = performance.now();
+  const [refShot, genShot] = await Promise.all([
+    referencePage.screenshot({ type: "png", fullPage: true, animations: "disabled" }),
+    generatedPage.screenshot({ type: "png", fullPage: true, animations: "disabled" }),
+  ]);
+  if (telemetry) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 2; }
+  const fullPage = await comparePixels(refShot, genShot, 1, undefined, telemetry);
+  const refPng = PNG.sync.read(refShot), genPng = PNG.sync.read(genShot);
+  const baselines: ComponentVisualBaseline[] = [];
+  for (const target of targets) {
+    const [refRect, genRect] = await Promise.all([rectOf(referencePage, target.sourceSelector), rectOf(generatedPage, target.generatedSelector)]);
+    if (!refRect || !genRect || refRect.width < 1 || genRect.width < 1) {
+      baselines.push({
+        id: target.id, name: target.name,
+        referenceSelector: target.sourceSelector, generatedSelector: target.generatedSelector,
+        matched: false, pixelDiff: null, areaMatch: false,
+        referenceRect: refRect ? { width: Math.round(refRect.width), height: Math.round(refRect.height) } : null,
+        generatedRect: genRect ? { width: Math.round(genRect.width), height: Math.round(genRect.height) } : null,
+      });
+      continue;
+    }
+    const refCrop = PNG.sync.write(cropPng(refPng, refRect));
+    const genCrop = PNG.sync.write(cropPng(genPng, genRect));
+    const diff = await comparePixels(refCrop, genCrop, 1, undefined, telemetry);
+    baselines.push({
+      id: target.id, name: target.name,
+      referenceSelector: target.sourceSelector, generatedSelector: target.generatedSelector,
+      matched: true,
+      pixelDiff: diff.diffRate,
+      areaMatch: Math.abs(refRect.width - genRect.width) <= 4 && Math.abs(refRect.height - genRect.height) <= 4,
+      referenceRect: { width: Math.round(refRect.width), height: Math.round(refRect.height) },
+      generatedRect: { width: Math.round(genRect.width), height: Math.round(genRect.height) },
+    });
+  }
+  return { baselines, fullPageDiffRate: fullPage.diffRate };
 }
 
 async function evaluateBrowserQualityOnPages(
@@ -1950,11 +2115,15 @@ async function evaluateBrowserQualityOnPages(
     const resourceReadinessPassed = allResourceFailures.filter((failure) => failure.required).length === 0;
     const stabilityPassed = generated.stabilityFailures.length === 0 && reference.stabilityFailures.length === 0;
     const passed = translationFidelity.passed && externalAvailability.passed && resourceReadinessPassed && stabilityPassed;
+    const componentResult = options.componentBaselines?.length
+      ? await collectComponentBaselines(referencePage, generatedPage, options.componentBaselines, telemetry)
+      : undefined;
     return {
       available: true,
       reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, resourceFailures: reference.resourceFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
       generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, resourceFailures: generated.resourceFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
       selectorCoverage, styles, pixels, navigationIntegrity, fontFaceAlignment, translationFidelity, externalAvailability, score, passed,
+      ...(componentResult ? { componentBaselines: componentResult.baselines, pixelsFullPage: componentResult.fullPageDiffRate ?? undefined } : {}),
     };
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
@@ -2032,9 +2201,11 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
       generatedCount: report.styles.generatedCount,
       propertyCount: report.styles.propertyCount,
       matchingProperties: report.styles.matchingProperties,
+      unresolvedReferenceSelectors: report.styles.unresolvedReferenceSelectors,
       mismatches: report.styles.mismatches,
     },
     pixels: report.pixels,
+    ...(report.componentBaselines ? { componentBaselines: report.componentBaselines, pixelsFullPage: report.pixelsFullPage } : {}),
     score: report.score,
     passed: report.passed === true,
   };

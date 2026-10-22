@@ -1,28 +1,36 @@
 import { readFileSync, statSync } from "node:fs";
-import { basename, dirname, extname, resolve } from "node:path";
+import { basename, dirname, extname, relative, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { analyzeCssVariableReferences, extractGradients, extractMediaQueries, extractRootVariables, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
 import { classifyInteractionResponsibility, refineInteractionResponsibility } from "./interaction-responsibility.js";
 import { analyzeGraphGeometry, geometrySignalsForRole, geometrySignalsMatchRegion, type GraphGeometryResponsibility, type GraphGeometrySignals } from "./geometry-signals.js";
-import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
+import type { DataContract, Interaction, Manifest, AnalyzedView, UnmodeledBehavior, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
 const PROFILE_FALLBACK = "generic";
-const DEFAULT_MAX_CSS_BYTES = 300_000;
-const DEFAULT_MAX_STYLE_BYTES = 150_000;
+const DEFAULT_MAX_CSS_BYTES = 1_500_000;
+const DEFAULT_MAX_STYLE_BYTES = 1_000_000;
 const DEFAULT_MAX_SCRIPT_BYTES = 1_000_000;
 
-interface SourceBudget {
+export interface SourceBudget {
   maxCssBytes: number;
   maxStyleBytes: number;
   maxScriptBytes: number;
 }
 
-interface CollectedSource {
+export interface CollectedSource {
   text: string;
   warnings: string[];
 }
+
+/**
+ * Behavior version of the analyzer, recorded into every manifest as
+ * `meta.analyzerVersion`. Bump whenever analysis output semantics change so a
+ * frozen manifest can be distinguished from current-code output. 1.0.0 is the
+ * unversioned baseline; 1.1.0 adds the field itself and relative sources.
+ */
+export const ANALYZER_VERSION = "1.1.0";
 
 function byteLength(value: string): number { return Buffer.byteLength(value, "utf8"); }
 
@@ -40,11 +48,50 @@ function appendWithinBudget(chunks: string[], value: string, remaining: number):
   return { used: byteLength(value.slice(0, end)), truncated: true };
 }
 
+/** Strip data URIs from a CSS body so embedded assets do not consume the CSS budget. */
+export function stripCssDataUris(value: string): { text: string; count: number } {
+  let count = 0;
+  const text = value.replace(/data:[^"'()\s<>]+/gi, () => { count += 1; return "data:,"; });
+  return { text, count };
+}
+
+/**
+ * Cut CSS at the last top-level rule boundary within the byte budget. A mid-rule
+ * slice produces a stylesheet parsers reject outright ("Could not parse CSS
+ * stylesheet"); cutting at a depth-0 `}` keeps every retained rule — and every
+ * @media block — syntactically complete. Strings and comments are honored so
+ * braces inside them never steer the cut.
+ */
+export function truncateCssAtRuleBoundary(css: string, maxBytes: number): { text: string; truncated: boolean } {
+  if (byteLength(css) <= maxBytes) return { text: css, truncated: false };
+  if (maxBytes <= 0) return { text: "", truncated: css.length > 0 };
+  let lo = 0, hi = css.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (byteLength(css.slice(0, mid)) <= maxBytes) lo = mid; else hi = mid - 1;
+  }
+  let depth = 0, lastBoundary = 0;
+  let inString: string | null = null, inComment = false;
+  for (let i = 0; i < lo; i += 1) {
+    const ch = css[i], next = css[i + 1];
+    if (inComment) { if (ch === "*" && next === "/") { inComment = false; i += 1; } continue; }
+    if (inString) { if (ch === "\\") i += 1; else if (ch === inString) inString = null; continue; }
+    if (ch === "/" && next === "*") { inComment = true; i += 1; continue; }
+    if (ch === '"' || ch === "'") { inString = ch; continue; }
+    if (ch === "{") { depth += 1; continue; }
+    if (ch === "}") {
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) lastBoundary = i + 1;
+    }
+  }
+  return { text: css.slice(0, lastBoundary), truncated: true };
+}
+
 function readText(path: string): string {
   return readFileSync(path, "utf8");
 }
 
-function compactArchiveSource(source: string, budget: SourceBudget): CollectedSource {
+export function compactArchiveSource(source: string, budget: SourceBudget): CollectedSource {
   const warnings: string[] = [];
   if (byteLength(source) < 5_000_000) return { text: source, warnings };
   let skippedStyleBytes = 0;
@@ -54,8 +101,12 @@ function compactArchiveSource(source: string, budget: SourceBudget): CollectedSo
   let scriptBudget = budget.maxScriptBytes;
   let cssBudget = budget.maxCssBytes;
   let text = source.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi, (_match, open, body: string, close) => {
-    const allowed = Math.max(0, Math.min(body.length, budget.maxStyleBytes, cssBudget));
-    const compacted = body.slice(0, allowed);
+    // Embedded assets are compacted before metering so a multi-hundred-KB data URI
+    // cannot evict real rules from the budget; the cut itself lands on the last
+    // complete top-level rule so jsdom never sees a partial stylesheet.
+    const stripped = body.replace(/data:[^"'()\s<>]+/gi, () => { dataUris += 1; return "data:,"; });
+    const allowed = Math.max(0, Math.min(byteLength(stripped), budget.maxStyleBytes, cssBudget));
+    const compacted = truncateCssAtRuleBoundary(stripped, allowed).text;
     cssBudget -= byteLength(compacted);
     skippedStyleBytes += byteLength(body) - byteLength(compacted);
     return compacted ? `${open}${compacted}${close}` : "";
@@ -77,19 +128,23 @@ function compactArchiveSource(source: string, budget: SourceBudget): CollectedSo
   return { text, warnings };
 }
 
-function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
+export function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
   const document = dom.window.document;
   const chunks: string[] = [];
   const warnings: string[] = [];
   let used = 0;
   let skipped = 0;
+  let dataUris = 0;
   const append = (raw: string, label: string) => {
-    const rawBytes = byteLength(raw);
+    const stripped = stripCssDataUris(raw);
+    dataUris += stripped.count;
+    const rawBytes = byteLength(stripped.text);
     const perStyle = Math.min(rawBytes, budget.maxStyleBytes);
     const allowed = Math.max(0, Math.min(perStyle, budget.maxCssBytes - used));
-    const result = appendWithinBudget(chunks, raw, allowed);
-    used += result.used;
-    skipped += rawBytes - result.used;
+    const result = truncateCssAtRuleBoundary(stripped.text, allowed);
+    chunks.push(result.text);
+    used += byteLength(result.text);
+    skipped += rawBytes - byteLength(result.text);
     void label;
   };
   [...document.querySelectorAll("style")].forEach((node, index) => append(node.textContent ?? "", `style[${index + 1}]`));
@@ -101,6 +156,7 @@ function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): Co
     catch { /* Missing local resources are reported by runtime validation. */ }
   }
   if (skipped) warnings.push(`CSS 分析预算生效：读取 ${used} bytes，跳过 ${skipped} bytes；DOM/文本分析保持完整`);
+  if (dataUris) warnings.push(`CSS 分析预处理：压缩 ${dataUris} 个 data URI 后再计量预算`);
   return { text: chunks.join("\n"), warnings };
 }
 
@@ -145,6 +201,25 @@ function selectorCache(document: Document): StableSelectorCache {
     stableSelectorCaches.set(document, cache);
   }
   return cache;
+}
+
+/** Detect script-driven behavior regions (canvas / iframe) the declarative
+ * interaction model cannot see into, so they are annotated instead of vanishing. */
+function collectUnmodeledBehaviors(document: Document): UnmodeledBehavior[] {
+  const behaviors: UnmodeledBehavior[] = [];
+  document.querySelectorAll("canvas").forEach((element) => behaviors.push({
+    kind: "canvas",
+    selector: stableSelector(element),
+    source: null,
+    note: "canvas 渲染行为由脚本驱动，不在声明式交互建模范围内",
+  }));
+  document.querySelectorAll("iframe").forEach((element) => behaviors.push({
+    kind: "iframe",
+    selector: stableSelector(element),
+    source: element.getAttribute("src") ?? (element.hasAttribute("srcdoc") ? "srcdoc" : null),
+    note: "嵌套浏览上下文（iframe），其内部行为不在本文档建模范围内",
+  }));
+  return behaviors;
 }
 
 function stableSelector(element: Element): string {
@@ -695,16 +770,116 @@ function isSectionCandidate(element: Element): boolean {
   return direct || builder;
 }
 
+const GENERIC_SECTION_LABELS = /^(?:section|content|container|wrapper|main|app|page|root|body|layout|block)$/i;
+
+function leafTexts(element: Element, limit = 24): string[] {
+  const values: string[] = [];
+  for (const node of element.querySelectorAll("h1, h2, h3, h4, p, span, a, li, button, label")) {
+    if (node.children.length) continue;
+    const value = textOf(node).replace(/\s+/g, " ").trim();
+    if (value.length < 6 || value.length > 80) continue;
+    if (!/[\p{Letter}\p{Number}]/u.test(value) || /^[\d\s\W]+$/.test(value)) continue;
+    values.push(value);
+    if (values.length >= limit) break;
+  }
+  return values;
+}
+
+function accessibleSectionLabel(element: Element): string {
+  const aria = (element.getAttribute("aria-label") ?? "").trim();
+  if (aria) return aria;
+  const labelledBy = element.getAttribute("aria-labelledby");
+  if (labelledBy) {
+    const target = element.ownerDocument?.getElementById(labelledBy);
+    const value = target ? textOf(target).trim() : "";
+    if (value) return value;
+  }
+  const id = (element.id ?? "").replace(/[-_]+/g, " ").trim();
+  if (id.length >= 3 && !GENERIC_SECTION_LABELS.test(id)) return id;
+  return leafTexts(element)[0] ?? "";
+}
+
 function sectionView(element: Element, index: number): AnalyzedView {
-  const heading = sectionHeading(element) || (element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`);
+  const headingText = sectionHeading(element);
+  const fallback = element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`;
+  const heading = headingText || accessibleSectionLabel(element) || fallback;
   const hero = /designing|currently|profile|intro|hero/i.test(heading) || element.matches('header, [class*="hero" i], [id*="hero" i], [data-hero]');
   const type = element.matches("footer") ? "page-footer" : hero ? "hero-profile" : "content-section";
   const repeated = [...element.children].filter((child) => child.children.length > 0).length;
   return {
-    id: `section-${index + 1}-${slug(heading)}`, type, structuralType: "content-region", semanticType: slug(heading), confidence: 0.82,
-    evidence: [{ signal: "heading-led-section", value: heading }, { signal: "direct-child-regions", value: repeated }], selector: stableSelector(element),
+    id: `section-${index + 1}-${slug(heading)}`, type, structuralType: "content-region", semanticType: slug(heading), confidence: headingText ? 0.82 : 0.74,
+    evidence: [{ signal: headingText ? "heading-led-section" : "label-led-section", value: heading }, { signal: "direct-child-regions", value: repeated }], selector: stableSelector(element),
     details: { text: heading, className: `${element.className ?? ""}`, heading, childRegions: repeated, interactionSelectors: controlsOf(element).slice(0, 80).map(stableSelector) }, componentCandidates: componentCandidates(element, slug(heading)),
   };
+}
+
+function headingGroupSections(document: Document, exclude: Element[] = []): Element[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const groups = [...document.body.querySelectorAll("div, section, main, article")]
+    .filter((element) => {
+      if (element.matches("header, footer, nav, ul, ol")) return false;
+      const children = [...element.children];
+      if (children.length < 3) return false;
+      const headingChildren = children.filter((child) => child.querySelector("h1, h2"));
+      return headingChildren.length >= 2 && textOf(element).length >= Math.max(800, bodyText * 0.1);
+    })
+    .sort((left, right) => textOf(left).length - textOf(right).length);
+  const picked: Element[] = [];
+  for (const group of groups) {
+    for (const child of [...group.children]) {
+      if (child.matches("script, style, link, meta, template")) continue;
+      const heading = child.querySelector("h1, h2");
+      const controls = controlsOf(child).length;
+      if (!heading && textOf(child).length < 250 && controls < 3) continue;
+      if (picked.some((existing) => existing === child || existing.contains(child) || child.contains(existing))) continue;
+      if (exclude.some((existing) => existing === child || existing.contains(child) || child.contains(existing))) continue;
+      picked.push(child);
+    }
+  }
+  return picked
+    .filter((element) => !element.matches("header, footer, nav") && textOf(element).length >= 40)
+    .sort((left, right) => (left.compareDocumentPosition(right) & 4 ? -1 : 1));
+}
+
+function genericShellViewsFor(document: Document, sections: Element[]): AnalyzedView[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const links = (element: Element): number => element.querySelectorAll("a[href]").length;
+  const candidates = [...document.body.querySelectorAll("header, footer, nav, div, section")].filter((element) => {
+    if (element.matches("script, style, link, meta, template")) return false;
+    if (links(element) < 3) return false;
+    const size = textOf(element).length;
+    if (size < 5 || size > bodyText * 0.25) return false;
+    return !sections.some((section) => section.contains(element) || element.contains(section));
+  });
+  const header = candidates[0];
+  const footer = [...candidates].reverse().find((element) => element !== header);
+  return [
+    ...(header ? [shellView(header, "page-header", 0)] : []),
+    ...(footer ? [shellView(footer, "page-footer", 0)] : []),
+  ];
+}
+
+function overlayRegionViews(document: Document, views: AnalyzedView[]): AnalyzedView[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const overlays: AnalyzedView[] = [];
+  for (const element of [...document.body.children]) {
+    if (element.matches("script, style, link, meta, template")) continue;
+    const size = textOf(element).length;
+    if (size < 20 || size > bodyText * 0.3) continue;
+    if (controlsOf(element).length < 2) continue;
+    const covered = views.some((view) => {
+      try {
+        const target = document.querySelector(view.selector);
+        return Boolean(target && (target === element || target.contains(element) || element.contains(target)));
+      } catch { return false; }
+    });
+    if (covered) continue;
+    overlays.push(regionView(element, `page-overlay-${overlays.length + 1}`, "page-overlay", "page-overlay", "body"));
+  }
+  return overlays;
 }
 
 function attachInteractionSelectors(document: Document, views: AnalyzedView[], interactions: Interaction[]): void {
@@ -756,6 +931,8 @@ export class HtmlAnalyzer {
     if (document.querySelectorAll("script[src^=http], link[href^=http], img[src^=http]").length) warnings.push("包含远程资源，运行态 roundtrip 可能无法完全复现");
     if (a11y.imagesWithoutAlt) warnings.push(`${a11y.imagesWithoutAlt} 个图片缺少 alt 文本`);
     if (!views.length) warnings.push("未识别到已注册视图范式，将按 generic 处理");
+    const unmodeledBehaviors = collectUnmodeledBehaviors(document);
+    if (unmodeledBehaviors.length) warnings.push(`检测到 ${unmodeledBehaviors.length} 处脚本驱动行为区域（canvas/iframe），已在 unmodeledBehaviors 标注`);
 
     const rootVariables = extractRootVariables(css);
     const variableReferences = analyzeCssVariableReferences(css, Object.keys(rootVariables));
@@ -774,7 +951,8 @@ export class HtmlAnalyzer {
     return {
       schemaVersion: "1.0",
       meta: {
-        source: this.htmlPath,
+        source: relative(process.cwd(), this.htmlPath) || ".",
+        analyzerVersion: ANALYZER_VERSION,
         title: document.title.trim(),
         templateId: document.querySelector('meta[name="template"]')?.getAttribute("content") ?? null,
         vertical: profile,
@@ -793,6 +971,7 @@ export class HtmlAnalyzer {
           closeSelector: element.querySelector("[data-close], .close, [aria-label*=close i]") ? stableSelector(element.querySelector("[data-close], .close, [aria-label*=close i]")!) : null,
         })),
         landmarks: [...document.querySelectorAll("header, nav, main, aside, footer, [role]")].slice(0, 60).map((element) => ({ tag: element.tagName.toLowerCase(), role: element.getAttribute("role"), selector: stableSelector(element) })),
+        ...(unmodeledBehaviors.length ? { unmodeledBehaviors } : {}),
       },
       data: { contracts, members: [], timeline: [], works: [], moreFacts: [] },
       interactions,
@@ -823,18 +1002,25 @@ export class HtmlAnalyzer {
     const sections = candidates.filter(isSectionCandidate).filter((element, index, items) => !items.some((other, otherIndex) => otherIndex < index && other.contains(element) && sectionHeading(other).toLowerCase() === sectionHeading(element).toLowerCase()));
     const filteredSections = sections.filter((section) => !sections.some((other) => other !== section && section.contains(other) && sectionHeading(section).toLowerCase() === sectionHeading(other).toLowerCase()));
     const sectionViews = filteredSections.slice(0, 40).map(sectionView);
+    // Landing pages built from heading-led blocks (no tabs, panels, or semantic sections)
+    // would otherwise collapse into a single page-shell view.
+    const genericSections = !specialized.length && filteredSections.length < 2 ? headingGroupSections(document, filteredSections) : [];
+    const genericSectionViews = genericSections.map(sectionView);
     const appViews = applicationViews(document, scriptText);
-    const shellViews = [
-      ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
-      ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
-    ];
+    const shellViews = genericSections.length >= 3
+      ? genericShellViewsFor(document, genericSections)
+      : [
+        ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
+        ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
+      ];
+    const overlayViews = genericSections.length >= 3 ? overlayRegionViews(document, [...genericSectionViews, ...shellViews]) : [];
     for (const view of specialized) {
       let element: Element | null = null;
       try { element = document.querySelector(view.selector); } catch { /* Stable selectors should be valid; retain a flat plan if not. */ }
       const parent = element ? [...filteredSections].filter((section) => section !== element && section.contains(element)).sort((a, b) => textOf(a).length - textOf(b).length)[0] : undefined;
       if (parent) view.details.parentSelector = stableSelector(parent);
     }
-    const combined = [...appViews, ...specialized, ...shellViews, ...sectionViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
+    const combined = [...appViews, ...specialized, ...shellViews, ...genericSectionViews, ...sectionViews, ...overlayViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
     return combined.slice(0, 60);
   }
 

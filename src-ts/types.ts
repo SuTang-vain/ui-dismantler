@@ -56,10 +56,20 @@ export interface Interaction {
   fingerprint: string;
 }
 
+export interface UnmodeledBehavior {
+  kind: "canvas" | "iframe";
+  selector: string;
+  /** iframe 的 src；“srcdoc”；或 null。 */
+  source: string | null;
+  note: string;
+}
+
 export interface Manifest {
   schemaVersion: "1.0";
   meta: {
     source: string;
+    /** Analyzer behavior version; absent in manifests produced before versioning existed. */
+    analyzerVersion?: string;
     title: string;
     templateId: string | null;
     vertical: string;
@@ -81,6 +91,8 @@ export interface Manifest {
     views: AnalyzedView[];
     modals: Array<{ id: string; selector: string; role: string | null; closeSelector: string | null }>;
     landmarks: Array<{ tag: string; role: string | null; selector: string }>;
+    /** 脚本驱动行为区域（canvas/iframe），不在声明式交互建模范围内；无则省略。 */
+    unmodeledBehaviors?: UnmodeledBehavior[];
   };
   data: {
     contracts: DataContract[];
@@ -252,6 +264,11 @@ export interface RoundtripScore {
     refNodes: number;
     gotNodes: number;
     matchedNodes: number;
+    semanticMatches: number;
+    structureMode: "mimicry" | "semantic";
+    textAnchors: number;
+    textAnchorMatches: number;
+    textAnchorCoverage: number;
   };
   text: {
     textMatchRate: number;
@@ -301,6 +318,7 @@ export interface ComputedStyleSnapshot {
   tag: string;
   id: string;
   classes: string[];
+  text?: string;
   selector: string;
   rect: { x: number; y: number; width: number; height: number };
   styles: Record<string, string>;
@@ -313,6 +331,8 @@ export interface StyleComparisonReport {
   propertyCount: number;
   matchingProperties: number;
   rate: number;
+  /** Reference selectors that found no eligible counterpart — reported, never hard-paired. */
+  unresolvedReferenceSelectors?: string[];
   mismatches: Array<{
     key: string;
     property: string;
@@ -454,8 +474,10 @@ export interface BrowserViewportReport extends QualityViewport {
   navigationIntegrity?: NavigationIntegrityReport;
   fontFaceAlignment?: FontFaceAlignmentReport;
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
-  styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
+  styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "unresolvedReferenceSelectors" | "mismatches">;
   pixels?: PixelDiffReport;
+  pixelsFullPage?: number;
+  componentBaselines?: ComponentVisualBaseline[];
   score?: number;
   passed: boolean;
 }
@@ -485,6 +507,28 @@ export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrix
   label?: string;
 }
 
+export interface ComponentBaselineTarget {
+  id: string;
+  name: string;
+  sourceSelector: string;
+  generatedSelector: string;
+}
+
+export interface ComponentVisualBaseline {
+  id: string;
+  name: string;
+  referenceSelector: string;
+  generatedSelector: string;
+  /** 两侧元素都定位到才为 true。 */
+  matched: boolean;
+  /** 按各自 bounding rect 裁剪后的像素 diff 率；未匹配为 null。 */
+  pixelDiff: number | null;
+  /** 宽高均在 4px 容差内。 */
+  areaMatch: boolean;
+  referenceRect: { width: number; height: number } | null;
+  generatedRect: { width: number; height: number } | null;
+}
+
 export interface BrowserQualityReport {
   available: boolean;
   error?: string;
@@ -511,6 +555,10 @@ export interface BrowserQualityReport {
   navigationIntegrity?: NavigationIntegrityReport;
   fontFaceAlignment?: FontFaceAlignmentReport;
   pixels?: PixelDiffReport;
+  /** fullPage 截图 diff 率（仅在请求组件基线时采集）；报告用，不进门禁。 */
+  pixelsFullPage?: number;
+  /** 组件级视觉基线（仅在请求时采集）；报告用，不进门禁。 */
+  componentBaselines?: ComponentVisualBaseline[];
   score?: number;
   passed?: boolean;
 }
