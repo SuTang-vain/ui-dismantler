@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import type { AnalyzedView, Interaction, Manifest, UIStateTransition } from "../types.js";
 import { contributesInteractionComplexity, requiresInteractionOwner } from "../analysis/interaction-responsibility.js";
 
@@ -56,6 +56,13 @@ function pascal(value: string): string {
   const words = value.normalize("NFKD").replace(/[^\p{Letter}\p{Number}]+/gu, " ").trim().split(/\s+/).filter(Boolean);
   const name = words.map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`).join("");
   return /^[A-Za-z_$]/.test(name) ? name : `View${name || "Component"}`;
+}
+
+function boundedPascal(value: string): string {
+  const parts = value.split("-").filter(Boolean);
+  let chosen = parts.slice(0, 5).join("-");
+  while (chosen.includes("-") && pascal(chosen).length > 32) chosen = chosen.slice(0, chosen.lastIndexOf("-"));
+  return pascal(chosen || value);
 }
 
 function normalizedTargetSelector(target?: string): string | null {
@@ -257,7 +264,7 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
     const interactions = manifest.interactions.filter((item) => interactionOwner.get(item.fingerprint) === index);
     const semanticTypes = ["content-section", "repeated-item", "interactive-slot", "interactive-panel", "component-shell", "app-shell", "content-panel", "story-panel", "relationship-panel", "quiz-panel", "dialog", "graph-filters", "relationship-canvas", "relationship-detail", "quiz-question", "quiz-result", "story-origins", "story-source", "definition-hero", "definition-details", "identity-gallery", "gesture-surface", "works-explorer", "cast-explorer", "graph-surface", "graph-layout", "edge-renderer", "edge-label-placement", "graph-animation-loop", "event-controls", "graph-node-control", "member-control", "carousel-controls", "work-story-panel", "work-card-control", "cast-card-control", "story-control", "scroll-surface"];
     const preferredName = semanticTypes.includes(view.type) ? view.semanticType : view.type;
-    const baseName = pascal(preferredName);
+    const baseName = boundedPascal(preferredName);
     const occurrence = (nameCounts.get(baseName) ?? 0) + 1;
     nameCounts.set(baseName, occurrence);
     const componentName = occurrence === 1 ? baseName : `${baseName}${occurrence}`;
@@ -318,7 +325,11 @@ function renderPlan(plan: ComponentPlan): string {
   return `# ${plan.componentName} Specification\n\n## Overview\n- **Target file:** \`${plan.targetFile}\`\n- **Source selector:** \`${plan.sourceSelector}\`\n- **Source instances:** ${plan.sourceSelectors.length}\n- **Interaction model:** ${plan.interactionModel}\n- **Responsibility:** ${plan.responsibility}\n- **Parent:** ${plan.parentId ? `\`${plan.parentId}\`` : "root"}\n- **Dependencies:** ${plan.dependencies.length ? plan.dependencies.map((item) => `\`${item}\``).join(", ") : "None"}\n\n## DOM Structure\n- Preserve the source subtree rooted at \`${plan.sourceSelector}\`.\n${plan.sourceSelectors.length > 1 ? `- Reuse this component for all source instances:\n${list(plan.sourceSelectors.map((item) => `\`${item}\``))}\n` : ""}\n## Computed Styles\n${list(plan.designTokens.map((item) => `Token: \`${item}\``))}\n\n## States & Behaviors\n${list(plan.acceptance.states)}\n\n## Per-State Content\n${list(plan.interactionFingerprints.map((item) => `Covers: \`${item}\``), "N/A (static component)")}\n\n## Mutation Targets\n${list(plan.mutationTargets.map((item) => `Mutates: \`${item}\``), "N/A")}\n\n## State Transitions\n${list(plan.stateTransitions.map((item) => `${item.target}: ${item.kind}.${item.operation}${item.name ? ` \`${item.name}\`${item.value !== undefined ? ` → \`${String(item.value)}\`` : ""}` : ""}`), "N/A")}\n\n## Assets & Data\n${list([...plan.dataDependencies.map((item) => `Data dependency: \`${item}\``), ...plan.dataContracts.map((item) => `Data contract: \`${item}\``)])}\n\n## Text Content (verbatim)\n${list(plan.acceptance.text)}\n\n## Responsive Behavior\n${list(plan.acceptance.viewports.map((item) => `${item}: must pass visual quality matrix`))}\n${plan.responsiveQueries.length ? `\nSource media queries:\n${list(plan.responsiveQueries.map((item) => `\`${item}\``))}\n` : ""}\n## Complexity Budget\n- Estimated lines: ${plan.complexity.estimatedLines}\n- Budget: ${plan.complexity.budget}\n- Status: ${plan.complexity.overBudget ? "SPLIT REQUIRED" : "READY"}\n`;
 }
 
-export async function writeComponentPlanningReport(path: string, report: ComponentPlanningReport): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(report, null, 2)}\n`, "utf8"); }
+export async function writeComponentPlanningReport(path: string, report: ComponentPlanningReport): Promise<void> {
+  const absolute = resolve(path);
+  await mkdir(dirname(absolute), { recursive: true });
+  await writeFile(absolute, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+}
 export async function writeComponentSpecs(directory: string, report: ComponentPlanningReport): Promise<void> {
   const target = resolve(directory); await mkdir(target, { recursive: true });
   await Promise.all(report.components.map((component) => writeFile(resolve(target, `${component.id}.spec.md`), renderPlan(component), "utf8")));

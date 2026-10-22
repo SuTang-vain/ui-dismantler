@@ -1668,6 +1668,7 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
         tag: element.tagName.toLowerCase(),
         id: element.id,
         classes,
+        text: (element.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 160),
         selector: stableSelector(element),
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
         styles: Object.fromEntries(properties.map((property) => [property, computed.getPropertyValue(property).trim()])),
@@ -1727,10 +1728,21 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
       if (used.has(index)) return;
       const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
       const identityScore = expected.id && candidate.id && normalizeIdentity(expected.id) === normalizeIdentity(candidate.id) ? 1.5 : 0;
-      const score = identityScore + classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.35 : 0);
+      // Tag equality alone used to reach the match threshold, pairing unrelated divs and
+      // dragging the computed-style rate down with meaningless comparisons. Tag is a
+      // tiebreaker now; visible text may pair nodes whose class vocabularies differ.
+      const leftText = (expected.text ?? "").trim();
+      const rightText = (candidate.text ?? "").trim();
+      const shorter = Math.min(leftText.length, rightText.length);
+      const longer = Math.max(leftText.length, rightText.length);
+      const comparable = shorter >= 4 && shorter >= longer * 0.5;
+      const textScore = comparable
+        ? leftText === rightText ? 1 : shorter >= 12 ? 0.6 : 0
+        : 0;
+      const score = identityScore + classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.15 : 0) + textScore;
       if (score > bestScore) { bestScore = score; bestIndex = index; }
     });
-    if (bestIndex < 0 || bestScore < 0.35) continue;
+    if (bestIndex < 0 || bestScore < 0.45) continue;
     used.add(bestIndex); matched += 1;
     const actual = generated[bestIndex];
     for (const property of COMPUTED_STYLE_PROPERTIES) {

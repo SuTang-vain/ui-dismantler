@@ -9,8 +9,8 @@ import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } 
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
 const PROFILE_FALLBACK = "generic";
-const DEFAULT_MAX_CSS_BYTES = 300_000;
-const DEFAULT_MAX_STYLE_BYTES = 150_000;
+const DEFAULT_MAX_CSS_BYTES = 1_500_000;
+const DEFAULT_MAX_STYLE_BYTES = 1_000_000;
 const DEFAULT_MAX_SCRIPT_BYTES = 1_000_000;
 
 interface SourceBudget {
@@ -695,16 +695,116 @@ function isSectionCandidate(element: Element): boolean {
   return direct || builder;
 }
 
+const GENERIC_SECTION_LABELS = /^(?:section|content|container|wrapper|main|app|page|root|body|layout|block)$/i;
+
+function leafTexts(element: Element, limit = 24): string[] {
+  const values: string[] = [];
+  for (const node of element.querySelectorAll("h1, h2, h3, h4, p, span, a, li, button, label")) {
+    if (node.children.length) continue;
+    const value = textOf(node).replace(/\s+/g, " ").trim();
+    if (value.length < 6 || value.length > 80) continue;
+    if (!/[\p{Letter}\p{Number}]/u.test(value) || /^[\d\s\W]+$/.test(value)) continue;
+    values.push(value);
+    if (values.length >= limit) break;
+  }
+  return values;
+}
+
+function accessibleSectionLabel(element: Element): string {
+  const aria = (element.getAttribute("aria-label") ?? "").trim();
+  if (aria) return aria;
+  const labelledBy = element.getAttribute("aria-labelledby");
+  if (labelledBy) {
+    const target = element.ownerDocument?.getElementById(labelledBy);
+    const value = target ? textOf(target).trim() : "";
+    if (value) return value;
+  }
+  const id = (element.id ?? "").replace(/[-_]+/g, " ").trim();
+  if (id.length >= 3 && !GENERIC_SECTION_LABELS.test(id)) return id;
+  return leafTexts(element)[0] ?? "";
+}
+
 function sectionView(element: Element, index: number): AnalyzedView {
-  const heading = sectionHeading(element) || (element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`);
+  const headingText = sectionHeading(element);
+  const fallback = element.matches("footer") ? "Site footer" : element.matches("header") ? "Site header" : `Section ${index + 1}`;
+  const heading = headingText || accessibleSectionLabel(element) || fallback;
   const hero = /designing|currently|profile|intro|hero/i.test(heading) || element.matches('header, [class*="hero" i], [id*="hero" i], [data-hero]');
   const type = element.matches("footer") ? "page-footer" : hero ? "hero-profile" : "content-section";
   const repeated = [...element.children].filter((child) => child.children.length > 0).length;
   return {
-    id: `section-${index + 1}-${slug(heading)}`, type, structuralType: "content-region", semanticType: slug(heading), confidence: 0.82,
-    evidence: [{ signal: "heading-led-section", value: heading }, { signal: "direct-child-regions", value: repeated }], selector: stableSelector(element),
+    id: `section-${index + 1}-${slug(heading)}`, type, structuralType: "content-region", semanticType: slug(heading), confidence: headingText ? 0.82 : 0.74,
+    evidence: [{ signal: headingText ? "heading-led-section" : "label-led-section", value: heading }, { signal: "direct-child-regions", value: repeated }], selector: stableSelector(element),
     details: { text: heading, className: `${element.className ?? ""}`, heading, childRegions: repeated, interactionSelectors: controlsOf(element).slice(0, 80).map(stableSelector) }, componentCandidates: componentCandidates(element, slug(heading)),
   };
+}
+
+function headingGroupSections(document: Document, exclude: Element[] = []): Element[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const groups = [...document.body.querySelectorAll("div, section, main, article")]
+    .filter((element) => {
+      if (element.matches("header, footer, nav, ul, ol")) return false;
+      const children = [...element.children];
+      if (children.length < 3) return false;
+      const headingChildren = children.filter((child) => child.querySelector("h1, h2"));
+      return headingChildren.length >= 2 && textOf(element).length >= Math.max(800, bodyText * 0.1);
+    })
+    .sort((left, right) => textOf(left).length - textOf(right).length);
+  const picked: Element[] = [];
+  for (const group of groups) {
+    for (const child of [...group.children]) {
+      if (child.matches("script, style, link, meta, template")) continue;
+      const heading = child.querySelector("h1, h2");
+      const controls = controlsOf(child).length;
+      if (!heading && textOf(child).length < 250 && controls < 3) continue;
+      if (picked.some((existing) => existing === child || existing.contains(child) || child.contains(existing))) continue;
+      if (exclude.some((existing) => existing === child || existing.contains(child) || child.contains(existing))) continue;
+      picked.push(child);
+    }
+  }
+  return picked
+    .filter((element) => !element.matches("header, footer, nav") && textOf(element).length >= 40)
+    .sort((left, right) => (left.compareDocumentPosition(right) & 4 ? -1 : 1));
+}
+
+function genericShellViewsFor(document: Document, sections: Element[]): AnalyzedView[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const links = (element: Element): number => element.querySelectorAll("a[href]").length;
+  const candidates = [...document.body.querySelectorAll("header, footer, nav, div, section")].filter((element) => {
+    if (element.matches("script, style, link, meta, template")) return false;
+    if (links(element) < 3) return false;
+    const size = textOf(element).length;
+    if (size < 5 || size > bodyText * 0.25) return false;
+    return !sections.some((section) => section.contains(element) || element.contains(section));
+  });
+  const header = candidates[0];
+  const footer = [...candidates].reverse().find((element) => element !== header);
+  return [
+    ...(header ? [shellView(header, "page-header", 0)] : []),
+    ...(footer ? [shellView(footer, "page-footer", 0)] : []),
+  ];
+}
+
+function overlayRegionViews(document: Document, views: AnalyzedView[]): AnalyzedView[] {
+  const bodyText = textOf(document.body).length;
+  if (!bodyText) return [];
+  const overlays: AnalyzedView[] = [];
+  for (const element of [...document.body.children]) {
+    if (element.matches("script, style, link, meta, template")) continue;
+    const size = textOf(element).length;
+    if (size < 20 || size > bodyText * 0.3) continue;
+    if (controlsOf(element).length < 2) continue;
+    const covered = views.some((view) => {
+      try {
+        const target = document.querySelector(view.selector);
+        return Boolean(target && (target === element || target.contains(element) || element.contains(target)));
+      } catch { return false; }
+    });
+    if (covered) continue;
+    overlays.push(regionView(element, `page-overlay-${overlays.length + 1}`, "page-overlay", "page-overlay", "body"));
+  }
+  return overlays;
 }
 
 function attachInteractionSelectors(document: Document, views: AnalyzedView[], interactions: Interaction[]): void {
@@ -823,18 +923,25 @@ export class HtmlAnalyzer {
     const sections = candidates.filter(isSectionCandidate).filter((element, index, items) => !items.some((other, otherIndex) => otherIndex < index && other.contains(element) && sectionHeading(other).toLowerCase() === sectionHeading(element).toLowerCase()));
     const filteredSections = sections.filter((section) => !sections.some((other) => other !== section && section.contains(other) && sectionHeading(section).toLowerCase() === sectionHeading(other).toLowerCase()));
     const sectionViews = filteredSections.slice(0, 40).map(sectionView);
+    // Landing pages built from heading-led blocks (no tabs, panels, or semantic sections)
+    // would otherwise collapse into a single page-shell view.
+    const genericSections = !specialized.length && filteredSections.length < 2 ? headingGroupSections(document, filteredSections) : [];
+    const genericSectionViews = genericSections.map(sectionView);
     const appViews = applicationViews(document, scriptText);
-    const shellViews = [
-      ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
-      ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
-    ];
+    const shellViews = genericSections.length >= 3
+      ? genericShellViewsFor(document, genericSections)
+      : [
+        ...pageShellElements(document, "page-header").map((element, index) => shellView(element, "page-header", index)),
+        ...pageShellElements(document, "page-footer").map((element, index) => shellView(element, "page-footer", index)),
+      ];
+    const overlayViews = genericSections.length >= 3 ? overlayRegionViews(document, [...genericSectionViews, ...shellViews]) : [];
     for (const view of specialized) {
       let element: Element | null = null;
       try { element = document.querySelector(view.selector); } catch { /* Stable selectors should be valid; retain a flat plan if not. */ }
       const parent = element ? [...filteredSections].filter((section) => section !== element && section.contains(element)).sort((a, b) => textOf(a).length - textOf(b).length)[0] : undefined;
       if (parent) view.details.parentSelector = stableSelector(parent);
     }
-    const combined = [...appViews, ...specialized, ...shellViews, ...sectionViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
+    const combined = [...appViews, ...specialized, ...shellViews, ...genericSectionViews, ...sectionViews, ...overlayViews].filter((view, index, items) => items.findIndex((item) => item.selector === view.selector) === index);
     return combined.slice(0, 60);
   }
 

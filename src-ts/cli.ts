@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile as writeFileRaw } from "node:fs/promises";
 import { writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
@@ -105,7 +105,7 @@ function componentQualityContract(args: string[]): ComponentLibraryQualityContra
   };
 }
 function usage(): void {
-  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
+  console.error(`ui-dismantler-ts\n\n命令:\n  analyze <html> --out <manifest> [--profile <name>] [--minimal]\n  plan <html> --out <component-plan.json> [--spec-dir <dir>] [--line-budget <n>]\n  validate <lib-dir>\n  scenarios <manifest> --out <scenarios.json>\n  roundtrip <html> --lib <lib-dir> [--structure-mode <mimicry|semantic>] [--out <report.json>]\n  quality <html> --lib <lib-dir> [--manifest <manifest>] [--scenarios <scenarios.json>] [--interaction-coverage <0..1|off>] [--viewports <desktop,tablet,mobile,tiny>] [--browser-mode <legacy|shared-browser>] [--browser-concurrency <n>] [--browser-resource-cache <off|run-local>] [--browser-stability <fixed|adaptive>] [--browser-shutdown <graceful|fast-kill>] [--structure-mode <mimicry|semantic>] [--spa-router <config.json>] [--out <report.json>]\n  spa-router <config.json> [--out <report.json>]\n  spa-shell-generate <route-shell.plan.json> --out-dir <dir> [--baseline-dir <dir>] [--manual-report <report.json>] [--generated-report <report.json>] [--manual-edits <n>] [--manual-edited-lines <n>] [--repair-iterations <n>] [--metrics-out <metrics.json>]\n  spa-vue-router-analyze <source-root> --out <responsibility.graph.json>\n  spa-vue-router-patch <source-root> --source <permission.js> --out-dir <dir> [--import-path <path>]\n  sfc-visual-analyze <source-root> --out <sfc-visual.graph.json> [--fixture-config <spa-router.config.json>]\n  transport-proxy-analyze <source-root> --out <transport-proxy.graph.json>\n  spa-auth-analyze <source-root> --out <spa-auth.graph.json>\n  echarts-responsibility-analyze <source-root> --out <echarts.graph.json>\n  visual-target-plan <sfc-visual.graph.json> --route-shell <route-shell.plan.json> [--router-sfc <router-sfc.graph.json>] --out <visual-target.plan.json> [--metrics-out <metrics.json>]\n  visual-target-generate <visual-target.plan.json> --route-shell <route-shell.plan.json> --out-dir <dir> [--vendor-root <echarts-root>]\n  data-surface <sfc-visual.graph.json> [--cardinality <data-cardinality.graph.json>] [--api <api-fixture.graph.json>] --out <data-surface.manifest.json> [--source-root <root>] [--source-hash <sha256>] [--source-commit <commit>] [--fixture-hash <sha256>] [--config-hash <sha256>] [--generated-at <ISO>]
   data-surface-validate <data-surface.manifest.json> [--require-ready]
   skill-list [--out <skill-catalog.json>]
   skill-run <skill-id> --input <input.json> --out <output.json> [--evidence-out <evidence.json>]
@@ -130,6 +130,20 @@ function printValidation(report: ReturnType<typeof validateLibrary>): void {
   console.log(`校验目标: ${report.target}`);
   for (const result of report.results) console.log(`${result.passed ? "[PASS]" : "[FAIL]"} ${result.name}\n      ${result.detail}`);
   console.log(`\n结果: ${report.passed} 通过 / ${report.failed} 失败 / 共 ${report.total} 项`);
+}
+
+// Every CLI output path is user-supplied, so create parents instead of failing with ENOENT
+// when the target directory does not exist yet.
+async function writeFile(path: string, data: string | Uint8Array, encoding: BufferEncoding = "utf8"): Promise<void> {
+  const absolute = resolve(path);
+  await mkdir(dirname(absolute), { recursive: true });
+  await writeFileRaw(absolute, data, encoding);
+}
+
+function readStructureMode(args: string[]): "mimicry" | "semantic" {
+  const value = flag(args, "--structure-mode") ?? "mimicry";
+  if (value !== "mimicry" && value !== "semantic") throw new Error("--structure-mode 必须是 mimicry 或 semantic");
+  return value;
 }
 
 async function main(argv: string[]): Promise<number> {
@@ -423,7 +437,8 @@ async function main(argv: string[]): Promise<number> {
     }
     if (command === "roundtrip") {
       const html = args[0]; const lib = flag(args, "--lib"); if (!html || !lib) throw new Error("roundtrip 需要 <html> 和 --lib");
-      const report = await evaluateRoundtrip(html, lib);
+      const structureMode = readStructureMode(args);
+      const report = await evaluateRoundtrip(html, lib, { structureMode });
       const browser = has(args, "--no-visual") ? undefined : await evaluateBrowserQuality(html, lib);
       const fullReport = { ...report, browser };
       const out = flag(args, "--out"); const serialized = `${JSON.stringify(fullReport, null, 2)}\n`;
@@ -839,7 +854,8 @@ Run Semantic navigation before visual Gold+. Formal measured iterations and rema
       if (!["fixed", "adaptive"].includes(browserStability)) throw new Error("--browser-stability 必须是 fixed 或 adaptive");
       const browserShutdown = flag(args, "--browser-shutdown") ?? "graceful";
       if (!["graceful", "fast-kill"].includes(browserShutdown)) throw new Error("--browser-shutdown 必须是 graceful 或 fast-kill");
-      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", browserShutdown: browserShutdown as "graceful" | "fast-kill", spaRouterConfigPath: flag(args, "--spa-router"), thresholds });
+      const structureMode = readStructureMode(args);
+      const report = await runQualityGate({ htmlPath: html, libDir: lib, manifestPath: flag(args, "--manifest"), scenarioPath: flag(args, "--scenarios"), visual: !has(args, "--no-visual"), visualArtifactsDir: flag(args, "--visual-artifacts"), viewports, browserMode: browserModeFlag as "legacy" | "shared-browser", browserConcurrency, browserResourceCache: browserResourceCache as "off" | "run-local", browserStability: browserStability as "fixed" | "adaptive", browserShutdown: browserShutdown as "graceful" | "fast-kill", spaRouterConfigPath: flag(args, "--spa-router"), structureMode, thresholds });
       const out = flag(args, "--out"); const serialized = `${JSON.stringify(report, null, 2)}\n`;
       if (out) await writeFile(resolve(out), serialized, "utf8"); for (const gate of report.gates) console.log(`${gate.passed ? "[PASS]" : "[FAIL]"} ${gate.id}: ${gate.detail}`); console.log(`\n质量门禁: ${report.passed ? "PASS" : "FAIL"}`); return report.passed ? 0 : 1;
     }

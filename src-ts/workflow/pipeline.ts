@@ -1,5 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import { analyzeHtml } from "../analysis/analyzer.js";
 import { generateScenarios, computeCoverage, loadScenarios } from "../evaluation/scenarios.js";
@@ -83,6 +83,7 @@ export async function runQualityGate(options: {
   browserResourceCache?: "off" | "run-local";
   browserStability?: "fixed" | "adaptive";
   browserShutdown?: "graceful" | "fast-kill";
+  structureMode?: "mimicry" | "semantic";
   thresholds?: Partial<QualityThresholds>;
 }): Promise<QualityGateReport> {
   const totalStartedAt = performance.now();
@@ -98,7 +99,7 @@ export async function runQualityGate(options: {
   const staticValidation = validateLibrary(options.libDir);
   timing.validateMs = elapsed(phaseStartedAt);
   phaseStartedAt = performance.now();
-  const roundtrip = await evaluateRoundtrip(options.htmlPath, options.libDir);
+  const roundtrip = await evaluateRoundtrip(options.htmlPath, options.libDir, { structureMode: options.structureMode });
   timing.roundtripMs = elapsed(phaseStartedAt);
   let scenarios: QualityGateReport["scenarios"];
   let coverage: QualityGateReport["coverage"];
@@ -201,7 +202,7 @@ export async function runQualityGate(options: {
     { id: "validation", passed: validation.ok, detail: `${validation.passed}/${validation.total} 校验通过` },
     { id: "render", passed: Boolean(roundtrip.reference.ok && roundtrip.generated.ok), detail: roundtrip.reference.ok && roundtrip.generated.ok ? "原页面和组件库均成功渲染" : "原页面或组件库渲染失败" },
     { id: "overall", passed: finalOverall >= thresholds.overall, detail: `finalOverall=${finalOverall}（dom=${roundtrip.score?.overall ?? 0}，visual=${visualScore}），门槛=${thresholds.overall}` },
-    { id: "structure", passed: Boolean(roundtrip.score && roundtrip.score.scores.structure >= thresholds.structure), detail: `structure=${roundtrip.score?.scores.structure ?? 0}，门槛=${thresholds.structure}` },
+    { id: "structure", passed: Boolean(roundtrip.score && roundtrip.score.scores.structure >= thresholds.structure), detail: `structure=${roundtrip.score?.scores.structure ?? 0}（${roundtrip.score?.structure.structureMode ?? "mimicry"}），门槛=${thresholds.structure}` },
     { id: "text", passed: Boolean(roundtrip.score && roundtrip.score.text.textMatchRate >= thresholds.text), detail: `text=${roundtrip.score?.text.textMatchRate ?? 0}，门槛=${thresholds.text}` },
   ];
   if (browserMatrix) {
@@ -281,6 +282,12 @@ export async function runQualityGate(options: {
   return { manifest, validation, roundtrip, scenarios, coverage, browser, browserMatrix, scenarioVisualMatrices, spaRouter, scores: { dom: roundtrip.score?.overall ?? 0, visual: browserMatrix ? visualScore : null, overall: finalOverall }, gates, telemetry, passed: gates.every((gate) => gate.passed) };
 }
 
-export async function writeManifest(path: string, manifest: Manifest): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(manifest, null, 2)}\n`, "utf8"); }
+export async function writeManifest(path: string, manifest: Manifest): Promise<void> { await writeArtifact(path, `${JSON.stringify(manifest, null, 2)}\n`); }
+
+async function writeArtifact(path: string, content: string): Promise<void> {
+  const absolute = resolve(path);
+  await mkdir(dirname(absolute), { recursive: true });
+  await writeFile(absolute, content, "utf8");
+}
 export async function writeScenarioDocument(path: string, document: ScenarioDocument): Promise<void> { await writeFile(resolve(path), `${JSON.stringify(document, null, 2)}\n`, "utf8"); }
 export { analyzeHtml, generateScenarios };

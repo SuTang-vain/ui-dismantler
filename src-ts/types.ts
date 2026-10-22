@@ -252,6 +252,11 @@ export interface RoundtripScore {
     refNodes: number;
     gotNodes: number;
     matchedNodes: number;
+    semanticMatches: number;
+    structureMode: "mimicry" | "semantic";
+    textAnchors: number;
+    textAnchorMatches: number;
+    textAnchorCoverage: number;
   };
   text: {
     textMatchRate: number;
@@ -301,6 +306,7 @@ export interface ComputedStyleSnapshot {
   tag: string;
   id: string;
   classes: string[];
+  text?: string;
   selector: string;
   rect: { x: number; y: number; width: number; height: number };
   styles: Record<string, string>;
