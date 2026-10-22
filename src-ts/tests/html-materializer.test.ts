@@ -11,7 +11,9 @@ import { validateLibrary } from "../validation/library.js";
 const filler = "This paragraph carries enough visible copy for the section to count as a content region. ".repeat(6);
 
 function demoPage(): string {
+  const fontB64 = "AAEAAAASAQAABAAgR0RFRgAAAA" + "A".repeat(900);
   return `<!doctype html><html lang="en"><head><title>Demo - Acme</title><style>
+@font-face{font-family:"DemoFont";src:url("data:font/woff2;base64,${fontB64}");font-display:swap}
 :root{--brand:#3366ff;--ink:#1a1a1a}
 body{margin:0}
 .nav-links{display:flex;gap:12px}
@@ -31,6 +33,7 @@ body{margin:0}
     <div class="block"><div class="head"><h2>First section</h2></div><div class="copy"><p>${filler}</p><a href="/one">Read more</a></div></div>
     <div class="block"><div class="head"><h2>Second section</h2></div><div class="copy"><p>${filler}</p><img src="data:image/png;base64,${"A".repeat(2048)}" alt="demo"></div></div>
     <div class="block"><div class="head"><h2>Third section</h2></div><div class="copy"><p>${filler}</p><canvas id="demo-canvas"></canvas></div></div>
+    <div class="block"><div class="head"><h2>Fourth section</h2></div><div class="copy"><p>${filler}</p><div style="position:relative"><img src="data:image/png;base64,${"B".repeat(1024)}" alt="fill" style="display:block;width:100%;height:100%;object-fit:cover"></div></div></div>
   </div>
   <footer class="site-foot"><a href="/terms">Terms</a><a href="/privacy">Privacy</a></footer>
 </div>
@@ -58,8 +61,9 @@ test("materializer emits a complete library skeleton with extracted data and ass
   }
   assert.ok(report.slots.texts > 10, "text slots extracted");
   assert.ok(report.slots.links >= 5, "link slots extracted");
-  assert.equal(report.slots.images, 1);
-  assert.ok(report.assets.length === 1 && report.assets[0].endsWith(".png"), "data URI asset externalized");
+  assert.equal(report.slots.images, 2);
+  assert.equal(report.assets.filter((name) => name.endsWith(".png")).length, 2, "img data URI assets externalized");
+  assert.ok(report.assets.some((name) => name.endsWith(".woff2")), "font asset externalized");
   const data = JSON.parse(await readFile(join(libDir, "data", "data.json"), "utf8"));
   const values = Object.values(data);
   assert.ok(values.some((value) => String(value).includes("Acme hero headline")), "hero copy in data.json");
@@ -97,6 +101,18 @@ test("class renaming is deterministic and colors normalize to variables", async 
   assert.ok(!/#[0-9a-f]{3,8}\b/i.test(outsideRoot.replace(/var\([^)]*\)/g, "")), "no hardcoded hex outside :root");
   assert.ok(cssA.includes(".sg-"), "sg classes present");
   assert.ok(!/\.nav-links|\.site-foot|\.hero\b/.test(cssA), "original class names fully remapped");
+});
+
+test("font data URIs externalize to assets and runtime-dependent geometry is reported", async (context) => {
+  const { dir, libDir, report } = await materializeDemo();
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  assert.ok(report.assets.some((name) => name.endsWith(".woff2")), "font asset extracted");
+  const css = await readFile(join(libDir, "src", "AcmeSite.css"), "utf8");
+  assert.ok(css.includes("../assets/asset-"), "font url rewritten to asset path");
+  assert.ok(!css.includes("data:font"), "no inline font data URI remains");
+  assert.equal(report.css.parseErrors, 0);
+  assert.ok(report.deferredGeometry.length >= 1, "100%×100% media without statically sized ancestor must be reported");
+  assert.ok(report.warnings.some((warning) => warning.includes("运行时 JS 决定")));
 });
 
 test("components missing from the DOM are reported, not silently dropped", async (context) => {

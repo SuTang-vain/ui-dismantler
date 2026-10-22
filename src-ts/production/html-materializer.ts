@@ -1,8 +1,9 @@
+import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { createRequire } from "node:module";
 import { JSDOM, VirtualConsole } from "jsdom";
-import { compactArchiveSource, cssFromDocument, type SourceBudget } from "../analysis/analyzer.js";
+import type { SourceBudget } from "../analysis/analyzer.js";
 import type { ComponentPlanningReport } from "../planning/components.js";
 import type { Manifest } from "../types.js";
 
@@ -43,6 +44,8 @@ export interface MaterializeReport {
   classes: { renamed: number };
   css: { inputBytes: number; outputBytes: number; rulesKept: number; rulesDropped: number; colorsNormalized: number; keyframesKept: number; fontFacesKept: number; droppedAtrules: number; parseErrors: number };
   assets: string[];
+  /** 几何依赖源页面运行时 JS 的元素（静态抽取无法复现），如实列出。 */
+  deferredGeometry: string[];
   warnings: string[];
 }
 
@@ -95,6 +98,7 @@ interface FragmentBuild {
   template: string;
   slots: SlotRecord[];
   elements: Element[]; // original-document elements, for CSS matching
+  deferredGeometry: string[];
 }
 
 const SKIP_TAGS = new Set(["script", "style", "link", "meta", "template", "noscript"]);
@@ -177,6 +181,48 @@ function sanitizeNode(node: Element, renamer: Renamer, compSlug: string, slots: 
 }
 
 /* ------------------------------------------------------------- CSS phase */
+
+/** 原样收集页面 CSS（内联 <style> + 本地 link 样式表），不剥 data URI。 */
+function collectRawCss(document: Document, htmlPath: string): string {
+  const chunks: string[] = [];
+  for (const node of [...document.querySelectorAll("style")]) chunks.push(node.textContent ?? "");
+  for (const link of [...document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][href]')]) {
+    const href = link.getAttribute("href");
+    if (!href || /^[a-z]+:/i.test(href)) continue;
+    const path = resolve(dirname(htmlPath), decodeURIComponent(href.split("#")[0].split("?")[0]));
+    try { chunks.push(readFileSync(path, "utf8")); } catch { /* 缺失的本地样式表由运行时验证报告 */ }
+  }
+  return chunks.join("\n");
+}
+
+const DATA_URI_IN_URL = /url\(\s*(["']?)(data:(?:font|image)\/[a-z0-9.+-]*;base64,[a-z0-9+/=]+)\1\s*\)/gi;
+
+function mimeToExt(mime: string): string {
+  if (mime.includes("woff2")) return "woff2";
+  if (mime.includes("woff")) return "woff";
+  if (mime.includes("ttf")) return "ttf";
+  if (mime.includes("otf")) return "otf";
+  if (mime.includes("png")) return "png";
+  if (mime.includes("svg")) return "svg";
+  if (mime.includes("webp")) return "webp";
+  if (mime.includes("avif")) return "avif";
+  if (mime.includes("jpeg") || mime.includes("jpg")) return "jpg";
+  return "bin";
+}
+
+/**
+ * 把 CSS 里的 url(data:...) 资产落盘并改写为相对路径；按内容哈希去重。
+ * 必须在颜色归一之前运行（base64 不含 #，顺序其实安全，但先落盘能缩小下游字符串）。
+ */
+function externalizeCssAssets(css: string, assets: Map<string, string>): string {
+  return css.replace(DATA_URI_IN_URL, (_match, _quote, uri: string) => {
+    const mime = uri.slice(5, uri.indexOf(";"));
+    const hash = createHash("md5").update(uri).digest("hex").slice(0, 8);
+    const name = `asset-${hash}.${mimeToExt(mime)}`;
+    if (!assets.has(name)) assets.set(name, uri);
+    return `url("../assets/${name}")`;
+  });
+}
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -298,6 +344,30 @@ function coreVars(colors: Map<string, string>): Record<string, string> {
 }
 
 /* ---------------------------------------------------------- JS template */
+
+/**
+ * 几何延迟元素检测：inline 100%×100% 的媒体元素，若其片段内没有任何祖先携带
+ * 显式 inline 尺寸（px），则实际几何由源页面运行时 JS 决定，静态抽取无法复现。
+ * 如实报告（选择器清单），不静默也不猜尺寸。
+ */
+function detectDeferredGeometry(fragmentRoot: Element): string[] {
+  const hits: string[] = [];
+  for (const element of [fragmentRoot, ...fragmentRoot.querySelectorAll("*")]) {
+    const style = element.getAttribute("style") ?? "";
+    if (!/width\s*:\s*100%/.test(style) || !/height\s*:\s*100%/.test(style)) continue;
+    if (!/^(?:IMG|DIV|CANVAS|VIDEO)$/.test(element.tagName)) continue;
+    let ancestor = element.parentElement;
+    let sized = false;
+    while (ancestor && ancestor !== fragmentRoot.parentElement) {
+      const ancestorStyle = ancestor.getAttribute("style") ?? "";
+      if (/(?:width|min-width)\s*:\s*\d+(?:\.\d+)?px/.test(ancestorStyle) && /(?:height|min-height)\s*:\s*\d+(?:\.\d+)?px/.test(ancestorStyle)) { sized = true; break; }
+      if (ancestor === fragmentRoot) break;
+      ancestor = ancestor.parentElement;
+    }
+    if (!sized) hits.push(element.id ? `#${element.id}` : element.tagName.toLowerCase() + (element.getAttribute("class") ? `.${(element.getAttribute("class") ?? "").split(/\s+/)[0]}` : ""));
+  }
+  return hits;
+}
 
 function generateLibraryJs(libName: string, fragments: FragmentBuild[]): string {
   const templates = fragments.map((fragment) => `  ${JSON.stringify(fragment.componentId)}: ${JSON.stringify(fragment.template).replace(/<\//g, "<\\/")}`).join(",\n");
@@ -437,17 +507,13 @@ ${rows}
 
 export async function materializeComponentLibrary(htmlPath: string, options: MaterializeOptions): Promise<MaterializeReport> {
   const warnings: string[] = [];
-  const budgets: SourceBudget = {
-    maxCssBytes: options.budgets?.maxCssBytes ?? 1_500_000,
-    maxStyleBytes: options.budgets?.maxStyleBytes ?? 1_000_000,
-    maxScriptBytes: options.budgets?.maxScriptBytes ?? 400_000,
-  };
-  const source = compactArchiveSource(readFileSync(htmlPath, "utf8"), budgets);
-  warnings.push(...source.warnings);
-  const dom = new JSDOM(source.text);
+  const source = readFileSync(htmlPath, "utf8");
+  // materialize 走原始文件而非归档压缩文本：压缩会把 data URI 清成 "data:,"，
+  // 字体与图片资产正是本次要回填的对象。jsdom 不执行脚本，raw 解析是安全的。
+  const dom = new JSDOM(source);
   const { document } = dom.window;
-  const fullCss = cssFromDocument(dom, htmlPath, budgets);
-  warnings.push(...fullCss.warnings);
+  const rawCss = collectRawCss(document, htmlPath);
+  const fullCss = { text: rawCss, warnings: [] as string[] };
 
   const title = document.title.trim() || basename(htmlPath);
   const libName = options.libName ?? pascal(title.split(/[-–—|]/).at(-1) ?? title);
@@ -477,12 +543,16 @@ export async function materializeComponentLibrary(htmlPath: string, options: Mat
       template: clone.outerHTML,
       slots,
       elements: [original, ...original.querySelectorAll("*")],
+      deferredGeometry: detectDeferredGeometry(clone),
     });
   }
+  const deferredGeometry = fragments.flatMap((fragment) => fragment.deferredGeometry);
+  if (deferredGeometry.length) warnings.push(`${deferredGeometry.length} 个元素的几何由源页面运行时 JS 决定，静态抽取无法复现（${deferredGeometry.slice(0, 5).join("、")}…）`);
 
   // CSS：仅保留命中已抽取元素的规则，类名/id 同步改写，颜色归一为变量。
   const selection = selectFragmentCss(fullCss.text, matchedElements, renamer);
-  const normalized = normalizeColors(selection.css);
+  const withAssets = externalizeCssAssets(selection.css, assets);
+  const normalized = normalizeColors(withAssets);
   const core = coreVars(normalized.vars);
   const derived = [...normalized.vars.entries()].filter(([name]) => !(name in core)).map(([name, value]) => `  ${name}: ${value};`).join("\n");
   const coreBlock = Object.entries(core).map(([name, value]) => `  ${name}: ${value};`).join("\n");
@@ -567,6 +637,7 @@ export async function materializeComponentLibrary(htmlPath: string, options: Mat
       parseErrors: cssProbe,
     },
     assets: assetFiles,
+    deferredGeometry,
     warnings,
   };
 }
