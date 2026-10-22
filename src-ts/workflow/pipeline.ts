@@ -8,6 +8,7 @@ import { evaluateRoundtrip, evaluateScenario } from "../evaluation/roundtrip.js"
 import { evaluateSpaRouterContract, type SpaRouterContractConfig, type SpaRouterContractReport } from "../evaluation/spa-router.js";
 import { appendRuntimeSelectorCheck, validateLibrary } from "../validation/library.js";
 import type { BrowserExecutionTelemetry } from "../evaluation/browser.js";
+import type { ComponentPlanningReport } from "../planning/components.js";
 import type { BrowserQualityMatrixReport, BrowserScenarioQualityMatrixReport, Manifest, QualityThresholds, QualityViewport, Scenario, ScenarioDocument } from "../types.js";
 
 export const DEFAULT_THRESHOLDS: QualityThresholds = {
@@ -73,6 +74,7 @@ export async function runQualityGate(options: {
   htmlPath: string;
   libDir: string;
   manifestPath?: string;
+  planPath?: string;
   scenarioPath?: string;
   spaRouterConfigPath?: string;
   visual?: boolean;
@@ -141,6 +143,14 @@ export async function runQualityGate(options: {
       scenarioVisualMatrices = suite.scenarios.map((item) => ({ scenarioId: item.scenarioId, label: item.label, ...item.evaluation.matrix }));
     } else {
       phaseStartedAt = performance.now();
+      const planTargets = options.planPath
+        ? (JSON.parse(await readFile(resolve(options.planPath), "utf8")) as ComponentPlanningReport).components.map((component) => ({
+            id: component.id,
+            name: component.componentName,
+            sourceSelector: component.sourceSelector,
+            generatedSelector: `[data-sg-component="${component.componentName.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase()}"]`,
+          }))
+        : undefined;
       browserEvaluation = await evaluateBrowserQualityMatrix(options.htmlPath, options.libDir, {
         artifactDir: options.visualArtifactsDir,
         pixelThreshold: thresholds.pixelDiff,
@@ -150,6 +160,7 @@ export async function runQualityGate(options: {
         concurrency: browserConcurrency,
         stabilityMode: options.browserStability ?? "fixed",
         browserShutdown: options.browserShutdown ?? "graceful",
+        ...(planTargets ? { componentBaselines: planTargets } : {}),
       });
       timing.visualMatrixMs = elapsed(phaseStartedAt);
     }

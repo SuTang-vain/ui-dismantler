@@ -13,13 +13,13 @@ const DEFAULT_MAX_CSS_BYTES = 1_500_000;
 const DEFAULT_MAX_STYLE_BYTES = 1_000_000;
 const DEFAULT_MAX_SCRIPT_BYTES = 1_000_000;
 
-interface SourceBudget {
+export interface SourceBudget {
   maxCssBytes: number;
   maxStyleBytes: number;
   maxScriptBytes: number;
 }
 
-interface CollectedSource {
+export interface CollectedSource {
   text: string;
   warnings: string[];
 }
@@ -91,7 +91,7 @@ function readText(path: string): string {
   return readFileSync(path, "utf8");
 }
 
-function compactArchiveSource(source: string, budget: SourceBudget): CollectedSource {
+export function compactArchiveSource(source: string, budget: SourceBudget): CollectedSource {
   const warnings: string[] = [];
   if (byteLength(source) < 5_000_000) return { text: source, warnings };
   let skippedStyleBytes = 0;
@@ -128,7 +128,7 @@ function compactArchiveSource(source: string, budget: SourceBudget): CollectedSo
   return { text, warnings };
 }
 
-function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
+export function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): CollectedSource {
   const document = dom.window.document;
   const chunks: string[] = [];
   const warnings: string[] = [];

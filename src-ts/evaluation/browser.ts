@@ -9,6 +9,8 @@ import { PNG } from "pngjs";
 import { chromium, type Browser, type BrowserContext, type BrowserServer, type Page, type Request, type Route } from "playwright-core";
 import type {
   BrowserQualityReport,
+  ComponentBaselineTarget,
+  ComponentVisualBaseline,
   ComputedStyleSnapshot,
   PixelDiffReport,
   BrowserQualityMatrixReport,
@@ -221,6 +223,8 @@ export interface BrowserQualityOptions {
   executablePath?: string;
   stabilityMode?: "fixed" | "adaptive";
   browserShutdown?: "graceful" | "fast-kill";
+  /** 提供时额外采集 full-page 像素与组件级基线（报告用，不进门禁）。 */
+  componentBaselines?: ComponentBaselineTarget[];
 }
 
 export interface BrowserQualityMatrixOptions extends Omit<BrowserQualityOptions, "width" | "height"> {
@@ -1992,6 +1996,74 @@ export function compareNavigationIntegrity(
   return { passed: issues.length === 0, total, matched, rate: total ? Number((matched / total).toFixed(4)) : 1, issues: issues.slice(0, 100) };
 }
 
+export interface ComponentRect { x: number; y: number; width: number; height: number }
+
+export function cropPng(image: PNG, rect: ComponentRect): PNG {
+  const x0 = Math.max(0, Math.min(image.width - 1, Math.round(rect.x)));
+  const y0 = Math.max(0, Math.min(image.height - 1, Math.round(rect.y)));
+  const width = Math.max(1, Math.min(image.width - x0, Math.round(rect.width)));
+  const height = Math.max(1, Math.min(image.height - y0, Math.round(rect.height)));
+  const out = new PNG({ width, height });
+  image.data.copy(out.data, 0, 0, 0);
+  for (let y = 0; y < height; y += 1) {
+    image.data.copy(out.data, y * width * 4, ((y0 + y) * image.width + x0) * 4, ((y0 + y) * image.width + x0) * 4 + width * 4);
+  }
+  return out;
+}
+
+/**
+ * 组件级视觉基线：full-page 截图 + 按计划选择器裁剪对比。报告用指标，不进门禁——
+ * 其目的是把“哪里退化了”定位到单个组件，而不是增设新阈值。
+ */
+async function collectComponentBaselines(
+  referencePage: Page,
+  generatedPage: Page,
+  targets: ComponentBaselineTarget[],
+  telemetry?: BrowserExecutionTelemetry,
+): Promise<{ baselines: ComponentVisualBaseline[]; fullPageDiffRate: number | null }> {
+  const rectOf = (page: Page, selector: string): Promise<ComponentRect | null> => page.evaluate((sel) => {
+    const element = document.querySelector(sel);
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x + window.scrollX, y: rect.y + window.scrollY, width: rect.width, height: rect.height };
+  }, selector).catch(() => null);
+  const startedAt = performance.now();
+  const [refShot, genShot] = await Promise.all([
+    referencePage.screenshot({ type: "png", fullPage: true, animations: "disabled" }),
+    generatedPage.screenshot({ type: "png", fullPage: true, animations: "disabled" }),
+  ]);
+  if (telemetry) { telemetry.timing.screenshotMs += elapsed(startedAt); telemetry.workload.screenshots += 2; }
+  const fullPage = await comparePixels(refShot, genShot, 1, undefined, telemetry);
+  const refPng = PNG.sync.read(refShot), genPng = PNG.sync.read(genShot);
+  const baselines: ComponentVisualBaseline[] = [];
+  for (const target of targets) {
+    const [refRect, genRect] = await Promise.all([rectOf(referencePage, target.sourceSelector), rectOf(generatedPage, target.generatedSelector)]);
+    if (!refRect || !genRect || refRect.width < 1 || genRect.width < 1) {
+      baselines.push({
+        id: target.id, name: target.name,
+        referenceSelector: target.sourceSelector, generatedSelector: target.generatedSelector,
+        matched: false, pixelDiff: null, areaMatch: false,
+        referenceRect: refRect ? { width: Math.round(refRect.width), height: Math.round(refRect.height) } : null,
+        generatedRect: genRect ? { width: Math.round(genRect.width), height: Math.round(genRect.height) } : null,
+      });
+      continue;
+    }
+    const refCrop = PNG.sync.write(cropPng(refPng, refRect));
+    const genCrop = PNG.sync.write(cropPng(genPng, genRect));
+    const diff = await comparePixels(refCrop, genCrop, 1, undefined, telemetry);
+    baselines.push({
+      id: target.id, name: target.name,
+      referenceSelector: target.sourceSelector, generatedSelector: target.generatedSelector,
+      matched: true,
+      pixelDiff: diff.diffRate,
+      areaMatch: Math.abs(refRect.width - genRect.width) <= 4 && Math.abs(refRect.height - genRect.height) <= 4,
+      referenceRect: { width: Math.round(refRect.width), height: Math.round(refRect.height) },
+      generatedRect: { width: Math.round(genRect.width), height: Math.round(genRect.height) },
+    });
+  }
+  return { baselines, fullPageDiffRate: fullPage.diffRate };
+}
+
 async function evaluateBrowserQualityOnPages(
   referencePage: Page,
   generatedPage: Page,
@@ -2043,11 +2115,15 @@ async function evaluateBrowserQualityOnPages(
     const resourceReadinessPassed = allResourceFailures.filter((failure) => failure.required).length === 0;
     const stabilityPassed = generated.stabilityFailures.length === 0 && reference.stabilityFailures.length === 0;
     const passed = translationFidelity.passed && externalAvailability.passed && resourceReadinessPassed && stabilityPassed;
+    const componentResult = options.componentBaselines?.length
+      ? await collectComponentBaselines(referencePage, generatedPage, options.componentBaselines, telemetry)
+      : undefined;
     return {
       available: true,
       reference: { ok: reference.ok, runtimeErrors: reference.runtimeErrors, stabilityFailures: reference.stabilityFailures, resourceFailures: reference.resourceFailures, selectorCoverage: reference.selectorCoverage, styles: reference.styles },
       generated: { ok: generated.ok, runtimeErrors: generated.runtimeErrors, stabilityFailures: generated.stabilityFailures, resourceFailures: generated.resourceFailures, selectorCoverage: generated.selectorCoverage, styles: generated.styles },
       selectorCoverage, styles, pixels, navigationIntegrity, fontFaceAlignment, translationFidelity, externalAvailability, score, passed,
+      ...(componentResult ? { componentBaselines: componentResult.baselines, pixelsFullPage: componentResult.fullPageDiffRate ?? undefined } : {}),
     };
   } catch (error) {
     return { available: false, error: error instanceof Error ? error.message : String(error), passed: false };
@@ -2129,6 +2205,7 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
       mismatches: report.styles.mismatches,
     },
     pixels: report.pixels,
+    ...(report.componentBaselines ? { componentBaselines: report.componentBaselines, pixelsFullPage: report.pixelsFullPage } : {}),
     score: report.score,
     passed: report.passed === true,
   };

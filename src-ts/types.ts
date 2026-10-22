@@ -476,6 +476,8 @@ export interface BrowserViewportReport extends QualityViewport {
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
   styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "unresolvedReferenceSelectors" | "mismatches">;
   pixels?: PixelDiffReport;
+  pixelsFullPage?: number;
+  componentBaselines?: ComponentVisualBaseline[];
   score?: number;
   passed: boolean;
 }
@@ -505,6 +507,28 @@ export interface BrowserScenarioQualityMatrixReport extends BrowserQualityMatrix
   label?: string;
 }
 
+export interface ComponentBaselineTarget {
+  id: string;
+  name: string;
+  sourceSelector: string;
+  generatedSelector: string;
+}
+
+export interface ComponentVisualBaseline {
+  id: string;
+  name: string;
+  referenceSelector: string;
+  generatedSelector: string;
+  /** 两侧元素都定位到才为 true。 */
+  matched: boolean;
+  /** 按各自 bounding rect 裁剪后的像素 diff 率；未匹配为 null。 */
+  pixelDiff: number | null;
+  /** 宽高均在 4px 容差内。 */
+  areaMatch: boolean;
+  referenceRect: { width: number; height: number } | null;
+  generatedRect: { width: number; height: number } | null;
+}
+
 export interface BrowserQualityReport {
   available: boolean;
   error?: string;
@@ -531,6 +555,10 @@ export interface BrowserQualityReport {
   navigationIntegrity?: NavigationIntegrityReport;
   fontFaceAlignment?: FontFaceAlignmentReport;
   pixels?: PixelDiffReport;
+  /** fullPage 截图 diff 率（仅在请求组件基线时采集）；报告用，不进门禁。 */
+  pixelsFullPage?: number;
+  /** 组件级视觉基线（仅在请求时采集）；报告用，不进门禁。 */
+  componentBaselines?: ComponentVisualBaseline[];
   score?: number;
   passed?: boolean;
 }
