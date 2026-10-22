@@ -103,7 +103,7 @@ interface FragmentBuild {
 
 const SKIP_TAGS = new Set(["script", "style", "link", "meta", "template", "noscript"]);
 
-function sanitizeNode(node: Element, renamer: Renamer, compSlug: string, slots: SlotRecord[], counters: { text: number; link: number; img: number }, usedClasses: Set<string>, assets: Map<string, string>, assetPrefix: string): void {
+function sanitizeNode(node: Element, renamer: Renamer, compSlug: string, slots: SlotRecord[], counters: { text: number; link: number; img: number }, usedClasses: Set<string>, assets: Map<string, string>, assetPrefix: string, preserveIds: ReadonlySet<string>): void {
   // canvas/iframe 是脚本驱动的未建模行为区（见 manifest.structure.unmodeledBehaviors）：
   // 替换为占位容器。iframe srcdoc 属性可合法携带未转义的 </script>，直接复制会破坏
   // 任何内联本库的 <script> 标签。
@@ -116,7 +116,7 @@ function sanitizeNode(node: Element, renamer: Renamer, compSlug: string, slots: 
     node.replaceWith(placeholder);
     return;
   }
-  if (node.id) {
+  if (node.id && !preserveIds.has(node.id)) {
     const renamed = `sg-${compSlug}-${kebab(node.id)}`;
     renamer.ids.set(node.id, renamed);
     node.setAttribute("id", renamed);
@@ -176,7 +176,7 @@ function sanitizeNode(node: Element, renamer: Renamer, compSlug: string, slots: 
   for (const child of [...node.children]) {
     if (SKIP_TAGS.has(child.tagName.toLowerCase())) { child.remove(); continue; }
     if (child.hasAttribute("data-sg-text")) continue; // 我们刚创建的文本插槽标记，不再深入
-    sanitizeNode(child, renamer, compSlug, slots, counters, usedClasses, assets, assetPrefix);
+    sanitizeNode(child, renamer, compSlug, slots, counters, usedClasses, assets, assetPrefix, preserveIds);
   }
 }
 
@@ -229,7 +229,12 @@ function escapeRegExp(value: string): string {
 }
 
 /** A rule selector matches when any included element matches its rightmost subject. */
+const PAGE_CONTEXT_SELECTOR = /^\s*(?:html|:root|body\b)/;
+
 function selectorMatches(selector: string, elements: Element[]): boolean {
+  // 页面上下文规则（html/body/:root）不在片段元素集合内，但必须保留：
+  // body{color} 这类基础级联正是它们承载的。
+  if (PAGE_CONTEXT_SELECTOR.test(selector)) return true;
   const subject = selector.trim().split(/[\s>+~]+/).pop() ?? "";
   const cleaned = subject.replace(/::?[a-z-]+(\([^)]*\))?/gi, (match) => (match.startsWith("::") || /^:(?:hover|focus|active|visited|focus-visible|focus-within|checked|disabled|first-child|last-child|nth|not|is|where|has|empty|root)/i.test(match) ? "" : match));
   if (!cleaned || !/[.#\w[]/.test(cleaned)) return false;
@@ -317,24 +322,34 @@ function normalizeColors(css: string): { css: string; vars: Map<string, string> 
   return { css: out, vars };
 }
 
-function luminance(hex: string): number {
+function parseHex(hex: string): { r: number; g: number; b: number; a: number } {
   const h = hex.replace("#", "");
   const full = h.length <= 4 ? [...h].map((c) => c + c).join("") : h;
-  const r = parseInt(full.slice(0, 2), 16) / 255, g = parseInt(full.slice(2, 4), 16) / 255, b = parseInt(full.slice(4, 6), 16) / 255;
+  return {
+    r: parseInt(full.slice(0, 2), 16) / 255,
+    g: parseInt(full.slice(2, 4), 16) / 255,
+    b: parseInt(full.slice(4, 6), 16) / 255,
+    a: full.length >= 8 ? parseInt(full.slice(6, 8), 16) / 255 : 1,
+  };
+}
+function luminance(hex: string): number {
+  const { r, g, b } = parseHex(hex);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 function saturation(hex: string): number {
-  const h = hex.replace("#", "");
-  const full = h.length <= 4 ? [...h].map((c) => c + c).join("") : h;
-  const r = parseInt(full.slice(0, 2), 16) / 255, g = parseInt(full.slice(2, 4), 16) / 255, b = parseInt(full.slice(4, 6), 16) / 255;
+  const { r, g, b } = parseHex(hex);
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
   return max === min ? 0 : (max - min) / max;
 }
 
 function coreVars(colors: Map<string, string>): Record<string, string> {
+  // 透明色（#RGBA/#RRGGBBAA 且 alpha<0.5）不是颜色候选：#0000 曾被选为 --sg-ink，
+  // 整页文本随之透明。只在基本不透明的颜色里推导核心变量。
   const entries = [...colors.values()];
-  const byLum = [...entries].sort((a, b) => luminance(a) - luminance(b));
-  const saturated = [...entries].sort((a, b) => saturation(b) - saturation(a));
+  const opaque = entries.filter((hex) => parseHex(hex).a >= 0.5);
+  const pool = opaque.length ? opaque : entries;
+  const byLum = [...pool].sort((a, b) => luminance(a) - luminance(b));
+  const saturated = [...pool].sort((a, b) => saturation(b) - saturation(a));
   const ink = byLum[0] ?? "#1e1e1e";
   const paper = byLum.at(-1) ?? "#ffffff";
   const primary = saturated.find((c) => saturation(c) > 0.25) ?? ink;
@@ -523,6 +538,10 @@ export async function materializeComponentLibrary(htmlPath: string, options: Mat
   const fragments: FragmentBuild[] = [];
   const matchedElements: Element[] = [];
 
+  // 页内锚点的目标 id 不得重命名：href="#mission" 改名后会成为断链（missing-fragment-target）。
+  const preserveIds = new Set([...document.querySelectorAll("a[href^='#'], area[href^='#']")]
+    .map((element) => (element.getAttribute("href") ?? "").slice(1))
+    .filter(Boolean));
   for (const component of options.plan.components) {
     const selector = component.sourceSelectors.find((candidate) => {
       try { return document.querySelector(candidate); } catch { return false; }
@@ -534,7 +553,7 @@ export async function materializeComponentLibrary(htmlPath: string, options: Mat
     const counters = { text: 0, link: 0, img: 0 };
     const slots: SlotRecord[] = [];
     clone.setAttribute("data-sg-component", slug);
-    sanitizeNode(clone, renamer, slug, slots, counters, usedClasses, assets, slug);
+    sanitizeNode(clone, renamer, slug, slots, counters, usedClasses, assets, slug, preserveIds);
     matchedElements.push(...[original, ...original.querySelectorAll("*")]);
     fragments.push({
       componentId: component.id,

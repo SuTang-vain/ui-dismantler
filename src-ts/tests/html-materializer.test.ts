@@ -115,6 +115,35 @@ test("font data URIs externalize to assets and runtime-dependent geometry is rep
   assert.ok(report.warnings.some((warning) => warning.includes("运行时 JS 决定")));
 });
 
+test("transparent hex colors never become the ink variable and body rules survive", async (context) => {
+  const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-materialize-"));
+  context.after(() => rm(dir, { recursive: true, force: true }));
+  const htmlPath = join(dir, "page.html");
+  await writeFile(htmlPath, `<!doctype html><html lang="en"><head><title>T</title><style>
+body{color:#1a1a19;background:#fff}
+.ghost{color:#0000}
+.block{padding:24px}
+</style></head><body>
+<div class="app">
+  <nav class="site-nav"><a href="/a">A</a><a href="/b">B</a><a href="/c">C</a></nav>
+  <div class="content">
+    <div class="block"><div class="head"><h2>Alpha one</h2></div><div class="copy"><p>${filler}</p></div></div>
+    <div class="block"><div class="head"><h2>Alpha two</h2></div><div class="copy"><p>${filler}</p></div></div>
+    <div class="block"><div class="head"><h2>Alpha three</h2></div><div class="copy"><p>${filler}</p></div></div>
+  </div>
+  <footer class="site-foot"><a href="/t">Terms</a><a href="/p">Privacy</a></footer>
+</div></body></html>`, "utf8");
+  const manifest = analyzeHtml(htmlPath);
+  const plan = planComponents(manifest, { lineBudget: 2000 });
+  const libDir = join(dir, "lib");
+  const report = await materializeComponentLibrary(htmlPath, { plan, manifest, libName: "AlphaSite", outDir: libDir });
+  const css = await readFile(join(libDir, "src", "AlphaSite.css"), "utf8");
+  assert.ok(!/--sg-ink:\#(?:0000|00000000)\b/.test(css), "transparent black must not become --sg-ink");
+  assert.ok(css.includes("--sg-ink: #1a1a19"), css.match(/--sg-ink:[^;]+/)?.[0] ?? "no ink");
+  assert.ok(css.includes("body{"), "body context rule preserved");
+  assert.equal(report.css.parseErrors, 0);
+});
+
 test("components missing from the DOM are reported, not silently dropped", async (context) => {
   const dir = await mkdtemp(join(tmpdir(), "ui-dismantler-materialize-"));
   context.after(() => rm(dir, { recursive: true, force: true }));

@@ -838,7 +838,13 @@ function headingGroupSections(document: Document, exclude: Element[] = []): Elem
     }
   }
   return picked
-    .filter((element) => !element.matches("header, footer, nav") && textOf(element).length >= 40)
+    .filter((element) => {
+      if (textOf(element).length < 40) return false;
+      if (!element.matches("header, footer, nav")) return true;
+      // 落地页常把 hero 做成 <header>（含 h1 + CTA，文本可能很短）：这种 header 是
+      // 内容，不是壳；无 h1 的导航/横幅 header 仍然排除。
+      return element.matches("header") && Boolean(element.querySelector("h1"));
+    })
     .sort((left, right) => (left.compareDocumentPosition(right) & 4 ? -1 : 1));
 }
 
