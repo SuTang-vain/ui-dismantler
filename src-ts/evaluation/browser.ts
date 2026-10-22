@@ -1657,7 +1657,17 @@ async function collectBrowserSnapshot(page: Page, rootSelector: string, url: str
       };
     }) : [];
 
-    const nodes = [root, ...root.querySelectorAll("[id], [class], [style]")].slice(0, 500);
+    // Stratified (systematic) sampling: the first 500 candidates of a long page only
+    // cover its top, so the style matrix used to ignore everything below. Keep the
+    // root plus evenly spaced candidates across the full document depth instead.
+    const candidates = [root, ...root.querySelectorAll("[id], [class], [style]")];
+    const snapshotCap = 500;
+    const nodes = candidates.length <= snapshotCap ? candidates : (() => {
+      const rest = candidates.slice(1);
+      const picked = [candidates[0]];
+      for (let i = 0; i < snapshotCap - 1; i += 1) picked.push(rest[Math.round(i * (rest.length - 1) / (snapshotCap - 2))]);
+      return picked;
+    })();
     const styles = nodes.map((element, index) => {
       const computed = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
@@ -1722,11 +1732,12 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
   const used = new Set<number>();
   let propertyCount = 0, matchingProperties = 0, matched = 0;
   const mismatches: StyleComparisonReport["mismatches"] = [];
+  const unresolved: string[] = [];
+  const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
   for (const expected of reference) {
     let bestIndex = -1, bestScore = 0;
     generated.forEach((candidate, index) => {
       if (used.has(index)) return;
-      const normalizeIdentity = (value: string) => value.toLowerCase().replace(/^sg-/, "");
       const identityScore = expected.id && candidate.id && normalizeIdentity(expected.id) === normalizeIdentity(candidate.id) ? 1.5 : 0;
       // Tag equality alone used to reach the match threshold, pairing unrelated divs and
       // dragging the computed-style rate down with meaningless comparisons. Tag is a
@@ -1736,13 +1747,39 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
       const shorter = Math.min(leftText.length, rightText.length);
       const longer = Math.max(leftText.length, rightText.length);
       const comparable = shorter >= 4 && shorter >= longer * 0.5;
-      const textScore = comparable
-        ? leftText === rightText ? 1 : shorter >= 12 ? 0.6 : 0
-        : 0;
-      const score = identityScore + classSimilarity(expected.classes, candidate.classes) + (expected.tag === candidate.tag ? 0.15 : 0) + textScore;
+      // Comparable length alone is not content evidence: a <style> element and a page
+      // container both carry long text. Require equality, containment, or a strong
+      // word overlap before text contributes to the score.
+      let textScore = 0;
+      if (comparable) {
+        const leftNorm = leftText.toLowerCase(), rightNorm = rightText.toLowerCase();
+        if (leftNorm === rightNorm) textScore = 1;
+        else if (shorter >= 12 && (rightNorm.includes(leftNorm) || leftNorm.includes(rightNorm))) textScore = 0.8;
+        else {
+          const tokens = (value: string) => new Set(value.split(/[^a-z0-9\u4e00-\u9fff]+/i).filter((token) => token.length >= 2));
+          const leftTokens = tokens(leftNorm), rightTokens = tokens(rightNorm);
+          const union = new Set([...leftTokens, ...rightTokens]).size;
+          const overlap = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+          if (union > 0 && overlap / union >= 0.6) textScore = 0.6;
+        }
+      }
+      const similarity = classSimilarity(expected.classes, candidate.classes);
+      // Size veto: a full-page wrapper must not absorb a small leaf on the strength of
+      // shared text. Only a strong identity (id or class vocabulary) may bridge an
+      // extreme area ratio; text/tag pairs across 10x areas are rejected outright.
+      const expectedArea = expected.rect.width * expected.rect.height;
+      const candidateArea = candidate.rect.width * candidate.rect.height;
+      if (expectedArea > 0 && candidateArea > 0) {
+        const areaRatio = Math.max(expectedArea, candidateArea) / Math.min(expectedArea, candidateArea);
+        if (areaRatio > 10 && identityScore < 1.5 && similarity < 0.6) return;
+      }
+      const score = identityScore + similarity + (expected.tag === candidate.tag ? 0.15 : 0) + textScore;
       if (score > bestScore) { bestScore = score; bestIndex = index; }
     });
-    if (bestIndex < 0 || bestScore < 0.45) continue;
+    if (bestIndex < 0 || bestScore < 0.45) {
+      if (unresolved.length < 100) unresolved.push(expected.selector);
+      continue;
+    }
     used.add(bestIndex); matched += 1;
     const actual = generated[bestIndex];
     for (const property of COMPUTED_STYLE_PROPERTIES) {
@@ -1757,7 +1794,7 @@ export function compareComputedStyles(reference: ComputedStyleSnapshot[], genera
       else if (mismatches.length < 100) mismatches.push({ key: `${expected.selector} ↔ ${actual.selector}`, property: `rect.${property}`, reference: String(expected.rect[property]), generated: String(actual.rect[property]) });
     }
   }
-  return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, mismatches };
+  return { matched, referenceCount: reference.length, generatedCount: generated.length, propertyCount, matchingProperties, rate: propertyCount ? Number((matchingProperties / propertyCount).toFixed(4)) : 0, unresolvedReferenceSelectors: unresolved, mismatches };
 }
 
 export async function comparePixels(reference: Buffer, generated: Buffer, threshold: number, artifactDir?: string, telemetry?: BrowserExecutionTelemetry): Promise<PixelDiffReport> {
@@ -1879,6 +1916,8 @@ export function compareFontFaces(reference: FontFaceSnapshot[], generated: FontF
   };
 }
 
+const normalizeNavigationText = (value: string) => value.replace(/\s+/g, " ").trim().toLowerCase();
+
 export function compareNavigationIntegrity(
   reference: NavigationReferenceSnapshot[],
   generated: NavigationReferenceSnapshot[],
@@ -1886,18 +1925,60 @@ export function compareNavigationIntegrity(
   generatedTransitions: NavigationTransitionSnapshot[] = [],
 ): NavigationIntegrityReport {
   const issues: NavigationIntegrityReport["issues"] = [];
-  const staticTotal = Math.max(reference.length, generated.length);
-  const transitionTotal = Math.max(referenceTransitions.length, generatedTransitions.length);
+  // Static references are matched by identity (target/kind/download), never by array
+  // index: reordering a nav or adding one link must not cascade every later entry into
+  // a target-mismatch. Matching is a three-pass greedy over a candidate pool — exact
+  // identity first, then same-text pairs (whose differing target is a real regression),
+  // then same-target pairs with a different kind. Leftovers are genuine extras/misses.
+  const pool = generated.map((entry, generatedIndex) => ({ entry, generatedIndex, used: false }));
   let matched = 0;
-  for (let index = 0; index < staticTotal; index += 1) {
-    const expected = reference[index], actual = generated[index];
-    if (!expected || !actual) { issues.push({ index, reason: "count-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.normalizedTarget !== actual.normalizedTarget) { issues.push({ index, reason: "target-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.download !== actual.download) { issues.push({ index, reason: "download-mismatch", reference: expected, generated: actual }); continue; }
-    if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); continue; }
-    matched += 1;
+  const take = (candidate: (typeof pool)[number] | undefined) => { if (candidate) candidate.used = true; };
+  const checkPair = (expected: NavigationReferenceSnapshot, actual: NavigationReferenceSnapshot, index: number): boolean => {
+    if (expected.kind !== actual.kind) { issues.push({ index, reason: "kind-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.normalizedTarget !== actual.normalizedTarget) { issues.push({ index, reason: "target-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.download !== actual.download) { issues.push({ index, reason: "download-mismatch", reference: expected, generated: actual }); return false; }
+    if (expected.kind === "fragment" && (!expected.fragmentTargetExists || !actual.fragmentTargetExists)) { issues.push({ index, reason: "missing-fragment-target", reference: expected, generated: actual }); return false; }
+    return true;
+  };
+  const referenceLeftovers: number[] = [];
+  const exactCandidates = (expected: NavigationReferenceSnapshot) => pool.filter((candidate) => !candidate.used
+    && candidate.entry.normalizedTarget === expected.normalizedTarget
+    && candidate.entry.kind === expected.kind
+    && candidate.entry.download === expected.download);
+  // Round A pairs only entries with a same-text exact candidate, so a duplicate target
+  // is claimed by the entry that actually corresponds to it; round B pairs the rest.
+  const deferred: number[] = [];
+  reference.forEach((expected, index) => {
+    const pick = exactCandidates(expected).find((candidate) => normalizeNavigationText(candidate.entry.text) === normalizeNavigationText(expected.text));
+    if (!pick) { deferred.push(index); return; }
+    take(pick);
+    if (checkPair(expected, pick.entry, index)) matched += 1;
+  });
+  for (const index of deferred) {
+    const expected = reference[index];
+    const pick = exactCandidates(expected)[0];
+    if (!pick) { referenceLeftovers.push(index); continue; }
+    take(pick);
+    if (checkPair(expected, pick.entry, index)) matched += 1;
   }
+  // Pass 2: leftover reference entries pair with leftover generated entries that carry
+  // the same visible text — a renamed target on the same link is one issue, not two.
+  const stillLeftover: number[] = [];
+  for (const index of referenceLeftovers) {
+    const expected = reference[index];
+    const byText = pool.find((candidate) => !candidate.used
+      && normalizeNavigationText(candidate.entry.text) === normalizeNavigationText(expected.text)
+      && normalizeNavigationText(expected.text) !== "");
+    if (byText) { take(byText); checkPair(expected, byText.entry, index); continue; }
+    const byTarget = pool.find((candidate) => !candidate.used && candidate.entry.normalizedTarget === expected.normalizedTarget);
+    if (byTarget) { take(byTarget); checkPair(expected, byTarget.entry, index); continue; }
+    stillLeftover.push(index);
+  }
+  for (const index of stillLeftover) issues.push({ index, reason: "count-mismatch", reference: reference[index] });
+  for (const candidate of pool) if (!candidate.used) issues.push({ index: candidate.generatedIndex, reason: "count-mismatch", generated: candidate.entry });
+  const staticTotal = Math.max(reference.length, generated.length);
+  // Transitions are an ordered event stream; index-based comparison is intentional.
+  const transitionTotal = Math.max(referenceTransitions.length, generatedTransitions.length);
   for (let transitionIndex = 0; transitionIndex < transitionTotal; transitionIndex += 1) {
     const index = staticTotal + transitionIndex;
     const expected = referenceTransitions[transitionIndex], actual = generatedTransitions[transitionIndex];
@@ -2044,6 +2125,7 @@ function summarizeViewport(viewport: QualityViewport, report: BrowserQualityRepo
       generatedCount: report.styles.generatedCount,
       propertyCount: report.styles.propertyCount,
       matchingProperties: report.styles.matchingProperties,
+      unresolvedReferenceSelectors: report.styles.unresolvedReferenceSelectors,
       mismatches: report.styles.mismatches,
     },
     pixels: report.pixels,

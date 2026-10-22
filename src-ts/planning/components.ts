@@ -41,7 +41,7 @@ export interface ComponentPlanningReport {
   lineBudget: number;
   components: ComponentPlan[];
   issues: PlanningIssue[];
-  summary: { components: number; overBudget: number; errors: number; warnings: number; interactions: number; ownedInteractions: number; unownedInteractions: number; ready: boolean };
+  summary: { components: number; overBudget: number; errors: number; warnings: number; interactions: number; ownedInteractions: number; unownedInteractions: number; unmodeledBehaviors?: number; ready: boolean };
 }
 
 export interface ComponentPlanningOptions { lineBudget?: number }
@@ -293,10 +293,15 @@ export function planComponents(manifest: Manifest, options: ComponentPlanningOpt
   });
   const issues = validateComponentPlans(components);
   const ownedInteractions = new Set(components.flatMap((component) => component.interactionFingerprints));
-  const unowned = manifest.interactions.filter((interaction) => interaction.source !== "event-listener" && requiresInteractionOwner(interaction) && !ownedInteractions.has(interaction.fingerprint));
+  // event-listener interactions used to be silently excluded here, which made pages
+  // with unextractable script behavior look fully owned. They now count like any
+  // other interaction; a page we could not fully understand must not read as ready.
+  const unowned = manifest.interactions.filter((interaction) => requiresInteractionOwner(interaction) && !ownedInteractions.has(interaction.fingerprint));
   for (const interaction of manifest.interactions) if (!requiresInteractionOwner(interaction) && !ownedInteractions.has(interaction.fingerprint)) ownedInteractions.add(interaction.fingerprint);
   if (unowned.length) issues.push({ severity: "error", code: "unowned-interactions", detail: `${unowned.length} 个 DOM 交互未分配到组件边界：${unowned.slice(0, 4).map((item) => item.fingerprint).join("；")}` });
-  return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, generatedAt: new Date().toISOString(), lineBudget, components, issues, summary: { components: components.length, overBudget: components.filter((item) => item.complexity.overBudget).length, errors: issues.filter((item) => item.severity === "error").length, warnings: issues.filter((item) => item.severity === "warning").length, interactions: manifest.interactions.length, ownedInteractions: ownedInteractions.size, unownedInteractions: unowned.length, ready: !issues.some((item) => item.severity === "error") } };
+  const unmodeledCount = manifest.structure.unmodeledBehaviors?.length ?? 0;
+  if (unmodeledCount) issues.push({ severity: "warning", code: "unmodeled-behaviors", detail: `${unmodeledCount} 处脚本驱动行为区域（canvas/iframe）未纳入组件边界建模，已在 manifest 标注` });
+  return { schemaVersion: "1.0", generatedFrom: manifest.meta.source, generatedAt: new Date().toISOString(), lineBudget, components, issues, summary: { components: components.length, overBudget: components.filter((item) => item.complexity.overBudget).length, errors: issues.filter((item) => item.severity === "error").length, warnings: issues.filter((item) => item.severity === "warning").length, interactions: manifest.interactions.length, ownedInteractions: ownedInteractions.size, unownedInteractions: unowned.length, unmodeledBehaviors: unmodeledCount, ready: !issues.some((item) => item.severity === "error") } };
 }
 
 export function validateComponentPlans(components: ComponentPlan[]): PlanningIssue[] {

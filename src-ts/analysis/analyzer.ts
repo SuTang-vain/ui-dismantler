@@ -1,11 +1,11 @@
 import { readFileSync, statSync } from "node:fs";
-import { basename, dirname, extname, resolve } from "node:path";
+import { basename, dirname, extname, relative, resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { analyzeCssVariableReferences, extractGradients, extractMediaQueries, extractRootVariables, normalizeTokenName } from "../core/css.js";
 import { extractScriptInteractions } from "./script-interactions.js";
 import { classifyInteractionResponsibility, refineInteractionResponsibility } from "./interaction-responsibility.js";
 import { analyzeGraphGeometry, geometrySignalsForRole, geometrySignalsMatchRegion, type GraphGeometryResponsibility, type GraphGeometrySignals } from "./geometry-signals.js";
-import type { DataContract, Interaction, Manifest, AnalyzedView, ViewEvidence } from "../types.js";
+import type { DataContract, Interaction, Manifest, AnalyzedView, UnmodeledBehavior, ViewEvidence } from "../types.js";
 
 const COLOR_PROPERTIES = new Set(["color", "background", "background-color", "border-color", "box-shadow", "fill", "stroke"]);
 const PROFILE_FALLBACK = "generic";
@@ -24,6 +24,14 @@ interface CollectedSource {
   warnings: string[];
 }
 
+/**
+ * Behavior version of the analyzer, recorded into every manifest as
+ * `meta.analyzerVersion`. Bump whenever analysis output semantics change so a
+ * frozen manifest can be distinguished from current-code output. 1.0.0 is the
+ * unversioned baseline; 1.1.0 adds the field itself and relative sources.
+ */
+export const ANALYZER_VERSION = "1.1.0";
+
 function byteLength(value: string): number { return Buffer.byteLength(value, "utf8"); }
 
 function executableScriptType(type: string | null): boolean {
@@ -40,6 +48,45 @@ function appendWithinBudget(chunks: string[], value: string, remaining: number):
   return { used: byteLength(value.slice(0, end)), truncated: true };
 }
 
+/** Strip data URIs from a CSS body so embedded assets do not consume the CSS budget. */
+export function stripCssDataUris(value: string): { text: string; count: number } {
+  let count = 0;
+  const text = value.replace(/data:[^"'()\s<>]+/gi, () => { count += 1; return "data:,"; });
+  return { text, count };
+}
+
+/**
+ * Cut CSS at the last top-level rule boundary within the byte budget. A mid-rule
+ * slice produces a stylesheet parsers reject outright ("Could not parse CSS
+ * stylesheet"); cutting at a depth-0 `}` keeps every retained rule — and every
+ * @media block — syntactically complete. Strings and comments are honored so
+ * braces inside them never steer the cut.
+ */
+export function truncateCssAtRuleBoundary(css: string, maxBytes: number): { text: string; truncated: boolean } {
+  if (byteLength(css) <= maxBytes) return { text: css, truncated: false };
+  if (maxBytes <= 0) return { text: "", truncated: css.length > 0 };
+  let lo = 0, hi = css.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (byteLength(css.slice(0, mid)) <= maxBytes) lo = mid; else hi = mid - 1;
+  }
+  let depth = 0, lastBoundary = 0;
+  let inString: string | null = null, inComment = false;
+  for (let i = 0; i < lo; i += 1) {
+    const ch = css[i], next = css[i + 1];
+    if (inComment) { if (ch === "*" && next === "/") { inComment = false; i += 1; } continue; }
+    if (inString) { if (ch === "\\") i += 1; else if (ch === inString) inString = null; continue; }
+    if (ch === "/" && next === "*") { inComment = true; i += 1; continue; }
+    if (ch === '"' || ch === "'") { inString = ch; continue; }
+    if (ch === "{") { depth += 1; continue; }
+    if (ch === "}") {
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) lastBoundary = i + 1;
+    }
+  }
+  return { text: css.slice(0, lastBoundary), truncated: true };
+}
+
 function readText(path: string): string {
   return readFileSync(path, "utf8");
 }
@@ -54,8 +101,12 @@ function compactArchiveSource(source: string, budget: SourceBudget): CollectedSo
   let scriptBudget = budget.maxScriptBytes;
   let cssBudget = budget.maxCssBytes;
   let text = source.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi, (_match, open, body: string, close) => {
-    const allowed = Math.max(0, Math.min(body.length, budget.maxStyleBytes, cssBudget));
-    const compacted = body.slice(0, allowed);
+    // Embedded assets are compacted before metering so a multi-hundred-KB data URI
+    // cannot evict real rules from the budget; the cut itself lands on the last
+    // complete top-level rule so jsdom never sees a partial stylesheet.
+    const stripped = body.replace(/data:[^"'()\s<>]+/gi, () => { dataUris += 1; return "data:,"; });
+    const allowed = Math.max(0, Math.min(byteLength(stripped), budget.maxStyleBytes, cssBudget));
+    const compacted = truncateCssAtRuleBoundary(stripped, allowed).text;
     cssBudget -= byteLength(compacted);
     skippedStyleBytes += byteLength(body) - byteLength(compacted);
     return compacted ? `${open}${compacted}${close}` : "";
@@ -83,13 +134,17 @@ function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): Co
   const warnings: string[] = [];
   let used = 0;
   let skipped = 0;
+  let dataUris = 0;
   const append = (raw: string, label: string) => {
-    const rawBytes = byteLength(raw);
+    const stripped = stripCssDataUris(raw);
+    dataUris += stripped.count;
+    const rawBytes = byteLength(stripped.text);
     const perStyle = Math.min(rawBytes, budget.maxStyleBytes);
     const allowed = Math.max(0, Math.min(perStyle, budget.maxCssBytes - used));
-    const result = appendWithinBudget(chunks, raw, allowed);
-    used += result.used;
-    skipped += rawBytes - result.used;
+    const result = truncateCssAtRuleBoundary(stripped.text, allowed);
+    chunks.push(result.text);
+    used += byteLength(result.text);
+    skipped += rawBytes - byteLength(result.text);
     void label;
   };
   [...document.querySelectorAll("style")].forEach((node, index) => append(node.textContent ?? "", `style[${index + 1}]`));
@@ -101,6 +156,7 @@ function cssFromDocument(dom: JSDOM, htmlPath: string, budget: SourceBudget): Co
     catch { /* Missing local resources are reported by runtime validation. */ }
   }
   if (skipped) warnings.push(`CSS 分析预算生效：读取 ${used} bytes，跳过 ${skipped} bytes；DOM/文本分析保持完整`);
+  if (dataUris) warnings.push(`CSS 分析预处理：压缩 ${dataUris} 个 data URI 后再计量预算`);
   return { text: chunks.join("\n"), warnings };
 }
 
@@ -145,6 +201,25 @@ function selectorCache(document: Document): StableSelectorCache {
     stableSelectorCaches.set(document, cache);
   }
   return cache;
+}
+
+/** Detect script-driven behavior regions (canvas / iframe) the declarative
+ * interaction model cannot see into, so they are annotated instead of vanishing. */
+function collectUnmodeledBehaviors(document: Document): UnmodeledBehavior[] {
+  const behaviors: UnmodeledBehavior[] = [];
+  document.querySelectorAll("canvas").forEach((element) => behaviors.push({
+    kind: "canvas",
+    selector: stableSelector(element),
+    source: null,
+    note: "canvas 渲染行为由脚本驱动，不在声明式交互建模范围内",
+  }));
+  document.querySelectorAll("iframe").forEach((element) => behaviors.push({
+    kind: "iframe",
+    selector: stableSelector(element),
+    source: element.getAttribute("src") ?? (element.hasAttribute("srcdoc") ? "srcdoc" : null),
+    note: "嵌套浏览上下文（iframe），其内部行为不在本文档建模范围内",
+  }));
+  return behaviors;
 }
 
 function stableSelector(element: Element): string {
@@ -856,6 +931,8 @@ export class HtmlAnalyzer {
     if (document.querySelectorAll("script[src^=http], link[href^=http], img[src^=http]").length) warnings.push("包含远程资源，运行态 roundtrip 可能无法完全复现");
     if (a11y.imagesWithoutAlt) warnings.push(`${a11y.imagesWithoutAlt} 个图片缺少 alt 文本`);
     if (!views.length) warnings.push("未识别到已注册视图范式，将按 generic 处理");
+    const unmodeledBehaviors = collectUnmodeledBehaviors(document);
+    if (unmodeledBehaviors.length) warnings.push(`检测到 ${unmodeledBehaviors.length} 处脚本驱动行为区域（canvas/iframe），已在 unmodeledBehaviors 标注`);
 
     const rootVariables = extractRootVariables(css);
     const variableReferences = analyzeCssVariableReferences(css, Object.keys(rootVariables));
@@ -874,7 +951,8 @@ export class HtmlAnalyzer {
     return {
       schemaVersion: "1.0",
       meta: {
-        source: this.htmlPath,
+        source: relative(process.cwd(), this.htmlPath) || ".",
+        analyzerVersion: ANALYZER_VERSION,
         title: document.title.trim(),
         templateId: document.querySelector('meta[name="template"]')?.getAttribute("content") ?? null,
         vertical: profile,
@@ -893,6 +971,7 @@ export class HtmlAnalyzer {
           closeSelector: element.querySelector("[data-close], .close, [aria-label*=close i]") ? stableSelector(element.querySelector("[data-close], .close, [aria-label*=close i]")!) : null,
         })),
         landmarks: [...document.querySelectorAll("header, nav, main, aside, footer, [role]")].slice(0, 60).map((element) => ({ tag: element.tagName.toLowerCase(), role: element.getAttribute("role"), selector: stableSelector(element) })),
+        ...(unmodeledBehaviors.length ? { unmodeledBehaviors } : {}),
       },
       data: { contracts, members: [], timeline: [], works: [], moreFacts: [] },
       interactions,

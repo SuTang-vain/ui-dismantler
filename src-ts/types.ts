@@ -56,10 +56,20 @@ export interface Interaction {
   fingerprint: string;
 }
 
+export interface UnmodeledBehavior {
+  kind: "canvas" | "iframe";
+  selector: string;
+  /** iframe 的 src；“srcdoc”；或 null。 */
+  source: string | null;
+  note: string;
+}
+
 export interface Manifest {
   schemaVersion: "1.0";
   meta: {
     source: string;
+    /** Analyzer behavior version; absent in manifests produced before versioning existed. */
+    analyzerVersion?: string;
     title: string;
     templateId: string | null;
     vertical: string;
@@ -81,6 +91,8 @@ export interface Manifest {
     views: AnalyzedView[];
     modals: Array<{ id: string; selector: string; role: string | null; closeSelector: string | null }>;
     landmarks: Array<{ tag: string; role: string | null; selector: string }>;
+    /** 脚本驱动行为区域（canvas/iframe），不在声明式交互建模范围内；无则省略。 */
+    unmodeledBehaviors?: UnmodeledBehavior[];
   };
   data: {
     contracts: DataContract[];
@@ -319,6 +331,8 @@ export interface StyleComparisonReport {
   propertyCount: number;
   matchingProperties: number;
   rate: number;
+  /** Reference selectors that found no eligible counterpart — reported, never hard-paired. */
+  unresolvedReferenceSelectors?: string[];
   mismatches: Array<{
     key: string;
     property: string;
@@ -460,7 +474,7 @@ export interface BrowserViewportReport extends QualityViewport {
   navigationIntegrity?: NavigationIntegrityReport;
   fontFaceAlignment?: FontFaceAlignmentReport;
   selectorCoverage?: Pick<SelectorCoverageReport, "passed" | "coverageRate" | "activeMatchRate" | "unmatchedClasses" | "exemptClasses" | "mismatchHints">;
-  styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "mismatches">;
+  styles?: Pick<StyleComparisonReport, "rate" | "matched" | "referenceCount" | "generatedCount" | "propertyCount" | "matchingProperties" | "unresolvedReferenceSelectors" | "mismatches">;
   pixels?: PixelDiffReport;
   score?: number;
   passed: boolean;
